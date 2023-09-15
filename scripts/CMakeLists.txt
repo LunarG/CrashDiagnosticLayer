@@ -38,6 +38,7 @@ if (UPDATE_DEPS)
     else()
         set(_build_type ${CMAKE_BUILD_TYPE})
     endif()
+
     list(APPEND update_dep_command "--config")
     list(APPEND update_dep_command "${_build_type}")
 
@@ -59,7 +60,13 @@ if (UPDATE_DEPS)
 
     list(APPEND cmake_vars "CMAKE_TOOLCHAIN_FILE")
     if (ANDROID)
-        list(APPEND cmake_vars "ANDROID_PLATFORM" "CMAKE_ANDROID_ARCH_ABI" "CMAKE_ANDROID_STL_TYPE" "CMAKE_ANDROID_RTTI" "CMAKE_ANDROID_EXCEPTIONS" "ANDROID_USE_LEGACY_TOOLCHAIN_FILE")
+        list(APPEND cmake_vars
+                "ANDROID_PLATFORM"
+                "CMAKE_ANDROID_ARCH_ABI"
+                "CMAKE_ANDROID_STL_TYPE"
+                "CMAKE_ANDROID_RTTI"
+                "CMAKE_ANDROID_EXCEPTIONS"
+                "ANDROID_USE_LEGACY_TOOLCHAIN_FILE")
     endif()
 
     set(cmake_var)
@@ -73,6 +80,8 @@ if (UPDATE_DEPS)
     if (cmake_var)
         list(APPEND update_dep_command "${cmake_var}")
     endif()
+    
+    #string(REPLACE "\n" "" update_dep_command ${update_dep_command})
 
     file(TIMESTAMP ${update_dep_py} timestamp_1)
     file(TIMESTAMP ${known_good_json} timestamp_2)

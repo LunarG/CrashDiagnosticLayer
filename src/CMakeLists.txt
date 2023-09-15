@@ -105,7 +105,11 @@ endif()
 
 target_compile_options(gfr PRIVATE "$<IF:$<CXX_COMPILER_ID:MSVC>,/wd4100,-Wno-unused-parameter>")
 
-target_include_directories(gfr SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${GENERATED_DIR})
+target_include_directories(gfr SYSTEM PRIVATE
+                                ${CMAKE_CURRENT_SOURCE_DIR}
+                                ${GENERATED_DIR}
+                                ${SPIRV_HEADERS_INSTALL_DIR}/include/spirv/unified1
+                                )
 
 if (ANDROID)
     add_subdirectory(android)

@@ -19,11 +19,7 @@
 
 #include <vulkan/vulkan.h>
 
-#ifdef WIN32
-#include <spirv-headers/spirv.hpp>
-#else
-#include <glslang/SPIRV/spirv.hpp>
-#endif
+#include <spirv.hpp>
 
 #include <memory>
 #include <string>

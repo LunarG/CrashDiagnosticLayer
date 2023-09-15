@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023 LunarG Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -1020,6 +1021,18 @@ void GfrContext::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex,
   queue_device_tracker_[*pQueue] = device;
 }
 
+void GfrContext::PostGetDeviceQueue2(VkDevice device,
+                                     const VkDeviceQueueInfo2 *pQueueInfo,
+                                     VkQueue *pQueue) {
+  {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    devices_[device]->RegisterQueueFamilyIndex(*pQueue,
+                                               pQueueInfo->queueFamilyIndex);
+  }
+  std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
+  queue_device_tracker_[*pQueue] = device;
+}
+
 VkResult GfrContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount,
                                     const VkSubmitInfo* pSubmits,
                                     VkFence fence) {
@@ -1044,6 +1057,36 @@ VkResult GfrContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount,
   return VK_SUCCESS;
 }
 
+VkResult GfrContext::PreQueueSubmit2(VkQueue queue, uint32_t submitCount,
+                                     const VkSubmitInfo2 *pSubmits,
+                                     VkFence fence) {
+  last_submit_time_ =
+      std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::high_resolution_clock::now().time_since_epoch())
+          .count();
+
+  for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+    const auto &submit_info = pSubmits[submit_index];
+    for (uint32_t command_buffer_index = 0;
+         command_buffer_index < submit_info.commandBufferInfoCount;
+         ++command_buffer_index) {
+      auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(
+          submit_info.pCommandBufferInfos[command_buffer_index].commandBuffer);
+      if (p_cmd != nullptr) {
+        p_cmd->QueueSubmit(queue, fence);
+      }
+    }
+  }
+
+  return VK_SUCCESS;
+}
+
+VkResult GfrContext::PreQueueSubmit2KHR(VkQueue queue, uint32_t submitCount,
+                                        const VkSubmitInfo2 *pSubmits,
+                                        VkFence fence) {
+  return PreQueueSubmit2(queue, submitCount, pSubmits, fence);
+}
+
 // Return true if this is a VkResult that GFR considers an error.
 bool IsVkError(VkResult result) {
   return result == VK_ERROR_DEVICE_LOST ||
@@ -1063,6 +1106,27 @@ VkResult GfrContext::PostQueueSubmit(VkQueue queue, uint32_t submitCount,
     DumpDeviceExecutionState(GetQueueDevice(queue));
   }
   return result;
+}
+
+VkResult GfrContext::PostQueueSubmit2(VkQueue queue, uint32_t submitCount,
+                                      const VkSubmitInfo2 *pSubmits,
+                                      VkFence fence, VkResult result) {
+  total_submits_++;
+
+  bool dump =
+      IsVkError(result) || (debug_autodump_rate_ > 0 &&
+                            (total_submits_ % debug_autodump_rate_) == 0);
+
+  if (dump) {
+    DumpDeviceExecutionState(GetQueueDevice(queue));
+  }
+  return result;
+}
+
+VkResult GfrContext::PostQueueSubmit2KHR(VkQueue queue, uint32_t submitCount,
+                                         const VkSubmitInfo2 *pSubmits,
+                                         VkFence fence, VkResult result) {
+  return PostQueueSubmit2(queue, submitCount, pSubmits, fence, result);
 }
 
 VkResult GfrContext::PostDeviceWaitIdle(VkDevice device, VkResult result) {

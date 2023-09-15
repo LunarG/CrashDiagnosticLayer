@@ -116,9 +116,9 @@ GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
 
         self.write("\n// Declare layer version of Vulkan API functions.\n")
         out = []
-        for vkcommand in filter(lambda x: self.NeedsIntercept(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace('vk', 'Intercept')
+            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Intercept')
             out.append(f'{func_call}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
@@ -126,9 +126,9 @@ GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
 
         self.write("\n// Declare pre-intercept functions.\n")
         out = []
-        for vkcommand in filter(lambda x: self.NeedsIntercept(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InterceptPreCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace('vk', 'InterceptPre')
+            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' InterceptPre')
             out.append(f'{func_call}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
@@ -136,9 +136,9 @@ GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
 
         self.write("\n// Declare post-intercept functions.\n")
         out = []
-        for vkcommand in filter(lambda x: self.NeedsIntercept(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InterceptPostCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace('vk', 'InterceptPost')
+            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' InterceptPost')
 
             if vkcommand.returnType is not None and vkcommand.returnType != 'void':
                 func_call = func_call.replace(');', f',\n    {vkcommand.returnType}                                    result);')
@@ -152,22 +152,26 @@ GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
 
         out.append(self.GenerateNamespaceEnd())
         out.append('''
-#ifdef WIN32
-#define DLL_EXPORT __declspec(dllexport)
+
+#if defined(__GNUC__) && __GNUC__ >= 4
+#define GFR_EXPORT __attribute__((visibility("default")))
 #else
-#define DLL_EXPORT
+#define GFR_EXPORT
 #endif
 
-extern "C" DLL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+extern "C" {
+
+GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
 GFR_GetInstanceProcAddr(VkInstance inst, const char* func);
 
-extern "C" DLL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
 GFR_GetDeviceProcAddr(VkDevice dev, const char* func);
 
-extern "C" DLL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
+GFR_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
 GFR_NegotiateLoaderLayerInterfaceVersion(
     VkNegotiateLayerInterface* pVersionStruct);
-                   
+
+} // extern "C"
 ''')
         self.write("".join(out))
 
@@ -320,7 +324,8 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj)
 
         self.write("\n// Implement layer version of Vulkan API functions.\n")
         out = []
-        for vkcommand in filter(lambda x: self.NeedsIntercept(x) and (not x.name in self.custom_intercept_commands), self.vk.commands.values()):
+        #for vkcommand in filter(lambda x: x.name not in self.custom_intercept_commands, self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InterceptCommand(x) and (not x.name in self.custom_intercept_commands), self.vk.commands.values()):
             lower_function_call = vkcommand.name + '('
             count = 0
             for vkparam in vkcommand.params:
@@ -339,9 +344,10 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj)
                 out.append(f'  {vkcommand.returnType} result = {default_value};\n')
                 out.append('\n')
 
-            pre_func = lower_function_call.replace('vk', 'InterceptPre')
-            out.append(f'  {pre_func}')
-            out.append('\n')
+            if self.InterceptPreCommand(vkcommand):
+              pre_func = lower_function_call.replace('vk', 'InterceptPre')
+              out.append(f'  {pre_func}')
+              out.append('\n')
 
             if self.InstanceCommand(vkcommand):
                 out.append(f'  auto layer_data = GetInstanceLayerData(DataKey({vkcommand.params[0].name}));\n')
@@ -357,12 +363,13 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj)
             out.append('  }\n')
             out.append('\n')
 
-            out.append('  ')
-            post_call = lower_function_call.replace('vk', 'InterceptPost')
-            if self.CommandHasReturn(vkcommand):
-                out.append('result = ')
-                post_call = post_call.replace(')', ', result)')
-            out.append(f'{post_call}')
+            if self.InterceptPostCommand(vkcommand):
+              out.append('  ')
+              post_call = lower_function_call.replace('vk', 'InterceptPost')
+              if self.CommandHasReturn(vkcommand):
+                  out.append('result = ')
+                  post_call = post_call.replace(')', ', result)')
+              out.append(f'{post_call}')
 
             if self.CommandHasReturn(vkcommand):
                 out.append('  return result;\n')
@@ -538,25 +545,21 @@ InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
 VkResult InterceptEnumerateInstanceExtensionProperties(const char *pLayerName,
                                                        uint32_t *pPropertyCount,
                                                        VkExtensionProperties *pProperties) {
-  bool layer_requested = (nullptr == pLayerName ||
-       strcmp(pLayerName, "VK_LAYER_GOOGLE_graphics_flight_recorder"));
-  if (!layer_requested || pPropertyCount == nullptr) {
+  bool layer_requested = (nullptr == pLayerName ||''')
+        layer_name = self.GetLayerName()
+        out.append(f'        strcmp(pLayerName, "{layer_name}"));\n')
+        out.append('''  if (!layer_requested) {
     return VK_ERROR_LAYER_NOT_PRESENT;
   }
-  VkResult result = VK_SUCCESS;
-  uint32_t copy_count = *pPropertyCount;
-  if (pProperties != nullptr && *pPropertyCount > 0) {
-''')
-        num_instance_ext = len(self.implemented_instance_extensions)
-        out.append(f'    if (copy_count < {num_instance_ext}) {{\n')
-        out.append('      result = VK_INCOMPLETE;\n')
-        out.append('    } else {\n')
-        out.append(f'      copy_count = {num_instance_ext};\n')
-        out.append('    }\n')
-        out.append('''
-    memcpy(pProperties, instance_extensions.data(), copy_count * sizeof(VkExtensionProperties));
+  if (nullptr == pProperties) {
+    *pPropertyCount += static_cast<uint32_t>(instance_extensions.size());
+    return VK_SUCCESS;
+  } else if (*pPropertyCount > 0) {
+    *pPropertyCount = static_cast<uint32_t>(instance_extensions.size());
+    memcpy(pProperties, instance_extensions.data(),
+           instance_extensions.size() * sizeof(VkExtensionProperties));
   }
-  *pPropertyCount = copy_count;
+  VkResult result = VK_SUCCESS;
 
   return result;
 }
@@ -565,27 +568,81 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
                                                      const char *pLayerName,
                                                      uint32_t *pPropertyCount,
                                                      VkExtensionProperties *pProperties) {
-  bool layer_requested = (nullptr == pLayerName ||
-       strcmp(pLayerName, "VK_LAYER_GOOGLE_graphics_flight_recorder"));
-  if (!layer_requested || pPropertyCount == nullptr) {
-    InstanceData *instance_data = GetInstanceLayerData(DataKey(physicalDevice));
-    return instance_data->dispatch_table.EnumerateDeviceExtensionProperties(
-          physicalDevice, pLayerName, pPropertyCount, pProperties);
+
+  // we want to append our extensions, removing duplicates.
+  InstanceData *instance_data = GetInstanceLayerData(DataKey(physicalDevice));
+
+  uint32_t num_other_extensions = 0;
+  VkResult result =
+      instance_data->dispatch_table.EnumerateDeviceExtensionProperties(
+          physicalDevice, nullptr, &num_other_extensions, nullptr);
+  if (result != VK_SUCCESS) {
+    return result;
   }
-  VkResult result = VK_SUCCESS;
-  uint32_t copy_count = *pPropertyCount;
-  if (pProperties != nullptr && *pPropertyCount > 0) {
-''')
-        num_device_ext = len(self.implemented_device_extensions)
-        out.append(f'    if (copy_count < {num_device_ext}) {{\n')
-        out.append('      result = VK_INCOMPLETE;\n')
-        out.append('    } else {\n')
-        out.append(f'      copy_count = {num_device_ext};\n')
-        out.append('    }\n')
+
+  // call down to get other device properties
+  std::vector<VkExtensionProperties> extensions(num_other_extensions);
+  result = instance_data->dispatch_table.EnumerateDeviceExtensionProperties(
+      physicalDevice, pLayerName, &num_other_extensions, &extensions[0]);
+
+  // add our extensions if we have any and requested
+  bool layer_requested =''')
+        layer_name = self.GetLayerName()
+        out.append(f'      (nullptr == pLayerName || strcmp(pLayerName, "{layer_name}"));\n')
         out.append('''
-    memcpy(pProperties, device_extensions.data(), copy_count * sizeof(VkExtensionProperties));
+  if (result == VK_SUCCESS && layer_requested) {
+    // not just our layer, we expose all our extensions
+    uint32_t max_extensions = *pPropertyCount;
+
+    // set and copy base extensions
+    *pPropertyCount = num_other_extensions;
+
+    // find our unique extensions that need to be added
+    uint32_t num_additional_extensions = 0;
+    auto num_device_extensions = device_extensions.size();
+    std::vector<const VkExtensionProperties *> additional_extensions(
+        num_device_extensions);
+
+    for (size_t i = 0; i < num_device_extensions; ++i) {
+      bool is_unique_extension = true;
+
+      for (size_t j = 0; j < num_other_extensions; ++j) {
+        if (0 == strcmp(extensions[j].extensionName,
+                        device_extensions[i].extensionName)) {
+          is_unique_extension = false;
+          break;
+        }
+      }
+
+      if (is_unique_extension) {
+        additional_extensions[num_additional_extensions++] =
+            &device_extensions[i];
+      }
+    }
+
+    // null properties, just count total extensions
+    if (nullptr == pProperties) {
+      *pPropertyCount += num_additional_extensions;
+    } else {
+      uint32_t numExtensions = std::min(num_other_extensions, max_extensions);
+
+      memcpy(pProperties, &extensions[0],
+             numExtensions * sizeof(VkExtensionProperties));
+
+      for (size_t i = 0;
+           i < num_additional_extensions && numExtensions < max_extensions;
+           ++i) {
+        pProperties[numExtensions++] = *additional_extensions[i];
+      }
+
+      *pPropertyCount = numExtensions;
+
+      // not enough space for all extensions
+      if (num_other_extensions + num_additional_extensions > max_extensions) {
+        result = VK_INCOMPLETE;
+      }
+    }
   }
-  *pPropertyCount = copy_count;
 
   return result;
 }
@@ -595,13 +652,15 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
         out = []
         out.append(self.GenerateNamespaceEnd())
         out.append('''
-extern "C" DLL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
-GFR_GetInstanceProcAddr(VkInstance inst, const char *func) {
+extern "C" {
+
+GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetInstanceProcAddr(
+    VkInstance inst, const char *func) {
 ''')
         self.write("".join(out))
 
         out = []
-        for vkcommand in filter(lambda x: self.NeedsIntercept(x) and self.InstanceCommand(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InstanceCommand(x) and self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'if (0 == strcmp(func, "{vkcommand.name}"))\n')
             out.append(f'  return (PFN_vkVoidFunction)graphics_flight_recorder::Intercept{vkcommand.name[2:]};\n')
@@ -613,13 +672,13 @@ GFR_GetInstanceProcAddr(VkInstance inst, const char *func) {
   return (PFN_vkVoidFunction)graphics_flight_recorder::PassInstanceProcDownTheChain(inst, func);
 }
 
-extern "C" DLL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
-GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
+GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetDeviceProcAddr(
+    VkDevice dev, const char *func) {
 ''')
         self.write("".join(out))
 
         out = []
-        for vkcommand in filter(lambda x: self.NeedsIntercept(x) and not self.InstanceCommand(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: not self.InstanceCommand(x) and self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'  if (0 == strcmp(func, "{vkcommand.name}"))\n')
             out.append(f'    return (PFN_vkVoidFunction)graphics_flight_recorder::Intercept{vkcommand.name[2:]};\n')
@@ -631,8 +690,7 @@ GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
   return (PFN_vkVoidFunction)graphics_flight_recorder::PassDeviceProcDownTheChain(dev, func);
 } // NOLINT(readability/fn_size)
 
-extern "C" DLL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
-GFR_NegotiateLoaderLayerInterfaceVersion(
+GFR_EXPORT VKAPI_ATTR VkResult VKAPI_CALL GFR_NegotiateLoaderLayerInterfaceVersion(
     VkNegotiateLayerInterface *pVersionStruct) {
   assert(pVersionStruct != NULL);
   assert(pVersionStruct->sType == LAYER_NEGOTIATE_INTERFACE_STRUCT);
@@ -650,5 +708,8 @@ GFR_NegotiateLoaderLayerInterfaceVersion(
   }
   return VK_SUCCESS;
 }
+
+} // extern "C"
+
 ''')
         self.write("".join(out))

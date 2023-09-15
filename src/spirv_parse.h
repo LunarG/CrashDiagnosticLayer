@@ -21,11 +21,7 @@
 #include <cstdint>
 #include <map>
 
-#ifdef WIN32
-#include <spirv-headers/spirv.hpp>
-#else
-#include <glslang/SPIRV/spirv.hpp>
-#endif
+#include <spirv.hpp>
 
 namespace graphics_flight_recorder {
 

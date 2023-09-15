@@ -19,18 +19,50 @@ import sys
 from generators.vulkan_object import (Queues, CommandScope)
 from generators.gfr_base_generator import GfrBaseOutputGenerator
 
-
 #  GFR has custom implementation for pre intercept #
-custom_pre_intercepts = [
-    'vkBeginCommandBuffer',
-    'vkResetCommandBuffer',
-    'vkCmdBindPipeline',
+custom_functions = [
+    'vkCreateInstance',
+    'vkDestroyDevice',
+    'vkResetCommandPool',
+    'vkDestroyCommandPool'
+    'vkQueueSubmit',
+    'vkQueueSubmit2',
+    'vkWaitSemaphoresKHR',
+    'vkQueueSubmit2KHR',
+    'vkDebugMarkerSetObjectNameEXT',
+    'vkSetDebugUtilsObjectNameEXT'
 ]
 
-custom_command_buffer_functions = [
+custom_pre_intercept_functions = [
     'vkBeginCommandBuffer',
-    'vkEndCommandBuffer',
     'vkResetCommandBuffer',
+    'vkCmdBindPipeline'
+]
+
+custom_post_intercept_functions = [
+    'vkCreateDevice',
+    'vkGetDeviceQueue',
+    'vkGetDeviceQueue2',
+    'vkDeviceWaitIdle',
+    'vkQueueWaitIdle',
+    'vkQueuePresentKHR',
+    'vkQueueBindSparse',
+    'vkWaitForFences',
+    'vkGetFenceStatus',
+    'vkGetQueryPoolResults',
+    'vkAcquireNextImageKHR',
+    'vkCreateShaderModule',
+    'vkDestroyShaderModule',
+    'vkCreateGraphicsPipelines',
+    'vkCreateComputePipelines',
+    'vkDestroyPipeline',
+    'vkCreateCommandPool',
+    'vkAllocateCommandBuffers',
+    'vkFreeCommandBuffers',
+    'vkCreateSemaphore',
+    'vkDestroySemaphore',
+    'vkSignalSemaphoreKHR',
+    'vkGetSemaphoreCounterValueKHR'
 ]
 
 default_instrumented_functions = [
@@ -73,9 +105,9 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
         if self.filename == 'gfr_intercepts.cc.inc':
             self.generateInterceptsSource()
         elif self.filename == 'gfr_commands.h.inc':
-            self.generateGfrCommandsHeader()
+            self.generateGfrContextCommandsHeader()
         elif self.filename == 'gfr_commands.cc.inc':
-            self.generateGfrCommandsSource()
+            self.generateGfrContextCommandsSource()
         elif self.filename == 'command.h.inc':
             self.generateCommandsHeader()
         elif self.filename == 'command.cc.inc':
@@ -91,9 +123,9 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
 
     def generateInterceptsSource(self):
         out = []
-        for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            pre_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '',).replace('VKAPI_CALL ', '').replace(';', ' {').replace('vk', 'InterceptPre', 1)
+            pre_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '',).replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' InterceptPre', 1)
             post_func_decl = pre_func_decl.replace('InterceptPre', 'InterceptPost')
             func_call = '  '
             if self.CommandHasReturn(vkcommand):
@@ -107,38 +139,45 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
                 func_call += vkparam.name
                 count += 1
             func_call += ');'
-            out.append(f'{pre_func_decl}\n')
-            out.append(f'{func_call}\n')
-            out.append('}\n')
-            func_call = func_call.replace('->Pre', '->Post', 1)
-            if self.CommandHasReturn(vkcommand):
-                func_call = func_call.replace(')', ', result)', 1)
-            out.append(f'{post_func_decl}\n')
-            out.append(f'{func_call}\n')
-            out.append('}\n')
+
+            if self.InterceptPreCommand(vkcommand):
+                out.append(f'{pre_func_decl}\n')
+                out.append(f'{func_call}\n')
+                out.append('}\n')
+
+            if self.InterceptPostCommand(vkcommand):
+                func_call = func_call.replace('->Pre', '->Post', 1)
+                if self.CommandHasReturn(vkcommand):
+                    func_call = func_call.replace(')', ', result)', 1)
+                out.append(f'{post_func_decl}\n')
+                out.append(f'{func_call}\n')
+                out.append('}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
         self.write("".join(out))
 
-    def generateGfrCommandsHeader(self):
+    def generateGfrContextCommandsHeader(self):
         out = []
-        for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace('vk', 'Post', 1)
+            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Post', 1)
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)
             if self.CommandHasReturn(vkcommand):
                 post_func_decl = post_func_decl.replace(')', f',\n    {vkcommand.returnType}                                    result)')
-            out.append(f'{pre_func_decl}\n')
-            out.append(f'{post_func_decl}\n')
+            if self.InterceptPreCommand(vkcommand):
+                out.append(f'{pre_func_decl}\n')
+            if self.InterceptPostCommand(vkcommand):
+                out.append(f'{post_func_decl}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
         self.write("".join(out))
 
-    def generateGfrCommandsSource(self):
+    def generateGfrContextCommandsSource(self):
         out = []
-        for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
+
+        for vkcommand in filter(lambda x: self.CommandBufferCall(x) and x.name not in custom_functions, self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace('vk', 'GfrContext::Post', 1)
+            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' GfrContext::Post', 1)
             pre_func_decl = post_func_decl.replace('GfrContext::Post', 'GfrContext::Pre', 1)
             pre_func_call = '  '
             post_func_call = '  '
@@ -162,25 +201,27 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
             post_func_call += ');'
 
             # Skip vkCmdBindPipeline pre call since it's implemented by hand
-            if vkcommand.name not in custom_pre_intercepts:
+            if not (vkcommand.name in custom_functions or vkcommand.name in custom_pre_intercept_functions):
                 out.append(f'{pre_func_decl}\n')
                 out.append('  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);\n')
                 out.append(f'{pre_func_call}\n')
                 out.append('}\n')
 
-            out.append(f'{post_func_decl}\n')
-            out.append('  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);\n')
-            out.append(f'{post_func_call}\n')
-            out.append('}\n')
+            if not (vkcommand.name in custom_functions or vkcommand.name in custom_post_intercept_functions):
+                out.append(f'{post_func_decl}\n')
+                out.append('  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);\n')
+                out.append(f'{post_func_call}\n')
+                out.append('}\n')
+
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
         self.write("".join(out))
 
     def generateCommandsHeader(self):
         out = []
-        for vkcommand in filter(lambda x: self.CommandBufferCall(x) and x.name not in custom_command_buffer_functions, self.vk.commands.values()):
+        for vkcommand in filter(lambda x: x.name.startswith('vkCmd'), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace('vk', 'Post', 1)
+            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Post', 1)
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)
             if self.CommandHasReturn(vkcommand):
                 post_func_decl = post_func_decl.replace(')', f', {vkcommand.returnType} result)', 1)
@@ -192,9 +233,9 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
 
     def generateCommandsSource(self):
         out = []
-        for vkcommand in filter(lambda x: self.CommandBufferCall(x) and x.name not in custom_command_buffer_functions, self.vk.commands.values()):
+        for vkcommand in filter(lambda x: x.name.startswith('vkCmd'), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace('vk', 'CommandBuffer::Post', 1)
+            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' CommandBuffer::Post', 1)
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)
             func_call = f'  tracker_.TrackPre{vkcommand.name[2:]}('
             count = 0

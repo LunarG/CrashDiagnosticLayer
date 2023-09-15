@@ -37,6 +37,45 @@ custom_intercept_commands = [
     'vkEnumerateDeviceExtensionProperties',
 ]
 
+intercept_pre_functions = [
+]
+
+intercept_post_functions = [
+    'vkAllocateCommandBuffers',
+    'vkFreeCommandBuffers',
+    'vkGetDeviceQueue',
+    'vkDeviceWaitIdle',
+    'vkQueueWaitIdle',
+    'vkQueueBindSparse',
+    'vkGetFenceStatus',
+    'vkWaitForFences',
+    'vkCreateSemaphore',
+    'vkDestroySemaphore',
+    'vkGetQueryPoolResults',
+    'vkCreateShaderModule',
+    'vkDestroyShaderModule',
+    'vkCreateGraphicsPipelines',
+    'vkCreateComputePipelines',
+    'vkDestroyPipeline',
+    'vkGetDeviceQueue2',
+    'vkCreateCommandPool',
+    'vkAcquireNextImageKHR',
+    'vkQueuePresentKHR',
+    'vkGetSemaphoreCounterValueKHR',
+    'vkSignalSemaphoreKHR',
+]
+
+intercept_functions = [
+    'vkDestroyCommandPool',
+    'vkResetCommandPool',
+    'vkQueueSubmit',
+    'vkQueueSubmit2',
+    'vkQueueSubmit2KHR',
+    'vkWaitSemaphoresKHR',
+    'vkDebugMarkerSetObjectNameEXT',
+    'vkSetDebugUtilsObjectNameEXT',
+]
+
 namespace = 'graphics_flight_recorder'
 layer_name = 'VK_LAYER_LUNARG_graphics_flight_recorder'
 layer_version = '1'
@@ -101,15 +140,28 @@ class GfrBaseOutputGenerator(BaseGenerator):
 
     def CommandBufferCall(self, vkcommand):
         intercept = (vkcommand.name.startswith('vkCmd') or
-                        vkcommand.params[0].type == 'VkCommandBuffer')
+                     vkcommand.params[0].type == 'VkCommandBuffer')
         return intercept
 
     def NeedsIntercept(self, vkcommand):
         intercept = (self.CommandBufferCall(vkcommand) or
-                        vkcommand.params[0].type == 'VkQueue' or
-                        'SetObjectName' in vkcommand.name or
                         vkcommand.name in custom_intercept_commands)
         return intercept
+
+    def InterceptPreCommand(self, command):
+        intercept = False
+        if self.NeedsIntercept(command) or command.name in intercept_functions or command.name in intercept_pre_functions:
+            intercept = True
+        return intercept
+
+    def InterceptPostCommand(self, command):
+        intercept = False
+        if self.NeedsIntercept(command) or command.name in intercept_functions or command.name in intercept_post_functions:
+            intercept = True
+        return intercept
+
+    def InterceptCommand(self, command):
+        return self.InterceptPreCommand(command) or self.InterceptPostCommand(command)
 
     def InstanceCommand(self, vkcommand):
         return vkcommand.instance or vkcommand.params[0].type == 'VkPhysicalDevice'
@@ -137,7 +189,7 @@ class GfrBaseOutputGenerator(BaseGenerator):
         elif 'int64' in return_type or 'Address' in return_type or 'Size' in return_type:
             return_string = '0ULL'
         elif return_type == 'VkBool32':
-            return_string = 'GL_FALSE'
+            return_string = 'VK_FALSE'
         elif 'PFN_' in return_type:
             return_string = 'nullptr'
         elif 'PFN_' in return_type:

@@ -138,6 +138,12 @@ VkResult InterceptEnumerateDeviceLayerProperties(
     uint32_t*                                   pPropertyCount,
     VkLayerProperties*                          pProperties);
 
+void InterceptGetDeviceQueue(
+    VkDevice                                    device,
+    uint32_t                                    queueFamilyIndex,
+    uint32_t                                    queueIndex,
+    VkQueue*                                    pQueue);
+
 VkResult InterceptQueueSubmit(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
@@ -147,11 +153,105 @@ VkResult InterceptQueueSubmit(
 VkResult InterceptQueueWaitIdle(
     VkQueue                                     queue);
 
+VkResult InterceptDeviceWaitIdle(
+    VkDevice                                    device);
+
 VkResult InterceptQueueBindSparse(
     VkQueue                                     queue,
     uint32_t                                    bindInfoCount,
     const VkBindSparseInfo*                     pBindInfo,
     VkFence                                     fence);
+
+VkResult InterceptGetFenceStatus(
+    VkDevice                                    device,
+    VkFence                                     fence);
+
+VkResult InterceptWaitForFences(
+    VkDevice                                    device,
+    uint32_t                                    fenceCount,
+    const VkFence*                              pFences,
+    VkBool32                                    waitAll,
+    uint64_t                                    timeout);
+
+VkResult InterceptCreateSemaphore(
+    VkDevice                                    device,
+    const VkSemaphoreCreateInfo*                pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSemaphore*                                pSemaphore);
+
+void InterceptDestroySemaphore(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptGetQueryPoolResults(
+    VkDevice                                    device,
+    VkQueryPool                                 queryPool,
+    uint32_t                                    firstQuery,
+    uint32_t                                    queryCount,
+    size_t                                      dataSize,
+    void*                                       pData,
+    VkDeviceSize                                stride,
+    VkQueryResultFlags                          flags);
+
+VkResult InterceptCreateShaderModule(
+    VkDevice                                    device,
+    const VkShaderModuleCreateInfo*             pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkShaderModule*                             pShaderModule);
+
+void InterceptDestroyShaderModule(
+    VkDevice                                    device,
+    VkShaderModule                              shaderModule,
+    const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptCreateGraphicsPipelines(
+    VkDevice                                    device,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkGraphicsPipelineCreateInfo*         pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines);
+
+VkResult InterceptCreateComputePipelines(
+    VkDevice                                    device,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkComputePipelineCreateInfo*          pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines);
+
+void InterceptDestroyPipeline(
+    VkDevice                                    device,
+    VkPipeline                                  pipeline,
+    const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptCreateCommandPool(
+    VkDevice                                    device,
+    const VkCommandPoolCreateInfo*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCommandPool*                              pCommandPool);
+
+void InterceptDestroyCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptResetCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    VkCommandPoolResetFlags                     flags);
+
+VkResult InterceptAllocateCommandBuffers(
+    VkDevice                                    device,
+    const VkCommandBufferAllocateInfo*          pAllocateInfo,
+    VkCommandBuffer*                            pCommandBuffers);
+
+void InterceptFreeCommandBuffers(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    uint32_t                                    commandBufferCount,
+    const VkCommandBuffer*                      pCommandBuffers);
 
 VkResult InterceptBeginCommandBuffer(
     VkCommandBuffer                             commandBuffer,
@@ -472,6 +572,11 @@ void InterceptCmdDispatchBase(
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ);
 
+void InterceptGetDeviceQueue2(
+    VkDevice                                    device,
+    const VkDeviceQueueInfo2*                   pQueueInfo,
+    VkQueue*                                    pQueue);
+
 void InterceptCmdDrawIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -638,6 +743,14 @@ void InterceptCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable);
 
+VkResult InterceptAcquireNextImageKHR(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    uint64_t                                    timeout,
+    VkSemaphore                                 semaphore,
+    VkFence                                     fence,
+    uint32_t*                                   pImageIndex);
+
 VkResult InterceptQueuePresentKHR(
     VkQueue                                     queue,
     const VkPresentInfoKHR*                     pPresentInfo);
@@ -725,6 +838,20 @@ void InterceptCmdDrawIndexedIndirectCountKHR(
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride);
 
+VkResult InterceptGetSemaphoreCounterValueKHR(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    uint64_t*                                   pValue);
+
+VkResult InterceptWaitSemaphoresKHR(
+    VkDevice                                    device,
+    const VkSemaphoreWaitInfo*                  pWaitInfo,
+    uint64_t                                    timeout);
+
+VkResult InterceptSignalSemaphoreKHR(
+    VkDevice                                    device,
+    const VkSemaphoreSignalInfo*                pSignalInfo);
+
 void InterceptCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
@@ -774,11 +901,6 @@ void InterceptCmdWriteBufferMarker2AMD(
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker);
-
-void InterceptGetQueueCheckpointData2NV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointData2NV*                        pCheckpointData);
 
 void InterceptCmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -916,16 +1038,9 @@ void InterceptCmdSetDiscardRectangleModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkDiscardRectangleModeEXT                   discardRectangleMode);
 
-void InterceptQueueBeginDebugUtilsLabelEXT(
-    VkQueue                                     queue,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
-
-void InterceptQueueEndDebugUtilsLabelEXT(
-    VkQueue                                     queue);
-
-void InterceptQueueInsertDebugUtilsLabelEXT(
-    VkQueue                                     queue,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
+VkResult InterceptSetDebugUtilsObjectNameEXT(
+    VkDevice                                    device,
+    const VkDebugUtilsObjectNameInfoEXT*        pNameInfo);
 
 void InterceptCmdBeginDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
@@ -1045,11 +1160,6 @@ void InterceptCmdSetCheckpointNV(
     VkCommandBuffer                             commandBuffer,
     const void*                                 pCheckpointMarker);
 
-void InterceptGetQueueCheckpointDataNV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointDataNV*                         pCheckpointData);
-
 VkResult InterceptCmdSetPerformanceMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceMarkerInfoINTEL*         pMarkerInfo);
@@ -1061,10 +1171,6 @@ VkResult InterceptCmdSetPerformanceStreamMarkerINTEL(
 VkResult InterceptCmdSetPerformanceOverrideINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceOverrideInfoINTEL*       pOverrideInfo);
-
-VkResult InterceptQueueSetPerformanceConfigurationINTEL(
-    VkQueue                                     queue,
-    VkPerformanceConfigurationINTEL             configuration);
 
 void InterceptCmdSetLineStippleEXT(
     VkCommandBuffer                             commandBuffer,
@@ -1576,14 +1682,15 @@ VkResult InterceptPreQueueSubmit(
     const VkSubmitInfo*                         pSubmits,
     VkFence                                     fence);
 
-VkResult InterceptPreQueueWaitIdle(
-    VkQueue                                     queue);
+void InterceptPreDestroyCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    const VkAllocationCallbacks*                pAllocator);
 
-VkResult InterceptPreQueueBindSparse(
-    VkQueue                                     queue,
-    uint32_t                                    bindInfoCount,
-    const VkBindSparseInfo*                     pBindInfo,
-    VkFence                                     fence);
+VkResult InterceptPreResetCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    VkCommandPoolResetFlags                     flags);
 
 VkResult InterceptPreBeginCommandBuffer(
     VkCommandBuffer                             commandBuffer,
@@ -2070,10 +2177,6 @@ void InterceptPreCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable);
 
-VkResult InterceptPreQueuePresentKHR(
-    VkQueue                                     queue,
-    const VkPresentInfoKHR*                     pPresentInfo);
-
 void InterceptPreCmdBeginVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoBeginCodingInfoKHR*            pBeginInfo);
@@ -2157,6 +2260,11 @@ void InterceptPreCmdDrawIndexedIndirectCountKHR(
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride);
 
+VkResult InterceptPreWaitSemaphoresKHR(
+    VkDevice                                    device,
+    const VkSemaphoreWaitInfo*                  pWaitInfo,
+    uint64_t                                    timeout);
+
 void InterceptPreCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
@@ -2206,11 +2314,6 @@ void InterceptPreCmdWriteBufferMarker2AMD(
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker);
-
-void InterceptPreGetQueueCheckpointData2NV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointData2NV*                        pCheckpointData);
 
 void InterceptPreCmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -2348,16 +2451,9 @@ void InterceptPreCmdSetDiscardRectangleModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkDiscardRectangleModeEXT                   discardRectangleMode);
 
-void InterceptPreQueueBeginDebugUtilsLabelEXT(
-    VkQueue                                     queue,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
-
-void InterceptPreQueueEndDebugUtilsLabelEXT(
-    VkQueue                                     queue);
-
-void InterceptPreQueueInsertDebugUtilsLabelEXT(
-    VkQueue                                     queue,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
+VkResult InterceptPreSetDebugUtilsObjectNameEXT(
+    VkDevice                                    device,
+    const VkDebugUtilsObjectNameInfoEXT*        pNameInfo);
 
 void InterceptPreCmdBeginDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
@@ -2477,11 +2573,6 @@ void InterceptPreCmdSetCheckpointNV(
     VkCommandBuffer                             commandBuffer,
     const void*                                 pCheckpointMarker);
 
-void InterceptPreGetQueueCheckpointDataNV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointDataNV*                         pCheckpointData);
-
 VkResult InterceptPreCmdSetPerformanceMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceMarkerInfoINTEL*         pMarkerInfo);
@@ -2493,10 +2584,6 @@ VkResult InterceptPreCmdSetPerformanceStreamMarkerINTEL(
 VkResult InterceptPreCmdSetPerformanceOverrideINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceOverrideInfoINTEL*       pOverrideInfo);
-
-VkResult InterceptPreQueueSetPerformanceConfigurationINTEL(
-    VkQueue                                     queue,
-    VkPerformanceConfigurationINTEL             configuration);
 
 void InterceptPreCmdSetLineStippleEXT(
     VkCommandBuffer                             commandBuffer,
@@ -3008,6 +3095,12 @@ VkResult InterceptPostEnumerateDeviceLayerProperties(
     VkLayerProperties*                          pProperties,
     VkResult                                    result);
 
+void InterceptPostGetDeviceQueue(
+    VkDevice                                    device,
+    uint32_t                                    queueFamilyIndex,
+    uint32_t                                    queueIndex,
+    VkQueue*                                    pQueue);
+
 VkResult InterceptPostQueueSubmit(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
@@ -3019,12 +3112,117 @@ VkResult InterceptPostQueueWaitIdle(
     VkQueue                                     queue,
     VkResult                                    result);
 
+VkResult InterceptPostDeviceWaitIdle(
+    VkDevice                                    device,
+    VkResult                                    result);
+
 VkResult InterceptPostQueueBindSparse(
     VkQueue                                     queue,
     uint32_t                                    bindInfoCount,
     const VkBindSparseInfo*                     pBindInfo,
     VkFence                                     fence,
     VkResult                                    result);
+
+VkResult InterceptPostGetFenceStatus(
+    VkDevice                                    device,
+    VkFence                                     fence,
+    VkResult                                    result);
+
+VkResult InterceptPostWaitForFences(
+    VkDevice                                    device,
+    uint32_t                                    fenceCount,
+    const VkFence*                              pFences,
+    VkBool32                                    waitAll,
+    uint64_t                                    timeout,
+    VkResult                                    result);
+
+VkResult InterceptPostCreateSemaphore(
+    VkDevice                                    device,
+    const VkSemaphoreCreateInfo*                pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSemaphore*                                pSemaphore,
+    VkResult                                    result);
+
+void InterceptPostDestroySemaphore(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptPostGetQueryPoolResults(
+    VkDevice                                    device,
+    VkQueryPool                                 queryPool,
+    uint32_t                                    firstQuery,
+    uint32_t                                    queryCount,
+    size_t                                      dataSize,
+    void*                                       pData,
+    VkDeviceSize                                stride,
+    VkQueryResultFlags                          flags,
+    VkResult                                    result);
+
+VkResult InterceptPostCreateShaderModule(
+    VkDevice                                    device,
+    const VkShaderModuleCreateInfo*             pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkShaderModule*                             pShaderModule,
+    VkResult                                    result);
+
+void InterceptPostDestroyShaderModule(
+    VkDevice                                    device,
+    VkShaderModule                              shaderModule,
+    const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptPostCreateGraphicsPipelines(
+    VkDevice                                    device,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkGraphicsPipelineCreateInfo*         pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines,
+    VkResult                                    result);
+
+VkResult InterceptPostCreateComputePipelines(
+    VkDevice                                    device,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkComputePipelineCreateInfo*          pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines,
+    VkResult                                    result);
+
+void InterceptPostDestroyPipeline(
+    VkDevice                                    device,
+    VkPipeline                                  pipeline,
+    const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptPostCreateCommandPool(
+    VkDevice                                    device,
+    const VkCommandPoolCreateInfo*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCommandPool*                              pCommandPool,
+    VkResult                                    result);
+
+void InterceptPostDestroyCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptPostResetCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    VkCommandPoolResetFlags                     flags,
+    VkResult                                    result);
+
+VkResult InterceptPostAllocateCommandBuffers(
+    VkDevice                                    device,
+    const VkCommandBufferAllocateInfo*          pAllocateInfo,
+    VkCommandBuffer*                            pCommandBuffers,
+    VkResult                                    result);
+
+void InterceptPostFreeCommandBuffers(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    uint32_t                                    commandBufferCount,
+    const VkCommandBuffer*                      pCommandBuffers);
 
 VkResult InterceptPostBeginCommandBuffer(
     VkCommandBuffer                             commandBuffer,
@@ -3348,6 +3546,11 @@ void InterceptPostCmdDispatchBase(
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ);
 
+void InterceptPostGetDeviceQueue2(
+    VkDevice                                    device,
+    const VkDeviceQueueInfo2*                   pQueueInfo,
+    VkQueue*                                    pQueue);
+
 void InterceptPostCmdDrawIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -3515,6 +3718,15 @@ void InterceptPostCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable);
 
+VkResult InterceptPostAcquireNextImageKHR(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    uint64_t                                    timeout,
+    VkSemaphore                                 semaphore,
+    VkFence                                     fence,
+    uint32_t*                                   pImageIndex,
+    VkResult                                    result);
+
 VkResult InterceptPostQueuePresentKHR(
     VkQueue                                     queue,
     const VkPresentInfoKHR*                     pPresentInfo,
@@ -3603,6 +3815,23 @@ void InterceptPostCmdDrawIndexedIndirectCountKHR(
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride);
 
+VkResult InterceptPostGetSemaphoreCounterValueKHR(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    uint64_t*                                   pValue,
+    VkResult                                    result);
+
+VkResult InterceptPostWaitSemaphoresKHR(
+    VkDevice                                    device,
+    const VkSemaphoreWaitInfo*                  pWaitInfo,
+    uint64_t                                    timeout,
+    VkResult                                    result);
+
+VkResult InterceptPostSignalSemaphoreKHR(
+    VkDevice                                    device,
+    const VkSemaphoreSignalInfo*                pSignalInfo,
+    VkResult                                    result);
+
 void InterceptPostCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
@@ -3653,11 +3882,6 @@ void InterceptPostCmdWriteBufferMarker2AMD(
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker);
-
-void InterceptPostGetQueueCheckpointData2NV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointData2NV*                        pCheckpointData);
 
 void InterceptPostCmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -3796,16 +4020,10 @@ void InterceptPostCmdSetDiscardRectangleModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkDiscardRectangleModeEXT                   discardRectangleMode);
 
-void InterceptPostQueueBeginDebugUtilsLabelEXT(
-    VkQueue                                     queue,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
-
-void InterceptPostQueueEndDebugUtilsLabelEXT(
-    VkQueue                                     queue);
-
-void InterceptPostQueueInsertDebugUtilsLabelEXT(
-    VkQueue                                     queue,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
+VkResult InterceptPostSetDebugUtilsObjectNameEXT(
+    VkDevice                                    device,
+    const VkDebugUtilsObjectNameInfoEXT*        pNameInfo,
+    VkResult                                    result);
 
 void InterceptPostCmdBeginDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
@@ -3925,11 +4143,6 @@ void InterceptPostCmdSetCheckpointNV(
     VkCommandBuffer                             commandBuffer,
     const void*                                 pCheckpointMarker);
 
-void InterceptPostGetQueueCheckpointDataNV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointDataNV*                         pCheckpointData);
-
 VkResult InterceptPostCmdSetPerformanceMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceMarkerInfoINTEL*         pMarkerInfo,
@@ -3943,11 +4156,6 @@ VkResult InterceptPostCmdSetPerformanceStreamMarkerINTEL(
 VkResult InterceptPostCmdSetPerformanceOverrideINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceOverrideInfoINTEL*       pOverrideInfo,
-    VkResult                                    result);
-
-VkResult InterceptPostQueueSetPerformanceConfigurationINTEL(
-    VkQueue                                     queue,
-    VkPerformanceConfigurationINTEL             configuration,
     VkResult                                    result);
 
 void InterceptPostCmdSetLineStippleEXT(
@@ -4415,22 +4623,26 @@ void InterceptPostCmdDrawMeshTasksIndirectCountEXT(
 
 } // namespace graphics_flight_recorder
 
-#ifdef WIN32
-#define DLL_EXPORT __declspec(dllexport)
+
+#if defined(__GNUC__) && __GNUC__ >= 4
+#define GFR_EXPORT __attribute__((visibility("default")))
 #else
-#define DLL_EXPORT
+#define GFR_EXPORT
 #endif
 
-extern "C" DLL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+extern "C" {
+
+GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
 GFR_GetInstanceProcAddr(VkInstance inst, const char* func);
 
-extern "C" DLL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
 GFR_GetDeviceProcAddr(VkDevice dev, const char* func);
 
-extern "C" DLL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
+GFR_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
 GFR_NegotiateLoaderLayerInterfaceVersion(
     VkNegotiateLayerInterface* pVersionStruct);
-                   
+
+} // extern "C"
 
 
 // NOLINTEND

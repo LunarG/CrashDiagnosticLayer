@@ -20,8 +20,6 @@
 
 LIBRARY VkLayer_LUNARG_graphics_flight_recorder
 EXPORTS
-vkGetInstanceProcAddr
-vkGetDeviceProcAddr
-vkEnumerateInstanceLayerProperties
-vkEnumerateInstanceExtensionProperties
-vkNegotiateLoaderLayerInterfaceVersion
+GFR_GetInstanceProcAddr
+GFR_GetDeviceProcAddr
+GFR_NegotiateLoaderLayerInterfaceVersion

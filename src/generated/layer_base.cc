@@ -160,6 +160,20 @@ static constexpr std::array<VkExtensionProperties, 1> device_extensions{{
 
 // Implement layer version of Vulkan API functions.
 
+void InterceptGetDeviceQueue(
+    VkDevice                                    device,
+    uint32_t                                    queueFamilyIndex,
+    uint32_t                                    queueIndex,
+    VkQueue*                                    pQueue) {
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkGetDeviceQueue pfn = layer_data->dispatch_table.GetDeviceQueue;
+  if (pfn != nullptr) {
+    pfn(device, queueFamilyIndex, queueIndex, pQueue);
+  }
+
+  InterceptPostGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
+}
+
 VkResult InterceptQueueSubmit(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
@@ -183,8 +197,6 @@ VkResult InterceptQueueWaitIdle(
     VkQueue                                     queue) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreQueueWaitIdle(queue);
-
   auto layer_data = GetDeviceLayerData(DataKey(queue));
   PFN_vkQueueWaitIdle pfn = layer_data->dispatch_table.QueueWaitIdle;
   if (pfn != nullptr) {
@@ -195,14 +207,26 @@ VkResult InterceptQueueWaitIdle(
   return result;
 }
 
+VkResult InterceptDeviceWaitIdle(
+    VkDevice                                    device) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkDeviceWaitIdle pfn = layer_data->dispatch_table.DeviceWaitIdle;
+  if (pfn != nullptr) {
+    result = pfn(device);
+  }
+
+  result = InterceptPostDeviceWaitIdle(device, result);
+  return result;
+}
+
 VkResult InterceptQueueBindSparse(
     VkQueue                                     queue,
     uint32_t                                    bindInfoCount,
     const VkBindSparseInfo*                     pBindInfo,
     VkFence                                     fence) {
   VkResult result = VK_SUCCESS;
-
-  InterceptPreQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
 
   auto layer_data = GetDeviceLayerData(DataKey(queue));
   PFN_vkQueueBindSparse pfn = layer_data->dispatch_table.QueueBindSparse;
@@ -212,6 +236,251 @@ VkResult InterceptQueueBindSparse(
 
   result = InterceptPostQueueBindSparse(queue, bindInfoCount, pBindInfo, fence, result);
   return result;
+}
+
+VkResult InterceptGetFenceStatus(
+    VkDevice                                    device,
+    VkFence                                     fence) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkGetFenceStatus pfn = layer_data->dispatch_table.GetFenceStatus;
+  if (pfn != nullptr) {
+    result = pfn(device, fence);
+  }
+
+  result = InterceptPostGetFenceStatus(device, fence, result);
+  return result;
+}
+
+VkResult InterceptWaitForFences(
+    VkDevice                                    device,
+    uint32_t                                    fenceCount,
+    const VkFence*                              pFences,
+    VkBool32                                    waitAll,
+    uint64_t                                    timeout) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkWaitForFences pfn = layer_data->dispatch_table.WaitForFences;
+  if (pfn != nullptr) {
+    result = pfn(device, fenceCount, pFences, waitAll, timeout);
+  }
+
+  result = InterceptPostWaitForFences(device, fenceCount, pFences, waitAll, timeout, result);
+  return result;
+}
+
+VkResult InterceptCreateSemaphore(
+    VkDevice                                    device,
+    const VkSemaphoreCreateInfo*                pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSemaphore*                                pSemaphore) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkCreateSemaphore pfn = layer_data->dispatch_table.CreateSemaphore;
+  if (pfn != nullptr) {
+    result = pfn(device, pCreateInfo, pAllocator, pSemaphore);
+  }
+
+  result = InterceptPostCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore, result);
+  return result;
+}
+
+void InterceptDestroySemaphore(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    const VkAllocationCallbacks*                pAllocator) {
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkDestroySemaphore pfn = layer_data->dispatch_table.DestroySemaphore;
+  if (pfn != nullptr) {
+    pfn(device, semaphore, pAllocator);
+  }
+
+  InterceptPostDestroySemaphore(device, semaphore, pAllocator);
+}
+
+VkResult InterceptGetQueryPoolResults(
+    VkDevice                                    device,
+    VkQueryPool                                 queryPool,
+    uint32_t                                    firstQuery,
+    uint32_t                                    queryCount,
+    size_t                                      dataSize,
+    void*                                       pData,
+    VkDeviceSize                                stride,
+    VkQueryResultFlags                          flags) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkGetQueryPoolResults pfn = layer_data->dispatch_table.GetQueryPoolResults;
+  if (pfn != nullptr) {
+    result = pfn(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
+  }
+
+  result = InterceptPostGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags, result);
+  return result;
+}
+
+VkResult InterceptCreateShaderModule(
+    VkDevice                                    device,
+    const VkShaderModuleCreateInfo*             pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkShaderModule*                             pShaderModule) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkCreateShaderModule pfn = layer_data->dispatch_table.CreateShaderModule;
+  if (pfn != nullptr) {
+    result = pfn(device, pCreateInfo, pAllocator, pShaderModule);
+  }
+
+  result = InterceptPostCreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule, result);
+  return result;
+}
+
+void InterceptDestroyShaderModule(
+    VkDevice                                    device,
+    VkShaderModule                              shaderModule,
+    const VkAllocationCallbacks*                pAllocator) {
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkDestroyShaderModule pfn = layer_data->dispatch_table.DestroyShaderModule;
+  if (pfn != nullptr) {
+    pfn(device, shaderModule, pAllocator);
+  }
+
+  InterceptPostDestroyShaderModule(device, shaderModule, pAllocator);
+}
+
+VkResult InterceptCreateGraphicsPipelines(
+    VkDevice                                    device,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkGraphicsPipelineCreateInfo*         pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkCreateGraphicsPipelines pfn = layer_data->dispatch_table.CreateGraphicsPipelines;
+  if (pfn != nullptr) {
+    result = pfn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+  }
+
+  result = InterceptPostCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines, result);
+  return result;
+}
+
+VkResult InterceptCreateComputePipelines(
+    VkDevice                                    device,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkComputePipelineCreateInfo*          pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkCreateComputePipelines pfn = layer_data->dispatch_table.CreateComputePipelines;
+  if (pfn != nullptr) {
+    result = pfn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+  }
+
+  result = InterceptPostCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines, result);
+  return result;
+}
+
+void InterceptDestroyPipeline(
+    VkDevice                                    device,
+    VkPipeline                                  pipeline,
+    const VkAllocationCallbacks*                pAllocator) {
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkDestroyPipeline pfn = layer_data->dispatch_table.DestroyPipeline;
+  if (pfn != nullptr) {
+    pfn(device, pipeline, pAllocator);
+  }
+
+  InterceptPostDestroyPipeline(device, pipeline, pAllocator);
+}
+
+VkResult InterceptCreateCommandPool(
+    VkDevice                                    device,
+    const VkCommandPoolCreateInfo*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCommandPool*                              pCommandPool) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkCreateCommandPool pfn = layer_data->dispatch_table.CreateCommandPool;
+  if (pfn != nullptr) {
+    result = pfn(device, pCreateInfo, pAllocator, pCommandPool);
+  }
+
+  result = InterceptPostCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool, result);
+  return result;
+}
+
+void InterceptDestroyCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    const VkAllocationCallbacks*                pAllocator) {
+  InterceptPreDestroyCommandPool(device, commandPool, pAllocator);
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkDestroyCommandPool pfn = layer_data->dispatch_table.DestroyCommandPool;
+  if (pfn != nullptr) {
+    pfn(device, commandPool, pAllocator);
+  }
+
+  InterceptPostDestroyCommandPool(device, commandPool, pAllocator);
+}
+
+VkResult InterceptResetCommandPool(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    VkCommandPoolResetFlags                     flags) {
+  VkResult result = VK_SUCCESS;
+
+  InterceptPreResetCommandPool(device, commandPool, flags);
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkResetCommandPool pfn = layer_data->dispatch_table.ResetCommandPool;
+  if (pfn != nullptr) {
+    result = pfn(device, commandPool, flags);
+  }
+
+  result = InterceptPostResetCommandPool(device, commandPool, flags, result);
+  return result;
+}
+
+VkResult InterceptAllocateCommandBuffers(
+    VkDevice                                    device,
+    const VkCommandBufferAllocateInfo*          pAllocateInfo,
+    VkCommandBuffer*                            pCommandBuffers) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkAllocateCommandBuffers pfn = layer_data->dispatch_table.AllocateCommandBuffers;
+  if (pfn != nullptr) {
+    result = pfn(device, pAllocateInfo, pCommandBuffers);
+  }
+
+  result = InterceptPostAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers, result);
+  return result;
+}
+
+void InterceptFreeCommandBuffers(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    uint32_t                                    commandBufferCount,
+    const VkCommandBuffer*                      pCommandBuffers) {
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkFreeCommandBuffers pfn = layer_data->dispatch_table.FreeCommandBuffers;
+  if (pfn != nullptr) {
+    pfn(device, commandPool, commandBufferCount, pCommandBuffers);
+  }
+
+  InterceptPostFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 }
 
 VkResult InterceptBeginCommandBuffer(
@@ -1032,6 +1301,19 @@ void InterceptCmdDispatchBase(
   InterceptPostCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 
+void InterceptGetDeviceQueue2(
+    VkDevice                                    device,
+    const VkDeviceQueueInfo2*                   pQueueInfo,
+    VkQueue*                                    pQueue) {
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkGetDeviceQueue2 pfn = layer_data->dispatch_table.GetDeviceQueue2;
+  if (pfn != nullptr) {
+    pfn(device, pQueueInfo, pQueue);
+  }
+
+  InterceptPostGetDeviceQueue2(device, pQueueInfo, pQueue);
+}
+
 void InterceptCmdDrawIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -1541,12 +1823,29 @@ void InterceptCmdSetPrimitiveRestartEnable(
   InterceptPostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 
+VkResult InterceptAcquireNextImageKHR(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    uint64_t                                    timeout,
+    VkSemaphore                                 semaphore,
+    VkFence                                     fence,
+    uint32_t*                                   pImageIndex) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkAcquireNextImageKHR pfn = layer_data->dispatch_table.AcquireNextImageKHR;
+  if (pfn != nullptr) {
+    result = pfn(device, swapchain, timeout, semaphore, fence, pImageIndex);
+  }
+
+  result = InterceptPostAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex, result);
+  return result;
+}
+
 VkResult InterceptQueuePresentKHR(
     VkQueue                                     queue,
     const VkPresentInfoKHR*                     pPresentInfo) {
   VkResult result = VK_SUCCESS;
-
-  InterceptPreQueuePresentKHR(queue, pPresentInfo);
 
   auto layer_data = GetDeviceLayerData(DataKey(queue));
   PFN_vkQueuePresentKHR pfn = layer_data->dispatch_table.QueuePresentKHR;
@@ -1791,6 +2090,55 @@ void InterceptCmdDrawIndexedIndirectCountKHR(
   InterceptPostCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
+VkResult InterceptGetSemaphoreCounterValueKHR(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    uint64_t*                                   pValue) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkGetSemaphoreCounterValueKHR pfn = layer_data->dispatch_table.GetSemaphoreCounterValueKHR;
+  if (pfn != nullptr) {
+    result = pfn(device, semaphore, pValue);
+  }
+
+  result = InterceptPostGetSemaphoreCounterValueKHR(device, semaphore, pValue, result);
+  return result;
+}
+
+VkResult InterceptWaitSemaphoresKHR(
+    VkDevice                                    device,
+    const VkSemaphoreWaitInfo*                  pWaitInfo,
+    uint64_t                                    timeout) {
+  VkResult result = VK_SUCCESS;
+
+  InterceptPreWaitSemaphoresKHR(device, pWaitInfo, timeout);
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkWaitSemaphoresKHR pfn = layer_data->dispatch_table.WaitSemaphoresKHR;
+  if (pfn != nullptr) {
+    result = pfn(device, pWaitInfo, timeout);
+  }
+
+  result = InterceptPostWaitSemaphoresKHR(device, pWaitInfo, timeout, result);
+  return result;
+}
+
+VkResult InterceptSignalSemaphoreKHR(
+    VkDevice                                    device,
+    const VkSemaphoreSignalInfo*                pSignalInfo) {
+  VkResult result = VK_SUCCESS;
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkSignalSemaphoreKHR pfn = layer_data->dispatch_table.SignalSemaphoreKHR;
+  if (pfn != nullptr) {
+    result = pfn(device, pSignalInfo);
+  }
+
+  result = InterceptPostSignalSemaphoreKHR(device, pSignalInfo, result);
+  return result;
+}
+
 void InterceptCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
@@ -1932,21 +2280,6 @@ void InterceptCmdWriteBufferMarker2AMD(
   }
 
   InterceptPostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
-}
-
-void InterceptGetQueueCheckpointData2NV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointData2NV*                        pCheckpointData) {
-  InterceptPreGetQueueCheckpointData2NV(queue, pCheckpointDataCount, pCheckpointData);
-
-  auto layer_data = GetDeviceLayerData(DataKey(queue));
-  PFN_vkGetQueueCheckpointData2NV pfn = layer_data->dispatch_table.GetQueueCheckpointData2NV;
-  if (pfn != nullptr) {
-    pfn(queue, pCheckpointDataCount, pCheckpointData);
-  }
-
-  InterceptPostGetQueueCheckpointData2NV(queue, pCheckpointDataCount, pCheckpointData);
 }
 
 void InterceptCmdCopyBuffer2KHR(
@@ -2348,45 +2681,21 @@ void InterceptCmdSetDiscardRectangleModeEXT(
   InterceptPostCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 }
 
-void InterceptQueueBeginDebugUtilsLabelEXT(
-    VkQueue                                     queue,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo) {
-  InterceptPreQueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
+VkResult InterceptSetDebugUtilsObjectNameEXT(
+    VkDevice                                    device,
+    const VkDebugUtilsObjectNameInfoEXT*        pNameInfo) {
+  VkResult result = VK_SUCCESS;
 
-  auto layer_data = GetDeviceLayerData(DataKey(queue));
-  PFN_vkQueueBeginDebugUtilsLabelEXT pfn = layer_data->dispatch_table.QueueBeginDebugUtilsLabelEXT;
+  InterceptPreSetDebugUtilsObjectNameEXT(device, pNameInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(device));
+  PFN_vkSetDebugUtilsObjectNameEXT pfn = layer_data->dispatch_table.SetDebugUtilsObjectNameEXT;
   if (pfn != nullptr) {
-    pfn(queue, pLabelInfo);
+    result = pfn(device, pNameInfo);
   }
 
-  InterceptPostQueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
-}
-
-void InterceptQueueEndDebugUtilsLabelEXT(
-    VkQueue                                     queue) {
-  InterceptPreQueueEndDebugUtilsLabelEXT(queue);
-
-  auto layer_data = GetDeviceLayerData(DataKey(queue));
-  PFN_vkQueueEndDebugUtilsLabelEXT pfn = layer_data->dispatch_table.QueueEndDebugUtilsLabelEXT;
-  if (pfn != nullptr) {
-    pfn(queue);
-  }
-
-  InterceptPostQueueEndDebugUtilsLabelEXT(queue);
-}
-
-void InterceptQueueInsertDebugUtilsLabelEXT(
-    VkQueue                                     queue,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo) {
-  InterceptPreQueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
-
-  auto layer_data = GetDeviceLayerData(DataKey(queue));
-  PFN_vkQueueInsertDebugUtilsLabelEXT pfn = layer_data->dispatch_table.QueueInsertDebugUtilsLabelEXT;
-  if (pfn != nullptr) {
-    pfn(queue, pLabelInfo);
-  }
-
-  InterceptPostQueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
+  result = InterceptPostSetDebugUtilsObjectNameEXT(device, pNameInfo, result);
+  return result;
 }
 
 void InterceptCmdBeginDebugUtilsLabelEXT(
@@ -2687,21 +2996,6 @@ void InterceptCmdSetCheckpointNV(
   InterceptPostCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 }
 
-void InterceptGetQueueCheckpointDataNV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointDataNV*                         pCheckpointData) {
-  InterceptPreGetQueueCheckpointDataNV(queue, pCheckpointDataCount, pCheckpointData);
-
-  auto layer_data = GetDeviceLayerData(DataKey(queue));
-  PFN_vkGetQueueCheckpointDataNV pfn = layer_data->dispatch_table.GetQueueCheckpointDataNV;
-  if (pfn != nullptr) {
-    pfn(queue, pCheckpointDataCount, pCheckpointData);
-  }
-
-  InterceptPostGetQueueCheckpointDataNV(queue, pCheckpointDataCount, pCheckpointData);
-}
-
 VkResult InterceptCmdSetPerformanceMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceMarkerInfoINTEL*         pMarkerInfo) {
@@ -2750,23 +3044,6 @@ VkResult InterceptCmdSetPerformanceOverrideINTEL(
   }
 
   result = InterceptPostCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo, result);
-  return result;
-}
-
-VkResult InterceptQueueSetPerformanceConfigurationINTEL(
-    VkQueue                                     queue,
-    VkPerformanceConfigurationINTEL             configuration) {
-  VkResult result = VK_SUCCESS;
-
-  InterceptPreQueueSetPerformanceConfigurationINTEL(queue, configuration);
-
-  auto layer_data = GetDeviceLayerData(DataKey(queue));
-  PFN_vkQueueSetPerformanceConfigurationINTEL pfn = layer_data->dispatch_table.QueueSetPerformanceConfigurationINTEL;
-  if (pfn != nullptr) {
-    result = pfn(queue, configuration);
-  }
-
-  result = InterceptPostQueueSetPerformanceConfigurationINTEL(queue, configuration, result);
   return result;
 }
 
@@ -4298,23 +4575,19 @@ InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
 VkResult InterceptEnumerateInstanceExtensionProperties(const char *pLayerName,
                                                        uint32_t *pPropertyCount,
                                                        VkExtensionProperties *pProperties) {
-  bool layer_requested = (nullptr == pLayerName ||
-       strcmp(pLayerName, "VK_LAYER_GOOGLE_graphics_flight_recorder"));
-  if (!layer_requested || pPropertyCount == nullptr) {
+  bool layer_requested = (nullptr == pLayerName ||        strcmp(pLayerName, "VK_LAYER_LUNARG_graphics_flight_recorder"));
+  if (!layer_requested) {
     return VK_ERROR_LAYER_NOT_PRESENT;
   }
-  VkResult result = VK_SUCCESS;
-  uint32_t copy_count = *pPropertyCount;
-  if (pProperties != nullptr && *pPropertyCount > 0) {
-    if (copy_count < 2) {
-      result = VK_INCOMPLETE;
-    } else {
-      copy_count = 2;
-    }
-
-    memcpy(pProperties, instance_extensions.data(), copy_count * sizeof(VkExtensionProperties));
+  if (nullptr == pProperties) {
+    *pPropertyCount += static_cast<uint32_t>(instance_extensions.size());
+    return VK_SUCCESS;
+  } else if (*pPropertyCount > 0) {
+    *pPropertyCount = static_cast<uint32_t>(instance_extensions.size());
+    memcpy(pProperties, instance_extensions.data(),
+           instance_extensions.size() * sizeof(VkExtensionProperties));
   }
-  *pPropertyCount = copy_count;
+  VkResult result = VK_SUCCESS;
 
   return result;
 }
@@ -4323,25 +4596,79 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
                                                      const char *pLayerName,
                                                      uint32_t *pPropertyCount,
                                                      VkExtensionProperties *pProperties) {
-  bool layer_requested = (nullptr == pLayerName ||
-       strcmp(pLayerName, "VK_LAYER_GOOGLE_graphics_flight_recorder"));
-  if (!layer_requested || pPropertyCount == nullptr) {
-    InstanceData *instance_data = GetInstanceLayerData(DataKey(physicalDevice));
-    return instance_data->dispatch_table.EnumerateDeviceExtensionProperties(
-          physicalDevice, pLayerName, pPropertyCount, pProperties);
+
+  // we want to append our extensions, removing duplicates.
+  InstanceData *instance_data = GetInstanceLayerData(DataKey(physicalDevice));
+
+  uint32_t num_other_extensions = 0;
+  VkResult result =
+      instance_data->dispatch_table.EnumerateDeviceExtensionProperties(
+          physicalDevice, nullptr, &num_other_extensions, nullptr);
+  if (result != VK_SUCCESS) {
+    return result;
   }
-  VkResult result = VK_SUCCESS;
-  uint32_t copy_count = *pPropertyCount;
-  if (pProperties != nullptr && *pPropertyCount > 0) {
-    if (copy_count < 1) {
-      result = VK_INCOMPLETE;
-    } else {
-      copy_count = 1;
+
+  // call down to get other device properties
+  std::vector<VkExtensionProperties> extensions(num_other_extensions);
+  result = instance_data->dispatch_table.EnumerateDeviceExtensionProperties(
+      physicalDevice, pLayerName, &num_other_extensions, &extensions[0]);
+
+  // add our extensions if we have any and requested
+  bool layer_requested =      (nullptr == pLayerName || strcmp(pLayerName, "VK_LAYER_LUNARG_graphics_flight_recorder"));
+
+  if (result == VK_SUCCESS && layer_requested) {
+    // not just our layer, we expose all our extensions
+    uint32_t max_extensions = *pPropertyCount;
+
+    // set and copy base extensions
+    *pPropertyCount = num_other_extensions;
+
+    // find our unique extensions that need to be added
+    uint32_t num_additional_extensions = 0;
+    auto num_device_extensions = device_extensions.size();
+    std::vector<const VkExtensionProperties *> additional_extensions(
+        num_device_extensions);
+
+    for (size_t i = 0; i < num_device_extensions; ++i) {
+      bool is_unique_extension = true;
+
+      for (size_t j = 0; j < num_other_extensions; ++j) {
+        if (0 == strcmp(extensions[j].extensionName,
+                        device_extensions[i].extensionName)) {
+          is_unique_extension = false;
+          break;
+        }
+      }
+
+      if (is_unique_extension) {
+        additional_extensions[num_additional_extensions++] =
+            &device_extensions[i];
+      }
     }
 
-    memcpy(pProperties, device_extensions.data(), copy_count * sizeof(VkExtensionProperties));
+    // null properties, just count total extensions
+    if (nullptr == pProperties) {
+      *pPropertyCount += num_additional_extensions;
+    } else {
+      uint32_t numExtensions = std::min(num_other_extensions, max_extensions);
+
+      memcpy(pProperties, &extensions[0],
+             numExtensions * sizeof(VkExtensionProperties));
+
+      for (size_t i = 0;
+           i < num_additional_extensions && numExtensions < max_extensions;
+           ++i) {
+        pProperties[numExtensions++] = *additional_extensions[i];
+      }
+
+      *pPropertyCount = numExtensions;
+
+      // not enough space for all extensions
+      if (num_other_extensions + num_additional_extensions > max_extensions) {
+        result = VK_INCOMPLETE;
+      }
+    }
   }
-  *pPropertyCount = copy_count;
 
   return result;
 }
@@ -4349,8 +4676,10 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
 
 } // namespace graphics_flight_recorder
 
-extern "C" DLL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
-GFR_GetInstanceProcAddr(VkInstance inst, const char *func) {
+extern "C" {
+
+GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetInstanceProcAddr(
+    VkInstance inst, const char *func) {
 
 if (0 == strcmp(func, "vkCreateInstance"))
   return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateInstance;
@@ -4372,17 +4701,51 @@ if (0 == strcmp(func, "vkEnumerateDeviceLayerProperties"))
   return (PFN_vkVoidFunction)graphics_flight_recorder::PassInstanceProcDownTheChain(inst, func);
 }
 
-extern "C" DLL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
-GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
+GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetDeviceProcAddr(
+    VkDevice dev, const char *func) {
 
   if (0 == strcmp(func, "vkDestroyDevice"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyDevice;
+  if (0 == strcmp(func, "vkGetDeviceQueue"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetDeviceQueue;
   if (0 == strcmp(func, "vkQueueSubmit"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueSubmit;
   if (0 == strcmp(func, "vkQueueWaitIdle"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueWaitIdle;
+  if (0 == strcmp(func, "vkDeviceWaitIdle"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDeviceWaitIdle;
   if (0 == strcmp(func, "vkQueueBindSparse"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueBindSparse;
+  if (0 == strcmp(func, "vkGetFenceStatus"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetFenceStatus;
+  if (0 == strcmp(func, "vkWaitForFences"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptWaitForFences;
+  if (0 == strcmp(func, "vkCreateSemaphore"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateSemaphore;
+  if (0 == strcmp(func, "vkDestroySemaphore"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroySemaphore;
+  if (0 == strcmp(func, "vkGetQueryPoolResults"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetQueryPoolResults;
+  if (0 == strcmp(func, "vkCreateShaderModule"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateShaderModule;
+  if (0 == strcmp(func, "vkDestroyShaderModule"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyShaderModule;
+  if (0 == strcmp(func, "vkCreateGraphicsPipelines"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateGraphicsPipelines;
+  if (0 == strcmp(func, "vkCreateComputePipelines"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateComputePipelines;
+  if (0 == strcmp(func, "vkDestroyPipeline"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyPipeline;
+  if (0 == strcmp(func, "vkCreateCommandPool"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateCommandPool;
+  if (0 == strcmp(func, "vkDestroyCommandPool"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyCommandPool;
+  if (0 == strcmp(func, "vkResetCommandPool"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptResetCommandPool;
+  if (0 == strcmp(func, "vkAllocateCommandBuffers"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptAllocateCommandBuffers;
+  if (0 == strcmp(func, "vkFreeCommandBuffers"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptFreeCommandBuffers;
   if (0 == strcmp(func, "vkBeginCommandBuffer"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptBeginCommandBuffer;
   if (0 == strcmp(func, "vkEndCommandBuffer"))
@@ -4481,6 +4844,8 @@ GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDeviceMask;
   if (0 == strcmp(func, "vkCmdDispatchBase"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDispatchBase;
+  if (0 == strcmp(func, "vkGetDeviceQueue2"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetDeviceQueue2;
   if (0 == strcmp(func, "vkCmdDrawIndirectCount"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndirectCount;
   if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCount"))
@@ -4549,6 +4914,8 @@ GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthBiasEnable;
   if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnable"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPrimitiveRestartEnable;
+  if (0 == strcmp(func, "vkAcquireNextImageKHR"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptAcquireNextImageKHR;
   if (0 == strcmp(func, "vkQueuePresentKHR"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueuePresentKHR;
   if (0 == strcmp(func, "vkCmdBeginVideoCodingKHR"))
@@ -4581,6 +4948,12 @@ GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndirectCountKHR;
   if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountKHR"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndexedIndirectCountKHR;
+  if (0 == strcmp(func, "vkGetSemaphoreCounterValueKHR"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetSemaphoreCounterValueKHR;
+  if (0 == strcmp(func, "vkWaitSemaphoresKHR"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptWaitSemaphoresKHR;
+  if (0 == strcmp(func, "vkSignalSemaphoreKHR"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptSignalSemaphoreKHR;
   if (0 == strcmp(func, "vkCmdSetFragmentShadingRateKHR"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetFragmentShadingRateKHR;
 #ifdef VK_ENABLE_BETA_EXTENSIONS
@@ -4601,8 +4974,6 @@ GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueSubmit2KHR;
   if (0 == strcmp(func, "vkCmdWriteBufferMarker2AMD"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteBufferMarker2AMD;
-  if (0 == strcmp(func, "vkGetQueueCheckpointData2NV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetQueueCheckpointData2NV;
   if (0 == strcmp(func, "vkCmdCopyBuffer2KHR"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyBuffer2KHR;
   if (0 == strcmp(func, "vkCmdCopyImage2KHR"))
@@ -4655,12 +5026,8 @@ GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDiscardRectangleEnableEXT;
   if (0 == strcmp(func, "vkCmdSetDiscardRectangleModeEXT"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDiscardRectangleModeEXT;
-  if (0 == strcmp(func, "vkQueueBeginDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueBeginDebugUtilsLabelEXT;
-  if (0 == strcmp(func, "vkQueueEndDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueEndDebugUtilsLabelEXT;
-  if (0 == strcmp(func, "vkQueueInsertDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueInsertDebugUtilsLabelEXT;
+  if (0 == strcmp(func, "vkSetDebugUtilsObjectNameEXT"))
+    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptSetDebugUtilsObjectNameEXT;
   if (0 == strcmp(func, "vkCmdBeginDebugUtilsLabelEXT"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginDebugUtilsLabelEXT;
   if (0 == strcmp(func, "vkCmdEndDebugUtilsLabelEXT"))
@@ -4697,16 +5064,12 @@ GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetExclusiveScissorNV;
   if (0 == strcmp(func, "vkCmdSetCheckpointNV"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCheckpointNV;
-  if (0 == strcmp(func, "vkGetQueueCheckpointDataNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetQueueCheckpointDataNV;
   if (0 == strcmp(func, "vkCmdSetPerformanceMarkerINTEL"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPerformanceMarkerINTEL;
   if (0 == strcmp(func, "vkCmdSetPerformanceStreamMarkerINTEL"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPerformanceStreamMarkerINTEL;
   if (0 == strcmp(func, "vkCmdSetPerformanceOverrideINTEL"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPerformanceOverrideINTEL;
-  if (0 == strcmp(func, "vkQueueSetPerformanceConfigurationINTEL"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueSetPerformanceConfigurationINTEL;
   if (0 == strcmp(func, "vkCmdSetLineStippleEXT"))
     return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetLineStippleEXT;
   if (0 == strcmp(func, "vkCmdSetCullModeEXT"))
@@ -4893,8 +5256,7 @@ GFR_GetDeviceProcAddr(VkDevice dev, const char *func) {
   return (PFN_vkVoidFunction)graphics_flight_recorder::PassDeviceProcDownTheChain(dev, func);
 } // NOLINT(readability/fn_size)
 
-extern "C" DLL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
-GFR_NegotiateLoaderLayerInterfaceVersion(
+GFR_EXPORT VKAPI_ATTR VkResult VKAPI_CALL GFR_NegotiateLoaderLayerInterfaceVersion(
     VkNegotiateLayerInterface *pVersionStruct) {
   assert(pVersionStruct != NULL);
   assert(pVersionStruct->sType == LAYER_NEGOTIATE_INTERFACE_STRUCT);
@@ -4912,6 +5274,9 @@ GFR_NegotiateLoaderLayerInterfaceVersion(
   }
   return VK_SUCCESS;
 }
+
+} // extern "C"
+
 
 
 // NOLINTEND
