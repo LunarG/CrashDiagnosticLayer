@@ -24,7 +24,7 @@
 #include "gfr.h"
 #include "util.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 SemaphoreTracker::SemaphoreTracker(Device* p_device,
                                    bool track_semaphores_last_setter)
@@ -269,4 +269,4 @@ void SemaphoreTracker::DumpWaitingThreads(std::ostream& os) {
   }
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder

@@ -24,10 +24,10 @@
 #ifdef WIN32
 #include <spirv-headers/spirv.hpp>
 #else
-#include <SPIRV/spirv.hpp>
+#include <glslang/SPIRV/spirv.hpp>
 #endif
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 /**
  * @brief SpirvParse
@@ -270,6 +270,6 @@ class BasicSpirvParse : public SpirvParse {
   std::string source_file_;
 };
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
 
 #endif  // GFR_PARSE_H

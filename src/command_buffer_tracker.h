@@ -23,7 +23,7 @@
 #include <thread>
 #include <unordered_map>
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 class CommandBuffer;
 using CommandBufferPtr = std::unique_ptr<CommandBuffer>;
@@ -31,16 +31,17 @@ using CommandBufferPtr = std::unique_ptr<CommandBuffer>;
 // Thread local cache
 struct ThreadLocalCommandBufferCache {
   VkCommandBuffer vkcb = VK_NULL_HANDLE;
-  GFR::CommandBuffer* gfrcb = nullptr;
+  graphics_flight_recorder::CommandBuffer *gfrcb = nullptr;
 };
 
 void SetGfrCommandBuffer(VkCommandBuffer vk_command_buffer,
                          CommandBufferPtr command_buffer);
 
-GFR::CommandBuffer* GetGfrCommandBuffer(VkCommandBuffer vk_command_buffer);
+graphics_flight_recorder::CommandBuffer *
+GetGfrCommandBuffer(VkCommandBuffer vk_command_buffer);
 
 void DeleteGfrCommandBuffer(VkCommandBuffer vk_command_buffer);
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
 
 #endif  // GFR_COMMAND_BUFFER_TRACKER_H

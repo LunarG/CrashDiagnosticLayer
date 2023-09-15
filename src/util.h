@@ -18,11 +18,12 @@
 #define GFR_UTIL_H
 
 #include <algorithm>
+#include <cstdint>
 #include <iomanip>
 #include <sstream>
 #include <string>
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 inline void ToUpper(std::string& s) {
   std::transform(std::begin(s), std::end(s), std::begin(s), ::toupper);
@@ -73,6 +74,6 @@ const T* FindOnChain(const void* pNext) {
   return FindOnChain<T, sType>(p->pNext);
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
 
 #endif  // GFR_UTIL_H

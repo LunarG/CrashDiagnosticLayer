@@ -22,7 +22,7 @@
 #ifdef WIN32
 #include <spirv-headers/spirv.hpp>
 #else
-#include <SPIRV/spirv.hpp>
+#include <glslang/SPIRV/spirv.hpp>
 #endif
 
 #include <memory>
@@ -31,7 +31,7 @@
 
 #include "object_name_db.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 class Device;
 
@@ -73,6 +73,6 @@ class ShaderModule {
 
 using ShaderModulePtr = std::unique_ptr<ShaderModule>;
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
 
 #endif  // GFR_SHADER_MODULE_H

@@ -16,4 +16,4 @@
 
 #include "util.h"
 
-namespace GFR {}  // namespace GFR
+namespace graphics_flight_recorder {} // namespace graphics_flight_recorder

@@ -18,9 +18,10 @@
 
 #include "command.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
-// Keep track of GFR::CommandBuffer objects created for each VkCommandBuffer
+// Keep track of graphics_flight_recorder::CommandBuffer objects created for
+// each VkCommandBuffer
 static std::unordered_map<VkCommandBuffer, CommandBufferPtr>
     global_commandbuffer_map_;
 static std::mutex global_commandbuffer_map_mutex_;
@@ -35,7 +36,8 @@ void SetGfrCommandBuffer(VkCommandBuffer vk_command_buffer,
   global_commandbuffer_map_[vk_command_buffer] = std::move(command_buffer);
 }
 
-GFR::CommandBuffer* GetGfrCommandBuffer(VkCommandBuffer vk_command_buffer) {
+graphics_flight_recorder::CommandBuffer *
+GetGfrCommandBuffer(VkCommandBuffer vk_command_buffer) {
   if (thread_cb_cache_.vkcb == vk_command_buffer) {
     return thread_cb_cache_.gfrcb;
   }
@@ -57,4 +59,4 @@ void DeleteGfrCommandBuffer(VkCommandBuffer vk_command_buffer) {
   global_commandbuffer_map_.erase(vk_command_buffer);
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder

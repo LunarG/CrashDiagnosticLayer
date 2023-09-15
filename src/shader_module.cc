@@ -25,7 +25,7 @@
 #define SPIRV_PARSE_INCLUDE_VULKAN_SPIRV_HPP
 #include "spirv_parse.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 ShaderModule::ShaderModule(VkShaderModule vk_shader_module, int load_options,
                            size_t code_size, const char* p_spirv,
@@ -84,4 +84,4 @@ std::string ShaderModule::DumpShaderCode(const std::string& prefix,
   return shader_filename;
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder

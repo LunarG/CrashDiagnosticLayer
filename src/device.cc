@@ -23,7 +23,7 @@
 #include "gfr.h"
 #include "util.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 const VkDeviceSize kBufferMarkerBufferSize =
     kBufferMarkerEventCount * sizeof(uint32_t);
@@ -355,7 +355,7 @@ void Device::DumpCommandBuffers(std::ostream& os,
       sorted_command_buffers;
   std::lock_guard<std::recursive_mutex> lock(command_buffers_mutex_);
   for (auto cb : command_buffers_) {
-    auto p_cmd = GFR::GetGfrCommandBuffer(cb);
+    auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(cb);
     if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
       if (dump_all_command_buffers ||
           (p_cmd->HasBufferMarker() && p_cmd->WasSubmittedToQueue() &&
@@ -466,7 +466,7 @@ bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd,
 
 bool Device::ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer,
                                            std::ostream& os) {
-  auto p_cmd = GFR::GetGfrCommandBuffer(vk_command_buffer);
+  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(vk_command_buffer);
   assert(p_cmd != nullptr);
   if (p_cmd != nullptr) {
     return ValidateCommandBufferNotInUse(p_cmd, os);
@@ -486,7 +486,7 @@ void Device::ValidateCommandPoolState(VkCommandPool vk_command_pool,
   auto command_buffers = command_pools_[vk_command_pool]->GetCommandBuffers(
       VK_COMMAND_BUFFER_LEVEL_PRIMARY);
   for (auto vk_cmd : command_buffers) {
-    auto p_cmd = GFR::GetGfrCommandBuffer(vk_cmd);
+    auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(vk_cmd);
     if (p_cmd != nullptr) {
       ValidateCommandBufferNotInUse(p_cmd, os);
     }
@@ -502,7 +502,7 @@ void Device::ResetCommandPool(VkCommandPool vk_command_pool) {
     auto command_buffers =
         command_pools_[vk_command_pool]->GetCommandBuffers(cb_level);
     for (auto vk_cmd : command_buffers) {
-      auto p_cmd = GFR::GetGfrCommandBuffer(vk_cmd);
+      auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(vk_cmd);
       if (p_cmd != nullptr) {
         p_cmd->Reset();
       }
@@ -520,12 +520,12 @@ void Device::DeleteCommandPool(VkCommandPool vk_command_pool) {
     auto command_buffers =
         command_pools_[vk_command_pool]->GetCommandBuffers(cb_level);
     for (auto vk_cmd : command_buffers) {
-      auto p_cmd = GFR::GetGfrCommandBuffer(vk_cmd);
+      auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(vk_cmd);
       if (p_cmd != nullptr) {
         command_buffers_.erase(std::remove(command_buffers_.begin(),
                                            command_buffers_.end(), vk_cmd),
                                command_buffers_.end());
-        GFR::DeleteGfrCommandBuffer(vk_cmd);
+        graphics_flight_recorder::DeleteGfrCommandBuffer(vk_cmd);
       }
     }
   }
@@ -540,7 +540,7 @@ void Device::DeleteCommandBuffers(const VkCommandBuffer* vk_cmds,
       command_buffers_.erase(std::remove(command_buffers_.begin(),
                                          command_buffers_.end(), vk_cmds[i]),
                              command_buffers_.end());
-      GFR::DeleteGfrCommandBuffer(vk_cmds[i]);
+      graphics_flight_recorder::DeleteGfrCommandBuffer(vk_cmds[i]);
     }
   }
 }
@@ -744,4 +744,4 @@ std::ostream& Device::Print(std::ostream& stream) const {
   return stream;
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder

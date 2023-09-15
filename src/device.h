@@ -34,7 +34,7 @@
 #include "shader_module.h"
 #include "submit_tracker.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 const VkDeviceSize kBufferMarkerEventCount = 1024;
 const MarkerType kMarkerType = MarkerType::kUint32;
@@ -217,6 +217,6 @@ class Device {
 
 using DevicePtr = std::unique_ptr<Device>;
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
 
 #endif  // GFR_DEVICE_H

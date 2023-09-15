@@ -43,7 +43,7 @@
 #include <direct.h>
 #endif
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 const char* kGfrVersion = "1.1.0";
 const char* kGpuHangDaemonSocketName = "/run/gpuhangd";
@@ -894,7 +894,8 @@ VkResult GfrContext::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
                                         VkInstance* pInstance,
                                         VkResult result) {
   vk_instance_ = *pInstance;
-  auto instance_layer_data = GetInstanceLayerData(GFR::DataKey(vk_instance_));
+  auto instance_layer_data =
+      GetInstanceLayerData(graphics_flight_recorder::DataKey(vk_instance_));
   instance_dispatch_table_ = instance_layer_data->dispatch_table;
 
   if (pCreateInfo->pApplicationInfo) {
@@ -955,8 +956,9 @@ VkResult GfrContext::PostCreateDevice(VkPhysicalDevice physicalDevice,
     // Create a helper command pool per queue family index. This command pool
     // will be used for allocating command buffers that track the state of
     // submit and semaphores.
-    auto dispatch_table =
-        GFR::GetDeviceLayerData(GFR::DataKey(vk_device))->dispatch_table;
+    auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
+                              graphics_flight_recorder::DataKey(vk_device))
+                              ->dispatch_table;
     VkCommandPoolCreateInfo command_pool_create_info = {};
     command_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 
@@ -987,8 +989,9 @@ VkResult GfrContext::PostCreateDevice(VkPhysicalDevice physicalDevice,
 void GfrContext::PreDestroyDevice(VkDevice device,
                                   const VkAllocationCallbacks* pAllocator) {
   if (track_semaphores_) {
-    auto dispatch_table =
-        GFR::GetDeviceLayerData(GFR::DataKey(device))->dispatch_table;
+    auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
+                              graphics_flight_recorder::DataKey(device))
+                              ->dispatch_table;
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto command_pools = devices_[device]->ReturnAndEraseCommandPools();
     for (auto& command_pool : command_pools) {
@@ -1030,7 +1033,7 @@ VkResult GfrContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount,
     for (uint32_t command_buffer_index = 0;
          command_buffer_index < submit_info.commandBufferCount;
          ++command_buffer_index) {
-      auto p_cmd = GFR::GetGfrCommandBuffer(
+      auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(
           submit_info.pCommandBuffers[command_buffer_index]);
       if (p_cmd != nullptr) {
         p_cmd->QueueSubmit(queue, fence);
@@ -1293,7 +1296,7 @@ VkResult GfrContext::PostAllocateCommandBuffers(
           p_device, vk_pool, vk_cmd, pAllocateInfo, has_buffer_markers);
       cmd->SetInstrumentAllCommands(instrument_all_commands_);
 
-      GFR::SetGfrCommandBuffer(vk_cmd, std::move(cmd));
+      graphics_flight_recorder::SetGfrCommandBuffer(vk_cmd, std::move(cmd));
       p_device->AddCommandBuffer(vk_cmd);
     }
   }
@@ -1474,8 +1477,9 @@ VkResult GfrContext::PostWaitSemaphoresKHR(
     {
       // Update semaphore values
       uint64_t semaphore_value;
-      auto dispatch_table =
-          GFR::GetDeviceLayerData(GFR::DataKey(device))->dispatch_table;
+      auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
+                                graphics_flight_recorder::DataKey(device))
+                                ->dispatch_table;
       std::lock_guard<std::mutex> lock(devices_mutex_);
       auto semaphore_tracker = devices_[device]->GetSemaphoreTracker();
       for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
@@ -1578,7 +1582,7 @@ VkResult GfrContext::PostSetDebugUtilsObjectNameEXT(
 void GfrContext::PreCmdBindPipeline(VkCommandBuffer commandBuffer,
                                     VkPipelineBindPoint pipelineBindPoint,
                                     VkPipeline pipeline) {
-  auto p_cmd = GFR::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
   if (DumpShadersOnBind()) {
     p_cmd->GetDevice()->DumpShaderFromPipeline(pipeline);
   }
@@ -1588,7 +1592,7 @@ void GfrContext::PreCmdBindPipeline(VkCommandBuffer commandBuffer,
 
 VkResult GfrContext::PreBeginCommandBuffer(
     VkCommandBuffer commandBuffer, VkCommandBufferBeginInfo const* pBeginInfo) {
-  auto p_cmd = GFR::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
   {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto device = p_cmd->GetDevice();
@@ -1603,7 +1607,7 @@ VkResult GfrContext::PreBeginCommandBuffer(
 
 VkResult GfrContext::PreResetCommandBuffer(VkCommandBuffer commandBuffer,
                                            VkCommandBufferResetFlags flags) {
-  auto p_cmd = GFR::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
   {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto device = p_cmd->GetDevice();
@@ -1620,7 +1624,8 @@ VkResult GfrContext::PreResetCommandBuffer(VkCommandBuffer commandBuffer,
 // Declare the global accessor for GfrContext
 // =============================================================================
 
-GFR::GfrContext* g_interceptor = new GFR::GfrContext();
+graphics_flight_recorder::GfrContext *g_interceptor =
+    new graphics_flight_recorder::GfrContext();
 
 // =============================================================================
 // VkInstanceCreateInfo and VkDeviceCreateInfo modification functions
@@ -1656,8 +1661,9 @@ VkResult QueueSubmitWithoutTrackingSemaphores(VkQueue queue,
   }
 
   VkResult res = VK_SUCCESS;
-  auto dispatch_table =
-      GFR::GetDeviceLayerData(GFR::DataKey(queue))->dispatch_table;
+  auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
+                            graphics_flight_recorder::DataKey(queue))
+                            ->dispatch_table;
   if (dispatch_table.QueueSubmit) {
     res = dispatch_table.QueueSubmit(queue, submitCount, pSubmits, fence);
   }
@@ -1683,8 +1689,9 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
 
   // Define common variables and structs used for each extended queue submit
   VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
-  auto dispatch_table =
-      GFR::GetDeviceLayerData(GFR::DataKey(vk_device))->dispatch_table;
+  auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
+                            graphics_flight_recorder::DataKey(vk_device))
+                            ->dispatch_table;
   VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
   if (vk_pool == VK_NULL_HANDLE) {
     std::cerr << "GFR Error: failed to find the helper command pool to "
@@ -1712,7 +1719,8 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
 
   for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
     // TODO b/152057973: Recycle state tracking CBs
-    VkCommandBuffer* new_buffers = GFR::GfrNewArray<VkCommandBuffer>(2);
+    VkCommandBuffer *new_buffers =
+        graphics_flight_recorder::GfrNewArray<VkCommandBuffer>(2);
     auto result = dispatch_table.AllocateCommandBuffers(
         vk_device, &cb_allocate_info, new_buffers);
     assert(result == VK_SUCCESS);
@@ -1750,7 +1758,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
         vk_device, submit_info_id, vk_pool, extended_cbs[0],
         extended_cbs[cb_count + 1]);
     for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
-      auto gfr_command_buffer = GFR::GetGfrCommandBuffer(
+      auto gfr_command_buffer = graphics_flight_recorder::GetGfrCommandBuffer(
           pSubmits[submit_index].pCommandBuffers[cb_index]);
       assert(gfr_command_buffer != nullptr);
       if (gfr_command_buffer) {
@@ -1809,8 +1817,9 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
 VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
     PFN_vkQueueBindSparse fp_queue_bind_sparse, VkQueue queue,
     uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence) {
-  auto dispatch_table =
-      GFR::GetDeviceLayerData(GFR::DataKey(queue))->dispatch_table;
+  auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
+                            graphics_flight_recorder::DataKey(queue))
+                            ->dispatch_table;
   bool track_semaphores = g_interceptor->TrackingSemaphores();
   // If semaphore tracking is not requested, pass the call to the dispatch table
   // as is.
@@ -1842,15 +1851,15 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
 
   // If we don't need to expand the bind sparse info, pass the call to dispatch
   // table.
-  GFR::PackedBindSparseInfo packed_bind_sparse_info(queue, bindInfoCount,
-                                                    pBindInfo);
+  graphics_flight_recorder::PackedBindSparseInfo packed_bind_sparse_info(
+      queue, bindInfoCount, pBindInfo);
   if (!g_interceptor->ShouldExpandQueueBindSparseToTrackSemaphores(
           &packed_bind_sparse_info)) {
     return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo,
                                           fence);
   }
 
-  GFR::ExpandedBindSparseInfo expanded_bind_sparse_info(
+  graphics_flight_recorder::ExpandedBindSparseInfo expanded_bind_sparse_info(
       &packed_bind_sparse_info);
   g_interceptor->ExpandBindSparseInfo(&expanded_bind_sparse_info);
 
@@ -1878,7 +1887,8 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
   cb_allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
   cb_allocate_info.commandBufferCount = num_submits;
   // TODO b/152057973: Recycle state tracking CBs
-  VkCommandBuffer* new_buffers = GFR::GfrNewArray<VkCommandBuffer>(num_submits);
+  VkCommandBuffer *new_buffers =
+      graphics_flight_recorder::GfrNewArray<VkCommandBuffer>(num_submits);
   auto result = dispatch_table.AllocateCommandBuffers(
       vk_device, &cb_allocate_info, new_buffers);
   assert(result == VK_SUCCESS);
@@ -1950,7 +1960,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
   for (int i = 0; i < expanded_bind_sparse_info.queue_operation_types.size();
        i++) {
     if (expanded_bind_sparse_info.queue_operation_types[i] ==
-        GFR::kQueueSubmit) {
+        graphics_flight_recorder::kQueueSubmit) {
       // Send all the available bind sparse infos before submit info. Signal the
       // fence only if the last bind sparse info is included.
       if (available_bind_sparse_info_counter) {
@@ -2049,4 +2059,4 @@ CreateDevice(PFN_vkCreateDevice pfn_create_device, VkPhysicalDevice gpu,
   return pfn_create_device(gpu, &local_create_info, pAllocator, pDevice);
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder

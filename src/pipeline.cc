@@ -21,7 +21,7 @@
 #include "gfr.h"
 #include "util.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 PipelineBoundShader PipelineBoundShader::NULL_SHADER = {
     static_cast<VkShaderStageFlagBits>(0), VK_NULL_HANDLE, "<NULL>"};
@@ -85,13 +85,13 @@ std::ostream& Pipeline::PrintName(std::ostream& stream,
 std::ostream& Pipeline::Print(std::ostream& stream,
                               const ObjectInfoDB& name_resolver,
                               const std::string& indent) const {
-  auto indent1 = GFR::IncreaseIndent(indent);
+  auto indent1 = graphics_flight_recorder::IncreaseIndent(indent);
   PrintName(stream, name_resolver, indent1);
 
   const auto num_shaders = shaders_.size();
   if (num_shaders) {
-    auto indent2 = GFR::IncreaseIndent(indent1);
-    auto indent3 = GFR::IncreaseIndent(indent2);
+    auto indent2 = graphics_flight_recorder::IncreaseIndent(indent1);
+    auto indent3 = graphics_flight_recorder::IncreaseIndent(indent2);
     stream << indent1 << "shaderInfos:";
     for (auto shader_index = 0u; shader_index < num_shaders; ++shader_index) {
       auto const& shader = shaders_[shader_index];
@@ -126,4 +126,4 @@ VkPipelineBindPoint Pipeline::GetVkPipelineBindPoint() const {
   return pipeline_bind_point_;
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder

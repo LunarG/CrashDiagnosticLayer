@@ -24,7 +24,7 @@
 #include "gfr.h"
 #include "util.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 SubmitTracker::SubmitTracker(Device* p_device) : device_(p_device) {}
 
@@ -472,4 +472,4 @@ void SubmitTracker::DumpWaitingSubmits(std::ostream& os) {
   }
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder

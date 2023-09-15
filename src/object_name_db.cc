@@ -29,7 +29,7 @@ namespace {
 template <typename T>
 std::string PtrToStr(const T* ptr) {
   uintptr_t value = (uintptr_t)ptr;
-  return GFR::Uint64ToStr(value);
+  return graphics_flight_recorder::Uint64ToStr(value);
 }
 }  // namespace
 
@@ -77,13 +77,13 @@ std::string ObjectInfoDB::GetObjectName(
     if (info != &unknown_object_) {
       return info->name;
     }
-    return GFR::Uint64ToStr(handle);
+    return graphics_flight_recorder::Uint64ToStr(handle);
   }
   std::stringstream object_name;
   if (info != &unknown_object_) {
     object_name << info->name << " ";
   }
-  object_name << "(" << GFR::Uint64ToStr(handle) << ")";
+  object_name << "(" << graphics_flight_recorder::Uint64ToStr(handle) << ")";
   return object_name.str();
 }
 
@@ -96,7 +96,7 @@ std::string ObjectInfoDB::GetObjectInfoInternal(
   if (vkhandle_tag_requirement == kPrintVkHandleTag) {
     info_ss << indent << "vkHandle: ";
   }
-  info_ss << GFR::Uint64ToStr(handle);
+  info_ss << graphics_flight_recorder::Uint64ToStr(handle);
   auto info = FindObjectInfo(handle);
   if (info != &unknown_object_) {
     info_ss << indent << "debugName: \"" << info->name << "\"";

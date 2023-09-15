@@ -43,7 +43,7 @@
 #include "layer_base.h"
 #include "submit_tracker.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 using StringArray = std::vector<std::string>;
 
@@ -473,6 +473,6 @@ class GfrContext {
 #endif  // __linux__
 };
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
 
 #endif  // GFR_H

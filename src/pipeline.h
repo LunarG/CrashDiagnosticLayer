@@ -25,7 +25,7 @@
 
 #include "object_name_db.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 // =================================================================================================
 // Shader bound to a pipeline
@@ -78,6 +78,6 @@ class Pipeline {
 
 using PipelinePtr = std::shared_ptr<Pipeline>;
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
 
 #endif  // GFR_PIPELINE_H

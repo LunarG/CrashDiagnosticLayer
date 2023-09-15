@@ -22,7 +22,7 @@
 #include <memory>
 #include <vector>
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 class Device;
 
@@ -66,6 +66,6 @@ class CommandPool {
 
 using CommandPoolPtr = std::unique_ptr<CommandPool>;
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
 
 #endif  // GFR_COMMAND_POOL_H

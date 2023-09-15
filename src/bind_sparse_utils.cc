@@ -20,7 +20,7 @@
 
 #include "util.h"
 
-namespace GFR {
+namespace graphics_flight_recorder {
 
 bool BindSparseUtils::BindSparseInfoWaitsOnBinarySemaphores(
     const VkBindSparseInfo* bind_info,
@@ -243,4 +243,4 @@ std::string BindSparseUtils::LogBindSparseInfosSemaphores(
   return log.str();
 }
 
-}  // namespace GFR
+} // namespace graphics_flight_recorder
