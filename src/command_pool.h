@@ -29,40 +29,33 @@ class Device;
 // CommandPool
 // =================================================================================================
 class CommandPool {
- public:
-  CommandPool(
-      VkCommandPool vk_command_pool,
-      const VkCommandPoolCreateInfo* p_create_info,
-      const std::vector<VkQueueFamilyProperties>& queue_family_properties,
-      bool has_buffer_markers);
+   public:
+    CommandPool(VkCommandPool vk_command_pool, const VkCommandPoolCreateInfo* p_create_info,
+                const std::vector<VkQueueFamilyProperties>& queue_family_properties, bool has_buffer_markers);
 
-  bool HasBufferMarkers() const { return has_buffer_markers_; }
-  bool CanResetBuffer() const {
-    return m_flags & VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-  }
+    bool HasBufferMarkers() const { return has_buffer_markers_; }
+    bool CanResetBuffer() const { return m_flags & VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; }
 
-  void Reset();
+    void Reset();
 
-  void AllocateCommandBuffers(const VkCommandBufferAllocateInfo* allocate_info,
-                              const VkCommandBuffer* p_command_buffers);
-  void FreeCommandBuffers(uint32_t command_buffer_count,
-                          const VkCommandBuffer* p_command_buffers);
+    void AllocateCommandBuffers(const VkCommandBufferAllocateInfo* allocate_info,
+                                const VkCommandBuffer* p_command_buffers);
+    void FreeCommandBuffers(uint32_t command_buffer_count, const VkCommandBuffer* p_command_buffers);
 
-  VkCommandPool GetCommandPool() const { return vk_command_pool_; }
+    VkCommandPool GetCommandPool() const { return vk_command_pool_; }
 
-  const std::vector<VkCommandBuffer>& GetCommandBuffers(
-      VkCommandBufferLevel level) const;
+    const std::vector<VkCommandBuffer>& GetCommandBuffers(VkCommandBufferLevel level) const;
 
- private:
-  VkCommandPool vk_command_pool_;
+   private:
+    VkCommandPool vk_command_pool_;
 
-  const bool has_buffer_markers_;
-  VkCommandPoolCreateFlags m_flags;
+    const bool has_buffer_markers_;
+    VkCommandPoolCreateFlags m_flags;
 
-  std::vector<VkCommandBuffer> primary_command_buffers_;
-  std::vector<VkCommandBuffer> secondary_command_buffers_;
+    std::vector<VkCommandBuffer> primary_command_buffers_;
+    std::vector<VkCommandBuffer> secondary_command_buffers_;
 };
 
 using CommandPoolPtr = std::unique_ptr<CommandPool>;
 
-} // namespace graphcrash_diagnostic_layerics_flight_recorder
+}  // namespace crash_diagnostic_layer

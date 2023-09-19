@@ -28,25 +28,23 @@ namespace crash_diagnostic_layer {
 // =============================================================================
 void ActiveDescriptorSets::Reset() { descriptor_sets_.clear(); }
 
-void ActiveDescriptorSets::Bind(uint32_t first_set, uint32_t set_count,
-                                const VkDescriptorSet* sets) {
-  for (uint32_t set_index = 0; set_index < set_count; ++set_index) {
-    descriptor_sets_[set_index + first_set] = sets[set_index];
-  }
+void ActiveDescriptorSets::Bind(uint32_t first_set, uint32_t set_count, const VkDescriptorSet* sets) {
+    for (uint32_t set_index = 0; set_index < set_count; ++set_index) {
+        descriptor_sets_[set_index + first_set] = sets[set_index];
+    }
 }
 
-std::ostream& ActiveDescriptorSets::Print(Device* device, std::ostream& stream,
-                                          const std::string& indent) const {
-  auto indent1 = crash_diagnostic_layer::IncreaseIndent(indent);
-  auto indent2 = crash_diagnostic_layer::IncreaseIndent(indent1);
-  for (const auto& ds : descriptor_sets_) {
-    stream << indent1 << "- # descriptorSet:";
-    stream << indent2 << "index: " << ds.first;
-    stream << indent2 << "set: ";
-    stream << device->GetObjectInfoNoHandleTag((uint64_t)ds.second, indent2);
-  }
+std::ostream& ActiveDescriptorSets::Print(Device* device, std::ostream& stream, const std::string& indent) const {
+    auto indent1 = crash_diagnostic_layer::IncreaseIndent(indent);
+    auto indent2 = crash_diagnostic_layer::IncreaseIndent(indent1);
+    for (const auto& ds : descriptor_sets_) {
+        stream << indent1 << "- # descriptorSet:";
+        stream << indent2 << "index: " << ds.first;
+        stream << indent2 << "set: ";
+        stream << device->GetObjectInfoNoHandleTag((uint64_t)ds.second, indent2);
+    }
 
-  return stream;
+    return stream;
 }
 
-} // namespace crash_diagnostic_layer
+}  // namespace crash_diagnostic_layer

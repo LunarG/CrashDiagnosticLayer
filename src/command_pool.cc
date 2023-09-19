@@ -21,57 +21,46 @@
 
 namespace crash_diagnostic_layer {
 
-CommandPool::CommandPool(
-    VkCommandPool vk_command_pool, const VkCommandPoolCreateInfo* p_create_info,
-    const std::vector<VkQueueFamilyProperties>& queue_family_properties,
-    bool has_buffer_markers)
-    : vk_command_pool_(vk_command_pool),
-      has_buffer_markers_(has_buffer_markers),
-      m_flags(p_create_info->flags) {}
+CommandPool::CommandPool(VkCommandPool vk_command_pool, const VkCommandPoolCreateInfo* p_create_info,
+                         const std::vector<VkQueueFamilyProperties>& queue_family_properties, bool has_buffer_markers)
+    : vk_command_pool_(vk_command_pool), has_buffer_markers_(has_buffer_markers), m_flags(p_create_info->flags) {}
 
-void CommandPool::AllocateCommandBuffers(
-    const VkCommandBufferAllocateInfo* allocate_info,
-    const VkCommandBuffer* p_command_buffers) {
-  if (allocate_info->level == VK_COMMAND_BUFFER_LEVEL_PRIMARY) {
-    primary_command_buffers_.insert(
-        primary_command_buffers_.end(), p_command_buffers,
-        p_command_buffers + allocate_info->commandBufferCount);
-  } else {
-    secondary_command_buffers_.insert(
-        secondary_command_buffers_.end(), p_command_buffers,
-        p_command_buffers + allocate_info->commandBufferCount);
-  }
-}
-
-void CommandPool::FreeCommandBuffers(uint32_t command_buffer_count,
-                                     const VkCommandBuffer* p_command_buffers) {
-  for (uint32_t i = 0; i < command_buffer_count; ++i) {
-    auto iter = std::find(primary_command_buffers_.begin(),
-                          primary_command_buffers_.end(), p_command_buffers[i]);
-    if (iter != primary_command_buffers_.end()) {
-      primary_command_buffers_.erase(iter);
+void CommandPool::AllocateCommandBuffers(const VkCommandBufferAllocateInfo* allocate_info,
+                                         const VkCommandBuffer* p_command_buffers) {
+    if (allocate_info->level == VK_COMMAND_BUFFER_LEVEL_PRIMARY) {
+        primary_command_buffers_.insert(primary_command_buffers_.end(), p_command_buffers,
+                                        p_command_buffers + allocate_info->commandBufferCount);
     } else {
-      auto iter =
-          std::find(secondary_command_buffers_.begin(),
-                    secondary_command_buffers_.end(), p_command_buffers[i]);
-      if (iter != secondary_command_buffers_.end()) {
-        secondary_command_buffers_.erase(iter);
-      }
+        secondary_command_buffers_.insert(secondary_command_buffers_.end(), p_command_buffers,
+                                          p_command_buffers + allocate_info->commandBufferCount);
     }
-  }
 }
 
-const std::vector<VkCommandBuffer>& CommandPool::GetCommandBuffers(
-    VkCommandBufferLevel level) const {
-  if (level == VK_COMMAND_BUFFER_LEVEL_PRIMARY) {
-    return primary_command_buffers_;
-  }
-  return secondary_command_buffers_;
+void CommandPool::FreeCommandBuffers(uint32_t command_buffer_count, const VkCommandBuffer* p_command_buffers) {
+    for (uint32_t i = 0; i < command_buffer_count; ++i) {
+        auto iter = std::find(primary_command_buffers_.begin(), primary_command_buffers_.end(), p_command_buffers[i]);
+        if (iter != primary_command_buffers_.end()) {
+            primary_command_buffers_.erase(iter);
+        } else {
+            auto iter =
+                std::find(secondary_command_buffers_.begin(), secondary_command_buffers_.end(), p_command_buffers[i]);
+            if (iter != secondary_command_buffers_.end()) {
+                secondary_command_buffers_.erase(iter);
+            }
+        }
+    }
+}
+
+const std::vector<VkCommandBuffer>& CommandPool::GetCommandBuffers(VkCommandBufferLevel level) const {
+    if (level == VK_COMMAND_BUFFER_LEVEL_PRIMARY) {
+        return primary_command_buffers_;
+    }
+    return secondary_command_buffers_;
 }
 
 void CommandPool::Reset() {
-  // reset all CBs
-  // TODO CB Reset/ResetByPool tracking b/113674089
+    // reset all CBs
+    // TODO CB Reset/ResetByPool tracking b/113674089
 }
 
-} // namespace crash_diagnostic_layer
+}  // namespace crash_diagnostic_layer

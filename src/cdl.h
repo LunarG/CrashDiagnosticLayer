@@ -47,267 +47,245 @@ namespace crash_diagnostic_layer {
 using StringArray = std::vector<std::string>;
 
 struct DeviceCreateInfo {
-  VkDeviceCreateInfo original_create_info;
-  VkDeviceCreateInfo modified_create_info;
+    VkDeviceCreateInfo original_create_info;
+    VkDeviceCreateInfo modified_create_info;
 };
 
 enum QueueOperationType {
-  kQueueSubmit,
-  kQueueBindSparse,
+    kQueueSubmit,
+    kQueueBindSparse,
 };
 
 enum CrashSource {
-  kDeviceLostError,
-  kHangDaemon,
-  kWatchdogTimer,
+    kDeviceLostError,
+    kHangDaemon,
+    kWatchdogTimer,
 };
 
 // Original bind sparse info with the submit tracker that tracks semaphores for
 // the respective device.
 struct PackedBindSparseInfo {
-  const VkQueue queue;
-  const uint32_t bind_info_count;
-  const VkBindSparseInfo* bind_infos;
-  SemaphoreTracker* semaphore_tracker;
+    const VkQueue queue;
+    const uint32_t bind_info_count;
+    const VkBindSparseInfo* bind_infos;
+    SemaphoreTracker* semaphore_tracker;
 
-  PackedBindSparseInfo(VkQueue queue_, uint32_t bind_info_count_,
-                       const VkBindSparseInfo* bind_infos_)
-      : queue(queue_),
-        bind_info_count(bind_info_count_),
-        bind_infos(bind_infos_){};
+    PackedBindSparseInfo(VkQueue queue_, uint32_t bind_info_count_, const VkBindSparseInfo* bind_infos_)
+        : queue(queue_), bind_info_count(bind_info_count_), bind_infos(bind_infos_){};
 };
 
 // Expanded bind sparse info, including all the information needed to correctly
 // insert semaphore tracking VkSubmitInfos between vkQueueBindSparse calls.
 struct ExpandedBindSparseInfo {
-  // Input: original bind sparse info.
-  const PackedBindSparseInfo* packed_bind_sparse_info;
-  // Vector of queue operation types, used to control interleaving order.
-  std::vector<QueueOperationType> queue_operation_types;
-  // Vector of submit info structs to be submitted to the queue.
-  std::vector<VkSubmitInfo> submit_infos;
-  // Vector of bool, specifying if a submit info includes a signal operation on
-  // a timeline semaphore.
-  std::vector<bool> has_timeline_semaphore_info;
-  // Place holder for timeline semaphore infos used in queue submit infos.
-  std::vector<VkTimelineSemaphoreSubmitInfoKHR> timeline_semaphore_infos;
-  // Place holder for vectors of binary semaphores used in a wait semaphore
-  // operation in a bind sparse info. This is needed since we need to signal
-  // these semaphores in the same vkQueueSubmit that we consume them for
-  // tracking (so the bind sparse info which is the real consumer of the
-  // semaphore can proceed).
-  std::vector<std::vector<VkSemaphore>> wait_binary_semaphores;
+    // Input: original bind sparse info.
+    const PackedBindSparseInfo* packed_bind_sparse_info;
+    // Vector of queue operation types, used to control interleaving order.
+    std::vector<QueueOperationType> queue_operation_types;
+    // Vector of submit info structs to be submitted to the queue.
+    std::vector<VkSubmitInfo> submit_infos;
+    // Vector of bool, specifying if a submit info includes a signal operation on
+    // a timeline semaphore.
+    std::vector<bool> has_timeline_semaphore_info;
+    // Place holder for timeline semaphore infos used in queue submit infos.
+    std::vector<VkTimelineSemaphoreSubmitInfoKHR> timeline_semaphore_infos;
+    // Place holder for vectors of binary semaphores used in a wait semaphore
+    // operation in a bind sparse info. This is needed since we need to signal
+    // these semaphores in the same vkQueueSubmit that we consume them for
+    // tracking (so the bind sparse info which is the real consumer of the
+    // semaphore can proceed).
+    std::vector<std::vector<VkSemaphore>> wait_binary_semaphores;
 
-  ExpandedBindSparseInfo(PackedBindSparseInfo* packed_bind_sparse_info_)
-      : packed_bind_sparse_info(packed_bind_sparse_info_){};
+    ExpandedBindSparseInfo(PackedBindSparseInfo* packed_bind_sparse_info_)
+        : packed_bind_sparse_info(packed_bind_sparse_info_){};
 };
 
 static inline void CdlNewHandler() {
-  std::cout << "CDL: Memory allocation failed!" << std::endl;
-  std::cerr << "CDL: Memory allocation failed!" << std::endl;
-  std::set_new_handler(nullptr);
+    std::cout << "CDL: Memory allocation failed!" << std::endl;
+    std::cerr << "CDL: Memory allocation failed!" << std::endl;
+    std::set_new_handler(nullptr);
 }
 
 template <typename T, typename... Args>
 T* CdlNew(Args&&... args) {
-  std::set_new_handler(CdlNewHandler);
-  return new T(std::forward<Args>(args)...);
+    std::set_new_handler(CdlNewHandler);
+    return new T(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
 T* CdlNewArray(size_t size) {
-  std::set_new_handler(CdlNewHandler);
-  return new T[size];
+    std::set_new_handler(CdlNewHandler);
+    return new T[size];
 }
 
 class CdlContext {
- public:
-  CdlContext();
-  virtual ~CdlContext();
+   public:
+    CdlContext();
+    virtual ~CdlContext();
 
-  VkInstance GetInstance() { return vk_instance_; }
+    VkInstance GetInstance() { return vk_instance_; }
 
-  void MakeOutputPath();
-  const std::string& GetOutputPath() const;
+    void MakeOutputPath();
+    const std::string& GetOutputPath() const;
 
-  const ShaderModule* FindShaderModule(VkShaderModule shader) const;
+    const ShaderModule* FindShaderModule(VkShaderModule shader) const;
 
-  bool DumpShadersOnCrash() const;
-  bool DumpShadersOnBind() const;
+    bool DumpShadersOnCrash() const;
+    bool DumpShadersOnBind() const;
 
-  bool TrackingSemaphores() { return track_semaphores_; };
-  bool TracingAllSemaphores() { return trace_all_semaphores_; };
-  QueueSubmitId GetNextQueueSubmitId() { return ++queue_submit_index_; };
-  VkCommandPool GetHelperCommandPool(VkDevice vk_device, VkQueue queue);
-  SubmitInfoId RegisterSubmitInfo(VkDevice vk_device,
-                                  QueueSubmitId queue_submit_id,
-                                  const VkSubmitInfo* vk_submit_info);
-  void LogSubmitInfoSemaphores(VkDevice vk_device, VkQueue vk_queue,
-                               SubmitInfoId submit_info_id);
-  void StoreSubmitHelperCommandBuffersInfo(VkDevice vk_device,
-                                           SubmitInfoId submit_info_id,
-                                           VkCommandPool vk_pool,
-                                           VkCommandBuffer start_marker_cb,
-                                           VkCommandBuffer end_marker_cb);
+    bool TrackingSemaphores() { return track_semaphores_; };
+    bool TracingAllSemaphores() { return trace_all_semaphores_; };
+    QueueSubmitId GetNextQueueSubmitId() { return ++queue_submit_index_; };
+    VkCommandPool GetHelperCommandPool(VkDevice vk_device, VkQueue queue);
+    SubmitInfoId RegisterSubmitInfo(VkDevice vk_device, QueueSubmitId queue_submit_id,
+                                    const VkSubmitInfo* vk_submit_info);
+    void LogSubmitInfoSemaphores(VkDevice vk_device, VkQueue vk_queue, SubmitInfoId submit_info_id);
+    void StoreSubmitHelperCommandBuffersInfo(VkDevice vk_device, SubmitInfoId submit_info_id, VkCommandPool vk_pool,
+                                             VkCommandBuffer start_marker_cb, VkCommandBuffer end_marker_cb);
 
-  void RecordSubmitStart(VkDevice vk_device, QueueSubmitId qsubmit_id,
-                         SubmitInfoId submit_info_id,
-                         VkCommandBuffer vk_command_buffer);
+    void RecordSubmitStart(VkDevice vk_device, QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
+                           VkCommandBuffer vk_command_buffer);
 
-  void RecordSubmitFinish(VkDevice vk_device, QueueSubmitId qsubmit_id,
-                          SubmitInfoId submit_info_id,
-                          VkCommandBuffer vk_command_buffer);
+    void RecordSubmitFinish(VkDevice vk_device, QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
+                            VkCommandBuffer vk_command_buffer);
 
-  QueueBindSparseId GetNextQueueBindSparseId() {
-    return ++queue_bind_sparse_index_;
-  };
+    QueueBindSparseId GetNextQueueBindSparseId() { return ++queue_bind_sparse_index_; };
 
-  void RecordBindSparseHelperSubmit(VkDevice vk_device,
-                                    QueueBindSparseId qbind_sparse_id,
-                                    const VkSubmitInfo* vk_submit_info,
-                                    VkCommandPool vk_pool);
+    void RecordBindSparseHelperSubmit(VkDevice vk_device, QueueBindSparseId qbind_sparse_id,
+                                      const VkSubmitInfo* vk_submit_info, VkCommandPool vk_pool);
 
-  VkDevice GetQueueDevice(VkQueue queue) const;
-  bool ShouldExpandQueueBindSparseToTrackSemaphores(
-      PackedBindSparseInfo* packed_bind_sparse_info);
-  void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
-  void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count,
-                                    const VkBindSparseInfo* bind_infos);
+    VkDevice GetQueueDevice(VkQueue queue) const;
+    bool ShouldExpandQueueBindSparseToTrackSemaphores(PackedBindSparseInfo* packed_bind_sparse_info);
+    void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
+    void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
 
-  bool DeviceCoherentMemoryEnabled() const { return device_coherent_enabled_; }
+    bool DeviceCoherentMemoryEnabled() const { return device_coherent_enabled_; }
 
- private:
-  void AddObjectInfo(VkDevice device, uint64_t handle, ObjectInfoPtr info);
-  std::string GetObjectName(VkDevice vk_device, uint64_t handle);
-  std::string GetObjectInfo(VkDevice vk_device, uint64_t handle);
+   private:
+    void AddObjectInfo(VkDevice device, uint64_t handle, ObjectInfoPtr info);
+    std::string GetObjectName(VkDevice vk_device, uint64_t handle);
+    std::string GetObjectInfo(VkDevice vk_device, uint64_t handle);
 
-  void DumpAllDevicesExecutionState(CrashSource crash_source);
-  void DumpDeviceExecutionState(VkDevice vk_device, bool dump_prologue,
-                                CrashSource crash_source, std::ostream* os);
-  void DumpDeviceExecutionState(const Device* device, bool dump_prologue,
-                                CrashSource crash_source, std::ostream* os);
-  void DumpDeviceExecutionState(const Device* device, std::string error_report,
-                                bool dump_prologue, CrashSource crash_source,
-                                std::ostream* os);
-  void DumpDeviceExecutionStateValidationFailed(const Device* device,
-                                                std::ostream& os);
+    void DumpAllDevicesExecutionState(CrashSource crash_source);
+    void DumpDeviceExecutionState(VkDevice vk_device, bool dump_prologue, CrashSource crash_source, std::ostream* os);
+    void DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source, std::ostream* os);
+    void DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue,
+                                  CrashSource crash_source, std::ostream* os);
+    void DumpDeviceExecutionStateValidationFailed(const Device* device, std::ostream& os);
 
-  void DumpReportPrologue(std::ostream& os, const Device* device);
-  void WriteReport(std::ostream& os, CrashSource crash_source);
+    void DumpReportPrologue(std::ostream& os, const Device* device);
+    void WriteReport(std::ostream& os, CrashSource crash_source);
 
-  void StartWatchdogTimer();
-  void StopWatchdogTimer();
-  void WatchdogTimer();
+    void StartWatchdogTimer();
+    void StopWatchdogTimer();
+    void WatchdogTimer();
 
-  void StartGpuHangdListener();
-  void StopGpuHangdListener();
-  void GpuHangdListener();
+    void StartGpuHangdListener();
+    void StopGpuHangdListener();
+    void GpuHangdListener();
 
-  void ValidateCommandBufferNotInUse(CommandBuffer* commandBuffer);
-  void DumpCommandBufferState(CommandBuffer* p_cmd);
+    void ValidateCommandBufferNotInUse(CommandBuffer* commandBuffer);
+    void DumpCommandBufferState(CommandBuffer* p_cmd);
 
- public:
-  void PreApiFunction(const char* api_name);
-  void PostApiFunction(const char* api_name);
+   public:
+    void PreApiFunction(const char* api_name);
+    void PostApiFunction(const char* api_name);
 
-  const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(
-      const VkInstanceCreateInfo* pCreateInfo);
-  const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(
-      VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo);
+    const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo);
+    const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
+                                                          const VkDeviceCreateInfo* pCreateInfo);
 
 #include "cdl_commands.h.inc"
 
- private:
-  using CStringArray = std::vector<char*>;
+   private:
+    using CStringArray = std::vector<char*>;
 
-  StringArray instance_extension_names_;
-  StringArray instance_extension_names_original_;
-  CStringArray instance_extension_names_cstr_;
-  VkInstance vk_instance_ = VK_NULL_HANDLE;
+    StringArray instance_extension_names_;
+    StringArray instance_extension_names_original_;
+    CStringArray instance_extension_names_cstr_;
+    VkInstance vk_instance_ = VK_NULL_HANDLE;
 
-  InstanceDispatchTable instance_dispatch_table_;
-  VkInstanceCreateInfo instance_create_info_;
+    InstanceDispatchTable instance_dispatch_table_;
+    VkInstanceCreateInfo instance_create_info_;
 
-  mutable std::mutex device_create_infos_mutex_;
-  std::unordered_map<const VkDeviceCreateInfo* /*modified_create_info*/,
-                     std::unique_ptr<DeviceCreateInfo>>
-      device_create_infos_;
+    mutable std::mutex device_create_infos_mutex_;
+    std::unordered_map<const VkDeviceCreateInfo* /*modified_create_info*/, std::unique_ptr<DeviceCreateInfo>>
+        device_create_infos_;
 
-  struct ApplicationInfo {
-    std::string applicationName;
-    uint32_t applicationVersion;
+    struct ApplicationInfo {
+        std::string applicationName;
+        uint32_t applicationVersion;
 
-    std::string engineName;
-    uint32_t engineVersion;
-    uint32_t apiVersion;
-  };
+        std::string engineName;
+        uint32_t engineVersion;
+        uint32_t apiVersion;
+    };
 
-  std::unique_ptr<ApplicationInfo> application_info_;
+    std::unique_ptr<ApplicationInfo> application_info_;
 
-  mutable std::mutex devices_mutex_;
-  std::unordered_map<VkDevice, DevicePtr> devices_;
-  StringArray device_extension_names_;
-  StringArray device_extension_names_original_;
-  CStringArray device_extension_names_cstr_;
-  CStringArray device_extension_names_original_cstr_;
+    mutable std::mutex devices_mutex_;
+    std::unordered_map<VkDevice, DevicePtr> devices_;
+    StringArray device_extension_names_;
+    StringArray device_extension_names_original_;
+    CStringArray device_extension_names_cstr_;
+    CStringArray device_extension_names_original_cstr_;
 
-  // Tracks VkDevice that a VkQueue belongs to. This is needed when tracking
-  // semaphores in vkQueueBindSparse, for which we need to allocate new command
-  // buffers from the device that owns the queue. This is valid since VkQueue is
-  // an opaque handle, since guaranteed to be unique.
-  mutable std::mutex queue_device_tracker_mutex_;
-  std::unordered_map<VkQueue, VkDevice> queue_device_tracker_;
+    // Tracks VkDevice that a VkQueue belongs to. This is needed when tracking
+    // semaphores in vkQueueBindSparse, for which we need to allocate new command
+    // buffers from the device that owns the queue. This is valid since VkQueue is
+    // an opaque handle, since guaranteed to be unique.
+    mutable std::mutex queue_device_tracker_mutex_;
+    std::unordered_map<VkQueue, VkDevice> queue_device_tracker_;
 
-  // Debug flags
-  int debug_autodump_rate_ = 0;
-  bool debug_dump_all_command_buffers_ = false;
-  bool debug_dump_shaders_on_crash_ = false;
-  bool debug_dump_shaders_on_bind_ = false;
+    // Debug flags
+    int debug_autodump_rate_ = 0;
+    bool debug_dump_all_command_buffers_ = false;
+    bool debug_dump_shaders_on_crash_ = false;
+    bool debug_dump_shaders_on_bind_ = false;
 
-  int shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
+    int shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
 
-  bool instrument_all_commands_ = false;
-  bool track_semaphores_ = false;
-  bool trace_all_semaphores_ = false;
+    bool instrument_all_commands_ = false;
+    bool track_semaphores_ = false;
+    bool trace_all_semaphores_ = false;
 
-  bool buffer_marker_enabled_ = false;
-  bool buffer_marker_added_ = false;
-  bool device_coherent_enabled_ = false;
-  bool device_coherent_added_ = false;
+    bool buffer_marker_enabled_ = false;
+    bool buffer_marker_added_ = false;
+    bool device_coherent_enabled_ = false;
+    bool device_coherent_added_ = false;
 
-  // TODO(aellem) some verbosity/trace modes?
-  bool trace_all_ = false;
+    // TODO(aellem) some verbosity/trace modes?
+    bool trace_all_ = false;
 
-  bool output_path_created_ = false;
-  std::string base_output_path_;
-  std::string output_path_;
-  std::string output_name_;
+    bool output_path_created_ = false;
+    std::string base_output_path_;
+    std::string output_path_;
+    std::string output_name_;
 
-  bool log_configs_ = false;
-  StringArray configs_;
-  template <class T>
-  void GetEnvVal(const char* name, T* value);
+    bool log_configs_ = false;
+    StringArray configs_;
+    template <class T>
+    void GetEnvVal(const char* name, T* value);
 
-  int total_submits_ = 0;
-  int total_logs_ = 0;
+    int total_submits_ = 0;
+    int total_logs_ = 0;
 
-  QueueSubmitId queue_submit_index_ = 0;
-  QueueBindSparseId queue_bind_sparse_index_ = 0;
+    QueueSubmitId queue_submit_index_ = 0;
+    QueueBindSparseId queue_bind_sparse_index_ = 0;
 
-  // Watchdog
-  // TODO(aellem) we should have a way to shut this down, but currently the
-  // CDL context never gets destroyed
-  std::unique_ptr<std::thread> watchdog_thread_;
-  std::atomic<bool> watchdog_running_;
-  std::atomic<long long> last_submit_time_;
-  uint64_t watchdog_timer_ms_ = 0;
+    // Watchdog
+    // TODO(aellem) we should have a way to shut this down, but currently the
+    // CDL context never gets destroyed
+    std::unique_ptr<std::thread> watchdog_thread_;
+    std::atomic<bool> watchdog_running_;
+    std::atomic<long long> last_submit_time_;
+    uint64_t watchdog_timer_ms_ = 0;
 
 // Hang daemon listener thread.
 #ifdef __linux__
-  std::unique_ptr<std::thread> gpuhangd_thread_;
-  int gpuhangd_socket_ = -1;
-  int gpuhang_event_id_ = 0;
+    std::unique_ptr<std::thread> gpuhangd_thread_;
+    int gpuhangd_socket_ = -1;
+    int gpuhang_event_id_ = 0;
 #endif  // __linux__
 };
 
-} // namespace crash_diagnostic_layer
+}  // namespace crash_diagnostic_layer

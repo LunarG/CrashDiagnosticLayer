@@ -37,173 +37,155 @@ class Device;
 typedef uint32_t CommandBufferDumpOptions;
 
 struct CommandBufferDumpOption {
-  static constexpr int kDefault = 0;
-  static constexpr int kDumpAllCommands = 1 << 0;
+    static constexpr int kDefault = 0;
+    static constexpr int kDumpAllCommands = 1 << 0;
 };
 
 enum class CommandState {
-  kCommandNotSubmitted,  // not submitted
-  kCommandPending,       // submitted, no more information available
-  kCommandNotStarted,    // submitted, not started
-  kCommandIncomplete,    // submitted, started, not finished
-  kCommandCompleted,     // submitted and executed
-  kInvalidState,
+    kCommandNotSubmitted,  // not submitted
+    kCommandPending,       // submitted, no more information available
+    kCommandNotStarted,    // submitted, not started
+    kCommandIncomplete,    // submitted, started, not finished
+    kCommandCompleted,     // submitted and executed
+    kInvalidState,
 };
 
 enum class CommandBufferState {
-  // Vulkan CommandBuffer states from the spec
-  // 5.1, Figure 1. Lifecycle of a command buffer
-  kInitial,     // created (we have a separate state for reset)
-  kRecording,   // begin called
-  kExecutable,  // end called
-  kPending,     // submitted
-  kInvalid,     // invalid
-  // Additional state since we know if a command buffer is reset
-  kInitialReset,  // reset
-  // The following are extensions of kPending and only can be verified when
-  // a hang or crash is detected and marker values are read.
-  kSubmittedExecutionNotStarted,  // submitted but not started
-  kSubmittedExecutionIncomplete,  // submitted and started, but not finished
-  kSubmittedExecutionCompleted,   // submitted and finished
-  // The following is used for secondary command buffers when the command
-  // vkCmdExecuteCommands is not submitted.
-  kNotSubmitted,
+    // Vulkan CommandBuffer states from the spec
+    // 5.1, Figure 1. Lifecycle of a command buffer
+    kInitial,     // created (we have a separate state for reset)
+    kRecording,   // begin called
+    kExecutable,  // end called
+    kPending,     // submitted
+    kInvalid,     // invalid
+    // Additional state since we know if a command buffer is reset
+    kInitialReset,  // reset
+    // The following are extensions of kPending and only can be verified when
+    // a hang or crash is detected and marker values are read.
+    kSubmittedExecutionNotStarted,  // submitted but not started
+    kSubmittedExecutionIncomplete,  // submitted and started, but not finished
+    kSubmittedExecutionCompleted,   // submitted and finished
+    // The following is used for secondary command buffers when the command
+    // vkCmdExecuteCommands is not submitted.
+    kNotSubmitted,
 };
 
 // =================================================================================================
 // CommandBuffer
 // =================================================================================================
 class CommandBuffer {
- public:
-  CommandBuffer(Device* p_device, VkCommandPool vk_command_pool,
-                VkCommandBuffer vk_command_buffer,
-                const VkCommandBufferAllocateInfo* allocate_info,
-                bool has_buffer_marker);
-  ~CommandBuffer();
+   public:
+    CommandBuffer(Device* p_device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
+                  const VkCommandBufferAllocateInfo* allocate_info, bool has_buffer_marker);
+    ~CommandBuffer();
 
-  Device* GetDevice() const { return device_; }
-  VkQueue GetSubmittedQueue() const { return submitted_queue_; }
-  VkFence GetSubmittedFence() const { return submitted_fence_; }
-  VkCommandPool GetVkCommandPool() { return vk_command_pool_; }
-  VkCommandBuffer GetVkCommandBuffer() { return vk_command_buffer_; }
+    Device* GetDevice() const { return device_; }
+    VkQueue GetSubmittedQueue() const { return submitted_queue_; }
+    VkFence GetSubmittedFence() const { return submitted_fence_; }
+    VkCommandPool GetVkCommandPool() { return vk_command_pool_; }
+    VkCommandBuffer GetVkCommandBuffer() { return vk_command_buffer_; }
 
-  bool IsPrimaryCommandBuffer() const {
-    return cb_level_ == VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  }
-  bool HasBufferMarker() const { return has_buffer_marker_; }
+    bool IsPrimaryCommandBuffer() const { return cb_level_ == VK_COMMAND_BUFFER_LEVEL_PRIMARY; }
+    bool HasBufferMarker() const { return has_buffer_marker_; }
 
-  void SetSubmitInfoId(uint64_t submit_info_id);
-  uint64_t GetSubmitInfoId() { return submit_info_id_; }
-  void SetInstrumentAllCommands(bool all) { instrument_all_commands_ = all; }
+    void SetSubmitInfoId(uint64_t submit_info_id);
+    uint64_t GetSubmitInfoId() { return submit_info_id_; }
+    void SetInstrumentAllCommands(bool all) { instrument_all_commands_ = all; }
 
-  bool WasSubmittedToQueue() const;
-  bool StartedExecution() const;
-  bool CompletedExecution() const;
+    bool WasSubmittedToQueue() const;
+    bool StartedExecution() const;
+    bool CompletedExecution() const;
 
-  void Reset();
-  void QueueSubmit(VkQueue queue, VkFence fence);
+    void Reset();
+    void QueueSubmit(VkQueue queue, VkFence fence);
 
-  void
-  DumpContents(std::ostream &os, CommandBufferDumpOptions options,
-               const std::string &indent = crash_diagnostic_layer::Indent(2),
-               uint64_t secondary_cb_submit_info_id = 0,
-               CommandState vkcmd_execute_commands_command_state =
-                   CommandState::kInvalidState);
+    void DumpContents(std::ostream& os, CommandBufferDumpOptions options,
+                      const std::string& indent = crash_diagnostic_layer::Indent(2),
+                      uint64_t secondary_cb_submit_info_id = 0,
+                      CommandState vkcmd_execute_commands_command_state = CommandState::kInvalidState);
 
-  // custom command buffer functions (not autogenerated)
-  VkResult PreBeginCommandBuffer(VkCommandBuffer commandBuffer,
-                                 const VkCommandBufferBeginInfo * pBeginInfo);
+    // custom command buffer functions (not autogenerated)
+    VkResult PreBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo);
 
-  VkResult PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
-                                  const VkCommandBufferBeginInfo* pBeginInfo,
-                                  VkResult result);
+    VkResult PostBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo,
+                                    VkResult result);
 
-  VkResult PreEndCommandBuffer(VkCommandBuffer commandBuffer);
+    VkResult PreEndCommandBuffer(VkCommandBuffer commandBuffer);
 
-  VkResult PostEndCommandBuffer(VkCommandBuffer commandBuffer, VkResult result);
+    VkResult PostEndCommandBuffer(VkCommandBuffer commandBuffer, VkResult result);
 
-  VkResult PreResetCommandBuffer(VkCommandBuffer commandBuffer,
-                                 VkCommandBufferResetFlags flags);
+    VkResult PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags);
 
-  VkResult PostResetCommandBuffer(VkCommandBuffer commandBuffer,
-                                  VkCommandBufferResetFlags flags,
-                                  VkResult result);
+    VkResult PostResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags, VkResult result);
 
-  CommandBuffer& operator=(const CommandBuffer&) = delete;
-  CommandBuffer(const CommandBuffer&) = delete;
+    CommandBuffer& operator=(const CommandBuffer&) = delete;
+    CommandBuffer(const CommandBuffer&) = delete;
 
 // =============================================================================
 // Include the generated command tracking code defines
 // =============================================================================
 #include "command.h.inc"
 
- private:
-  const char* GetCommandName(const Command& command);
+   private:
+    const char* GetCommandName(const Command& command);
 
-  CommandBufferState GetCommandBufferState() const;
-  CommandBufferState GetSecondaryCommandBufferState(
-      CommandState vkcmd_execute_commands_command_state) const;
-  std::string PrintCommandBufferState(CommandBufferState cb_state) const;
-  CommandState GetCommandState(CommandBufferState cb_state,
-                               const Command& command) const;
-  std::string PrintCommandState(CommandState cm_state) const;
+    CommandBufferState GetCommandBufferState() const;
+    CommandBufferState GetSecondaryCommandBufferState(CommandState vkcmd_execute_commands_command_state) const;
+    std::string PrintCommandBufferState(CommandBufferState cb_state) const;
+    CommandState GetCommandState(CommandBufferState cb_state, const Command& command) const;
+    std::string PrintCommandState(CommandState cm_state) const;
 
-  bool DumpCmdExecuteCommands(const Command& command,
-                              CommandState command_state, std::ostream& os,
-                              CommandBufferDumpOptions options,
-                              const std::string& indent);
+    bool DumpCmdExecuteCommands(const Command& command, CommandState command_state, std::ostream& os,
+                                CommandBufferDumpOptions options, const std::string& indent);
 
-  uint32_t GetLastStartedCommand() const;
-  uint32_t GetLastCompleteCommand() const;
+    uint32_t GetLastStartedCommand() const;
+    uint32_t GetLastCompleteCommand() const;
 
-  bool DumpCommand(const Command& command, std::ostream& os,
-                   const std::string& indent);
-  void HandleIncompleteCommand(
-      const Command& command,
-      const class CommandBufferInternalState& state) const;
+    bool DumpCommand(const Command& command, std::ostream& os, const std::string& indent);
+    void HandleIncompleteCommand(const Command& command, const class CommandBufferInternalState& state) const;
 
- private:
-  Device* device_ = nullptr;
-  uintptr_t vk_submit_info_ = 0;
-  uint64_t submit_info_id_ = 0;
-  VkCommandPool vk_command_pool_ = VK_NULL_HANDLE;
-  VkCommandBuffer vk_command_buffer_ = VK_NULL_HANDLE;
+   private:
+    Device* device_ = nullptr;
+    uintptr_t vk_submit_info_ = 0;
+    uint64_t submit_info_id_ = 0;
+    VkCommandPool vk_command_pool_ = VK_NULL_HANDLE;
+    VkCommandBuffer vk_command_buffer_ = VK_NULL_HANDLE;
 
-  VkCommandBufferLevel cb_level_ = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  bool cb_simultaneous_use_ = false;
+    VkCommandBufferLevel cb_level_ = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    bool cb_simultaneous_use_ = false;
 
-  // secondary command buffer inheritance info
-  VkCommandBufferInheritanceInfo* scb_inheritance_info_ = nullptr;
+    // secondary command buffer inheritance info
+    VkCommandBufferInheritanceInfo* scb_inheritance_info_ = nullptr;
 
-  bool instrument_all_commands_ = false;
-  bool has_buffer_marker_ = false;
+    bool instrument_all_commands_ = false;
+    bool has_buffer_marker_ = false;
 
-  Marker top_marker_;
-  Marker bottom_marker_;
+    Marker top_marker_;
+    Marker bottom_marker_;
 
-  uint32_t begin_marker_value_;
-  uint32_t end_marker_value_;
+    uint32_t begin_marker_value_;
+    uint32_t end_marker_value_;
 
-  CommandBufferState buffer_state_ = CommandBufferState::kInitial;
-  VkQueue submitted_queue_ = VK_NULL_HANDLE;
-  VkFence submitted_fence_ = VK_NULL_HANDLE;
+    CommandBufferState buffer_state_ = CommandBufferState::kInitial;
+    VkQueue submitted_queue_ = VK_NULL_HANDLE;
+    VkFence submitted_fence_ = VK_NULL_HANDLE;
 
-  CommandTracker tracker_;
+    CommandTracker tracker_;
 
-  enum MarkerPosition {
-    kTop,
-    kBottom,
-  };
+    enum MarkerPosition {
+        kTop,
+        kBottom,
+    };
 
-  void WriteMarker(MarkerPosition position, uint32_t marker_value);
-  uint32_t ReadMarker(MarkerPosition position) const;
+    void WriteMarker(MarkerPosition position, uint32_t marker_value);
+    uint32_t ReadMarker(MarkerPosition position) const;
 
-  void WriteBeginCommandBufferMarker();
-  void WriteEndCommandBufferMarker();
-  void WriteBeginCommandExecutionMarker(uint32_t command_id);
-  void WriteEndCommandExecutionMarker(uint32_t command_id);
+    void WriteBeginCommandBufferMarker();
+    void WriteEndCommandBufferMarker();
+    void WriteBeginCommandExecutionMarker(uint32_t command_id);
+    void WriteEndCommandExecutionMarker(uint32_t command_id);
 };
 
 using CommandBufferPtr = std::unique_ptr<CommandBuffer>;
 
-} // namespace crash_diagnostic_layer
+}  // namespace crash_diagnostic_layer

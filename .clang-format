@@ -2,6 +2,6 @@
 # Use defaults from the Google style with the following exceptions:
 BasedOnStyle: Google
 IndentWidth: 4
-ColumnLimit: 132
+ColumnLimit: 120
 SortIncludes: false
 ...

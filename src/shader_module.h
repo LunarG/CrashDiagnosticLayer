@@ -31,41 +31,39 @@ namespace crash_diagnostic_layer {
 class Device;
 
 class ShaderModule {
- public:
-  struct LoadOptions {
-    enum Mode {
-      kNone = 0,               // ignore code, only parse for names
-      kDumpOnCreate = 1 << 0,  // dump SPRIV code on creation
-      kKeepInMemory = 1 << 1,  // store a copy of SPRIV to dump later
+   public:
+    struct LoadOptions {
+        enum Mode {
+            kNone = 0,               // ignore code, only parse for names
+            kDumpOnCreate = 1 << 0,  // dump SPRIV code on creation
+            kKeepInMemory = 1 << 1,  // store a copy of SPRIV to dump later
+        };
     };
-  };
 
-  ShaderModule(VkShaderModule vk_shader_module, int load_options,
-               size_t code_size, const char* p_spirv,
-               std::string cdl_output_path);
+    ShaderModule(VkShaderModule vk_shader_module, int load_options, size_t code_size, const char* p_spirv,
+                 std::string cdl_output_path);
 
-  spv::ExecutionModel GetExecutionModel() const;
-  const std::string& GetEntryPoint() const;
-  const std::string& GetSourceFile() const;
+    spv::ExecutionModel GetExecutionModel() const;
+    const std::string& GetEntryPoint() const;
+    const std::string& GetSourceFile() const;
 
-  // dumps SPRIV to file, returns filename
-  std::string DumpShaderCode(const std::string& prefix) const;
+    // dumps SPRIV to file, returns filename
+    std::string DumpShaderCode(const std::string& prefix) const;
 
- private:
-  // dumps SPRIV to file, returns filename
-  std::string DumpShaderCode(const std::string& prefix, size_t code_size,
-                             const char* code) const;
+   private:
+    // dumps SPRIV to file, returns filename
+    std::string DumpShaderCode(const std::string& prefix, size_t code_size, const char* code) const;
 
-  VkShaderModule vk_shader_module_ = VK_NULL_HANDLE;
-  spv::ExecutionModel execution_model_ = static_cast<spv::ExecutionModel>(~0);
-  std::string entry_point_;
-  std::string source_file_;
+    VkShaderModule vk_shader_module_ = VK_NULL_HANDLE;
+    spv::ExecutionModel execution_model_ = static_cast<spv::ExecutionModel>(~0);
+    std::string entry_point_;
+    std::string source_file_;
 
-  std::vector<char> shader_code;
+    std::vector<char> shader_code;
 
-  const std::string cdl_output_path_;
+    const std::string cdl_output_path_;
 };
 
 using ShaderModulePtr = std::unique_ptr<ShaderModule>;
 
-} // namespace crash_diagnostic_layer
+}  // namespace crash_diagnostic_layer

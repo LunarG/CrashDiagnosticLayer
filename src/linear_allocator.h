@@ -40,92 +40,89 @@
 //
 template <size_t kDefaultBlockSize = 1024 * 32, size_t kAlignment = 8>
 class LinearAllocator {
-  static_assert(kAlignment > 0 && 0 == (kAlignment & (kAlignment - 1)),
-                "Power of 2 required");
+    static_assert(kAlignment > 0 && 0 == (kAlignment & (kAlignment - 1)), "Power of 2 required");
 
- public:
-  LinearAllocator() : active_block_(0) {
-    blocks_.push_back(std::make_unique<Block>(kDefaultBlockSize));
-  }
-
-  void* Alloc(const size_t size) {
-    assert(blocks_.size() > 0);
-
-    // Try and alloc from the active block.
-    auto& block = blocks_[active_block_];
-    auto alloc = block->Alloc(size);
-    if (alloc) {
-      return alloc;
-    }
-
-    // The current block is full, try another.
-    do {
-      // No free blocks, allocate a new one.
-      if (active_block_ == blocks_.size() - 1) {
-        auto new_block_size = std::max(size + kAlignment, kDefaultBlockSize);
-        blocks_.push_back(std::make_unique<Block>(new_block_size));
-      }
-
-      active_block_++;
-      alloc = blocks_[active_block_]->Alloc(size);
-    } while (alloc == nullptr);
-
-    assert(alloc);
-    return alloc;
-  }
-
-  void Reset() {
-    for (auto& block : blocks_) {
-      block->Reset();
-    }
-
-    active_block_ = 0;
-  }
-
-  size_t NumBlocksAllocated() const { return blocks_.size(); }
-  size_t GetDefaultBlockSize() const { return kDefaultBlockSize; }
-
- private:
-  class Block {
    public:
-    Block(size_t blocksize) {
-      blocksize_ = blocksize;
-      std::set_new_handler(NewHandler);
-      data_ = new char[blocksize_];
-      Reset();
-    }
-
-    ~Block() { delete[] data_; }
+    LinearAllocator() : active_block_(0) { blocks_.push_back(std::make_unique<Block>(kDefaultBlockSize)); }
 
     void* Alloc(const size_t size) {
-      auto room = blocksize_ - (head_ - data_);
+        assert(blocks_.size() > 0);
 
-      uintptr_t h = (uintptr_t)head_;
+        // Try and alloc from the active block.
+        auto& block = blocks_[active_block_];
+        auto alloc = block->Alloc(size);
+        if (alloc) {
+            return alloc;
+        }
 
-      // Round up to alignment and check if we fit.
-      char* alloc = (char*)((h + kAlignment - 1) & ~(kAlignment - 1));
-      if (alloc + size > data_ + blocksize_) {
-        return nullptr;
-      }
+        // The current block is full, try another.
+        do {
+            // No free blocks, allocate a new one.
+            if (active_block_ == blocks_.size() - 1) {
+                auto new_block_size = std::max(size + kAlignment, kDefaultBlockSize);
+                blocks_.push_back(std::make_unique<Block>(new_block_size));
+            }
 
-      head_ = alloc + size;
-      return alloc;
+            active_block_++;
+            alloc = blocks_[active_block_]->Alloc(size);
+        } while (alloc == nullptr);
+
+        assert(alloc);
+        return alloc;
     }
 
-    void Reset() { head_ = data_; }
+    void Reset() {
+        for (auto& block : blocks_) {
+            block->Reset();
+        }
+
+        active_block_ = 0;
+    }
+
+    size_t NumBlocksAllocated() const { return blocks_.size(); }
+    size_t GetDefaultBlockSize() const { return kDefaultBlockSize; }
 
    private:
-    static void NewHandler() {
-      std::cout << "CDL: Memory allocation failed!" << std::endl;
-      std::cerr << "CDL: Memory allocation failed!" << std::endl;
-      std::set_new_handler(nullptr);
-    };
-    size_t blocksize_;
-    char* head_;
-    char* data_;
-  };
+    class Block {
+       public:
+        Block(size_t blocksize) {
+            blocksize_ = blocksize;
+            std::set_new_handler(NewHandler);
+            data_ = new char[blocksize_];
+            Reset();
+        }
 
- private:
-  int active_block_;
-  std::vector<std::unique_ptr<Block>> blocks_;
+        ~Block() { delete[] data_; }
+
+        void* Alloc(const size_t size) {
+            auto room = blocksize_ - (head_ - data_);
+
+            uintptr_t h = (uintptr_t)head_;
+
+            // Round up to alignment and check if we fit.
+            char* alloc = (char*)((h + kAlignment - 1) & ~(kAlignment - 1));
+            if (alloc + size > data_ + blocksize_) {
+                return nullptr;
+            }
+
+            head_ = alloc + size;
+            return alloc;
+        }
+
+        void Reset() { head_ = data_; }
+
+       private:
+        static void NewHandler() {
+            std::cout << "CDL: Memory allocation failed!" << std::endl;
+            std::cerr << "CDL: Memory allocation failed!" << std::endl;
+            std::set_new_handler(nullptr);
+        };
+        size_t blocksize_;
+        char* head_;
+        char* data_;
+    };
+
+   private:
+    int active_block_;
+    std::vector<std::unique_ptr<Block>> blocks_;
 };

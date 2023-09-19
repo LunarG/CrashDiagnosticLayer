@@ -32,27 +32,20 @@ struct PackedBindSparseInfo;
 struct ExpandedBindSparseInfo;
 
 class BindSparseUtils {
- public:
-  static bool ShouldExpandQueueBindSparseToTrackSemaphores(
-      const PackedBindSparseInfo* packed_bind_sparse_info);
+   public:
+    static bool ShouldExpandQueueBindSparseToTrackSemaphores(const PackedBindSparseInfo* packed_bind_sparse_info);
 
-  static void ExpandBindSparseInfo(
-      ExpandedBindSparseInfo* bind_sparse_expand_info);
+    static void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
 
-  static std::string LogBindSparseInfosSemaphores(
-      const Device* device, VkDevice vk_device, VkQueue vk_queue,
-      uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
+    static std::string LogBindSparseInfosSemaphores(const Device* device, VkDevice vk_device, VkQueue vk_queue,
+                                                    uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
 
- private:
-  static bool BindSparseInfoWaitsOnBinarySemaphores(
-      const VkBindSparseInfo* bind_infos,
-      const SemaphoreTracker* semaphore_tracker);
+   private:
+    static bool BindSparseInfoWaitsOnBinarySemaphores(const VkBindSparseInfo* bind_infos,
+                                                      const SemaphoreTracker* semaphore_tracker);
 
-  static void GetWaitBinarySemaphores(
-      const VkBindSparseInfo* bind_info,
-      const SemaphoreTracker* semaphore_tracker,
-      std::vector<VkSemaphore>* wait_binary_semaphores);
+    static void GetWaitBinarySemaphores(const VkBindSparseInfo* bind_info, const SemaphoreTracker* semaphore_tracker,
+                                        std::vector<VkSemaphore>* wait_binary_semaphores);
 };
 
-} // namespace crash_diagnostic_layer
-
+}  // namespace crash_diagnostic_layer

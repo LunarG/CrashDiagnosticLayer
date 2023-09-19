@@ -23,41 +23,38 @@ namespace crash_diagnostic_layer {
 
 // Keep track of crash_diagnostic_layer::CommandBuffer objects created for
 // each VkCommandBuffer
-static std::unordered_map<VkCommandBuffer, CommandBufferPtr>
-    global_commandbuffer_map_;
+static std::unordered_map<VkCommandBuffer, CommandBufferPtr> global_commandbuffer_map_;
 static std::mutex global_commandbuffer_map_mutex_;
 
 static thread_local ThreadLocalCommandBufferCache thread_cb_cache_;
 
-void SetCdlCommandBuffer(VkCommandBuffer vk_command_buffer,
-                         CommandBufferPtr command_buffer) {
-  // We willingly allow to overwrite the existing key's value since Vulkan
-  // command buffers can be reused.
-  std::lock_guard<std::mutex> lock(global_commandbuffer_map_mutex_);
-  global_commandbuffer_map_[vk_command_buffer] = std::move(command_buffer);
+void SetCdlCommandBuffer(VkCommandBuffer vk_command_buffer, CommandBufferPtr command_buffer) {
+    // We willingly allow to overwrite the existing key's value since Vulkan
+    // command buffers can be reused.
+    std::lock_guard<std::mutex> lock(global_commandbuffer_map_mutex_);
+    global_commandbuffer_map_[vk_command_buffer] = std::move(command_buffer);
 }
 
-crash_diagnostic_layer::CommandBuffer *
-GetCdlCommandBuffer(VkCommandBuffer vk_command_buffer) {
-  if (thread_cb_cache_.vkcb == vk_command_buffer) {
+crash_diagnostic_layer::CommandBuffer* GetCdlCommandBuffer(VkCommandBuffer vk_command_buffer) {
+    if (thread_cb_cache_.vkcb == vk_command_buffer) {
+        return thread_cb_cache_.cdlcb;
+    }
+    std::lock_guard<std::mutex> lock(global_commandbuffer_map_mutex_);
+    auto it = global_commandbuffer_map_.find(vk_command_buffer);
+    if (global_commandbuffer_map_.end() == it) {
+        return nullptr;
+    }
+    thread_cb_cache_.vkcb = vk_command_buffer;
+    thread_cb_cache_.cdlcb = it->second.get();
     return thread_cb_cache_.cdlcb;
-  }
-  std::lock_guard<std::mutex> lock(global_commandbuffer_map_mutex_);
-  auto it = global_commandbuffer_map_.find(vk_command_buffer);
-  if (global_commandbuffer_map_.end() == it) {
-    return nullptr;
-  }
-  thread_cb_cache_.vkcb = vk_command_buffer;
-  thread_cb_cache_.cdlcb = it->second.get();
-  return thread_cb_cache_.cdlcb;
 }
 
 void DeleteCdlCommandBuffer(VkCommandBuffer vk_command_buffer) {
-  if (thread_cb_cache_.vkcb == vk_command_buffer) {
-    thread_cb_cache_.vkcb = VK_NULL_HANDLE;
-  }
-  std::lock_guard<std::mutex> lock(global_commandbuffer_map_mutex_);
-  global_commandbuffer_map_.erase(vk_command_buffer);
+    if (thread_cb_cache_.vkcb == vk_command_buffer) {
+        thread_cb_cache_.vkcb = VK_NULL_HANDLE;
+    }
+    std::lock_guard<std::mutex> lock(global_commandbuffer_map_mutex_);
+    global_commandbuffer_map_.erase(vk_command_buffer);
 }
 
-} // namespace crash_diagnostic_layer
+}  // namespace crash_diagnostic_layer

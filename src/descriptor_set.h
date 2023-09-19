@@ -33,18 +33,16 @@ class Device;
 // Used to display the expected state of the GPU when dumping logs.
 // =============================================================================
 class ActiveDescriptorSets {
- public:
-  void Reset();
-  void Bind(uint32_t first_set, uint32_t set_count,
-            const VkDescriptorSet* sets);
+   public:
+    void Reset();
+    void Bind(uint32_t first_set, uint32_t set_count, const VkDescriptorSet* sets);
 
-  std::ostream& Print(Device* device, std::ostream& stream,
-                      const std::string& indent) const;
+    std::ostream& Print(Device* device, std::ostream& stream, const std::string& indent) const;
 
- private:
-  void Insert(VkDescriptorSet set, uint32_t index);
+   private:
+    void Insert(VkDescriptorSet set, uint32_t index);
 
-  std::map<uint32_t, VkDescriptorSet> descriptor_sets_;
+    std::map<uint32_t, VkDescriptorSet> descriptor_sets_;
 };
 
-} // namespace crash_diagnostic_layer
+}  // namespace crash_diagnostic_layer

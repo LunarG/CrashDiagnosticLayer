@@ -16,4 +16,4 @@
 
 #include "util.h"
 
-namespace crash_diagnostic_layer {} // namespace crash_diagnostic_layer
+namespace crash_diagnostic_layer {}  // namespace crash_diagnostic_layer

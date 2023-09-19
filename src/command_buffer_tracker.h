@@ -30,16 +30,14 @@ using CommandBufferPtr = std::unique_ptr<CommandBuffer>;
 
 // Thread local cache
 struct ThreadLocalCommandBufferCache {
-  VkCommandBuffer vkcb = VK_NULL_HANDLE;
-  crash_diagnostic_layer::CommandBuffer *cdlcb = nullptr;
+    VkCommandBuffer vkcb = VK_NULL_HANDLE;
+    crash_diagnostic_layer::CommandBuffer *cdlcb = nullptr;
 };
 
-void SetCdlCommandBuffer(VkCommandBuffer vk_command_buffer,
-                         CommandBufferPtr command_buffer);
+void SetCdlCommandBuffer(VkCommandBuffer vk_command_buffer, CommandBufferPtr command_buffer);
 
-crash_diagnostic_layer::CommandBuffer *
-GetCdlCommandBuffer(VkCommandBuffer vk_command_buffer);
+crash_diagnostic_layer::CommandBuffer *GetCdlCommandBuffer(VkCommandBuffer vk_command_buffer);
 
 void DeleteCdlCommandBuffer(VkCommandBuffer vk_command_buffer);
 
-} // namespace crash_diagnostic_layer
+}  // namespace crash_diagnostic_layer

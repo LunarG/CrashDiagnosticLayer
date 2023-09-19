@@ -30,22 +30,22 @@
 // Debug info for a Vulkan object
 // -----------------------------------------------------------------------------
 struct ObjectInfo {
-  uint64_t object;
-  VkDebugReportObjectTypeEXT type;
-  std::string name;
+    uint64_t object;
+    VkDebugReportObjectTypeEXT type;
+    std::string name;
 };
 
 using ObjectInfoPtr = std::unique_ptr<ObjectInfo>;
 using ExtraObjectInfo = std::pair<std::string, std::string>;
 
 enum HandleDebugNamePreference {
-  kPreferDebugName,
-  kReportBoth,
+    kPreferDebugName,
+    kReportBoth,
 };
 
 enum VkHandleTagRequirement {
-  kPrintVkHandleTag,
-  kIgnoreVkHandleTag,
+    kPrintVkHandleTag,
+    kIgnoreVkHandleTag,
 };
 
 static const std::string kDefaultIndent = "\n" + std::string(4, ' ');
@@ -53,35 +53,30 @@ static const std::string kDefaultIndent = "\n" + std::string(4, ' ');
 // Database of debug info for multiple Vulkan objects
 // -----------------------------------------------------------------------------
 class ObjectInfoDB {
- public:
-  ObjectInfoDB();
+   public:
+    ObjectInfoDB();
 
-  void AddObjectInfo(uint64_t handle, ObjectInfoPtr info);
-  void AddExtraInfo(uint64_t handle, ExtraObjectInfo info);
+    void AddObjectInfo(uint64_t handle, ObjectInfoPtr info);
+    void AddExtraInfo(uint64_t handle, ExtraObjectInfo info);
 
-  void RemoveObjectInfo(uint64_t handle) {
-  }  // TODO(aellem) remove object info..
+    void RemoveObjectInfo(uint64_t handle) {}  // TODO(aellem) remove object info..
 
-  const ObjectInfo* FindObjectInfo(uint64_t handle) const;
-  std::string GetObjectDebugName(uint64_t handle) const;
-  std::string GetObjectName(
-      uint64_t handle, HandleDebugNamePreference handle_debug_name_preference =
-                           kReportBoth) const;
-  std::string GetObjectInfo(uint64_t handle,
-                            const std::string& indent = kDefaultIndent) const;
-  std::string GetObjectInfoNoHandleTag(
-      uint64_t handle, const std::string& indent = kDefaultIndent) const;
+    const ObjectInfo* FindObjectInfo(uint64_t handle) const;
+    std::string GetObjectDebugName(uint64_t handle) const;
+    std::string GetObjectName(uint64_t handle,
+                              HandleDebugNamePreference handle_debug_name_preference = kReportBoth) const;
+    std::string GetObjectInfo(uint64_t handle, const std::string& indent = kDefaultIndent) const;
+    std::string GetObjectInfoNoHandleTag(uint64_t handle, const std::string& indent = kDefaultIndent) const;
 
- private:
-  mutable std::mutex lock_;
+   private:
+    mutable std::mutex lock_;
 
-  std::unordered_map<uint64_t, ObjectInfoPtr> object_info_;
-  std::unordered_map<uint64_t, std::vector<ExtraObjectInfo>> object_extra_info_;
-  ObjectInfo unknown_object_;
+    std::unordered_map<uint64_t, ObjectInfoPtr> object_info_;
+    std::unordered_map<uint64_t, std::vector<ExtraObjectInfo>> object_extra_info_;
+    ObjectInfo unknown_object_;
 
-  std::string GetObjectInfoInternal(
-      uint64_t handle, const std::string& indent,
-      VkHandleTagRequirement vkhandle_tag_requirement) const;
+    std::string GetObjectInfoInternal(uint64_t handle, const std::string& indent,
+                                      VkHandleTagRequirement vkhandle_tag_requirement) const;
 };
 
 #endif  // OBJECT_NAME_DB_HEADER_
