@@ -16,7 +16,7 @@
 
 #include "shader_module.h"
 
-#include "gfr.h"
+#include "cdl.h"
 #include "util.h"
 
 #include <fstream>
@@ -25,12 +25,12 @@
 #define SPIRV_PARSE_INCLUDE_VULKAN_SPIRV_HPP
 #include "spirv_parse.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 ShaderModule::ShaderModule(VkShaderModule vk_shader_module, int load_options,
                            size_t code_size, const char* p_spirv,
-                           std::string gfr_output_path)
-    : vk_shader_module_(vk_shader_module), gfr_output_path_(gfr_output_path) {
+                           std::string cdl_output_path)
+    : vk_shader_module_(vk_shader_module), cdl_output_path_(cdl_output_path) {
   if (load_options & LoadOptions::kKeepInMemory) {
     DumpShaderCode("SHADER_", code_size, p_spirv);
   }
@@ -69,9 +69,9 @@ std::string ShaderModule::DumpShaderCode(const std::string& prefix,
                                          const char* p_spirv) const {
   std::string shader_filename = prefix + PtrToStr(vk_shader_module_) + "_" +
                                 std::to_string(GetExecutionModel()) + ".spv";
-  std::string shader_output_path = gfr_output_path_ + shader_filename;
+  std::string shader_output_path = cdl_output_path_ + shader_filename;
 
-  std::cerr << "[GFR] Writing Shader: \'" << shader_filename << "\'"
+  std::cerr << "[CDL] Writing Shader: \'" << shader_filename << "\'"
             << std::endl;
 
   std::ofstream os(shader_output_path.c_str());
@@ -84,4 +84,4 @@ std::string ShaderModule::DumpShaderCode(const std::string& prefix,
   return shader_filename;
 }
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer

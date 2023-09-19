@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_PIPELINE_H
-#define GFR_PIPELINE_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -25,7 +24,7 @@
 
 #include "object_name_db.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 // =================================================================================================
 // Shader bound to a pipeline
@@ -78,6 +77,4 @@ class Pipeline {
 
 using PipelinePtr = std::shared_ptr<Pipeline>;
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_PIPELINE_H
+} // namespace crash_diagnostic_layer

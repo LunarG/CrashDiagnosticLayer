@@ -17,9 +17,9 @@
 import os
 import sys
 from generators.vulkan_object import (Queues, CommandScope)
-from generators.gfr_base_generator import GfrBaseOutputGenerator
+from generators.cdl_base_generator import CdlBaseOutputGenerator
 
-#  GFR has custom implementation for pre intercept #
+#  CDL has custom implementation for pre intercept #
 custom_functions = [
     'vkCreateInstance',
     'vkDestroyDevice',
@@ -92,9 +92,9 @@ default_instrumented_functions = [
 
 #
 # InterceptCommandsOutputGenerator - Generate the dispatch tables
-class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
+class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
     def __init__(self):
-        GfrBaseOutputGenerator.__init__(self)
+        CdlBaseOutputGenerator.__init__(self)
 
     #
     # Called at beginning of processing as file is opened
@@ -102,12 +102,12 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
         file_start = self.GenerateFileStart(os.path.basename(__file__))
         self.write(file_start)
 
-        if self.filename == 'gfr_intercepts.cc.inc':
+        if self.filename == 'cdl_intercepts.cc.inc':
             self.generateInterceptsSource()
-        elif self.filename == 'gfr_commands.h.inc':
-            self.generateGfrContextCommandsHeader()
-        elif self.filename == 'gfr_commands.cc.inc':
-            self.generateGfrContextCommandsSource()
+        elif self.filename == 'cdl_commands.h.inc':
+            self.generateCdlContextCommandsHeader()
+        elif self.filename == 'cdl_commands.cc.inc':
+            self.generateCdlContextCommandsSource()
         elif self.filename == 'command.h.inc':
             self.generateCommandsHeader()
         elif self.filename == 'command.cc.inc':
@@ -156,7 +156,7 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
             out.append('\n')
         self.write("".join(out))
 
-    def generateGfrContextCommandsHeader(self):
+    def generateCdlContextCommandsHeader(self):
         out = []
         for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
@@ -172,13 +172,13 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
             out.append('\n')
         self.write("".join(out))
 
-    def generateGfrContextCommandsSource(self):
+    def generateCdlContextCommandsSource(self):
         out = []
 
         for vkcommand in filter(lambda x: self.CommandBufferCall(x) and x.name not in custom_functions, self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' GfrContext::Post', 1)
-            pre_func_decl = post_func_decl.replace('GfrContext::Post', 'GfrContext::Pre', 1)
+            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' CdlContext::Post', 1)
+            pre_func_decl = post_func_decl.replace('CdlContext::Post', 'CdlContext::Pre', 1)
             pre_func_call = '  '
             post_func_call = '  '
             if self.CommandHasReturn(vkcommand):
@@ -203,13 +203,13 @@ class InterceptCommandsOutputGenerator(GfrBaseOutputGenerator):
             # Skip vkCmdBindPipeline pre call since it's implemented by hand
             if not (vkcommand.name in custom_functions or vkcommand.name in custom_pre_intercept_functions):
                 out.append(f'{pre_func_decl}\n')
-                out.append('  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);\n')
+                out.append('  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);\n')
                 out.append(f'{pre_func_call}\n')
                 out.append('}\n')
 
             if not (vkcommand.name in custom_functions or vkcommand.name in custom_post_intercept_functions):
                 out.append(f'{post_func_decl}\n')
-                out.append('  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);\n')
+                out.append('  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);\n')
                 out.append(f'{post_func_call}\n')
                 out.append('}\n')
 

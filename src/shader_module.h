@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_SHADER_MODULE_H
-#define GFR_SHADER_MODULE_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -27,7 +26,7 @@
 
 #include "object_name_db.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 class Device;
 
@@ -43,7 +42,7 @@ class ShaderModule {
 
   ShaderModule(VkShaderModule vk_shader_module, int load_options,
                size_t code_size, const char* p_spirv,
-               std::string gfr_output_path);
+               std::string cdl_output_path);
 
   spv::ExecutionModel GetExecutionModel() const;
   const std::string& GetEntryPoint() const;
@@ -64,11 +63,9 @@ class ShaderModule {
 
   std::vector<char> shader_code;
 
-  const std::string gfr_output_path_;
+  const std::string cdl_output_path_;
 };
 
 using ShaderModulePtr = std::unique_ptr<ShaderModule>;
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_SHADER_MODULE_H
+} // namespace crash_diagnostic_layer

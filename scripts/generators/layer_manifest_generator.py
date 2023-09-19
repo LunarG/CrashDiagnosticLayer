@@ -17,17 +17,17 @@
 import os
 import sys
 from generators.vulkan_object import (Queues, CommandScope)
-from generators.gfr_base_generator import GfrBaseOutputGenerator
+from generators.cdl_base_generator import CdlBaseOutputGenerator
 #
 # LayerManifestOutputGenerator - Generate layer manifest file
-class LayerManifestOutputGenerator(GfrBaseOutputGenerator):
+class LayerManifestOutputGenerator(CdlBaseOutputGenerator):
     def __init__(self):
-        GfrBaseOutputGenerator.__init__(self)
+        CdlBaseOutputGenerator.__init__(self)
 
     #
     # Called at beginning of processing as file is opened
     def generate(self):
-        if self.filename == 'graphics_flight_recorder.json.in':
+        if self.filename == 'crash_diagnostic_layer.json.in':
             self.generateJson()
         else:
             self.write(f'\nFile name {self.filename} has no code to generate\n')
@@ -54,9 +54,9 @@ class LayerManifestOutputGenerator(GfrBaseOutputGenerator):
         "implementation_version": "{layer_version}",
         "description": "{layer_description}",
         "functions": {{
-            "vkNegotiateLoaderLayerInterfaceVersion": "GFR_NegotiateLoaderLayerInterfaceVersion",
-            "vkGetInstanceProcAddr": "GFR_GetInstanceProcAddr",
-            "vkGetDeviceProcAddr": "GFR_GetDeviceProcAddr"
+            "vkNegotiateLoaderLayerInterfaceVersion": "CDL_NegotiateLoaderLayerInterfaceVersion",
+            "vkGetInstanceProcAddr": "CDL_GetInstanceProcAddr",
+            "vkGetDeviceProcAddr": "CDL_GetDeviceProcAddr"
         }},
         "enable_environment": {{
             "VK_GFX_FLIGHT_RECORD_ENABLE": "1"

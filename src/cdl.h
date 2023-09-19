@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_H
-#define GFR_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -43,7 +42,7 @@
 #include "layer_base.h"
 #include "submit_tracker.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 using StringArray = std::vector<std::string>;
 
@@ -103,28 +102,28 @@ struct ExpandedBindSparseInfo {
       : packed_bind_sparse_info(packed_bind_sparse_info_){};
 };
 
-static inline void GfrNewHandler() {
-  std::cout << "GFR: Memory allocation failed!" << std::endl;
-  std::cerr << "GFR: Memory allocation failed!" << std::endl;
+static inline void CdlNewHandler() {
+  std::cout << "CDL: Memory allocation failed!" << std::endl;
+  std::cerr << "CDL: Memory allocation failed!" << std::endl;
   std::set_new_handler(nullptr);
 }
 
 template <typename T, typename... Args>
-T* GfrNew(Args&&... args) {
-  std::set_new_handler(GfrNewHandler);
+T* CdlNew(Args&&... args) {
+  std::set_new_handler(CdlNewHandler);
   return new T(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-T* GfrNewArray(size_t size) {
-  std::set_new_handler(GfrNewHandler);
+T* CdlNewArray(size_t size) {
+  std::set_new_handler(CdlNewHandler);
   return new T[size];
 }
 
-class GfrContext {
+class CdlContext {
  public:
-  GfrContext();
-  virtual ~GfrContext();
+  CdlContext();
+  virtual ~CdlContext();
 
   VkInstance GetInstance() { return vk_instance_; }
 
@@ -216,7 +215,7 @@ class GfrContext {
   const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(
       VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo);
 
-#include "gfr_commands.h.inc"
+#include "cdl_commands.h.inc"
 
  private:
   using CStringArray = std::vector<char*>;
@@ -297,7 +296,7 @@ class GfrContext {
 
   // Watchdog
   // TODO(aellem) we should have a way to shut this down, but currently the
-  // GFR context never gets destroyed
+  // CDL context never gets destroyed
   std::unique_ptr<std::thread> watchdog_thread_;
   std::atomic<bool> watchdog_running_;
   std::atomic<long long> last_submit_time_;
@@ -311,6 +310,4 @@ class GfrContext {
 #endif  // __linux__
 };
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_H
+} // namespace crash_diagnostic_layer

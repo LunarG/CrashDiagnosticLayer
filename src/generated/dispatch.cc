@@ -28,7 +28,7 @@
 
 #include "dispatch.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 
 void InitInstanceDispatchTable(VkInstance instance,
@@ -1436,7 +1436,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
 
 
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer
 
 
 // NOLINTEND

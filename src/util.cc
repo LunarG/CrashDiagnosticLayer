@@ -16,4 +16,4 @@
 
 #include "util.h"
 
-namespace graphics_flight_recorder {} // namespace graphics_flight_recorder
+namespace crash_diagnostic_layer {} // namespace crash_diagnostic_layer

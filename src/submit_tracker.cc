@@ -21,10 +21,10 @@
 #include <sstream>
 
 #include "device.h"
-#include "gfr.h"
+#include "cdl.h"
 #include "util.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 SubmitTracker::SubmitTracker(Device* p_device) : device_(p_device) {}
 
@@ -41,7 +41,7 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(
   bool top_marker_is_valid = device_->AllocateMarker(&submit_info.top_marker);
   if (!top_marker_is_valid ||
       !device_->AllocateMarker(&submit_info.bottom_marker)) {
-    std::cerr << "GFR warning: Cannot acquire marker. Not tracking submit info "
+    std::cerr << "CDL warning: Cannot acquire marker. Not tracking submit info "
               << device_->GetObjectName((uint64_t)vk_submit_info) << std::endl;
     if (top_marker_is_valid) {
       device_->FreeMarker(submit_info.top_marker);
@@ -143,7 +143,7 @@ void SubmitTracker::RecordSubmitStart(QueueSubmitId qsubmit_id,
       }
     }
   } else {
-    std::cerr << "GFR Warning: No previous record of queued submit in submit "
+    std::cerr << "CDL Warning: No previous record of queued submit in submit "
                  "tracker: "
               << submit_info_id << std::endl;
   }
@@ -171,7 +171,7 @@ void SubmitTracker::RecordSubmitFinish(QueueSubmitId qsubmit_id,
         submit_info.bottom_marker.buffer, submit_info.bottom_marker.offset,
         SubmitState::kFinished);
   } else {
-    std::cerr << "GFR Warning: No previous record of queued submit in submit "
+    std::cerr << "CDL Warning: No previous record of queued submit in submit "
                  "tracker."
               << std::endl;
   }
@@ -188,7 +188,7 @@ void SubmitTracker::CleanupSubmitInfos() {
       auto submit_info_id = *submit_it;
       auto it = submit_infos_.find(submit_info_id);
       if (it == submit_infos_.end()) {
-        std::cerr << "GFR Warning: No previous record of queued submit in "
+        std::cerr << "CDL Warning: No previous record of queued submit in "
                      "submit tracker: "
                   << submit_info_id << std::endl;
         submit_it++;
@@ -225,7 +225,7 @@ void SubmitTracker::RecordBindSparseHelperSubmit(
   // Reserve the marker
   if (!device_->AllocateMarker(&hsubmit_info.marker)) {
     std::cerr
-        << "GFR warning: Cannot acquire marker for QueueBindSparse's helper "
+        << "CDL warning: Cannot acquire marker for QueueBindSparse's helper "
            "submit."
         << std::endl;
     return;
@@ -357,11 +357,11 @@ std::string SubmitTracker::GetSubmitInfoSemaphoresLog(
     VkDevice vk_device, VkQueue vk_queue, SubmitInfoId submit_info_id) const {
   std::lock_guard<std::mutex> lock(submit_infos_mutex_);
   std::stringstream log;
-  log << "[GFR] VkSubmitInfo with semaphores submitted to queue.\n"
-      << "[GFR]\tVkDevice: " << device_->GetObjectName((uint64_t)vk_device)
+  log << "[CDL] VkSubmitInfo with semaphores submitted to queue.\n"
+      << "[CDL]\tVkDevice: " << device_->GetObjectName((uint64_t)vk_device)
       << ", VkQueue: " << device_->GetObjectName((uint64_t)vk_queue)
       << ", SubmitInfoId: " << submit_info_id << std::endl;
-  const char* tab = "[GFR]\t";
+  const char* tab = "[CDL]\t";
   auto wait_semaphores =
       GetTrackedSemaphoreInfos(submit_info_id, kWaitOperation);
   if (wait_semaphores.size() > 0) {
@@ -472,4 +472,4 @@ void SubmitTracker::DumpWaitingSubmits(std::ostream& os) {
   }
 }
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer

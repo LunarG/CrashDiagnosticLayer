@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_DEVICE_H
-#define GFR_DEVICE_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -34,12 +33,12 @@
 #include "shader_module.h"
 #include "submit_tracker.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 const VkDeviceSize kBufferMarkerEventCount = 1024;
 const MarkerType kMarkerType = MarkerType::kUint32;
 
-class GfrContext;
+class CdlContext;
 struct DeviceCreateInfo;
 
 // Options when dumping a command buffer to a log file.
@@ -48,13 +47,13 @@ struct CommandBufferDumpOption;
 
 class Device {
  public:
-  Device(GfrContext* p_gfr, VkPhysicalDevice vk_gpu, VkDevice vk_device,
+  Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device,
          bool has_buffer_marker);
   ~Device();
   void SetDeviceCreateInfo(
       std::unique_ptr<DeviceCreateInfo> device_create_info);
 
-  GfrContext* GetGFR() const;
+  CdlContext* GetCDL() const;
   VkPhysicalDevice GetVkGpu() const;
   VkDevice GetVkDevice() const;
 
@@ -150,7 +149,7 @@ class Device {
   std::ostream& Print(std::ostream& stream) const;
 
  private:
-  GfrContext* gfr_ = nullptr;
+  CdlContext* cdl_ = nullptr;
   InstanceDispatchTable instance_dispatch_table_;
   DeviceDispatchTable device_dispatch_table_;
   VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;
@@ -217,6 +216,4 @@ class Device {
 
 using DevicePtr = std::unique_ptr<Device>;
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_DEVICE_H
+} // namespace crash_diagnostic_layer

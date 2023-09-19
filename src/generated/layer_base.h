@@ -40,7 +40,7 @@
 
 #include "dispatch.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 
 typedef VkResult (VKAPI_PTR *PFN_vkSetInstanceLoaderData)(VkInstance instance, void* object);
@@ -4621,25 +4621,25 @@ void InterceptPostCmdDrawMeshTasksIndirectCountEXT(
 
 
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer
 
 
 #if defined(__GNUC__) && __GNUC__ >= 4
-#define GFR_EXPORT __attribute__((visibility("default")))
+#define CDL_EXPORT __attribute__((visibility("default")))
 #else
-#define GFR_EXPORT
+#define CDL_EXPORT
 #endif
 
 extern "C" {
 
-GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
-GFR_GetInstanceProcAddr(VkInstance inst, const char* func);
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+CDL_GetInstanceProcAddr(VkInstance inst, const char* func);
 
-GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
-GFR_GetDeviceProcAddr(VkDevice dev, const char* func);
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+CDL_GetDeviceProcAddr(VkDevice dev, const char* func);
 
-GFR_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
-GFR_NegotiateLoaderLayerInterfaceVersion(
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
+CDL_NegotiateLoaderLayerInterfaceVersion(
     VkNegotiateLayerInterface* pVersionStruct);
 
 } // extern "C"

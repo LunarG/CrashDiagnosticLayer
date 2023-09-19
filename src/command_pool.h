@@ -14,15 +14,14 @@
  limitations under the License.
 */
 
-#ifndef GFR_COMMAND_POOL_H
-#define GFR_COMMAND_POOL_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
 #include <memory>
 #include <vector>
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 class Device;
 
@@ -66,6 +65,4 @@ class CommandPool {
 
 using CommandPoolPtr = std::unique_ptr<CommandPool>;
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_COMMAND_POOL_H
+} // namespace graphcrash_diagnostic_layerics_flight_recorder

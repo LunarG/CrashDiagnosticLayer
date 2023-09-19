@@ -17,12 +17,12 @@
 import os
 import sys
 from generators.vulkan_object import (Queues, CommandScope)
-from generators.gfr_base_generator import GfrBaseOutputGenerator
+from generators.cdl_base_generator import CdlBaseOutputGenerator
 #
 # CommandCommonOutputGenerator - Generate command output and storage
-class CommandCommonOutputGenerator(GfrBaseOutputGenerator):
+class CommandCommonOutputGenerator(CdlBaseOutputGenerator):
     def __init__(self):
-        GfrBaseOutputGenerator.__init__(self)
+        CdlBaseOutputGenerator.__init__(self)
 
     #
     # Called at beginning of processing as file is opened

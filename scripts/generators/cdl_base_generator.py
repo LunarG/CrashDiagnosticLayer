@@ -76,15 +76,15 @@ intercept_functions = [
     'vkSetDebugUtilsObjectNameEXT',
 ]
 
-namespace = 'graphics_flight_recorder'
-layer_name = 'VK_LAYER_LUNARG_graphics_flight_recorder'
+namespace = 'crash_diagnostic_layer'
+layer_name = 'VK_LAYER_LUNARG_crash_diagnostic'
 layer_version = '1'
-layer_description = 'Graphics Flight Recorder is a crash/hang debugging tool ' \
+layer_description = 'Crash Diagnostic Layer is a crash/hang debugging tool ' \
                     'that helps determines GPU progress in a Vulkan application.'
 
 #
-# GfrBaseOutputGenerator - Base Generator for the whole Graphics Flight Recorder
-class GfrBaseOutputGenerator(BaseGenerator):
+# CdlBaseOutputGenerator - Base Generator for the whole Graphics Flight Recorder
+class CdlBaseOutputGenerator(BaseGenerator):
     def __init__(self):
         BaseGenerator.__init__(self)
 

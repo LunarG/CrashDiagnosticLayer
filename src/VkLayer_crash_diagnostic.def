@@ -18,8 +18,8 @@
 ; limitations under the License.
 ;;;;  End Copyright Notice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-LIBRARY VkLayer_LUNARG_graphics_flight_recorder
+LIBRARY VkLayer_LUNARG_crash_diagnostic_layer
 EXPORTS
-GFR_GetInstanceProcAddr
-GFR_GetDeviceProcAddr
-GFR_NegotiateLoaderLayerInterfaceVersion
+CDL_GetInstanceProcAddr
+CDL_GetDeviceProcAddr
+CDL_NegotiateLoaderLayerInterfaceVersion

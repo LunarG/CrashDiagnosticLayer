@@ -21,10 +21,10 @@
 #include <sstream>
 
 #include "device.h"
-#include "gfr.h"
+#include "cdl.h"
 #include "util.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 SemaphoreTracker::SemaphoreTracker(Device* p_device,
                                    bool track_semaphores_last_setter)
@@ -44,14 +44,14 @@ void SemaphoreTracker::RegisterSemaphore(VkSemaphore vk_semaphore,
   // Reserve a marker to track semaphore value
   if (!device_->AllocateMarker(&semaphore_info.marker)) {
     fprintf(stderr,
-            "GFR warning: Cannot acquire marker. Not tracking semaphore %s.\n",
+            "CDL warning: Cannot acquire marker. Not tracking semaphore %s.\n",
             device_->GetObjectName((uint64_t)vk_semaphore).c_str());
     return;
   }
   if (track_semaphores_last_setter_) {
     if (!device_->AllocateMarker(&semaphore_info.last_modifier_marker)) {
       fprintf(stderr,
-              "GFR warning: Cannot acquire modifier tracking marker. Not "
+              "CDL warning: Cannot acquire modifier tracking marker. Not "
               "tracking semaphore %s.\n",
               device_->GetObjectName((uint64_t)vk_semaphore).c_str());
       return;
@@ -269,4 +269,4 @@ void SemaphoreTracker::DumpWaitingThreads(std::ostream& os) {
   }
 }
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer

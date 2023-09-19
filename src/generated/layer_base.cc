@@ -41,12 +41,12 @@
 
 #include "layer_base.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 constexpr VkLayerProperties layer_properties = {
-    "VK_LAYER_LUNARG_graphics_flight_recorder", VK_HEADER_VERSION,
+    "VK_LAYER_LUNARG_crash_diagnostic", VK_HEADER_VERSION,
     1,
-    "Graphics Flight Recorder is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application."
+    "Crash Diagnostic Layer is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application."
 };
 
 namespace {
@@ -4575,7 +4575,7 @@ InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
 VkResult InterceptEnumerateInstanceExtensionProperties(const char *pLayerName,
                                                        uint32_t *pPropertyCount,
                                                        VkExtensionProperties *pProperties) {
-  bool layer_requested = (nullptr == pLayerName ||        strcmp(pLayerName, "VK_LAYER_LUNARG_graphics_flight_recorder"));
+  bool layer_requested = (nullptr == pLayerName ||        strcmp(pLayerName, "VK_LAYER_LUNARG_crash_diagnostic"));
   if (!layer_requested) {
     return VK_ERROR_LAYER_NOT_PRESENT;
   }
@@ -4614,7 +4614,7 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
       physicalDevice, pLayerName, &num_other_extensions, &extensions[0]);
 
   // add our extensions if we have any and requested
-  bool layer_requested =      (nullptr == pLayerName || strcmp(pLayerName, "VK_LAYER_LUNARG_graphics_flight_recorder"));
+  bool layer_requested =      (nullptr == pLayerName || strcmp(pLayerName, "VK_LAYER_LUNARG_crash_diagnostic"));
 
   if (result == VK_SUCCESS && layer_requested) {
     // not just our layer, we expose all our extensions
@@ -4674,597 +4674,597 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
 }
 
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer
 
 extern "C" {
 
-GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetInstanceProcAddr(
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(
     VkInstance inst, const char *func) {
 
 if (0 == strcmp(func, "vkCreateInstance"))
-  return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateInstance;
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateInstance;
 if (0 == strcmp(func, "vkDestroyInstance"))
-  return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyInstance;
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyInstance;
 if (0 == strcmp(func, "vkCreateDevice"))
-  return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateDevice;
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateDevice;
 if (0 == strcmp(func, "vkEnumerateInstanceExtensionProperties"))
-  return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptEnumerateInstanceExtensionProperties;
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEnumerateInstanceExtensionProperties;
 if (0 == strcmp(func, "vkEnumerateDeviceExtensionProperties"))
-  return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptEnumerateDeviceExtensionProperties;
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEnumerateDeviceExtensionProperties;
 if (0 == strcmp(func, "vkEnumerateInstanceLayerProperties"))
-  return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptEnumerateInstanceLayerProperties;
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEnumerateInstanceLayerProperties;
 if (0 == strcmp(func, "vkEnumerateDeviceLayerProperties"))
-  return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptEnumerateDeviceLayerProperties;
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEnumerateDeviceLayerProperties;
 
   // If the function was not found, just pass it down the chain to support
   // unregistered extensions, such as vkSwapchainCallbackEXT.
-  return (PFN_vkVoidFunction)graphics_flight_recorder::PassInstanceProcDownTheChain(inst, func);
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::PassInstanceProcDownTheChain(inst, func);
 }
 
-GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetDeviceProcAddr(
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(
     VkDevice dev, const char *func) {
 
   if (0 == strcmp(func, "vkDestroyDevice"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyDevice;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyDevice;
   if (0 == strcmp(func, "vkGetDeviceQueue"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetDeviceQueue;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetDeviceQueue;
   if (0 == strcmp(func, "vkQueueSubmit"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueSubmit;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueSubmit;
   if (0 == strcmp(func, "vkQueueWaitIdle"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueWaitIdle;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueWaitIdle;
   if (0 == strcmp(func, "vkDeviceWaitIdle"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDeviceWaitIdle;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDeviceWaitIdle;
   if (0 == strcmp(func, "vkQueueBindSparse"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueBindSparse;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueBindSparse;
   if (0 == strcmp(func, "vkGetFenceStatus"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetFenceStatus;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetFenceStatus;
   if (0 == strcmp(func, "vkWaitForFences"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptWaitForFences;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptWaitForFences;
   if (0 == strcmp(func, "vkCreateSemaphore"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateSemaphore;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateSemaphore;
   if (0 == strcmp(func, "vkDestroySemaphore"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroySemaphore;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroySemaphore;
   if (0 == strcmp(func, "vkGetQueryPoolResults"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetQueryPoolResults;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetQueryPoolResults;
   if (0 == strcmp(func, "vkCreateShaderModule"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateShaderModule;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateShaderModule;
   if (0 == strcmp(func, "vkDestroyShaderModule"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyShaderModule;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyShaderModule;
   if (0 == strcmp(func, "vkCreateGraphicsPipelines"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateGraphicsPipelines;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateGraphicsPipelines;
   if (0 == strcmp(func, "vkCreateComputePipelines"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateComputePipelines;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateComputePipelines;
   if (0 == strcmp(func, "vkDestroyPipeline"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyPipeline;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyPipeline;
   if (0 == strcmp(func, "vkCreateCommandPool"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCreateCommandPool;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateCommandPool;
   if (0 == strcmp(func, "vkDestroyCommandPool"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDestroyCommandPool;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyCommandPool;
   if (0 == strcmp(func, "vkResetCommandPool"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptResetCommandPool;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptResetCommandPool;
   if (0 == strcmp(func, "vkAllocateCommandBuffers"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptAllocateCommandBuffers;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptAllocateCommandBuffers;
   if (0 == strcmp(func, "vkFreeCommandBuffers"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptFreeCommandBuffers;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptFreeCommandBuffers;
   if (0 == strcmp(func, "vkBeginCommandBuffer"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptBeginCommandBuffer;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptBeginCommandBuffer;
   if (0 == strcmp(func, "vkEndCommandBuffer"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptEndCommandBuffer;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEndCommandBuffer;
   if (0 == strcmp(func, "vkResetCommandBuffer"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptResetCommandBuffer;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptResetCommandBuffer;
   if (0 == strcmp(func, "vkCmdBindPipeline"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindPipeline;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindPipeline;
   if (0 == strcmp(func, "vkCmdSetViewport"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetViewport;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewport;
   if (0 == strcmp(func, "vkCmdSetScissor"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetScissor;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetScissor;
   if (0 == strcmp(func, "vkCmdSetLineWidth"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetLineWidth;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLineWidth;
   if (0 == strcmp(func, "vkCmdSetDepthBias"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthBias;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBias;
   if (0 == strcmp(func, "vkCmdSetBlendConstants"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetBlendConstants;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetBlendConstants;
   if (0 == strcmp(func, "vkCmdSetDepthBounds"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthBounds;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBounds;
   if (0 == strcmp(func, "vkCmdSetStencilCompareMask"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetStencilCompareMask;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilCompareMask;
   if (0 == strcmp(func, "vkCmdSetStencilWriteMask"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetStencilWriteMask;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilWriteMask;
   if (0 == strcmp(func, "vkCmdSetStencilReference"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetStencilReference;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilReference;
   if (0 == strcmp(func, "vkCmdBindDescriptorSets"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindDescriptorSets;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindDescriptorSets;
   if (0 == strcmp(func, "vkCmdBindIndexBuffer"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindIndexBuffer;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindIndexBuffer;
   if (0 == strcmp(func, "vkCmdBindVertexBuffers"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindVertexBuffers;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindVertexBuffers;
   if (0 == strcmp(func, "vkCmdDraw"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDraw;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDraw;
   if (0 == strcmp(func, "vkCmdDrawIndexed"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndexed;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexed;
   if (0 == strcmp(func, "vkCmdDrawIndirect"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndirect;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirect;
   if (0 == strcmp(func, "vkCmdDrawIndexedIndirect"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndexedIndirect;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexedIndirect;
   if (0 == strcmp(func, "vkCmdDispatch"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDispatch;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatch;
   if (0 == strcmp(func, "vkCmdDispatchIndirect"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDispatchIndirect;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchIndirect;
   if (0 == strcmp(func, "vkCmdCopyBuffer"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyBuffer;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBuffer;
   if (0 == strcmp(func, "vkCmdCopyImage"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyImage;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImage;
   if (0 == strcmp(func, "vkCmdBlitImage"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBlitImage;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBlitImage;
   if (0 == strcmp(func, "vkCmdCopyBufferToImage"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyBufferToImage;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBufferToImage;
   if (0 == strcmp(func, "vkCmdCopyImageToBuffer"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyImageToBuffer;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImageToBuffer;
   if (0 == strcmp(func, "vkCmdUpdateBuffer"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdUpdateBuffer;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdUpdateBuffer;
   if (0 == strcmp(func, "vkCmdFillBuffer"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdFillBuffer;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdFillBuffer;
   if (0 == strcmp(func, "vkCmdClearColorImage"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdClearColorImage;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdClearColorImage;
   if (0 == strcmp(func, "vkCmdClearDepthStencilImage"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdClearDepthStencilImage;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdClearDepthStencilImage;
   if (0 == strcmp(func, "vkCmdClearAttachments"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdClearAttachments;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdClearAttachments;
   if (0 == strcmp(func, "vkCmdResolveImage"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdResolveImage;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResolveImage;
   if (0 == strcmp(func, "vkCmdSetEvent"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetEvent;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetEvent;
   if (0 == strcmp(func, "vkCmdResetEvent"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdResetEvent;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResetEvent;
   if (0 == strcmp(func, "vkCmdWaitEvents"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWaitEvents;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWaitEvents;
   if (0 == strcmp(func, "vkCmdPipelineBarrier"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdPipelineBarrier;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPipelineBarrier;
   if (0 == strcmp(func, "vkCmdBeginQuery"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginQuery;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginQuery;
   if (0 == strcmp(func, "vkCmdEndQuery"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndQuery;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndQuery;
   if (0 == strcmp(func, "vkCmdResetQueryPool"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdResetQueryPool;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResetQueryPool;
   if (0 == strcmp(func, "vkCmdWriteTimestamp"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteTimestamp;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteTimestamp;
   if (0 == strcmp(func, "vkCmdCopyQueryPoolResults"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyQueryPoolResults;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyQueryPoolResults;
   if (0 == strcmp(func, "vkCmdPushConstants"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdPushConstants;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPushConstants;
   if (0 == strcmp(func, "vkCmdBeginRenderPass"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginRenderPass;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRenderPass;
   if (0 == strcmp(func, "vkCmdNextSubpass"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdNextSubpass;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdNextSubpass;
   if (0 == strcmp(func, "vkCmdEndRenderPass"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndRenderPass;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRenderPass;
   if (0 == strcmp(func, "vkCmdExecuteCommands"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdExecuteCommands;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdExecuteCommands;
   if (0 == strcmp(func, "vkCmdSetDeviceMask"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDeviceMask;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDeviceMask;
   if (0 == strcmp(func, "vkCmdDispatchBase"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDispatchBase;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchBase;
   if (0 == strcmp(func, "vkGetDeviceQueue2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetDeviceQueue2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetDeviceQueue2;
   if (0 == strcmp(func, "vkCmdDrawIndirectCount"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndirectCount;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirectCount;
   if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCount"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndexedIndirectCount;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexedIndirectCount;
   if (0 == strcmp(func, "vkCmdBeginRenderPass2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginRenderPass2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRenderPass2;
   if (0 == strcmp(func, "vkCmdNextSubpass2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdNextSubpass2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdNextSubpass2;
   if (0 == strcmp(func, "vkCmdEndRenderPass2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndRenderPass2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRenderPass2;
   if (0 == strcmp(func, "vkCmdSetEvent2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetEvent2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetEvent2;
   if (0 == strcmp(func, "vkCmdResetEvent2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdResetEvent2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResetEvent2;
   if (0 == strcmp(func, "vkCmdWaitEvents2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWaitEvents2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWaitEvents2;
   if (0 == strcmp(func, "vkCmdPipelineBarrier2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdPipelineBarrier2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPipelineBarrier2;
   if (0 == strcmp(func, "vkCmdWriteTimestamp2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteTimestamp2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteTimestamp2;
   if (0 == strcmp(func, "vkQueueSubmit2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueSubmit2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueSubmit2;
   if (0 == strcmp(func, "vkCmdCopyBuffer2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyBuffer2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBuffer2;
   if (0 == strcmp(func, "vkCmdCopyImage2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyImage2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImage2;
   if (0 == strcmp(func, "vkCmdCopyBufferToImage2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyBufferToImage2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBufferToImage2;
   if (0 == strcmp(func, "vkCmdCopyImageToBuffer2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyImageToBuffer2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImageToBuffer2;
   if (0 == strcmp(func, "vkCmdBlitImage2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBlitImage2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBlitImage2;
   if (0 == strcmp(func, "vkCmdResolveImage2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdResolveImage2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResolveImage2;
   if (0 == strcmp(func, "vkCmdBeginRendering"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginRendering;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRendering;
   if (0 == strcmp(func, "vkCmdEndRendering"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndRendering;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRendering;
   if (0 == strcmp(func, "vkCmdSetCullMode"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCullMode;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCullMode;
   if (0 == strcmp(func, "vkCmdSetFrontFace"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetFrontFace;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetFrontFace;
   if (0 == strcmp(func, "vkCmdSetPrimitiveTopology"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPrimitiveTopology;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPrimitiveTopology;
   if (0 == strcmp(func, "vkCmdSetViewportWithCount"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetViewportWithCount;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportWithCount;
   if (0 == strcmp(func, "vkCmdSetScissorWithCount"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetScissorWithCount;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetScissorWithCount;
   if (0 == strcmp(func, "vkCmdBindVertexBuffers2"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindVertexBuffers2;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindVertexBuffers2;
   if (0 == strcmp(func, "vkCmdSetDepthTestEnable"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthTestEnable;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthTestEnable;
   if (0 == strcmp(func, "vkCmdSetDepthWriteEnable"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthWriteEnable;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthWriteEnable;
   if (0 == strcmp(func, "vkCmdSetDepthCompareOp"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthCompareOp;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthCompareOp;
   if (0 == strcmp(func, "vkCmdSetDepthBoundsTestEnable"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthBoundsTestEnable;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBoundsTestEnable;
   if (0 == strcmp(func, "vkCmdSetStencilTestEnable"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetStencilTestEnable;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilTestEnable;
   if (0 == strcmp(func, "vkCmdSetStencilOp"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetStencilOp;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilOp;
   if (0 == strcmp(func, "vkCmdSetRasterizerDiscardEnable"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetRasterizerDiscardEnable;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRasterizerDiscardEnable;
   if (0 == strcmp(func, "vkCmdSetDepthBiasEnable"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthBiasEnable;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBiasEnable;
   if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnable"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPrimitiveRestartEnable;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPrimitiveRestartEnable;
   if (0 == strcmp(func, "vkAcquireNextImageKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptAcquireNextImageKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptAcquireNextImageKHR;
   if (0 == strcmp(func, "vkQueuePresentKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueuePresentKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueuePresentKHR;
   if (0 == strcmp(func, "vkCmdBeginVideoCodingKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginVideoCodingKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginVideoCodingKHR;
   if (0 == strcmp(func, "vkCmdEndVideoCodingKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndVideoCodingKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndVideoCodingKHR;
   if (0 == strcmp(func, "vkCmdControlVideoCodingKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdControlVideoCodingKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdControlVideoCodingKHR;
   if (0 == strcmp(func, "vkCmdDecodeVideoKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDecodeVideoKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDecodeVideoKHR;
   if (0 == strcmp(func, "vkCmdBeginRenderingKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginRenderingKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRenderingKHR;
   if (0 == strcmp(func, "vkCmdEndRenderingKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndRenderingKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRenderingKHR;
   if (0 == strcmp(func, "vkCmdSetDeviceMaskKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDeviceMaskKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDeviceMaskKHR;
   if (0 == strcmp(func, "vkCmdDispatchBaseKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDispatchBaseKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchBaseKHR;
   if (0 == strcmp(func, "vkCmdPushDescriptorSetKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdPushDescriptorSetKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPushDescriptorSetKHR;
   if (0 == strcmp(func, "vkCmdPushDescriptorSetWithTemplateKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdPushDescriptorSetWithTemplateKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPushDescriptorSetWithTemplateKHR;
   if (0 == strcmp(func, "vkCmdBeginRenderPass2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginRenderPass2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRenderPass2KHR;
   if (0 == strcmp(func, "vkCmdNextSubpass2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdNextSubpass2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdNextSubpass2KHR;
   if (0 == strcmp(func, "vkCmdEndRenderPass2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndRenderPass2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRenderPass2KHR;
   if (0 == strcmp(func, "vkCmdDrawIndirectCountKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndirectCountKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirectCountKHR;
   if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndexedIndirectCountKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexedIndirectCountKHR;
   if (0 == strcmp(func, "vkGetSemaphoreCounterValueKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptGetSemaphoreCounterValueKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetSemaphoreCounterValueKHR;
   if (0 == strcmp(func, "vkWaitSemaphoresKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptWaitSemaphoresKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptWaitSemaphoresKHR;
   if (0 == strcmp(func, "vkSignalSemaphoreKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptSignalSemaphoreKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptSignalSemaphoreKHR;
   if (0 == strcmp(func, "vkCmdSetFragmentShadingRateKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetFragmentShadingRateKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetFragmentShadingRateKHR;
 #ifdef VK_ENABLE_BETA_EXTENSIONS
   if (0 == strcmp(func, "vkCmdEncodeVideoKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEncodeVideoKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEncodeVideoKHR;
 #endif //VK_ENABLE_BETA_EXTENSIONS
   if (0 == strcmp(func, "vkCmdSetEvent2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetEvent2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetEvent2KHR;
   if (0 == strcmp(func, "vkCmdResetEvent2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdResetEvent2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResetEvent2KHR;
   if (0 == strcmp(func, "vkCmdWaitEvents2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWaitEvents2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWaitEvents2KHR;
   if (0 == strcmp(func, "vkCmdPipelineBarrier2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdPipelineBarrier2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPipelineBarrier2KHR;
   if (0 == strcmp(func, "vkCmdWriteTimestamp2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteTimestamp2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteTimestamp2KHR;
   if (0 == strcmp(func, "vkQueueSubmit2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptQueueSubmit2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueSubmit2KHR;
   if (0 == strcmp(func, "vkCmdWriteBufferMarker2AMD"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteBufferMarker2AMD;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteBufferMarker2AMD;
   if (0 == strcmp(func, "vkCmdCopyBuffer2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyBuffer2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBuffer2KHR;
   if (0 == strcmp(func, "vkCmdCopyImage2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyImage2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImage2KHR;
   if (0 == strcmp(func, "vkCmdCopyBufferToImage2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyBufferToImage2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBufferToImage2KHR;
   if (0 == strcmp(func, "vkCmdCopyImageToBuffer2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyImageToBuffer2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImageToBuffer2KHR;
   if (0 == strcmp(func, "vkCmdBlitImage2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBlitImage2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBlitImage2KHR;
   if (0 == strcmp(func, "vkCmdResolveImage2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdResolveImage2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResolveImage2KHR;
   if (0 == strcmp(func, "vkCmdTraceRaysIndirect2KHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdTraceRaysIndirect2KHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysIndirect2KHR;
   if (0 == strcmp(func, "vkDebugMarkerSetObjectNameEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptDebugMarkerSetObjectNameEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDebugMarkerSetObjectNameEXT;
   if (0 == strcmp(func, "vkCmdDebugMarkerBeginEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDebugMarkerBeginEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDebugMarkerBeginEXT;
   if (0 == strcmp(func, "vkCmdDebugMarkerEndEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDebugMarkerEndEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDebugMarkerEndEXT;
   if (0 == strcmp(func, "vkCmdDebugMarkerInsertEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDebugMarkerInsertEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDebugMarkerInsertEXT;
   if (0 == strcmp(func, "vkCmdBindTransformFeedbackBuffersEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindTransformFeedbackBuffersEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindTransformFeedbackBuffersEXT;
   if (0 == strcmp(func, "vkCmdBeginTransformFeedbackEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginTransformFeedbackEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginTransformFeedbackEXT;
   if (0 == strcmp(func, "vkCmdEndTransformFeedbackEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndTransformFeedbackEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndTransformFeedbackEXT;
   if (0 == strcmp(func, "vkCmdBeginQueryIndexedEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginQueryIndexedEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginQueryIndexedEXT;
   if (0 == strcmp(func, "vkCmdEndQueryIndexedEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndQueryIndexedEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndQueryIndexedEXT;
   if (0 == strcmp(func, "vkCmdDrawIndirectByteCountEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndirectByteCountEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirectByteCountEXT;
   if (0 == strcmp(func, "vkCmdCuLaunchKernelNVX"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCuLaunchKernelNVX;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCuLaunchKernelNVX;
   if (0 == strcmp(func, "vkCmdDrawIndirectCountAMD"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndirectCountAMD;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirectCountAMD;
   if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountAMD"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawIndexedIndirectCountAMD;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexedIndirectCountAMD;
   if (0 == strcmp(func, "vkCmdBeginConditionalRenderingEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginConditionalRenderingEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginConditionalRenderingEXT;
   if (0 == strcmp(func, "vkCmdEndConditionalRenderingEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndConditionalRenderingEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndConditionalRenderingEXT;
   if (0 == strcmp(func, "vkCmdSetViewportWScalingNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetViewportWScalingNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportWScalingNV;
   if (0 == strcmp(func, "vkCmdSetDiscardRectangleEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDiscardRectangleEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDiscardRectangleEXT;
   if (0 == strcmp(func, "vkCmdSetDiscardRectangleEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDiscardRectangleEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDiscardRectangleEnableEXT;
   if (0 == strcmp(func, "vkCmdSetDiscardRectangleModeEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDiscardRectangleModeEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDiscardRectangleModeEXT;
   if (0 == strcmp(func, "vkSetDebugUtilsObjectNameEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptSetDebugUtilsObjectNameEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptSetDebugUtilsObjectNameEXT;
   if (0 == strcmp(func, "vkCmdBeginDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBeginDebugUtilsLabelEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginDebugUtilsLabelEXT;
   if (0 == strcmp(func, "vkCmdEndDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdEndDebugUtilsLabelEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndDebugUtilsLabelEXT;
   if (0 == strcmp(func, "vkCmdInsertDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdInsertDebugUtilsLabelEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdInsertDebugUtilsLabelEXT;
   if (0 == strcmp(func, "vkCmdSetSampleLocationsEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetSampleLocationsEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetSampleLocationsEXT;
   if (0 == strcmp(func, "vkCmdBindShadingRateImageNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindShadingRateImageNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindShadingRateImageNV;
   if (0 == strcmp(func, "vkCmdSetViewportShadingRatePaletteNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetViewportShadingRatePaletteNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportShadingRatePaletteNV;
   if (0 == strcmp(func, "vkCmdSetCoarseSampleOrderNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCoarseSampleOrderNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoarseSampleOrderNV;
   if (0 == strcmp(func, "vkCmdBuildAccelerationStructureNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBuildAccelerationStructureNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBuildAccelerationStructureNV;
   if (0 == strcmp(func, "vkCmdCopyAccelerationStructureNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyAccelerationStructureNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyAccelerationStructureNV;
   if (0 == strcmp(func, "vkCmdTraceRaysNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdTraceRaysNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysNV;
   if (0 == strcmp(func, "vkCmdWriteAccelerationStructuresPropertiesNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteAccelerationStructuresPropertiesNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteAccelerationStructuresPropertiesNV;
   if (0 == strcmp(func, "vkCmdWriteBufferMarkerAMD"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteBufferMarkerAMD;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteBufferMarkerAMD;
   if (0 == strcmp(func, "vkCmdDrawMeshTasksNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawMeshTasksNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksNV;
   if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawMeshTasksIndirectNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksIndirectNV;
   if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectCountNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawMeshTasksIndirectCountNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksIndirectCountNV;
   if (0 == strcmp(func, "vkCmdSetExclusiveScissorEnableNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetExclusiveScissorEnableNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetExclusiveScissorEnableNV;
   if (0 == strcmp(func, "vkCmdSetExclusiveScissorNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetExclusiveScissorNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetExclusiveScissorNV;
   if (0 == strcmp(func, "vkCmdSetCheckpointNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCheckpointNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCheckpointNV;
   if (0 == strcmp(func, "vkCmdSetPerformanceMarkerINTEL"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPerformanceMarkerINTEL;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPerformanceMarkerINTEL;
   if (0 == strcmp(func, "vkCmdSetPerformanceStreamMarkerINTEL"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPerformanceStreamMarkerINTEL;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPerformanceStreamMarkerINTEL;
   if (0 == strcmp(func, "vkCmdSetPerformanceOverrideINTEL"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPerformanceOverrideINTEL;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPerformanceOverrideINTEL;
   if (0 == strcmp(func, "vkCmdSetLineStippleEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetLineStippleEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLineStippleEXT;
   if (0 == strcmp(func, "vkCmdSetCullModeEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCullModeEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCullModeEXT;
   if (0 == strcmp(func, "vkCmdSetFrontFaceEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetFrontFaceEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetFrontFaceEXT;
   if (0 == strcmp(func, "vkCmdSetPrimitiveTopologyEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPrimitiveTopologyEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPrimitiveTopologyEXT;
   if (0 == strcmp(func, "vkCmdSetViewportWithCountEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetViewportWithCountEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportWithCountEXT;
   if (0 == strcmp(func, "vkCmdSetScissorWithCountEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetScissorWithCountEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetScissorWithCountEXT;
   if (0 == strcmp(func, "vkCmdBindVertexBuffers2EXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindVertexBuffers2EXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindVertexBuffers2EXT;
   if (0 == strcmp(func, "vkCmdSetDepthTestEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthTestEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthTestEnableEXT;
   if (0 == strcmp(func, "vkCmdSetDepthWriteEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthWriteEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthWriteEnableEXT;
   if (0 == strcmp(func, "vkCmdSetDepthCompareOpEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthCompareOpEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthCompareOpEXT;
   if (0 == strcmp(func, "vkCmdSetDepthBoundsTestEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthBoundsTestEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBoundsTestEnableEXT;
   if (0 == strcmp(func, "vkCmdSetStencilTestEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetStencilTestEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilTestEnableEXT;
   if (0 == strcmp(func, "vkCmdSetStencilOpEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetStencilOpEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilOpEXT;
   if (0 == strcmp(func, "vkCmdPreprocessGeneratedCommandsNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdPreprocessGeneratedCommandsNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPreprocessGeneratedCommandsNV;
   if (0 == strcmp(func, "vkCmdExecuteGeneratedCommandsNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdExecuteGeneratedCommandsNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdExecuteGeneratedCommandsNV;
   if (0 == strcmp(func, "vkCmdBindPipelineShaderGroupNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindPipelineShaderGroupNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindPipelineShaderGroupNV;
   if (0 == strcmp(func, "vkCmdSetDepthBias2EXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthBias2EXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBias2EXT;
   if (0 == strcmp(func, "vkCmdBindDescriptorBuffersEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindDescriptorBuffersEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindDescriptorBuffersEXT;
   if (0 == strcmp(func, "vkCmdSetDescriptorBufferOffsetsEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDescriptorBufferOffsetsEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDescriptorBufferOffsetsEXT;
   if (0 == strcmp(func, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT;
   if (0 == strcmp(func, "vkCmdSetFragmentShadingRateEnumNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetFragmentShadingRateEnumNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetFragmentShadingRateEnumNV;
   if (0 == strcmp(func, "vkCmdSetVertexInputEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetVertexInputEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetVertexInputEXT;
   if (0 == strcmp(func, "vkCmdSubpassShadingHUAWEI"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSubpassShadingHUAWEI;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSubpassShadingHUAWEI;
   if (0 == strcmp(func, "vkCmdBindInvocationMaskHUAWEI"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindInvocationMaskHUAWEI;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindInvocationMaskHUAWEI;
   if (0 == strcmp(func, "vkCmdSetPatchControlPointsEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPatchControlPointsEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPatchControlPointsEXT;
   if (0 == strcmp(func, "vkCmdSetRasterizerDiscardEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetRasterizerDiscardEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRasterizerDiscardEnableEXT;
   if (0 == strcmp(func, "vkCmdSetDepthBiasEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthBiasEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBiasEnableEXT;
   if (0 == strcmp(func, "vkCmdSetLogicOpEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetLogicOpEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLogicOpEXT;
   if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPrimitiveRestartEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPrimitiveRestartEnableEXT;
   if (0 == strcmp(func, "vkCmdSetColorWriteEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetColorWriteEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorWriteEnableEXT;
   if (0 == strcmp(func, "vkCmdDrawMultiEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawMultiEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMultiEXT;
   if (0 == strcmp(func, "vkCmdDrawMultiIndexedEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawMultiIndexedEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMultiIndexedEXT;
   if (0 == strcmp(func, "vkCmdBuildMicromapsEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBuildMicromapsEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBuildMicromapsEXT;
   if (0 == strcmp(func, "vkCmdCopyMicromapEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyMicromapEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMicromapEXT;
   if (0 == strcmp(func, "vkCmdCopyMicromapToMemoryEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyMicromapToMemoryEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMicromapToMemoryEXT;
   if (0 == strcmp(func, "vkCmdCopyMemoryToMicromapEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyMemoryToMicromapEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMemoryToMicromapEXT;
   if (0 == strcmp(func, "vkCmdWriteMicromapsPropertiesEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteMicromapsPropertiesEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteMicromapsPropertiesEXT;
   if (0 == strcmp(func, "vkCmdDrawClusterHUAWEI"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawClusterHUAWEI;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawClusterHUAWEI;
   if (0 == strcmp(func, "vkCmdDrawClusterIndirectHUAWEI"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawClusterIndirectHUAWEI;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawClusterIndirectHUAWEI;
   if (0 == strcmp(func, "vkCmdCopyMemoryIndirectNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyMemoryIndirectNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMemoryIndirectNV;
   if (0 == strcmp(func, "vkCmdCopyMemoryToImageIndirectNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyMemoryToImageIndirectNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMemoryToImageIndirectNV;
   if (0 == strcmp(func, "vkCmdDecompressMemoryNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDecompressMemoryNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDecompressMemoryNV;
   if (0 == strcmp(func, "vkCmdDecompressMemoryIndirectCountNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDecompressMemoryIndirectCountNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDecompressMemoryIndirectCountNV;
   if (0 == strcmp(func, "vkCmdUpdatePipelineIndirectBufferNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdUpdatePipelineIndirectBufferNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdUpdatePipelineIndirectBufferNV;
   if (0 == strcmp(func, "vkCmdSetTessellationDomainOriginEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetTessellationDomainOriginEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetTessellationDomainOriginEXT;
   if (0 == strcmp(func, "vkCmdSetDepthClampEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthClampEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthClampEnableEXT;
   if (0 == strcmp(func, "vkCmdSetPolygonModeEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetPolygonModeEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPolygonModeEXT;
   if (0 == strcmp(func, "vkCmdSetRasterizationSamplesEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetRasterizationSamplesEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRasterizationSamplesEXT;
   if (0 == strcmp(func, "vkCmdSetSampleMaskEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetSampleMaskEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetSampleMaskEXT;
   if (0 == strcmp(func, "vkCmdSetAlphaToCoverageEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetAlphaToCoverageEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetAlphaToCoverageEnableEXT;
   if (0 == strcmp(func, "vkCmdSetAlphaToOneEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetAlphaToOneEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetAlphaToOneEnableEXT;
   if (0 == strcmp(func, "vkCmdSetLogicOpEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetLogicOpEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLogicOpEnableEXT;
   if (0 == strcmp(func, "vkCmdSetColorBlendEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetColorBlendEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorBlendEnableEXT;
   if (0 == strcmp(func, "vkCmdSetColorBlendEquationEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetColorBlendEquationEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorBlendEquationEXT;
   if (0 == strcmp(func, "vkCmdSetColorWriteMaskEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetColorWriteMaskEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorWriteMaskEXT;
   if (0 == strcmp(func, "vkCmdSetRasterizationStreamEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetRasterizationStreamEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRasterizationStreamEXT;
   if (0 == strcmp(func, "vkCmdSetConservativeRasterizationModeEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetConservativeRasterizationModeEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetConservativeRasterizationModeEXT;
   if (0 == strcmp(func, "vkCmdSetExtraPrimitiveOverestimationSizeEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetExtraPrimitiveOverestimationSizeEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetExtraPrimitiveOverestimationSizeEXT;
   if (0 == strcmp(func, "vkCmdSetDepthClipEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthClipEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthClipEnableEXT;
   if (0 == strcmp(func, "vkCmdSetSampleLocationsEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetSampleLocationsEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetSampleLocationsEnableEXT;
   if (0 == strcmp(func, "vkCmdSetColorBlendAdvancedEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetColorBlendAdvancedEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorBlendAdvancedEXT;
   if (0 == strcmp(func, "vkCmdSetProvokingVertexModeEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetProvokingVertexModeEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetProvokingVertexModeEXT;
   if (0 == strcmp(func, "vkCmdSetLineRasterizationModeEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetLineRasterizationModeEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLineRasterizationModeEXT;
   if (0 == strcmp(func, "vkCmdSetLineStippleEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetLineStippleEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLineStippleEnableEXT;
   if (0 == strcmp(func, "vkCmdSetDepthClipNegativeOneToOneEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetDepthClipNegativeOneToOneEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthClipNegativeOneToOneEXT;
   if (0 == strcmp(func, "vkCmdSetViewportWScalingEnableNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetViewportWScalingEnableNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportWScalingEnableNV;
   if (0 == strcmp(func, "vkCmdSetViewportSwizzleNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetViewportSwizzleNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportSwizzleNV;
   if (0 == strcmp(func, "vkCmdSetCoverageToColorEnableNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCoverageToColorEnableNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageToColorEnableNV;
   if (0 == strcmp(func, "vkCmdSetCoverageToColorLocationNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCoverageToColorLocationNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageToColorLocationNV;
   if (0 == strcmp(func, "vkCmdSetCoverageModulationModeNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCoverageModulationModeNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageModulationModeNV;
   if (0 == strcmp(func, "vkCmdSetCoverageModulationTableEnableNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCoverageModulationTableEnableNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageModulationTableEnableNV;
   if (0 == strcmp(func, "vkCmdSetCoverageModulationTableNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCoverageModulationTableNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageModulationTableNV;
   if (0 == strcmp(func, "vkCmdSetShadingRateImageEnableNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetShadingRateImageEnableNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetShadingRateImageEnableNV;
   if (0 == strcmp(func, "vkCmdSetRepresentativeFragmentTestEnableNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetRepresentativeFragmentTestEnableNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRepresentativeFragmentTestEnableNV;
   if (0 == strcmp(func, "vkCmdSetCoverageReductionModeNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetCoverageReductionModeNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageReductionModeNV;
   if (0 == strcmp(func, "vkCmdOpticalFlowExecuteNV"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdOpticalFlowExecuteNV;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdOpticalFlowExecuteNV;
   if (0 == strcmp(func, "vkCmdBindShadersEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBindShadersEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindShadersEXT;
   if (0 == strcmp(func, "vkCmdSetAttachmentFeedbackLoopEnableEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetAttachmentFeedbackLoopEnableEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetAttachmentFeedbackLoopEnableEXT;
   if (0 == strcmp(func, "vkCmdBuildAccelerationStructuresKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBuildAccelerationStructuresKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBuildAccelerationStructuresKHR;
   if (0 == strcmp(func, "vkCmdBuildAccelerationStructuresIndirectKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdBuildAccelerationStructuresIndirectKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBuildAccelerationStructuresIndirectKHR;
   if (0 == strcmp(func, "vkCmdCopyAccelerationStructureKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyAccelerationStructureKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyAccelerationStructureKHR;
   if (0 == strcmp(func, "vkCmdCopyAccelerationStructureToMemoryKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyAccelerationStructureToMemoryKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyAccelerationStructureToMemoryKHR;
   if (0 == strcmp(func, "vkCmdCopyMemoryToAccelerationStructureKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdCopyMemoryToAccelerationStructureKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMemoryToAccelerationStructureKHR;
   if (0 == strcmp(func, "vkCmdWriteAccelerationStructuresPropertiesKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdWriteAccelerationStructuresPropertiesKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteAccelerationStructuresPropertiesKHR;
   if (0 == strcmp(func, "vkCmdTraceRaysKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdTraceRaysKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysKHR;
   if (0 == strcmp(func, "vkCmdTraceRaysIndirectKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdTraceRaysIndirectKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysIndirectKHR;
   if (0 == strcmp(func, "vkCmdSetRayTracingPipelineStackSizeKHR"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdSetRayTracingPipelineStackSizeKHR;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRayTracingPipelineStackSizeKHR;
   if (0 == strcmp(func, "vkCmdDrawMeshTasksEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawMeshTasksEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksEXT;
   if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawMeshTasksIndirectEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksIndirectEXT;
   if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectCountEXT"))
-    return (PFN_vkVoidFunction)graphics_flight_recorder::InterceptCmdDrawMeshTasksIndirectCountEXT;
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksIndirectCountEXT;
 
   // If the function was not found, just pass it down the chain to support
   // unregistered extensions, such as vkSwapchainCallbackEXT.
-  return (PFN_vkVoidFunction)graphics_flight_recorder::PassDeviceProcDownTheChain(dev, func);
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::PassDeviceProcDownTheChain(dev, func);
 } // NOLINT(readability/fn_size)
 
-GFR_EXPORT VKAPI_ATTR VkResult VKAPI_CALL GFR_NegotiateLoaderLayerInterfaceVersion(
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL CDL_NegotiateLoaderLayerInterfaceVersion(
     VkNegotiateLayerInterface *pVersionStruct) {
   assert(pVersionStruct != NULL);
   assert(pVersionStruct->sType == LAYER_NEGOTIATE_INTERFACE_STRUCT);
   // Fill in the function pointers if our version is at least capable of having
   // the structure contain them.
   if (pVersionStruct->loaderLayerInterfaceVersion >= 2) {
-    pVersionStruct->pfnGetInstanceProcAddr = &GFR_GetInstanceProcAddr;
-    pVersionStruct->pfnGetDeviceProcAddr = &GFR_GetDeviceProcAddr;
+    pVersionStruct->pfnGetInstanceProcAddr = &CDL_GetInstanceProcAddr;
+    pVersionStruct->pfnGetDeviceProcAddr = &CDL_GetDeviceProcAddr;
     pVersionStruct->pfnGetPhysicalDeviceProcAddr = nullptr;
   }
   if (pVersionStruct->loaderLayerInterfaceVersion >

@@ -67,7 +67,7 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
 
     genOpts = {}
 
-    # GFR Generators
+    # CDL Generators
 
     genOpts['command.h.inc'] = [
           InterceptCommandsOutputGenerator,
@@ -159,24 +159,24 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             valid_usage_path  = scripts)
         ]
 
-    genOpts['gfr_commands.h.inc'] = [
+    genOpts['cdl_commands.h.inc'] = [
           InterceptCommandsOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'gfr_commands.h.inc',
+            filename          = 'cdl_commands.h.inc',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['gfr_commands.cc.inc'] = [
+    genOpts['cdl_commands.cc.inc'] = [
           InterceptCommandsOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'gfr_commands.cc.inc',
+            filename          = 'cdl_commands.cc.inc',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['gfr_intercepts.cc.inc'] = [
+    genOpts['cdl_intercepts.cc.inc'] = [
           InterceptCommandsOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'gfr_intercepts.cc.inc',
+            filename          = 'cdl_intercepts.cc.inc',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
@@ -196,10 +196,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             valid_usage_path  = scripts)
         ]
 
-    genOpts['graphics_flight_recorder.json.in'] = [
+    genOpts['crash_diagnostic_layer.json.in'] = [
           LayerManifestOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'graphics_flight_recorder.json.in',
+            filename          = 'crash_diagnostic_layer.json.in',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]

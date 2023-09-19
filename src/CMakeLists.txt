@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(LAYER_NAME "VkLayer_gfr")
+set(LAYER_NAME "VkLayer_crash_diagnostic")
 
 # NOTE: Our custom code generation target isn't desirable for system package managers or add_subdirectory users.
 # So this target needs to be off by default to avoid obtuse build errors or patches.
-option(GFR_CODEGEN "Enable graphics flight recorder code generation")
-if (GFR_CODEGEN)
+option(CDL_CODEGEN "Enable graphics flight recorder code generation")
+if (CDL_CODEGEN)
     find_package(Python3 REQUIRED)
-    add_custom_target(gfr_codegen
+    add_custom_target(cdl_codegen
         COMMAND Python3::Interpreter
           "${CMAKE_SOURCE_DIR}/scripts/generate_source.py"
           "${VULKAN_HEADERS_INSTALL_DIR}/share/vulkan/registry"
@@ -29,9 +29,9 @@ if (GFR_CODEGEN)
     )
 endif()
 
-add_library(gfr MODULE)
+add_library(crash_diagnostic MODULE)
 
-target_sources(gfr PRIVATE
+target_sources(crash_diagnostic PRIVATE
     ${GENERATED_DIR}/command_common.h
     ${GENERATED_DIR}/command_common.cc
     ${GENERATED_DIR}/command_printer.h
@@ -56,8 +56,8 @@ target_sources(gfr PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/descriptor_set.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/device.h
     ${CMAKE_CURRENT_SOURCE_DIR}/device.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/gfr.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/gfr.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/cdl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/cdl.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/linear_allocator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/marker.h
     ${CMAKE_CURRENT_SOURCE_DIR}/object_name_db.h
@@ -75,12 +75,12 @@ target_sources(gfr PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/util.cc
 )
 
-get_target_property(LAYER_SOURCES gfr SOURCES)
+get_target_property(LAYER_SOURCES crash_diagnostic SOURCES)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${LAYER_SOURCES})
 
-set_target_properties(gfr PROPERTIES OUTPUT_NAME ${LAYER_NAME})
+set_target_properties(crash_diagnostic PROPERTIES OUTPUT_NAME ${LAYER_NAME})
 
-target_link_libraries(gfr PUBLIC
+target_link_libraries(crash_diagnostic PUBLIC
     Vulkan::Headers
     ${CMAKE_DL_LIBS}
     $<TARGET_NAME_IF_EXISTS:PkgConfig::XCB>
@@ -89,23 +89,23 @@ target_link_libraries(gfr PUBLIC
 )
 
 if(MSVC)
-    target_link_options(gfr PRIVATE /DEF:${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.def)
-    target_compile_options(gfr PRIVATE /bigobj)
+    target_link_options(crash_diagnostic PRIVATE /DEF:${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.def)
+    target_compile_options(crash_diagnostic PRIVATE /bigobj)
 elseif(MINGW)
-    target_sources(gfr PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.def)
-    target_compile_options(gfr PRIVATE -Wa,-mbig-obj)
+    target_sources(crash_diagnosticPRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.def)
+    target_compile_options(crash_diagnostic PRIVATE -Wa,-mbig-obj)
 elseif(APPLE)
     message(STATUS "Functions are exported via VVL_EXPORT")
-    set_target_properties(gfr PROPERTIES SUFFIX ".dylib")
+    set_target_properties(crash_diagnostic PROPERTIES SUFFIX ".dylib")
 elseif(ANDROID)
     message(STATUS "Functions are exported via VVL_EXPORT")
 else()
-    target_link_options(gfr PRIVATE LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.map,-Bsymbolic,--exclude-libs,ALL)
+    target_link_options(crash_diagnostic PRIVATE LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.map,-Bsymbolic,--exclude-libs,ALL)
 endif()
 
-target_compile_options(gfr PRIVATE "$<IF:$<CXX_COMPILER_ID:MSVC>,/wd4100,-Wno-unused-parameter>")
+target_compile_options(crash_diagnostic PRIVATE "$<IF:$<CXX_COMPILER_ID:MSVC>,/wd4100,-Wno-unused-parameter>")
 
-target_include_directories(gfr SYSTEM PRIVATE
+target_include_directories(crash_diagnostic SYSTEM PRIVATE
                                 ${CMAKE_CURRENT_SOURCE_DIR}
                                 ${GENERATED_DIR}
                                 ${SPIRV_HEADERS_INSTALL_DIR}/include/spirv/unified1
@@ -121,8 +121,8 @@ endif()
 # - The respective json file
 # This code generates the appropriate json for both local testing and the installation.
 # NOTE: For WIN32 the JSON and dll MUST be placed in the same location, due to Win32 using a relative path for installation.
-set(INPUT_FILE "${GENERATED_DIR}/graphics_flight_recorder.json.in")
-set(INTERMEDIATE_FILE "${CMAKE_CURRENT_BINARY_DIR}/json/graphics_flight_recorder.json")
+set(INPUT_FILE "${GENERATED_DIR}/crash_diagnostic_layer.json.in")
+set(INTERMEDIATE_FILE "${CMAKE_CURRENT_BINARY_DIR}/json/crash_diagnostic_layer.json")
 set(OUTPUT_FILE_FINAL_NAME "${LAYER_NAME}.json")
 set(LAYER_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
 
@@ -141,8 +141,8 @@ endif()
 configure_file(${INPUT_FILE} ${INTERMEDIATE_FILE} @ONLY)
 
 # To support both multi/single configuration generators just copy the json to the correct directory
-add_custom_command(TARGET gfr POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${INTERMEDIATE_FILE} $<TARGET_FILE_DIR:gfr>/${OUTPUT_FILE_FINAL_NAME}
+add_custom_command(TARGET crash_diagnostic POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${INTERMEDIATE_FILE} $<TARGET_FILE_DIR:crash_diagnostic>/${OUTPUT_FILE_FINAL_NAME}
 )
 
 # For UNIX-based systems, `library_path` should not contain a relative path (indicated by "./") before installing to system directories
@@ -165,7 +165,7 @@ if (WIN32)
     install(FILES ${INTERMEDIATE_FILE} DESTINATION ${LAYER_INSTALL_DIR} RENAME ${OUTPUT_FILE_FINAL_NAME})
 endif()
 if (MSVC)
-    install(FILES $<TARGET_PDB_FILE:gfr> DESTINATION ${LAYER_INSTALL_DIR})
+    install(FILES $<TARGET_PDB_FILE:crash_diagnostic> DESTINATION ${LAYER_INSTALL_DIR})
 endif()
 
-install(TARGETS gfr DESTINATION ${LAYER_INSTALL_DIR})
+install(TARGETS crash_diagnostic DESTINATION ${LAYER_INSTALL_DIR})

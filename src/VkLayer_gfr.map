@@ -1,8 +1,0 @@
-{
-  global:
-    GFR_GetInstanceProcAddr;
-    GFR_GetDeviceProcAddr;
-    GFR_NegotiateLoaderLayerInterfaceVersion;
-  local:
-    *;
-};

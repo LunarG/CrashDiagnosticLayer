@@ -2,16 +2,16 @@
 {
     "file_format_version": "1.1.0",
     "layer": {
-        "name": "VK_LAYER_LUNARG_graphics_flight_recorder",
+        "name": "VK_LAYER_LUNARG_crash_diagnostic",
         "type": "GLOBAL",
         "library_path": "@JSON_LIBRARY_PATH@",
         "api_version": "1.3.259",
         "implementation_version": "1",
-        "description": "Graphics Flight Recorder is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application.",
+        "description": "Crash Diagnostic Layer is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application.",
         "functions": {
-            "vkNegotiateLoaderLayerInterfaceVersion": "GFR_NegotiateLoaderLayerInterfaceVersion",
-            "vkGetInstanceProcAddr": "GFR_GetInstanceProcAddr",
-            "vkGetDeviceProcAddr": "GFR_GetDeviceProcAddr"
+            "vkNegotiateLoaderLayerInterfaceVersion": "CDL_NegotiateLoaderLayerInterfaceVersion",
+            "vkGetInstanceProcAddr": "CDL_GetInstanceProcAddr",
+            "vkGetDeviceProcAddr": "CDL_GetDeviceProcAddr"
         },
         "enable_environment": {
             "VK_GFX_FLIGHT_RECORD_ENABLE": "1"

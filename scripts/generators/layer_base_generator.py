@@ -17,13 +17,13 @@
 import os
 import sys
 from generators.vulkan_object import (Queues, CommandScope)
-from generators.gfr_base_generator import GfrBaseOutputGenerator
+from generators.cdl_base_generator import CdlBaseOutputGenerator
 
 #
 # LayerBaseOutputGenerator - Generate command print utilities
-class LayerBaseOutputGenerator(GfrBaseOutputGenerator):
+class LayerBaseOutputGenerator(CdlBaseOutputGenerator):
     def __init__(self):
-        GfrBaseOutputGenerator.__init__(self)
+        CdlBaseOutputGenerator.__init__(self)
 
     #
     # Called at beginning of processing as file is opened
@@ -154,21 +154,21 @@ GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
         out.append('''
 
 #if defined(__GNUC__) && __GNUC__ >= 4
-#define GFR_EXPORT __attribute__((visibility("default")))
+#define CDL_EXPORT __attribute__((visibility("default")))
 #else
-#define GFR_EXPORT
+#define CDL_EXPORT
 #endif
 
 extern "C" {
 
-GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
-GFR_GetInstanceProcAddr(VkInstance inst, const char* func);
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+CDL_GetInstanceProcAddr(VkInstance inst, const char* func);
 
-GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
-GFR_GetDeviceProcAddr(VkDevice dev, const char* func);
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+CDL_GetDeviceProcAddr(VkDevice dev, const char* func);
 
-GFR_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
-GFR_NegotiateLoaderLayerInterfaceVersion(
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
+CDL_NegotiateLoaderLayerInterfaceVersion(
     VkNegotiateLayerInterface* pVersionStruct);
 
 } // extern "C"
@@ -654,7 +654,7 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
         out.append('''
 extern "C" {
 
-GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetInstanceProcAddr(
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(
     VkInstance inst, const char *func) {
 ''')
         self.write("".join(out))
@@ -663,16 +663,16 @@ GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetInstanceProcAddr(
         for vkcommand in filter(lambda x: self.InstanceCommand(x) and self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'if (0 == strcmp(func, "{vkcommand.name}"))\n')
-            out.append(f'  return (PFN_vkVoidFunction)graphics_flight_recorder::Intercept{vkcommand.name[2:]};\n')
+            out.append(f'  return (PFN_vkVoidFunction)crash_diagnostic_layer::Intercept{vkcommand.name[2:]};\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             
         out.append('''
   // If the function was not found, just pass it down the chain to support
   // unregistered extensions, such as vkSwapchainCallbackEXT.
-  return (PFN_vkVoidFunction)graphics_flight_recorder::PassInstanceProcDownTheChain(inst, func);
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::PassInstanceProcDownTheChain(inst, func);
 }
 
-GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetDeviceProcAddr(
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(
     VkDevice dev, const char *func) {
 ''')
         self.write("".join(out))
@@ -681,24 +681,24 @@ GFR_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GFR_GetDeviceProcAddr(
         for vkcommand in filter(lambda x: not self.InstanceCommand(x) and self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'  if (0 == strcmp(func, "{vkcommand.name}"))\n')
-            out.append(f'    return (PFN_vkVoidFunction)graphics_flight_recorder::Intercept{vkcommand.name[2:]};\n')
+            out.append(f'    return (PFN_vkVoidFunction)crash_diagnostic_layer::Intercept{vkcommand.name[2:]};\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             
         out.append('''
   // If the function was not found, just pass it down the chain to support
   // unregistered extensions, such as vkSwapchainCallbackEXT.
-  return (PFN_vkVoidFunction)graphics_flight_recorder::PassDeviceProcDownTheChain(dev, func);
+  return (PFN_vkVoidFunction)crash_diagnostic_layer::PassDeviceProcDownTheChain(dev, func);
 } // NOLINT(readability/fn_size)
 
-GFR_EXPORT VKAPI_ATTR VkResult VKAPI_CALL GFR_NegotiateLoaderLayerInterfaceVersion(
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL CDL_NegotiateLoaderLayerInterfaceVersion(
     VkNegotiateLayerInterface *pVersionStruct) {
   assert(pVersionStruct != NULL);
   assert(pVersionStruct->sType == LAYER_NEGOTIATE_INTERFACE_STRUCT);
   // Fill in the function pointers if our version is at least capable of having
   // the structure contain them.
   if (pVersionStruct->loaderLayerInterfaceVersion >= 2) {
-    pVersionStruct->pfnGetInstanceProcAddr = &GFR_GetInstanceProcAddr;
-    pVersionStruct->pfnGetDeviceProcAddr = &GFR_GetDeviceProcAddr;
+    pVersionStruct->pfnGetInstanceProcAddr = &CDL_GetInstanceProcAddr;
+    pVersionStruct->pfnGetDeviceProcAddr = &CDL_GetDeviceProcAddr;
     pVersionStruct->pfnGetPhysicalDeviceProcAddr = nullptr;
   }
   if (pVersionStruct->loaderLayerInterfaceVersion >

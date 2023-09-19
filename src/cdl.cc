@@ -15,7 +15,7 @@
  limitations under the License.
 */
 
-#include "gfr.h"
+#include "cdl.h"
 
 #if defined(WIN32)
 // For OutputDebugString
@@ -44,31 +44,31 @@
 #include <direct.h>
 #endif
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
-const char* kGfrVersion = "1.1.0";
+const char* kCdlVersion = "1.1.0";
 const char* kGpuHangDaemonSocketName = "/run/gpuhangd";
 
-const char* k_env_var_output_path = "GFR_OUTPUT_PATH";
-const char* k_env_var_output_name = "GFR_OUTPUT_NAME";
+const char* k_env_var_output_path = "CDL_OUTPUT_PATH";
+const char* k_env_var_output_name = "CDL_OUTPUT_NAME";
 
-const char* k_env_var_log_configs = "GFR_DEBUG_LOG_CONFIGS";
-const char* k_env_var_trace_on = "GFR_TRACE_ON";
-const char* k_env_var_debug_autodump = "GFR_AUTODUMP";
-const char* k_env_var_dump_all_command_buffers = "GFR_DUMP_ALL_COMMAND_BUFFERS";
-const char* k_env_var_track_semaphores = "GFR_TRACK_SEMAPHORES";
-const char* k_env_var_trace_all_semaphores = "GFR_TRACE_ALL_SEMAPHORES";
-const char* k_env_var_instrument_all_commands = "GFR_INSTRUMENT_ALL_COMMANDS";
+const char* k_env_var_log_configs = "CDL_DEBUG_LOG_CONFIGS";
+const char* k_env_var_trace_on = "CDL_TRACE_ON";
+const char* k_env_var_debug_autodump = "CDL_AUTODUMP";
+const char* k_env_var_dump_all_command_buffers = "CDL_DUMP_ALL_COMMAND_BUFFERS";
+const char* k_env_var_track_semaphores = "CDL_TRACK_SEMAPHORES";
+const char* k_env_var_trace_all_semaphores = "CDL_TRACE_ALL_SEMAPHORES";
+const char* k_env_var_instrument_all_commands = "CDL_INSTRUMENT_ALL_COMMANDS";
 
-const char* k_env_var_debug_shaders_dump = "GFR_SHADERS_DUMP";
-const char* k_env_var_debug_shaders_dump_on_crash = "GFR_SHADERS_DUMP_ON_CRASH";
-const char* k_env_var_debug_shaders_dump_on_bind = "GFR_SHADERS_DUMP_ON_BIND";
+const char* k_env_var_debug_shaders_dump = "CDL_SHADERS_DUMP";
+const char* k_env_var_debug_shaders_dump_on_crash = "CDL_SHADERS_DUMP_ON_CRASH";
+const char* k_env_var_debug_shaders_dump_on_bind = "CDL_SHADERS_DUMP_ON_BIND";
 
-const char* k_env_var_debug_buffers_dump_indirect = "GFR_BUFFERS_DUMP_INDIRECT";
+const char* k_env_var_debug_buffers_dump_indirect = "CDL_BUFFERS_DUMP_INDIRECT";
 
-const char* k_env_var_watchdog_timeout = "GFR_WATCHDOG_TIMEOUT_MS";
+const char* k_env_var_watchdog_timeout = "CDL_WATCHDOG_TIMEOUT_MS";
 
-const char* k_env_var_disable_driver_hang = "GFR_DISABLE_DRIVER_HANG";
+const char* k_env_var_disable_driver_hang = "CDL_DISABLE_DRIVER_HANG";
 
 constexpr int kMessageHangDetected = 0x8badf00d;
 
@@ -87,17 +87,17 @@ void MakeDir(const std::string& path) {
 #endif
 
   if (mkdir_result && EEXIST != errno) {
-    std::cerr << "GFR: Error creating output directory \'" << path
+    std::cerr << "CDL: Error creating output directory \'" << path
               << "\': " << strerror(errno) << std::endl;
   }
 }
 }  // namespace
 
 // =============================================================================
-// GfrContext
+// CdlContext
 // =============================================================================
-GfrContext::GfrContext() {
-  std::cerr << "GFR: Version " << kGfrVersion << " enabled." << std::endl;
+CdlContext::CdlContext() {
+  std::cerr << "CDL: Version " << kCdlVersion << " enabled." << std::endl;
   // output path
   {
     char* p_env_value = getenv(k_env_var_output_path);
@@ -115,7 +115,7 @@ GfrContext::GfrContext() {
 #endif
 
       output_path_ += k_path_separator;
-      output_path_ += +"gfr";
+      output_path_ += +"cdl";
       output_path_ += k_path_separator;
     }
 
@@ -139,7 +139,7 @@ GfrContext::GfrContext() {
     }
   }
 
-  // report gfr configs
+  // report cdl configs
   {
     char* p_env_value = getenv(k_env_var_log_configs);
     log_configs_ = (p_env_value != nullptr) && (std::atol(p_env_value) == 1);
@@ -192,7 +192,7 @@ GfrContext::GfrContext() {
 
     if (watchdog_timer_ms_ > 0) {
       StartWatchdogTimer();
-      std::cerr << "GFR: Begin Watchdog: " << watchdog_timer_ms_ << "ms"
+      std::cerr << "CDL: Begin Watchdog: " << watchdog_timer_ms_ << "ms"
                 << std::endl;
     }
   }
@@ -204,19 +204,19 @@ GfrContext::GfrContext() {
 
     if (!disable_driver_hang_thread) {
       StartGpuHangdListener();
-      std::cerr << "GFR: gpuhangd listener started: "
+      std::cerr << "CDL: gpuhangd listener started: "
                 << kGpuHangDaemonSocketName << std::endl;
     }
   }
 }
 
-GfrContext::~GfrContext() {
+CdlContext::~CdlContext() {
   StopWatchdogTimer();
   StopGpuHangdListener();
 }
 
 template <class T>
-void GfrContext::GetEnvVal(const char* name, T* value) {
+void CdlContext::GetEnvVal(const char* name, T* value) {
   char* p_env_value = getenv(name);
   if (p_env_value) {
     if (log_configs_) {
@@ -230,23 +230,23 @@ void GfrContext::GetEnvVal(const char* name, T* value) {
   }
 }
 
-void GfrContext::StartWatchdogTimer() {
+void CdlContext::StartWatchdogTimer() {
   // Start up the watchdog timer thread.
   watchdog_running_ = true;
   watchdog_thread_ =
       std::make_unique<std::thread>([&]() { this->WatchdogTimer(); });
 }
 
-void GfrContext::StopWatchdogTimer() {
+void CdlContext::StopWatchdogTimer() {
   if (watchdog_running_ && watchdog_thread_->joinable()) {
-    std::cerr << "GFR: Stopping Watchdog" << std::endl;
+    std::cerr << "CDL: Stopping Watchdog" << std::endl;
     watchdog_running_ = false;  // TODO: condition variable that waits
     watchdog_thread_->join();
-    std::cerr << "GFR: Watchdog Stopped" << std::endl;
+    std::cerr << "CDL: Watchdog Stopped" << std::endl;
   }
 }
 
-void GfrContext::WatchdogTimer() {
+void CdlContext::WatchdogTimer() {
   uint64_t test_interval_us =
       std::min((uint64_t)(1000 * 1000), watchdog_timer_ms_ * 500);
   while (watchdog_running_) {
@@ -259,7 +259,7 @@ void GfrContext::WatchdogTimer() {
     auto ms = (int64_t)(now - last_submit_time_);
 
     if (ms > (int64_t)watchdog_timer_ms_) {
-      std::cout << "GFR: Watchdog check failed, no submit in " << ms << "ms"
+      std::cout << "CDL: Watchdog check failed, no submit in " << ms << "ms"
                 << std::endl;
 
       DumpAllDevicesExecutionState(CrashSource::kWatchdogTimer);
@@ -273,7 +273,7 @@ void GfrContext::WatchdogTimer() {
   }
 }
 
-void GfrContext::StartGpuHangdListener() {
+void CdlContext::StartGpuHangdListener() {
 #ifdef __linux__
   // Start up the hang deamon thread.
   gpuhangd_thread_ =
@@ -281,24 +281,24 @@ void GfrContext::StartGpuHangdListener() {
 #endif  // __linux__
 }
 
-void GfrContext::StopGpuHangdListener() {
+void CdlContext::StopGpuHangdListener() {
 #ifdef __linux__
   if (gpuhangd_thread_ && gpuhangd_thread_->joinable()) {
-    std::cerr << "GFR: Stopping Listener" << std::endl;
+    std::cerr << "CDL: Stopping Listener" << std::endl;
     if (gpuhangd_socket_ >= 0) {
       shutdown(gpuhangd_socket_, SHUT_RDWR);
     }
     gpuhangd_thread_->join();
-    std::cerr << "GFR: Listener Stopped" << std::endl;
+    std::cerr << "CDL: Listener Stopped" << std::endl;
   }
 #endif  // __linux__
 }
 
-void GfrContext::GpuHangdListener() {
+void CdlContext::GpuHangdListener() {
 #ifdef __linux__
   gpuhangd_socket_ = socket(AF_LOCAL, SOCK_STREAM, 0);
   if (gpuhangd_socket_ < 0) {
-    std::cerr << "GFR: Could not create socket: " << strerror(errno)
+    std::cerr << "CDL: Could not create socket: " << strerror(errno)
               << std::endl;
     return;
   }
@@ -312,7 +312,7 @@ void GfrContext::GpuHangdListener() {
   int connect_ret = connect(gpuhangd_socket_, (const struct sockaddr*)&addr,
                             sizeof(struct sockaddr_un));
   if (connect_ret < 0) {
-    std::cerr << "GFR: Could not connect socket: " << strerror(errno)
+    std::cerr << "CDL: Could not connect socket: " << strerror(errno)
               << std::endl;
     return;
   }
@@ -321,22 +321,22 @@ void GfrContext::GpuHangdListener() {
     int msg = 0;
     int read_ret = read(gpuhangd_socket_, &msg, sizeof(int));
     if (read_ret < 0) {
-      std::cerr << "GFR: Could not read socket: " << strerror(errno)
+      std::cerr << "CDL: Could not read socket: " << strerror(errno)
                 << std::endl;
       break;
     } else if (0 == read_ret) {
-      std::cerr << "GFR: Socket closed\n" << std::endl;
+      std::cerr << "CDL: Socket closed\n" << std::endl;
       break;
     }
 
     if (kMessageHangDetected == msg) {
-      std::cerr << "GFR: Driver signalled a hang." << std::endl;
+      std::cerr << "CDL: Driver signalled a hang." << std::endl;
       read_ret = read(gpuhangd_socket_, &gpuhang_event_id_, sizeof(int));
       if (read_ret > 0) {
-        std::cerr << "GFR: Hang event ID: " << gpuhang_event_id_ << std::endl;
+        std::cerr << "CDL: Hang event ID: " << gpuhang_event_id_ << std::endl;
       } else {
         std::cerr
-            << "GFR Warning: Hang event ID not received from the hang daemon."
+            << "CDL Warning: Hang event ID not received from the hang daemon."
             << std::endl;
       }
       DumpAllDevicesExecutionState(CrashSource::kHangDaemon);
@@ -345,19 +345,19 @@ void GfrContext::GpuHangdListener() {
 #endif  // __linux__
 }
 
-void GfrContext::PreApiFunction(const char* api_name) {
+void CdlContext::PreApiFunction(const char* api_name) {
   if (trace_all_) {
     std::cout << "> " << api_name << std::endl;
   }
 }
 
-void GfrContext::PostApiFunction(const char* api_name) {
+void CdlContext::PostApiFunction(const char* api_name) {
   if (trace_all_) {
     std::cout << "< " << api_name << std::endl;
   }
 }
 
-const VkInstanceCreateInfo* GfrContext::GetModifiedInstanceCreateInfo(
+const VkInstanceCreateInfo* CdlContext::GetModifiedInstanceCreateInfo(
     const VkInstanceCreateInfo* pCreateInfo) {
   instance_create_info_ = *pCreateInfo;
   instance_extension_names_.assign(pCreateInfo->ppEnabledExtensionNames,
@@ -430,7 +430,7 @@ void TryAddDeviceExtension(
   enabled_extensions.push_back(extension_name);
 }
 
-const VkDeviceCreateInfo* GfrContext::GetModifiedDeviceCreateInfo(
+const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(
     VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo) {
   // Get the list of device extensions.
   uint32_t extension_count = 0;
@@ -479,7 +479,7 @@ const VkDeviceCreateInfo* GfrContext::GetModifiedDeviceCreateInfo(
                         &buffer_marker_enabled_, &buffer_marker_added_);
 
   if (!buffer_marker_enabled_) {
-    std::cerr << "GFR Warning: No VK_AMD_buffer_marker extension, "
+    std::cerr << "CDL Warning: No VK_AMD_buffer_marker extension, "
                  "progression tracking will be disabled. "
               << std::endl;
   }
@@ -490,7 +490,7 @@ const VkDeviceCreateInfo* GfrContext::GetModifiedDeviceCreateInfo(
                         &device_coherent_enabled_, &device_coherent_added_);
 
   if (!device_coherent_enabled_) {
-    std::cerr << "GFR Warning: No VK_AMD_device_coherent_memory extension, "
+    std::cerr << "CDL Warning: No VK_AMD_device_coherent_memory extension, "
                  "results may not be as accurate as possible."
               << std::endl;
   }
@@ -524,15 +524,15 @@ const VkDeviceCreateInfo* GfrContext::GetModifiedDeviceCreateInfo(
   return p_modified_create_info;
 }
 
-bool GfrContext::DumpShadersOnCrash() const {
+bool CdlContext::DumpShadersOnCrash() const {
   return debug_dump_shaders_on_crash_;
 }
 
-bool GfrContext::DumpShadersOnBind() const {
+bool CdlContext::DumpShadersOnBind() const {
   return debug_dump_shaders_on_bind_;
 }
 
-void GfrContext::AddObjectInfo(VkDevice device, uint64_t handle,
+void CdlContext::AddObjectInfo(VkDevice device, uint64_t handle,
                                ObjectInfoPtr info) {
   std::lock_guard<std::mutex> lock(devices_mutex_);
   if (devices_.find(device) != devices_.end()) {
@@ -540,7 +540,7 @@ void GfrContext::AddObjectInfo(VkDevice device, uint64_t handle,
   }
 }
 
-std::string GfrContext::GetObjectName(VkDevice vk_device, uint64_t handle) {
+std::string CdlContext::GetObjectName(VkDevice vk_device, uint64_t handle) {
   std::lock_guard<std::mutex> lock(devices_mutex_);
   if (devices_.find(vk_device) != devices_.end()) {
     return devices_[vk_device]->GetObjectName(handle);
@@ -548,7 +548,7 @@ std::string GfrContext::GetObjectName(VkDevice vk_device, uint64_t handle) {
   return Uint64ToStr(handle);
 }
 
-std::string GfrContext::GetObjectInfo(VkDevice vk_device, uint64_t handle) {
+std::string CdlContext::GetObjectInfo(VkDevice vk_device, uint64_t handle) {
   std::lock_guard<std::mutex> lock(devices_mutex_);
   if (devices_.find(vk_device) != devices_.end()) {
     return devices_[vk_device]->GetObjectInfo(handle);
@@ -556,7 +556,7 @@ std::string GfrContext::GetObjectInfo(VkDevice vk_device, uint64_t handle) {
   return Uint64ToStr(handle);
 }
 
-void GfrContext::DumpAllDevicesExecutionState(CrashSource crash_source) {
+void CdlContext::DumpAllDevicesExecutionState(CrashSource crash_source) {
   std::lock_guard<std::mutex> lock(devices_mutex_);
   bool dump_prologue = true;
   std::stringstream os;
@@ -568,7 +568,7 @@ void GfrContext::DumpAllDevicesExecutionState(CrashSource crash_source) {
   WriteReport(os, crash_source);
 }
 
-void GfrContext::DumpDeviceExecutionState(
+void CdlContext::DumpDeviceExecutionState(
     VkDevice vk_device, bool dump_prologue = true,
     CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
   std::lock_guard<std::mutex> lock(devices_mutex_);
@@ -578,13 +578,13 @@ void GfrContext::DumpDeviceExecutionState(
   }
 }
 
-void GfrContext::DumpDeviceExecutionState(
+void CdlContext::DumpDeviceExecutionState(
     const Device* device, bool dump_prologue = true,
     CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
   DumpDeviceExecutionState(device, {}, dump_prologue, crash_source, os);
 }
 
-void GfrContext::DumpDeviceExecutionState(
+void CdlContext::DumpDeviceExecutionState(
     const Device* device, std::string error_report, bool dump_prologue = true,
     CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
   if (!device) {
@@ -625,7 +625,7 @@ void GfrContext::DumpDeviceExecutionState(
   }
 }
 
-void GfrContext::DumpDeviceExecutionStateValidationFailed(const Device* device,
+void CdlContext::DumpDeviceExecutionStateValidationFailed(const Device* device,
                                                           std::ostream& os) {
   // We force all command buffers to dump here because validation can be
   // from a race condition and the GPU can complete work by the time we've
@@ -640,9 +640,9 @@ void GfrContext::DumpDeviceExecutionStateValidationFailed(const Device* device,
   debug_dump_all_command_buffers_ = dump_all;
 }
 
-void GfrContext::DumpReportPrologue(std::ostream& os, const Device* device) {
+void CdlContext::DumpReportPrologue(std::ostream& os, const Device* device) {
   os << "#----------------------------------------------------------------\n";
-  os << "#-                    GRAPHICS FLIGHT RECORDER                  -\n";
+  os << "#-                    CRASH DIAGNOSTIC LAYER                    -\n";
   os << "#----------------------------------------------------------------\n";
 
 #ifdef __linux__
@@ -656,7 +656,7 @@ void GfrContext::DumpReportPrologue(std::ostream& os, const Device* device) {
 
   const char* t = "\n  ";
   const char* tt = "\n    ";
-  os << "GFRInfo:" << t << "version: " << kGfrVersion << t << "date: \""
+  os << "CDLInfo:" << t << "version: " << kCdlVersion << t << "date: \""
      << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X") << "\"";
   if (log_configs_) {
     os << t << "envVars:";
@@ -691,17 +691,17 @@ void GfrContext::DumpReportPrologue(std::ostream& os, const Device* device) {
   os << "\n";
 }
 
-void GfrContext::WriteReport(std::ostream& os, CrashSource crash_source) {
+void CdlContext::WriteReport(std::ostream& os, CrashSource crash_source) {
   // Make sure our output directory exists.
   MakeOutputPath();
 
   // now write our log.
   std::stringstream ss_path;
 
-  // Keep the first log as gfr.log then add a number if more than one log is
+  // Keep the first log as cdl.log then add a number if more than one log is
   // generated. Multiple logs are a new feature and we want to keep backward
   // compatiblity for now.
-  std::string output_name = "gfr";
+  std::string output_name = "cdl";
   if (output_name_.size() > 0) {
     output_name = output_name_;
   }
@@ -725,14 +725,14 @@ void GfrContext::WriteReport(std::ostream& os, CrashSource crash_source) {
 
 #if !defined(WIN32)
   // Create a symlink from the generated log file.
-  std::string symlink_path = base_output_path_ + "gfr.log.symlink";
+  std::string symlink_path = base_output_path_ + "cdl.log.symlink";
   remove(symlink_path.c_str());
   symlink(output_path.c_str(), symlink_path.c_str());
 #endif
 
   std::stringstream ss;
   ss << "----------------------------------------------------------------\n";
-  ss << "- GRAPHICS FLIGHT RECORDER - ERROR DETECTED                    -\n";
+  ss << "- CRASH DIAGNOSTIC LAYER - ERROR DETECTED                      -\n";
   ss << "----------------------------------------------------------------\n";
   ss << "\n";
   ss << "Output written to: " << output_path << "\n";
@@ -748,7 +748,7 @@ void GfrContext::WriteReport(std::ostream& os, CrashSource crash_source) {
 #endif
 }
 
-VkCommandPool GfrContext::GetHelperCommandPool(VkDevice vk_device,
+VkCommandPool CdlContext::GetHelperCommandPool(VkDevice vk_device,
                                                VkQueue vk_queue) {
   assert(track_semaphores_ == true);
   if (vk_device == VK_NULL_HANDLE || vk_queue == VK_NULL_HANDLE) {
@@ -760,7 +760,7 @@ VkCommandPool GfrContext::GetHelperCommandPool(VkDevice vk_device,
   return devices_[vk_device]->GetHelperCommandPool(queue_family_index);
 }
 
-SubmitInfoId GfrContext::RegisterSubmitInfo(
+SubmitInfoId CdlContext::RegisterSubmitInfo(
     VkDevice vk_device, QueueSubmitId queue_submit_id,
     const VkSubmitInfo* vk_submit_info) {
   assert(track_semaphores_ == true);
@@ -771,7 +771,7 @@ SubmitInfoId GfrContext::RegisterSubmitInfo(
   return submit_info_id;
 }
 
-void GfrContext::StoreSubmitHelperCommandBuffersInfo(
+void CdlContext::StoreSubmitHelperCommandBuffersInfo(
     VkDevice vk_device, SubmitInfoId submit_info_id, VkCommandPool vk_pool,
     VkCommandBuffer start_marker_cb, VkCommandBuffer end_marker_cb) {
   assert(track_semaphores_ == true);
@@ -780,7 +780,7 @@ void GfrContext::StoreSubmitHelperCommandBuffersInfo(
       submit_info_id, vk_pool, start_marker_cb, end_marker_cb);
 }
 
-void GfrContext::RecordSubmitStart(VkDevice vk_device, QueueSubmitId qsubmit_id,
+void CdlContext::RecordSubmitStart(VkDevice vk_device, QueueSubmitId qsubmit_id,
                                    SubmitInfoId submit_info_id,
                                    VkCommandBuffer vk_command_buffer) {
   assert(track_semaphores_ == true);
@@ -789,7 +789,7 @@ void GfrContext::RecordSubmitStart(VkDevice vk_device, QueueSubmitId qsubmit_id,
       qsubmit_id, submit_info_id, vk_command_buffer);
 }
 
-void GfrContext::RecordSubmitFinish(VkDevice vk_device,
+void CdlContext::RecordSubmitFinish(VkDevice vk_device,
                                     QueueSubmitId qsubmit_id,
                                     SubmitInfoId submit_info_id,
                                     VkCommandBuffer vk_command_buffer) {
@@ -801,7 +801,7 @@ void GfrContext::RecordSubmitFinish(VkDevice vk_device,
   submit_tracker->CleanupSubmitInfos();
 }
 
-void GfrContext::LogSubmitInfoSemaphores(VkDevice vk_device, VkQueue vk_queue,
+void CdlContext::LogSubmitInfoSemaphores(VkDevice vk_device, VkQueue vk_queue,
                                          SubmitInfoId submit_info_id) {
   assert(track_semaphores_ == true);
   assert(trace_all_semaphores_ == true);
@@ -813,7 +813,7 @@ void GfrContext::LogSubmitInfoSemaphores(VkDevice vk_device, VkQueue vk_queue,
   }
 }
 
-void GfrContext::RecordBindSparseHelperSubmit(
+void CdlContext::RecordBindSparseHelperSubmit(
     VkDevice vk_device, QueueBindSparseId qbind_sparse_id,
     const VkSubmitInfo* vk_submit_info, VkCommandPool vk_pool) {
   assert(track_semaphores_ == true);
@@ -824,18 +824,18 @@ void GfrContext::RecordBindSparseHelperSubmit(
                                                vk_pool);
 }
 
-VkDevice GfrContext::GetQueueDevice(VkQueue queue) const {
+VkDevice CdlContext::GetQueueDevice(VkQueue queue) const {
   std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
   auto it = queue_device_tracker_.find(queue);
   if (it == queue_device_tracker_.end()) {
-    std::cerr << "GFR Warning: queue " << std::hex << (uint64_t)(queue)
+    std::cerr << "CDL Warning: queue " << std::hex << (uint64_t)(queue)
               << std::dec << "cannot be linked to any device." << std::endl;
     return VK_NULL_HANDLE;
   }
   return it->second;
 }
 
-bool GfrContext::ShouldExpandQueueBindSparseToTrackSemaphores(
+bool CdlContext::ShouldExpandQueueBindSparseToTrackSemaphores(
     PackedBindSparseInfo* packed_bind_sparse_info) {
   assert(track_semaphores_ == true);
   VkDevice vk_device = GetQueueDevice(packed_bind_sparse_info->queue);
@@ -847,12 +847,12 @@ bool GfrContext::ShouldExpandQueueBindSparseToTrackSemaphores(
       packed_bind_sparse_info);
 }
 
-void GfrContext::ExpandBindSparseInfo(
+void CdlContext::ExpandBindSparseInfo(
     ExpandedBindSparseInfo* bind_sparse_expand_info) {
   return BindSparseUtils::ExpandBindSparseInfo(bind_sparse_expand_info);
 }
 
-void GfrContext::LogBindSparseInfosSemaphores(
+void CdlContext::LogBindSparseInfosSemaphores(
     VkQueue vk_queue, uint32_t bind_info_count,
     const VkBindSparseInfo* bind_infos) {
   assert(track_semaphores_ == true);
@@ -872,7 +872,7 @@ void GfrContext::LogBindSparseInfosSemaphores(
 // Define pre / post intercepted commands
 // =============================================================================
 
-VkResult GfrContext::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
+VkResult CdlContext::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
                                        const VkAllocationCallbacks* pAllocator,
                                        VkInstance* pInstance) {
   // Setup debug flags
@@ -890,13 +890,13 @@ VkResult GfrContext::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
   return VK_SUCCESS;
 }
 
-VkResult GfrContext::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
+VkResult CdlContext::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
                                         const VkAllocationCallbacks* pAllocator,
                                         VkInstance* pInstance,
                                         VkResult result) {
   vk_instance_ = *pInstance;
   auto instance_layer_data =
-      GetInstanceLayerData(graphics_flight_recorder::DataKey(vk_instance_));
+      GetInstanceLayerData(crash_diagnostic_layer::DataKey(vk_instance_));
   instance_dispatch_table_ = instance_layer_data->dispatch_table;
 
   if (pCreateInfo->pApplicationInfo) {
@@ -923,7 +923,7 @@ VkResult GfrContext::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
 
 // TODO(b/141996712): extensions should be down at the intercept level, not
 // pre/post OR intercept should always extend/copy list
-VkResult GfrContext::PostCreateDevice(VkPhysicalDevice physicalDevice,
+VkResult CdlContext::PostCreateDevice(VkPhysicalDevice physicalDevice,
                                       const VkDeviceCreateInfo* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator,
                                       VkDevice* pDevice, VkResult callResult) {
@@ -957,8 +957,8 @@ VkResult GfrContext::PostCreateDevice(VkPhysicalDevice physicalDevice,
     // Create a helper command pool per queue family index. This command pool
     // will be used for allocating command buffers that track the state of
     // submit and semaphores.
-    auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
-                              graphics_flight_recorder::DataKey(vk_device))
+    auto dispatch_table = crash_diagnostic_layer::GetDeviceLayerData(
+                              crash_diagnostic_layer::DataKey(vk_device))
                               ->dispatch_table;
     VkCommandPoolCreateInfo command_pool_create_info = {};
     command_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -972,7 +972,7 @@ VkResult GfrContext::PostCreateDevice(VkPhysicalDevice physicalDevice,
           vk_device, &command_pool_create_info, nullptr, &command_pool);
       if (res != VK_SUCCESS) {
         std::cerr
-            << "GFR Warning: failed to create command pools for helper command "
+            << "CDL Warning: failed to create command pools for helper command "
                "buffers. VkDevice: 0x"
             << std::hex << (uint64_t)(vk_device) << std::dec
             << ", queueFamilyIndex: " << queue_family_index;
@@ -987,11 +987,11 @@ VkResult GfrContext::PostCreateDevice(VkPhysicalDevice physicalDevice,
   return VK_SUCCESS;
 }
 
-void GfrContext::PreDestroyDevice(VkDevice device,
+void CdlContext::PreDestroyDevice(VkDevice device,
                                   const VkAllocationCallbacks* pAllocator) {
   if (track_semaphores_) {
-    auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
-                              graphics_flight_recorder::DataKey(device))
+    auto dispatch_table = crash_diagnostic_layer::GetDeviceLayerData(
+                              crash_diagnostic_layer::DataKey(device))
                               ->dispatch_table;
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto command_pools = devices_[device]->ReturnAndEraseCommandPools();
@@ -1001,7 +1001,7 @@ void GfrContext::PreDestroyDevice(VkDevice device,
   }
 }
 
-void GfrContext::PostDestroyDevice(VkDevice device,
+void CdlContext::PostDestroyDevice(VkDevice device,
                                    const VkAllocationCallbacks* pAllocator) {
   std::lock_guard<std::mutex> lock(devices_mutex_);
 
@@ -1011,7 +1011,7 @@ void GfrContext::PostDestroyDevice(VkDevice device,
   }
 }
 
-void GfrContext::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex,
+void CdlContext::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex,
                                     uint32_t queueIndex, VkQueue* pQueue) {
   {
     std::lock_guard<std::mutex> lock(devices_mutex_);
@@ -1021,7 +1021,7 @@ void GfrContext::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex,
   queue_device_tracker_[*pQueue] = device;
 }
 
-void GfrContext::PostGetDeviceQueue2(VkDevice device,
+void CdlContext::PostGetDeviceQueue2(VkDevice device,
                                      const VkDeviceQueueInfo2 *pQueueInfo,
                                      VkQueue *pQueue) {
   {
@@ -1033,7 +1033,7 @@ void GfrContext::PostGetDeviceQueue2(VkDevice device,
   queue_device_tracker_[*pQueue] = device;
 }
 
-VkResult GfrContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount,
+VkResult CdlContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount,
                                     const VkSubmitInfo* pSubmits,
                                     VkFence fence) {
   last_submit_time_ =
@@ -1046,7 +1046,7 @@ VkResult GfrContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount,
     for (uint32_t command_buffer_index = 0;
          command_buffer_index < submit_info.commandBufferCount;
          ++command_buffer_index) {
-      auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(
+      auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(
           submit_info.pCommandBuffers[command_buffer_index]);
       if (p_cmd != nullptr) {
         p_cmd->QueueSubmit(queue, fence);
@@ -1057,7 +1057,7 @@ VkResult GfrContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount,
   return VK_SUCCESS;
 }
 
-VkResult GfrContext::PreQueueSubmit2(VkQueue queue, uint32_t submitCount,
+VkResult CdlContext::PreQueueSubmit2(VkQueue queue, uint32_t submitCount,
                                      const VkSubmitInfo2 *pSubmits,
                                      VkFence fence) {
   last_submit_time_ =
@@ -1070,7 +1070,7 @@ VkResult GfrContext::PreQueueSubmit2(VkQueue queue, uint32_t submitCount,
     for (uint32_t command_buffer_index = 0;
          command_buffer_index < submit_info.commandBufferInfoCount;
          ++command_buffer_index) {
-      auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(
+      auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(
           submit_info.pCommandBufferInfos[command_buffer_index].commandBuffer);
       if (p_cmd != nullptr) {
         p_cmd->QueueSubmit(queue, fence);
@@ -1081,19 +1081,19 @@ VkResult GfrContext::PreQueueSubmit2(VkQueue queue, uint32_t submitCount,
   return VK_SUCCESS;
 }
 
-VkResult GfrContext::PreQueueSubmit2KHR(VkQueue queue, uint32_t submitCount,
+VkResult CdlContext::PreQueueSubmit2KHR(VkQueue queue, uint32_t submitCount,
                                         const VkSubmitInfo2 *pSubmits,
                                         VkFence fence) {
   return PreQueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
-// Return true if this is a VkResult that GFR considers an error.
+// Return true if this is a VkResult that CDL considers an error.
 bool IsVkError(VkResult result) {
   return result == VK_ERROR_DEVICE_LOST ||
          result == VK_ERROR_INITIALIZATION_FAILED;
 }
 
-VkResult GfrContext::PostQueueSubmit(VkQueue queue, uint32_t submitCount,
+VkResult CdlContext::PostQueueSubmit(VkQueue queue, uint32_t submitCount,
                                      const VkSubmitInfo* pSubmits,
                                      VkFence fence, VkResult result) {
   total_submits_++;
@@ -1108,7 +1108,7 @@ VkResult GfrContext::PostQueueSubmit(VkQueue queue, uint32_t submitCount,
   return result;
 }
 
-VkResult GfrContext::PostQueueSubmit2(VkQueue queue, uint32_t submitCount,
+VkResult CdlContext::PostQueueSubmit2(VkQueue queue, uint32_t submitCount,
                                       const VkSubmitInfo2 *pSubmits,
                                       VkFence fence, VkResult result) {
   total_submits_++;
@@ -1123,13 +1123,13 @@ VkResult GfrContext::PostQueueSubmit2(VkQueue queue, uint32_t submitCount,
   return result;
 }
 
-VkResult GfrContext::PostQueueSubmit2KHR(VkQueue queue, uint32_t submitCount,
+VkResult CdlContext::PostQueueSubmit2KHR(VkQueue queue, uint32_t submitCount,
                                          const VkSubmitInfo2 *pSubmits,
                                          VkFence fence, VkResult result) {
   return PostQueueSubmit2(queue, submitCount, pSubmits, fence, result);
 }
 
-VkResult GfrContext::PostDeviceWaitIdle(VkDevice device, VkResult result) {
+VkResult CdlContext::PostDeviceWaitIdle(VkDevice device, VkResult result) {
   PostApiFunction("vkDeviceWaitIdle");
 
   if (IsVkError(result)) {
@@ -1139,7 +1139,7 @@ VkResult GfrContext::PostDeviceWaitIdle(VkDevice device, VkResult result) {
   return result;
 }
 
-VkResult GfrContext::PostQueueWaitIdle(VkQueue queue, VkResult result) {
+VkResult CdlContext::PostQueueWaitIdle(VkQueue queue, VkResult result) {
   PostApiFunction("vkQueueWaitIdle");
 
   if (IsVkError(result)) {
@@ -1149,7 +1149,7 @@ VkResult GfrContext::PostQueueWaitIdle(VkQueue queue, VkResult result) {
   return result;
 }
 
-VkResult GfrContext::PostQueuePresentKHR(VkQueue queue,
+VkResult CdlContext::PostQueuePresentKHR(VkQueue queue,
                                          VkPresentInfoKHR const* pPresentInfo,
                                          VkResult result) {
   PostApiFunction("vkQueuePresentKHR");
@@ -1161,7 +1161,7 @@ VkResult GfrContext::PostQueuePresentKHR(VkQueue queue,
   return result;
 }
 
-VkResult GfrContext::PostQueueBindSparse(VkQueue queue, uint32_t bindInfoCount,
+VkResult CdlContext::PostQueueBindSparse(VkQueue queue, uint32_t bindInfoCount,
                                          VkBindSparseInfo const* pBindInfo,
                                          VkFence fence, VkResult result) {
   PostApiFunction("vkQueueBindSparse");
@@ -1173,7 +1173,7 @@ VkResult GfrContext::PostQueueBindSparse(VkQueue queue, uint32_t bindInfoCount,
   return result;
 }
 
-VkResult GfrContext::PostWaitForFences(VkDevice device, uint32_t fenceCount,
+VkResult CdlContext::PostWaitForFences(VkDevice device, uint32_t fenceCount,
                                        VkFence const* pFences, VkBool32 waitAll,
                                        uint64_t timeout, VkResult result) {
   PostApiFunction("vkWaitForFences");
@@ -1185,7 +1185,7 @@ VkResult GfrContext::PostWaitForFences(VkDevice device, uint32_t fenceCount,
   return result;
 }
 
-VkResult GfrContext::PostGetFenceStatus(VkDevice device, VkFence fence,
+VkResult CdlContext::PostGetFenceStatus(VkDevice device, VkFence fence,
                                         VkResult result) {
   PostApiFunction("vkGetFenceStatus");
 
@@ -1196,7 +1196,7 @@ VkResult GfrContext::PostGetFenceStatus(VkDevice device, VkFence fence,
   return result;
 }
 
-VkResult GfrContext::PostGetQueryPoolResults(
+VkResult CdlContext::PostGetQueryPoolResults(
     VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
     uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride,
     VkQueryResultFlags flags, VkResult result) {
@@ -1209,7 +1209,7 @@ VkResult GfrContext::PostGetQueryPoolResults(
   return result;
 }
 
-VkResult GfrContext::PostAcquireNextImageKHR(
+VkResult CdlContext::PostAcquireNextImageKHR(
     VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
     VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex,
     VkResult result) {
@@ -1222,7 +1222,7 @@ VkResult GfrContext::PostAcquireNextImageKHR(
   return result;
 }
 
-VkResult GfrContext::PostCreateShaderModule(
+VkResult CdlContext::PostCreateShaderModule(
     VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule,
     VkResult callResult) {
@@ -1235,14 +1235,14 @@ VkResult GfrContext::PostCreateShaderModule(
   return callResult;
 }
 
-void GfrContext::PostDestroyShaderModule(
+void CdlContext::PostDestroyShaderModule(
     VkDevice device, VkShaderModule shaderModule,
     const VkAllocationCallbacks* pAllocator) {
   std::lock_guard<std::mutex> lock(devices_mutex_);
   devices_[device]->DeleteShaderModule(shaderModule);
 }
 
-VkResult GfrContext::PostCreateGraphicsPipelines(
+VkResult CdlContext::PostCreateGraphicsPipelines(
     VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount,
     const VkGraphicsPipelineCreateInfo* pCreateInfos,
     const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines,
@@ -1255,7 +1255,7 @@ VkResult GfrContext::PostCreateGraphicsPipelines(
   return callResult;
 }
 
-VkResult GfrContext::PostCreateComputePipelines(
+VkResult CdlContext::PostCreateComputePipelines(
     VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount,
     const VkComputePipelineCreateInfo* pCreateInfos,
     const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines,
@@ -1268,14 +1268,14 @@ VkResult GfrContext::PostCreateComputePipelines(
   return callResult;
 }
 
-void GfrContext::PostDestroyPipeline(VkDevice device, VkPipeline pipeline,
+void CdlContext::PostDestroyPipeline(VkDevice device, VkPipeline pipeline,
                                      const VkAllocationCallbacks* pAllocator) {
   std::lock_guard<std::mutex> lock(devices_mutex_);
   Device* p_device = devices_[device].get();
   p_device->DeletePipeline(pipeline);
 }
 
-VkResult GfrContext::PostCreateCommandPool(
+VkResult CdlContext::PostCreateCommandPool(
     VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool,
     VkResult callResult) {
@@ -1290,7 +1290,7 @@ VkResult GfrContext::PostCreateCommandPool(
   return callResult;
 }
 
-void GfrContext::PreDestroyCommandPool(
+void CdlContext::PreDestroyCommandPool(
     VkDevice device, VkCommandPool commandPool,
     const VkAllocationCallbacks* pAllocator) {
   PreApiFunction("vkDestroyCommandPool");
@@ -1303,7 +1303,7 @@ void GfrContext::PreDestroyCommandPool(
   }
 }
 
-void GfrContext::PostDestroyCommandPool(
+void CdlContext::PostDestroyCommandPool(
     VkDevice device, VkCommandPool commandPool,
     const VkAllocationCallbacks* pAllocator) {
   PostApiFunction("vkDestroyCommandPool");
@@ -1312,7 +1312,7 @@ void GfrContext::PostDestroyCommandPool(
   devices_[device]->DeleteCommandPool(commandPool);
 }
 
-VkResult GfrContext::PreResetCommandPool(VkDevice device,
+VkResult CdlContext::PreResetCommandPool(VkDevice device,
                                          VkCommandPool commandPool,
                                          VkCommandPoolResetFlags flags) {
   PreApiFunction("vkResetCommandPool");
@@ -1326,7 +1326,7 @@ VkResult GfrContext::PreResetCommandPool(VkDevice device,
   return VK_SUCCESS;
 }
 
-VkResult GfrContext::PostResetCommandPool(VkDevice device,
+VkResult CdlContext::PostResetCommandPool(VkDevice device,
                                           VkCommandPool commandPool,
                                           VkCommandPoolResetFlags flags,
                                           VkResult callResult) {
@@ -1338,7 +1338,7 @@ VkResult GfrContext::PostResetCommandPool(VkDevice device,
   return callResult;
 }
 
-VkResult GfrContext::PostAllocateCommandBuffers(
+VkResult CdlContext::PostAllocateCommandBuffers(
     VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo,
     VkCommandBuffer* pCommandBuffers, VkResult callResult) {
   if (callResult == VK_SUCCESS) {
@@ -1360,14 +1360,14 @@ VkResult GfrContext::PostAllocateCommandBuffers(
           p_device, vk_pool, vk_cmd, pAllocateInfo, has_buffer_markers);
       cmd->SetInstrumentAllCommands(instrument_all_commands_);
 
-      graphics_flight_recorder::SetGfrCommandBuffer(vk_cmd, std::move(cmd));
+      crash_diagnostic_layer::SetCdlCommandBuffer(vk_cmd, std::move(cmd));
       p_device->AddCommandBuffer(vk_cmd);
     }
   }
   return callResult;
 }
 
-void GfrContext::PostFreeCommandBuffers(
+void CdlContext::PostFreeCommandBuffers(
     VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
     const VkCommandBuffer* pCommandBuffers) {
   PostApiFunction("vkFreeCommandBuffers");
@@ -1391,14 +1391,14 @@ void GfrContext::PostFreeCommandBuffers(
   devices_[device]->DeleteCommandBuffers(pCommandBuffers, commandBufferCount);
 }
 
-void GfrContext::MakeOutputPath() {
+void CdlContext::MakeOutputPath() {
   if (!output_path_created_) {
     output_path_created_ = true;
     MakeDir(output_path_);
   }
 }
 
-VkResult GfrContext::PostCreateSemaphore(
+VkResult CdlContext::PostCreateSemaphore(
     VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
     const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore,
     VkResult result) {
@@ -1420,7 +1420,7 @@ VkResult GfrContext::PostCreateSemaphore(
     }
     if (trace_all_semaphores_) {
       std::stringstream log;
-      log << "[GFR] Semaphore created. VkDevice:"
+      log << "[CDL] Semaphore created. VkDevice:"
           << GetObjectName(device, (uint64_t)device) << ", VkSemaphore: "
           << GetObjectName(device, (uint64_t)(*pSemaphore));
       if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
@@ -1434,14 +1434,14 @@ VkResult GfrContext::PostCreateSemaphore(
   return result;
 }
 
-void GfrContext::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore,
+void CdlContext::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore,
                                       const VkAllocationCallbacks* pAllocator) {
   if (track_semaphores_) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto semaphore_tracker = devices_[device]->GetSemaphoreTracker();
     if (trace_all_semaphores_) {
       std::stringstream log;
-      log << "[GFR] Semaphore destroyed. VkDevice:"
+      log << "[CDL] Semaphore destroyed. VkDevice:"
           << GetObjectName(device, (uint64_t)device)
           << ", VkSemaphore: " << GetObjectName(device, (uint64_t)(semaphore));
       if (semaphore_tracker->GetSemaphoreType(semaphore) ==
@@ -1462,7 +1462,7 @@ void GfrContext::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore,
   }
 }
 
-VkResult GfrContext::PostSignalSemaphoreKHR(
+VkResult CdlContext::PostSignalSemaphoreKHR(
     VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo,
     VkResult result) {
   if (track_semaphores_ && result == VK_SUCCESS) {
@@ -1473,7 +1473,7 @@ VkResult GfrContext::PostSignalSemaphoreKHR(
           {SemaphoreModifierType::kModifierHost});
     }
     if (trace_all_semaphores_) {
-      std::cout << "[GFR] Timeline semaphore signaled from host. VkDevice: "
+      std::cout << "[CDL] Timeline semaphore signaled from host. VkDevice: "
                 << GetObjectName(device, (uint64_t)device) << ", VkSemaphore: "
                 << GetObjectName(device, (uint64_t)(pSignalInfo->semaphore))
                 << ", Signal value: " << pSignalInfo->value << std::endl;
@@ -1482,7 +1482,7 @@ VkResult GfrContext::PostSignalSemaphoreKHR(
   return result;
 }
 
-VkResult GfrContext::PreWaitSemaphoresKHR(
+VkResult CdlContext::PreWaitSemaphoresKHR(
     VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo,
     uint64_t timeout) {
   if (track_semaphores_) {
@@ -1504,12 +1504,12 @@ VkResult GfrContext::PreWaitSemaphoresKHR(
     }
     if (trace_all_semaphores_) {
       std::stringstream log;
-      log << "[GFR] Waiting for timeline semaphores on host. PID: " << pid
+      log << "[CDL] Waiting for timeline semaphores on host. PID: " << pid
           << ", TID: " << tid
           << ", VkDevice: " << GetObjectName(device, (uint64_t)device)
           << std::endl;
       for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
-        log << "[GFR]\tVkSemaphore: "
+        log << "[CDL]\tVkSemaphore: "
             << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
             << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
       }
@@ -1519,7 +1519,7 @@ VkResult GfrContext::PreWaitSemaphoresKHR(
   return VK_SUCCESS;
 }
 
-VkResult GfrContext::PostWaitSemaphoresKHR(
+VkResult CdlContext::PostWaitSemaphoresKHR(
     VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout,
     VkResult result) {
   if (IsVkError(result)) {
@@ -1541,8 +1541,8 @@ VkResult GfrContext::PostWaitSemaphoresKHR(
     {
       // Update semaphore values
       uint64_t semaphore_value;
-      auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
-                                graphics_flight_recorder::DataKey(device))
+      auto dispatch_table = crash_diagnostic_layer::GetDeviceLayerData(
+                                crash_diagnostic_layer::DataKey(device))
                                 ->dispatch_table;
       std::lock_guard<std::mutex> lock(devices_mutex_);
       auto semaphore_tracker = devices_[device]->GetSemaphoreTracker();
@@ -1560,12 +1560,12 @@ VkResult GfrContext::PostWaitSemaphoresKHR(
 
     if (trace_all_semaphores_) {
       std::stringstream log;
-      log << "[GFR] Finished waiting for timeline semaphores on host. PID: "
+      log << "[CDL] Finished waiting for timeline semaphores on host. PID: "
           << pid << ", TID: " << tid
           << ", VkDevice: " << GetObjectName(device, (uint64_t)device)
           << std::endl;
       for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
-        log << "[GFR]\tVkSemaphore: "
+        log << "[CDL]\tVkSemaphore: "
             << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
             << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
       }
@@ -1575,7 +1575,7 @@ VkResult GfrContext::PostWaitSemaphoresKHR(
   return result;
 }
 
-VkResult GfrContext::PostGetSemaphoreCounterValueKHR(VkDevice device,
+VkResult CdlContext::PostGetSemaphoreCounterValueKHR(VkDevice device,
                                                      VkSemaphore semaphore,
                                                      uint64_t* pValue,
                                                      VkResult result) {
@@ -1585,9 +1585,9 @@ VkResult GfrContext::PostGetSemaphoreCounterValueKHR(VkDevice device,
   return result;
 }
 
-const std::string& GfrContext::GetOutputPath() const { return output_path_; }
+const std::string& CdlContext::GetOutputPath() const { return output_path_; }
 
-VkResult GfrContext::PreDebugMarkerSetObjectNameEXT(
+VkResult CdlContext::PreDebugMarkerSetObjectNameEXT(
     VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
   PreApiFunction("vkDebugMarkerSetObjectNameEXT");
 
@@ -1602,14 +1602,14 @@ VkResult GfrContext::PreDebugMarkerSetObjectNameEXT(
   return VK_SUCCESS;
 };
 
-VkResult GfrContext::PostDebugMarkerSetObjectNameEXT(
+VkResult CdlContext::PostDebugMarkerSetObjectNameEXT(
     VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo,
     VkResult result) {
   PostApiFunction("vkDebugMarkerSetObjectNameEXT");
   return result;
 };
 
-VkResult GfrContext::PreSetDebugUtilsObjectNameEXT(
+VkResult CdlContext::PreSetDebugUtilsObjectNameEXT(
     VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
   PreApiFunction("vkSetDebugUtilsObjectNameEXT");
 
@@ -1628,7 +1628,7 @@ VkResult GfrContext::PreSetDebugUtilsObjectNameEXT(
   return VK_SUCCESS;
 }
 
-VkResult GfrContext::PostSetDebugUtilsObjectNameEXT(
+VkResult CdlContext::PostSetDebugUtilsObjectNameEXT(
     VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo,
     VkResult result) {
   PostApiFunction("vkSetDebugUtilsObjectNameEXT");
@@ -1638,15 +1638,15 @@ VkResult GfrContext::PostSetDebugUtilsObjectNameEXT(
 // =============================================================================
 // Include the generated implementation to forward commands to command buffer
 // =============================================================================
-#include "gfr_commands.cc.inc"
+#include "cdl_commands.cc.inc"
 
 // =============================================================================
 // Define the custom pre intercepted commands
 // =============================================================================
-void GfrContext::PreCmdBindPipeline(VkCommandBuffer commandBuffer,
+void CdlContext::PreCmdBindPipeline(VkCommandBuffer commandBuffer,
                                     VkPipelineBindPoint pipelineBindPoint,
                                     VkPipeline pipeline) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   if (DumpShadersOnBind()) {
     p_cmd->GetDevice()->DumpShaderFromPipeline(pipeline);
   }
@@ -1654,9 +1654,9 @@ void GfrContext::PreCmdBindPipeline(VkCommandBuffer commandBuffer,
   p_cmd->PreCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 
-VkResult GfrContext::PreBeginCommandBuffer(
+VkResult CdlContext::PreBeginCommandBuffer(
     VkCommandBuffer commandBuffer, VkCommandBufferBeginInfo const* pBeginInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto device = p_cmd->GetDevice();
@@ -1669,9 +1669,9 @@ VkResult GfrContext::PreBeginCommandBuffer(
   return p_cmd->PreBeginCommandBuffer(commandBuffer, pBeginInfo);
 }
 
-VkResult GfrContext::PreResetCommandBuffer(VkCommandBuffer commandBuffer,
+VkResult CdlContext::PreResetCommandBuffer(VkCommandBuffer commandBuffer,
                                            VkCommandBufferResetFlags flags) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto device = p_cmd->GetDevice();
@@ -1685,11 +1685,11 @@ VkResult GfrContext::PreResetCommandBuffer(VkCommandBuffer commandBuffer,
 }
 
 // =============================================================================
-// Declare the global accessor for GfrContext
+// Declare the global accessor for CdlContext
 // =============================================================================
 
-graphics_flight_recorder::GfrContext *g_interceptor =
-    new graphics_flight_recorder::GfrContext();
+crash_diagnostic_layer::CdlContext *g_interceptor =
+    new crash_diagnostic_layer::CdlContext();
 
 // =============================================================================
 // VkInstanceCreateInfo and VkDeviceCreateInfo modification functions
@@ -1707,9 +1707,9 @@ const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(
 }
 
 // =============================================================================
-// Include the generated implementation to forward intercepts to GfrContext
+// Include the generated implementation to forward intercepts to CdlContext
 // =============================================================================
-#include "gfr_intercepts.cc.inc"
+#include "cdl_intercepts.cc.inc"
 
 // =============================================================================
 // Custom Vulkan entry points
@@ -1725,8 +1725,8 @@ VkResult QueueSubmitWithoutTrackingSemaphores(VkQueue queue,
   }
 
   VkResult res = VK_SUCCESS;
-  auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
-                            graphics_flight_recorder::DataKey(queue))
+  auto dispatch_table = crash_diagnostic_layer::GetDeviceLayerData(
+                            crash_diagnostic_layer::DataKey(queue))
                             ->dispatch_table;
   if (dispatch_table.QueueSubmit) {
     res = dispatch_table.QueueSubmit(queue, submitCount, pSubmits, fence);
@@ -1753,12 +1753,12 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
 
   // Define common variables and structs used for each extended queue submit
   VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
-  auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
-                            graphics_flight_recorder::DataKey(vk_device))
+  auto dispatch_table = crash_diagnostic_layer::GetDeviceLayerData(
+                            crash_diagnostic_layer::DataKey(vk_device))
                             ->dispatch_table;
   VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
   if (vk_pool == VK_NULL_HANDLE) {
-    std::cerr << "GFR Error: failed to find the helper command pool to "
+    std::cerr << "CDL Error: failed to find the helper command pool to "
                  "allocate helper command buffers for "
                  "tracking queue submit state. Not tracking semaphores.";
     return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits,
@@ -1784,12 +1784,12 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
   for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
     // TODO b/152057973: Recycle state tracking CBs
     VkCommandBuffer *new_buffers =
-        graphics_flight_recorder::GfrNewArray<VkCommandBuffer>(2);
+        crash_diagnostic_layer::CdlNewArray<VkCommandBuffer>(2);
     auto result = dispatch_table.AllocateCommandBuffers(
         vk_device, &cb_allocate_info, new_buffers);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-      std::cerr << "GFR Warning: failed to allocate helper command buffers for "
+      std::cerr << "CDL Warning: failed to allocate helper command buffers for "
                    "tracking queue submit state. vkAllocateCommandBuffers() "
                    "returned "
                 << result;
@@ -1822,11 +1822,11 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
         vk_device, submit_info_id, vk_pool, extended_cbs[0],
         extended_cbs[cb_count + 1]);
     for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
-      auto gfr_command_buffer = graphics_flight_recorder::GetGfrCommandBuffer(
+      auto cdl_command_buffer = crash_diagnostic_layer::GetCdlCommandBuffer(
           pSubmits[submit_index].pCommandBuffers[cb_index]);
-      assert(gfr_command_buffer != nullptr);
-      if (gfr_command_buffer) {
-        gfr_command_buffer->SetSubmitInfoId(submit_info_id);
+      assert(cdl_command_buffer != nullptr);
+      if (cdl_command_buffer) {
+        cdl_command_buffer->SetSubmitInfoId(submit_info_id);
       }
     }
 
@@ -1838,7 +1838,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
                                                &commandBufferBeginInfo);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-      std::cerr << "GFR Warning: failed to begin helper command buffer. "
+      std::cerr << "CDL Warning: failed to begin helper command buffer. "
                    "vkBeginCommandBuffer() returned "
                 << result;
     } else {
@@ -1852,7 +1852,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
                                                &commandBufferBeginInfo);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-      std::cerr << "GFR Warning: failed to begin helper command buffer. "
+      std::cerr << "CDL Warning: failed to begin helper command buffer. "
                    "vkBeginCommandBuffer() returned "
                 << result;
     } else {
@@ -1881,8 +1881,8 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit,
 VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
     PFN_vkQueueBindSparse fp_queue_bind_sparse, VkQueue queue,
     uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence) {
-  auto dispatch_table = graphics_flight_recorder::GetDeviceLayerData(
-                            graphics_flight_recorder::DataKey(queue))
+  auto dispatch_table = crash_diagnostic_layer::GetDeviceLayerData(
+                            crash_diagnostic_layer::DataKey(queue))
                             ->dispatch_table;
   bool track_semaphores = g_interceptor->TrackingSemaphores();
   // If semaphore tracking is not requested, pass the call to the dispatch table
@@ -1904,7 +1904,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
   VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
   VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
   if (vk_device == VK_NULL_HANDLE || vk_pool == VK_NULL_HANDLE) {
-    std::cerr << "GFR Warning: device handle not found for queue " << std::hex
+    std::cerr << "CDL Warning: device handle not found for queue " << std::hex
               << (uint64_t)queue << std::dec
               << ", Ignoring "
                  "semaphore signals in vkQueueBindSparse call."
@@ -1915,7 +1915,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
 
   // If we don't need to expand the bind sparse info, pass the call to dispatch
   // table.
-  graphics_flight_recorder::PackedBindSparseInfo packed_bind_sparse_info(
+  crash_diagnostic_layer::PackedBindSparseInfo packed_bind_sparse_info(
       queue, bindInfoCount, pBindInfo);
   if (!g_interceptor->ShouldExpandQueueBindSparseToTrackSemaphores(
           &packed_bind_sparse_info)) {
@@ -1923,7 +1923,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
                                           fence);
   }
 
-  graphics_flight_recorder::ExpandedBindSparseInfo expanded_bind_sparse_info(
+  crash_diagnostic_layer::ExpandedBindSparseInfo expanded_bind_sparse_info(
       &packed_bind_sparse_info);
   g_interceptor->ExpandBindSparseInfo(&expanded_bind_sparse_info);
 
@@ -1952,12 +1952,12 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
   cb_allocate_info.commandBufferCount = num_submits;
   // TODO b/152057973: Recycle state tracking CBs
   VkCommandBuffer *new_buffers =
-      graphics_flight_recorder::GfrNewArray<VkCommandBuffer>(num_submits);
+      crash_diagnostic_layer::CdlNewArray<VkCommandBuffer>(num_submits);
   auto result = dispatch_table.AllocateCommandBuffers(
       vk_device, &cb_allocate_info, new_buffers);
   assert(result == VK_SUCCESS);
   if (result != VK_SUCCESS) {
-    std::cerr << "GFR Warning: failed to allocate helper command buffers for "
+    std::cerr << "CDL Warning: failed to allocate helper command buffers for "
                  "tracking queue bind sparse state. vkAllocateCommandBuffers() "
                  "returned "
               << result;
@@ -1983,7 +1983,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
                                                &commandBufferBeginInfo);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-      std::cerr << "GFR Warning: failed to begin helper command buffer. "
+      std::cerr << "CDL Warning: failed to begin helper command buffer. "
                    "vkBeginCommandBuffer() returned "
                 << result;
     } else {
@@ -2024,7 +2024,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
   for (int i = 0; i < expanded_bind_sparse_info.queue_operation_types.size();
        i++) {
     if (expanded_bind_sparse_info.queue_operation_types[i] ==
-        graphics_flight_recorder::kQueueSubmit) {
+        crash_diagnostic_layer::kQueueSubmit) {
       // Send all the available bind sparse infos before submit info. Signal the
       // fence only if the last bind sparse info is included.
       if (available_bind_sparse_info_counter) {
@@ -2050,7 +2050,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
           VK_NULL_HANDLE);
       if (result != VK_SUCCESS) {
         std::cerr
-            << "GFR Warning: helper vkQueueSubmit failed while tracking "
+            << "CDL Warning: helper vkQueueSubmit failed while tracking "
                "semaphores in a vkQueueBindSparse call. Semaphore values in "
                "the final report might be wrong. Result: "
             << result << std::endl;
@@ -2062,7 +2062,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
     }
   }
   if (last_bind_result != VK_SUCCESS) {
-    std::cerr << "GFR Warning: QueueBindSparse: Unexpected VkResult = "
+    std::cerr << "CDL Warning: QueueBindSparse: Unexpected VkResult = "
               << last_bind_result
               << " after "
                  "submitting "
@@ -2098,7 +2098,7 @@ const void* FindOnChain(const void* pNext, VkStructureType type) {
   return nullptr;
 }
 
-// GFR intercepts vkCreateDevice to enforce coherent memory
+// CDL intercepts vkCreateDevice to enforce coherent memory
 VKAPI_ATTR VkResult VKAPI_CALL
 CreateDevice(PFN_vkCreateDevice pfn_create_device, VkPhysicalDevice gpu,
              const VkDeviceCreateInfo* pCreateInfo,
@@ -2123,4 +2123,4 @@ CreateDevice(PFN_vkCreateDevice pfn_create_device, VkPhysicalDevice gpu,
   return pfn_create_device(gpu, &local_create_info, pAllocator, pDevice);
 }
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer

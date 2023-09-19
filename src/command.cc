@@ -22,10 +22,10 @@
 #include <sstream>
 
 #include "device.h"
-#include "gfr.h"
+#include "cdl.h"
 #include "util.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 static std::atomic<uint16_t> command_buffer_marker_high_bits{1};
 
@@ -43,7 +43,7 @@ CommandBuffer::CommandBuffer(Device* p_device, VkCommandPool vk_command_pool,
     bottom_marker_.type = MarkerType::kUint32;
     bool top_marker_is_valid = p_device->AllocateMarker(&top_marker_);
     if (!top_marker_is_valid || !p_device->AllocateMarker(&bottom_marker_)) {
-      std::cerr << "GFR warning: Cannot acquire markers. Not tracking "
+      std::cerr << "CDL warning: Cannot acquire markers. Not tracking "
                    "VkCommandBuffer "
                 << device_->GetObjectName((uint64_t)vk_command_buffer)
                 << std::endl;
@@ -102,7 +102,7 @@ uint32_t CommandBuffer::ReadMarker(MarkerPosition position) const {
 
 void CommandBuffer::WriteBeginCommandBufferMarker() {
   if (has_buffer_marker_) {
-    // GFR log lables the commands inside a command buffer as follows:
+    // CDL log lables the commands inside a command buffer as follows:
     // - vkBeginCommandBuffer: 1
     // - n vkCmd commands recorded into command buffer: 2 ... n+1
     // - vkEndCommandBuffer: n+2
@@ -191,7 +191,7 @@ VkResult CommandBuffer::PostBeginCommandBuffer(
       pBeginInfo->pInheritanceInfo) {
     if (!scb_inheritance_info_) {
       scb_inheritance_info_ =
-          graphics_flight_recorder::GfrNew<VkCommandBufferInheritanceInfo>();
+          crash_diagnostic_layer::CdlNew<VkCommandBufferInheritanceInfo>();
     }
     *scb_inheritance_info_ = *pBeginInfo->pInheritanceInfo;
   }
@@ -377,10 +377,10 @@ bool CommandBuffer::DumpCmdExecuteCommands(const Command& command,
                                            const std::string& indent) {
   size_t stream_pos_0 = os.tellp();
   auto args = reinterpret_cast<CmdExecuteCommandsArgs*>(command.parameters);
-  auto pindent1 = graphics_flight_recorder::IncreaseIndent(indent);
-  auto pindent2 = graphics_flight_recorder::IncreaseIndent(pindent1);
-  auto pindent3 = graphics_flight_recorder::IncreaseIndent(pindent2);
-  auto pindent4 = graphics_flight_recorder::IncreaseIndent(pindent3);
+  auto pindent1 = crash_diagnostic_layer::IncreaseIndent(indent);
+  auto pindent2 = crash_diagnostic_layer::IncreaseIndent(pindent1);
+  auto pindent3 = crash_diagnostic_layer::IncreaseIndent(pindent2);
+  auto pindent4 = crash_diagnostic_layer::IncreaseIndent(pindent3);
   os << pindent1 << "- # parameter:";
   os << pindent2 << "name: commandBuffer";
   os << pindent2 << "value: " << args->commandBuffer;
@@ -393,7 +393,7 @@ bool CommandBuffer::DumpCmdExecuteCommands(const Command& command,
     os << pindent2 << "commandBuffers:";
     for (uint32_t i = 0; i < args->commandBufferCount; i++) {
       auto secondary_command_buffer =
-          graphics_flight_recorder::GetGfrCommandBuffer(
+          crash_diagnostic_layer::GetCdlCommandBuffer(
               args->pCommandBuffers[i]);
       if (secondary_command_buffer) {
         secondary_command_buffer->DumpContents(os, options, pindent3,
@@ -456,8 +456,8 @@ int GetCommandPipelineType(const Command& command) {
 void CommandBuffer::HandleIncompleteCommand(
     const Command& command, const CommandBufferInternalState& state) const {
   // Should we write our shaders on crash?
-  auto gfr_context = device_->GetGFR();
-  if (!gfr_context->DumpShadersOnCrash()) {
+  auto cdl_context = device_->GetCDL();
+  if (!cdl_context->DumpShadersOnCrash()) {
     return;
   }
 
@@ -516,7 +516,7 @@ bool CommandBufferInternalState::Print(const Command& cmd,
 
   if (-1 != bind_point) {
     os << indent << "internalState:";
-    auto indent2 = graphics_flight_recorder::IncreaseIndent(indent);
+    auto indent2 = crash_diagnostic_layer::IncreaseIndent(indent);
     os << indent2 << "pipeline:";
     bound_pipelines_[bind_point]->Print(os, name_resolver, indent2);
     os << indent2 << "descriptorSets:";
@@ -534,7 +534,7 @@ void CommandBuffer::DumpContents(
   auto num_commands = tracker_.GetCommands().size();
   StringArray indents = {indent};
   for (uint32_t i = 1; i < 4; i++) {
-    indents.push_back(graphics_flight_recorder::IncreaseIndent(indents[i - 1]));
+    indents.push_back(crash_diagnostic_layer::IncreaseIndent(indents[i - 1]));
   }
   os << indents[0] << "- # CommandBuffer:"
      << device_->GetObjectInfo((uint64_t)vk_command_buffer_, indents[1])
@@ -542,14 +542,14 @@ void CommandBuffer::DumpContents(
      << "device:" << device_->GetObjectInfo((uint64_t)device_, indents[2]);
   if (has_buffer_marker_) {
     os << indents[1] << "beginMarkerValue: "
-       << graphics_flight_recorder::Uint32ToStr(begin_marker_value_)
+       << crash_diagnostic_layer::Uint32ToStr(begin_marker_value_)
        << indents[1] << "endMarkerValue: "
-       << graphics_flight_recorder::Uint32ToStr(end_marker_value_);
+       << crash_diagnostic_layer::Uint32ToStr(end_marker_value_);
     os << indents[1] << "topMarkerBuffer: "
-       << graphics_flight_recorder::Uint32ToStr(
+       << crash_diagnostic_layer::Uint32ToStr(
               ReadMarker(MarkerPosition::kTop))
        << indents[1] << "bottomMarkerBuffer: "
-       << graphics_flight_recorder::Uint32ToStr(
+       << crash_diagnostic_layer::Uint32ToStr(
               ReadMarker(MarkerPosition::kBottom));
   }
   os << indents[1] << "submitInfoId: ";
@@ -611,15 +611,15 @@ void CommandBuffer::DumpContents(
       auto command_state = GetCommandState(cb_state, command);
       os << indents[2] << "- # Command:" << indents[3] << "id: " << command.id
          << "/" << num_commands << indents[3] << "markerValue: "
-         << graphics_flight_recorder::Uint32ToStr(begin_marker_value_ +
+         << crash_diagnostic_layer::Uint32ToStr(begin_marker_value_ +
                                                   command.id)
          << indents[3] << "name: " << command_name << indents[3] << "state: ["
          << PrintCommandState(command_state) << "]" << indents[3]
          << "parameters:" << std::endl;
 
       state.Mutate(command);
-      // For vkCmdExecuteCommands, GFR prints all the information about the
-      // recorded command buffers. For every other command, GFR prints the
+      // For vkCmdExecuteCommands, CDL prints all the information about the
+      // recorded command buffers. For every other command, CDL prints the
       // arguments without going deep into printing objects themselves.
       if (strcmp(command_name, "vkCmdExecuteCommands") != 0) {
         DumpCommand(command, os, indents[3]);
@@ -648,4 +648,4 @@ void CommandBuffer::DumpContents(
 // =============================================================================
 #include "command.cc.inc"
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer

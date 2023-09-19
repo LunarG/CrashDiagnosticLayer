@@ -13,7 +13,7 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "UPDATE_DEPS": "ON",
-        "GFR_CODEGEN": "ON",
+        "CDL_CODEGEN": "ON",
         "CMAKE_BUILD_TYPE": "Debug"
       }
     }

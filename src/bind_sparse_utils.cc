@@ -20,7 +20,7 @@
 
 #include "util.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 bool BindSparseUtils::BindSparseInfoWaitsOnBinarySemaphores(
     const VkBindSparseInfo* bind_info,
@@ -180,7 +180,7 @@ std::string BindSparseUtils::LogBindSparseInfosSemaphores(
       continue;
     }
     if (!msg_header_printed) {
-      log << "[GFR] VkBindSparseInfo with semaphores submitted to queue:";
+      log << "[CDL] VkBindSparseInfo with semaphores submitted to queue:";
       log << "\n   VkDevice:" << device->GetObjectName((uint64_t)vk_device)
           << "\n   VkQueue: " << device->GetObjectName((uint64_t)vk_queue)
           << std::endl;
@@ -243,4 +243,4 @@ std::string BindSparseUtils::LogBindSparseInfosSemaphores(
   return log.str();
 }
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer

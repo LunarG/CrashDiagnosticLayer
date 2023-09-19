@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_SEMAPHORE_TRACKER_H
-#define GFR_SEMAPHORE_TRACKER_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -27,7 +26,7 @@
 
 #include "marker.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 class Device;
 
@@ -138,6 +137,4 @@ class SemaphoreTracker {
 
 using SemaphoreTrackerPtr = std::unique_ptr<SemaphoreTracker>;
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_SEMAPHORE_TRACKER_H
+} // namespace crash_diagnostic_layer

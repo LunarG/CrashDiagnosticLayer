@@ -55,7 +55,7 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
 
 std::ostream &operator<<(std::ostream& os, const VkBuffer &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -66,7 +66,7 @@ std::ostream &operator<<(std::ostream& os, const VkBuffer &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkImage &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -77,7 +77,7 @@ std::ostream &operator<<(std::ostream& os, const VkImage &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkInstance &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -88,7 +88,7 @@ std::ostream &operator<<(std::ostream& os, const VkInstance &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkPhysicalDevice &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -99,7 +99,7 @@ std::ostream &operator<<(std::ostream& os, const VkPhysicalDevice &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDevice &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -110,7 +110,7 @@ std::ostream &operator<<(std::ostream& os, const VkDevice &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkQueue &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -121,7 +121,7 @@ std::ostream &operator<<(std::ostream& os, const VkQueue &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkSemaphore &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -132,7 +132,7 @@ std::ostream &operator<<(std::ostream& os, const VkSemaphore &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkCommandBuffer &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -143,7 +143,7 @@ std::ostream &operator<<(std::ostream& os, const VkCommandBuffer &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkFence &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -154,7 +154,7 @@ std::ostream &operator<<(std::ostream& os, const VkFence &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDeviceMemory &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -165,7 +165,7 @@ std::ostream &operator<<(std::ostream& os, const VkDeviceMemory &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkEvent &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -176,7 +176,7 @@ std::ostream &operator<<(std::ostream& os, const VkEvent &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkQueryPool &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -187,7 +187,7 @@ std::ostream &operator<<(std::ostream& os, const VkQueryPool &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkBufferView &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -198,7 +198,7 @@ std::ostream &operator<<(std::ostream& os, const VkBufferView &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkImageView &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -209,7 +209,7 @@ std::ostream &operator<<(std::ostream& os, const VkImageView &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkShaderModule &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -220,7 +220,7 @@ std::ostream &operator<<(std::ostream& os, const VkShaderModule &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkPipelineCache &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -231,7 +231,7 @@ std::ostream &operator<<(std::ostream& os, const VkPipelineCache &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkPipelineLayout &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -242,7 +242,7 @@ std::ostream &operator<<(std::ostream& os, const VkPipelineLayout &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkPipeline &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -253,7 +253,7 @@ std::ostream &operator<<(std::ostream& os, const VkPipeline &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkRenderPass &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -264,7 +264,7 @@ std::ostream &operator<<(std::ostream& os, const VkRenderPass &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDescriptorSetLayout &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -275,7 +275,7 @@ std::ostream &operator<<(std::ostream& os, const VkDescriptorSetLayout &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkSampler &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -286,7 +286,7 @@ std::ostream &operator<<(std::ostream& os, const VkSampler &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDescriptorSet &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -297,7 +297,7 @@ std::ostream &operator<<(std::ostream& os, const VkDescriptorSet &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDescriptorPool &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -308,7 +308,7 @@ std::ostream &operator<<(std::ostream& os, const VkDescriptorPool &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkFramebuffer &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -319,7 +319,7 @@ std::ostream &operator<<(std::ostream& os, const VkFramebuffer &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkCommandPool &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -330,7 +330,7 @@ std::ostream &operator<<(std::ostream& os, const VkCommandPool &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkSamplerYcbcrConversion &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -341,7 +341,7 @@ std::ostream &operator<<(std::ostream& os, const VkSamplerYcbcrConversion &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDescriptorUpdateTemplate &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -352,7 +352,7 @@ std::ostream &operator<<(std::ostream& os, const VkDescriptorUpdateTemplate &a) 
 
 std::ostream &operator<<(std::ostream& os, const VkPrivateDataSlot &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -363,7 +363,7 @@ std::ostream &operator<<(std::ostream& os, const VkPrivateDataSlot &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkSurfaceKHR &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -374,7 +374,7 @@ std::ostream &operator<<(std::ostream& os, const VkSurfaceKHR &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkSwapchainKHR &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -385,7 +385,7 @@ std::ostream &operator<<(std::ostream& os, const VkSwapchainKHR &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDisplayKHR &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -396,7 +396,7 @@ std::ostream &operator<<(std::ostream& os, const VkDisplayKHR &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDisplayModeKHR &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -407,7 +407,7 @@ std::ostream &operator<<(std::ostream& os, const VkDisplayModeKHR &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkVideoSessionKHR &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -418,7 +418,7 @@ std::ostream &operator<<(std::ostream& os, const VkVideoSessionKHR &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkVideoSessionParametersKHR &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -429,7 +429,7 @@ std::ostream &operator<<(std::ostream& os, const VkVideoSessionParametersKHR &a)
 
 std::ostream &operator<<(std::ostream& os, const VkDeferredOperationKHR &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -440,7 +440,7 @@ std::ostream &operator<<(std::ostream& os, const VkDeferredOperationKHR &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDebugReportCallbackEXT &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -451,7 +451,7 @@ std::ostream &operator<<(std::ostream& os, const VkDebugReportCallbackEXT &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkCuModuleNVX &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -462,7 +462,7 @@ std::ostream &operator<<(std::ostream& os, const VkCuModuleNVX &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkCuFunctionNVX &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -473,7 +473,7 @@ std::ostream &operator<<(std::ostream& os, const VkCuFunctionNVX &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkDebugUtilsMessengerEXT &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -484,7 +484,7 @@ std::ostream &operator<<(std::ostream& os, const VkDebugUtilsMessengerEXT &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkValidationCacheEXT &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -495,7 +495,7 @@ std::ostream &operator<<(std::ostream& os, const VkValidationCacheEXT &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkAccelerationStructureNV &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -506,7 +506,7 @@ std::ostream &operator<<(std::ostream& os, const VkAccelerationStructureNV &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkPerformanceConfigurationINTEL &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -517,7 +517,7 @@ std::ostream &operator<<(std::ostream& os, const VkPerformanceConfigurationINTEL
 
 std::ostream &operator<<(std::ostream& os, const VkIndirectCommandsLayoutNV &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -528,7 +528,7 @@ std::ostream &operator<<(std::ostream& os, const VkIndirectCommandsLayoutNV &a) 
 
 std::ostream &operator<<(std::ostream& os, const VkAccelerationStructureKHR &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -540,7 +540,7 @@ std::ostream &operator<<(std::ostream& os, const VkAccelerationStructureKHR &a) 
 #ifdef VK_USE_PLATFORM_FUCHSIA
 std::ostream &operator<<(std::ostream& os, const VkBufferCollectionFUCHSIA &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -552,7 +552,7 @@ std::ostream &operator<<(std::ostream& os, const VkBufferCollectionFUCHSIA &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkMicromapEXT &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -563,7 +563,7 @@ std::ostream &operator<<(std::ostream& os, const VkMicromapEXT &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkOpticalFlowSessionNV &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {
@@ -574,7 +574,7 @@ std::ostream &operator<<(std::ostream& os, const VkOpticalFlowSessionNV &a) {
 
 std::ostream &operator<<(std::ostream& os, const VkShaderEXT &a) {
     auto handle = (uint64_t)(a);
-    os << graphics_flight_recorder::Uint64ToStr(handle) << std::endl;
+    os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
 
     auto debug_name = global_name_resolver->GetObjectDebugName(handle);
     if (debug_name.length() > 0) {

@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_DESCRIPTOR_SET_H
-#define GFR_DESCRIPTOR_SET_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -24,7 +23,7 @@
 #include <string>
 #include <vector>
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 class Device;
 
@@ -48,6 +47,4 @@ class ActiveDescriptorSets {
   std::map<uint32_t, VkDescriptorSet> descriptor_sets_;
 };
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_DESCRIPTOR_SET_H
+} // namespace crash_diagnostic_layer

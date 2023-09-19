@@ -14,18 +14,17 @@
  limitations under the License.
 */
 
-#ifndef GFR_BIND_SPARSE_UTILS_H
-#define GFR_BIND_SPARSE_UTILS_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
 #include <vector>
 
 #include "device.h"
-#include "gfr.h"
+#include "cdl.h"
 #include "semaphore_tracker.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 class Device;
 class SemaphoreTracker;
@@ -55,6 +54,5 @@ class BindSparseUtils {
       std::vector<VkSemaphore>* wait_binary_semaphores);
 };
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer
 
-#endif  // GFR_BIND_SPARSE_UTILS_H

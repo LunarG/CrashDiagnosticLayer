@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_SUBMIT_TRACKER_H
-#define GFR_SUBMIT_TRACKER_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -28,7 +27,7 @@
 #include "marker.h"
 #include "semaphore_tracker.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 class Device;
 
@@ -113,7 +112,7 @@ class SubmitTracker {
   struct HelperSubmitInfo {
     QueueBindSparseId qbind_sparse_id;
     // Marker used to track the state of the helper submit and its signal
-    // semaphore operations. While GFR doesn't care about the state of helper
+    // semaphore operations. While CDL doesn't care about the state of helper
     // submits in its log, this is necessary to free the extra command buffer
     // allocated and used in the helper submit.
     Marker marker;
@@ -131,6 +130,4 @@ class SubmitTracker {
 
 using SubmitTrackerPtr = std::unique_ptr<SubmitTracker>;
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_SUBMIT_TRACKER_H
+} // namespace crash_diagnostic_layer

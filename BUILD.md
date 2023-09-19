@@ -27,8 +27,8 @@ The following will be enough for most people, for more detailed instructions,
 see below.
 
 ```bash
-git clone https://github.com/googlestadia/gfr.git
-cd gfr
+git clone https://github.com/LunarG/CrashDiagnosticLayer.git
+cd CrashDiagnosticLayer
 
 cmake -S . -B build -D UPDATE_DEPS=ON -D CMAKE_BUILD_TYPE=Debug
 cmake --build build --config Debug
@@ -60,8 +60,8 @@ folder.
 The source can be generated using CMake by building the following target:
 
 ```bash
-cmake -S . -B build -D GFR_CODEGEN=ON -D CMAKE_BUILD_TYPE=Debug
-cmake --build build --target gfr_codegen
+cmake -S . -B build -D CDL_CODEGEN=ON -D CMAKE_BUILD_TYPE=Debug
+cmake --build build --target CDL_codegen
 ```
 
 **NOTE:** This is only necessary when the Vulkan or SPIR-V header repo
@@ -305,15 +305,15 @@ The installation depends on the target platform
 
 For UNIX operating systems:
 
-- *install_dir*`/lib` : The Vulkan Graphics Flight Recorder layer library
-- *install_dir*`/share/vulkan/implicit_layer.d` : The VkLayer_gfr.json manifest
+- *install_dir*`/lib` : The Vulkan Crash Diagnostic Layer library
+- *install_dir*`/share/vulkan/implicit_layer.d` : The VkLayer_CDL.json manifest
 
 `NOTE`: Android doesn't use json manifests for Vulkan layers.
 
 For WIN32:
 
-- *install_dir*`/bin` : The Vulkan Graphics Flight Recorder layer library
-- *install_dir*`/bin` : The VkLayer_gfr.json manifest
+- *install_dir*`/bin` : The Vulkan Crash Diagnostic Layer library
+- *install_dir*`/bin` : The VkLayer_CDL.json manifest
 
 ### Software Installation
 

@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_PARSE_H
-#define GFR_PARSE_H
+#pragma once
 
 #include <cassert>
 #include <cstdint>
@@ -23,7 +22,7 @@
 
 #include <spirv.hpp>
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 /**
  * @brief SpirvParse
@@ -266,6 +265,4 @@ class BasicSpirvParse : public SpirvParse {
   std::string source_file_;
 };
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_PARSE_H
+} // namespace crash_diagnostic_layer

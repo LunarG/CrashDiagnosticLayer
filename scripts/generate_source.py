@@ -46,12 +46,12 @@ def main(argv):
         'command_tracker.cc',
         'dispatch.h',
         'dispatch.cc',
-        'gfr_commands.h.inc',
-        'gfr_commands.cc.inc',
-        'gfr_intercepts.cc.inc',
+        'cdl_commands.h.inc',
+        'cdl_commands.cc.inc',
+        'cdl_intercepts.cc.inc',
         'layer_base.h',
         'layer_base.cc',
-        'graphics_flight_recorder.json.in'
+        'crash_diagnostic_layer.json.in'
     ]
 
     parser = argparse.ArgumentParser(description='Generate source code for this repository')
@@ -76,7 +76,7 @@ def main(argv):
     # get directory where generators will run
     if args.verify or args.incremental:
         # generate in temp directory so we can compare or copy later
-        temp_obj = tempfile.TemporaryDirectory(prefix='gfr_codegen_')
+        temp_obj = tempfile.TemporaryDirectory(prefix='cdl_codegen_')
         temp_dir = temp_obj.name
         gen_dir = temp_dir
     else:

@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_LINEAR_ALLOCATOR_HEADER
-#define GFR_LINEAR_ALLOCATOR_HEADER
+#pragma once
 
 #include <array>
 #include <cassert>
@@ -117,8 +116,8 @@ class LinearAllocator {
 
    private:
     static void NewHandler() {
-      std::cout << "GFR: Memory allocation failed!" << std::endl;
-      std::cerr << "GFR: Memory allocation failed!" << std::endl;
+      std::cout << "CDL: Memory allocation failed!" << std::endl;
+      std::cerr << "CDL: Memory allocation failed!" << std::endl;
       std::set_new_handler(nullptr);
     };
     size_t blocksize_;
@@ -130,5 +129,3 @@ class LinearAllocator {
   int active_block_;
   std::vector<std::unique_ptr<Block>> blocks_;
 };
-
-#endif  // GFR_LINEAR_ALLOCATOR_HEADER

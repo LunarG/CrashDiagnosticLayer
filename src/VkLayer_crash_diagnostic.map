@@ -1,0 +1,8 @@
+{
+  global:
+    CDL_GetInstanceProcAddr;
+    CDL_GetDeviceProcAddr;
+    CDL_NegotiateLoaderLayerInterfaceVersion;
+  local:
+    *;
+};

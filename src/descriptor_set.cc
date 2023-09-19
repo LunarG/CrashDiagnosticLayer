@@ -18,10 +18,10 @@
 
 #include <sstream>
 
-#include "gfr.h"
+#include "cdl.h"
 #include "util.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 // =============================================================================
 // ActiveDescriptorSets
@@ -37,8 +37,8 @@ void ActiveDescriptorSets::Bind(uint32_t first_set, uint32_t set_count,
 
 std::ostream& ActiveDescriptorSets::Print(Device* device, std::ostream& stream,
                                           const std::string& indent) const {
-  auto indent1 = graphics_flight_recorder::IncreaseIndent(indent);
-  auto indent2 = graphics_flight_recorder::IncreaseIndent(indent1);
+  auto indent1 = crash_diagnostic_layer::IncreaseIndent(indent);
+  auto indent2 = crash_diagnostic_layer::IncreaseIndent(indent1);
   for (const auto& ds : descriptor_sets_) {
     stream << indent1 << "- # descriptorSet:";
     stream << indent2 << "index: " << ds.first;
@@ -49,4 +49,4 @@ std::ostream& ActiveDescriptorSets::Print(Device* device, std::ostream& stream,
   return stream;
 }
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer

@@ -20,10 +20,10 @@
 #include <iomanip>
 #include <iostream>
 
-#include "gfr.h"
+#include "cdl.h"
 #include "util.h"
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 const VkDeviceSize kBufferMarkerBufferSize =
     kBufferMarkerEventCount * sizeof(uint32_t);
@@ -94,7 +94,7 @@ VkResult CreateHostBuffer(VkDevice device,
                                        mem_flags, &memory_type_index);
 
     if (!found_memory) {
-      std::cerr << "GFR Warning: No device coherent memory found, results "
+      std::cerr << "CDL Warning: No device coherent memory found, results "
                    "might not be accurate."
                 << std::endl;
       mem_flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
@@ -144,15 +144,15 @@ void DestroyBuffer(VkDevice device, VkBuffer buffer) {
 // =================================================================================================
 // Device
 // =================================================================================================
-Device::Device(GfrContext* p_gfr, VkPhysicalDevice vk_gpu, VkDevice device,
+Device::Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice device,
                bool has_buffer_marker)
-    : gfr_(p_gfr),
+    : cdl_(p_cdl),
       vk_physical_device_(vk_gpu),
       vk_device_(device),
       has_buffer_marker_(has_buffer_marker) {
   // Set the dispatch tables
   auto instance_layer_data =
-      GetInstanceLayerData(DataKey(p_gfr->GetInstance()));
+      GetInstanceLayerData(DataKey(p_cdl->GetInstance()));
   instance_dispatch_table_ = instance_layer_data->dispatch_table;
   auto device_layer_data = GetDeviceLayerData(DataKey(device));
   device_dispatch_table_ = device_layer_data->dispatch_table;
@@ -190,7 +190,7 @@ Device::Device(GfrContext* p_gfr, VkPhysicalDevice vk_gpu, VkDevice device,
 
   // Create a semaphore tracker
   semaphore_tracker_ =
-      std::make_unique<SemaphoreTracker>(this, p_gfr->TracingAllSemaphores());
+      std::make_unique<SemaphoreTracker>(this, p_cdl->TracingAllSemaphores());
 }
 
 Device::~Device() {}
@@ -200,7 +200,7 @@ void Device::SetDeviceCreateInfo(
   device_create_info_ = std::move(device_create_info);
 }
 
-GfrContext* Device::GetGFR() const { return gfr_; }
+CdlContext* Device::GetCDL() const { return cdl_; }
 
 VkPhysicalDevice Device::GetVkGpu() const { return vk_physical_device_; }
 
@@ -286,8 +286,8 @@ bool Device::AllocateMarker(Marker* marker) {
 
   // Out of space, allocate a new buffer
   if (marker_buffer_index >= marker_buffers_.size()) {
-    // zakerinasab: This causes a glitch if GFR is on while a user plays
-    // the game. If GFR goes to be activated for end users, this should be
+    // zakerinasab: This causes a glitch if CDL is on while a user plays
+    // the game. If CDL goes to be activated for end users, this should be
     // done out of markers_buffers_mutex_ lock in a predictive mode.
     if (AcquireMarkerBuffer() != VK_SUCCESS) {
       return false;
@@ -355,7 +355,7 @@ void Device::DumpCommandBuffers(std::ostream& os,
       sorted_command_buffers;
   std::lock_guard<std::recursive_mutex> lock(command_buffers_mutex_);
   for (auto cb : command_buffers_) {
-    auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(cb);
+    auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(cb);
     if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
       if (dump_all_command_buffers ||
           (p_cmd->HasBufferMarker() && p_cmd->WasSubmittedToQueue() &&
@@ -415,7 +415,7 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd,
   std::cout
       << "----------------------------------------------------------------\n";
   std::cout
-      << "- GRAPHICS FLIGHT RECORDER INVALID COMMAND BUFFER USAGE        -\n";
+      << "- CRASH DIAGNOSTIC LAYER INVALID COMMAND BUFFER USAGE          -\n";
   std::cout
       << "----------------------------------------------------------------\n\n";
   std::cout << "Reset of VkCommandBuffer in use by GPU: "
@@ -466,7 +466,7 @@ bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd,
 
 bool Device::ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer,
                                            std::ostream& os) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(vk_command_buffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(vk_command_buffer);
   assert(p_cmd != nullptr);
   if (p_cmd != nullptr) {
     return ValidateCommandBufferNotInUse(p_cmd, os);
@@ -481,12 +481,12 @@ void Device::ValidateCommandPoolState(VkCommandPool vk_command_pool,
   std::lock_guard<std::mutex> lock(command_pools_mutex_);
   assert(command_pools_.find(vk_command_pool) != command_pools_.end());
   // Only validate primary command buffers. If a secondary command buffer is
-  // hung, GFR catches the primary command buffer that the hung cb was recorded
+  // hung, CDL catches the primary command buffer that the hung cb was recorded
   // to.
   auto command_buffers = command_pools_[vk_command_pool]->GetCommandBuffers(
       VK_COMMAND_BUFFER_LEVEL_PRIMARY);
   for (auto vk_cmd : command_buffers) {
-    auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(vk_cmd);
+    auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(vk_cmd);
     if (p_cmd != nullptr) {
       ValidateCommandBufferNotInUse(p_cmd, os);
     }
@@ -502,7 +502,7 @@ void Device::ResetCommandPool(VkCommandPool vk_command_pool) {
     auto command_buffers =
         command_pools_[vk_command_pool]->GetCommandBuffers(cb_level);
     for (auto vk_cmd : command_buffers) {
-      auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(vk_cmd);
+      auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(vk_cmd);
       if (p_cmd != nullptr) {
         p_cmd->Reset();
       }
@@ -520,12 +520,12 @@ void Device::DeleteCommandPool(VkCommandPool vk_command_pool) {
     auto command_buffers =
         command_pools_[vk_command_pool]->GetCommandBuffers(cb_level);
     for (auto vk_cmd : command_buffers) {
-      auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(vk_cmd);
+      auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(vk_cmd);
       if (p_cmd != nullptr) {
         command_buffers_.erase(std::remove(command_buffers_.begin(),
                                            command_buffers_.end(), vk_cmd),
                                command_buffers_.end());
-        graphics_flight_recorder::DeleteGfrCommandBuffer(vk_cmd);
+        crash_diagnostic_layer::DeleteCdlCommandBuffer(vk_cmd);
       }
     }
   }
@@ -540,7 +540,7 @@ void Device::DeleteCommandBuffers(const VkCommandBuffer* vk_cmds,
       command_buffers_.erase(std::remove(command_buffers_.begin(),
                                          command_buffers_.end(), vk_cmds[i]),
                              command_buffers_.end());
-      graphics_flight_recorder::DeleteGfrCommandBuffer(vk_cmds[i]);
+      crash_diagnostic_layer::DeleteCdlCommandBuffer(vk_cmds[i]);
     }
   }
 }
@@ -609,13 +609,13 @@ void Device::DeletePipeline(VkPipeline pipeline) {
 void Device::CreateShaderModule(const VkShaderModuleCreateInfo* pCreateInfo,
                                 VkShaderModule* pShaderModule,
                                 int shader_module_load_options) {
-  GetGFR()->MakeOutputPath();
+  GetCDL()->MakeOutputPath();
   // Parse the SPIR-V for relevant information, does not copy the SPIR-V
   // binary.
   ShaderModulePtr shader_module = std::make_unique<ShaderModule>(
       *pShaderModule, shader_module_load_options, pCreateInfo->codeSize,
       reinterpret_cast<const char*>(pCreateInfo->pCode),
-      GetGFR()->GetOutputPath());
+      GetCDL()->GetOutputPath());
 
   // Add extra name information for shaders, used to give them names even if
   // they don't have explict debug names.
@@ -744,4 +744,4 @@ std::ostream& Device::Print(std::ostream& stream) const {
   return stream;
 }
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer

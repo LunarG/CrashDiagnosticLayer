@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_MARKER_H
-#define GFR_MARKER_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -30,5 +29,3 @@ struct Marker {
   uint32_t offset = 0;
   void* cpu_mapped_address = nullptr;
 };
-
-#endif  // GFR_MARKER_H

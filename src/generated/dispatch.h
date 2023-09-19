@@ -32,7 +32,7 @@
 #include <vulkan/vk_layer.h>
 #include <vulkan/vulkan.h>
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 
 struct InstanceDispatchTable {
@@ -795,7 +795,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
                              DeviceDispatchTable *dt);
 
 
-} // namespace graphics_flight_recorder
+} // namespace crash_diagnostic_layer
 
 
 // NOLINTEND

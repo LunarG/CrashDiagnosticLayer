@@ -26,180 +26,180 @@
 
 // NOLINTBEGIN
 
-VkResult GfrContext::PostBeginCommandBuffer(
+VkResult CdlContext::PostBeginCommandBuffer(
     VkCommandBuffer                             commandBuffer,
     const VkCommandBufferBeginInfo*             pBeginInfo,
     VkResult                                    result) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PostBeginCommandBuffer(commandBuffer, pBeginInfo, result);
 }
 
-VkResult GfrContext::PreEndCommandBuffer(
+VkResult CdlContext::PreEndCommandBuffer(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PreEndCommandBuffer(commandBuffer);
 }
-VkResult GfrContext::PostEndCommandBuffer(
+VkResult CdlContext::PostEndCommandBuffer(
     VkCommandBuffer                             commandBuffer,
     VkResult                                    result) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PostEndCommandBuffer(commandBuffer, result);
 }
 
-VkResult GfrContext::PostResetCommandBuffer(
+VkResult CdlContext::PostResetCommandBuffer(
     VkCommandBuffer                             commandBuffer,
     VkCommandBufferResetFlags                   flags,
     VkResult                                    result) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PostResetCommandBuffer(commandBuffer, flags, result);
 }
 
-void GfrContext::PostCmdBindPipeline(
+void CdlContext::PostCmdBindPipeline(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 
-void GfrContext::PreCmdSetViewport(
+void CdlContext::PreCmdSetViewport(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
-void GfrContext::PostCmdSetViewport(
+void CdlContext::PostCmdSetViewport(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
 
-void GfrContext::PreCmdSetScissor(
+void CdlContext::PreCmdSetScissor(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstScissor,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
-void GfrContext::PostCmdSetScissor(
+void CdlContext::PostCmdSetScissor(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstScissor,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
 
-void GfrContext::PreCmdSetLineWidth(
+void CdlContext::PreCmdSetLineWidth(
     VkCommandBuffer                             commandBuffer,
     float                                       lineWidth) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetLineWidth(commandBuffer, lineWidth);
 }
-void GfrContext::PostCmdSetLineWidth(
+void CdlContext::PostCmdSetLineWidth(
     VkCommandBuffer                             commandBuffer,
     float                                       lineWidth) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetLineWidth(commandBuffer, lineWidth);
 }
 
-void GfrContext::PreCmdSetDepthBias(
+void CdlContext::PreCmdSetDepthBias(
     VkCommandBuffer                             commandBuffer,
     float                                       depthBiasConstantFactor,
     float                                       depthBiasClamp,
     float                                       depthBiasSlopeFactor) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 }
-void GfrContext::PostCmdSetDepthBias(
+void CdlContext::PostCmdSetDepthBias(
     VkCommandBuffer                             commandBuffer,
     float                                       depthBiasConstantFactor,
     float                                       depthBiasClamp,
     float                                       depthBiasSlopeFactor) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 }
 
-void GfrContext::PreCmdSetBlendConstants(
+void CdlContext::PreCmdSetBlendConstants(
     VkCommandBuffer                             commandBuffer,
     const float                                 blendConstants[4]) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetBlendConstants(commandBuffer, blendConstants);
 }
-void GfrContext::PostCmdSetBlendConstants(
+void CdlContext::PostCmdSetBlendConstants(
     VkCommandBuffer                             commandBuffer,
     const float                                 blendConstants[4]) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetBlendConstants(commandBuffer, blendConstants);
 }
 
-void GfrContext::PreCmdSetDepthBounds(
+void CdlContext::PreCmdSetDepthBounds(
     VkCommandBuffer                             commandBuffer,
     float                                       minDepthBounds,
     float                                       maxDepthBounds) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
-void GfrContext::PostCmdSetDepthBounds(
+void CdlContext::PostCmdSetDepthBounds(
     VkCommandBuffer                             commandBuffer,
     float                                       minDepthBounds,
     float                                       maxDepthBounds) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
 
-void GfrContext::PreCmdSetStencilCompareMask(
+void CdlContext::PreCmdSetStencilCompareMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    compareMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
-void GfrContext::PostCmdSetStencilCompareMask(
+void CdlContext::PostCmdSetStencilCompareMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    compareMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
 
-void GfrContext::PreCmdSetStencilWriteMask(
+void CdlContext::PreCmdSetStencilWriteMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    writeMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
-void GfrContext::PostCmdSetStencilWriteMask(
+void CdlContext::PostCmdSetStencilWriteMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    writeMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
 
-void GfrContext::PreCmdSetStencilReference(
+void CdlContext::PreCmdSetStencilReference(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    reference) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetStencilReference(commandBuffer, faceMask, reference);
 }
-void GfrContext::PostCmdSetStencilReference(
+void CdlContext::PostCmdSetStencilReference(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    reference) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 
-void GfrContext::PreCmdBindDescriptorSets(
+void CdlContext::PreCmdBindDescriptorSets(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
@@ -208,10 +208,10 @@ void GfrContext::PreCmdBindDescriptorSets(
     const VkDescriptorSet*                      pDescriptorSets,
     uint32_t                                    dynamicOffsetCount,
     const uint32_t*                             pDynamicOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 }
-void GfrContext::PostCmdBindDescriptorSets(
+void CdlContext::PostCmdBindDescriptorSets(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
@@ -220,176 +220,176 @@ void GfrContext::PostCmdBindDescriptorSets(
     const VkDescriptorSet*                      pDescriptorSets,
     uint32_t                                    dynamicOffsetCount,
     const uint32_t*                             pDynamicOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 }
 
-void GfrContext::PreCmdBindIndexBuffer(
+void CdlContext::PreCmdBindIndexBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     VkIndexType                                 indexType) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
-void GfrContext::PostCmdBindIndexBuffer(
+void CdlContext::PostCmdBindIndexBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     VkIndexType                                 indexType) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
 
-void GfrContext::PreCmdBindVertexBuffers(
+void CdlContext::PreCmdBindVertexBuffers(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
-void GfrContext::PostCmdBindVertexBuffers(
+void CdlContext::PostCmdBindVertexBuffers(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
 
-void GfrContext::PreCmdDraw(
+void CdlContext::PreCmdDraw(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    vertexCount,
     uint32_t                                    instanceCount,
     uint32_t                                    firstVertex,
     uint32_t                                    firstInstance) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
-void GfrContext::PostCmdDraw(
+void CdlContext::PostCmdDraw(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    vertexCount,
     uint32_t                                    instanceCount,
     uint32_t                                    firstVertex,
     uint32_t                                    firstInstance) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-void GfrContext::PreCmdDrawIndexed(
+void CdlContext::PreCmdDrawIndexed(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    indexCount,
     uint32_t                                    instanceCount,
     uint32_t                                    firstIndex,
     int32_t                                     vertexOffset,
     uint32_t                                    firstInstance) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
-void GfrContext::PostCmdDrawIndexed(
+void CdlContext::PostCmdDrawIndexed(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    indexCount,
     uint32_t                                    instanceCount,
     uint32_t                                    firstIndex,
     int32_t                                     vertexOffset,
     uint32_t                                    firstInstance) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 
-void GfrContext::PreCmdDrawIndirect(
+void CdlContext::PreCmdDrawIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
-void GfrContext::PostCmdDrawIndirect(
+void CdlContext::PostCmdDrawIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-void GfrContext::PreCmdDrawIndexedIndirect(
+void CdlContext::PreCmdDrawIndexedIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
-void GfrContext::PostCmdDrawIndexedIndirect(
+void CdlContext::PostCmdDrawIndexedIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-void GfrContext::PreCmdDispatch(
+void CdlContext::PreCmdDispatch(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
-void GfrContext::PostCmdDispatch(
+void CdlContext::PostCmdDispatch(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
-void GfrContext::PreCmdDispatchIndirect(
+void CdlContext::PreCmdDispatchIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDispatchIndirect(commandBuffer, buffer, offset);
 }
-void GfrContext::PostCmdDispatchIndirect(
+void CdlContext::PostCmdDispatchIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDispatchIndirect(commandBuffer, buffer, offset);
 }
 
-void GfrContext::PreCmdCopyBuffer(
+void CdlContext::PreCmdCopyBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    srcBuffer,
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
     const VkBufferCopy*                         pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
-void GfrContext::PostCmdCopyBuffer(
+void CdlContext::PostCmdCopyBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    srcBuffer,
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
     const VkBufferCopy*                         pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
 
-void GfrContext::PreCmdCopyImage(
+void CdlContext::PreCmdCopyImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
@@ -397,10 +397,10 @@ void GfrContext::PreCmdCopyImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkImageCopy*                          pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
-void GfrContext::PostCmdCopyImage(
+void CdlContext::PostCmdCopyImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
@@ -408,11 +408,11 @@ void GfrContext::PostCmdCopyImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkImageCopy*                          pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
-void GfrContext::PreCmdBlitImage(
+void CdlContext::PreCmdBlitImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
@@ -421,10 +421,10 @@ void GfrContext::PreCmdBlitImage(
     uint32_t                                    regionCount,
     const VkImageBlit*                          pRegions,
     VkFilter                                    filter) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 }
-void GfrContext::PostCmdBlitImage(
+void CdlContext::PostCmdBlitImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
@@ -433,152 +433,152 @@ void GfrContext::PostCmdBlitImage(
     uint32_t                                    regionCount,
     const VkImageBlit*                          pRegions,
     VkFilter                                    filter) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 }
 
-void GfrContext::PreCmdCopyBufferToImage(
+void CdlContext::PreCmdCopyBufferToImage(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    srcBuffer,
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkBufferImageCopy*                    pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
-void GfrContext::PostCmdCopyBufferToImage(
+void CdlContext::PostCmdCopyBufferToImage(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    srcBuffer,
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkBufferImageCopy*                    pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
-void GfrContext::PreCmdCopyImageToBuffer(
+void CdlContext::PreCmdCopyImageToBuffer(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
     const VkBufferImageCopy*                    pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
-void GfrContext::PostCmdCopyImageToBuffer(
+void CdlContext::PostCmdCopyImageToBuffer(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
     const VkBufferImageCopy*                    pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
 
-void GfrContext::PreCmdUpdateBuffer(
+void CdlContext::PreCmdUpdateBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                dataSize,
     const void*                                 pData) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
-void GfrContext::PostCmdUpdateBuffer(
+void CdlContext::PostCmdUpdateBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                dataSize,
     const void*                                 pData) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
 
-void GfrContext::PreCmdFillBuffer(
+void CdlContext::PreCmdFillBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                size,
     uint32_t                                    data) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
-void GfrContext::PostCmdFillBuffer(
+void CdlContext::PostCmdFillBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                size,
     uint32_t                                    data) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
 
-void GfrContext::PreCmdClearColorImage(
+void CdlContext::PreCmdClearColorImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     image,
     VkImageLayout                               imageLayout,
     const VkClearColorValue*                    pColor,
     uint32_t                                    rangeCount,
     const VkImageSubresourceRange*              pRanges) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
-void GfrContext::PostCmdClearColorImage(
+void CdlContext::PostCmdClearColorImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     image,
     VkImageLayout                               imageLayout,
     const VkClearColorValue*                    pColor,
     uint32_t                                    rangeCount,
     const VkImageSubresourceRange*              pRanges) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 
-void GfrContext::PreCmdClearDepthStencilImage(
+void CdlContext::PreCmdClearDepthStencilImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     image,
     VkImageLayout                               imageLayout,
     const VkClearDepthStencilValue*             pDepthStencil,
     uint32_t                                    rangeCount,
     const VkImageSubresourceRange*              pRanges) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
-void GfrContext::PostCmdClearDepthStencilImage(
+void CdlContext::PostCmdClearDepthStencilImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     image,
     VkImageLayout                               imageLayout,
     const VkClearDepthStencilValue*             pDepthStencil,
     uint32_t                                    rangeCount,
     const VkImageSubresourceRange*              pRanges) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
 
-void GfrContext::PreCmdClearAttachments(
+void CdlContext::PreCmdClearAttachments(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkClearAttachment*                    pAttachments,
     uint32_t                                    rectCount,
     const VkClearRect*                          pRects) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
-void GfrContext::PostCmdClearAttachments(
+void CdlContext::PostCmdClearAttachments(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkClearAttachment*                    pAttachments,
     uint32_t                                    rectCount,
     const VkClearRect*                          pRects) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
 
-void GfrContext::PreCmdResolveImage(
+void CdlContext::PreCmdResolveImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
@@ -586,10 +586,10 @@ void GfrContext::PreCmdResolveImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkImageResolve*                       pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
-void GfrContext::PostCmdResolveImage(
+void CdlContext::PostCmdResolveImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
@@ -597,41 +597,41 @@ void GfrContext::PostCmdResolveImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkImageResolve*                       pRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
-void GfrContext::PreCmdSetEvent(
+void CdlContext::PreCmdSetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags                        stageMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetEvent(commandBuffer, event, stageMask);
 }
-void GfrContext::PostCmdSetEvent(
+void CdlContext::PostCmdSetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags                        stageMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetEvent(commandBuffer, event, stageMask);
 }
 
-void GfrContext::PreCmdResetEvent(
+void CdlContext::PreCmdResetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags                        stageMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdResetEvent(commandBuffer, event, stageMask);
 }
-void GfrContext::PostCmdResetEvent(
+void CdlContext::PostCmdResetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags                        stageMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdResetEvent(commandBuffer, event, stageMask);
 }
 
-void GfrContext::PreCmdWaitEvents(
+void CdlContext::PreCmdWaitEvents(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
@@ -643,10 +643,10 @@ void GfrContext::PreCmdWaitEvents(
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
     const VkImageMemoryBarrier*                 pImageMemoryBarriers) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
-void GfrContext::PostCmdWaitEvents(
+void CdlContext::PostCmdWaitEvents(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
@@ -658,11 +658,11 @@ void GfrContext::PostCmdWaitEvents(
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
     const VkImageMemoryBarrier*                 pImageMemoryBarriers) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
-void GfrContext::PreCmdPipelineBarrier(
+void CdlContext::PreCmdPipelineBarrier(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags                        srcStageMask,
     VkPipelineStageFlags                        dstStageMask,
@@ -673,10 +673,10 @@ void GfrContext::PreCmdPipelineBarrier(
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
     const VkImageMemoryBarrier*                 pImageMemoryBarriers) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
-void GfrContext::PostCmdPipelineBarrier(
+void CdlContext::PostCmdPipelineBarrier(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags                        srcStageMask,
     VkPipelineStageFlags                        dstStageMask,
@@ -687,77 +687,77 @@ void GfrContext::PostCmdPipelineBarrier(
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
     const VkImageMemoryBarrier*                 pImageMemoryBarriers) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
-void GfrContext::PreCmdBeginQuery(
+void CdlContext::PreCmdBeginQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     VkQueryControlFlags                         flags) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
-void GfrContext::PostCmdBeginQuery(
+void CdlContext::PostCmdBeginQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     VkQueryControlFlags                         flags) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 
-void GfrContext::PreCmdEndQuery(
+void CdlContext::PreCmdEndQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndQuery(commandBuffer, queryPool, query);
 }
-void GfrContext::PostCmdEndQuery(
+void CdlContext::PostCmdEndQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndQuery(commandBuffer, queryPool, query);
 }
 
-void GfrContext::PreCmdResetQueryPool(
+void CdlContext::PreCmdResetQueryPool(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
     uint32_t                                    queryCount) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
-void GfrContext::PostCmdResetQueryPool(
+void CdlContext::PostCmdResetQueryPool(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
     uint32_t                                    queryCount) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
 
-void GfrContext::PreCmdWriteTimestamp(
+void CdlContext::PreCmdWriteTimestamp(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlagBits                     pipelineStage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
-void GfrContext::PostCmdWriteTimestamp(
+void CdlContext::PostCmdWriteTimestamp(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlagBits                     pipelineStage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 
-void GfrContext::PreCmdCopyQueryPoolResults(
+void CdlContext::PreCmdCopyQueryPoolResults(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
@@ -766,10 +766,10 @@ void GfrContext::PreCmdCopyQueryPoolResults(
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                stride,
     VkQueryResultFlags                          flags) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 }
-void GfrContext::PostCmdCopyQueryPoolResults(
+void CdlContext::PostCmdCopyQueryPoolResults(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
@@ -778,99 +778,99 @@ void GfrContext::PostCmdCopyQueryPoolResults(
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                stride,
     VkQueryResultFlags                          flags) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 }
 
-void GfrContext::PreCmdPushConstants(
+void CdlContext::PreCmdPushConstants(
     VkCommandBuffer                             commandBuffer,
     VkPipelineLayout                            layout,
     VkShaderStageFlags                          stageFlags,
     uint32_t                                    offset,
     uint32_t                                    size,
     const void*                                 pValues) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
-void GfrContext::PostCmdPushConstants(
+void CdlContext::PostCmdPushConstants(
     VkCommandBuffer                             commandBuffer,
     VkPipelineLayout                            layout,
     VkShaderStageFlags                          stageFlags,
     uint32_t                                    offset,
     uint32_t                                    size,
     const void*                                 pValues) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 
-void GfrContext::PreCmdBeginRenderPass(
+void CdlContext::PreCmdBeginRenderPass(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     VkSubpassContents                           contents) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
-void GfrContext::PostCmdBeginRenderPass(
+void CdlContext::PostCmdBeginRenderPass(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     VkSubpassContents                           contents) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
 
-void GfrContext::PreCmdNextSubpass(
+void CdlContext::PreCmdNextSubpass(
     VkCommandBuffer                             commandBuffer,
     VkSubpassContents                           contents) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdNextSubpass(commandBuffer, contents);
 }
-void GfrContext::PostCmdNextSubpass(
+void CdlContext::PostCmdNextSubpass(
     VkCommandBuffer                             commandBuffer,
     VkSubpassContents                           contents) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdNextSubpass(commandBuffer, contents);
 }
 
-void GfrContext::PreCmdEndRenderPass(
+void CdlContext::PreCmdEndRenderPass(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndRenderPass(commandBuffer);
 }
-void GfrContext::PostCmdEndRenderPass(
+void CdlContext::PostCmdEndRenderPass(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndRenderPass(commandBuffer);
 }
 
-void GfrContext::PreCmdExecuteCommands(
+void CdlContext::PreCmdExecuteCommands(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    commandBufferCount,
     const VkCommandBuffer*                      pCommandBuffers) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
-void GfrContext::PostCmdExecuteCommands(
+void CdlContext::PostCmdExecuteCommands(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    commandBufferCount,
     const VkCommandBuffer*                      pCommandBuffers) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 
-void GfrContext::PreCmdSetDeviceMask(
+void CdlContext::PreCmdSetDeviceMask(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    deviceMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDeviceMask(commandBuffer, deviceMask);
 }
-void GfrContext::PostCmdSetDeviceMask(
+void CdlContext::PostCmdSetDeviceMask(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    deviceMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDeviceMask(commandBuffer, deviceMask);
 }
 
-void GfrContext::PreCmdDispatchBase(
+void CdlContext::PreCmdDispatchBase(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    baseGroupX,
     uint32_t                                    baseGroupY,
@@ -878,10 +878,10 @@ void GfrContext::PreCmdDispatchBase(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
-void GfrContext::PostCmdDispatchBase(
+void CdlContext::PostCmdDispatchBase(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    baseGroupX,
     uint32_t                                    baseGroupY,
@@ -889,11 +889,11 @@ void GfrContext::PostCmdDispatchBase(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 
-void GfrContext::PreCmdDrawIndirectCount(
+void CdlContext::PreCmdDrawIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -901,10 +901,10 @@ void GfrContext::PreCmdDrawIndirectCount(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
-void GfrContext::PostCmdDrawIndirectCount(
+void CdlContext::PostCmdDrawIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -912,11 +912,11 @@ void GfrContext::PostCmdDrawIndirectCount(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
-void GfrContext::PreCmdDrawIndexedIndirectCount(
+void CdlContext::PreCmdDrawIndexedIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -924,10 +924,10 @@ void GfrContext::PreCmdDrawIndexedIndirectCount(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
-void GfrContext::PostCmdDrawIndexedIndirectCount(
+void CdlContext::PostCmdDrawIndexedIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -935,302 +935,302 @@ void GfrContext::PostCmdDrawIndexedIndirectCount(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
-void GfrContext::PreCmdBeginRenderPass2(
+void CdlContext::PreCmdBeginRenderPass2(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
-void GfrContext::PostCmdBeginRenderPass2(
+void CdlContext::PostCmdBeginRenderPass2(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 
-void GfrContext::PreCmdNextSubpass2(
+void CdlContext::PreCmdNextSubpass2(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
-void GfrContext::PostCmdNextSubpass2(
+void CdlContext::PostCmdNextSubpass2(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 
-void GfrContext::PreCmdEndRenderPass2(
+void CdlContext::PreCmdEndRenderPass2(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
-void GfrContext::PostCmdEndRenderPass2(
+void CdlContext::PostCmdEndRenderPass2(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
 
-void GfrContext::PreCmdSetEvent2(
+void CdlContext::PreCmdSetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     const VkDependencyInfo*                     pDependencyInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
 }
-void GfrContext::PostCmdSetEvent2(
+void CdlContext::PostCmdSetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     const VkDependencyInfo*                     pDependencyInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetEvent2(commandBuffer, event, pDependencyInfo);
 }
 
-void GfrContext::PreCmdResetEvent2(
+void CdlContext::PreCmdResetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags2                       stageMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdResetEvent2(commandBuffer, event, stageMask);
 }
-void GfrContext::PostCmdResetEvent2(
+void CdlContext::PostCmdResetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags2                       stageMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdResetEvent2(commandBuffer, event, stageMask);
 }
 
-void GfrContext::PreCmdWaitEvents2(
+void CdlContext::PreCmdWaitEvents2(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
     const VkDependencyInfo*                     pDependencyInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
-void GfrContext::PostCmdWaitEvents2(
+void CdlContext::PostCmdWaitEvents2(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
     const VkDependencyInfo*                     pDependencyInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
-void GfrContext::PreCmdPipelineBarrier2(
+void CdlContext::PreCmdPipelineBarrier2(
     VkCommandBuffer                             commandBuffer,
     const VkDependencyInfo*                     pDependencyInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
 }
-void GfrContext::PostCmdPipelineBarrier2(
+void CdlContext::PostCmdPipelineBarrier2(
     VkCommandBuffer                             commandBuffer,
     const VkDependencyInfo*                     pDependencyInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
 }
 
-void GfrContext::PreCmdWriteTimestamp2(
+void CdlContext::PreCmdWriteTimestamp2(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
-void GfrContext::PostCmdWriteTimestamp2(
+void CdlContext::PostCmdWriteTimestamp2(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
 
-void GfrContext::PreCmdCopyBuffer2(
+void CdlContext::PreCmdCopyBuffer2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferInfo2*                    pCopyBufferInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
 }
-void GfrContext::PostCmdCopyBuffer2(
+void CdlContext::PostCmdCopyBuffer2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferInfo2*                    pCopyBufferInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
 }
 
-void GfrContext::PreCmdCopyImage2(
+void CdlContext::PreCmdCopyImage2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageInfo2*                     pCopyImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyImage2(commandBuffer, pCopyImageInfo);
 }
-void GfrContext::PostCmdCopyImage2(
+void CdlContext::PostCmdCopyImage2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageInfo2*                     pCopyImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyImage2(commandBuffer, pCopyImageInfo);
 }
 
-void GfrContext::PreCmdCopyBufferToImage2(
+void CdlContext::PreCmdCopyBufferToImage2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
 }
-void GfrContext::PostCmdCopyBufferToImage2(
+void CdlContext::PostCmdCopyBufferToImage2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
 }
 
-void GfrContext::PreCmdCopyImageToBuffer2(
+void CdlContext::PreCmdCopyImageToBuffer2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
 }
-void GfrContext::PostCmdCopyImageToBuffer2(
+void CdlContext::PostCmdCopyImageToBuffer2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
 }
 
-void GfrContext::PreCmdBlitImage2(
+void CdlContext::PreCmdBlitImage2(
     VkCommandBuffer                             commandBuffer,
     const VkBlitImageInfo2*                     pBlitImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBlitImage2(commandBuffer, pBlitImageInfo);
 }
-void GfrContext::PostCmdBlitImage2(
+void CdlContext::PostCmdBlitImage2(
     VkCommandBuffer                             commandBuffer,
     const VkBlitImageInfo2*                     pBlitImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBlitImage2(commandBuffer, pBlitImageInfo);
 }
 
-void GfrContext::PreCmdResolveImage2(
+void CdlContext::PreCmdResolveImage2(
     VkCommandBuffer                             commandBuffer,
     const VkResolveImageInfo2*                  pResolveImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdResolveImage2(commandBuffer, pResolveImageInfo);
 }
-void GfrContext::PostCmdResolveImage2(
+void CdlContext::PostCmdResolveImage2(
     VkCommandBuffer                             commandBuffer,
     const VkResolveImageInfo2*                  pResolveImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdResolveImage2(commandBuffer, pResolveImageInfo);
 }
 
-void GfrContext::PreCmdBeginRendering(
+void CdlContext::PreCmdBeginRendering(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingInfo*                      pRenderingInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginRendering(commandBuffer, pRenderingInfo);
 }
-void GfrContext::PostCmdBeginRendering(
+void CdlContext::PostCmdBeginRendering(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingInfo*                      pRenderingInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginRendering(commandBuffer, pRenderingInfo);
 }
 
-void GfrContext::PreCmdEndRendering(
+void CdlContext::PreCmdEndRendering(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndRendering(commandBuffer);
 }
-void GfrContext::PostCmdEndRendering(
+void CdlContext::PostCmdEndRendering(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndRendering(commandBuffer);
 }
 
-void GfrContext::PreCmdSetCullMode(
+void CdlContext::PreCmdSetCullMode(
     VkCommandBuffer                             commandBuffer,
     VkCullModeFlags                             cullMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCullMode(commandBuffer, cullMode);
 }
-void GfrContext::PostCmdSetCullMode(
+void CdlContext::PostCmdSetCullMode(
     VkCommandBuffer                             commandBuffer,
     VkCullModeFlags                             cullMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCullMode(commandBuffer, cullMode);
 }
 
-void GfrContext::PreCmdSetFrontFace(
+void CdlContext::PreCmdSetFrontFace(
     VkCommandBuffer                             commandBuffer,
     VkFrontFace                                 frontFace) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetFrontFace(commandBuffer, frontFace);
 }
-void GfrContext::PostCmdSetFrontFace(
+void CdlContext::PostCmdSetFrontFace(
     VkCommandBuffer                             commandBuffer,
     VkFrontFace                                 frontFace) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetFrontFace(commandBuffer, frontFace);
 }
 
-void GfrContext::PreCmdSetPrimitiveTopology(
+void CdlContext::PreCmdSetPrimitiveTopology(
     VkCommandBuffer                             commandBuffer,
     VkPrimitiveTopology                         primitiveTopology) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
 }
-void GfrContext::PostCmdSetPrimitiveTopology(
+void CdlContext::PostCmdSetPrimitiveTopology(
     VkCommandBuffer                             commandBuffer,
     VkPrimitiveTopology                         primitiveTopology) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
 }
 
-void GfrContext::PreCmdSetViewportWithCount(
+void CdlContext::PreCmdSetViewportWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
 }
-void GfrContext::PostCmdSetViewportWithCount(
+void CdlContext::PostCmdSetViewportWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
 }
 
-void GfrContext::PreCmdSetScissorWithCount(
+void CdlContext::PreCmdSetScissorWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
 }
-void GfrContext::PostCmdSetScissorWithCount(
+void CdlContext::PostCmdSetScissorWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
 }
 
-void GfrContext::PreCmdBindVertexBuffers2(
+void CdlContext::PreCmdBindVertexBuffers2(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
@@ -1238,10 +1238,10 @@ void GfrContext::PreCmdBindVertexBuffers2(
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
     const VkDeviceSize*                         pStrides) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
-void GfrContext::PostCmdBindVertexBuffers2(
+void CdlContext::PostCmdBindVertexBuffers2(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
@@ -1249,225 +1249,225 @@ void GfrContext::PostCmdBindVertexBuffers2(
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
     const VkDeviceSize*                         pStrides) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
 
-void GfrContext::PreCmdSetDepthTestEnable(
+void CdlContext::PreCmdSetDepthTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
 }
-void GfrContext::PostCmdSetDepthTestEnable(
+void CdlContext::PostCmdSetDepthTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
 }
 
-void GfrContext::PreCmdSetDepthWriteEnable(
+void CdlContext::PreCmdSetDepthWriteEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthWriteEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
 }
-void GfrContext::PostCmdSetDepthWriteEnable(
+void CdlContext::PostCmdSetDepthWriteEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthWriteEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
 }
 
-void GfrContext::PreCmdSetDepthCompareOp(
+void CdlContext::PreCmdSetDepthCompareOp(
     VkCommandBuffer                             commandBuffer,
     VkCompareOp                                 depthCompareOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
 }
-void GfrContext::PostCmdSetDepthCompareOp(
+void CdlContext::PostCmdSetDepthCompareOp(
     VkCommandBuffer                             commandBuffer,
     VkCompareOp                                 depthCompareOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
 }
 
-void GfrContext::PreCmdSetDepthBoundsTestEnable(
+void CdlContext::PreCmdSetDepthBoundsTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBoundsTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
 }
-void GfrContext::PostCmdSetDepthBoundsTestEnable(
+void CdlContext::PostCmdSetDepthBoundsTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBoundsTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
 }
 
-void GfrContext::PreCmdSetStencilTestEnable(
+void CdlContext::PreCmdSetStencilTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stencilTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
 }
-void GfrContext::PostCmdSetStencilTestEnable(
+void CdlContext::PostCmdSetStencilTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stencilTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
 }
 
-void GfrContext::PreCmdSetStencilOp(
+void CdlContext::PreCmdSetStencilOp(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     VkStencilOp                                 failOp,
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
     VkCompareOp                                 compareOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
-void GfrContext::PostCmdSetStencilOp(
+void CdlContext::PostCmdSetStencilOp(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     VkStencilOp                                 failOp,
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
     VkCompareOp                                 compareOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 
-void GfrContext::PreCmdSetRasterizerDiscardEnable(
+void CdlContext::PreCmdSetRasterizerDiscardEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    rasterizerDiscardEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
 }
-void GfrContext::PostCmdSetRasterizerDiscardEnable(
+void CdlContext::PostCmdSetRasterizerDiscardEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    rasterizerDiscardEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
 }
 
-void GfrContext::PreCmdSetDepthBiasEnable(
+void CdlContext::PreCmdSetDepthBiasEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBiasEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 }
-void GfrContext::PostCmdSetDepthBiasEnable(
+void CdlContext::PostCmdSetDepthBiasEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBiasEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 }
 
-void GfrContext::PreCmdSetPrimitiveRestartEnable(
+void CdlContext::PreCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
-void GfrContext::PostCmdSetPrimitiveRestartEnable(
+void CdlContext::PostCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 
-void GfrContext::PreCmdBeginVideoCodingKHR(
+void CdlContext::PreCmdBeginVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoBeginCodingInfoKHR*            pBeginInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
 }
-void GfrContext::PostCmdBeginVideoCodingKHR(
+void CdlContext::PostCmdBeginVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoBeginCodingInfoKHR*            pBeginInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
 }
 
-void GfrContext::PreCmdEndVideoCodingKHR(
+void CdlContext::PreCmdEndVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEndCodingInfoKHR*              pEndCodingInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
 }
-void GfrContext::PostCmdEndVideoCodingKHR(
+void CdlContext::PostCmdEndVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEndCodingInfoKHR*              pEndCodingInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
 }
 
-void GfrContext::PreCmdControlVideoCodingKHR(
+void CdlContext::PreCmdControlVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoCodingControlInfoKHR*          pCodingControlInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
 }
-void GfrContext::PostCmdControlVideoCodingKHR(
+void CdlContext::PostCmdControlVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoCodingControlInfoKHR*          pCodingControlInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
 }
 
-void GfrContext::PreCmdDecodeVideoKHR(
+void CdlContext::PreCmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoDecodeInfoKHR*                 pDecodeInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
 }
-void GfrContext::PostCmdDecodeVideoKHR(
+void CdlContext::PostCmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoDecodeInfoKHR*                 pDecodeInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
 }
 
-void GfrContext::PreCmdBeginRenderingKHR(
+void CdlContext::PreCmdBeginRenderingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingInfo*                      pRenderingInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 }
-void GfrContext::PostCmdBeginRenderingKHR(
+void CdlContext::PostCmdBeginRenderingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingInfo*                      pRenderingInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 }
 
-void GfrContext::PreCmdEndRenderingKHR(
+void CdlContext::PreCmdEndRenderingKHR(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndRenderingKHR(commandBuffer);
 }
-void GfrContext::PostCmdEndRenderingKHR(
+void CdlContext::PostCmdEndRenderingKHR(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndRenderingKHR(commandBuffer);
 }
 
-void GfrContext::PreCmdSetDeviceMaskKHR(
+void CdlContext::PreCmdSetDeviceMaskKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    deviceMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
 }
-void GfrContext::PostCmdSetDeviceMaskKHR(
+void CdlContext::PostCmdSetDeviceMaskKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    deviceMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
 }
 
-void GfrContext::PreCmdDispatchBaseKHR(
+void CdlContext::PreCmdDispatchBaseKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    baseGroupX,
     uint32_t                                    baseGroupY,
@@ -1475,10 +1475,10 @@ void GfrContext::PreCmdDispatchBaseKHR(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
-void GfrContext::PostCmdDispatchBaseKHR(
+void CdlContext::PostCmdDispatchBaseKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    baseGroupX,
     uint32_t                                    baseGroupY,
@@ -1486,94 +1486,94 @@ void GfrContext::PostCmdDispatchBaseKHR(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 
-void GfrContext::PreCmdPushDescriptorSetKHR(
+void CdlContext::PreCmdPushDescriptorSetKHR(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
     uint32_t                                    set,
     uint32_t                                    descriptorWriteCount,
     const VkWriteDescriptorSet*                 pDescriptorWrites) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 }
-void GfrContext::PostCmdPushDescriptorSetKHR(
+void CdlContext::PostCmdPushDescriptorSetKHR(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
     uint32_t                                    set,
     uint32_t                                    descriptorWriteCount,
     const VkWriteDescriptorSet*                 pDescriptorWrites) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 }
 
-void GfrContext::PreCmdPushDescriptorSetWithTemplateKHR(
+void CdlContext::PreCmdPushDescriptorSetWithTemplateKHR(
     VkCommandBuffer                             commandBuffer,
     VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
     VkPipelineLayout                            layout,
     uint32_t                                    set,
     const void*                                 pData) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
-void GfrContext::PostCmdPushDescriptorSetWithTemplateKHR(
+void CdlContext::PostCmdPushDescriptorSetWithTemplateKHR(
     VkCommandBuffer                             commandBuffer,
     VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
     VkPipelineLayout                            layout,
     uint32_t                                    set,
     const void*                                 pData) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
 
-void GfrContext::PreCmdBeginRenderPass2KHR(
+void CdlContext::PreCmdBeginRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
-void GfrContext::PostCmdBeginRenderPass2KHR(
+void CdlContext::PostCmdBeginRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 
-void GfrContext::PreCmdNextSubpass2KHR(
+void CdlContext::PreCmdNextSubpass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
-void GfrContext::PostCmdNextSubpass2KHR(
+void CdlContext::PostCmdNextSubpass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 
-void GfrContext::PreCmdEndRenderPass2KHR(
+void CdlContext::PreCmdEndRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
 }
-void GfrContext::PostCmdEndRenderPass2KHR(
+void CdlContext::PostCmdEndRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
 }
 
-void GfrContext::PreCmdDrawIndirectCountKHR(
+void CdlContext::PreCmdDrawIndirectCountKHR(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -1581,10 +1581,10 @@ void GfrContext::PreCmdDrawIndirectCountKHR(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
-void GfrContext::PostCmdDrawIndirectCountKHR(
+void CdlContext::PostCmdDrawIndirectCountKHR(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -1592,11 +1592,11 @@ void GfrContext::PostCmdDrawIndirectCountKHR(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
-void GfrContext::PreCmdDrawIndexedIndirectCountKHR(
+void CdlContext::PreCmdDrawIndexedIndirectCountKHR(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -1604,10 +1604,10 @@ void GfrContext::PreCmdDrawIndexedIndirectCountKHR(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
-void GfrContext::PostCmdDrawIndexedIndirectCountKHR(
+void CdlContext::PostCmdDrawIndexedIndirectCountKHR(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -1615,360 +1615,360 @@ void GfrContext::PostCmdDrawIndexedIndirectCountKHR(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
-void GfrContext::PreCmdSetFragmentShadingRateKHR(
+void CdlContext::PreCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
-void GfrContext::PostCmdSetFragmentShadingRateKHR(
+void CdlContext::PostCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-void GfrContext::PreCmdEncodeVideoKHR(
+void CdlContext::PreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
-void GfrContext::PostCmdEncodeVideoKHR(
+void CdlContext::PostCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
-void GfrContext::PreCmdSetEvent2KHR(
+void CdlContext::PreCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     const VkDependencyInfo*                     pDependencyInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
 }
-void GfrContext::PostCmdSetEvent2KHR(
+void CdlContext::PostCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     const VkDependencyInfo*                     pDependencyInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
 }
 
-void GfrContext::PreCmdResetEvent2KHR(
+void CdlContext::PreCmdResetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags2                       stageMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdResetEvent2KHR(commandBuffer, event, stageMask);
 }
-void GfrContext::PostCmdResetEvent2KHR(
+void CdlContext::PostCmdResetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags2                       stageMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdResetEvent2KHR(commandBuffer, event, stageMask);
 }
 
-void GfrContext::PreCmdWaitEvents2KHR(
+void CdlContext::PreCmdWaitEvents2KHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
     const VkDependencyInfo*                     pDependencyInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
-void GfrContext::PostCmdWaitEvents2KHR(
+void CdlContext::PostCmdWaitEvents2KHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
     const VkDependencyInfo*                     pDependencyInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
-void GfrContext::PreCmdPipelineBarrier2KHR(
+void CdlContext::PreCmdPipelineBarrier2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkDependencyInfo*                     pDependencyInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
 }
-void GfrContext::PostCmdPipelineBarrier2KHR(
+void CdlContext::PostCmdPipelineBarrier2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkDependencyInfo*                     pDependencyInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
 }
 
-void GfrContext::PreCmdWriteTimestamp2KHR(
+void CdlContext::PreCmdWriteTimestamp2KHR(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
-void GfrContext::PostCmdWriteTimestamp2KHR(
+void CdlContext::PostCmdWriteTimestamp2KHR(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
 
-void GfrContext::PreCmdWriteBufferMarker2AMD(
+void CdlContext::PreCmdWriteBufferMarker2AMD(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
-void GfrContext::PostCmdWriteBufferMarker2AMD(
+void CdlContext::PostCmdWriteBufferMarker2AMD(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
 
-void GfrContext::PreCmdCopyBuffer2KHR(
+void CdlContext::PreCmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferInfo2*                    pCopyBufferInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
 }
-void GfrContext::PostCmdCopyBuffer2KHR(
+void CdlContext::PostCmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferInfo2*                    pCopyBufferInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
 }
 
-void GfrContext::PreCmdCopyImage2KHR(
+void CdlContext::PreCmdCopyImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageInfo2*                     pCopyImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
 }
-void GfrContext::PostCmdCopyImage2KHR(
+void CdlContext::PostCmdCopyImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageInfo2*                     pCopyImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
 }
 
-void GfrContext::PreCmdCopyBufferToImage2KHR(
+void CdlContext::PreCmdCopyBufferToImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
 }
-void GfrContext::PostCmdCopyBufferToImage2KHR(
+void CdlContext::PostCmdCopyBufferToImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
 }
 
-void GfrContext::PreCmdCopyImageToBuffer2KHR(
+void CdlContext::PreCmdCopyImageToBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
 }
-void GfrContext::PostCmdCopyImageToBuffer2KHR(
+void CdlContext::PostCmdCopyImageToBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
 }
 
-void GfrContext::PreCmdBlitImage2KHR(
+void CdlContext::PreCmdBlitImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkBlitImageInfo2*                     pBlitImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
 }
-void GfrContext::PostCmdBlitImage2KHR(
+void CdlContext::PostCmdBlitImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkBlitImageInfo2*                     pBlitImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
 }
 
-void GfrContext::PreCmdResolveImage2KHR(
+void CdlContext::PreCmdResolveImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkResolveImageInfo2*                  pResolveImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
 }
-void GfrContext::PostCmdResolveImage2KHR(
+void CdlContext::PostCmdResolveImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkResolveImageInfo2*                  pResolveImageInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
 }
 
-void GfrContext::PreCmdTraceRaysIndirect2KHR(
+void CdlContext::PreCmdTraceRaysIndirect2KHR(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             indirectDeviceAddress) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
-void GfrContext::PostCmdTraceRaysIndirect2KHR(
+void CdlContext::PostCmdTraceRaysIndirect2KHR(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             indirectDeviceAddress) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
 
-void GfrContext::PreCmdDebugMarkerBeginEXT(
+void CdlContext::PreCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 }
-void GfrContext::PostCmdDebugMarkerBeginEXT(
+void CdlContext::PostCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 }
 
-void GfrContext::PreCmdDebugMarkerEndEXT(
+void CdlContext::PreCmdDebugMarkerEndEXT(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDebugMarkerEndEXT(commandBuffer);
 }
-void GfrContext::PostCmdDebugMarkerEndEXT(
+void CdlContext::PostCmdDebugMarkerEndEXT(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDebugMarkerEndEXT(commandBuffer);
 }
 
-void GfrContext::PreCmdDebugMarkerInsertEXT(
+void CdlContext::PreCmdDebugMarkerInsertEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
 }
-void GfrContext::PostCmdDebugMarkerInsertEXT(
+void CdlContext::PostCmdDebugMarkerInsertEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
 }
 
-void GfrContext::PreCmdBindTransformFeedbackBuffersEXT(
+void CdlContext::PreCmdBindTransformFeedbackBuffersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
 }
-void GfrContext::PostCmdBindTransformFeedbackBuffersEXT(
+void CdlContext::PostCmdBindTransformFeedbackBuffersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
 }
 
-void GfrContext::PreCmdBeginTransformFeedbackEXT(
+void CdlContext::PreCmdBeginTransformFeedbackEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstCounterBuffer,
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
     const VkDeviceSize*                         pCounterBufferOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
-void GfrContext::PostCmdBeginTransformFeedbackEXT(
+void CdlContext::PostCmdBeginTransformFeedbackEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstCounterBuffer,
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
     const VkDeviceSize*                         pCounterBufferOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 
-void GfrContext::PreCmdEndTransformFeedbackEXT(
+void CdlContext::PreCmdEndTransformFeedbackEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstCounterBuffer,
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
     const VkDeviceSize*                         pCounterBufferOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
-void GfrContext::PostCmdEndTransformFeedbackEXT(
+void CdlContext::PostCmdEndTransformFeedbackEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstCounterBuffer,
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
     const VkDeviceSize*                         pCounterBufferOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 
-void GfrContext::PreCmdBeginQueryIndexedEXT(
+void CdlContext::PreCmdBeginQueryIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     VkQueryControlFlags                         flags,
     uint32_t                                    index) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
 }
-void GfrContext::PostCmdBeginQueryIndexedEXT(
+void CdlContext::PostCmdBeginQueryIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     VkQueryControlFlags                         flags,
     uint32_t                                    index) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
 }
 
-void GfrContext::PreCmdEndQueryIndexedEXT(
+void CdlContext::PreCmdEndQueryIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     uint32_t                                    index) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
 }
-void GfrContext::PostCmdEndQueryIndexedEXT(
+void CdlContext::PostCmdEndQueryIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     uint32_t                                    index) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
 }
 
-void GfrContext::PreCmdDrawIndirectByteCountEXT(
+void CdlContext::PreCmdDrawIndirectByteCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
@@ -1976,10 +1976,10 @@ void GfrContext::PreCmdDrawIndirectByteCountEXT(
     VkDeviceSize                                counterBufferOffset,
     uint32_t                                    counterOffset,
     uint32_t                                    vertexStride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
 }
-void GfrContext::PostCmdDrawIndirectByteCountEXT(
+void CdlContext::PostCmdDrawIndirectByteCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
@@ -1987,24 +1987,24 @@ void GfrContext::PostCmdDrawIndirectByteCountEXT(
     VkDeviceSize                                counterBufferOffset,
     uint32_t                                    counterOffset,
     uint32_t                                    vertexStride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
 }
 
-void GfrContext::PreCmdCuLaunchKernelNVX(
+void CdlContext::PreCmdCuLaunchKernelNVX(
     VkCommandBuffer                             commandBuffer,
     const VkCuLaunchInfoNVX*                    pLaunchInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
 }
-void GfrContext::PostCmdCuLaunchKernelNVX(
+void CdlContext::PostCmdCuLaunchKernelNVX(
     VkCommandBuffer                             commandBuffer,
     const VkCuLaunchInfoNVX*                    pLaunchInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
 }
 
-void GfrContext::PreCmdDrawIndirectCountAMD(
+void CdlContext::PreCmdDrawIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -2012,10 +2012,10 @@ void GfrContext::PreCmdDrawIndirectCountAMD(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
-void GfrContext::PostCmdDrawIndirectCountAMD(
+void CdlContext::PostCmdDrawIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -2023,11 +2023,11 @@ void GfrContext::PostCmdDrawIndirectCountAMD(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
-void GfrContext::PreCmdDrawIndexedIndirectCountAMD(
+void CdlContext::PreCmdDrawIndexedIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -2035,10 +2035,10 @@ void GfrContext::PreCmdDrawIndexedIndirectCountAMD(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
-void GfrContext::PostCmdDrawIndexedIndirectCountAMD(
+void CdlContext::PostCmdDrawIndexedIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -2046,194 +2046,194 @@ void GfrContext::PostCmdDrawIndexedIndirectCountAMD(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
-void GfrContext::PreCmdBeginConditionalRenderingEXT(
+void CdlContext::PreCmdBeginConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer,
     const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
 }
-void GfrContext::PostCmdBeginConditionalRenderingEXT(
+void CdlContext::PostCmdBeginConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer,
     const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
 }
 
-void GfrContext::PreCmdEndConditionalRenderingEXT(
+void CdlContext::PreCmdEndConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndConditionalRenderingEXT(commandBuffer);
 }
-void GfrContext::PostCmdEndConditionalRenderingEXT(
+void CdlContext::PostCmdEndConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndConditionalRenderingEXT(commandBuffer);
 }
 
-void GfrContext::PreCmdSetViewportWScalingNV(
+void CdlContext::PreCmdSetViewportWScalingNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewportWScalingNV*                 pViewportWScalings) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
 }
-void GfrContext::PostCmdSetViewportWScalingNV(
+void CdlContext::PostCmdSetViewportWScalingNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewportWScalingNV*                 pViewportWScalings) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
 }
 
-void GfrContext::PreCmdSetDiscardRectangleEXT(
+void CdlContext::PreCmdSetDiscardRectangleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstDiscardRectangle,
     uint32_t                                    discardRectangleCount,
     const VkRect2D*                             pDiscardRectangles) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 }
-void GfrContext::PostCmdSetDiscardRectangleEXT(
+void CdlContext::PostCmdSetDiscardRectangleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstDiscardRectangle,
     uint32_t                                    discardRectangleCount,
     const VkRect2D*                             pDiscardRectangles) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 }
 
-void GfrContext::PreCmdSetDiscardRectangleEnableEXT(
+void CdlContext::PreCmdSetDiscardRectangleEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    discardRectangleEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
 }
-void GfrContext::PostCmdSetDiscardRectangleEnableEXT(
+void CdlContext::PostCmdSetDiscardRectangleEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    discardRectangleEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
 }
 
-void GfrContext::PreCmdSetDiscardRectangleModeEXT(
+void CdlContext::PreCmdSetDiscardRectangleModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkDiscardRectangleModeEXT                   discardRectangleMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 }
-void GfrContext::PostCmdSetDiscardRectangleModeEXT(
+void CdlContext::PostCmdSetDiscardRectangleModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkDiscardRectangleModeEXT                   discardRectangleMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 }
 
-void GfrContext::PreCmdBeginDebugUtilsLabelEXT(
+void CdlContext::PreCmdBeginDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugUtilsLabelEXT*                 pLabelInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
-void GfrContext::PostCmdBeginDebugUtilsLabelEXT(
+void CdlContext::PostCmdBeginDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugUtilsLabelEXT*                 pLabelInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 
-void GfrContext::PreCmdEndDebugUtilsLabelEXT(
+void CdlContext::PreCmdEndDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
-void GfrContext::PostCmdEndDebugUtilsLabelEXT(
+void CdlContext::PostCmdEndDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
-void GfrContext::PreCmdInsertDebugUtilsLabelEXT(
+void CdlContext::PreCmdInsertDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugUtilsLabelEXT*                 pLabelInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
-void GfrContext::PostCmdInsertDebugUtilsLabelEXT(
+void CdlContext::PostCmdInsertDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugUtilsLabelEXT*                 pLabelInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 
-void GfrContext::PreCmdSetSampleLocationsEXT(
+void CdlContext::PreCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,
     const VkSampleLocationsInfoEXT*             pSampleLocationsInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
 }
-void GfrContext::PostCmdSetSampleLocationsEXT(
+void CdlContext::PostCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,
     const VkSampleLocationsInfoEXT*             pSampleLocationsInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
 }
 
-void GfrContext::PreCmdBindShadingRateImageNV(
+void CdlContext::PreCmdBindShadingRateImageNV(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
     VkImageLayout                               imageLayout) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
 }
-void GfrContext::PostCmdBindShadingRateImageNV(
+void CdlContext::PostCmdBindShadingRateImageNV(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
     VkImageLayout                               imageLayout) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
 }
 
-void GfrContext::PreCmdSetViewportShadingRatePaletteNV(
+void CdlContext::PreCmdSetViewportShadingRatePaletteNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkShadingRatePaletteNV*               pShadingRatePalettes) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
 }
-void GfrContext::PostCmdSetViewportShadingRatePaletteNV(
+void CdlContext::PostCmdSetViewportShadingRatePaletteNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkShadingRatePaletteNV*               pShadingRatePalettes) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
 }
 
-void GfrContext::PreCmdSetCoarseSampleOrderNV(
+void CdlContext::PreCmdSetCoarseSampleOrderNV(
     VkCommandBuffer                             commandBuffer,
     VkCoarseSampleOrderTypeNV                   sampleOrderType,
     uint32_t                                    customSampleOrderCount,
     const VkCoarseSampleOrderCustomNV*          pCustomSampleOrders) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
 }
-void GfrContext::PostCmdSetCoarseSampleOrderNV(
+void CdlContext::PostCmdSetCoarseSampleOrderNV(
     VkCommandBuffer                             commandBuffer,
     VkCoarseSampleOrderTypeNV                   sampleOrderType,
     uint32_t                                    customSampleOrderCount,
     const VkCoarseSampleOrderCustomNV*          pCustomSampleOrders) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
 }
 
-void GfrContext::PreCmdBuildAccelerationStructureNV(
+void CdlContext::PreCmdBuildAccelerationStructureNV(
     VkCommandBuffer                             commandBuffer,
     const VkAccelerationStructureInfoNV*        pInfo,
     VkBuffer                                    instanceData,
@@ -2243,10 +2243,10 @@ void GfrContext::PreCmdBuildAccelerationStructureNV(
     VkAccelerationStructureNV                   src,
     VkBuffer                                    scratch,
     VkDeviceSize                                scratchOffset) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
 }
-void GfrContext::PostCmdBuildAccelerationStructureNV(
+void CdlContext::PostCmdBuildAccelerationStructureNV(
     VkCommandBuffer                             commandBuffer,
     const VkAccelerationStructureInfoNV*        pInfo,
     VkBuffer                                    instanceData,
@@ -2256,28 +2256,28 @@ void GfrContext::PostCmdBuildAccelerationStructureNV(
     VkAccelerationStructureNV                   src,
     VkBuffer                                    scratch,
     VkDeviceSize                                scratchOffset) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
 }
 
-void GfrContext::PreCmdCopyAccelerationStructureNV(
+void CdlContext::PreCmdCopyAccelerationStructureNV(
     VkCommandBuffer                             commandBuffer,
     VkAccelerationStructureNV                   dst,
     VkAccelerationStructureNV                   src,
     VkCopyAccelerationStructureModeKHR          mode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
 }
-void GfrContext::PostCmdCopyAccelerationStructureNV(
+void CdlContext::PostCmdCopyAccelerationStructureNV(
     VkCommandBuffer                             commandBuffer,
     VkAccelerationStructureNV                   dst,
     VkAccelerationStructureNV                   src,
     VkCopyAccelerationStructureModeKHR          mode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
 }
 
-void GfrContext::PreCmdTraceRaysNV(
+void CdlContext::PreCmdTraceRaysNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    raygenShaderBindingTableBuffer,
     VkDeviceSize                                raygenShaderBindingOffset,
@@ -2293,10 +2293,10 @@ void GfrContext::PreCmdTraceRaysNV(
     uint32_t                                    width,
     uint32_t                                    height,
     uint32_t                                    depth) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
 }
-void GfrContext::PostCmdTraceRaysNV(
+void CdlContext::PostCmdTraceRaysNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    raygenShaderBindingTableBuffer,
     VkDeviceSize                                raygenShaderBindingOffset,
@@ -2312,85 +2312,85 @@ void GfrContext::PostCmdTraceRaysNV(
     uint32_t                                    width,
     uint32_t                                    height,
     uint32_t                                    depth) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
 }
 
-void GfrContext::PreCmdWriteAccelerationStructuresPropertiesNV(
+void CdlContext::PreCmdWriteAccelerationStructuresPropertiesNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    accelerationStructureCount,
     const VkAccelerationStructureNV*            pAccelerationStructures,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
-void GfrContext::PostCmdWriteAccelerationStructuresPropertiesNV(
+void CdlContext::PostCmdWriteAccelerationStructuresPropertiesNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    accelerationStructureCount,
     const VkAccelerationStructureNV*            pAccelerationStructures,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 
-void GfrContext::PreCmdWriteBufferMarkerAMD(
+void CdlContext::PreCmdWriteBufferMarkerAMD(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlagBits                     pipelineStage,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 }
-void GfrContext::PostCmdWriteBufferMarkerAMD(
+void CdlContext::PostCmdWriteBufferMarkerAMD(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlagBits                     pipelineStage,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 }
 
-void GfrContext::PreCmdDrawMeshTasksNV(
+void CdlContext::PreCmdDrawMeshTasksNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    taskCount,
     uint32_t                                    firstTask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
 }
-void GfrContext::PostCmdDrawMeshTasksNV(
+void CdlContext::PostCmdDrawMeshTasksNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    taskCount,
     uint32_t                                    firstTask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
 }
 
-void GfrContext::PreCmdDrawMeshTasksIndirectNV(
+void CdlContext::PreCmdDrawMeshTasksIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 }
-void GfrContext::PostCmdDrawMeshTasksIndirectNV(
+void CdlContext::PostCmdDrawMeshTasksIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-void GfrContext::PreCmdDrawMeshTasksIndirectCountNV(
+void CdlContext::PreCmdDrawMeshTasksIndirectCountNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -2398,10 +2398,10 @@ void GfrContext::PreCmdDrawMeshTasksIndirectCountNV(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
-void GfrContext::PostCmdDrawMeshTasksIndirectCountNV(
+void CdlContext::PostCmdDrawMeshTasksIndirectCountNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -2409,184 +2409,184 @@ void GfrContext::PostCmdDrawMeshTasksIndirectCountNV(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
-void GfrContext::PreCmdSetExclusiveScissorEnableNV(
+void CdlContext::PreCmdSetExclusiveScissorEnableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
     const VkBool32*                             pExclusiveScissorEnables) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
 }
-void GfrContext::PostCmdSetExclusiveScissorEnableNV(
+void CdlContext::PostCmdSetExclusiveScissorEnableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
     const VkBool32*                             pExclusiveScissorEnables) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
 }
 
-void GfrContext::PreCmdSetExclusiveScissorNV(
+void CdlContext::PreCmdSetExclusiveScissorNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
     const VkRect2D*                             pExclusiveScissors) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
 }
-void GfrContext::PostCmdSetExclusiveScissorNV(
+void CdlContext::PostCmdSetExclusiveScissorNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
     const VkRect2D*                             pExclusiveScissors) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
 }
 
-void GfrContext::PreCmdSetCheckpointNV(
+void CdlContext::PreCmdSetCheckpointNV(
     VkCommandBuffer                             commandBuffer,
     const void*                                 pCheckpointMarker) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 }
-void GfrContext::PostCmdSetCheckpointNV(
+void CdlContext::PostCmdSetCheckpointNV(
     VkCommandBuffer                             commandBuffer,
     const void*                                 pCheckpointMarker) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 }
 
-VkResult GfrContext::PreCmdSetPerformanceMarkerINTEL(
+VkResult CdlContext::PreCmdSetPerformanceMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceMarkerInfoINTEL*         pMarkerInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PreCmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo);
 }
-VkResult GfrContext::PostCmdSetPerformanceMarkerINTEL(
+VkResult CdlContext::PostCmdSetPerformanceMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceMarkerInfoINTEL*         pMarkerInfo,
     VkResult                                    result) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PostCmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo, result);
 }
 
-VkResult GfrContext::PreCmdSetPerformanceStreamMarkerINTEL(
+VkResult CdlContext::PreCmdSetPerformanceStreamMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceStreamMarkerInfoINTEL*   pMarkerInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PreCmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo);
 }
-VkResult GfrContext::PostCmdSetPerformanceStreamMarkerINTEL(
+VkResult CdlContext::PostCmdSetPerformanceStreamMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceStreamMarkerInfoINTEL*   pMarkerInfo,
     VkResult                                    result) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PostCmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo, result);
 }
 
-VkResult GfrContext::PreCmdSetPerformanceOverrideINTEL(
+VkResult CdlContext::PreCmdSetPerformanceOverrideINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceOverrideInfoINTEL*       pOverrideInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PreCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo);
 }
-VkResult GfrContext::PostCmdSetPerformanceOverrideINTEL(
+VkResult CdlContext::PostCmdSetPerformanceOverrideINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceOverrideInfoINTEL*       pOverrideInfo,
     VkResult                                    result) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   return p_cmd->PostCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo, result);
 }
 
-void GfrContext::PreCmdSetLineStippleEXT(
+void CdlContext::PreCmdSetLineStippleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    lineStippleFactor,
     uint16_t                                    lineStipplePattern) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
-void GfrContext::PostCmdSetLineStippleEXT(
+void CdlContext::PostCmdSetLineStippleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    lineStippleFactor,
     uint16_t                                    lineStipplePattern) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 
-void GfrContext::PreCmdSetCullModeEXT(
+void CdlContext::PreCmdSetCullModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkCullModeFlags                             cullMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCullModeEXT(commandBuffer, cullMode);
 }
-void GfrContext::PostCmdSetCullModeEXT(
+void CdlContext::PostCmdSetCullModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkCullModeFlags                             cullMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCullModeEXT(commandBuffer, cullMode);
 }
 
-void GfrContext::PreCmdSetFrontFaceEXT(
+void CdlContext::PreCmdSetFrontFaceEXT(
     VkCommandBuffer                             commandBuffer,
     VkFrontFace                                 frontFace) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetFrontFaceEXT(commandBuffer, frontFace);
 }
-void GfrContext::PostCmdSetFrontFaceEXT(
+void CdlContext::PostCmdSetFrontFaceEXT(
     VkCommandBuffer                             commandBuffer,
     VkFrontFace                                 frontFace) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetFrontFaceEXT(commandBuffer, frontFace);
 }
 
-void GfrContext::PreCmdSetPrimitiveTopologyEXT(
+void CdlContext::PreCmdSetPrimitiveTopologyEXT(
     VkCommandBuffer                             commandBuffer,
     VkPrimitiveTopology                         primitiveTopology) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
 }
-void GfrContext::PostCmdSetPrimitiveTopologyEXT(
+void CdlContext::PostCmdSetPrimitiveTopologyEXT(
     VkCommandBuffer                             commandBuffer,
     VkPrimitiveTopology                         primitiveTopology) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
 }
 
-void GfrContext::PreCmdSetViewportWithCountEXT(
+void CdlContext::PreCmdSetViewportWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
 }
-void GfrContext::PostCmdSetViewportWithCountEXT(
+void CdlContext::PostCmdSetViewportWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
 }
 
-void GfrContext::PreCmdSetScissorWithCountEXT(
+void CdlContext::PreCmdSetScissorWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
 }
-void GfrContext::PostCmdSetScissorWithCountEXT(
+void CdlContext::PostCmdSetScissorWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
 }
 
-void GfrContext::PreCmdBindVertexBuffers2EXT(
+void CdlContext::PreCmdBindVertexBuffers2EXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
@@ -2594,10 +2594,10 @@ void GfrContext::PreCmdBindVertexBuffers2EXT(
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
     const VkDeviceSize*                         pStrides) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
-void GfrContext::PostCmdBindVertexBuffers2EXT(
+void CdlContext::PostCmdBindVertexBuffers2EXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
@@ -2605,170 +2605,170 @@ void GfrContext::PostCmdBindVertexBuffers2EXT(
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
     const VkDeviceSize*                         pStrides) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
 
-void GfrContext::PreCmdSetDepthTestEnableEXT(
+void CdlContext::PreCmdSetDepthTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
 }
-void GfrContext::PostCmdSetDepthTestEnableEXT(
+void CdlContext::PostCmdSetDepthTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
 }
 
-void GfrContext::PreCmdSetDepthWriteEnableEXT(
+void CdlContext::PreCmdSetDepthWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthWriteEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
 }
-void GfrContext::PostCmdSetDepthWriteEnableEXT(
+void CdlContext::PostCmdSetDepthWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthWriteEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
 }
 
-void GfrContext::PreCmdSetDepthCompareOpEXT(
+void CdlContext::PreCmdSetDepthCompareOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkCompareOp                                 depthCompareOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
 }
-void GfrContext::PostCmdSetDepthCompareOpEXT(
+void CdlContext::PostCmdSetDepthCompareOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkCompareOp                                 depthCompareOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
 }
 
-void GfrContext::PreCmdSetDepthBoundsTestEnableEXT(
+void CdlContext::PreCmdSetDepthBoundsTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBoundsTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
 }
-void GfrContext::PostCmdSetDepthBoundsTestEnableEXT(
+void CdlContext::PostCmdSetDepthBoundsTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBoundsTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
 }
 
-void GfrContext::PreCmdSetStencilTestEnableEXT(
+void CdlContext::PreCmdSetStencilTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stencilTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
 }
-void GfrContext::PostCmdSetStencilTestEnableEXT(
+void CdlContext::PostCmdSetStencilTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stencilTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
 }
 
-void GfrContext::PreCmdSetStencilOpEXT(
+void CdlContext::PreCmdSetStencilOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     VkStencilOp                                 failOp,
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
     VkCompareOp                                 compareOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
-void GfrContext::PostCmdSetStencilOpEXT(
+void CdlContext::PostCmdSetStencilOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     VkStencilOp                                 failOp,
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
     VkCompareOp                                 compareOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 
-void GfrContext::PreCmdPreprocessGeneratedCommandsNV(
+void CdlContext::PreCmdPreprocessGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
     const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
 }
-void GfrContext::PostCmdPreprocessGeneratedCommandsNV(
+void CdlContext::PostCmdPreprocessGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
     const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
 }
 
-void GfrContext::PreCmdExecuteGeneratedCommandsNV(
+void CdlContext::PreCmdExecuteGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    isPreprocessed,
     const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
-void GfrContext::PostCmdExecuteGeneratedCommandsNV(
+void CdlContext::PostCmdExecuteGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    isPreprocessed,
     const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 
-void GfrContext::PreCmdBindPipelineShaderGroupNV(
+void CdlContext::PreCmdBindPipelineShaderGroupNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline,
     uint32_t                                    groupIndex) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 }
-void GfrContext::PostCmdBindPipelineShaderGroupNV(
+void CdlContext::PostCmdBindPipelineShaderGroupNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline,
     uint32_t                                    groupIndex) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 }
 
-void GfrContext::PreCmdSetDepthBias2EXT(
+void CdlContext::PreCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkDepthBiasInfoEXT*                   pDepthBiasInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
-void GfrContext::PostCmdSetDepthBias2EXT(
+void CdlContext::PostCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkDepthBiasInfoEXT*                   pDepthBiasInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
 
-void GfrContext::PreCmdBindDescriptorBuffersEXT(
+void CdlContext::PreCmdBindDescriptorBuffersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    bufferCount,
     const VkDescriptorBufferBindingInfoEXT*     pBindingInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
 }
-void GfrContext::PostCmdBindDescriptorBuffersEXT(
+void CdlContext::PostCmdBindDescriptorBuffersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    bufferCount,
     const VkDescriptorBufferBindingInfoEXT*     pBindingInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
 }
 
-void GfrContext::PreCmdSetDescriptorBufferOffsetsEXT(
+void CdlContext::PreCmdSetDescriptorBufferOffsetsEXT(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
@@ -2776,10 +2776,10 @@ void GfrContext::PreCmdSetDescriptorBufferOffsetsEXT(
     uint32_t                                    setCount,
     const uint32_t*                             pBufferIndices,
     const VkDeviceSize*                         pOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
 }
-void GfrContext::PostCmdSetDescriptorBufferOffsetsEXT(
+void CdlContext::PostCmdSetDescriptorBufferOffsetsEXT(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
@@ -2787,189 +2787,189 @@ void GfrContext::PostCmdSetDescriptorBufferOffsetsEXT(
     uint32_t                                    setCount,
     const uint32_t*                             pBufferIndices,
     const VkDeviceSize*                         pOffsets) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
 }
 
-void GfrContext::PreCmdBindDescriptorBufferEmbeddedSamplersEXT(
+void CdlContext::PreCmdBindDescriptorBufferEmbeddedSamplersEXT(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
     uint32_t                                    set) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
 }
-void GfrContext::PostCmdBindDescriptorBufferEmbeddedSamplersEXT(
+void CdlContext::PostCmdBindDescriptorBufferEmbeddedSamplersEXT(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
     uint32_t                                    set) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
 }
 
-void GfrContext::PreCmdSetFragmentShadingRateEnumNV(
+void CdlContext::PreCmdSetFragmentShadingRateEnumNV(
     VkCommandBuffer                             commandBuffer,
     VkFragmentShadingRateNV                     shadingRate,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
 }
-void GfrContext::PostCmdSetFragmentShadingRateEnumNV(
+void CdlContext::PostCmdSetFragmentShadingRateEnumNV(
     VkCommandBuffer                             commandBuffer,
     VkFragmentShadingRateNV                     shadingRate,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
 }
 
-void GfrContext::PreCmdSetVertexInputEXT(
+void CdlContext::PreCmdSetVertexInputEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    vertexBindingDescriptionCount,
     const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
     uint32_t                                    vertexAttributeDescriptionCount,
     const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
 }
-void GfrContext::PostCmdSetVertexInputEXT(
+void CdlContext::PostCmdSetVertexInputEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    vertexBindingDescriptionCount,
     const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
     uint32_t                                    vertexAttributeDescriptionCount,
     const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
 }
 
-void GfrContext::PreCmdSubpassShadingHUAWEI(
+void CdlContext::PreCmdSubpassShadingHUAWEI(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSubpassShadingHUAWEI(commandBuffer);
 }
-void GfrContext::PostCmdSubpassShadingHUAWEI(
+void CdlContext::PostCmdSubpassShadingHUAWEI(
     VkCommandBuffer                             commandBuffer) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSubpassShadingHUAWEI(commandBuffer);
 }
 
-void GfrContext::PreCmdBindInvocationMaskHUAWEI(
+void CdlContext::PreCmdBindInvocationMaskHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
     VkImageLayout                               imageLayout) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
 }
-void GfrContext::PostCmdBindInvocationMaskHUAWEI(
+void CdlContext::PostCmdBindInvocationMaskHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
     VkImageLayout                               imageLayout) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
 }
 
-void GfrContext::PreCmdSetPatchControlPointsEXT(
+void CdlContext::PreCmdSetPatchControlPointsEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    patchControlPoints) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
 }
-void GfrContext::PostCmdSetPatchControlPointsEXT(
+void CdlContext::PostCmdSetPatchControlPointsEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    patchControlPoints) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
 }
 
-void GfrContext::PreCmdSetRasterizerDiscardEnableEXT(
+void CdlContext::PreCmdSetRasterizerDiscardEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    rasterizerDiscardEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
 }
-void GfrContext::PostCmdSetRasterizerDiscardEnableEXT(
+void CdlContext::PostCmdSetRasterizerDiscardEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    rasterizerDiscardEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
 }
 
-void GfrContext::PreCmdSetDepthBiasEnableEXT(
+void CdlContext::PreCmdSetDepthBiasEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBiasEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
 }
-void GfrContext::PostCmdSetDepthBiasEnableEXT(
+void CdlContext::PostCmdSetDepthBiasEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBiasEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
 }
 
-void GfrContext::PreCmdSetLogicOpEXT(
+void CdlContext::PreCmdSetLogicOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkLogicOp                                   logicOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetLogicOpEXT(commandBuffer, logicOp);
 }
-void GfrContext::PostCmdSetLogicOpEXT(
+void CdlContext::PostCmdSetLogicOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkLogicOp                                   logicOp) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetLogicOpEXT(commandBuffer, logicOp);
 }
 
-void GfrContext::PreCmdSetPrimitiveRestartEnableEXT(
+void CdlContext::PreCmdSetPrimitiveRestartEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
 }
-void GfrContext::PostCmdSetPrimitiveRestartEnableEXT(
+void CdlContext::PostCmdSetPrimitiveRestartEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
 }
 
-void                                    GfrContext::PreCmdSetColorWriteEnableEXT(
+void                                    CdlContext::PreCmdSetColorWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorWriteEnables) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
 }
-void                                    GfrContext::PostCmdSetColorWriteEnableEXT(
+void                                    CdlContext::PostCmdSetColorWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorWriteEnables) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
 }
 
-void GfrContext::PreCmdDrawMultiEXT(
+void CdlContext::PreCmdDrawMultiEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    drawCount,
     const VkMultiDrawInfoEXT*                   pVertexInfo,
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
 }
-void GfrContext::PostCmdDrawMultiEXT(
+void CdlContext::PostCmdDrawMultiEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    drawCount,
     const VkMultiDrawInfoEXT*                   pVertexInfo,
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
 }
 
-void GfrContext::PreCmdDrawMultiIndexedEXT(
+void CdlContext::PreCmdDrawMultiIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    drawCount,
     const VkMultiDrawIndexedInfoEXT*            pIndexInfo,
@@ -2977,10 +2977,10 @@ void GfrContext::PreCmdDrawMultiIndexedEXT(
     uint32_t                                    firstInstance,
     uint32_t                                    stride,
     const int32_t*                              pVertexOffset) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
 }
-void GfrContext::PostCmdDrawMultiIndexedEXT(
+void CdlContext::PostCmdDrawMultiIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    drawCount,
     const VkMultiDrawIndexedInfoEXT*            pIndexInfo,
@@ -2988,135 +2988,135 @@ void GfrContext::PostCmdDrawMultiIndexedEXT(
     uint32_t                                    firstInstance,
     uint32_t                                    stride,
     const int32_t*                              pVertexOffset) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
 }
 
-void GfrContext::PreCmdBuildMicromapsEXT(
+void CdlContext::PreCmdBuildMicromapsEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkMicromapBuildInfoEXT*               pInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
 }
-void GfrContext::PostCmdBuildMicromapsEXT(
+void CdlContext::PostCmdBuildMicromapsEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkMicromapBuildInfoEXT*               pInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
 }
 
-void GfrContext::PreCmdCopyMicromapEXT(
+void CdlContext::PreCmdCopyMicromapEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMicromapInfoEXT*                pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyMicromapEXT(commandBuffer, pInfo);
 }
-void GfrContext::PostCmdCopyMicromapEXT(
+void CdlContext::PostCmdCopyMicromapEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMicromapInfoEXT*                pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyMicromapEXT(commandBuffer, pInfo);
 }
 
-void GfrContext::PreCmdCopyMicromapToMemoryEXT(
+void CdlContext::PreCmdCopyMicromapToMemoryEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMicromapToMemoryInfoEXT*        pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
 }
-void GfrContext::PostCmdCopyMicromapToMemoryEXT(
+void CdlContext::PostCmdCopyMicromapToMemoryEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMicromapToMemoryInfoEXT*        pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
 }
 
-void GfrContext::PreCmdCopyMemoryToMicromapEXT(
+void CdlContext::PreCmdCopyMemoryToMicromapEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMemoryToMicromapInfoEXT*        pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
 }
-void GfrContext::PostCmdCopyMemoryToMicromapEXT(
+void CdlContext::PostCmdCopyMemoryToMicromapEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMemoryToMicromapInfoEXT*        pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
 }
 
-void GfrContext::PreCmdWriteMicromapsPropertiesEXT(
+void CdlContext::PreCmdWriteMicromapsPropertiesEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    micromapCount,
     const VkMicromapEXT*                        pMicromaps,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
 }
-void GfrContext::PostCmdWriteMicromapsPropertiesEXT(
+void CdlContext::PostCmdWriteMicromapsPropertiesEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    micromapCount,
     const VkMicromapEXT*                        pMicromaps,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
 }
 
-void GfrContext::PreCmdDrawClusterHUAWEI(
+void CdlContext::PreCmdDrawClusterHUAWEI(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
-void GfrContext::PostCmdDrawClusterHUAWEI(
+void CdlContext::PostCmdDrawClusterHUAWEI(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
-void GfrContext::PreCmdDrawClusterIndirectHUAWEI(
+void CdlContext::PreCmdDrawClusterIndirectHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
 }
-void GfrContext::PostCmdDrawClusterIndirectHUAWEI(
+void CdlContext::PostCmdDrawClusterIndirectHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
 }
 
-void GfrContext::PreCmdCopyMemoryIndirectNV(
+void CdlContext::PreCmdCopyMemoryIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
     uint32_t                                    copyCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
 }
-void GfrContext::PostCmdCopyMemoryIndirectNV(
+void CdlContext::PostCmdCopyMemoryIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
     uint32_t                                    copyCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
 }
 
-void GfrContext::PreCmdCopyMemoryToImageIndirectNV(
+void CdlContext::PreCmdCopyMemoryToImageIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
     uint32_t                                    copyCount,
@@ -3124,10 +3124,10 @@ void GfrContext::PreCmdCopyMemoryToImageIndirectNV(
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     const VkImageSubresourceLayers*             pImageSubresources) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
 }
-void GfrContext::PostCmdCopyMemoryToImageIndirectNV(
+void CdlContext::PostCmdCopyMemoryToImageIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
     uint32_t                                    copyCount,
@@ -3135,628 +3135,628 @@ void GfrContext::PostCmdCopyMemoryToImageIndirectNV(
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     const VkImageSubresourceLayers*             pImageSubresources) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
 }
 
-void GfrContext::PreCmdDecompressMemoryNV(
+void CdlContext::PreCmdDecompressMemoryNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    decompressRegionCount,
     const VkDecompressMemoryRegionNV*           pDecompressMemoryRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 }
-void GfrContext::PostCmdDecompressMemoryNV(
+void CdlContext::PostCmdDecompressMemoryNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    decompressRegionCount,
     const VkDecompressMemoryRegionNV*           pDecompressMemoryRegions) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 }
 
-void GfrContext::PreCmdDecompressMemoryIndirectCountNV(
+void CdlContext::PreCmdDecompressMemoryIndirectCountNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             indirectCommandsAddress,
     VkDeviceAddress                             indirectCommandsCountAddress,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
 }
-void GfrContext::PostCmdDecompressMemoryIndirectCountNV(
+void CdlContext::PostCmdDecompressMemoryIndirectCountNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             indirectCommandsAddress,
     VkDeviceAddress                             indirectCommandsCountAddress,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
 }
 
-void GfrContext::PreCmdUpdatePipelineIndirectBufferNV(
+void CdlContext::PreCmdUpdatePipelineIndirectBufferNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
-void GfrContext::PostCmdUpdatePipelineIndirectBufferNV(
+void CdlContext::PostCmdUpdatePipelineIndirectBufferNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
 
-void GfrContext::PreCmdSetTessellationDomainOriginEXT(
+void CdlContext::PreCmdSetTessellationDomainOriginEXT(
     VkCommandBuffer                             commandBuffer,
     VkTessellationDomainOrigin                  domainOrigin) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
-void GfrContext::PostCmdSetTessellationDomainOriginEXT(
+void CdlContext::PostCmdSetTessellationDomainOriginEXT(
     VkCommandBuffer                             commandBuffer,
     VkTessellationDomainOrigin                  domainOrigin) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
 
-void GfrContext::PreCmdSetDepthClampEnableEXT(
+void CdlContext::PreCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
 }
-void GfrContext::PostCmdSetDepthClampEnableEXT(
+void CdlContext::PostCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
 }
 
-void GfrContext::PreCmdSetPolygonModeEXT(
+void CdlContext::PreCmdSetPolygonModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkPolygonMode                               polygonMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetPolygonModeEXT(commandBuffer, polygonMode);
 }
-void GfrContext::PostCmdSetPolygonModeEXT(
+void CdlContext::PostCmdSetPolygonModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkPolygonMode                               polygonMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetPolygonModeEXT(commandBuffer, polygonMode);
 }
 
-void GfrContext::PreCmdSetRasterizationSamplesEXT(
+void CdlContext::PreCmdSetRasterizationSamplesEXT(
     VkCommandBuffer                             commandBuffer,
     VkSampleCountFlagBits                       rasterizationSamples) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
 }
-void GfrContext::PostCmdSetRasterizationSamplesEXT(
+void CdlContext::PostCmdSetRasterizationSamplesEXT(
     VkCommandBuffer                             commandBuffer,
     VkSampleCountFlagBits                       rasterizationSamples) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
 }
 
-void GfrContext::PreCmdSetSampleMaskEXT(
+void CdlContext::PreCmdSetSampleMaskEXT(
     VkCommandBuffer                             commandBuffer,
     VkSampleCountFlagBits                       samples,
     const VkSampleMask*                         pSampleMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
 }
-void GfrContext::PostCmdSetSampleMaskEXT(
+void CdlContext::PostCmdSetSampleMaskEXT(
     VkCommandBuffer                             commandBuffer,
     VkSampleCountFlagBits                       samples,
     const VkSampleMask*                         pSampleMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
 }
 
-void GfrContext::PreCmdSetAlphaToCoverageEnableEXT(
+void CdlContext::PreCmdSetAlphaToCoverageEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    alphaToCoverageEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
 }
-void GfrContext::PostCmdSetAlphaToCoverageEnableEXT(
+void CdlContext::PostCmdSetAlphaToCoverageEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    alphaToCoverageEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
 }
 
-void GfrContext::PreCmdSetAlphaToOneEnableEXT(
+void CdlContext::PreCmdSetAlphaToOneEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    alphaToOneEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
 }
-void GfrContext::PostCmdSetAlphaToOneEnableEXT(
+void CdlContext::PostCmdSetAlphaToOneEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    alphaToOneEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
 }
 
-void GfrContext::PreCmdSetLogicOpEnableEXT(
+void CdlContext::PreCmdSetLogicOpEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    logicOpEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
 }
-void GfrContext::PostCmdSetLogicOpEnableEXT(
+void CdlContext::PostCmdSetLogicOpEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    logicOpEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
 }
 
-void GfrContext::PreCmdSetColorBlendEnableEXT(
+void CdlContext::PreCmdSetColorBlendEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorBlendEnables) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
 }
-void GfrContext::PostCmdSetColorBlendEnableEXT(
+void CdlContext::PostCmdSetColorBlendEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorBlendEnables) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
 }
 
-void GfrContext::PreCmdSetColorBlendEquationEXT(
+void CdlContext::PreCmdSetColorBlendEquationEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorBlendEquationEXT*              pColorBlendEquations) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
 }
-void GfrContext::PostCmdSetColorBlendEquationEXT(
+void CdlContext::PostCmdSetColorBlendEquationEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorBlendEquationEXT*              pColorBlendEquations) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
 }
 
-void GfrContext::PreCmdSetColorWriteMaskEXT(
+void CdlContext::PreCmdSetColorWriteMaskEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorComponentFlags*                pColorWriteMasks) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
 }
-void GfrContext::PostCmdSetColorWriteMaskEXT(
+void CdlContext::PostCmdSetColorWriteMaskEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorComponentFlags*                pColorWriteMasks) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
 }
 
-void GfrContext::PreCmdSetRasterizationStreamEXT(
+void CdlContext::PreCmdSetRasterizationStreamEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    rasterizationStream) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
 }
-void GfrContext::PostCmdSetRasterizationStreamEXT(
+void CdlContext::PostCmdSetRasterizationStreamEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    rasterizationStream) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
 }
 
-void GfrContext::PreCmdSetConservativeRasterizationModeEXT(
+void CdlContext::PreCmdSetConservativeRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkConservativeRasterizationModeEXT          conservativeRasterizationMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
 }
-void GfrContext::PostCmdSetConservativeRasterizationModeEXT(
+void CdlContext::PostCmdSetConservativeRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkConservativeRasterizationModeEXT          conservativeRasterizationMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
 }
 
-void GfrContext::PreCmdSetExtraPrimitiveOverestimationSizeEXT(
+void CdlContext::PreCmdSetExtraPrimitiveOverestimationSizeEXT(
     VkCommandBuffer                             commandBuffer,
     float                                       extraPrimitiveOverestimationSize) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
 }
-void GfrContext::PostCmdSetExtraPrimitiveOverestimationSizeEXT(
+void CdlContext::PostCmdSetExtraPrimitiveOverestimationSizeEXT(
     VkCommandBuffer                             commandBuffer,
     float                                       extraPrimitiveOverestimationSize) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
 }
 
-void GfrContext::PreCmdSetDepthClipEnableEXT(
+void CdlContext::PreCmdSetDepthClipEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClipEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
 }
-void GfrContext::PostCmdSetDepthClipEnableEXT(
+void CdlContext::PostCmdSetDepthClipEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClipEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
 }
 
-void GfrContext::PreCmdSetSampleLocationsEnableEXT(
+void CdlContext::PreCmdSetSampleLocationsEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    sampleLocationsEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
 }
-void GfrContext::PostCmdSetSampleLocationsEnableEXT(
+void CdlContext::PostCmdSetSampleLocationsEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    sampleLocationsEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
 }
 
-void GfrContext::PreCmdSetColorBlendAdvancedEXT(
+void CdlContext::PreCmdSetColorBlendAdvancedEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorBlendAdvancedEXT*              pColorBlendAdvanced) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
 }
-void GfrContext::PostCmdSetColorBlendAdvancedEXT(
+void CdlContext::PostCmdSetColorBlendAdvancedEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorBlendAdvancedEXT*              pColorBlendAdvanced) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
 }
 
-void GfrContext::PreCmdSetProvokingVertexModeEXT(
+void CdlContext::PreCmdSetProvokingVertexModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkProvokingVertexModeEXT                    provokingVertexMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
 }
-void GfrContext::PostCmdSetProvokingVertexModeEXT(
+void CdlContext::PostCmdSetProvokingVertexModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkProvokingVertexModeEXT                    provokingVertexMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
 }
 
-void GfrContext::PreCmdSetLineRasterizationModeEXT(
+void CdlContext::PreCmdSetLineRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkLineRasterizationModeEXT                  lineRasterizationMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
 }
-void GfrContext::PostCmdSetLineRasterizationModeEXT(
+void CdlContext::PostCmdSetLineRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkLineRasterizationModeEXT                  lineRasterizationMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
 }
 
-void GfrContext::PreCmdSetLineStippleEnableEXT(
+void CdlContext::PreCmdSetLineStippleEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stippledLineEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
 }
-void GfrContext::PostCmdSetLineStippleEnableEXT(
+void CdlContext::PostCmdSetLineStippleEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stippledLineEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
 }
 
-void GfrContext::PreCmdSetDepthClipNegativeOneToOneEXT(
+void CdlContext::PreCmdSetDepthClipNegativeOneToOneEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    negativeOneToOne) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
 }
-void GfrContext::PostCmdSetDepthClipNegativeOneToOneEXT(
+void CdlContext::PostCmdSetDepthClipNegativeOneToOneEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    negativeOneToOne) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
 }
 
-void GfrContext::PreCmdSetViewportWScalingEnableNV(
+void CdlContext::PreCmdSetViewportWScalingEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    viewportWScalingEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
 }
-void GfrContext::PostCmdSetViewportWScalingEnableNV(
+void CdlContext::PostCmdSetViewportWScalingEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    viewportWScalingEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
 }
 
-void GfrContext::PreCmdSetViewportSwizzleNV(
+void CdlContext::PreCmdSetViewportSwizzleNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewportSwizzleNV*                  pViewportSwizzles) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 }
-void GfrContext::PostCmdSetViewportSwizzleNV(
+void CdlContext::PostCmdSetViewportSwizzleNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewportSwizzleNV*                  pViewportSwizzles) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 }
 
-void GfrContext::PreCmdSetCoverageToColorEnableNV(
+void CdlContext::PreCmdSetCoverageToColorEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    coverageToColorEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
 }
-void GfrContext::PostCmdSetCoverageToColorEnableNV(
+void CdlContext::PostCmdSetCoverageToColorEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    coverageToColorEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
 }
 
-void GfrContext::PreCmdSetCoverageToColorLocationNV(
+void CdlContext::PreCmdSetCoverageToColorLocationNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    coverageToColorLocation) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
 }
-void GfrContext::PostCmdSetCoverageToColorLocationNV(
+void CdlContext::PostCmdSetCoverageToColorLocationNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    coverageToColorLocation) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
 }
 
-void GfrContext::PreCmdSetCoverageModulationModeNV(
+void CdlContext::PreCmdSetCoverageModulationModeNV(
     VkCommandBuffer                             commandBuffer,
     VkCoverageModulationModeNV                  coverageModulationMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
 }
-void GfrContext::PostCmdSetCoverageModulationModeNV(
+void CdlContext::PostCmdSetCoverageModulationModeNV(
     VkCommandBuffer                             commandBuffer,
     VkCoverageModulationModeNV                  coverageModulationMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
 }
 
-void GfrContext::PreCmdSetCoverageModulationTableEnableNV(
+void CdlContext::PreCmdSetCoverageModulationTableEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    coverageModulationTableEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
 }
-void GfrContext::PostCmdSetCoverageModulationTableEnableNV(
+void CdlContext::PostCmdSetCoverageModulationTableEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    coverageModulationTableEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
 }
 
-void GfrContext::PreCmdSetCoverageModulationTableNV(
+void CdlContext::PreCmdSetCoverageModulationTableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    coverageModulationTableCount,
     const float*                                pCoverageModulationTable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
 }
-void GfrContext::PostCmdSetCoverageModulationTableNV(
+void CdlContext::PostCmdSetCoverageModulationTableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    coverageModulationTableCount,
     const float*                                pCoverageModulationTable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
 }
 
-void GfrContext::PreCmdSetShadingRateImageEnableNV(
+void CdlContext::PreCmdSetShadingRateImageEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    shadingRateImageEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
 }
-void GfrContext::PostCmdSetShadingRateImageEnableNV(
+void CdlContext::PostCmdSetShadingRateImageEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    shadingRateImageEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
 }
 
-void GfrContext::PreCmdSetRepresentativeFragmentTestEnableNV(
+void CdlContext::PreCmdSetRepresentativeFragmentTestEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    representativeFragmentTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
 }
-void GfrContext::PostCmdSetRepresentativeFragmentTestEnableNV(
+void CdlContext::PostCmdSetRepresentativeFragmentTestEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    representativeFragmentTestEnable) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
 }
 
-void GfrContext::PreCmdSetCoverageReductionModeNV(
+void CdlContext::PreCmdSetCoverageReductionModeNV(
     VkCommandBuffer                             commandBuffer,
     VkCoverageReductionModeNV                   coverageReductionMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
-void GfrContext::PostCmdSetCoverageReductionModeNV(
+void CdlContext::PostCmdSetCoverageReductionModeNV(
     VkCommandBuffer                             commandBuffer,
     VkCoverageReductionModeNV                   coverageReductionMode) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
 
-void GfrContext::PreCmdOpticalFlowExecuteNV(
+void CdlContext::PreCmdOpticalFlowExecuteNV(
     VkCommandBuffer                             commandBuffer,
     VkOpticalFlowSessionNV                      session,
     const VkOpticalFlowExecuteInfoNV*           pExecuteInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
 }
-void GfrContext::PostCmdOpticalFlowExecuteNV(
+void CdlContext::PostCmdOpticalFlowExecuteNV(
     VkCommandBuffer                             commandBuffer,
     VkOpticalFlowSessionNV                      session,
     const VkOpticalFlowExecuteInfoNV*           pExecuteInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
 }
 
-void GfrContext::PreCmdBindShadersEXT(
+void CdlContext::PreCmdBindShadersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    stageCount,
     const VkShaderStageFlagBits*                pStages,
     const VkShaderEXT*                          pShaders) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
-void GfrContext::PostCmdBindShadersEXT(
+void CdlContext::PostCmdBindShadersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    stageCount,
     const VkShaderStageFlagBits*                pStages,
     const VkShaderEXT*                          pShaders) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
 
-void GfrContext::PreCmdSetAttachmentFeedbackLoopEnableEXT(
+void CdlContext::PreCmdSetAttachmentFeedbackLoopEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkImageAspectFlags                          aspectMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
-void GfrContext::PostCmdSetAttachmentFeedbackLoopEnableEXT(
+void CdlContext::PostCmdSetAttachmentFeedbackLoopEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkImageAspectFlags                          aspectMask) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
 
-void GfrContext::PreCmdBuildAccelerationStructuresKHR(
+void CdlContext::PreCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 }
-void GfrContext::PostCmdBuildAccelerationStructuresKHR(
+void CdlContext::PostCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 }
 
-void GfrContext::PreCmdBuildAccelerationStructuresIndirectKHR(
+void CdlContext::PreCmdBuildAccelerationStructuresIndirectKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkDeviceAddress*                      pIndirectDeviceAddresses,
     const uint32_t*                             pIndirectStrides,
     const uint32_t* const*                      ppMaxPrimitiveCounts) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
 }
-void GfrContext::PostCmdBuildAccelerationStructuresIndirectKHR(
+void CdlContext::PostCmdBuildAccelerationStructuresIndirectKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkDeviceAddress*                      pIndirectDeviceAddresses,
     const uint32_t*                             pIndirectStrides,
     const uint32_t* const*                      ppMaxPrimitiveCounts) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
 }
 
-void GfrContext::PreCmdCopyAccelerationStructureKHR(
+void CdlContext::PreCmdCopyAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyAccelerationStructureInfoKHR*   pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
 }
-void GfrContext::PostCmdCopyAccelerationStructureKHR(
+void CdlContext::PostCmdCopyAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyAccelerationStructureInfoKHR*   pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
 }
 
-void GfrContext::PreCmdCopyAccelerationStructureToMemoryKHR(
+void CdlContext::PreCmdCopyAccelerationStructureToMemoryKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
 }
-void GfrContext::PostCmdCopyAccelerationStructureToMemoryKHR(
+void CdlContext::PostCmdCopyAccelerationStructureToMemoryKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
 }
 
-void GfrContext::PreCmdCopyMemoryToAccelerationStructureKHR(
+void CdlContext::PreCmdCopyMemoryToAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
 }
-void GfrContext::PostCmdCopyMemoryToAccelerationStructureKHR(
+void CdlContext::PostCmdCopyMemoryToAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
 }
 
-void GfrContext::PreCmdWriteAccelerationStructuresPropertiesKHR(
+void CdlContext::PreCmdWriteAccelerationStructuresPropertiesKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    accelerationStructureCount,
     const VkAccelerationStructureKHR*           pAccelerationStructures,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
-void GfrContext::PostCmdWriteAccelerationStructuresPropertiesKHR(
+void CdlContext::PostCmdWriteAccelerationStructuresPropertiesKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    accelerationStructureCount,
     const VkAccelerationStructureKHR*           pAccelerationStructures,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 
-void GfrContext::PreCmdTraceRaysKHR(
+void CdlContext::PreCmdTraceRaysKHR(
     VkCommandBuffer                             commandBuffer,
     const VkStridedDeviceAddressRegionKHR*      pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pMissShaderBindingTable,
@@ -3765,10 +3765,10 @@ void GfrContext::PreCmdTraceRaysKHR(
     uint32_t                                    width,
     uint32_t                                    height,
     uint32_t                                    depth) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
 }
-void GfrContext::PostCmdTraceRaysKHR(
+void CdlContext::PostCmdTraceRaysKHR(
     VkCommandBuffer                             commandBuffer,
     const VkStridedDeviceAddressRegionKHR*      pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pMissShaderBindingTable,
@@ -3777,81 +3777,81 @@ void GfrContext::PostCmdTraceRaysKHR(
     uint32_t                                    width,
     uint32_t                                    height,
     uint32_t                                    depth) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
 }
 
-void GfrContext::PreCmdTraceRaysIndirectKHR(
+void CdlContext::PreCmdTraceRaysIndirectKHR(
     VkCommandBuffer                             commandBuffer,
     const VkStridedDeviceAddressRegionKHR*      pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pMissShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pHitShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pCallableShaderBindingTable,
     VkDeviceAddress                             indirectDeviceAddress) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
 }
-void GfrContext::PostCmdTraceRaysIndirectKHR(
+void CdlContext::PostCmdTraceRaysIndirectKHR(
     VkCommandBuffer                             commandBuffer,
     const VkStridedDeviceAddressRegionKHR*      pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pMissShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pHitShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pCallableShaderBindingTable,
     VkDeviceAddress                             indirectDeviceAddress) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
 }
 
-void GfrContext::PreCmdSetRayTracingPipelineStackSizeKHR(
+void CdlContext::PreCmdSetRayTracingPipelineStackSizeKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    pipelineStackSize) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
 }
-void GfrContext::PostCmdSetRayTracingPipelineStackSizeKHR(
+void CdlContext::PostCmdSetRayTracingPipelineStackSizeKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    pipelineStackSize) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
 }
 
-void GfrContext::PreCmdDrawMeshTasksEXT(
+void CdlContext::PreCmdDrawMeshTasksEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
-void GfrContext::PostCmdDrawMeshTasksEXT(
+void CdlContext::PostCmdDrawMeshTasksEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
-void GfrContext::PreCmdDrawMeshTasksIndirectEXT(
+void CdlContext::PreCmdDrawMeshTasksIndirectEXT(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
 }
-void GfrContext::PostCmdDrawMeshTasksIndirectEXT(
+void CdlContext::PostCmdDrawMeshTasksIndirectEXT(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-void GfrContext::PreCmdDrawMeshTasksIndirectCountEXT(
+void CdlContext::PreCmdDrawMeshTasksIndirectCountEXT(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -3859,10 +3859,10 @@ void GfrContext::PreCmdDrawMeshTasksIndirectCountEXT(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PreCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
-void GfrContext::PostCmdDrawMeshTasksIndirectCountEXT(
+void CdlContext::PostCmdDrawMeshTasksIndirectCountEXT(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
@@ -3870,7 +3870,7 @@ void GfrContext::PostCmdDrawMeshTasksIndirectCountEXT(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  auto p_cmd = graphics_flight_recorder::GetGfrCommandBuffer(commandBuffer);
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 

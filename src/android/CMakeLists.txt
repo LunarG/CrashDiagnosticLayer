@@ -34,4 +34,4 @@ message(STATUS "Targeting Android API Level ${CMAKE_SYSTEM_VERSION}")
 
 message(STATUS "Building with Android NDK Version ${ANDROID_NDK_REVISION}")
 
-install(TARGETS gfr DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS CDL DESTINATION ${CMAKE_INSTALL_LIBDIR})

@@ -1,5 +1,6 @@
 /*
  Copyright 2020 Google Inc.
+ Copyright 2023 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -14,8 +15,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_COMMAND_BUFFER_TRACKER_H
-#define GFR_COMMAND_BUFFER_TRACKER_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 
@@ -23,7 +23,7 @@
 #include <thread>
 #include <unordered_map>
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 class CommandBuffer;
 using CommandBufferPtr = std::unique_ptr<CommandBuffer>;
@@ -31,17 +31,15 @@ using CommandBufferPtr = std::unique_ptr<CommandBuffer>;
 // Thread local cache
 struct ThreadLocalCommandBufferCache {
   VkCommandBuffer vkcb = VK_NULL_HANDLE;
-  graphics_flight_recorder::CommandBuffer *gfrcb = nullptr;
+  crash_diagnostic_layer::CommandBuffer *cdlcb = nullptr;
 };
 
-void SetGfrCommandBuffer(VkCommandBuffer vk_command_buffer,
+void SetCdlCommandBuffer(VkCommandBuffer vk_command_buffer,
                          CommandBufferPtr command_buffer);
 
-graphics_flight_recorder::CommandBuffer *
-GetGfrCommandBuffer(VkCommandBuffer vk_command_buffer);
+crash_diagnostic_layer::CommandBuffer *
+GetCdlCommandBuffer(VkCommandBuffer vk_command_buffer);
 
-void DeleteGfrCommandBuffer(VkCommandBuffer vk_command_buffer);
+void DeleteCdlCommandBuffer(VkCommandBuffer vk_command_buffer);
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_COMMAND_BUFFER_TRACKER_H
+} // namespace crash_diagnostic_layer

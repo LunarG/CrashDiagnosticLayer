@@ -14,8 +14,7 @@
  limitations under the License.
 */
 
-#ifndef GFR_UTIL_H
-#define GFR_UTIL_H
+#pragma once
 
 #include <algorithm>
 #include <cstdint>
@@ -23,7 +22,7 @@
 #include <sstream>
 #include <string>
 
-namespace graphics_flight_recorder {
+namespace crash_diagnostic_layer {
 
 inline void ToUpper(std::string& s) {
   std::transform(std::begin(s), std::end(s), std::begin(s), ::toupper);
@@ -74,6 +73,4 @@ const T* FindOnChain(const void* pNext) {
   return FindOnChain<T, sType>(p->pNext);
 }
 
-} // namespace graphics_flight_recorder
-
-#endif  // GFR_UTIL_H
+} // namespace crash_diagnostic_layer
