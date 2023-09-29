@@ -69,6 +69,10 @@ CommandBuffer::~CommandBuffer() {
         device_->FreeMarker(top_marker_);
         device_->FreeMarker(bottom_marker_);
     }
+    device_ = nullptr;
+    vk_command_pool_ = VK_NULL_HANDLE;
+    vk_command_buffer_ = VK_NULL_HANDLE;
+    has_buffer_marker_ = false;
 }
 
 void CommandBuffer::SetSubmitInfoId(uint64_t submit_info_id) { submit_info_id_ = submit_info_id; }
@@ -485,6 +489,9 @@ bool CommandBufferInternalState::Print(const Command& cmd, const std::string& in
 void CommandBuffer::DumpContents(std::ostream& os, CommandBufferDumpOptions options, const std::string& indent,
                                  uint64_t secondary_cb_submit_info_id,
                                  CommandState vkcmd_execute_commands_command_state) {
+    if (vk_command_buffer_ == VK_NULL_HANDLE) {
+        return;
+    }
     auto num_commands = tracker_.GetCommands().size();
     StringArray indents = {indent};
     for (uint32_t i = 1; i < 4; i++) {
