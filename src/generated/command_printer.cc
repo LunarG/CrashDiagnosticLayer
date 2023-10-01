@@ -1530,6 +1530,26 @@ const char *VkStructureTypeToString(VkStructureType e) {
     return "VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_ANDROID";
   case VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID:
     return "VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID";
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_FEATURES_AMDX:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_FEATURES_AMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_SCRATCH_SIZE_AMDX:
+    return "VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_SCRATCH_SIZE_AMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_CREATE_INFO_AMDX:
+    return "VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_CREATE_INFO_AMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_NODE_CREATE_INFO_AMDX:
+    return "VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_NODE_CREATE_INFO_AMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
   case VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT:
     return "VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT";
   case VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT:
@@ -2086,10 +2106,6 @@ const char *VkStructureTypeToString(VkStructureType e) {
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT";
   case VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT:
     return "VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT";
-  case VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT:
-    return "VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT";
-  case VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT:
-    return "VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT";
   case VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT:
     return "VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_LAYOUT_FEATURES_EXT:
@@ -2170,6 +2186,10 @@ const char *VkStructureTypeToString(VkStructureType e) {
     return "VK_STRUCTURE_TYPE_PIPELINE_PROPERTIES_IDENTIFIER_EXT";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT:
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAME_BOUNDARY_FEATURES_EXT:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAME_BOUNDARY_FEATURES_EXT";
+  case VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT:
+    return "VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_EXT:
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_EXT";
   case VK_STRUCTURE_TYPE_SUBPASS_RESOLVE_PERFORMANCE_QUERY_EXT:
@@ -2336,6 +2356,28 @@ const char *VkStructureTypeToString(VkStructureType e) {
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT:
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_FEATURES_ANDROID:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_FEATURES_ANDROID";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID";
+  case VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID:
+    return "VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR";
+  case VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR:
+    return "VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR";
+  case VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR:
+    return "VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR";
+  case VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR:
+    return "VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR";
+  case VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR:
+    return "VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR";
+  case VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR:
+    return "VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR";
+  case VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR:
+    return "VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_POSITION_FETCH_FEATURES_KHR:
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_POSITION_FETCH_FEATURES_KHR";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT:
@@ -2370,6 +2412,24 @@ const char *VkStructureTypeToString(VkStructureType e) {
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_EXT";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_FEATURES_EXT:
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_FEATURES_EXT";
+  case VK_STRUCTURE_TYPE_LATENCY_SLEEP_MODE_INFO_NV:
+    return "VK_STRUCTURE_TYPE_LATENCY_SLEEP_MODE_INFO_NV";
+  case VK_STRUCTURE_TYPE_LATENCY_SLEEP_INFO_NV:
+    return "VK_STRUCTURE_TYPE_LATENCY_SLEEP_INFO_NV";
+  case VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV:
+    return "VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV";
+  case VK_STRUCTURE_TYPE_GET_LATENCY_MARKER_INFO_NV:
+    return "VK_STRUCTURE_TYPE_GET_LATENCY_MARKER_INFO_NV";
+  case VK_STRUCTURE_TYPE_LATENCY_TIMINGS_FRAME_REPORT_NV:
+    return "VK_STRUCTURE_TYPE_LATENCY_TIMINGS_FRAME_REPORT_NV";
+  case VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV:
+    return "VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV";
+  case VK_STRUCTURE_TYPE_OUT_OF_BAND_QUEUE_TYPE_INFO_NV:
+    return "VK_STRUCTURE_TYPE_OUT_OF_BAND_QUEUE_TYPE_INFO_NV";
+  case VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV:
+    return "VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV";
+  case VK_STRUCTURE_TYPE_LATENCY_SURFACE_CAPABILITIES_NV:
+    return "VK_STRUCTURE_TYPE_LATENCY_SURFACE_CAPABILITIES_NV";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR:
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR";
   case VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_KHR:
@@ -2380,6 +2440,24 @@ const char *VkStructureTypeToString(VkStructureType e) {
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_RENDER_AREAS_FEATURES_QCOM";
   case VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_RENDER_AREAS_RENDER_PASS_BEGIN_INFO_QCOM:
     return "VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_RENDER_AREAS_RENDER_PASS_BEGIN_INFO_QCOM";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_2_FEATURES_QCOM:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_2_FEATURES_QCOM";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_2_PROPERTIES_QCOM:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_2_PROPERTIES_QCOM";
+  case VK_STRUCTURE_TYPE_SAMPLER_BLOCK_MATCH_WINDOW_CREATE_INFO_QCOM:
+    return "VK_STRUCTURE_TYPE_SAMPLER_BLOCK_MATCH_WINDOW_CREATE_INFO_QCOM";
+  case VK_STRUCTURE_TYPE_SAMPLER_CUBIC_WEIGHTS_CREATE_INFO_QCOM:
+    return "VK_STRUCTURE_TYPE_SAMPLER_CUBIC_WEIGHTS_CREATE_INFO_QCOM";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_WEIGHTS_FEATURES_QCOM:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_WEIGHTS_FEATURES_QCOM";
+  case VK_STRUCTURE_TYPE_BLIT_IMAGE_CUBIC_WEIGHTS_INFO_QCOM:
+    return "VK_STRUCTURE_TYPE_BLIT_IMAGE_CUBIC_WEIGHTS_INFO_QCOM";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_DEGAMMA_FEATURES_QCOM:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_DEGAMMA_FEATURES_QCOM";
+  case VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_YCBCR_DEGAMMA_CREATE_INFO_QCOM:
+    return "VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_YCBCR_DEGAMMA_CREATE_INFO_QCOM";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_CLAMP_FEATURES_QCOM:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_CLAMP_FEATURES_QCOM";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_DYNAMIC_STATE_FEATURES_EXT:
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_DYNAMIC_STATE_FEATURES_EXT";
   case VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX:
@@ -2392,6 +2470,10 @@ const char *VkStructureTypeToString(VkStructureType e) {
     return "VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX";
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX:
     return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_DRIVER_PROPERTIES_MSFT:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_DRIVER_PROPERTIES_MSFT";
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV:
+    return "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV";
   default: return "Unknown VkStructureType";
   }
 }
@@ -3118,6 +3200,10 @@ const char *VkFormatToString(VkFormat e) {
     return "VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG";
   case VK_FORMAT_R16G16_S10_5_NV:
     return "VK_FORMAT_R16G16_S10_5_NV";
+  case VK_FORMAT_A1B5G5R5_UNORM_PACK16_KHR:
+    return "VK_FORMAT_A1B5G5R5_UNORM_PACK16_KHR";
+  case VK_FORMAT_A8_UNORM_KHR:
+    return "VK_FORMAT_A8_UNORM_KHR";
   default: return "Unknown VkFormat";
   }
 }
@@ -3832,6 +3918,10 @@ const char *VkPipelineBindPointToString(VkPipelineBindPoint e) {
     return "VK_PIPELINE_BIND_POINT_GRAPHICS";
   case VK_PIPELINE_BIND_POINT_COMPUTE:
     return "VK_PIPELINE_BIND_POINT_COMPUTE";
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_PIPELINE_BIND_POINT_EXECUTION_GRAPH_AMDX:
+    return "VK_PIPELINE_BIND_POINT_EXECUTION_GRAPH_AMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
   case VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR:
     return "VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR";
   case VK_PIPELINE_BIND_POINT_SUBPASS_SHADING_HUAWEI:
@@ -3992,6 +4082,8 @@ const char *VkDriverIdToString(VkDriverId e) {
     return "VK_DRIVER_ID_MESA_NVK";
   case VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA:
     return "VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA";
+  case VK_DRIVER_ID_MESA_AGXV:
+    return "VK_DRIVER_ID_MESA_AGXV";
   default: return "Unknown VkDriverId";
   }
 }
@@ -4016,6 +4108,8 @@ const char *VkSamplerReductionModeToString(VkSamplerReductionMode e) {
     return "VK_SAMPLER_REDUCTION_MODE_MIN";
   case VK_SAMPLER_REDUCTION_MODE_MAX:
     return "VK_SAMPLER_REDUCTION_MODE_MAX";
+  case VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_RANGECLAMP_QCOM:
+    return "VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_RANGECLAMP_QCOM";
   default: return "Unknown VkSamplerReductionMode";
   }
 }
@@ -4094,6 +4188,8 @@ const char *VkQueryResultStatusKHRToString(VkQueryResultStatusKHR e) {
     return "VK_QUERY_RESULT_STATUS_NOT_READY_KHR";
   case VK_QUERY_RESULT_STATUS_COMPLETE_KHR:
     return "VK_QUERY_RESULT_STATUS_COMPLETE_KHR";
+  case VK_QUERY_RESULT_STATUS_INSUFFICIENT_BITSTREAM_BUFFER_RANGE_KHR:
+    return "VK_QUERY_RESULT_STATUS_INSUFFICIENT_BITSTREAM_BUFFER_RANGE_KHR";
   default: return "Unknown VkQueryResultStatusKHR";
   }
 }
@@ -5124,6 +5220,80 @@ const char *VkRayTracingInvocationReorderModeNVToString(VkRayTracingInvocationRe
   }
 }
 
+const char *VkLatencyMarkerNVToString(VkLatencyMarkerNV e) {
+  switch (e) {
+  case VK_LATENCY_MARKER_SIMULATION_START_NV:
+    return "VK_LATENCY_MARKER_SIMULATION_START_NV";
+  case VK_LATENCY_MARKER_SIMULATION_END_NV:
+    return "VK_LATENCY_MARKER_SIMULATION_END_NV";
+  case VK_LATENCY_MARKER_RENDERSUBMIT_START_NV:
+    return "VK_LATENCY_MARKER_RENDERSUBMIT_START_NV";
+  case VK_LATENCY_MARKER_RENDERSUBMIT_END_NV:
+    return "VK_LATENCY_MARKER_RENDERSUBMIT_END_NV";
+  case VK_LATENCY_MARKER_PRESENT_START_NV:
+    return "VK_LATENCY_MARKER_PRESENT_START_NV";
+  case VK_LATENCY_MARKER_PRESENT_END_NV:
+    return "VK_LATENCY_MARKER_PRESENT_END_NV";
+  case VK_LATENCY_MARKER_INPUT_SAMPLE_NV:
+    return "VK_LATENCY_MARKER_INPUT_SAMPLE_NV";
+  case VK_LATENCY_MARKER_TRIGGER_FLASH_NV:
+    return "VK_LATENCY_MARKER_TRIGGER_FLASH_NV";
+  case VK_LATENCY_MARKER_OUT_OF_BAND_RENDERSUBMIT_START_NV:
+    return "VK_LATENCY_MARKER_OUT_OF_BAND_RENDERSUBMIT_START_NV";
+  case VK_LATENCY_MARKER_OUT_OF_BAND_RENDERSUBMIT_END_NV:
+    return "VK_LATENCY_MARKER_OUT_OF_BAND_RENDERSUBMIT_END_NV";
+  case VK_LATENCY_MARKER_OUT_OF_BAND_PRESENT_START_NV:
+    return "VK_LATENCY_MARKER_OUT_OF_BAND_PRESENT_START_NV";
+  case VK_LATENCY_MARKER_OUT_OF_BAND_PRESENT_END_NV:
+    return "VK_LATENCY_MARKER_OUT_OF_BAND_PRESENT_END_NV";
+  default: return "Unknown VkLatencyMarkerNV";
+  }
+}
+
+const char *VkOutOfBandQueueTypeNVToString(VkOutOfBandQueueTypeNV e) {
+  switch (e) {
+  case VK_OUT_OF_BAND_QUEUE_TYPE_RENDER_NV:
+    return "VK_OUT_OF_BAND_QUEUE_TYPE_RENDER_NV";
+  case VK_OUT_OF_BAND_QUEUE_TYPE_PRESENT_NV:
+    return "VK_OUT_OF_BAND_QUEUE_TYPE_PRESENT_NV";
+  default: return "Unknown VkOutOfBandQueueTypeNV";
+  }
+}
+
+const char *VkBlockMatchWindowCompareModeQCOMToString(VkBlockMatchWindowCompareModeQCOM e) {
+  switch (e) {
+  case VK_BLOCK_MATCH_WINDOW_COMPARE_MODE_MIN_QCOM:
+    return "VK_BLOCK_MATCH_WINDOW_COMPARE_MODE_MIN_QCOM";
+  case VK_BLOCK_MATCH_WINDOW_COMPARE_MODE_MAX_QCOM:
+    return "VK_BLOCK_MATCH_WINDOW_COMPARE_MODE_MAX_QCOM";
+  default: return "Unknown VkBlockMatchWindowCompareModeQCOM";
+  }
+}
+
+const char *VkCubicFilterWeightsQCOMToString(VkCubicFilterWeightsQCOM e) {
+  switch (e) {
+  case VK_CUBIC_FILTER_WEIGHTS_CATMULL_ROM_QCOM:
+    return "VK_CUBIC_FILTER_WEIGHTS_CATMULL_ROM_QCOM";
+  case VK_CUBIC_FILTER_WEIGHTS_ZERO_TANGENT_CARDINAL_QCOM:
+    return "VK_CUBIC_FILTER_WEIGHTS_ZERO_TANGENT_CARDINAL_QCOM";
+  case VK_CUBIC_FILTER_WEIGHTS_B_SPLINE_QCOM:
+    return "VK_CUBIC_FILTER_WEIGHTS_B_SPLINE_QCOM";
+  case VK_CUBIC_FILTER_WEIGHTS_MITCHELL_NETRAVALI_QCOM:
+    return "VK_CUBIC_FILTER_WEIGHTS_MITCHELL_NETRAVALI_QCOM";
+  default: return "Unknown VkCubicFilterWeightsQCOM";
+  }
+}
+
+const char *VkLayeredDriverUnderlyingApiMSFTToString(VkLayeredDriverUnderlyingApiMSFT e) {
+  switch (e) {
+  case VK_LAYERED_DRIVER_UNDERLYING_API_NONE_MSFT:
+    return "VK_LAYERED_DRIVER_UNDERLYING_API_NONE_MSFT";
+  case VK_LAYERED_DRIVER_UNDERLYING_API_D3D12_MSFT:
+    return "VK_LAYERED_DRIVER_UNDERLYING_API_D3D12_MSFT";
+  default: return "Unknown VkLayeredDriverUnderlyingApiMSFT";
+  }
+}
+
 const char *VkBuildAccelerationStructureModeKHRToString(VkBuildAccelerationStructureModeKHR e) {
   switch (e) {
   case VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR:
@@ -5740,6 +5910,31 @@ std::ostream &operator<<(std::ostream & os, const VkShaderCodeTypeEXT &t) {
 
 std::ostream &operator<<(std::ostream & os, const VkRayTracingInvocationReorderModeNV &t) {
   os << VkRayTracingInvocationReorderModeNVToString(t);
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkLatencyMarkerNV &t) {
+  os << VkLatencyMarkerNVToString(t);
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkOutOfBandQueueTypeNV &t) {
+  os << VkOutOfBandQueueTypeNVToString(t);
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkBlockMatchWindowCompareModeQCOM &t) {
+  os << VkBlockMatchWindowCompareModeQCOMToString(t);
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkCubicFilterWeightsQCOM &t) {
+  os << VkCubicFilterWeightsQCOMToString(t);
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkLayeredDriverUnderlyingApiMSFT &t) {
+  os << VkLayeredDriverUnderlyingApiMSFTToString(t);
   return os;
 }
 
@@ -28209,6 +28404,320 @@ std::ostream &operator<<(std::ostream & os, const VkTraceRaysIndirectCommand2KHR
   return os;
 }
 
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance5FeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  maintenance5" << std::endl;
+    // maintenance5 -> Field -> VkBool32
+    os << "value: " << t.maintenance5 << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance5PropertiesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  earlyFragmentMultisampleCoverageAfterSampleCounting" << std::endl;
+    // earlyFragmentMultisampleCoverageAfterSampleCounting -> Field -> VkBool32
+    os << "value: " << t.earlyFragmentMultisampleCoverageAfterSampleCounting << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  earlyFragmentSampleMaskTestBeforeSampleCounting" << std::endl;
+    // earlyFragmentSampleMaskTestBeforeSampleCounting -> Field -> VkBool32
+    os << "value: " << t.earlyFragmentSampleMaskTestBeforeSampleCounting << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  depthStencilSwizzleOneSupport" << std::endl;
+    // depthStencilSwizzleOneSupport -> Field -> VkBool32
+    os << "value: " << t.depthStencilSwizzleOneSupport << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  polygonModePointSize" << std::endl;
+    // polygonModePointSize -> Field -> VkBool32
+    os << "value: " << t.polygonModePointSize << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  nonStrictSinglePixelWideLinesUseParallelogram" << std::endl;
+    // nonStrictSinglePixelWideLinesUseParallelogram -> Field -> VkBool32
+    os << "value: " << t.nonStrictSinglePixelWideLinesUseParallelogram << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  nonStrictWideLinesUseParallelogram" << std::endl;
+    // nonStrictWideLinesUseParallelogram -> Field -> VkBool32
+    os << "value: " << t.nonStrictWideLinesUseParallelogram << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkRenderingAreaInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  viewMask" << std::endl;
+    // viewMask -> Field -> uint32_t
+    os << "value: " << t.viewMask << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  colorAttachmentCount" << std::endl;
+    // colorAttachmentCount -> Field -> uint32_t
+    os << "value: " << t.colorAttachmentCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pColorAttachmentFormats" << std::endl;
+    // pColorAttachmentFormats -> Field -> ConstDynamicArray(VkFormat)
+    if (t.colorAttachmentCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # VkFormat" << std::endl;
+        for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.pColorAttachmentFormats << std::endl;
+        } // for i
+      }
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  depthAttachmentFormat" << std::endl;
+    // depthAttachmentFormat -> Field -> VkFormat
+    os << "value: " << t.depthAttachmentFormat << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  stencilAttachmentFormat" << std::endl;
+    // stencilAttachmentFormat -> Field -> VkFormat
+    os << "value: " << t.stencilAttachmentFormat << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkImageSubresource2KHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  imageSubresource" << std::endl;
+    // imageSubresource -> Field -> VkImageSubresource
+    os <<  "members:" << std::endl << t.imageSubresource << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkDeviceImageSubresourceInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pCreateInfo" << std::endl;
+    // pointer
+    if (t.pCreateInfo != nullptr) {
+      os <<  "members:" << std::endl << *t.pCreateInfo << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pSubresource" << std::endl;
+    // pointer
+    if (t.pSubresource != nullptr) {
+      os <<  "members:" << std::endl << *t.pSubresource << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkSubresourceLayout2KHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  subresourceLayout" << std::endl;
+    // subresourceLayout -> Field -> VkSubresourceLayout
+    os <<  "members:" << std::endl << t.subresourceLayout << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPipelineCreateFlags2CreateInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  flags" << std::endl;
+    // flags -> Field -> VkPipelineCreateFlags2KHR
+    os << "value: " << t.flags << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkBufferUsageFlags2CreateInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  usage" << std::endl;
+    // usage -> Field -> VkBufferUsageFlags2KHR
+    os << "value: " << t.usage << std::endl;
+  }
+  return os;
+}
+
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR &t) {
   ScopedOstream sos(os);
   {
@@ -33405,6 +33914,333 @@ std::ostream &operator<<(std::ostream & os, const VkAndroidHardwareBufferFormatP
   return os;
 }
 #endif //VK_USE_PLATFORM_ANDROID_KHR
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderEnqueueFeaturesAMDX &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderEnqueue" << std::endl;
+    // shaderEnqueue -> Field -> VkBool32
+    os << "value: " << t.shaderEnqueue << std::endl;
+  }
+  return os;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderEnqueuePropertiesAMDX &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  maxExecutionGraphDepth" << std::endl;
+    // maxExecutionGraphDepth -> Field -> uint32_t
+    os << "value: " << t.maxExecutionGraphDepth << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  maxExecutionGraphShaderOutputNodes" << std::endl;
+    // maxExecutionGraphShaderOutputNodes -> Field -> uint32_t
+    os << "value: " << t.maxExecutionGraphShaderOutputNodes << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  maxExecutionGraphShaderPayloadSize" << std::endl;
+    // maxExecutionGraphShaderPayloadSize -> Field -> uint32_t
+    os << "value: " << t.maxExecutionGraphShaderPayloadSize << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  maxExecutionGraphShaderPayloadCount" << std::endl;
+    // maxExecutionGraphShaderPayloadCount -> Field -> uint32_t
+    os << "value: " << t.maxExecutionGraphShaderPayloadCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  executionGraphDispatchAddressAlignment" << std::endl;
+    // executionGraphDispatchAddressAlignment -> Field -> uint32_t
+    os << "value: " << t.executionGraphDispatchAddressAlignment << std::endl;
+  }
+  return os;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkExecutionGraphPipelineScratchSizeAMDX &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  size" << std::endl;
+    // size -> Field -> VkDeviceSize
+    os << "value: " << t.size << std::endl;
+  }
+  return os;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkExecutionGraphPipelineCreateInfoAMDX &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  flags" << std::endl;
+    // flags -> Field -> VkPipelineCreateFlags
+    os << "value: " << t.flags << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  stageCount" << std::endl;
+    // stageCount -> Field -> uint32_t
+    os << "value: " << t.stageCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pStages" << std::endl;
+    // pStages -> Field -> ConstDynamicArray(VkPipelineShaderStageCreateInfo)
+    if (t.stageCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # VkPipelineShaderStageCreateInfo" << std::endl;
+        for (uint64_t i = 0; i < t.stageCount; ++i) {
+          ScopedOstream somember(os);
+          os << "members::" << std::endl << t.pStages << std::endl;
+        } // for i
+      }
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pLibraryInfo" << std::endl;
+    // pointer
+    if (t.pLibraryInfo != nullptr) {
+      os <<  "members:" << std::endl << *t.pLibraryInfo << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  layout" << std::endl;
+    // layout -> Field -> VkPipelineLayout
+    os << "value: " << t.layout << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  basePipelineHandle" << std::endl;
+    // basePipelineHandle -> Field -> VkPipeline
+    os << "value: " << t.basePipelineHandle << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  basePipelineIndex" << std::endl;
+    // basePipelineIndex -> Field -> int32_t
+    os << "value: " << t.basePipelineIndex << std::endl;
+  }
+  return os;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkDeviceOrHostAddressConstAMDX &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  deviceAddress" << std::endl;
+    // deviceAddress -> Field -> VkDeviceAddress
+    os << "value: " << t.deviceAddress << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  hostAddress" << std::endl;
+    // void
+    os << "value: NOT_AVAILABLE" << std::endl;
+  }
+  return os;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkDispatchGraphInfoAMDX &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  nodeIndex" << std::endl;
+    // nodeIndex -> Field -> uint32_t
+    os << "value: " << t.nodeIndex << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  payloadCount" << std::endl;
+    // payloadCount -> Field -> uint32_t
+    os << "value: " << t.payloadCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  payloads" << std::endl;
+    // payloads -> Field -> VkDeviceOrHostAddressConstAMDX
+    os <<  "members:" << std::endl << t.payloads << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  payloadStride" << std::endl;
+    // payloadStride -> Field -> uint64_t
+    os << "value: " << t.payloadStride << std::endl;
+  }
+  return os;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkDispatchGraphCountInfoAMDX &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  count" << std::endl;
+    // count -> Field -> uint32_t
+    os << "value: " << t.count << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  infos" << std::endl;
+    // infos -> Field -> VkDeviceOrHostAddressConstAMDX
+    os <<  "members:" << std::endl << t.infos << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  stride" << std::endl;
+    // stride -> Field -> uint64_t
+    os << "value: " << t.stride << std::endl;
+  }
+  return os;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkPipelineShaderStageNodeCreateInfoAMDX &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pName" << std::endl;
+    // pName -> Field -> string
+    os << "value: " << t.pName << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  index" << std::endl;
+    // index -> Field -> uint32_t
+    os << "value: " << t.index << std::endl;
+  }
+  return os;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 std::ostream &operator<<(std::ostream & os, const VkSampleLocationEXT &t) {
   ScopedOstream sos(os);
@@ -38876,62 +39712,6 @@ std::ostream &operator<<(std::ostream & os, const VkHostImageCopyDevicePerforman
     os << "name:  identicalMemoryLayout" << std::endl;
     // identicalMemoryLayout -> Field -> VkBool32
     os << "value: " << t.identicalMemoryLayout << std::endl;
-  }
-  return os;
-}
-
-std::ostream &operator<<(std::ostream & os, const VkSubresourceLayout2EXT &t) {
-  ScopedOstream sos(os);
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  sType" << std::endl;
-    // sType -> Field -> VkStructureType
-    os << "value: " << t.sType << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  pNext" << std::endl;
-    // pNext -> Field -> ConstNextPtr(void)
-    os << "value: ";
-    PrintNextPtr(os, t.pNext);
-    os << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  subresourceLayout" << std::endl;
-    // subresourceLayout -> Field -> VkSubresourceLayout
-    os <<  "members:" << std::endl << t.subresourceLayout << std::endl;
-  }
-  return os;
-}
-
-std::ostream &operator<<(std::ostream & os, const VkImageSubresource2EXT &t) {
-  ScopedOstream sos(os);
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  sType" << std::endl;
-    // sType -> Field -> VkStructureType
-    os << "value: " << t.sType << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  pNext" << std::endl;
-    // pNext -> Field -> ConstNextPtr(void)
-    os << "value: ";
-    PrintNextPtr(os, t.pNext);
-    os << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  imageSubresource" << std::endl;
-    // imageSubresource -> Field -> VkImageSubresource
-    os <<  "members:" << std::endl << t.imageSubresource << std::endl;
   }
   return os;
 }
@@ -44902,6 +45682,142 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDevicePipelineProper
   return os;
 }
 
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceFrameBoundaryFeaturesEXT &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  frameBoundary" << std::endl;
+    // frameBoundary -> Field -> VkBool32
+    os << "value: " << t.frameBoundary << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkFrameBoundaryEXT &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  flags" << std::endl;
+    // flags -> Field -> VkFrameBoundaryFlagsEXT
+    os << "value: " << t.flags << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  frameID" << std::endl;
+    // frameID -> Field -> uint64_t
+    os << "value: " << t.frameID << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  imageCount" << std::endl;
+    // imageCount -> Field -> uint32_t
+    os << "value: " << t.imageCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pImages" << std::endl;
+    // pImages -> Field -> ConstDynamicArray(VkImage)
+    if (t.imageCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # VkImage" << std::endl;
+        for (uint64_t i = 0; i < t.imageCount; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.pImages << std::endl;
+        } // for i
+      }
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  bufferCount" << std::endl;
+    // bufferCount -> Field -> uint32_t
+    os << "value: " << t.bufferCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pBuffers" << std::endl;
+    // pBuffers -> Field -> ConstDynamicArray(VkBuffer)
+    if (t.bufferCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # VkBuffer" << std::endl;
+        for (uint64_t i = 0; i < t.bufferCount; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.pBuffers << std::endl;
+        } // for i
+      }
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  tagName" << std::endl;
+    // tagName -> Field -> uint64_t
+    os << "value: " << t.tagName << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  tagSize" << std::endl;
+    // tagSize -> Field -> size_t
+    os << "value: " << t.tagSize << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pTag" << std::endl;
+    // void
+    os << "value: NOT_AVAILABLE" << std::endl;
+  }
+  return os;
+}
+
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT &t) {
   ScopedOstream sos(os);
   {
@@ -48665,6 +49581,110 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDevicePipelineProtec
   return os;
 }
 
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExternalFormatResolveFeaturesANDROID &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  externalFormatResolve" << std::endl;
+    // externalFormatResolve -> Field -> VkBool32
+    os << "value: " << t.externalFormatResolve << std::endl;
+  }
+  return os;
+}
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExternalFormatResolvePropertiesANDROID &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  nullColorAttachmentWithExternalFormatResolve" << std::endl;
+    // nullColorAttachmentWithExternalFormatResolve -> Field -> VkBool32
+    os << "value: " << t.nullColorAttachmentWithExternalFormatResolve << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  externalFormatResolveChromaOffsetX" << std::endl;
+    // externalFormatResolveChromaOffsetX -> Field -> VkChromaLocation
+    os << "value: " << t.externalFormatResolveChromaOffsetX << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  externalFormatResolveChromaOffsetY" << std::endl;
+    // externalFormatResolveChromaOffsetY -> Field -> VkChromaLocation
+    os << "value: " << t.externalFormatResolveChromaOffsetY << std::endl;
+  }
+  return os;
+}
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+std::ostream &operator<<(std::ostream & os, const VkAndroidHardwareBufferFormatResolvePropertiesANDROID &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  colorAttachmentFormat" << std::endl;
+    // colorAttachmentFormat -> Field -> VkFormat
+    os << "value: " << t.colorAttachmentFormat << std::endl;
+  }
+  return os;
+}
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderObjectFeaturesEXT &t) {
   ScopedOstream sos(os);
   {
@@ -49226,6 +50246,400 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceDynamicRenderi
   return os;
 }
 
+std::ostream &operator<<(std::ostream & os, const VkLatencySleepModeInfoNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  lowLatencyMode" << std::endl;
+    // lowLatencyMode -> Field -> VkBool32
+    os << "value: " << t.lowLatencyMode << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  lowLatencyBoost" << std::endl;
+    // lowLatencyBoost -> Field -> VkBool32
+    os << "value: " << t.lowLatencyBoost << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  minimumIntervalUs" << std::endl;
+    // minimumIntervalUs -> Field -> uint32_t
+    os << "value: " << t.minimumIntervalUs << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkLatencySleepInfoNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  signalSemaphore" << std::endl;
+    // signalSemaphore -> Field -> VkSemaphore
+    os << "value: " << t.signalSemaphore << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  value" << std::endl;
+    // value -> Field -> uint64_t
+    os << "value: " << t.value << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkSetLatencyMarkerInfoNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  presentID" << std::endl;
+    // presentID -> Field -> uint64_t
+    os << "value: " << t.presentID << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  marker" << std::endl;
+    // marker -> Field -> VkLatencyMarkerNV
+    os << "value: " << t.marker << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkLatencyTimingsFrameReportNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  presentID" << std::endl;
+    // presentID -> Field -> uint64_t
+    os << "value: " << t.presentID << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  inputSampleTimeUs" << std::endl;
+    // inputSampleTimeUs -> Field -> uint64_t
+    os << "value: " << t.inputSampleTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  simStartTimeUs" << std::endl;
+    // simStartTimeUs -> Field -> uint64_t
+    os << "value: " << t.simStartTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  simEndTimeUs" << std::endl;
+    // simEndTimeUs -> Field -> uint64_t
+    os << "value: " << t.simEndTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  renderSubmitStartTimeUs" << std::endl;
+    // renderSubmitStartTimeUs -> Field -> uint64_t
+    os << "value: " << t.renderSubmitStartTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  renderSubmitEndTimeUs" << std::endl;
+    // renderSubmitEndTimeUs -> Field -> uint64_t
+    os << "value: " << t.renderSubmitEndTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  presentStartTimeUs" << std::endl;
+    // presentStartTimeUs -> Field -> uint64_t
+    os << "value: " << t.presentStartTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  presentEndTimeUs" << std::endl;
+    // presentEndTimeUs -> Field -> uint64_t
+    os << "value: " << t.presentEndTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  driverStartTimeUs" << std::endl;
+    // driverStartTimeUs -> Field -> uint64_t
+    os << "value: " << t.driverStartTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  driverEndTimeUs" << std::endl;
+    // driverEndTimeUs -> Field -> uint64_t
+    os << "value: " << t.driverEndTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  osRenderQueueStartTimeUs" << std::endl;
+    // osRenderQueueStartTimeUs -> Field -> uint64_t
+    os << "value: " << t.osRenderQueueStartTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  osRenderQueueEndTimeUs" << std::endl;
+    // osRenderQueueEndTimeUs -> Field -> uint64_t
+    os << "value: " << t.osRenderQueueEndTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  gpuRenderStartTimeUs" << std::endl;
+    // gpuRenderStartTimeUs -> Field -> uint64_t
+    os << "value: " << t.gpuRenderStartTimeUs << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  gpuRenderEndTimeUs" << std::endl;
+    // gpuRenderEndTimeUs -> Field -> uint64_t
+    os << "value: " << t.gpuRenderEndTimeUs << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkGetLatencyMarkerInfoNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pTimings" << std::endl;
+    // pointer
+    if (t.pTimings != nullptr) {
+      os <<  "members:" << std::endl << *t.pTimings << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkLatencySubmissionPresentIdNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  presentID" << std::endl;
+    // presentID -> Field -> uint64_t
+    os << "value: " << t.presentID << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkSwapchainLatencyCreateInfoNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  latencyModeEnable" << std::endl;
+    // latencyModeEnable -> Field -> VkBool32
+    os << "value: " << t.latencyModeEnable << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkOutOfBandQueueTypeInfoNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  queueType" << std::endl;
+    // queueType -> Field -> VkOutOfBandQueueTypeNV
+    os << "value: " << t.queueType << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkLatencySurfaceCapabilitiesNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  presentModeCount" << std::endl;
+    // presentModeCount -> Field -> uint32_t
+    os << "value: " << t.presentModeCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pPresentModes" << std::endl;
+    // pPresentModes -> Field -> DynamicArray(VkPresentModeKHR)
+    if (t.presentModeCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # VkPresentModeKHR" << std::endl;
+        for (uint64_t i = 0; i < t.presentModeCount; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.pPresentModes << std::endl;
+        } // for i
+      }
+    }
+  }
+  return os;
+}
+
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM &t) {
   ScopedOstream sos(os);
   {
@@ -49297,6 +50711,272 @@ std::ostream &operator<<(std::ostream & os, const VkMultiviewPerViewRenderAreasR
         } // for i
       }
     }
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceImageProcessing2FeaturesQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  textureBlockMatch2" << std::endl;
+    // textureBlockMatch2 -> Field -> VkBool32
+    os << "value: " << t.textureBlockMatch2 << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceImageProcessing2PropertiesQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  maxBlockMatchWindow" << std::endl;
+    // maxBlockMatchWindow -> Field -> VkExtent2D
+    os <<  "members:" << std::endl << t.maxBlockMatchWindow << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkSamplerBlockMatchWindowCreateInfoQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  windowExtent" << std::endl;
+    // windowExtent -> Field -> VkExtent2D
+    os <<  "members:" << std::endl << t.windowExtent << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  windowCompareMode" << std::endl;
+    // windowCompareMode -> Field -> VkBlockMatchWindowCompareModeQCOM
+    os << "value: " << t.windowCompareMode << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceCubicWeightsFeaturesQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  selectableCubicWeights" << std::endl;
+    // selectableCubicWeights -> Field -> VkBool32
+    os << "value: " << t.selectableCubicWeights << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkSamplerCubicWeightsCreateInfoQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  cubicWeights" << std::endl;
+    // cubicWeights -> Field -> VkCubicFilterWeightsQCOM
+    os << "value: " << t.cubicWeights << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkBlitImageCubicWeightsInfoQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  cubicWeights" << std::endl;
+    // cubicWeights -> Field -> VkCubicFilterWeightsQCOM
+    os << "value: " << t.cubicWeights << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceYcbcrDegammaFeaturesQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  ycbcrDegamma" << std::endl;
+    // ycbcrDegamma -> Field -> VkBool32
+    os << "value: " << t.ycbcrDegamma << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  enableYDegamma" << std::endl;
+    // enableYDegamma -> Field -> VkBool32
+    os << "value: " << t.enableYDegamma << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  enableCbCrDegamma" << std::endl;
+    // enableCbCrDegamma -> Field -> VkBool32
+    os << "value: " << t.enableCbCrDegamma << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceCubicClampFeaturesQCOM &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  cubicRangeClamp" << std::endl;
+    // cubicRangeClamp -> Field -> VkBool32
+    os << "value: " << t.cubicRangeClamp << std::endl;
   }
   return os;
 }
@@ -49545,6 +51225,62 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExternalMemory
   return os;
 }
 #endif //VK_USE_PLATFORM_SCREEN_QNX
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLayeredDriverPropertiesMSFT &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  underlyingAPI" << std::endl;
+    // underlyingAPI -> Field -> VkLayeredDriverUnderlyingApiMSFT
+    os << "value: " << t.underlyingAPI << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  descriptorPoolOverallocation" << std::endl;
+    // descriptorPoolOverallocation -> Field -> VkBool32
+    os << "value: " << t.descriptorPoolOverallocation << std::endl;
+  }
+  return os;
+}
 
 std::ostream &operator<<(std::ostream & os, const VkAccelerationStructureBuildRangeInfoKHR &t) {
   ScopedOstream sos(os);
@@ -52325,6 +54061,30 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR *>(pStruct);
     break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceMaintenance5FeaturesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceMaintenance5PropertiesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR:
+    os << *reinterpret_cast<const VkRenderingAreaInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR:
+    os << *reinterpret_cast<const VkImageSubresource2KHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR:
+    os << *reinterpret_cast<const VkDeviceImageSubresourceInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR:
+    os << *reinterpret_cast<const VkSubresourceLayout2KHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR:
+    os << *reinterpret_cast<const VkPipelineCreateFlags2CreateInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR:
+    os << *reinterpret_cast<const VkBufferUsageFlags2CreateInfoKHR *>(pStruct);
+    break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_POSITION_FETCH_FEATURES_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR *>(pStruct);
     break;
@@ -52697,6 +54457,31 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
     os << *reinterpret_cast<const VkAndroidHardwareBufferFormatProperties2ANDROID *>(pStruct);
     break;
 #endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_FEATURES_AMDX:
+    os << *reinterpret_cast<const VkPhysicalDeviceShaderEnqueueFeaturesAMDX *>(pStruct);
+    break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX:
+    os << *reinterpret_cast<const VkPhysicalDeviceShaderEnqueuePropertiesAMDX *>(pStruct);
+    break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_SCRATCH_SIZE_AMDX:
+    os << *reinterpret_cast<const VkExecutionGraphPipelineScratchSizeAMDX *>(pStruct);
+    break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_CREATE_INFO_AMDX:
+    os << *reinterpret_cast<const VkExecutionGraphPipelineCreateInfoAMDX *>(pStruct);
+    break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_NODE_CREATE_INFO_AMDX:
+    os << *reinterpret_cast<const VkPipelineShaderStageNodeCreateInfoAMDX *>(pStruct);
+    break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
   case VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT:
     os << *reinterpret_cast<const VkSampleLocationsInfoEXT *>(pStruct);
     break;
@@ -53050,12 +54835,6 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
     break;
   case VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY_EXT:
     os << *reinterpret_cast<const VkHostImageCopyDevicePerformanceQueryEXT *>(pStruct);
-    break;
-  case VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT:
-    os << *reinterpret_cast<const VkSubresourceLayout2EXT *>(pStruct);
-    break;
-  case VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT:
-    os << *reinterpret_cast<const VkImageSubresource2EXT *>(pStruct);
     break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT *>(pStruct);
@@ -53485,6 +55264,12 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDevicePipelinePropertiesFeaturesEXT *>(pStruct);
     break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAME_BOUNDARY_FEATURES_EXT:
+    os << *reinterpret_cast<const VkPhysicalDeviceFrameBoundaryFeaturesEXT *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT:
+    os << *reinterpret_cast<const VkFrameBoundaryEXT *>(pStruct);
+    break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT *>(pStruct);
     break;
@@ -53727,6 +55512,21 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDevicePipelineProtectedAccessFeaturesEXT *>(pStruct);
     break;
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_FEATURES_ANDROID:
+    os << *reinterpret_cast<const VkPhysicalDeviceExternalFormatResolveFeaturesANDROID *>(pStruct);
+    break;
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID:
+    os << *reinterpret_cast<const VkPhysicalDeviceExternalFormatResolvePropertiesANDROID *>(pStruct);
+    break;
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+  case VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID:
+    os << *reinterpret_cast<const VkAndroidHardwareBufferFormatResolvePropertiesANDROID *>(pStruct);
+    break;
+#endif //VK_USE_PLATFORM_ANDROID_KHR
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDeviceShaderObjectFeaturesEXT *>(pStruct);
     break;
@@ -53769,11 +55569,65 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT *>(pStruct);
     break;
+  case VK_STRUCTURE_TYPE_LATENCY_SLEEP_MODE_INFO_NV:
+    os << *reinterpret_cast<const VkLatencySleepModeInfoNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_LATENCY_SLEEP_INFO_NV:
+    os << *reinterpret_cast<const VkLatencySleepInfoNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV:
+    os << *reinterpret_cast<const VkSetLatencyMarkerInfoNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_LATENCY_TIMINGS_FRAME_REPORT_NV:
+    os << *reinterpret_cast<const VkLatencyTimingsFrameReportNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_GET_LATENCY_MARKER_INFO_NV:
+    os << *reinterpret_cast<const VkGetLatencyMarkerInfoNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV:
+    os << *reinterpret_cast<const VkLatencySubmissionPresentIdNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV:
+    os << *reinterpret_cast<const VkSwapchainLatencyCreateInfoNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_OUT_OF_BAND_QUEUE_TYPE_INFO_NV:
+    os << *reinterpret_cast<const VkOutOfBandQueueTypeInfoNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_LATENCY_SURFACE_CAPABILITIES_NV:
+    os << *reinterpret_cast<const VkLatencySurfaceCapabilitiesNV *>(pStruct);
+    break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_RENDER_AREAS_FEATURES_QCOM:
     os << *reinterpret_cast<const VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM *>(pStruct);
     break;
   case VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_RENDER_AREAS_RENDER_PASS_BEGIN_INFO_QCOM:
     os << *reinterpret_cast<const VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_2_FEATURES_QCOM:
+    os << *reinterpret_cast<const VkPhysicalDeviceImageProcessing2FeaturesQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_2_PROPERTIES_QCOM:
+    os << *reinterpret_cast<const VkPhysicalDeviceImageProcessing2PropertiesQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_SAMPLER_BLOCK_MATCH_WINDOW_CREATE_INFO_QCOM:
+    os << *reinterpret_cast<const VkSamplerBlockMatchWindowCreateInfoQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_WEIGHTS_FEATURES_QCOM:
+    os << *reinterpret_cast<const VkPhysicalDeviceCubicWeightsFeaturesQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_SAMPLER_CUBIC_WEIGHTS_CREATE_INFO_QCOM:
+    os << *reinterpret_cast<const VkSamplerCubicWeightsCreateInfoQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_BLIT_IMAGE_CUBIC_WEIGHTS_INFO_QCOM:
+    os << *reinterpret_cast<const VkBlitImageCubicWeightsInfoQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_DEGAMMA_FEATURES_QCOM:
+    os << *reinterpret_cast<const VkPhysicalDeviceYcbcrDegammaFeaturesQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_YCBCR_DEGAMMA_CREATE_INFO_QCOM:
+    os << *reinterpret_cast<const VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_CLAMP_FEATURES_QCOM:
+    os << *reinterpret_cast<const VkPhysicalDeviceCubicClampFeaturesQCOM *>(pStruct);
     break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_DYNAMIC_STATE_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT *>(pStruct);
@@ -53803,6 +55657,12 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
     os << *reinterpret_cast<const VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX *>(pStruct);
     break;
 #endif //VK_USE_PLATFORM_SCREEN_QNX
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_DRIVER_PROPERTIES_MSFT:
+    os << *reinterpret_cast<const VkPhysicalDeviceLayeredDriverPropertiesMSFT *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV:
+    os << *reinterpret_cast<const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV *>(pStruct);
+    break;
   case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
     os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);
     break;
@@ -57802,6 +59662,45 @@ void CommandPrinter::PrintCmdTraceRaysIndirect2KHRArgs(
   }
 }
 
+void CommandPrinter::PrintCmdBindIndexBuffer2KHRArgs(
+  std::ostream & os, const CmdBindIndexBuffer2KHRArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  buffer" << std::endl;
+    // buffer -> Field -> VkBuffer
+    os << "value: " << args.buffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  offset" << std::endl;
+    // offset -> Field -> VkDeviceSize
+    os << "value: " << args.offset << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  size" << std::endl;
+    // size -> Field -> VkDeviceSize
+    os << "value: " << args.size << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  indexType" << std::endl;
+    // indexType -> Field -> VkIndexType
+    os << "value: " << args.indexType << std::endl;
+  }
+}
+
 void CommandPrinter::PrintCmdDebugMarkerBeginEXTArgs(
   std::ostream & os, const CmdDebugMarkerBeginEXTArgs &args) {
   {
@@ -58528,6 +60427,115 @@ void CommandPrinter::PrintCmdInsertDebugUtilsLabelEXTArgs(
     }
   }
 }
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandPrinter::PrintCmdInitializeGraphScratchMemoryAMDXArgs(
+  std::ostream & os, const CmdInitializeGraphScratchMemoryAMDXArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  scratch" << std::endl;
+    // scratch -> Field -> VkDeviceAddress
+    os << "value: " << args.scratch << std::endl;
+  }
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandPrinter::PrintCmdDispatchGraphAMDXArgs(
+  std::ostream & os, const CmdDispatchGraphAMDXArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  scratch" << std::endl;
+    // scratch -> Field -> VkDeviceAddress
+    os << "value: " << args.scratch << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pCountInfo" << std::endl;
+    // pointer
+    if (args.pCountInfo != nullptr) {
+      os <<  "members:" << std::endl << *args.pCountInfo << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandPrinter::PrintCmdDispatchGraphIndirectAMDXArgs(
+  std::ostream & os, const CmdDispatchGraphIndirectAMDXArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  scratch" << std::endl;
+    // scratch -> Field -> VkDeviceAddress
+    os << "value: " << args.scratch << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pCountInfo" << std::endl;
+    // pointer
+    if (args.pCountInfo != nullptr) {
+      os <<  "members:" << std::endl << *args.pCountInfo << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandPrinter::PrintCmdDispatchGraphIndirectCountAMDXArgs(
+  std::ostream & os, const CmdDispatchGraphIndirectCountAMDXArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  scratch" << std::endl;
+    // scratch -> Field -> VkDeviceAddress
+    os << "value: " << args.scratch << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  countInfo" << std::endl;
+    // countInfo -> Field -> VkDeviceAddress
+    os << "value: " << args.countInfo << std::endl;
+  }
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void CommandPrinter::PrintCmdSetSampleLocationsEXTArgs(
   std::ostream & os, const CmdSetSampleLocationsEXTArgs &args) {

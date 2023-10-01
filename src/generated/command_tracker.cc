@@ -820,6 +820,13 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
       }
       break;
 
+    case Command::Type::kCmdBindIndexBuffer2KHR:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdBindIndexBuffer2KHRArgs *>(cmd.parameters);
+        printer_.PrintCmdBindIndexBuffer2KHRArgs(os, *args);
+      }
+      break;
+
     case Command::Type::kCmdDebugMarkerBeginEXT:
       if (cmd.parameters) {
         auto args = reinterpret_cast<CmdDebugMarkerBeginEXTArgs *>(cmd.parameters);
@@ -966,6 +973,42 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
         printer_.PrintCmdInsertDebugUtilsLabelEXTArgs(os, *args);
       }
       break;
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    case Command::Type::kCmdInitializeGraphScratchMemoryAMDX:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdInitializeGraphScratchMemoryAMDXArgs *>(cmd.parameters);
+        printer_.PrintCmdInitializeGraphScratchMemoryAMDXArgs(os, *args);
+      }
+      break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    case Command::Type::kCmdDispatchGraphAMDX:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdDispatchGraphAMDXArgs *>(cmd.parameters);
+        printer_.PrintCmdDispatchGraphAMDXArgs(os, *args);
+      }
+      break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    case Command::Type::kCmdDispatchGraphIndirectAMDX:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdDispatchGraphIndirectAMDXArgs *>(cmd.parameters);
+        printer_.PrintCmdDispatchGraphIndirectAMDXArgs(os, *args);
+      }
+      break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    case Command::Type::kCmdDispatchGraphIndirectCountAMDX:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdDispatchGraphIndirectCountAMDXArgs *>(cmd.parameters);
+        printer_.PrintCmdDispatchGraphIndirectCountAMDXArgs(os, *args);
+      }
+      break;
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
     case Command::Type::kCmdSetSampleLocationsEXT:
       if (cmd.parameters) {
@@ -3776,6 +3819,27 @@ void CommandTracker::TrackPostCmdTraceRaysIndirect2KHR(
   assert(commands_.back().type == Command::Type::kCmdTraceRaysIndirect2KHR);
 }
 
+void CommandTracker::TrackPreCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdBindIndexBuffer2KHR;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  assert(commands_.back().type == Command::Type::kCmdBindIndexBuffer2KHR);
+}
+
 void CommandTracker::TrackPreCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
@@ -4152,6 +4216,80 @@ void CommandTracker::TrackPostCmdInsertDebugUtilsLabelEXT(
     const VkDebugUtilsLabelEXT*                 pLabelInfo) {
   assert(commands_.back().type == Command::Type::kCmdInsertDebugUtilsLabelEXT);
 }
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandTracker::TrackPreCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdInitializeGraphScratchMemoryAMDX;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  assert(commands_.back().type == Command::Type::kCmdInitializeGraphScratchMemoryAMDX);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandTracker::TrackPreCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdDispatchGraphAMDX;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  assert(commands_.back().type == Command::Type::kCmdDispatchGraphAMDX);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandTracker::TrackPreCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdDispatchGraphIndirectAMDX;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  assert(commands_.back().type == Command::Type::kCmdDispatchGraphIndirectAMDX);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandTracker::TrackPreCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdDispatchGraphIndirectCountAMDX;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  assert(commands_.back().type == Command::Type::kCmdDispatchGraphIndirectCountAMDX);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void CommandTracker::TrackPreCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,

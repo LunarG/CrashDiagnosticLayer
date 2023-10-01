@@ -1837,6 +1837,25 @@ void CdlContext::PostCmdTraceRaysIndirect2KHR(
   p_cmd->PostCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
 
+void CdlContext::PreCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+void CdlContext::PostCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+
 void CdlContext::PreCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
@@ -2171,6 +2190,72 @@ void CdlContext::PostCmdInsertDebugUtilsLabelEXT(
   auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CdlContext::PreCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+}
+void CdlContext::PostCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CdlContext::PreCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+}
+void CdlContext::PostCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CdlContext::PreCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+}
+void CdlContext::PostCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CdlContext::PreCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+}
+void CdlContext::PostCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void CdlContext::PreCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,

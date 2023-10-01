@@ -2014,6 +2014,23 @@ void InterceptPostCmdTraceRaysIndirect2KHR(
   g_interceptor->PostCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
 
+void InterceptPreCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  g_interceptor->PreCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+void InterceptPostCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  g_interceptor->PostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+
 VkResult InterceptPreDebugMarkerSetObjectNameEXT(
     VkDevice                                    device,
     const VkDebugMarkerObjectNameInfoEXT*       pNameInfo) {
@@ -2330,6 +2347,64 @@ void InterceptPostCmdInsertDebugUtilsLabelEXT(
     const VkDebugUtilsLabelEXT*                 pLabelInfo) {
   g_interceptor->PostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void InterceptPreCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  g_interceptor->PreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+}
+void InterceptPostCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  g_interceptor->PostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void InterceptPreCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  g_interceptor->PreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+}
+void InterceptPostCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  g_interceptor->PostCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void InterceptPreCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  g_interceptor->PreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+}
+void InterceptPostCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  g_interceptor->PostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void InterceptPreCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  g_interceptor->PreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+}
+void InterceptPostCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  g_interceptor->PostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void InterceptPreCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,

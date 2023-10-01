@@ -498,6 +498,10 @@ struct DeviceDispatchTable {
   PFN_vkGetDeviceBufferMemoryRequirementsKHR GetDeviceBufferMemoryRequirementsKHR;
   PFN_vkGetDeviceImageMemoryRequirementsKHR GetDeviceImageMemoryRequirementsKHR;
   PFN_vkGetDeviceImageSparseMemoryRequirementsKHR GetDeviceImageSparseMemoryRequirementsKHR;
+  PFN_vkCmdBindIndexBuffer2KHR CmdBindIndexBuffer2KHR;
+  PFN_vkGetRenderingAreaGranularityKHR GetRenderingAreaGranularityKHR;
+  PFN_vkGetDeviceImageSubresourceLayoutKHR GetDeviceImageSubresourceLayoutKHR;
+  PFN_vkGetImageSubresourceLayout2KHR GetImageSubresourceLayout2KHR;
   PFN_vkDebugMarkerSetObjectTagEXT DebugMarkerSetObjectTagEXT;
   PFN_vkDebugMarkerSetObjectNameEXT DebugMarkerSetObjectNameEXT;
   PFN_vkCmdDebugMarkerBeginEXT CmdDebugMarkerBeginEXT;
@@ -549,6 +553,27 @@ struct DeviceDispatchTable {
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
   PFN_vkGetMemoryAndroidHardwareBufferANDROID GetMemoryAndroidHardwareBufferANDROID;
 #endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  PFN_vkCreateExecutionGraphPipelinesAMDX CreateExecutionGraphPipelinesAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  PFN_vkGetExecutionGraphPipelineScratchSizeAMDX GetExecutionGraphPipelineScratchSizeAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  PFN_vkGetExecutionGraphPipelineNodeIndexAMDX GetExecutionGraphPipelineNodeIndexAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  PFN_vkCmdInitializeGraphScratchMemoryAMDX CmdInitializeGraphScratchMemoryAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  PFN_vkCmdDispatchGraphAMDX CmdDispatchGraphAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  PFN_vkCmdDispatchGraphIndirectAMDX CmdDispatchGraphIndirectAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  PFN_vkCmdDispatchGraphIndirectCountAMDX CmdDispatchGraphIndirectCountAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
   PFN_vkCmdSetSampleLocationsEXT CmdSetSampleLocationsEXT;
   PFN_vkGetImageDrmFormatModifierPropertiesEXT GetImageDrmFormatModifierPropertiesEXT;
   PFN_vkCreateValidationCacheEXT CreateValidationCacheEXT;
@@ -758,6 +783,11 @@ struct DeviceDispatchTable {
   PFN_vkCmdBindShadersEXT CmdBindShadersEXT;
   PFN_vkGetFramebufferTilePropertiesQCOM GetFramebufferTilePropertiesQCOM;
   PFN_vkGetDynamicRenderingTilePropertiesQCOM GetDynamicRenderingTilePropertiesQCOM;
+  PFN_vkSetLatencySleepModeNV SetLatencySleepModeNV;
+  PFN_vkLatencySleepNV LatencySleepNV;
+  PFN_vkSetLatencyMarkerNV SetLatencyMarkerNV;
+  PFN_vkGetLatencyTimingsNV GetLatencyTimingsNV;
+  PFN_vkQueueNotifyOutOfBandNV QueueNotifyOutOfBandNV;
   PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT CmdSetAttachmentFeedbackLoopEnableEXT;
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
   PFN_vkGetScreenBufferPropertiesQNX GetScreenBufferPropertiesQNX;

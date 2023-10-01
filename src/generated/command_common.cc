@@ -263,6 +263,8 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdResolveImage2KHR";
   case Command::Type::kCmdTraceRaysIndirect2KHR:
     return "vkCmdTraceRaysIndirect2KHR";
+  case Command::Type::kCmdBindIndexBuffer2KHR:
+    return "vkCmdBindIndexBuffer2KHR";
   case Command::Type::kCmdDebugMarkerBeginEXT:
     return "vkCmdDebugMarkerBeginEXT";
   case Command::Type::kCmdDebugMarkerEndEXT:
@@ -305,6 +307,22 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdEndDebugUtilsLabelEXT";
   case Command::Type::kCmdInsertDebugUtilsLabelEXT:
     return "vkCmdInsertDebugUtilsLabelEXT";
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case Command::Type::kCmdInitializeGraphScratchMemoryAMDX:
+    return "vkCmdInitializeGraphScratchMemoryAMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case Command::Type::kCmdDispatchGraphAMDX:
+    return "vkCmdDispatchGraphAMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case Command::Type::kCmdDispatchGraphIndirectAMDX:
+    return "vkCmdDispatchGraphIndirectAMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  case Command::Type::kCmdDispatchGraphIndirectCountAMDX:
+    return "vkCmdDispatchGraphIndirectCountAMDX";
+#endif //VK_ENABLE_BETA_EXTENSIONS
   case Command::Type::kCmdSetSampleLocationsEXT:
     return "vkCmdSetSampleLocationsEXT";
   case Command::Type::kCmdBindShadingRateImageNV:

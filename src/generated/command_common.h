@@ -155,6 +155,7 @@ struct Command
     kCmdBlitImage2KHR,
     kCmdResolveImage2KHR,
     kCmdTraceRaysIndirect2KHR,
+    kCmdBindIndexBuffer2KHR,
     kCmdDebugMarkerBeginEXT,
     kCmdDebugMarkerEndEXT,
     kCmdDebugMarkerInsertEXT,
@@ -176,6 +177,18 @@ struct Command
     kCmdBeginDebugUtilsLabelEXT,
     kCmdEndDebugUtilsLabelEXT,
     kCmdInsertDebugUtilsLabelEXT,
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    kCmdInitializeGraphScratchMemoryAMDX,
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    kCmdDispatchGraphAMDX,
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    kCmdDispatchGraphIndirectAMDX,
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    kCmdDispatchGraphIndirectCountAMDX,
+#endif //VK_ENABLE_BETA_EXTENSIONS
     kCmdSetSampleLocationsEXT,
     kCmdBindShadingRateImageNV,
     kCmdSetViewportShadingRatePaletteNV,
@@ -1042,6 +1055,14 @@ struct CmdTraceRaysIndirect2KHRArgs {
     VkDeviceAddress indirectDeviceAddress;
 };
 
+struct CmdBindIndexBuffer2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+    VkDeviceSize size;
+    VkIndexType indexType;
+};
+
 struct CmdDebugMarkerBeginEXTArgs {
     VkCommandBuffer commandBuffer;
     const VkDebugMarkerMarkerInfoEXT* pMarkerInfo;
@@ -1177,6 +1198,37 @@ struct CmdInsertDebugUtilsLabelEXTArgs {
     VkCommandBuffer commandBuffer;
     const VkDebugUtilsLabelEXT* pLabelInfo;
 };
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+struct CmdInitializeGraphScratchMemoryAMDXArgs {
+    VkCommandBuffer commandBuffer;
+    VkDeviceAddress scratch;
+};
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+struct CmdDispatchGraphAMDXArgs {
+    VkCommandBuffer commandBuffer;
+    VkDeviceAddress scratch;
+    const VkDispatchGraphCountInfoAMDX* pCountInfo;
+};
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+struct CmdDispatchGraphIndirectAMDXArgs {
+    VkCommandBuffer commandBuffer;
+    VkDeviceAddress scratch;
+    const VkDispatchGraphCountInfoAMDX* pCountInfo;
+};
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+struct CmdDispatchGraphIndirectCountAMDXArgs {
+    VkCommandBuffer commandBuffer;
+    VkDeviceAddress scratch;
+    VkDeviceAddress countInfo;
+};
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 struct CmdSetSampleLocationsEXTArgs {
     VkCommandBuffer commandBuffer;

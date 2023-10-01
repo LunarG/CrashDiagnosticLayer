@@ -2381,6 +2381,23 @@ void InterceptCmdTraceRaysIndirect2KHR(
   InterceptPostCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
 
+void InterceptCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  InterceptPreCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdBindIndexBuffer2KHR pfn = layer_data->dispatch_table.CmdBindIndexBuffer2KHR;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, buffer, offset, size, indexType);
+  }
+
+  InterceptPostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+
 VkResult InterceptDebugMarkerSetObjectNameEXT(
     VkDevice                                    device,
     const VkDebugMarkerObjectNameInfoEXT*       pNameInfo) {
@@ -2739,6 +2756,73 @@ void InterceptCmdInsertDebugUtilsLabelEXT(
 
   InterceptPostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void InterceptCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  InterceptPreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdInitializeGraphScratchMemoryAMDX pfn = layer_data->dispatch_table.CmdInitializeGraphScratchMemoryAMDX;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, scratch);
+  }
+
+  InterceptPostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void InterceptCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  InterceptPreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdDispatchGraphAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphAMDX;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, scratch, pCountInfo);
+  }
+
+  InterceptPostCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void InterceptCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  InterceptPreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdDispatchGraphIndirectAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphIndirectAMDX;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, scratch, pCountInfo);
+  }
+
+  InterceptPostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void InterceptCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  InterceptPreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdDispatchGraphIndirectCountAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphIndirectCountAMDX;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, scratch, countInfo);
+  }
+
+  InterceptPostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void InterceptCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,
@@ -4989,6 +5073,8 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(
     return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResolveImage2KHR;
   if (0 == strcmp(func, "vkCmdTraceRaysIndirect2KHR"))
     return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysIndirect2KHR;
+  if (0 == strcmp(func, "vkCmdBindIndexBuffer2KHR"))
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindIndexBuffer2KHR;
   if (0 == strcmp(func, "vkDebugMarkerSetObjectNameEXT"))
     return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDebugMarkerSetObjectNameEXT;
   if (0 == strcmp(func, "vkCmdDebugMarkerBeginEXT"))
@@ -5035,6 +5121,22 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(
     return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndDebugUtilsLabelEXT;
   if (0 == strcmp(func, "vkCmdInsertDebugUtilsLabelEXT"))
     return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdInsertDebugUtilsLabelEXT;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdInitializeGraphScratchMemoryAMDX"))
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdInitializeGraphScratchMemoryAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdDispatchGraphAMDX"))
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchGraphAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdDispatchGraphIndirectAMDX"))
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchGraphIndirectAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdDispatchGraphIndirectCountAMDX"))
+    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchGraphIndirectCountAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
   if (0 == strcmp(func, "vkCmdSetSampleLocationsEXT"))
     return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetSampleLocationsEXT;
   if (0 == strcmp(func, "vkCmdBindShadingRateImageNV"))

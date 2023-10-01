@@ -889,6 +889,14 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkGetDeviceImageMemoryRequirementsKHR)pa(device, "vkGetDeviceImageMemoryRequirementsKHR");
   dt->GetDeviceImageSparseMemoryRequirementsKHR =
     (PFN_vkGetDeviceImageSparseMemoryRequirementsKHR)pa(device, "vkGetDeviceImageSparseMemoryRequirementsKHR");
+  dt->CmdBindIndexBuffer2KHR =
+    (PFN_vkCmdBindIndexBuffer2KHR)pa(device, "vkCmdBindIndexBuffer2KHR");
+  dt->GetRenderingAreaGranularityKHR =
+    (PFN_vkGetRenderingAreaGranularityKHR)pa(device, "vkGetRenderingAreaGranularityKHR");
+  dt->GetDeviceImageSubresourceLayoutKHR =
+    (PFN_vkGetDeviceImageSubresourceLayoutKHR)pa(device, "vkGetDeviceImageSubresourceLayoutKHR");
+  dt->GetImageSubresourceLayout2KHR =
+    (PFN_vkGetImageSubresourceLayout2KHR)pa(device, "vkGetImageSubresourceLayout2KHR");
   dt->DebugMarkerSetObjectTagEXT =
     (PFN_vkDebugMarkerSetObjectTagEXT)pa(device, "vkDebugMarkerSetObjectTagEXT");
   dt->DebugMarkerSetObjectNameEXT =
@@ -985,6 +993,34 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
   dt->GetMemoryAndroidHardwareBufferANDROID =
     (PFN_vkGetMemoryAndroidHardwareBufferANDROID)pa(device, "vkGetMemoryAndroidHardwareBufferANDROID");
 #endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  dt->CreateExecutionGraphPipelinesAMDX =
+    (PFN_vkCreateExecutionGraphPipelinesAMDX)pa(device, "vkCreateExecutionGraphPipelinesAMDX");
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  dt->GetExecutionGraphPipelineScratchSizeAMDX =
+    (PFN_vkGetExecutionGraphPipelineScratchSizeAMDX)pa(device, "vkGetExecutionGraphPipelineScratchSizeAMDX");
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  dt->GetExecutionGraphPipelineNodeIndexAMDX =
+    (PFN_vkGetExecutionGraphPipelineNodeIndexAMDX)pa(device, "vkGetExecutionGraphPipelineNodeIndexAMDX");
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  dt->CmdInitializeGraphScratchMemoryAMDX =
+    (PFN_vkCmdInitializeGraphScratchMemoryAMDX)pa(device, "vkCmdInitializeGraphScratchMemoryAMDX");
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  dt->CmdDispatchGraphAMDX =
+    (PFN_vkCmdDispatchGraphAMDX)pa(device, "vkCmdDispatchGraphAMDX");
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  dt->CmdDispatchGraphIndirectAMDX =
+    (PFN_vkCmdDispatchGraphIndirectAMDX)pa(device, "vkCmdDispatchGraphIndirectAMDX");
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  dt->CmdDispatchGraphIndirectCountAMDX =
+    (PFN_vkCmdDispatchGraphIndirectCountAMDX)pa(device, "vkCmdDispatchGraphIndirectCountAMDX");
+#endif //VK_ENABLE_BETA_EXTENSIONS
   dt->CmdSetSampleLocationsEXT =
     (PFN_vkCmdSetSampleLocationsEXT)pa(device, "vkCmdSetSampleLocationsEXT");
   dt->GetImageDrmFormatModifierPropertiesEXT =
@@ -1377,6 +1413,16 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkGetFramebufferTilePropertiesQCOM)pa(device, "vkGetFramebufferTilePropertiesQCOM");
   dt->GetDynamicRenderingTilePropertiesQCOM =
     (PFN_vkGetDynamicRenderingTilePropertiesQCOM)pa(device, "vkGetDynamicRenderingTilePropertiesQCOM");
+  dt->SetLatencySleepModeNV =
+    (PFN_vkSetLatencySleepModeNV)pa(device, "vkSetLatencySleepModeNV");
+  dt->LatencySleepNV =
+    (PFN_vkLatencySleepNV)pa(device, "vkLatencySleepNV");
+  dt->SetLatencyMarkerNV =
+    (PFN_vkSetLatencyMarkerNV)pa(device, "vkSetLatencyMarkerNV");
+  dt->GetLatencyTimingsNV =
+    (PFN_vkGetLatencyTimingsNV)pa(device, "vkGetLatencyTimingsNV");
+  dt->QueueNotifyOutOfBandNV =
+    (PFN_vkQueueNotifyOutOfBandNV)pa(device, "vkQueueNotifyOutOfBandNV");
   dt->CmdSetAttachmentFeedbackLoopEnableEXT =
     (PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT)pa(device, "vkCmdSetAttachmentFeedbackLoopEnableEXT");
 #ifdef VK_USE_PLATFORM_SCREEN_QNX

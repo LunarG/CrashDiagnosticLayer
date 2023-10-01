@@ -2002,6 +2002,27 @@ void CommandBuffer::PostCmdTraceRaysIndirect2KHR(
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  tracker_.TrackPreCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  tracker_.TrackPostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
@@ -2366,6 +2387,80 @@ void CommandBuffer::PostCmdInsertDebugUtilsLabelEXT(
   tracker_.TrackPostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
   WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandBuffer::PreCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  tracker_.TrackPreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  tracker_.TrackPostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandBuffer::PreCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  tracker_.TrackPreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  tracker_.TrackPostCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandBuffer::PreCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  tracker_.TrackPreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  tracker_.TrackPostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void CommandBuffer::PreCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  tracker_.TrackPreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  tracker_.TrackPostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void CommandBuffer::PreCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,

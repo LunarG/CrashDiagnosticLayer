@@ -950,6 +950,22 @@ VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR* CommandRecorder::CopyArray<Vk
 template<>
 VkTraceRaysIndirectCommand2KHR* CommandRecorder::CopyArray<VkTraceRaysIndirectCommand2KHR>(const VkTraceRaysIndirectCommand2KHR* src, uint64_t start_index, uint64_t count);
 template<>
+VkPhysicalDeviceMaintenance5FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceMaintenance5FeaturesKHR>(const VkPhysicalDeviceMaintenance5FeaturesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceMaintenance5PropertiesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceMaintenance5PropertiesKHR>(const VkPhysicalDeviceMaintenance5PropertiesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkRenderingAreaInfoKHR* CommandRecorder::CopyArray<VkRenderingAreaInfoKHR>(const VkRenderingAreaInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkImageSubresource2KHR* CommandRecorder::CopyArray<VkImageSubresource2KHR>(const VkImageSubresource2KHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkDeviceImageSubresourceInfoKHR* CommandRecorder::CopyArray<VkDeviceImageSubresourceInfoKHR>(const VkDeviceImageSubresourceInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkSubresourceLayout2KHR* CommandRecorder::CopyArray<VkSubresourceLayout2KHR>(const VkSubresourceLayout2KHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPipelineCreateFlags2CreateInfoKHR* CommandRecorder::CopyArray<VkPipelineCreateFlags2CreateInfoKHR>(const VkPipelineCreateFlags2CreateInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkBufferUsageFlags2CreateInfoKHR* CommandRecorder::CopyArray<VkBufferUsageFlags2CreateInfoKHR>(const VkBufferUsageFlags2CreateInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
 VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR>(const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR* src, uint64_t start_index, uint64_t count);
 template<>
 VkCooperativeMatrixPropertiesKHR* CommandRecorder::CopyArray<VkCooperativeMatrixPropertiesKHR>(const VkCooperativeMatrixPropertiesKHR* src, uint64_t start_index, uint64_t count);
@@ -1259,6 +1275,38 @@ VkExternalFormatANDROID* CommandRecorder::CopyArray<VkExternalFormatANDROID>(con
 template<>
 VkAndroidHardwareBufferFormatProperties2ANDROID* CommandRecorder::CopyArray<VkAndroidHardwareBufferFormatProperties2ANDROID>(const VkAndroidHardwareBufferFormatProperties2ANDROID* src, uint64_t start_index, uint64_t count);
 #endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkPhysicalDeviceShaderEnqueueFeaturesAMDX* CommandRecorder::CopyArray<VkPhysicalDeviceShaderEnqueueFeaturesAMDX>(const VkPhysicalDeviceShaderEnqueueFeaturesAMDX* src, uint64_t start_index, uint64_t count);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkPhysicalDeviceShaderEnqueuePropertiesAMDX* CommandRecorder::CopyArray<VkPhysicalDeviceShaderEnqueuePropertiesAMDX>(const VkPhysicalDeviceShaderEnqueuePropertiesAMDX* src, uint64_t start_index, uint64_t count);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkExecutionGraphPipelineScratchSizeAMDX* CommandRecorder::CopyArray<VkExecutionGraphPipelineScratchSizeAMDX>(const VkExecutionGraphPipelineScratchSizeAMDX* src, uint64_t start_index, uint64_t count);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkExecutionGraphPipelineCreateInfoAMDX* CommandRecorder::CopyArray<VkExecutionGraphPipelineCreateInfoAMDX>(const VkExecutionGraphPipelineCreateInfoAMDX* src, uint64_t start_index, uint64_t count);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkDeviceOrHostAddressConstAMDX* CommandRecorder::CopyArray<VkDeviceOrHostAddressConstAMDX>(const VkDeviceOrHostAddressConstAMDX* src, uint64_t start_index, uint64_t count);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkDispatchGraphInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphInfoAMDX>(const VkDispatchGraphInfoAMDX* src, uint64_t start_index, uint64_t count);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkDispatchGraphCountInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphCountInfoAMDX>(const VkDispatchGraphCountInfoAMDX* src, uint64_t start_index, uint64_t count);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkPipelineShaderStageNodeCreateInfoAMDX* CommandRecorder::CopyArray<VkPipelineShaderStageNodeCreateInfoAMDX>(const VkPipelineShaderStageNodeCreateInfoAMDX* src, uint64_t start_index, uint64_t count);
+#endif //VK_ENABLE_BETA_EXTENSIONS
 template<>
 VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSampleLocationEXT* src, uint64_t start_index, uint64_t count);
 template<>
@@ -1531,10 +1579,6 @@ template<>
 VkSubresourceHostMemcpySizeEXT* CommandRecorder::CopyArray<VkSubresourceHostMemcpySizeEXT>(const VkSubresourceHostMemcpySizeEXT* src, uint64_t start_index, uint64_t count);
 template<>
 VkHostImageCopyDevicePerformanceQueryEXT* CommandRecorder::CopyArray<VkHostImageCopyDevicePerformanceQueryEXT>(const VkHostImageCopyDevicePerformanceQueryEXT* src, uint64_t start_index, uint64_t count);
-template<>
-VkSubresourceLayout2EXT* CommandRecorder::CopyArray<VkSubresourceLayout2EXT>(const VkSubresourceLayout2EXT* src, uint64_t start_index, uint64_t count);
-template<>
-VkImageSubresource2EXT* CommandRecorder::CopyArray<VkImageSubresource2EXT>(const VkImageSubresource2EXT* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT>(const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
@@ -1872,6 +1916,10 @@ VkPipelinePropertiesIdentifierEXT* CommandRecorder::CopyArray<VkPipelineProperti
 template<>
 VkPhysicalDevicePipelinePropertiesFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDevicePipelinePropertiesFeaturesEXT>(const VkPhysicalDevicePipelinePropertiesFeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
+VkPhysicalDeviceFrameBoundaryFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceFrameBoundaryFeaturesEXT>(const VkPhysicalDeviceFrameBoundaryFeaturesEXT* src, uint64_t start_index, uint64_t count);
+template<>
+VkFrameBoundaryEXT* CommandRecorder::CopyArray<VkFrameBoundaryEXT>(const VkFrameBoundaryEXT* src, uint64_t start_index, uint64_t count);
+template<>
 VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT>(const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
 VkSubpassResolvePerformanceQueryEXT* CommandRecorder::CopyArray<VkSubpassResolvePerformanceQueryEXT>(const VkSubpassResolvePerformanceQueryEXT* src, uint64_t start_index, uint64_t count);
@@ -2061,6 +2109,18 @@ template<>
 VkPhysicalDeviceLegacyDitheringFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceLegacyDitheringFeaturesEXT>(const VkPhysicalDeviceLegacyDitheringFeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDevicePipelineProtectedAccessFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDevicePipelineProtectedAccessFeaturesEXT>(const VkPhysicalDevicePipelineProtectedAccessFeaturesEXT* src, uint64_t start_index, uint64_t count);
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+template<>
+VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* CommandRecorder::CopyArray<VkPhysicalDeviceExternalFormatResolveFeaturesANDROID>(const VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* src, uint64_t start_index, uint64_t count);
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+template<>
+VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* CommandRecorder::CopyArray<VkPhysicalDeviceExternalFormatResolvePropertiesANDROID>(const VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* src, uint64_t start_index, uint64_t count);
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+template<>
+VkAndroidHardwareBufferFormatResolvePropertiesANDROID* CommandRecorder::CopyArray<VkAndroidHardwareBufferFormatResolvePropertiesANDROID>(const VkAndroidHardwareBufferFormatResolvePropertiesANDROID* src, uint64_t start_index, uint64_t count);
+#endif //VK_USE_PLATFORM_ANDROID_KHR
 template<>
 VkPhysicalDeviceShaderObjectFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceShaderObjectFeaturesEXT>(const VkPhysicalDeviceShaderObjectFeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
@@ -2090,9 +2150,45 @@ VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT* CommandRecorder::CopyArr
 template<>
 VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT>(const VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
+VkLatencySleepModeInfoNV* CommandRecorder::CopyArray<VkLatencySleepModeInfoNV>(const VkLatencySleepModeInfoNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkLatencySleepInfoNV* CommandRecorder::CopyArray<VkLatencySleepInfoNV>(const VkLatencySleepInfoNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkSetLatencyMarkerInfoNV* CommandRecorder::CopyArray<VkSetLatencyMarkerInfoNV>(const VkSetLatencyMarkerInfoNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkLatencyTimingsFrameReportNV* CommandRecorder::CopyArray<VkLatencyTimingsFrameReportNV>(const VkLatencyTimingsFrameReportNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkGetLatencyMarkerInfoNV* CommandRecorder::CopyArray<VkGetLatencyMarkerInfoNV>(const VkGetLatencyMarkerInfoNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkLatencySubmissionPresentIdNV* CommandRecorder::CopyArray<VkLatencySubmissionPresentIdNV>(const VkLatencySubmissionPresentIdNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkSwapchainLatencyCreateInfoNV* CommandRecorder::CopyArray<VkSwapchainLatencyCreateInfoNV>(const VkSwapchainLatencyCreateInfoNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkOutOfBandQueueTypeInfoNV* CommandRecorder::CopyArray<VkOutOfBandQueueTypeInfoNV>(const VkOutOfBandQueueTypeInfoNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkLatencySurfaceCapabilitiesNV* CommandRecorder::CopyArray<VkLatencySurfaceCapabilitiesNV>(const VkLatencySurfaceCapabilitiesNV* src, uint64_t start_index, uint64_t count);
+template<>
 VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM>(const VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM* src, uint64_t start_index, uint64_t count);
 template<>
 VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM* CommandRecorder::CopyArray<VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM>(const VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceImageProcessing2FeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceImageProcessing2FeaturesQCOM>(const VkPhysicalDeviceImageProcessing2FeaturesQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceImageProcessing2PropertiesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceImageProcessing2PropertiesQCOM>(const VkPhysicalDeviceImageProcessing2PropertiesQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkSamplerBlockMatchWindowCreateInfoQCOM* CommandRecorder::CopyArray<VkSamplerBlockMatchWindowCreateInfoQCOM>(const VkSamplerBlockMatchWindowCreateInfoQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceCubicWeightsFeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceCubicWeightsFeaturesQCOM>(const VkPhysicalDeviceCubicWeightsFeaturesQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkSamplerCubicWeightsCreateInfoQCOM* CommandRecorder::CopyArray<VkSamplerCubicWeightsCreateInfoQCOM>(const VkSamplerCubicWeightsCreateInfoQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkBlitImageCubicWeightsInfoQCOM* CommandRecorder::CopyArray<VkBlitImageCubicWeightsInfoQCOM>(const VkBlitImageCubicWeightsInfoQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceYcbcrDegammaFeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceYcbcrDegammaFeaturesQCOM>(const VkPhysicalDeviceYcbcrDegammaFeaturesQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM* CommandRecorder::CopyArray<VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM>(const VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceCubicClampFeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceCubicClampFeaturesQCOM>(const VkPhysicalDeviceCubicClampFeaturesQCOM* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT>(const VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT* src, uint64_t start_index, uint64_t count);
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
@@ -2115,6 +2211,10 @@ VkExternalFormatQNX* CommandRecorder::CopyArray<VkExternalFormatQNX>(const VkExt
 template<>
 VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* CommandRecorder::CopyArray<VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX>(const VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* src, uint64_t start_index, uint64_t count);
 #endif //VK_USE_PLATFORM_SCREEN_QNX
+template<>
+VkPhysicalDeviceLayeredDriverPropertiesMSFT* CommandRecorder::CopyArray<VkPhysicalDeviceLayeredDriverPropertiesMSFT>(const VkPhysicalDeviceLayeredDriverPropertiesMSFT* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV>(const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV* src, uint64_t start_index, uint64_t count);
 template<>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(const VkAccelerationStructureBuildRangeInfoKHR* src, uint64_t start_index, uint64_t count);
 template<>
@@ -8554,6 +8654,107 @@ VkTraceRaysIndirectCommand2KHR* CommandRecorder::CopyArray<VkTraceRaysIndirectCo
 }
 
 template<>
+VkPhysicalDeviceMaintenance5FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceMaintenance5FeaturesKHR>(const VkPhysicalDeviceMaintenance5FeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceMaintenance5FeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceMaintenance5FeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].maintenance5 = src[start_index + i].maintenance5;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceMaintenance5PropertiesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceMaintenance5PropertiesKHR>(const VkPhysicalDeviceMaintenance5PropertiesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceMaintenance5PropertiesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceMaintenance5PropertiesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].earlyFragmentMultisampleCoverageAfterSampleCounting = src[start_index + i].earlyFragmentMultisampleCoverageAfterSampleCounting;
+      ptr[i].earlyFragmentSampleMaskTestBeforeSampleCounting = src[start_index + i].earlyFragmentSampleMaskTestBeforeSampleCounting;
+      ptr[i].depthStencilSwizzleOneSupport = src[start_index + i].depthStencilSwizzleOneSupport;
+      ptr[i].polygonModePointSize = src[start_index + i].polygonModePointSize;
+      ptr[i].nonStrictSinglePixelWideLinesUseParallelogram = src[start_index + i].nonStrictSinglePixelWideLinesUseParallelogram;
+      ptr[i].nonStrictWideLinesUseParallelogram = src[start_index + i].nonStrictWideLinesUseParallelogram;
+  }
+  return ptr;
+}
+
+template<>
+VkRenderingAreaInfoKHR* CommandRecorder::CopyArray<VkRenderingAreaInfoKHR>(const VkRenderingAreaInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkRenderingAreaInfoKHR*>(m_allocator.Alloc(sizeof(VkRenderingAreaInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].viewMask = src[start_index + i].viewMask;
+      ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
+      ptr[i].pColorAttachmentFormats = nullptr;
+      if (src[start_index + i].pColorAttachmentFormats) {
+        ptr[i].pColorAttachmentFormats = CopyArray<>(src[start_index + i].pColorAttachmentFormats, 0, 1);
+      }
+      ptr[i].depthAttachmentFormat = src[start_index + i].depthAttachmentFormat;
+      ptr[i].stencilAttachmentFormat = src[start_index + i].stencilAttachmentFormat;
+  }
+  return ptr;
+}
+
+template<>
+VkImageSubresource2KHR* CommandRecorder::CopyArray<VkImageSubresource2KHR>(const VkImageSubresource2KHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkImageSubresource2KHR*>(m_allocator.Alloc(sizeof(VkImageSubresource2KHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].imageSubresource = src[start_index + i].imageSubresource;
+  }
+  return ptr;
+}
+
+template<>
+VkDeviceImageSubresourceInfoKHR* CommandRecorder::CopyArray<VkDeviceImageSubresourceInfoKHR>(const VkDeviceImageSubresourceInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkDeviceImageSubresourceInfoKHR*>(m_allocator.Alloc(sizeof(VkDeviceImageSubresourceInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].pCreateInfo = src[start_index + i].pCreateInfo;
+      ptr[i].pSubresource = src[start_index + i].pSubresource;
+  }
+  return ptr;
+}
+
+template<>
+VkSubresourceLayout2KHR* CommandRecorder::CopyArray<VkSubresourceLayout2KHR>(const VkSubresourceLayout2KHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkSubresourceLayout2KHR*>(m_allocator.Alloc(sizeof(VkSubresourceLayout2KHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].subresourceLayout = src[start_index + i].subresourceLayout;
+  }
+  return ptr;
+}
+
+template<>
+VkPipelineCreateFlags2CreateInfoKHR* CommandRecorder::CopyArray<VkPipelineCreateFlags2CreateInfoKHR>(const VkPipelineCreateFlags2CreateInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPipelineCreateFlags2CreateInfoKHR*>(m_allocator.Alloc(sizeof(VkPipelineCreateFlags2CreateInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].flags = src[start_index + i].flags;
+  }
+  return ptr;
+}
+
+template<>
+VkBufferUsageFlags2CreateInfoKHR* CommandRecorder::CopyArray<VkBufferUsageFlags2CreateInfoKHR>(const VkBufferUsageFlags2CreateInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkBufferUsageFlags2CreateInfoKHR*>(m_allocator.Alloc(sizeof(VkBufferUsageFlags2CreateInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].usage = src[start_index + i].usage;
+  }
+  return ptr;
+}
+
+template<>
 VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR>(const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR) * count));
   for (uint64_t i = 0; i < count; ++i) {
@@ -10167,6 +10368,127 @@ VkAndroidHardwareBufferFormatProperties2ANDROID* CommandRecorder::CopyArray<VkAn
   return ptr;
 }
 #endif //VK_USE_PLATFORM_ANDROID_KHR
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkPhysicalDeviceShaderEnqueueFeaturesAMDX* CommandRecorder::CopyArray<VkPhysicalDeviceShaderEnqueueFeaturesAMDX>(const VkPhysicalDeviceShaderEnqueueFeaturesAMDX* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceShaderEnqueueFeaturesAMDX*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderEnqueueFeaturesAMDX) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].shaderEnqueue = src[start_index + i].shaderEnqueue;
+  }
+  return ptr;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkPhysicalDeviceShaderEnqueuePropertiesAMDX* CommandRecorder::CopyArray<VkPhysicalDeviceShaderEnqueuePropertiesAMDX>(const VkPhysicalDeviceShaderEnqueuePropertiesAMDX* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceShaderEnqueuePropertiesAMDX*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderEnqueuePropertiesAMDX) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].maxExecutionGraphDepth = src[start_index + i].maxExecutionGraphDepth;
+      ptr[i].maxExecutionGraphShaderOutputNodes = src[start_index + i].maxExecutionGraphShaderOutputNodes;
+      ptr[i].maxExecutionGraphShaderPayloadSize = src[start_index + i].maxExecutionGraphShaderPayloadSize;
+      ptr[i].maxExecutionGraphShaderPayloadCount = src[start_index + i].maxExecutionGraphShaderPayloadCount;
+      ptr[i].executionGraphDispatchAddressAlignment = src[start_index + i].executionGraphDispatchAddressAlignment;
+  }
+  return ptr;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkExecutionGraphPipelineScratchSizeAMDX* CommandRecorder::CopyArray<VkExecutionGraphPipelineScratchSizeAMDX>(const VkExecutionGraphPipelineScratchSizeAMDX* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkExecutionGraphPipelineScratchSizeAMDX*>(m_allocator.Alloc(sizeof(VkExecutionGraphPipelineScratchSizeAMDX) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].size = src[start_index + i].size;
+  }
+  return ptr;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkExecutionGraphPipelineCreateInfoAMDX* CommandRecorder::CopyArray<VkExecutionGraphPipelineCreateInfoAMDX>(const VkExecutionGraphPipelineCreateInfoAMDX* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkExecutionGraphPipelineCreateInfoAMDX*>(m_allocator.Alloc(sizeof(VkExecutionGraphPipelineCreateInfoAMDX) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].flags = src[start_index + i].flags;
+      ptr[i].stageCount = src[start_index + i].stageCount;
+      ptr[i].pStages = nullptr;
+      if (src[start_index + i].pStages) {
+        ptr[i].pStages = CopyArray<>(src[start_index + i].pStages, 0, 1);
+      }
+      ptr[i].pLibraryInfo = src[start_index + i].pLibraryInfo;
+      ptr[i].layout = src[start_index + i].layout;
+      ptr[i].basePipelineHandle = src[start_index + i].basePipelineHandle;
+      ptr[i].basePipelineIndex = src[start_index + i].basePipelineIndex;
+  }
+  return ptr;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkDeviceOrHostAddressConstAMDX* CommandRecorder::CopyArray<VkDeviceOrHostAddressConstAMDX>(const VkDeviceOrHostAddressConstAMDX* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkDeviceOrHostAddressConstAMDX*>(m_allocator.Alloc(sizeof(VkDeviceOrHostAddressConstAMDX) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].deviceAddress = src[start_index + i].deviceAddress;
+      ptr[i].hostAddress = src[start_index + i].hostAddress;
+  }
+  return ptr;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkDispatchGraphInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphInfoAMDX>(const VkDispatchGraphInfoAMDX* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkDispatchGraphInfoAMDX*>(m_allocator.Alloc(sizeof(VkDispatchGraphInfoAMDX) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].nodeIndex = src[start_index + i].nodeIndex;
+      ptr[i].payloadCount = src[start_index + i].payloadCount;
+      ptr[i].payloads = src[start_index + i].payloads;
+      ptr[i].payloadStride = src[start_index + i].payloadStride;
+  }
+  return ptr;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkDispatchGraphCountInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphCountInfoAMDX>(const VkDispatchGraphCountInfoAMDX* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkDispatchGraphCountInfoAMDX*>(m_allocator.Alloc(sizeof(VkDispatchGraphCountInfoAMDX) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].count = src[start_index + i].count;
+      ptr[i].infos = src[start_index + i].infos;
+      ptr[i].stride = src[start_index + i].stride;
+  }
+  return ptr;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+template<>
+VkPipelineShaderStageNodeCreateInfoAMDX* CommandRecorder::CopyArray<VkPipelineShaderStageNodeCreateInfoAMDX>(const VkPipelineShaderStageNodeCreateInfoAMDX* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPipelineShaderStageNodeCreateInfoAMDX*>(m_allocator.Alloc(sizeof(VkPipelineShaderStageNodeCreateInfoAMDX) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].pName = nullptr;
+      if (src[start_index + i].pName) {
+        ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + 1].pName));
+      }
+      ptr[i].index = src[start_index + i].index;
+  }
+  return ptr;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 template<>
 VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSampleLocationEXT* src, uint64_t start_index, uint64_t count) {
@@ -11896,28 +12218,6 @@ VkHostImageCopyDevicePerformanceQueryEXT* CommandRecorder::CopyArray<VkHostImage
       ptr[i].pNext = src[start_index + i].pNext;
       ptr[i].optimalDeviceAccess = src[start_index + i].optimalDeviceAccess;
       ptr[i].identicalMemoryLayout = src[start_index + i].identicalMemoryLayout;
-  }
-  return ptr;
-}
-
-template<>
-VkSubresourceLayout2EXT* CommandRecorder::CopyArray<VkSubresourceLayout2EXT>(const VkSubresourceLayout2EXT* src, uint64_t start_index, uint64_t count) {
-  auto ptr = reinterpret_cast<VkSubresourceLayout2EXT*>(m_allocator.Alloc(sizeof(VkSubresourceLayout2EXT) * count));
-  for (uint64_t i = 0; i < count; ++i) {
-      ptr[i].sType = src[start_index + i].sType;
-      ptr[i].pNext = src[start_index + i].pNext;
-      ptr[i].subresourceLayout = src[start_index + i].subresourceLayout;
-  }
-  return ptr;
-}
-
-template<>
-VkImageSubresource2EXT* CommandRecorder::CopyArray<VkImageSubresource2EXT>(const VkImageSubresource2EXT* src, uint64_t start_index, uint64_t count) {
-  auto ptr = reinterpret_cast<VkImageSubresource2EXT*>(m_allocator.Alloc(sizeof(VkImageSubresource2EXT) * count));
-  for (uint64_t i = 0; i < count; ++i) {
-      ptr[i].sType = src[start_index + i].sType;
-      ptr[i].pNext = src[start_index + i].pNext;
-      ptr[i].imageSubresource = src[start_index + i].imageSubresource;
   }
   return ptr;
 }
@@ -13817,6 +14117,42 @@ VkPhysicalDevicePipelinePropertiesFeaturesEXT* CommandRecorder::CopyArray<VkPhys
 }
 
 template<>
+VkPhysicalDeviceFrameBoundaryFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceFrameBoundaryFeaturesEXT>(const VkPhysicalDeviceFrameBoundaryFeaturesEXT* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceFrameBoundaryFeaturesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceFrameBoundaryFeaturesEXT) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].frameBoundary = src[start_index + i].frameBoundary;
+  }
+  return ptr;
+}
+
+template<>
+VkFrameBoundaryEXT* CommandRecorder::CopyArray<VkFrameBoundaryEXT>(const VkFrameBoundaryEXT* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkFrameBoundaryEXT*>(m_allocator.Alloc(sizeof(VkFrameBoundaryEXT) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].flags = src[start_index + i].flags;
+      ptr[i].frameID = src[start_index + i].frameID;
+      ptr[i].imageCount = src[start_index + i].imageCount;
+      ptr[i].pImages = nullptr;
+      if (src[start_index + i].pImages) {
+        ptr[i].pImages = CopyArray<>(src[start_index + i].pImages, 0, 1);
+      }
+      ptr[i].bufferCount = src[start_index + i].bufferCount;
+      ptr[i].pBuffers = nullptr;
+      if (src[start_index + i].pBuffers) {
+        ptr[i].pBuffers = CopyArray<>(src[start_index + i].pBuffers, 0, 1);
+      }
+      ptr[i].tagName = src[start_index + i].tagName;
+      ptr[i].tagSize = src[start_index + i].tagSize;
+      ptr[i].pTag = src[start_index + i].pTag;
+  }
+  return ptr;
+}
+
+template<>
 VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT>(const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT) * count));
   for (uint64_t i = 0; i < count; ++i) {
@@ -15008,6 +15344,47 @@ VkPhysicalDevicePipelineProtectedAccessFeaturesEXT* CommandRecorder::CopyArray<V
   return ptr;
 }
 
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+template<>
+VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* CommandRecorder::CopyArray<VkPhysicalDeviceExternalFormatResolveFeaturesANDROID>(const VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceExternalFormatResolveFeaturesANDROID*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceExternalFormatResolveFeaturesANDROID) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].externalFormatResolve = src[start_index + i].externalFormatResolve;
+  }
+  return ptr;
+}
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+template<>
+VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* CommandRecorder::CopyArray<VkPhysicalDeviceExternalFormatResolvePropertiesANDROID>(const VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceExternalFormatResolvePropertiesANDROID*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceExternalFormatResolvePropertiesANDROID) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].nullColorAttachmentWithExternalFormatResolve = src[start_index + i].nullColorAttachmentWithExternalFormatResolve;
+      ptr[i].externalFormatResolveChromaOffsetX = src[start_index + i].externalFormatResolveChromaOffsetX;
+      ptr[i].externalFormatResolveChromaOffsetY = src[start_index + i].externalFormatResolveChromaOffsetY;
+  }
+  return ptr;
+}
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+template<>
+VkAndroidHardwareBufferFormatResolvePropertiesANDROID* CommandRecorder::CopyArray<VkAndroidHardwareBufferFormatResolvePropertiesANDROID>(const VkAndroidHardwareBufferFormatResolvePropertiesANDROID* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkAndroidHardwareBufferFormatResolvePropertiesANDROID*>(m_allocator.Alloc(sizeof(VkAndroidHardwareBufferFormatResolvePropertiesANDROID) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].colorAttachmentFormat = src[start_index + i].colorAttachmentFormat;
+  }
+  return ptr;
+}
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+
 template<>
 VkPhysicalDeviceShaderObjectFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceShaderObjectFeaturesEXT>(const VkPhysicalDeviceShaderObjectFeaturesEXT* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkPhysicalDeviceShaderObjectFeaturesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderObjectFeaturesEXT) * count));
@@ -15189,6 +15566,126 @@ VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT* CommandRecorder::C
 }
 
 template<>
+VkLatencySleepModeInfoNV* CommandRecorder::CopyArray<VkLatencySleepModeInfoNV>(const VkLatencySleepModeInfoNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkLatencySleepModeInfoNV*>(m_allocator.Alloc(sizeof(VkLatencySleepModeInfoNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].lowLatencyMode = src[start_index + i].lowLatencyMode;
+      ptr[i].lowLatencyBoost = src[start_index + i].lowLatencyBoost;
+      ptr[i].minimumIntervalUs = src[start_index + i].minimumIntervalUs;
+  }
+  return ptr;
+}
+
+template<>
+VkLatencySleepInfoNV* CommandRecorder::CopyArray<VkLatencySleepInfoNV>(const VkLatencySleepInfoNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkLatencySleepInfoNV*>(m_allocator.Alloc(sizeof(VkLatencySleepInfoNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].signalSemaphore = src[start_index + i].signalSemaphore;
+      ptr[i].value = src[start_index + i].value;
+  }
+  return ptr;
+}
+
+template<>
+VkSetLatencyMarkerInfoNV* CommandRecorder::CopyArray<VkSetLatencyMarkerInfoNV>(const VkSetLatencyMarkerInfoNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkSetLatencyMarkerInfoNV*>(m_allocator.Alloc(sizeof(VkSetLatencyMarkerInfoNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].presentID = src[start_index + i].presentID;
+      ptr[i].marker = src[start_index + i].marker;
+  }
+  return ptr;
+}
+
+template<>
+VkLatencyTimingsFrameReportNV* CommandRecorder::CopyArray<VkLatencyTimingsFrameReportNV>(const VkLatencyTimingsFrameReportNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkLatencyTimingsFrameReportNV*>(m_allocator.Alloc(sizeof(VkLatencyTimingsFrameReportNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].presentID = src[start_index + i].presentID;
+      ptr[i].inputSampleTimeUs = src[start_index + i].inputSampleTimeUs;
+      ptr[i].simStartTimeUs = src[start_index + i].simStartTimeUs;
+      ptr[i].simEndTimeUs = src[start_index + i].simEndTimeUs;
+      ptr[i].renderSubmitStartTimeUs = src[start_index + i].renderSubmitStartTimeUs;
+      ptr[i].renderSubmitEndTimeUs = src[start_index + i].renderSubmitEndTimeUs;
+      ptr[i].presentStartTimeUs = src[start_index + i].presentStartTimeUs;
+      ptr[i].presentEndTimeUs = src[start_index + i].presentEndTimeUs;
+      ptr[i].driverStartTimeUs = src[start_index + i].driverStartTimeUs;
+      ptr[i].driverEndTimeUs = src[start_index + i].driverEndTimeUs;
+      ptr[i].osRenderQueueStartTimeUs = src[start_index + i].osRenderQueueStartTimeUs;
+      ptr[i].osRenderQueueEndTimeUs = src[start_index + i].osRenderQueueEndTimeUs;
+      ptr[i].gpuRenderStartTimeUs = src[start_index + i].gpuRenderStartTimeUs;
+      ptr[i].gpuRenderEndTimeUs = src[start_index + i].gpuRenderEndTimeUs;
+  }
+  return ptr;
+}
+
+template<>
+VkGetLatencyMarkerInfoNV* CommandRecorder::CopyArray<VkGetLatencyMarkerInfoNV>(const VkGetLatencyMarkerInfoNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkGetLatencyMarkerInfoNV*>(m_allocator.Alloc(sizeof(VkGetLatencyMarkerInfoNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].pTimings = src[start_index + i].pTimings;
+  }
+  return ptr;
+}
+
+template<>
+VkLatencySubmissionPresentIdNV* CommandRecorder::CopyArray<VkLatencySubmissionPresentIdNV>(const VkLatencySubmissionPresentIdNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkLatencySubmissionPresentIdNV*>(m_allocator.Alloc(sizeof(VkLatencySubmissionPresentIdNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].presentID = src[start_index + i].presentID;
+  }
+  return ptr;
+}
+
+template<>
+VkSwapchainLatencyCreateInfoNV* CommandRecorder::CopyArray<VkSwapchainLatencyCreateInfoNV>(const VkSwapchainLatencyCreateInfoNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkSwapchainLatencyCreateInfoNV*>(m_allocator.Alloc(sizeof(VkSwapchainLatencyCreateInfoNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].latencyModeEnable = src[start_index + i].latencyModeEnable;
+  }
+  return ptr;
+}
+
+template<>
+VkOutOfBandQueueTypeInfoNV* CommandRecorder::CopyArray<VkOutOfBandQueueTypeInfoNV>(const VkOutOfBandQueueTypeInfoNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkOutOfBandQueueTypeInfoNV*>(m_allocator.Alloc(sizeof(VkOutOfBandQueueTypeInfoNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].queueType = src[start_index + i].queueType;
+  }
+  return ptr;
+}
+
+template<>
+VkLatencySurfaceCapabilitiesNV* CommandRecorder::CopyArray<VkLatencySurfaceCapabilitiesNV>(const VkLatencySurfaceCapabilitiesNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkLatencySurfaceCapabilitiesNV*>(m_allocator.Alloc(sizeof(VkLatencySurfaceCapabilitiesNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].presentModeCount = src[start_index + i].presentModeCount;
+      ptr[i].pPresentModes = nullptr;
+      if (src[start_index + i].pPresentModes) {
+        ptr[i].pPresentModes = CopyArray<>(src[start_index + i].pPresentModes, 0, 1);
+      }
+  }
+  return ptr;
+}
+
+template<>
 VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM>(const VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM) * count));
   for (uint64_t i = 0; i < count; ++i) {
@@ -15210,6 +15707,107 @@ VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM* CommandRecorder::CopyArray
       if (src[start_index + i].pPerViewRenderAreas) {
         ptr[i].pPerViewRenderAreas = CopyArray<>(src[start_index + i].pPerViewRenderAreas, 0, 1);
       }
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceImageProcessing2FeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceImageProcessing2FeaturesQCOM>(const VkPhysicalDeviceImageProcessing2FeaturesQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceImageProcessing2FeaturesQCOM*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceImageProcessing2FeaturesQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].textureBlockMatch2 = src[start_index + i].textureBlockMatch2;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceImageProcessing2PropertiesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceImageProcessing2PropertiesQCOM>(const VkPhysicalDeviceImageProcessing2PropertiesQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceImageProcessing2PropertiesQCOM*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceImageProcessing2PropertiesQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].maxBlockMatchWindow = src[start_index + i].maxBlockMatchWindow;
+  }
+  return ptr;
+}
+
+template<>
+VkSamplerBlockMatchWindowCreateInfoQCOM* CommandRecorder::CopyArray<VkSamplerBlockMatchWindowCreateInfoQCOM>(const VkSamplerBlockMatchWindowCreateInfoQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkSamplerBlockMatchWindowCreateInfoQCOM*>(m_allocator.Alloc(sizeof(VkSamplerBlockMatchWindowCreateInfoQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].windowExtent = src[start_index + i].windowExtent;
+      ptr[i].windowCompareMode = src[start_index + i].windowCompareMode;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceCubicWeightsFeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceCubicWeightsFeaturesQCOM>(const VkPhysicalDeviceCubicWeightsFeaturesQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceCubicWeightsFeaturesQCOM*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceCubicWeightsFeaturesQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].selectableCubicWeights = src[start_index + i].selectableCubicWeights;
+  }
+  return ptr;
+}
+
+template<>
+VkSamplerCubicWeightsCreateInfoQCOM* CommandRecorder::CopyArray<VkSamplerCubicWeightsCreateInfoQCOM>(const VkSamplerCubicWeightsCreateInfoQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkSamplerCubicWeightsCreateInfoQCOM*>(m_allocator.Alloc(sizeof(VkSamplerCubicWeightsCreateInfoQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].cubicWeights = src[start_index + i].cubicWeights;
+  }
+  return ptr;
+}
+
+template<>
+VkBlitImageCubicWeightsInfoQCOM* CommandRecorder::CopyArray<VkBlitImageCubicWeightsInfoQCOM>(const VkBlitImageCubicWeightsInfoQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkBlitImageCubicWeightsInfoQCOM*>(m_allocator.Alloc(sizeof(VkBlitImageCubicWeightsInfoQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].cubicWeights = src[start_index + i].cubicWeights;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceYcbcrDegammaFeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceYcbcrDegammaFeaturesQCOM>(const VkPhysicalDeviceYcbcrDegammaFeaturesQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceYcbcrDegammaFeaturesQCOM*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceYcbcrDegammaFeaturesQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].ycbcrDegamma = src[start_index + i].ycbcrDegamma;
+  }
+  return ptr;
+}
+
+template<>
+VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM* CommandRecorder::CopyArray<VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM>(const VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM*>(m_allocator.Alloc(sizeof(VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].enableYDegamma = src[start_index + i].enableYDegamma;
+      ptr[i].enableCbCrDegamma = src[start_index + i].enableCbCrDegamma;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceCubicClampFeaturesQCOM* CommandRecorder::CopyArray<VkPhysicalDeviceCubicClampFeaturesQCOM>(const VkPhysicalDeviceCubicClampFeaturesQCOM* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceCubicClampFeaturesQCOM*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceCubicClampFeaturesQCOM) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].cubicRangeClamp = src[start_index + i].cubicRangeClamp;
   }
   return ptr;
 }
@@ -15298,6 +15896,28 @@ VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* CommandRecorder::CopyArra
   return ptr;
 }
 #endif //VK_USE_PLATFORM_SCREEN_QNX
+
+template<>
+VkPhysicalDeviceLayeredDriverPropertiesMSFT* CommandRecorder::CopyArray<VkPhysicalDeviceLayeredDriverPropertiesMSFT>(const VkPhysicalDeviceLayeredDriverPropertiesMSFT* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceLayeredDriverPropertiesMSFT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceLayeredDriverPropertiesMSFT) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].underlyingAPI = src[start_index + i].underlyingAPI;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV>(const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].descriptorPoolOverallocation = src[start_index + i].descriptorPoolOverallocation;
+  }
+  return ptr;
+}
 
 template<>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(const VkAccelerationStructureBuildRangeInfoKHR* src, uint64_t start_index, uint64_t count) {
@@ -17256,6 +17876,21 @@ CmdTraceRaysIndirect2KHRArgs*CommandRecorder::RecordCmdTraceRaysIndirect2KHR(
   return args;
 }
 
+CmdBindIndexBuffer2KHRArgs*CommandRecorder::RecordCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType) {
+  auto *args = Alloc<CmdBindIndexBuffer2KHRArgs>();
+  args->commandBuffer = commandBuffer;
+  args->buffer = buffer;
+  args->offset = offset;
+  args->size = size;
+  args->indexType = indexType;
+  return args;
+}
+
 CmdDebugMarkerBeginEXTArgs*CommandRecorder::RecordCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
@@ -17536,6 +18171,60 @@ CmdInsertDebugUtilsLabelEXTArgs*CommandRecorder::RecordCmdInsertDebugUtilsLabelE
   }
   return args;
 }
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+CmdInitializeGraphScratchMemoryAMDXArgs*CommandRecorder::RecordCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch) {
+  auto *args = Alloc<CmdInitializeGraphScratchMemoryAMDXArgs>();
+  args->commandBuffer = commandBuffer;
+  args->scratch = scratch;
+  return args;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+CmdDispatchGraphAMDXArgs*CommandRecorder::RecordCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  auto *args = Alloc<CmdDispatchGraphAMDXArgs>();
+  args->commandBuffer = commandBuffer;
+  args->scratch = scratch;
+  if (pCountInfo) {
+    args->pCountInfo = CopyArray(pCountInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+  }
+  return args;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+CmdDispatchGraphIndirectAMDXArgs*CommandRecorder::RecordCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
+  auto *args = Alloc<CmdDispatchGraphIndirectAMDXArgs>();
+  args->commandBuffer = commandBuffer;
+  args->scratch = scratch;
+  if (pCountInfo) {
+    args->pCountInfo = CopyArray(pCountInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+  }
+  return args;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+CmdDispatchGraphIndirectCountAMDXArgs*CommandRecorder::RecordCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo) {
+  auto *args = Alloc<CmdDispatchGraphIndirectCountAMDXArgs>();
+  args->commandBuffer = commandBuffer;
+  args->scratch = scratch;
+  args->countInfo = countInfo;
+  return args;
+}
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
 CmdSetSampleLocationsEXTArgs*CommandRecorder::RecordCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,

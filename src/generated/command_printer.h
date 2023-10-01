@@ -209,6 +209,11 @@ const char *VkOpticalFlowPerformanceLevelNVToString(VkOpticalFlowPerformanceLeve
 const char *VkOpticalFlowSessionBindingPointNVToString(VkOpticalFlowSessionBindingPointNV e);
 const char *VkShaderCodeTypeEXTToString(VkShaderCodeTypeEXT e);
 const char *VkRayTracingInvocationReorderModeNVToString(VkRayTracingInvocationReorderModeNV e);
+const char *VkLatencyMarkerNVToString(VkLatencyMarkerNV e);
+const char *VkOutOfBandQueueTypeNVToString(VkOutOfBandQueueTypeNV e);
+const char *VkBlockMatchWindowCompareModeQCOMToString(VkBlockMatchWindowCompareModeQCOM e);
+const char *VkCubicFilterWeightsQCOMToString(VkCubicFilterWeightsQCOM e);
+const char *VkLayeredDriverUnderlyingApiMSFTToString(VkLayeredDriverUnderlyingApiMSFT e);
 const char *VkBuildAccelerationStructureModeKHRToString(VkBuildAccelerationStructureModeKHR e);
 const char *VkShaderGroupShaderKHRToString(VkShaderGroupShaderKHR e);
 
@@ -338,6 +343,11 @@ std::ostream &operator<<(std::ostream & os, const VkOpticalFlowPerformanceLevelN
 std::ostream &operator<<(std::ostream & os, const VkOpticalFlowSessionBindingPointNV &t);
 std::ostream &operator<<(std::ostream & os, const VkShaderCodeTypeEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkRayTracingInvocationReorderModeNV &t);
+std::ostream &operator<<(std::ostream & os, const VkLatencyMarkerNV &t);
+std::ostream &operator<<(std::ostream & os, const VkOutOfBandQueueTypeNV &t);
+std::ostream &operator<<(std::ostream & os, const VkBlockMatchWindowCompareModeQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkCubicFilterWeightsQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkLayeredDriverUnderlyingApiMSFT &t);
 std::ostream &operator<<(std::ostream & os, const VkBuildAccelerationStructureModeKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkShaderGroupShaderKHR &t);
 
@@ -829,6 +839,14 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderSubgroup
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkTraceRaysIndirectCommand2KHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance5FeaturesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance5PropertiesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkRenderingAreaInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkImageSubresource2KHR &t);
+std::ostream &operator<<(std::ostream & os, const VkDeviceImageSubresourceInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkSubresourceLayout2KHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPipelineCreateFlags2CreateInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkBufferUsageFlags2CreateInfoKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkCooperativeMatrixPropertiesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceCooperativeMatrixFeaturesKHR &t);
@@ -1030,6 +1048,30 @@ std::ostream &operator<<(std::ostream & os, const VkExternalFormatANDROID &t);
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 std::ostream &operator<<(std::ostream & os, const VkAndroidHardwareBufferFormatProperties2ANDROID &t);
 #endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderEnqueueFeaturesAMDX &t);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderEnqueuePropertiesAMDX &t);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkExecutionGraphPipelineScratchSizeAMDX &t);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkExecutionGraphPipelineCreateInfoAMDX &t);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkDeviceOrHostAddressConstAMDX &t);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkDispatchGraphInfoAMDX &t);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkDispatchGraphCountInfoAMDX &t);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+std::ostream &operator<<(std::ostream & os, const VkPipelineShaderStageNodeCreateInfoAMDX &t);
+#endif //VK_ENABLE_BETA_EXTENSIONS
 std::ostream &operator<<(std::ostream & os, const VkSampleLocationEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkSampleLocationsInfoEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkAttachmentSampleLocationsEXT &t);
@@ -1172,8 +1214,6 @@ std::ostream &operator<<(std::ostream & os, const VkCopyImageToImageInfoEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkHostImageLayoutTransitionInfoEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkSubresourceHostMemcpySizeEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkHostImageCopyDevicePerformanceQueryEXT &t);
-std::ostream &operator<<(std::ostream & os, const VkSubresourceLayout2EXT &t);
-std::ostream &operator<<(std::ostream & os, const VkImageSubresource2EXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkSurfacePresentModeEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkSurfacePresentScalingCapabilitiesEXT &t);
@@ -1370,6 +1410,8 @@ std::ostream &operator<<(std::ostream & os, const VkMemoryGetRemoteAddressInfoNV
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExternalMemoryRDMAFeaturesNV &t);
 std::ostream &operator<<(std::ostream & os, const VkPipelinePropertiesIdentifierEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDevicePipelinePropertiesFeaturesEXT &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceFrameBoundaryFeaturesEXT &t);
+std::ostream &operator<<(std::ostream & os, const VkFrameBoundaryEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkSubpassResolvePerformanceQueryEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkMultisampledRenderToSingleSampledInfoEXT &t);
@@ -1469,6 +1511,15 @@ std::ostream &operator<<(std::ostream & os, const VkOpticalFlowSessionCreatePriv
 std::ostream &operator<<(std::ostream & os, const VkOpticalFlowExecuteInfoNV &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLegacyDitheringFeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDevicePipelineProtectedAccessFeaturesEXT &t);
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExternalFormatResolveFeaturesANDROID &t);
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExternalFormatResolvePropertiesANDROID &t);
+#endif //VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+std::ostream &operator<<(std::ostream & os, const VkAndroidHardwareBufferFormatResolvePropertiesANDROID &t);
+#endif //VK_USE_PLATFORM_ANDROID_KHR
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderObjectFeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderObjectPropertiesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkShaderCreateInfoEXT &t);
@@ -1483,8 +1534,26 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderCoreBuil
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderCoreBuiltinsPropertiesARM &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT &t);
+std::ostream &operator<<(std::ostream & os, const VkLatencySleepModeInfoNV &t);
+std::ostream &operator<<(std::ostream & os, const VkLatencySleepInfoNV &t);
+std::ostream &operator<<(std::ostream & os, const VkSetLatencyMarkerInfoNV &t);
+std::ostream &operator<<(std::ostream & os, const VkLatencyTimingsFrameReportNV &t);
+std::ostream &operator<<(std::ostream & os, const VkGetLatencyMarkerInfoNV &t);
+std::ostream &operator<<(std::ostream & os, const VkLatencySubmissionPresentIdNV &t);
+std::ostream &operator<<(std::ostream & os, const VkSwapchainLatencyCreateInfoNV &t);
+std::ostream &operator<<(std::ostream & os, const VkOutOfBandQueueTypeInfoNV &t);
+std::ostream &operator<<(std::ostream & os, const VkLatencySurfaceCapabilitiesNV &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM &t);
 std::ostream &operator<<(std::ostream & os, const VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceImageProcessing2FeaturesQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceImageProcessing2PropertiesQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkSamplerBlockMatchWindowCreateInfoQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceCubicWeightsFeaturesQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkSamplerCubicWeightsCreateInfoQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkBlitImageCubicWeightsInfoQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceYcbcrDegammaFeaturesQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceCubicClampFeaturesQCOM &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT &t);
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
 std::ostream &operator<<(std::ostream & os, const VkScreenBufferPropertiesQNX &t);
@@ -1501,6 +1570,8 @@ std::ostream &operator<<(std::ostream & os, const VkExternalFormatQNX &t);
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX &t);
 #endif //VK_USE_PLATFORM_SCREEN_QNX
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLayeredDriverPropertiesMSFT &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV &t);
 std::ostream &operator<<(std::ostream & os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
@@ -1651,6 +1722,7 @@ class CommandPrinter {
   void PrintCmdBlitImage2KHRArgs(std::ostream & os, const CmdBlitImage2KHRArgs &args);
   void PrintCmdResolveImage2KHRArgs(std::ostream & os, const CmdResolveImage2KHRArgs &args);
   void PrintCmdTraceRaysIndirect2KHRArgs(std::ostream & os, const CmdTraceRaysIndirect2KHRArgs &args);
+  void PrintCmdBindIndexBuffer2KHRArgs(std::ostream & os, const CmdBindIndexBuffer2KHRArgs &args);
   void PrintCmdDebugMarkerBeginEXTArgs(std::ostream & os, const CmdDebugMarkerBeginEXTArgs &args);
   void PrintCmdDebugMarkerEndEXTArgs(std::ostream & os, const CmdDebugMarkerEndEXTArgs &args);
   void PrintCmdDebugMarkerInsertEXTArgs(std::ostream & os, const CmdDebugMarkerInsertEXTArgs &args);
@@ -1672,6 +1744,18 @@ class CommandPrinter {
   void PrintCmdBeginDebugUtilsLabelEXTArgs(std::ostream & os, const CmdBeginDebugUtilsLabelEXTArgs &args);
   void PrintCmdEndDebugUtilsLabelEXTArgs(std::ostream & os, const CmdEndDebugUtilsLabelEXTArgs &args);
   void PrintCmdInsertDebugUtilsLabelEXTArgs(std::ostream & os, const CmdInsertDebugUtilsLabelEXTArgs &args);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  void PrintCmdInitializeGraphScratchMemoryAMDXArgs(std::ostream & os, const CmdInitializeGraphScratchMemoryAMDXArgs &args);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  void PrintCmdDispatchGraphAMDXArgs(std::ostream & os, const CmdDispatchGraphAMDXArgs &args);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  void PrintCmdDispatchGraphIndirectAMDXArgs(std::ostream & os, const CmdDispatchGraphIndirectAMDXArgs &args);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  void PrintCmdDispatchGraphIndirectCountAMDXArgs(std::ostream & os, const CmdDispatchGraphIndirectCountAMDXArgs &args);
+#endif //VK_ENABLE_BETA_EXTENSIONS
   void PrintCmdSetSampleLocationsEXTArgs(std::ostream & os, const CmdSetSampleLocationsEXTArgs &args);
   void PrintCmdBindShadingRateImageNVArgs(std::ostream & os, const CmdBindShadingRateImageNVArgs &args);
   void PrintCmdSetViewportShadingRatePaletteNVArgs(std::ostream & os, const CmdSetViewportShadingRatePaletteNVArgs &args);

@@ -674,6 +674,13 @@ class CommandRecorder
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             indirectDeviceAddress);
 
+  CmdBindIndexBuffer2KHRArgs*RecordCmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType);
+
   CmdDebugMarkerBeginEXTArgs*RecordCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo);
@@ -788,6 +795,33 @@ class CommandRecorder
   CmdInsertDebugUtilsLabelEXTArgs*RecordCmdInsertDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugUtilsLabelEXT*                 pLabelInfo);
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  CmdInitializeGraphScratchMemoryAMDXArgs*RecordCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  CmdDispatchGraphAMDXArgs*RecordCmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  CmdDispatchGraphIndirectAMDXArgs*RecordCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo);
+#endif //VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  CmdDispatchGraphIndirectCountAMDXArgs*RecordCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo);
+#endif //VK_ENABLE_BETA_EXTENSIONS
 
   CmdSetSampleLocationsEXTArgs*RecordCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,
