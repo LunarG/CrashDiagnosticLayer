@@ -1,5 +1,6 @@
 # ~~~
 # Copyright (c) 2023 Valve Corporation
+# Copyright (c) 2023 Valve Corporation
 # Copyright (c) 2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,4 +35,4 @@ message(STATUS "Targeting Android API Level ${CMAKE_SYSTEM_VERSION}")
 
 message(STATUS "Building with Android NDK Version ${ANDROID_NDK_REVISION}")
 
-install(TARGETS CDL DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS crash_diagnostic DESTINATION ${CMAKE_INSTALL_LIBDIR})

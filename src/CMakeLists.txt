@@ -71,6 +71,8 @@ target_sources(crash_diagnostic PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/spirv_parse.h
     ${CMAKE_CURRENT_SOURCE_DIR}/submit_tracker.h
     ${CMAKE_CURRENT_SOURCE_DIR}/submit_tracker.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/system.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/system.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/util.h
     ${CMAKE_CURRENT_SOURCE_DIR}/util.cc
 )
@@ -91,16 +93,25 @@ target_link_libraries(crash_diagnostic PUBLIC
 if(MSVC)
     target_link_options(crash_diagnostic PRIVATE /DEF:${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.def)
     target_compile_options(crash_diagnostic PRIVATE /bigobj)
+    target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_WINDOWS)
 elseif(MINGW)
     target_sources(crash_diagnosticPRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.def)
     target_compile_options(crash_diagnostic PRIVATE -Wa,-mbig-obj)
+    target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_WINDOWS)
 elseif(APPLE)
     message(STATUS "Functions are exported via VVL_EXPORT")
     set_target_properties(crash_diagnostic PROPERTIES SUFFIX ".dylib")
+    target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_APPLE)
 elseif(ANDROID)
     message(STATUS "Functions are exported via VVL_EXPORT")
+    target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_ANDROID)
 else()
     target_link_options(crash_diagnostic PRIVATE LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.map,-Bsymbolic,--exclude-libs,ALL)
+    if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+        target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_LINUX)
+    elseif(CMAKE_SYSTEM_NAME MATCHES "BSD")
+        target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_BSD)
+    endif()
 endif()
 
 target_compile_options(crash_diagnostic PRIVATE "$<IF:$<CXX_COMPILER_ID:MSVC>,/wd4100,-Wno-unused-parameter>")

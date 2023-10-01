@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -i
 #
+# Copyright (c) 2023 Valve Corporation
 # Copyright (c) 2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -345,6 +346,7 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
   ScopedOstream sos(os, indentation);
   switch (cmd.type)
   {
+    default:
     case Command::Type::kUnknown:
       os << "";
       break;

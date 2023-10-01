@@ -1,4 +1,5 @@
 # ~~~
+# Copyright (c) 2023 Valve Corporation
 # Copyright (c) 2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,6 +42,8 @@ if (UPDATE_DEPS)
 
     list(APPEND update_dep_command "--config")
     list(APPEND update_dep_command "${_build_type}")
+    list(APPEND update_dep_command "--api")
+    list(APPEND update_dep_command "${API_TYPE}")
 
     set(UPDATE_DEPS_DIR_SUFFIX "${_build_type}")
     if (ANDROID)
@@ -49,6 +52,10 @@ if (UPDATE_DEPS)
     set(UPDATE_DEPS_DIR "${PROJECT_SOURCE_DIR}/external/${UPDATE_DEPS_DIR_SUFFIX}" CACHE PATH "Location where update_deps.py installs packages")
     list(APPEND update_dep_command "--dir" )
     list(APPEND update_dep_command "${UPDATE_DEPS_DIR}")
+
+    if (CDL_ENABLE_ASAN)
+        list(APPEND update_dep_command "--asan" )
+    endif()
 
     if (NOT BUILD_TESTS)
         list(APPEND update_dep_command "--optional=tests")
@@ -59,14 +66,11 @@ if (UPDATE_DEPS)
     endif()
 
     list(APPEND cmake_vars "CMAKE_TOOLCHAIN_FILE")
+    if (NOT MSVC_IDE)
+        list(APPEND cmake_vars "CMAKE_CXX_COMPILER" "CMAKE_C_COMPILER" "CMAKE_ASM_COMPILER")
+    endif()
     if (ANDROID)
-        list(APPEND cmake_vars
-                "ANDROID_PLATFORM"
-                "CMAKE_ANDROID_ARCH_ABI"
-                "CMAKE_ANDROID_STL_TYPE"
-                "CMAKE_ANDROID_RTTI"
-                "CMAKE_ANDROID_EXCEPTIONS"
-                "ANDROID_USE_LEGACY_TOOLCHAIN_FILE")
+        list(APPEND cmake_vars "ANDROID_PLATFORM" "CMAKE_ANDROID_ARCH_ABI" "CMAKE_ANDROID_STL_TYPE" "CMAKE_ANDROID_RTTI" "CMAKE_ANDROID_EXCEPTIONS" "ANDROID_USE_LEGACY_TOOLCHAIN_FILE")
     endif()
 
     set(cmake_var)

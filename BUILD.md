@@ -30,7 +30,9 @@ see below.
 git clone https://github.com/LunarG/CrashDiagnosticLayer.git
 cd CrashDiagnosticLayer
 
+# Update the dependencies and generate the appropriate build files
 cmake -S . -B build -D UPDATE_DEPS=ON -D CMAKE_BUILD_TYPE=Debug
+# Commence the build
 cmake --build build --config Debug
 
 # CMake 3.21+
@@ -104,6 +106,11 @@ cmake -S . -B build/ ... -D CMAKE_PREFIX_PATH=~/foobar/my_custom_glslang_install
 
 
 ## Building On Linux
+
+To build for Linux, follow the instructions in the
+[Building Overview](#building-overview) section above.
+
+Additional details and options are mentioned below.
 
 ### Linux Build Requirements
 

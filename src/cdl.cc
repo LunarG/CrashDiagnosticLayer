@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright 2023 LunarG Inc.
+ Copyright 2023 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@
 
 namespace crash_diagnostic_layer {
 
-const char* kCdlVersion = "1.1.0";
+const char* kCdlVersion = "1.2.0";
 const char* kGpuHangDaemonSocketName = "/run/gpuhangd";
 
 const char* k_env_var_output_path = "CDL_OUTPUT_PATH";
@@ -261,14 +261,17 @@ void CdlContext::WatchdogTimer() {
 }
 
 void CdlContext::StartGpuHangdListener() {
-#ifdef __linux__
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
     // Start up the hang deamon thread.
     gpuhangd_thread_ = std::make_unique<std::thread>([&]() { this->GpuHangdListener(); });
-#endif  // __linux__
+#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
+        // defined(SYSTEM_TARGET_BSD)
 }
 
 void CdlContext::StopGpuHangdListener() {
-#ifdef __linux__
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
     if (gpuhangd_thread_ && gpuhangd_thread_->joinable()) {
         std::cerr << "CDL: Stopping Listener" << std::endl;
         if (gpuhangd_socket_ >= 0) {
@@ -277,11 +280,13 @@ void CdlContext::StopGpuHangdListener() {
         gpuhangd_thread_->join();
         std::cerr << "CDL: Listener Stopped" << std::endl;
     }
-#endif  // __linux__
+#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
+        // defined(SYSTEM_TARGET_BSD)
 }
 
 void CdlContext::GpuHangdListener() {
-#ifdef __linux__
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
     gpuhangd_socket_ = socket(AF_LOCAL, SOCK_STREAM, 0);
     if (gpuhangd_socket_ < 0) {
         std::cerr << "CDL: Could not create socket: " << strerror(errno) << std::endl;
@@ -321,7 +326,8 @@ void CdlContext::GpuHangdListener() {
             DumpAllDevicesExecutionState(CrashSource::kHangDaemon);
         }
     }
-#endif  // __linux__
+#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
+        // defined(SYSTEM_TARGET_BSD)
 }
 
 void CdlContext::PreApiFunction(const char* api_name) {
@@ -611,6 +617,12 @@ void CdlContext::DumpReportPrologue(std::ostream& os, const Device* device) {
         }
     }
     os << "\n";
+
+    os << "\nSystemInfo:" << t << "osName: " << system_.GetOsName() << t << "osVersion: " << system_.GetOsVersion() << t
+       << "osBitdepth: " << system_.GetOsBitdepth() << t << "osAdditional: " << system_.GetOsAdditionalInfo() << t
+       << "cpuName: " << system_.GetHwCpuName() << t << "numCpus: " << system_.GetHwNumCpus() << t
+       << "totalRam: " << system_.GetHwTotalRam() << t << "totalDiskSpace: " << system_.GetHwTotalDiskSpace() << t
+       << "availDiskSpace: " << system_.GetHwAvailDiskSpace() << t;
 
     os << "\nInstance:" << device->GetObjectInfo((uint64_t)vk_instance_, t);
     if (application_info_) {

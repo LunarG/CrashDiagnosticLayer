@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,10 +19,12 @@
 
 #include <vulkan/vulkan.h>
 
-#ifdef __linux__
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
 #include <sys/syscall.h>
 #include <unistd.h>
-#endif
+#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
+        // defined(SYSTEM_TARGET_BSD)
 
 #include <atomic>
 #include <cassert>
@@ -40,6 +43,7 @@
 #include "command_buffer_tracker.h"
 #include "device.h"
 #include "layer_base.h"
+#include "system.h"
 #include "submit_tracker.h"
 
 namespace crash_diagnostic_layer {
@@ -199,6 +203,8 @@ class CdlContext {
    private:
     using CStringArray = std::vector<char*>;
 
+    System system_;
+
     StringArray instance_extension_names_;
     StringArray instance_extension_names_original_;
     CStringArray instance_extension_names_cstr_;
@@ -281,11 +287,13 @@ class CdlContext {
     uint64_t watchdog_timer_ms_ = 0;
 
 // Hang daemon listener thread.
-#ifdef __linux__
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
     std::unique_ptr<std::thread> gpuhangd_thread_;
     int gpuhangd_socket_ = -1;
     int gpuhang_event_id_ = 0;
-#endif  // __linux__
+#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
+        // defined(SYSTEM_TARGET_BSD)
 };
 
 }  // namespace crash_diagnostic_layer
