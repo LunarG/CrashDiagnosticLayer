@@ -96,6 +96,8 @@ void MakeDir(const std::string& path) {
 // CdlContext
 // =============================================================================
 CdlContext::CdlContext() {
+    system_.SetCDL(this);
+
     std::cerr << "CDL: Version " << kCdlVersion << " enabled." << std::endl;
     // output path
     {

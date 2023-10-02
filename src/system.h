@@ -20,9 +20,14 @@
 
 namespace crash_diagnostic_layer {
 
+class CdlContext;
+
 class System {
    public:
     System();
+
+    void SetCDL(CdlContext* p_cdl) { cdl_ = p_cdl; }
+    CdlContext* GetCDL() const { return cdl_; }
 
     const std::string& GetOsName() { return os_name_; }
     const std::string& GetOsVersion() { return os_version_; }
@@ -38,6 +43,8 @@ class System {
     bool QueryInfoAndroid();
     bool QueryInfoPosix();
     bool QueryInfoWindows();
+
+    CdlContext* cdl_ = nullptr;
 
     std::string os_name_;
     std::string os_version_;

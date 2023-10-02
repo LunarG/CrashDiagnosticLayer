@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <iostream>
 #include <stdint.h>
 #include <sstream>
 #include <stdlib.h>
@@ -373,7 +374,7 @@ bool System::QueryInfoWindows() {
     if (nullptr != fpIsWow64Process) {
         BOOL is_wow_64_process = FALSE;
         if (!fpIsWow64Process(GetCurrentProcess(), &is_wow_64_process)) {
-            LogError("Failed to determine properly if 32-bit on Win64!");
+            std::cerr << "Failed to determine properly if 32-bit on Win64!" << std::endl;
         }
         is_wow64 = (is_wow_64_process == TRUE);
     }
@@ -444,7 +445,7 @@ bool System::QueryInfoWindows() {
                 }
                 break;
             default:
-                break
+                break;
         }
         if (!found) {
             if (is_server) {
@@ -466,20 +467,20 @@ bool System::QueryInfoWindows() {
     GetSystemInfo(&system_info);
     number_cpus_ = std::to_string(system_info.dwNumberOfProcessors);
 
-    switch (system_info.DUMMYUNIONNAME.DUMMYSTRUCTNAME.wProcessorArchitecture) {
+    switch (system_info.wProcessorArchitecture) {
         case PROCESSOR_ARCHITECTURE_AMD64:  // x64 (AMD or Intel)
-            cpu_name_ = "x64" break;
+            cpu_name_ = "x64"; break;
         case PROCESSOR_ARCHITECTURE_ARM:  // ARM
-            cpu_name_ = "ARM" break;
+            cpu_name_ = "ARM"; break;
         case PROCESSOR_ARCHITECTURE_ARM64:  // ARM64
-            cpu_name_ = "ARM64" break;
+            cpu_name_ = "ARM64"; break;
         case PROCESSOR_ARCHITECTURE_IA64:  // Intel Itanium-based
-            cpu_name_ = "Intel Itanium" break;
+            cpu_name_ = "Intel Itanium"; break;
         case PROCESSOR_ARCHITECTURE_INTEL:  // x86
-            cpu_name_ = "x86" break;
+            cpu_name_ = "x86"; break;
         case PROCESSOR_ARCHITECTURE_UNKNOWN:
         default:
-            cpu_name_ = "Unknown Architecture" break;
+            cpu_name_ = "Unknown Architecture"; break;
     }
 
     MEMORYSTATUSEX mem_stat;
@@ -489,12 +490,12 @@ bool System::QueryInfoWindows() {
         uint64_t bytes_total = (mem_stat.ullTotalPhys) >> 10;
         if ((bytes_total >> 30) > 0) {
             total_ram_ = std::to_string((uint32_t)(bytes_total >> 30)) + " TB";
-        } else if ((memory >> 20) > 0) {
-            total_ram_ = std::to_string((uint32_t)((memory) >> 20)) + " GB";
-        } else if ((memory >> 10) > 0) {
-            total_ram_ = std::to_string((uint32_t)((memory) >> 10)) + " GB";
+        } else if ((bytes_total >> 20) > 0) {
+            total_ram_ = std::to_string((uint32_t)((bytes_total) >> 20)) + " GB";
+        } else if ((bytes_total >> 10) > 0) {
+            total_ram_ = std::to_string((uint32_t)((bytes_total) >> 10)) + " GB";
         } else {
-            total_ram_ = std::to_string((uint32_t)(memory)) + " KB";
+            total_ram_ = std::to_string((uint32_t)(bytes_total)) + " KB";
         }
     }
 
@@ -504,7 +505,7 @@ bool System::QueryInfoWindows() {
     DWORD total_num_cluster = 0;
     if (TRUE == GetDiskFreeSpaceA(NULL, &sect_per_cluster, &bytes_per_sect, &num_free_cluster, &total_num_cluster)) {
         uint64_t bytes_total = (uint64_t)bytes_per_sect * (uint64_t)sect_per_cluster * (uint64_t)total_num_cluster;
-        bytes_total >> 10;
+        bytes_total >>= 10;
         if ((bytes_total >> 30) > 0) {
             total_disk_space_ = std::to_string((uint32_t)(bytes_total >> 30)) + " TB";
         } else if ((bytes_total >> 20) > 0) {
@@ -516,7 +517,7 @@ bool System::QueryInfoWindows() {
         }
 
         uint64_t bytes_free = (uint64_t)bytes_per_sect * (uint64_t)sect_per_cluster * (uint64_t)num_free_cluster;
-        bytes_free >> 10;
+        bytes_free >>= 10;
         if ((bytes_free >> 30) > 0) {
             avail_disk_space_ = std::to_string((uint32_t)(bytes_free >> 30)) + " TB";
         } else if ((bytes_free >> 20) > 0) {
