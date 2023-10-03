@@ -42,6 +42,7 @@
 #error "Unsupported operating system"
 #endif
 
+#include "cdl.h"
 #include "system.h"
 
 namespace crash_diagnostic_layer {

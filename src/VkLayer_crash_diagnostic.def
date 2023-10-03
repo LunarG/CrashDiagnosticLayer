@@ -17,7 +17,7 @@
 ; limitations under the License.
 ;;;;  End Copyright Notice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-LIBRARY VkLayer_LUNARG_crash_diagnostic_layer
+LIBRARY VkLayer_crash_diagnostic
 EXPORTS
 CDL_GetInstanceProcAddr
 CDL_GetDeviceProcAddr
