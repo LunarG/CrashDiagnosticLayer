@@ -59,6 +59,8 @@ target_sources(crash_diagnostic PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/cdl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/cdl.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/linear_allocator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/logger.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/logger.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/marker.h
     ${CMAKE_CURRENT_SOURCE_DIR}/object_name_db.h
     ${CMAKE_CURRENT_SOURCE_DIR}/object_name_db.cc

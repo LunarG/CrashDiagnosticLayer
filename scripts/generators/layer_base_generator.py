@@ -661,7 +661,7 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(
         self.write("".join(out))
 
         out = []
-        for vkcommand in filter(lambda x: self.InstanceCommand(x) and self.InterceptCommand(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InstanceCommand(x) and self.NeedsIntercept(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'if (0 == strcmp(func, "{vkcommand.name}"))\n')
             out.append(f'  return (PFN_vkVoidFunction)crash_diagnostic_layer::Intercept{vkcommand.name[2:]};\n')

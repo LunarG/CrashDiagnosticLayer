@@ -1,5 +1,7 @@
 /*
  Copyright 2020 Google Inc.
+ Copyright (c) 2023 Valve Corporation
+ Copyright (c) 2023 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -39,8 +41,8 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index,
     // Reserve the markers
     bool top_marker_is_valid = device_->AllocateMarker(&submit_info.top_marker);
     if (!top_marker_is_valid || !device_->AllocateMarker(&submit_info.bottom_marker)) {
-        std::cerr << "CDL warning: Cannot acquire marker. Not tracking submit info "
-                  << device_->GetObjectName((uint64_t)vk_submit_info) << std::endl;
+        device_->GetCDL()->GetLogger().LogWarning("Cannot acquire marker. Not tracking submit info %s",
+                                                  device_->GetObjectName((uint64_t)vk_submit_info).c_str());
         if (top_marker_is_valid) {
             device_->FreeMarker(submit_info.top_marker);
         }
@@ -127,9 +129,8 @@ void SubmitTracker::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId sub
             }
         }
     } else {
-        std::cerr << "CDL Warning: No previous record of queued submit in submit "
-                     "tracker: "
-                  << submit_info_id << std::endl;
+        device_->GetCDL()->GetLogger().LogWarning("No previous record of queued submit in submit tracker: %d",
+                                                  submit_info_id);
     }
 }
 
@@ -151,9 +152,7 @@ void SubmitTracker::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId su
                                          submit_info.bottom_marker.buffer, submit_info.bottom_marker.offset,
                                          SubmitState::kFinished);
     } else {
-        std::cerr << "CDL Warning: No previous record of queued submit in submit "
-                     "tracker."
-                  << std::endl;
+        device_->GetCDL()->GetLogger().LogWarning("No previous record of queued submit in submit tracker.");
     }
 }
 
@@ -166,9 +165,8 @@ void SubmitTracker::CleanupSubmitInfos() {
             auto submit_info_id = *submit_it;
             auto it = submit_infos_.find(submit_info_id);
             if (it == submit_infos_.end()) {
-                std::cerr << "CDL Warning: No previous record of queued submit in "
-                             "submit tracker: "
-                          << submit_info_id << std::endl;
+                device_->GetCDL()->GetLogger().LogWarning("No previous record of queued submit in submit tracker: %d",
+                                                          submit_info_id);
                 submit_it++;
                 continue;
             }
@@ -198,9 +196,7 @@ void SubmitTracker::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_
     HelperSubmitInfo hsubmit_info;
     // Reserve the marker
     if (!device_->AllocateMarker(&hsubmit_info.marker)) {
-        std::cerr << "CDL warning: Cannot acquire marker for QueueBindSparse's helper "
-                     "submit."
-                  << std::endl;
+        device_->GetCDL()->GetLogger().LogWarning("Cannot acquire marker for QueueBindSparse's helper submit");
         return;
     }
     std::lock_guard<std::mutex> lock(helper_submit_infos_mutex_);

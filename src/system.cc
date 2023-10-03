@@ -1,5 +1,6 @@
 /*
- Copyright 2023 LunarG, Inc.
+ Copyright (c) 2023 Valve Corporation
+ Copyright (c) 2023 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -374,7 +375,7 @@ bool System::QueryInfoWindows() {
     if (nullptr != fpIsWow64Process) {
         BOOL is_wow_64_process = FALSE;
         if (!fpIsWow64Process(GetCurrentProcess(), &is_wow_64_process)) {
-            std::cerr << "Failed to determine properly if 32-bit on Win64!" << std::endl;
+            GetCDL()->GetLogger().LogError("Failed to determine properly if 32-bit on Win64!");
         }
         is_wow64 = (is_wow_64_process == TRUE);
     }

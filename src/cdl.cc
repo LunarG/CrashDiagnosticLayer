@@ -1,6 +1,7 @@
 /*
  Copyright 2018 Google Inc.
- Copyright 2023 LunarG, Inc.
+ Copyright (c) 2023 Valve Corporation
+ Copyright (c) 2023 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -34,6 +35,7 @@
 #include <algorithm>
 #include <chrono>
 #include <fstream>
+#include <inttypes.h>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -51,6 +53,7 @@ const char* kGpuHangDaemonSocketName = "/run/gpuhangd";
 
 const char* k_env_var_output_path = "CDL_OUTPUT_PATH";
 const char* k_env_var_output_name = "CDL_OUTPUT_NAME";
+const char* k_env_var_logfile_prefix = "CDL_LOGFILE_PREFIX";
 
 const char* k_env_var_log_configs = "CDL_DEBUG_LOG_CONFIGS";
 const char* k_env_var_trace_on = "CDL_TRACE_ON";
@@ -98,7 +101,7 @@ void MakeDir(const std::string& path) {
 CdlContext::CdlContext() {
     system_.SetCDL(this);
 
-    std::cerr << "CDL: Version " << kCdlVersion << " enabled." << std::endl;
+    logger_.LogInfo("Version %s enabled.", kCdlVersion);
     // output path
     {
         char* p_env_value = getenv(k_env_var_output_path);
@@ -124,19 +127,27 @@ CdlContext::CdlContext() {
         MakeDir(output_path_);
         base_output_path_ = output_path_;
 
+        // Calculate a unique sub directory based on time
+        auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
         // if output_name_ is given, don't create a subdirectory
         char* d_env_value = getenv(k_env_var_output_name);
         if (d_env_value) {
             output_name_ = d_env_value;
         } else {
-            // calculate a unique sub directory based on time
-            auto now = std::chrono::system_clock::now();
-            auto in_time_t = std::chrono::system_clock::to_time_t(now);
-
             std::stringstream ss;
             ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S");
             output_path_ += ss.str();
             output_path_ += k_path_separator;
+        }
+
+        // If logfile prefix is given, create it with the date_time suffix
+        d_env_value = getenv(k_env_var_logfile_prefix);
+        if (d_env_value) {
+            std::stringstream ss;
+            ss << output_path_ << d_env_value << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S") << ".log";
+            logger_.OpenLogFile(ss.str());
         }
     }
 
@@ -188,7 +199,7 @@ CdlContext::CdlContext() {
 
         if (watchdog_timer_ms_ > 0) {
             StartWatchdogTimer();
-            std::cerr << "CDL: Begin Watchdog: " << watchdog_timer_ms_ << "ms" << std::endl;
+            logger_.LogInfo("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
         }
     }
 
@@ -199,7 +210,7 @@ CdlContext::CdlContext() {
 
         if (!disable_driver_hang_thread) {
             StartGpuHangdListener();
-            std::cerr << "CDL: gpuhangd listener started: " << kGpuHangDaemonSocketName << std::endl;
+            logger_.LogInfo("gpuhangd listener started: %s", kGpuHangDaemonSocketName);
         }
     }
 }
@@ -207,6 +218,7 @@ CdlContext::CdlContext() {
 CdlContext::~CdlContext() {
     StopWatchdogTimer();
     StopGpuHangdListener();
+    logger_.CloseLogFile();
 }
 
 template <class T>
@@ -231,10 +243,10 @@ void CdlContext::StartWatchdogTimer() {
 
 void CdlContext::StopWatchdogTimer() {
     if (watchdog_running_ && watchdog_thread_->joinable()) {
-        std::cerr << "CDL: Stopping Watchdog" << std::endl;
+        logger_.LogInfo("Stopping Watchdog");
         watchdog_running_ = false;  // TODO: condition variable that waits
         watchdog_thread_->join();
-        std::cerr << "CDL: Watchdog Stopped" << std::endl;
+        logger_.LogInfo("Watchdog Stopped");
     }
 }
 
@@ -250,7 +262,7 @@ void CdlContext::WatchdogTimer() {
         auto ms = (int64_t)(now - last_submit_time_);
 
         if (ms > (int64_t)watchdog_timer_ms_) {
-            std::cout << "CDL: Watchdog check failed, no submit in " << ms << "ms" << std::endl;
+            logger_.LogInfo("CDL: Watchdog check failed, no submit in %" PRId64 "ms", ms);
 
             DumpAllDevicesExecutionState(CrashSource::kWatchdogTimer);
 
@@ -275,12 +287,12 @@ void CdlContext::StopGpuHangdListener() {
 #if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
     defined(SYSTEM_TARGET_BSD)
     if (gpuhangd_thread_ && gpuhangd_thread_->joinable()) {
-        std::cerr << "CDL: Stopping Listener" << std::endl;
+        logger_.LogInfo("Stopping Listener");
         if (gpuhangd_socket_ >= 0) {
             shutdown(gpuhangd_socket_, SHUT_RDWR);
         }
         gpuhangd_thread_->join();
-        std::cerr << "CDL: Listener Stopped" << std::endl;
+        logger_.LogInfo("Listener Stopped");
     }
 #endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
         // defined(SYSTEM_TARGET_BSD)
@@ -291,7 +303,7 @@ void CdlContext::GpuHangdListener() {
     defined(SYSTEM_TARGET_BSD)
     gpuhangd_socket_ = socket(AF_LOCAL, SOCK_STREAM, 0);
     if (gpuhangd_socket_ < 0) {
-        std::cerr << "CDL: Could not create socket: " << strerror(errno) << std::endl;
+        logger_.LogWarning("Could not create socket: %s", strerror(errno));
         return;
     }
 
@@ -302,7 +314,7 @@ void CdlContext::GpuHangdListener() {
 
     int connect_ret = connect(gpuhangd_socket_, (const struct sockaddr*)&addr, sizeof(struct sockaddr_un));
     if (connect_ret < 0) {
-        std::cerr << "CDL: Could not connect socket: " << strerror(errno) << std::endl;
+        logger_.LogWarning("Could not connect socket: %s", strerror(errno));
         return;
     }
 
@@ -310,20 +322,20 @@ void CdlContext::GpuHangdListener() {
         int msg = 0;
         int read_ret = read(gpuhangd_socket_, &msg, sizeof(int));
         if (read_ret < 0) {
-            std::cerr << "CDL: Could not read socket: " << strerror(errno) << std::endl;
+            logger_.LogWarning("Could not read socket: %s", strerror(errno));
             break;
         } else if (0 == read_ret) {
-            std::cerr << "CDL: Socket closed\n" << std::endl;
+            logger_.LogInfo("Socket closed");
             break;
         }
 
         if (kMessageHangDetected == msg) {
-            std::cerr << "CDL: Driver signalled a hang." << std::endl;
+            logger_.LogError("Driver signalled a hang.");
             read_ret = read(gpuhangd_socket_, &gpuhang_event_id_, sizeof(int));
             if (read_ret > 0) {
-                std::cerr << "CDL: Hang event ID: " << gpuhang_event_id_ << std::endl;
+                logger_.LogError("Hang event ID: %d", gpuhang_event_id_);
             } else {
-                std::cerr << "CDL Warning: Hang event ID not received from the hang daemon." << std::endl;
+                logger_.LogError("Hang event ID not received from the hang daemon.");
             }
             DumpAllDevicesExecutionState(CrashSource::kHangDaemon);
         }
@@ -334,13 +346,13 @@ void CdlContext::GpuHangdListener() {
 
 void CdlContext::PreApiFunction(const char* api_name) {
     if (trace_all_) {
-        std::cout << "> " << api_name << std::endl;
+        logger_.LogInfo("> %s", api_name);
     }
 }
 
 void CdlContext::PostApiFunction(const char* api_name) {
     if (trace_all_) {
-        std::cout << "< " << api_name << std::endl;
+        logger_.LogInfo("< %s", api_name);
     }
 }
 
@@ -450,9 +462,7 @@ const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(VkPhysicalDevi
                           VK_AMD_BUFFER_MARKER_EXTENSION_NAME, &buffer_marker_enabled_, &buffer_marker_added_);
 
     if (!buffer_marker_enabled_) {
-        std::cerr << "CDL Warning: No VK_AMD_buffer_marker extension, "
-                     "progression tracking will be disabled. "
-                  << std::endl;
+        logger_.LogError("No VK_AMD_buffer_marker extension, progression tracking will be disabled. ");
     }
 
     TryAddDeviceExtension(pCreateInfo, extension_properties, device_extension_names_,
@@ -460,9 +470,7 @@ const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(VkPhysicalDevi
                           &device_coherent_added_);
 
     if (!device_coherent_enabled_) {
-        std::cerr << "CDL Warning: No VK_AMD_device_coherent_memory extension, "
-                     "results may not be as accurate as possible."
-                  << std::endl;
+        logger_.LogError("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
     }
 
     auto device_create_info = std::make_unique<DeviceCreateInfo>();
@@ -687,21 +695,16 @@ void CdlContext::WriteReport(std::ostream& os, CrashSource crash_source) {
 #endif
 
     std::stringstream ss;
-    ss << "----------------------------------------------------------------\n";
-    ss << "- CRASH DIAGNOSTIC LAYER - ERROR DETECTED                      -\n";
-    ss << "----------------------------------------------------------------\n";
-    ss << "\n";
-    ss << "Output written to: " << output_path << "\n";
+    ss << "Device error encountered and log being recorded\n";
+    ss << "\tOutput written to: " << output_path << "\n";
 #if !defined(WIN32)
-    ss << "Symlink to output: " << symlink_path << "\n";
+    ss << "\tSymlink to output: " << symlink_path << "\n";
 #endif
-    ss << "\n";
     ss << "----------------------------------------------------------------\n";
 #if defined(WIN32)
     OutputDebugString(ss.str().c_str());
-#else
-    std::cout << ss.str() << std::endl;
 #endif
+    logger_.LogError(ss.str());
 }
 
 VkCommandPool CdlContext::GetHelperCommandPool(VkDevice vk_device, VkQueue vk_queue) {
@@ -753,7 +756,8 @@ void CdlContext::LogSubmitInfoSemaphores(VkDevice vk_device, VkQueue vk_queue, S
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto submit_tracker = devices_[vk_device]->GetSubmitTracker();
     if (submit_tracker->SubmitInfoHasSemaphores(submit_info_id)) {
-        std::cout << submit_tracker->GetSubmitInfoSemaphoresLog(vk_device, vk_queue, submit_info_id);
+        std::string semaphore_log = submit_tracker->GetSubmitInfoSemaphoresLog(vk_device, vk_queue, submit_info_id);
+        logger_.LogInfo(semaphore_log);
     }
 }
 
@@ -770,8 +774,7 @@ VkDevice CdlContext::GetQueueDevice(VkQueue queue) const {
     std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
     auto it = queue_device_tracker_.find(queue);
     if (it == queue_device_tracker_.end()) {
-        std::cerr << "CDL Warning: queue " << std::hex << (uint64_t)(queue) << std::dec
-                  << "cannot be linked to any device." << std::endl;
+        logger_.LogWarning("queue 0x" PRIx64 " cannot be linked to any device.", (uint64_t)(queue));
         return VK_NULL_HANDLE;
     }
     return it->second;
@@ -801,7 +804,7 @@ void CdlContext::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_in
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto log = BindSparseUtils::LogBindSparseInfosSemaphores(devices_[vk_device].get(), vk_device, vk_queue,
                                                              bind_info_count, bind_infos);
-    std::cout << log;
+    logger_.LogInfo(log);
 }
 
 // =============================================================================
@@ -889,10 +892,9 @@ VkResult CdlContext::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkD
             VkCommandPool command_pool;
             auto res = dispatch_table.CreateCommandPool(vk_device, &command_pool_create_info, nullptr, &command_pool);
             if (res != VK_SUCCESS) {
-                std::cerr << "CDL Warning: failed to create command pools for helper command "
-                             "buffers. VkDevice: 0x"
-                          << std::hex << (uint64_t)(vk_device) << std::dec
-                          << ", queueFamilyIndex: " << queue_family_index;
+                logger_.LogWarning("failed to create command pools for helper command  buffers. VkDevice: 0x" PRIx64
+                                   ", queueFamilyIndex: %d",
+                                   (uint64_t)(vk_device), queue_family_index);
             } else {
                 std::lock_guard<std::mutex> lock(devices_mutex_);
                 devices_[vk_device]->RegisterHelperCommandPool(queue_family_index, command_pool);
@@ -1288,7 +1290,7 @@ VkResult CdlContext::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo 
             } else {
                 log << ", Type: Timeline, Initial value: " << s_value << std::endl;
             }
-            std::cout << log.str();
+            logger_.LogInfo(log.str());
         }
     }
     return result;
@@ -1313,7 +1315,7 @@ void CdlContext::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, co
             } else {
                 log << "Latest value: Unknonw.\n";
             }
-            std::cout << log.str();
+            logger_.LogInfo(log.str());
         }
         semaphore_tracker->EraseSemaphore(semaphore);
     }
@@ -1328,10 +1330,11 @@ VkResult CdlContext::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSi
                                                                      {SemaphoreModifierType::kModifierHost});
         }
         if (trace_all_semaphores_) {
-            std::cout << "[CDL] Timeline semaphore signaled from host. VkDevice: "
-                      << GetObjectName(device, (uint64_t)device)
-                      << ", VkSemaphore: " << GetObjectName(device, (uint64_t)(pSignalInfo->semaphore))
-                      << ", Signal value: " << pSignalInfo->value << std::endl;
+            std::string timeline_message = "[CDL] Timeline semaphore signaled from host. VkDevice: ";
+            timeline_message += GetObjectName(device, (uint64_t)device) +
+                                ", VkSemaphore: " + GetObjectName(device, (uint64_t)(pSignalInfo->semaphore)) +
+                                ", Signal value: " + std::to_string(pSignalInfo->value);
+            logger_.LogInfo(timeline_message.c_str());
         }
     }
     return result;
@@ -1362,7 +1365,7 @@ VkResult CdlContext::PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWait
                 log << "[CDL]\tVkSemaphore: " << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
                     << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
             }
-            std::cout << log.str();
+            logger_.LogInfo(log.str());
         }
     }
     return VK_SUCCESS;
@@ -1412,7 +1415,7 @@ VkResult CdlContext::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWai
                 log << "[CDL]\tVkSemaphore: " << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
                     << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
             }
-            std::cout << log.str();
+            logger_.LogInfo(log.str());
         }
     }
     return result;
@@ -1580,9 +1583,9 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(vk_device))->dispatch_table;
     VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
     if (vk_pool == VK_NULL_HANDLE) {
-        std::cerr << "CDL Error: failed to find the helper command pool to "
-                     "allocate helper command buffers for "
-                     "tracking queue submit state. Not tracking semaphores.";
+        g_interceptor->GetLogger().LogError(
+            "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
+            "state. Not tracking semaphores.");
         return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence, call_pre_queue_submit);
     }
 
@@ -1607,10 +1610,10 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         auto result = dispatch_table.AllocateCommandBuffers(vk_device, &cb_allocate_info, new_buffers);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            std::cerr << "CDL Warning: failed to allocate helper command buffers for "
-                         "tracking queue submit state. vkAllocateCommandBuffers() "
-                         "returned "
-                      << result;
+            g_interceptor->GetLogger().LogWarning(
+                "failed to allocate helper command buffers for tracking queue submit state. vkAllocateCommandBuffers() "
+                "returned 0x%08x",
+                result);
             return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence, call_pre_queue_submit);
         }
 
@@ -1651,9 +1654,8 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         result = dispatch_table.BeginCommandBuffer(extended_cbs[0], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            std::cerr << "CDL Warning: failed to begin helper command buffer. "
-                         "vkBeginCommandBuffer() returned "
-                      << result;
+            g_interceptor->GetLogger().LogWarning(
+                "failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
             g_interceptor->RecordSubmitStart(vk_device, queue_submit_id, submit_info_id, extended_cbs[0]);
             result = dispatch_table.EndCommandBuffer(extended_cbs[0]);
@@ -1663,9 +1665,8 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         result = dispatch_table.BeginCommandBuffer(extended_cbs[cb_count + 1], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            std::cerr << "CDL Warning: failed to begin helper command buffer. "
-                         "vkBeginCommandBuffer() returned "
-                      << result;
+            g_interceptor->GetLogger().LogWarning(
+                "failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
             g_interceptor->RecordSubmitFinish(vk_device, queue_submit_id, submit_info_id, extended_cbs[cb_count + 1]);
             result = dispatch_table.EndCommandBuffer(extended_cbs[cb_count + 1]);
@@ -1708,10 +1709,9 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
     VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
     VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
     if (vk_device == VK_NULL_HANDLE || vk_pool == VK_NULL_HANDLE) {
-        std::cerr << "CDL Warning: device handle not found for queue " << std::hex << (uint64_t)queue << std::dec
-                  << ", Ignoring "
-                     "semaphore signals in vkQueueBindSparse call."
-                  << std::endl;
+        g_interceptor->GetLogger().LogWarning("device handle not found for queue 0x" PRIx64
+                                              ", Ignoring semaphore signals in vkQueueBindSparse call.",
+                                              (uint64_t)queue);
         return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
     }
 
@@ -1752,10 +1752,10 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
     auto result = dispatch_table.AllocateCommandBuffers(vk_device, &cb_allocate_info, new_buffers);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-        std::cerr << "CDL Warning: failed to allocate helper command buffers for "
-                     "tracking queue bind sparse state. vkAllocateCommandBuffers() "
-                     "returned "
-                  << result;
+        g_interceptor->GetLogger().LogWarning(
+            "failed to allocate helper command buffers for tracking queue bind sparse state. "
+            "vkAllocateCommandBuffers() returned 0x%08x",
+            result);
         // Silently pass the call to the dispatch table.
         return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
     }
@@ -1776,9 +1776,8 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
         result = dispatch_table.BeginCommandBuffer(helper_cbs[i], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            std::cerr << "CDL Warning: failed to begin helper command buffer. "
-                         "vkBeginCommandBuffer() returned "
-                      << result;
+            g_interceptor->GetLogger().LogWarning(
+                "ailed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
             g_interceptor->RecordBindSparseHelperSubmit(vk_device, qbind_sparse_id,
                                                         &expanded_bind_sparse_info.submit_infos[i], vk_pool);
@@ -1831,10 +1830,10 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
             result = dispatch_table.QueueSubmit(
                 queue, 1, &expanded_bind_sparse_info.submit_infos[next_submit_info_index], VK_NULL_HANDLE);
             if (result != VK_SUCCESS) {
-                std::cerr << "CDL Warning: helper vkQueueSubmit failed while tracking "
-                             "semaphores in a vkQueueBindSparse call. Semaphore values in "
-                             "the final report might be wrong. Result: "
-                          << result << std::endl;
+                g_interceptor->GetLogger().LogWarning(
+                    "helper vkQueueSubmit failed while tracking semaphores in a vkQueueBindSparse call. Semaphore "
+                    "values in the final report might be wrong. Result: 0x%08x",
+                    result);
                 break;
             }
             next_submit_info_index++;
@@ -1843,13 +1842,10 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
         }
     }
     if (last_bind_result != VK_SUCCESS) {
-        std::cerr << "CDL Warning: QueueBindSparse: Unexpected VkResult = " << last_bind_result
-                  << " after "
-                     "submitting "
-                  << next_bind_sparse_info_index << " bind sparse infos and " << next_submit_info_index
-                  << " helper submit infos to the "
-                     "queue. Submitting the remained bind sparse infos at once."
-                  << std::endl;
+        g_interceptor->GetLogger().LogWarning(
+            "QueueBindSparse: Unexpected VkResult = 0x%8x after submitting %d bind sparse infos and %d "
+            " helper submit infos to the queue. Submitting the remained bind sparse infos at once.",
+            last_bind_result, next_bind_sparse_info_index, next_submit_info_index);
         return dispatch_table.QueueBindSparse(queue, bindInfoCount - next_bind_sparse_info_index,
                                               &pBindInfo[next_bind_sparse_info_index], fence);
     }

@@ -105,10 +105,6 @@ VkResult InterceptCreateInstance(
     const VkAllocationCallbacks*                pAllocator,
     VkInstance*                                 pInstance);
 
-void InterceptDestroyInstance(
-    VkInstance                                  instance,
-    const VkAllocationCallbacks*                pAllocator);
-
 VkResult InterceptCreateDevice(
     VkPhysicalDevice                            physicalDevice,
     const VkDeviceCreateInfo*                   pCreateInfo,
@@ -118,26 +114,6 @@ VkResult InterceptCreateDevice(
 void InterceptDestroyDevice(
     VkDevice                                    device,
     const VkAllocationCallbacks*                pAllocator);
-
-VkResult InterceptEnumerateInstanceExtensionProperties(
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties);
-
-VkResult InterceptEnumerateDeviceExtensionProperties(
-    VkPhysicalDevice                            physicalDevice,
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties);
-
-VkResult InterceptEnumerateInstanceLayerProperties(
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties);
-
-VkResult InterceptEnumerateDeviceLayerProperties(
-    VkPhysicalDevice                            physicalDevice,
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties);
 
 void InterceptGetDeviceQueue(
     VkDevice                                    device,
@@ -1677,39 +1653,9 @@ VkResult InterceptPreCreateInstance(
     const VkAllocationCallbacks*                pAllocator,
     VkInstance*                                 pInstance);
 
-void InterceptPreDestroyInstance(
-    VkInstance                                  instance,
-    const VkAllocationCallbacks*                pAllocator);
-
-VkResult InterceptPreCreateDevice(
-    VkPhysicalDevice                            physicalDevice,
-    const VkDeviceCreateInfo*                   pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkDevice*                                   pDevice);
-
 void InterceptPreDestroyDevice(
     VkDevice                                    device,
     const VkAllocationCallbacks*                pAllocator);
-
-VkResult InterceptPreEnumerateInstanceExtensionProperties(
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties);
-
-VkResult InterceptPreEnumerateDeviceExtensionProperties(
-    VkPhysicalDevice                            physicalDevice,
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties);
-
-VkResult InterceptPreEnumerateInstanceLayerProperties(
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties);
-
-VkResult InterceptPreEnumerateDeviceLayerProperties(
-    VkPhysicalDevice                            physicalDevice,
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties);
 
 VkResult InterceptPreQueueSubmit(
     VkQueue                                     queue,
@@ -3125,10 +3071,6 @@ VkResult InterceptPostCreateInstance(
     VkInstance*                                 pInstance,
     VkResult                                    result);
 
-void InterceptPostDestroyInstance(
-    VkInstance                                  instance,
-    const VkAllocationCallbacks*                pAllocator);
-
 VkResult InterceptPostCreateDevice(
     VkPhysicalDevice                            physicalDevice,
     const VkDeviceCreateInfo*                   pCreateInfo,
@@ -3139,30 +3081,6 @@ VkResult InterceptPostCreateDevice(
 void InterceptPostDestroyDevice(
     VkDevice                                    device,
     const VkAllocationCallbacks*                pAllocator);
-
-VkResult InterceptPostEnumerateInstanceExtensionProperties(
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties,
-    VkResult                                    result);
-
-VkResult InterceptPostEnumerateDeviceExtensionProperties(
-    VkPhysicalDevice                            physicalDevice,
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties,
-    VkResult                                    result);
-
-VkResult InterceptPostEnumerateInstanceLayerProperties(
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties,
-    VkResult                                    result);
-
-VkResult InterceptPostEnumerateDeviceLayerProperties(
-    VkPhysicalDevice                            physicalDevice,
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties,
-    VkResult                                    result);
 
 void InterceptPostGetDeviceQueue(
     VkDevice                                    device,

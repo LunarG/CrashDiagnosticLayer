@@ -41,24 +41,6 @@ VkResult InterceptPostCreateInstance(
   return g_interceptor->PostCreateInstance(pCreateInfo, pAllocator, pInstance, result);
 }
 
-void InterceptPreDestroyInstance(
-    VkInstance                                  instance,
-    const VkAllocationCallbacks*                pAllocator) {
-  g_interceptor->PreDestroyInstance(instance, pAllocator);
-}
-void InterceptPostDestroyInstance(
-    VkInstance                                  instance,
-    const VkAllocationCallbacks*                pAllocator) {
-  g_interceptor->PostDestroyInstance(instance, pAllocator);
-}
-
-VkResult InterceptPreCreateDevice(
-    VkPhysicalDevice                            physicalDevice,
-    const VkDeviceCreateInfo*                   pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkDevice*                                   pDevice) {
-  return g_interceptor->PreCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
-}
 VkResult InterceptPostCreateDevice(
     VkPhysicalDevice                            physicalDevice,
     const VkDeviceCreateInfo*                   pCreateInfo,
@@ -77,62 +59,6 @@ void InterceptPostDestroyDevice(
     VkDevice                                    device,
     const VkAllocationCallbacks*                pAllocator) {
   g_interceptor->PostDestroyDevice(device, pAllocator);
-}
-
-VkResult InterceptPreEnumerateInstanceExtensionProperties(
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties) {
-  return g_interceptor->PreEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties);
-}
-VkResult InterceptPostEnumerateInstanceExtensionProperties(
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties,
-    VkResult                                    result) {
-  return g_interceptor->PostEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties, result);
-}
-
-VkResult InterceptPreEnumerateDeviceExtensionProperties(
-    VkPhysicalDevice                            physicalDevice,
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties) {
-  return g_interceptor->PreEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
-}
-VkResult InterceptPostEnumerateDeviceExtensionProperties(
-    VkPhysicalDevice                            physicalDevice,
-    const char*                                 pLayerName,
-    uint32_t*                                   pPropertyCount,
-    VkExtensionProperties*                      pProperties,
-    VkResult                                    result) {
-  return g_interceptor->PostEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties, result);
-}
-
-VkResult InterceptPreEnumerateInstanceLayerProperties(
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties) {
-  return g_interceptor->PreEnumerateInstanceLayerProperties(pPropertyCount, pProperties);
-}
-VkResult InterceptPostEnumerateInstanceLayerProperties(
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties,
-    VkResult                                    result) {
-  return g_interceptor->PostEnumerateInstanceLayerProperties(pPropertyCount, pProperties, result);
-}
-
-VkResult InterceptPreEnumerateDeviceLayerProperties(
-    VkPhysicalDevice                            physicalDevice,
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties) {
-  return g_interceptor->PreEnumerateDeviceLayerProperties(physicalDevice, pPropertyCount, pProperties);
-}
-VkResult InterceptPostEnumerateDeviceLayerProperties(
-    VkPhysicalDevice                            physicalDevice,
-    uint32_t*                                   pPropertyCount,
-    VkLayerProperties*                          pProperties,
-    VkResult                                    result) {
-  return g_interceptor->PostEnumerateDeviceLayerProperties(physicalDevice, pPropertyCount, pProperties, result);
 }
 
 void InterceptPostGetDeviceQueue(

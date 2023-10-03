@@ -23,6 +23,7 @@ implemented_instance_extensions = [
     'VK_EXT_debug_report',
     'VK_EXT_debug_utils'
 ]
+
 implemented_device_extensions = [
     'VK_EXT_debug_marker'
 ]
@@ -39,6 +40,15 @@ custom_intercept_commands = [
 ]
 
 intercept_pre_functions = [
+]
+
+no_intercept_pre_functions = [
+    'vkDestroyInstance',
+    'vkCreateDevice',
+    'vkEnumerateInstanceLayerProperties',
+    'vkEnumerateDeviceLayerProperties',
+    'vkEnumerateInstanceExtensionProperties',
+    'vkEnumerateDeviceExtensionProperties',
 ]
 
 intercept_post_functions = [
@@ -64,6 +74,14 @@ intercept_post_functions = [
     'vkQueuePresentKHR',
     'vkGetSemaphoreCounterValueKHR',
     'vkSignalSemaphoreKHR',
+]
+
+no_intercept_post_functions = [
+    'vkDestroyInstance',
+    'vkEnumerateInstanceLayerProperties',
+    'vkEnumerateDeviceLayerProperties',
+    'vkEnumerateInstanceExtensionProperties',
+    'vkEnumerateDeviceExtensionProperties',
 ]
 
 intercept_functions = [
@@ -152,13 +170,15 @@ class CdlBaseOutputGenerator(BaseGenerator):
 
     def InterceptPreCommand(self, command):
         intercept = False
-        if self.NeedsIntercept(command) or command.name in intercept_functions or command.name in intercept_pre_functions:
+        if ((self.NeedsIntercept(command) or command.name in intercept_functions or command.name in intercept_pre_functions)
+            and command.name not in no_intercept_pre_functions):
             intercept = True
         return intercept
 
     def InterceptPostCommand(self, command):
         intercept = False
-        if self.NeedsIntercept(command) or command.name in intercept_functions or command.name in intercept_post_functions:
+        if ((self.NeedsIntercept(command) or command.name in intercept_functions or command.name in intercept_post_functions)
+            and command.name not in no_intercept_post_functions):
             intercept = True
         return intercept
 

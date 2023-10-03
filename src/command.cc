@@ -41,9 +41,8 @@ CommandBuffer::CommandBuffer(Device* p_device, VkCommandPool vk_command_pool, Vk
         bottom_marker_.type = MarkerType::kUint32;
         bool top_marker_is_valid = p_device->AllocateMarker(&top_marker_);
         if (!top_marker_is_valid || !p_device->AllocateMarker(&bottom_marker_)) {
-            std::cerr << "CDL warning: Cannot acquire markers. Not tracking "
-                         "VkCommandBuffer "
-                      << device_->GetObjectName((uint64_t)vk_command_buffer) << std::endl;
+            device_->GetCDL()->GetLogger().LogWarning("Cannot acquire markers. Not tracking VkCommandBuffer %s",
+                      device_->GetObjectName((uint64_t)vk_command_buffer).c_str());
             has_buffer_marker_ = false;
             if (top_marker_is_valid) {
                 p_device->FreeMarker(top_marker_);

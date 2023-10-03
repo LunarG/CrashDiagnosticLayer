@@ -1,6 +1,7 @@
 /*
  Copyright 2018 Google Inc.
- Copyright 2023 LunarG, Inc.
+ Copyright (c) 2023 Valve Corporation
+ Copyright (c) 2023 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -43,6 +44,7 @@
 #include "command_buffer_tracker.h"
 #include "device.h"
 #include "layer_base.h"
+#include "logger.h"
 #include "system.h"
 #include "submit_tracker.h"
 
@@ -131,6 +133,7 @@ class CdlContext {
     void MakeOutputPath();
     const std::string& GetOutputPath() const;
 
+    Logger& GetLogger() { return logger_; }
     const ShaderModule* FindShaderModule(VkShaderModule shader) const;
 
     bool DumpShadersOnCrash() const;
@@ -203,6 +206,7 @@ class CdlContext {
    private:
     using CStringArray = std::vector<char*>;
 
+    Logger logger_;
     System system_;
 
     StringArray instance_extension_names_;
