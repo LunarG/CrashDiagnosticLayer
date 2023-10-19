@@ -69,14 +69,23 @@ VkResult PostQueueSubmit(
     VkFence                                     fence,
     VkResult                                    result);
 
+VkResult PreQueueWaitIdle(
+    VkQueue                                     queue);
 VkResult PostQueueWaitIdle(
     VkQueue                                     queue,
     VkResult                                    result);
 
+VkResult PreDeviceWaitIdle(
+    VkDevice                                    device);
 VkResult PostDeviceWaitIdle(
     VkDevice                                    device,
     VkResult                                    result);
 
+VkResult PreQueueBindSparse(
+    VkQueue                                     queue,
+    uint32_t                                    bindInfoCount,
+    const VkBindSparseInfo*                     pBindInfo,
+    VkFence                                     fence);
 VkResult PostQueueBindSparse(
     VkQueue                                     queue,
     uint32_t                                    bindInfoCount,
@@ -84,11 +93,20 @@ VkResult PostQueueBindSparse(
     VkFence                                     fence,
     VkResult                                    result);
 
+VkResult PreGetFenceStatus(
+    VkDevice                                    device,
+    VkFence                                     fence);
 VkResult PostGetFenceStatus(
     VkDevice                                    device,
     VkFence                                     fence,
     VkResult                                    result);
 
+VkResult PreWaitForFences(
+    VkDevice                                    device,
+    uint32_t                                    fenceCount,
+    const VkFence*                              pFences,
+    VkBool32                                    waitAll,
+    uint64_t                                    timeout);
 VkResult PostWaitForFences(
     VkDevice                                    device,
     uint32_t                                    fenceCount,
@@ -97,6 +115,11 @@ VkResult PostWaitForFences(
     uint64_t                                    timeout,
     VkResult                                    result);
 
+VkResult PreCreateSemaphore(
+    VkDevice                                    device,
+    const VkSemaphoreCreateInfo*                pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSemaphore*                                pSemaphore);
 VkResult PostCreateSemaphore(
     VkDevice                                    device,
     const VkSemaphoreCreateInfo*                pCreateInfo,
@@ -104,11 +127,24 @@ VkResult PostCreateSemaphore(
     VkSemaphore*                                pSemaphore,
     VkResult                                    result);
 
+void PreDestroySemaphore(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    const VkAllocationCallbacks*                pAllocator);
 void PostDestroySemaphore(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
     const VkAllocationCallbacks*                pAllocator);
 
+VkResult PreGetQueryPoolResults(
+    VkDevice                                    device,
+    VkQueryPool                                 queryPool,
+    uint32_t                                    firstQuery,
+    uint32_t                                    queryCount,
+    size_t                                      dataSize,
+    void*                                       pData,
+    VkDeviceSize                                stride,
+    VkQueryResultFlags                          flags);
 VkResult PostGetQueryPoolResults(
     VkDevice                                    device,
     VkQueryPool                                 queryPool,
@@ -150,11 +186,20 @@ VkResult PostCreateComputePipelines(
     VkPipeline*                                 pPipelines,
     VkResult                                    result);
 
+void PreDestroyPipeline(
+    VkDevice                                    device,
+    VkPipeline                                  pipeline,
+    const VkAllocationCallbacks*                pAllocator);
 void PostDestroyPipeline(
     VkDevice                                    device,
     VkPipeline                                  pipeline,
     const VkAllocationCallbacks*                pAllocator);
 
+VkResult PreCreateCommandPool(
+    VkDevice                                    device,
+    const VkCommandPoolCreateInfo*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCommandPool*                              pCommandPool);
 VkResult PostCreateCommandPool(
     VkDevice                                    device,
     const VkCommandPoolCreateInfo*              pCreateInfo,
@@ -181,12 +226,21 @@ VkResult PostResetCommandPool(
     VkCommandPoolResetFlags                     flags,
     VkResult                                    result);
 
+VkResult PreAllocateCommandBuffers(
+    VkDevice                                    device,
+    const VkCommandBufferAllocateInfo*          pAllocateInfo,
+    VkCommandBuffer*                            pCommandBuffers);
 VkResult PostAllocateCommandBuffers(
     VkDevice                                    device,
     const VkCommandBufferAllocateInfo*          pAllocateInfo,
     VkCommandBuffer*                            pCommandBuffers,
     VkResult                                    result);
 
+void PreFreeCommandBuffers(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    uint32_t                                    commandBufferCount,
+    const VkCommandBuffer*                      pCommandBuffers);
 void PostFreeCommandBuffers(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
@@ -785,6 +839,10 @@ void PostCmdDispatchBase(
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ);
 
+void PreGetDeviceQueue2(
+    VkDevice                                    device,
+    const VkDeviceQueueInfo2*                   pQueueInfo,
+    VkQueue*                                    pQueue);
 void PostGetDeviceQueue2(
     VkDevice                                    device,
     const VkDeviceQueueInfo2*                   pQueueInfo,
@@ -1089,6 +1147,13 @@ void PostCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable);
 
+VkResult PreAcquireNextImageKHR(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    uint64_t                                    timeout,
+    VkSemaphore                                 semaphore,
+    VkFence                                     fence,
+    uint32_t*                                   pImageIndex);
 VkResult PostAcquireNextImageKHR(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
@@ -1098,6 +1163,9 @@ VkResult PostAcquireNextImageKHR(
     uint32_t*                                   pImageIndex,
     VkResult                                    result);
 
+VkResult PreQueuePresentKHR(
+    VkQueue                                     queue,
+    const VkPresentInfoKHR*                     pPresentInfo);
 VkResult PostQueuePresentKHR(
     VkQueue                                     queue,
     const VkPresentInfoKHR*                     pPresentInfo,
@@ -1254,6 +1322,10 @@ void PostCmdDrawIndexedIndirectCountKHR(
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride);
 
+VkResult PreGetSemaphoreCounterValueKHR(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    uint64_t*                                   pValue);
 VkResult PostGetSemaphoreCounterValueKHR(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
@@ -1270,6 +1342,9 @@ VkResult PostWaitSemaphoresKHR(
     uint64_t                                    timeout,
     VkResult                                    result);
 
+VkResult PreSignalSemaphoreKHR(
+    VkDevice                                    device,
+    const VkSemaphoreSignalInfo*                pSignalInfo);
 VkResult PostSignalSemaphoreKHR(
     VkDevice                                    device,
     const VkSemaphoreSignalInfo*                pSignalInfo,

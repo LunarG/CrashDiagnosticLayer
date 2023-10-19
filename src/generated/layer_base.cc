@@ -198,6 +198,8 @@ VkResult InterceptQueueWaitIdle(
     VkQueue                                     queue) {
   VkResult result = VK_SUCCESS;
 
+  InterceptPreQueueWaitIdle(queue);
+
   auto layer_data = GetDeviceLayerData(DataKey(queue));
   PFN_vkQueueWaitIdle pfn = layer_data->dispatch_table.QueueWaitIdle;
   if (pfn != nullptr) {
@@ -211,6 +213,8 @@ VkResult InterceptQueueWaitIdle(
 VkResult InterceptDeviceWaitIdle(
     VkDevice                                    device) {
   VkResult result = VK_SUCCESS;
+
+  InterceptPreDeviceWaitIdle(device);
 
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkDeviceWaitIdle pfn = layer_data->dispatch_table.DeviceWaitIdle;
@@ -229,6 +233,8 @@ VkResult InterceptQueueBindSparse(
     VkFence                                     fence) {
   VkResult result = VK_SUCCESS;
 
+  InterceptPreQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+
   auto layer_data = GetDeviceLayerData(DataKey(queue));
   PFN_vkQueueBindSparse pfn = layer_data->dispatch_table.QueueBindSparse;
   if (pfn != nullptr) {
@@ -243,6 +249,8 @@ VkResult InterceptGetFenceStatus(
     VkDevice                                    device,
     VkFence                                     fence) {
   VkResult result = VK_SUCCESS;
+
+  InterceptPreGetFenceStatus(device, fence);
 
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkGetFenceStatus pfn = layer_data->dispatch_table.GetFenceStatus;
@@ -262,6 +270,8 @@ VkResult InterceptWaitForFences(
     uint64_t                                    timeout) {
   VkResult result = VK_SUCCESS;
 
+  InterceptPreWaitForFences(device, fenceCount, pFences, waitAll, timeout);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkWaitForFences pfn = layer_data->dispatch_table.WaitForFences;
   if (pfn != nullptr) {
@@ -279,6 +289,8 @@ VkResult InterceptCreateSemaphore(
     VkSemaphore*                                pSemaphore) {
   VkResult result = VK_SUCCESS;
 
+  InterceptPreCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkCreateSemaphore pfn = layer_data->dispatch_table.CreateSemaphore;
   if (pfn != nullptr) {
@@ -293,6 +305,8 @@ void InterceptDestroySemaphore(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
     const VkAllocationCallbacks*                pAllocator) {
+  InterceptPreDestroySemaphore(device, semaphore, pAllocator);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkDestroySemaphore pfn = layer_data->dispatch_table.DestroySemaphore;
   if (pfn != nullptr) {
@@ -312,6 +326,8 @@ VkResult InterceptGetQueryPoolResults(
     VkDeviceSize                                stride,
     VkQueryResultFlags                          flags) {
   VkResult result = VK_SUCCESS;
+
+  InterceptPreGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
 
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkGetQueryPoolResults pfn = layer_data->dispatch_table.GetQueryPoolResults;
@@ -395,6 +411,8 @@ void InterceptDestroyPipeline(
     VkDevice                                    device,
     VkPipeline                                  pipeline,
     const VkAllocationCallbacks*                pAllocator) {
+  InterceptPreDestroyPipeline(device, pipeline, pAllocator);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkDestroyPipeline pfn = layer_data->dispatch_table.DestroyPipeline;
   if (pfn != nullptr) {
@@ -410,6 +428,8 @@ VkResult InterceptCreateCommandPool(
     const VkAllocationCallbacks*                pAllocator,
     VkCommandPool*                              pCommandPool) {
   VkResult result = VK_SUCCESS;
+
+  InterceptPreCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
 
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkCreateCommandPool pfn = layer_data->dispatch_table.CreateCommandPool;
@@ -460,6 +480,8 @@ VkResult InterceptAllocateCommandBuffers(
     VkCommandBuffer*                            pCommandBuffers) {
   VkResult result = VK_SUCCESS;
 
+  InterceptPreAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkAllocateCommandBuffers pfn = layer_data->dispatch_table.AllocateCommandBuffers;
   if (pfn != nullptr) {
@@ -475,6 +497,8 @@ void InterceptFreeCommandBuffers(
     VkCommandPool                               commandPool,
     uint32_t                                    commandBufferCount,
     const VkCommandBuffer*                      pCommandBuffers) {
+  InterceptPreFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkFreeCommandBuffers pfn = layer_data->dispatch_table.FreeCommandBuffers;
   if (pfn != nullptr) {
@@ -1306,6 +1330,8 @@ void InterceptGetDeviceQueue2(
     VkDevice                                    device,
     const VkDeviceQueueInfo2*                   pQueueInfo,
     VkQueue*                                    pQueue) {
+  InterceptPreGetDeviceQueue2(device, pQueueInfo, pQueue);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkGetDeviceQueue2 pfn = layer_data->dispatch_table.GetDeviceQueue2;
   if (pfn != nullptr) {
@@ -1833,6 +1859,8 @@ VkResult InterceptAcquireNextImageKHR(
     uint32_t*                                   pImageIndex) {
   VkResult result = VK_SUCCESS;
 
+  InterceptPreAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkAcquireNextImageKHR pfn = layer_data->dispatch_table.AcquireNextImageKHR;
   if (pfn != nullptr) {
@@ -1847,6 +1875,8 @@ VkResult InterceptQueuePresentKHR(
     VkQueue                                     queue,
     const VkPresentInfoKHR*                     pPresentInfo) {
   VkResult result = VK_SUCCESS;
+
+  InterceptPreQueuePresentKHR(queue, pPresentInfo);
 
   auto layer_data = GetDeviceLayerData(DataKey(queue));
   PFN_vkQueuePresentKHR pfn = layer_data->dispatch_table.QueuePresentKHR;
@@ -2097,6 +2127,8 @@ VkResult InterceptGetSemaphoreCounterValueKHR(
     uint64_t*                                   pValue) {
   VkResult result = VK_SUCCESS;
 
+  InterceptPreGetSemaphoreCounterValueKHR(device, semaphore, pValue);
+
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkGetSemaphoreCounterValueKHR pfn = layer_data->dispatch_table.GetSemaphoreCounterValueKHR;
   if (pfn != nullptr) {
@@ -2129,6 +2161,8 @@ VkResult InterceptSignalSemaphoreKHR(
     VkDevice                                    device,
     const VkSemaphoreSignalInfo*                pSignalInfo) {
   VkResult result = VK_SUCCESS;
+
+  InterceptPreSignalSemaphoreKHR(device, pSignalInfo);
 
   auto layer_data = GetDeviceLayerData(DataKey(device));
   PFN_vkSignalSemaphoreKHR pfn = layer_data->dispatch_table.SignalSemaphoreKHR;
@@ -4758,6 +4792,595 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
   return result;
 }
 
+PFN_vkVoidFunction GetInstanceFuncs(const char* func)
+{
+  if (0 == strcmp(func, "vkCreateInstance"))
+    return (PFN_vkVoidFunction)InterceptCreateInstance;
+  if (0 == strcmp(func, "vkDestroyInstance"))
+    return (PFN_vkVoidFunction)InterceptDestroyInstance;
+  if (0 == strcmp(func, "vkCreateDevice"))
+    return (PFN_vkVoidFunction)InterceptCreateDevice;
+  if (0 == strcmp(func, "vkEnumerateInstanceExtensionProperties"))
+    return (PFN_vkVoidFunction)InterceptEnumerateInstanceExtensionProperties;
+  if (0 == strcmp(func, "vkEnumerateDeviceExtensionProperties"))
+    return (PFN_vkVoidFunction)InterceptEnumerateDeviceExtensionProperties;
+  if (0 == strcmp(func, "vkEnumerateInstanceLayerProperties"))
+    return (PFN_vkVoidFunction)InterceptEnumerateInstanceLayerProperties;
+  if (0 == strcmp(func, "vkEnumerateDeviceLayerProperties"))
+    return (PFN_vkVoidFunction)InterceptEnumerateDeviceLayerProperties;
+
+  return nullptr;
+}
+
+PFN_vkVoidFunction GetDeviceFuncs(const char* func)
+{
+  if (0 == strcmp(func, "vkDestroyDevice"))
+    return (PFN_vkVoidFunction)InterceptDestroyDevice;
+  if (0 == strcmp(func, "vkGetDeviceQueue"))
+    return (PFN_vkVoidFunction)InterceptGetDeviceQueue;
+  if (0 == strcmp(func, "vkQueueSubmit"))
+    return (PFN_vkVoidFunction)InterceptQueueSubmit;
+  if (0 == strcmp(func, "vkQueueWaitIdle"))
+    return (PFN_vkVoidFunction)InterceptQueueWaitIdle;
+  if (0 == strcmp(func, "vkDeviceWaitIdle"))
+    return (PFN_vkVoidFunction)InterceptDeviceWaitIdle;
+  if (0 == strcmp(func, "vkQueueBindSparse"))
+    return (PFN_vkVoidFunction)InterceptQueueBindSparse;
+  if (0 == strcmp(func, "vkGetFenceStatus"))
+    return (PFN_vkVoidFunction)InterceptGetFenceStatus;
+  if (0 == strcmp(func, "vkWaitForFences"))
+    return (PFN_vkVoidFunction)InterceptWaitForFences;
+  if (0 == strcmp(func, "vkCreateSemaphore"))
+    return (PFN_vkVoidFunction)InterceptCreateSemaphore;
+  if (0 == strcmp(func, "vkDestroySemaphore"))
+    return (PFN_vkVoidFunction)InterceptDestroySemaphore;
+  if (0 == strcmp(func, "vkGetQueryPoolResults"))
+    return (PFN_vkVoidFunction)InterceptGetQueryPoolResults;
+  if (0 == strcmp(func, "vkCreateShaderModule"))
+    return (PFN_vkVoidFunction)InterceptCreateShaderModule;
+  if (0 == strcmp(func, "vkDestroyShaderModule"))
+    return (PFN_vkVoidFunction)InterceptDestroyShaderModule;
+  if (0 == strcmp(func, "vkCreateGraphicsPipelines"))
+    return (PFN_vkVoidFunction)InterceptCreateGraphicsPipelines;
+  if (0 == strcmp(func, "vkCreateComputePipelines"))
+    return (PFN_vkVoidFunction)InterceptCreateComputePipelines;
+  if (0 == strcmp(func, "vkDestroyPipeline"))
+    return (PFN_vkVoidFunction)InterceptDestroyPipeline;
+  if (0 == strcmp(func, "vkCreateCommandPool"))
+    return (PFN_vkVoidFunction)InterceptCreateCommandPool;
+  if (0 == strcmp(func, "vkDestroyCommandPool"))
+    return (PFN_vkVoidFunction)InterceptDestroyCommandPool;
+  if (0 == strcmp(func, "vkResetCommandPool"))
+    return (PFN_vkVoidFunction)InterceptResetCommandPool;
+  if (0 == strcmp(func, "vkAllocateCommandBuffers"))
+    return (PFN_vkVoidFunction)InterceptAllocateCommandBuffers;
+  if (0 == strcmp(func, "vkFreeCommandBuffers"))
+    return (PFN_vkVoidFunction)InterceptFreeCommandBuffers;
+  if (0 == strcmp(func, "vkBeginCommandBuffer"))
+    return (PFN_vkVoidFunction)InterceptBeginCommandBuffer;
+  if (0 == strcmp(func, "vkEndCommandBuffer"))
+    return (PFN_vkVoidFunction)InterceptEndCommandBuffer;
+  if (0 == strcmp(func, "vkResetCommandBuffer"))
+    return (PFN_vkVoidFunction)InterceptResetCommandBuffer;
+  if (0 == strcmp(func, "vkCmdBindPipeline"))
+    return (PFN_vkVoidFunction)InterceptCmdBindPipeline;
+  if (0 == strcmp(func, "vkCmdSetViewport"))
+    return (PFN_vkVoidFunction)InterceptCmdSetViewport;
+  if (0 == strcmp(func, "vkCmdSetScissor"))
+    return (PFN_vkVoidFunction)InterceptCmdSetScissor;
+  if (0 == strcmp(func, "vkCmdSetLineWidth"))
+    return (PFN_vkVoidFunction)InterceptCmdSetLineWidth;
+  if (0 == strcmp(func, "vkCmdSetDepthBias"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthBias;
+  if (0 == strcmp(func, "vkCmdSetBlendConstants"))
+    return (PFN_vkVoidFunction)InterceptCmdSetBlendConstants;
+  if (0 == strcmp(func, "vkCmdSetDepthBounds"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthBounds;
+  if (0 == strcmp(func, "vkCmdSetStencilCompareMask"))
+    return (PFN_vkVoidFunction)InterceptCmdSetStencilCompareMask;
+  if (0 == strcmp(func, "vkCmdSetStencilWriteMask"))
+    return (PFN_vkVoidFunction)InterceptCmdSetStencilWriteMask;
+  if (0 == strcmp(func, "vkCmdSetStencilReference"))
+    return (PFN_vkVoidFunction)InterceptCmdSetStencilReference;
+  if (0 == strcmp(func, "vkCmdBindDescriptorSets"))
+    return (PFN_vkVoidFunction)InterceptCmdBindDescriptorSets;
+  if (0 == strcmp(func, "vkCmdBindIndexBuffer"))
+    return (PFN_vkVoidFunction)InterceptCmdBindIndexBuffer;
+  if (0 == strcmp(func, "vkCmdBindVertexBuffers"))
+    return (PFN_vkVoidFunction)InterceptCmdBindVertexBuffers;
+  if (0 == strcmp(func, "vkCmdDraw"))
+    return (PFN_vkVoidFunction)InterceptCmdDraw;
+  if (0 == strcmp(func, "vkCmdDrawIndexed"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndexed;
+  if (0 == strcmp(func, "vkCmdDrawIndirect"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndirect;
+  if (0 == strcmp(func, "vkCmdDrawIndexedIndirect"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndexedIndirect;
+  if (0 == strcmp(func, "vkCmdDispatch"))
+    return (PFN_vkVoidFunction)InterceptCmdDispatch;
+  if (0 == strcmp(func, "vkCmdDispatchIndirect"))
+    return (PFN_vkVoidFunction)InterceptCmdDispatchIndirect;
+  if (0 == strcmp(func, "vkCmdCopyBuffer"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyBuffer;
+  if (0 == strcmp(func, "vkCmdCopyImage"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyImage;
+  if (0 == strcmp(func, "vkCmdBlitImage"))
+    return (PFN_vkVoidFunction)InterceptCmdBlitImage;
+  if (0 == strcmp(func, "vkCmdCopyBufferToImage"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyBufferToImage;
+  if (0 == strcmp(func, "vkCmdCopyImageToBuffer"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyImageToBuffer;
+  if (0 == strcmp(func, "vkCmdUpdateBuffer"))
+    return (PFN_vkVoidFunction)InterceptCmdUpdateBuffer;
+  if (0 == strcmp(func, "vkCmdFillBuffer"))
+    return (PFN_vkVoidFunction)InterceptCmdFillBuffer;
+  if (0 == strcmp(func, "vkCmdClearColorImage"))
+    return (PFN_vkVoidFunction)InterceptCmdClearColorImage;
+  if (0 == strcmp(func, "vkCmdClearDepthStencilImage"))
+    return (PFN_vkVoidFunction)InterceptCmdClearDepthStencilImage;
+  if (0 == strcmp(func, "vkCmdClearAttachments"))
+    return (PFN_vkVoidFunction)InterceptCmdClearAttachments;
+  if (0 == strcmp(func, "vkCmdResolveImage"))
+    return (PFN_vkVoidFunction)InterceptCmdResolveImage;
+  if (0 == strcmp(func, "vkCmdSetEvent"))
+    return (PFN_vkVoidFunction)InterceptCmdSetEvent;
+  if (0 == strcmp(func, "vkCmdResetEvent"))
+    return (PFN_vkVoidFunction)InterceptCmdResetEvent;
+  if (0 == strcmp(func, "vkCmdWaitEvents"))
+    return (PFN_vkVoidFunction)InterceptCmdWaitEvents;
+  if (0 == strcmp(func, "vkCmdPipelineBarrier"))
+    return (PFN_vkVoidFunction)InterceptCmdPipelineBarrier;
+  if (0 == strcmp(func, "vkCmdBeginQuery"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginQuery;
+  if (0 == strcmp(func, "vkCmdEndQuery"))
+    return (PFN_vkVoidFunction)InterceptCmdEndQuery;
+  if (0 == strcmp(func, "vkCmdResetQueryPool"))
+    return (PFN_vkVoidFunction)InterceptCmdResetQueryPool;
+  if (0 == strcmp(func, "vkCmdWriteTimestamp"))
+    return (PFN_vkVoidFunction)InterceptCmdWriteTimestamp;
+  if (0 == strcmp(func, "vkCmdCopyQueryPoolResults"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyQueryPoolResults;
+  if (0 == strcmp(func, "vkCmdPushConstants"))
+    return (PFN_vkVoidFunction)InterceptCmdPushConstants;
+  if (0 == strcmp(func, "vkCmdBeginRenderPass"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginRenderPass;
+  if (0 == strcmp(func, "vkCmdNextSubpass"))
+    return (PFN_vkVoidFunction)InterceptCmdNextSubpass;
+  if (0 == strcmp(func, "vkCmdEndRenderPass"))
+    return (PFN_vkVoidFunction)InterceptCmdEndRenderPass;
+  if (0 == strcmp(func, "vkCmdExecuteCommands"))
+    return (PFN_vkVoidFunction)InterceptCmdExecuteCommands;
+  if (0 == strcmp(func, "vkCmdSetDeviceMask"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDeviceMask;
+  if (0 == strcmp(func, "vkCmdDispatchBase"))
+    return (PFN_vkVoidFunction)InterceptCmdDispatchBase;
+  if (0 == strcmp(func, "vkGetDeviceQueue2"))
+    return (PFN_vkVoidFunction)InterceptGetDeviceQueue2;
+  if (0 == strcmp(func, "vkCmdDrawIndirectCount"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndirectCount;
+  if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCount"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndexedIndirectCount;
+  if (0 == strcmp(func, "vkCmdBeginRenderPass2"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginRenderPass2;
+  if (0 == strcmp(func, "vkCmdNextSubpass2"))
+    return (PFN_vkVoidFunction)InterceptCmdNextSubpass2;
+  if (0 == strcmp(func, "vkCmdEndRenderPass2"))
+    return (PFN_vkVoidFunction)InterceptCmdEndRenderPass2;
+  if (0 == strcmp(func, "vkCmdSetEvent2"))
+    return (PFN_vkVoidFunction)InterceptCmdSetEvent2;
+  if (0 == strcmp(func, "vkCmdResetEvent2"))
+    return (PFN_vkVoidFunction)InterceptCmdResetEvent2;
+  if (0 == strcmp(func, "vkCmdWaitEvents2"))
+    return (PFN_vkVoidFunction)InterceptCmdWaitEvents2;
+  if (0 == strcmp(func, "vkCmdPipelineBarrier2"))
+    return (PFN_vkVoidFunction)InterceptCmdPipelineBarrier2;
+  if (0 == strcmp(func, "vkCmdWriteTimestamp2"))
+    return (PFN_vkVoidFunction)InterceptCmdWriteTimestamp2;
+  if (0 == strcmp(func, "vkQueueSubmit2"))
+    return (PFN_vkVoidFunction)InterceptQueueSubmit2;
+  if (0 == strcmp(func, "vkCmdCopyBuffer2"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyBuffer2;
+  if (0 == strcmp(func, "vkCmdCopyImage2"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyImage2;
+  if (0 == strcmp(func, "vkCmdCopyBufferToImage2"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyBufferToImage2;
+  if (0 == strcmp(func, "vkCmdCopyImageToBuffer2"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyImageToBuffer2;
+  if (0 == strcmp(func, "vkCmdBlitImage2"))
+    return (PFN_vkVoidFunction)InterceptCmdBlitImage2;
+  if (0 == strcmp(func, "vkCmdResolveImage2"))
+    return (PFN_vkVoidFunction)InterceptCmdResolveImage2;
+  if (0 == strcmp(func, "vkCmdBeginRendering"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginRendering;
+  if (0 == strcmp(func, "vkCmdEndRendering"))
+    return (PFN_vkVoidFunction)InterceptCmdEndRendering;
+  if (0 == strcmp(func, "vkCmdSetCullMode"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCullMode;
+  if (0 == strcmp(func, "vkCmdSetFrontFace"))
+    return (PFN_vkVoidFunction)InterceptCmdSetFrontFace;
+  if (0 == strcmp(func, "vkCmdSetPrimitiveTopology"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPrimitiveTopology;
+  if (0 == strcmp(func, "vkCmdSetViewportWithCount"))
+    return (PFN_vkVoidFunction)InterceptCmdSetViewportWithCount;
+  if (0 == strcmp(func, "vkCmdSetScissorWithCount"))
+    return (PFN_vkVoidFunction)InterceptCmdSetScissorWithCount;
+  if (0 == strcmp(func, "vkCmdBindVertexBuffers2"))
+    return (PFN_vkVoidFunction)InterceptCmdBindVertexBuffers2;
+  if (0 == strcmp(func, "vkCmdSetDepthTestEnable"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthTestEnable;
+  if (0 == strcmp(func, "vkCmdSetDepthWriteEnable"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthWriteEnable;
+  if (0 == strcmp(func, "vkCmdSetDepthCompareOp"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthCompareOp;
+  if (0 == strcmp(func, "vkCmdSetDepthBoundsTestEnable"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthBoundsTestEnable;
+  if (0 == strcmp(func, "vkCmdSetStencilTestEnable"))
+    return (PFN_vkVoidFunction)InterceptCmdSetStencilTestEnable;
+  if (0 == strcmp(func, "vkCmdSetStencilOp"))
+    return (PFN_vkVoidFunction)InterceptCmdSetStencilOp;
+  if (0 == strcmp(func, "vkCmdSetRasterizerDiscardEnable"))
+    return (PFN_vkVoidFunction)InterceptCmdSetRasterizerDiscardEnable;
+  if (0 == strcmp(func, "vkCmdSetDepthBiasEnable"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthBiasEnable;
+  if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnable"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPrimitiveRestartEnable;
+  if (0 == strcmp(func, "vkAcquireNextImageKHR"))
+    return (PFN_vkVoidFunction)InterceptAcquireNextImageKHR;
+  if (0 == strcmp(func, "vkQueuePresentKHR"))
+    return (PFN_vkVoidFunction)InterceptQueuePresentKHR;
+  if (0 == strcmp(func, "vkCmdBeginVideoCodingKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginVideoCodingKHR;
+  if (0 == strcmp(func, "vkCmdEndVideoCodingKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdEndVideoCodingKHR;
+  if (0 == strcmp(func, "vkCmdControlVideoCodingKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdControlVideoCodingKHR;
+  if (0 == strcmp(func, "vkCmdDecodeVideoKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdDecodeVideoKHR;
+  if (0 == strcmp(func, "vkCmdBeginRenderingKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginRenderingKHR;
+  if (0 == strcmp(func, "vkCmdEndRenderingKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdEndRenderingKHR;
+  if (0 == strcmp(func, "vkCmdSetDeviceMaskKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDeviceMaskKHR;
+  if (0 == strcmp(func, "vkCmdDispatchBaseKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdDispatchBaseKHR;
+  if (0 == strcmp(func, "vkCmdPushDescriptorSetKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdPushDescriptorSetKHR;
+  if (0 == strcmp(func, "vkCmdPushDescriptorSetWithTemplateKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdPushDescriptorSetWithTemplateKHR;
+  if (0 == strcmp(func, "vkCmdBeginRenderPass2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginRenderPass2KHR;
+  if (0 == strcmp(func, "vkCmdNextSubpass2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdNextSubpass2KHR;
+  if (0 == strcmp(func, "vkCmdEndRenderPass2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdEndRenderPass2KHR;
+  if (0 == strcmp(func, "vkCmdDrawIndirectCountKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndirectCountKHR;
+  if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndexedIndirectCountKHR;
+  if (0 == strcmp(func, "vkGetSemaphoreCounterValueKHR"))
+    return (PFN_vkVoidFunction)InterceptGetSemaphoreCounterValueKHR;
+  if (0 == strcmp(func, "vkWaitSemaphoresKHR"))
+    return (PFN_vkVoidFunction)InterceptWaitSemaphoresKHR;
+  if (0 == strcmp(func, "vkSignalSemaphoreKHR"))
+    return (PFN_vkVoidFunction)InterceptSignalSemaphoreKHR;
+  if (0 == strcmp(func, "vkCmdSetFragmentShadingRateKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdSetFragmentShadingRateKHR;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdEncodeVideoKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdEncodeVideoKHR;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdSetEvent2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdSetEvent2KHR;
+  if (0 == strcmp(func, "vkCmdResetEvent2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdResetEvent2KHR;
+  if (0 == strcmp(func, "vkCmdWaitEvents2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdWaitEvents2KHR;
+  if (0 == strcmp(func, "vkCmdPipelineBarrier2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdPipelineBarrier2KHR;
+  if (0 == strcmp(func, "vkCmdWriteTimestamp2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdWriteTimestamp2KHR;
+  if (0 == strcmp(func, "vkQueueSubmit2KHR"))
+    return (PFN_vkVoidFunction)InterceptQueueSubmit2KHR;
+  if (0 == strcmp(func, "vkCmdWriteBufferMarker2AMD"))
+    return (PFN_vkVoidFunction)InterceptCmdWriteBufferMarker2AMD;
+  if (0 == strcmp(func, "vkCmdCopyBuffer2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyBuffer2KHR;
+  if (0 == strcmp(func, "vkCmdCopyImage2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyImage2KHR;
+  if (0 == strcmp(func, "vkCmdCopyBufferToImage2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyBufferToImage2KHR;
+  if (0 == strcmp(func, "vkCmdCopyImageToBuffer2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyImageToBuffer2KHR;
+  if (0 == strcmp(func, "vkCmdBlitImage2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdBlitImage2KHR;
+  if (0 == strcmp(func, "vkCmdResolveImage2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdResolveImage2KHR;
+  if (0 == strcmp(func, "vkCmdTraceRaysIndirect2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdTraceRaysIndirect2KHR;
+  if (0 == strcmp(func, "vkCmdBindIndexBuffer2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdBindIndexBuffer2KHR;
+  if (0 == strcmp(func, "vkDebugMarkerSetObjectNameEXT"))
+    return (PFN_vkVoidFunction)InterceptDebugMarkerSetObjectNameEXT;
+  if (0 == strcmp(func, "vkCmdDebugMarkerBeginEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDebugMarkerBeginEXT;
+  if (0 == strcmp(func, "vkCmdDebugMarkerEndEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDebugMarkerEndEXT;
+  if (0 == strcmp(func, "vkCmdDebugMarkerInsertEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDebugMarkerInsertEXT;
+  if (0 == strcmp(func, "vkCmdBindTransformFeedbackBuffersEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBindTransformFeedbackBuffersEXT;
+  if (0 == strcmp(func, "vkCmdBeginTransformFeedbackEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginTransformFeedbackEXT;
+  if (0 == strcmp(func, "vkCmdEndTransformFeedbackEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdEndTransformFeedbackEXT;
+  if (0 == strcmp(func, "vkCmdBeginQueryIndexedEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginQueryIndexedEXT;
+  if (0 == strcmp(func, "vkCmdEndQueryIndexedEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdEndQueryIndexedEXT;
+  if (0 == strcmp(func, "vkCmdDrawIndirectByteCountEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndirectByteCountEXT;
+  if (0 == strcmp(func, "vkCmdCuLaunchKernelNVX"))
+    return (PFN_vkVoidFunction)InterceptCmdCuLaunchKernelNVX;
+  if (0 == strcmp(func, "vkCmdDrawIndirectCountAMD"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndirectCountAMD;
+  if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountAMD"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawIndexedIndirectCountAMD;
+  if (0 == strcmp(func, "vkCmdBeginConditionalRenderingEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginConditionalRenderingEXT;
+  if (0 == strcmp(func, "vkCmdEndConditionalRenderingEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdEndConditionalRenderingEXT;
+  if (0 == strcmp(func, "vkCmdSetViewportWScalingNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetViewportWScalingNV;
+  if (0 == strcmp(func, "vkCmdSetDiscardRectangleEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDiscardRectangleEXT;
+  if (0 == strcmp(func, "vkCmdSetDiscardRectangleEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDiscardRectangleEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetDiscardRectangleModeEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDiscardRectangleModeEXT;
+  if (0 == strcmp(func, "vkSetDebugUtilsObjectNameEXT"))
+    return (PFN_vkVoidFunction)InterceptSetDebugUtilsObjectNameEXT;
+  if (0 == strcmp(func, "vkCmdBeginDebugUtilsLabelEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBeginDebugUtilsLabelEXT;
+  if (0 == strcmp(func, "vkCmdEndDebugUtilsLabelEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdEndDebugUtilsLabelEXT;
+  if (0 == strcmp(func, "vkCmdInsertDebugUtilsLabelEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdInsertDebugUtilsLabelEXT;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdInitializeGraphScratchMemoryAMDX"))
+    return (PFN_vkVoidFunction)InterceptCmdInitializeGraphScratchMemoryAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdDispatchGraphAMDX"))
+    return (PFN_vkVoidFunction)InterceptCmdDispatchGraphAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdDispatchGraphIndirectAMDX"))
+    return (PFN_vkVoidFunction)InterceptCmdDispatchGraphIndirectAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdDispatchGraphIndirectCountAMDX"))
+    return (PFN_vkVoidFunction)InterceptCmdDispatchGraphIndirectCountAMDX;
+#endif //VK_ENABLE_BETA_EXTENSIONS
+  if (0 == strcmp(func, "vkCmdSetSampleLocationsEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetSampleLocationsEXT;
+  if (0 == strcmp(func, "vkCmdBindShadingRateImageNV"))
+    return (PFN_vkVoidFunction)InterceptCmdBindShadingRateImageNV;
+  if (0 == strcmp(func, "vkCmdSetViewportShadingRatePaletteNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetViewportShadingRatePaletteNV;
+  if (0 == strcmp(func, "vkCmdSetCoarseSampleOrderNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCoarseSampleOrderNV;
+  if (0 == strcmp(func, "vkCmdBuildAccelerationStructureNV"))
+    return (PFN_vkVoidFunction)InterceptCmdBuildAccelerationStructureNV;
+  if (0 == strcmp(func, "vkCmdCopyAccelerationStructureNV"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyAccelerationStructureNV;
+  if (0 == strcmp(func, "vkCmdTraceRaysNV"))
+    return (PFN_vkVoidFunction)InterceptCmdTraceRaysNV;
+  if (0 == strcmp(func, "vkCmdWriteAccelerationStructuresPropertiesNV"))
+    return (PFN_vkVoidFunction)InterceptCmdWriteAccelerationStructuresPropertiesNV;
+  if (0 == strcmp(func, "vkCmdWriteBufferMarkerAMD"))
+    return (PFN_vkVoidFunction)InterceptCmdWriteBufferMarkerAMD;
+  if (0 == strcmp(func, "vkCmdDrawMeshTasksNV"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksNV;
+  if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectNV"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksIndirectNV;
+  if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectCountNV"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksIndirectCountNV;
+  if (0 == strcmp(func, "vkCmdSetExclusiveScissorEnableNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetExclusiveScissorEnableNV;
+  if (0 == strcmp(func, "vkCmdSetExclusiveScissorNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetExclusiveScissorNV;
+  if (0 == strcmp(func, "vkCmdSetCheckpointNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCheckpointNV;
+  if (0 == strcmp(func, "vkCmdSetPerformanceMarkerINTEL"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPerformanceMarkerINTEL;
+  if (0 == strcmp(func, "vkCmdSetPerformanceStreamMarkerINTEL"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPerformanceStreamMarkerINTEL;
+  if (0 == strcmp(func, "vkCmdSetPerformanceOverrideINTEL"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPerformanceOverrideINTEL;
+  if (0 == strcmp(func, "vkCmdSetLineStippleEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetLineStippleEXT;
+  if (0 == strcmp(func, "vkCmdSetCullModeEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCullModeEXT;
+  if (0 == strcmp(func, "vkCmdSetFrontFaceEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetFrontFaceEXT;
+  if (0 == strcmp(func, "vkCmdSetPrimitiveTopologyEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPrimitiveTopologyEXT;
+  if (0 == strcmp(func, "vkCmdSetViewportWithCountEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetViewportWithCountEXT;
+  if (0 == strcmp(func, "vkCmdSetScissorWithCountEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetScissorWithCountEXT;
+  if (0 == strcmp(func, "vkCmdBindVertexBuffers2EXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBindVertexBuffers2EXT;
+  if (0 == strcmp(func, "vkCmdSetDepthTestEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthTestEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetDepthWriteEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthWriteEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetDepthCompareOpEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthCompareOpEXT;
+  if (0 == strcmp(func, "vkCmdSetDepthBoundsTestEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthBoundsTestEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetStencilTestEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetStencilTestEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetStencilOpEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetStencilOpEXT;
+  if (0 == strcmp(func, "vkCmdPreprocessGeneratedCommandsNV"))
+    return (PFN_vkVoidFunction)InterceptCmdPreprocessGeneratedCommandsNV;
+  if (0 == strcmp(func, "vkCmdExecuteGeneratedCommandsNV"))
+    return (PFN_vkVoidFunction)InterceptCmdExecuteGeneratedCommandsNV;
+  if (0 == strcmp(func, "vkCmdBindPipelineShaderGroupNV"))
+    return (PFN_vkVoidFunction)InterceptCmdBindPipelineShaderGroupNV;
+  if (0 == strcmp(func, "vkCmdSetDepthBias2EXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthBias2EXT;
+  if (0 == strcmp(func, "vkCmdBindDescriptorBuffersEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBindDescriptorBuffersEXT;
+  if (0 == strcmp(func, "vkCmdSetDescriptorBufferOffsetsEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDescriptorBufferOffsetsEXT;
+  if (0 == strcmp(func, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT;
+  if (0 == strcmp(func, "vkCmdSetFragmentShadingRateEnumNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetFragmentShadingRateEnumNV;
+  if (0 == strcmp(func, "vkCmdSetVertexInputEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetVertexInputEXT;
+  if (0 == strcmp(func, "vkCmdSubpassShadingHUAWEI"))
+    return (PFN_vkVoidFunction)InterceptCmdSubpassShadingHUAWEI;
+  if (0 == strcmp(func, "vkCmdBindInvocationMaskHUAWEI"))
+    return (PFN_vkVoidFunction)InterceptCmdBindInvocationMaskHUAWEI;
+  if (0 == strcmp(func, "vkCmdSetPatchControlPointsEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPatchControlPointsEXT;
+  if (0 == strcmp(func, "vkCmdSetRasterizerDiscardEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetRasterizerDiscardEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetDepthBiasEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthBiasEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetLogicOpEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetLogicOpEXT;
+  if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPrimitiveRestartEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetColorWriteEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetColorWriteEnableEXT;
+  if (0 == strcmp(func, "vkCmdDrawMultiEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawMultiEXT;
+  if (0 == strcmp(func, "vkCmdDrawMultiIndexedEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawMultiIndexedEXT;
+  if (0 == strcmp(func, "vkCmdBuildMicromapsEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBuildMicromapsEXT;
+  if (0 == strcmp(func, "vkCmdCopyMicromapEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyMicromapEXT;
+  if (0 == strcmp(func, "vkCmdCopyMicromapToMemoryEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyMicromapToMemoryEXT;
+  if (0 == strcmp(func, "vkCmdCopyMemoryToMicromapEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyMemoryToMicromapEXT;
+  if (0 == strcmp(func, "vkCmdWriteMicromapsPropertiesEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdWriteMicromapsPropertiesEXT;
+  if (0 == strcmp(func, "vkCmdDrawClusterHUAWEI"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawClusterHUAWEI;
+  if (0 == strcmp(func, "vkCmdDrawClusterIndirectHUAWEI"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawClusterIndirectHUAWEI;
+  if (0 == strcmp(func, "vkCmdCopyMemoryIndirectNV"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyMemoryIndirectNV;
+  if (0 == strcmp(func, "vkCmdCopyMemoryToImageIndirectNV"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyMemoryToImageIndirectNV;
+  if (0 == strcmp(func, "vkCmdDecompressMemoryNV"))
+    return (PFN_vkVoidFunction)InterceptCmdDecompressMemoryNV;
+  if (0 == strcmp(func, "vkCmdDecompressMemoryIndirectCountNV"))
+    return (PFN_vkVoidFunction)InterceptCmdDecompressMemoryIndirectCountNV;
+  if (0 == strcmp(func, "vkCmdUpdatePipelineIndirectBufferNV"))
+    return (PFN_vkVoidFunction)InterceptCmdUpdatePipelineIndirectBufferNV;
+  if (0 == strcmp(func, "vkCmdSetTessellationDomainOriginEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetTessellationDomainOriginEXT;
+  if (0 == strcmp(func, "vkCmdSetDepthClampEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthClampEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetPolygonModeEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetPolygonModeEXT;
+  if (0 == strcmp(func, "vkCmdSetRasterizationSamplesEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetRasterizationSamplesEXT;
+  if (0 == strcmp(func, "vkCmdSetSampleMaskEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetSampleMaskEXT;
+  if (0 == strcmp(func, "vkCmdSetAlphaToCoverageEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetAlphaToCoverageEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetAlphaToOneEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetAlphaToOneEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetLogicOpEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetLogicOpEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetColorBlendEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetColorBlendEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetColorBlendEquationEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetColorBlendEquationEXT;
+  if (0 == strcmp(func, "vkCmdSetColorWriteMaskEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetColorWriteMaskEXT;
+  if (0 == strcmp(func, "vkCmdSetRasterizationStreamEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetRasterizationStreamEXT;
+  if (0 == strcmp(func, "vkCmdSetConservativeRasterizationModeEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetConservativeRasterizationModeEXT;
+  if (0 == strcmp(func, "vkCmdSetExtraPrimitiveOverestimationSizeEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetExtraPrimitiveOverestimationSizeEXT;
+  if (0 == strcmp(func, "vkCmdSetDepthClipEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthClipEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetSampleLocationsEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetSampleLocationsEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetColorBlendAdvancedEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetColorBlendAdvancedEXT;
+  if (0 == strcmp(func, "vkCmdSetProvokingVertexModeEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetProvokingVertexModeEXT;
+  if (0 == strcmp(func, "vkCmdSetLineRasterizationModeEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetLineRasterizationModeEXT;
+  if (0 == strcmp(func, "vkCmdSetLineStippleEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetLineStippleEnableEXT;
+  if (0 == strcmp(func, "vkCmdSetDepthClipNegativeOneToOneEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDepthClipNegativeOneToOneEXT;
+  if (0 == strcmp(func, "vkCmdSetViewportWScalingEnableNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetViewportWScalingEnableNV;
+  if (0 == strcmp(func, "vkCmdSetViewportSwizzleNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetViewportSwizzleNV;
+  if (0 == strcmp(func, "vkCmdSetCoverageToColorEnableNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCoverageToColorEnableNV;
+  if (0 == strcmp(func, "vkCmdSetCoverageToColorLocationNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCoverageToColorLocationNV;
+  if (0 == strcmp(func, "vkCmdSetCoverageModulationModeNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCoverageModulationModeNV;
+  if (0 == strcmp(func, "vkCmdSetCoverageModulationTableEnableNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCoverageModulationTableEnableNV;
+  if (0 == strcmp(func, "vkCmdSetCoverageModulationTableNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCoverageModulationTableNV;
+  if (0 == strcmp(func, "vkCmdSetShadingRateImageEnableNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetShadingRateImageEnableNV;
+  if (0 == strcmp(func, "vkCmdSetRepresentativeFragmentTestEnableNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetRepresentativeFragmentTestEnableNV;
+  if (0 == strcmp(func, "vkCmdSetCoverageReductionModeNV"))
+    return (PFN_vkVoidFunction)InterceptCmdSetCoverageReductionModeNV;
+  if (0 == strcmp(func, "vkCmdOpticalFlowExecuteNV"))
+    return (PFN_vkVoidFunction)InterceptCmdOpticalFlowExecuteNV;
+  if (0 == strcmp(func, "vkCmdBindShadersEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBindShadersEXT;
+  if (0 == strcmp(func, "vkCmdSetAttachmentFeedbackLoopEnableEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetAttachmentFeedbackLoopEnableEXT;
+  if (0 == strcmp(func, "vkCmdBuildAccelerationStructuresKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdBuildAccelerationStructuresKHR;
+  if (0 == strcmp(func, "vkCmdBuildAccelerationStructuresIndirectKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdBuildAccelerationStructuresIndirectKHR;
+  if (0 == strcmp(func, "vkCmdCopyAccelerationStructureKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyAccelerationStructureKHR;
+  if (0 == strcmp(func, "vkCmdCopyAccelerationStructureToMemoryKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyAccelerationStructureToMemoryKHR;
+  if (0 == strcmp(func, "vkCmdCopyMemoryToAccelerationStructureKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdCopyMemoryToAccelerationStructureKHR;
+  if (0 == strcmp(func, "vkCmdWriteAccelerationStructuresPropertiesKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdWriteAccelerationStructuresPropertiesKHR;
+  if (0 == strcmp(func, "vkCmdTraceRaysKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdTraceRaysKHR;
+  if (0 == strcmp(func, "vkCmdTraceRaysIndirectKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdTraceRaysIndirectKHR;
+  if (0 == strcmp(func, "vkCmdSetRayTracingPipelineStackSizeKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdSetRayTracingPipelineStackSizeKHR;
+  if (0 == strcmp(func, "vkCmdDrawMeshTasksEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksEXT;
+  if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksIndirectEXT;
+  if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectCountEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksIndirectCountEXT;
+
+  return nullptr;
+}
 
 } // namespace crash_diagnostic_layer
 
@@ -4765,21 +5388,14 @@ extern "C" {
 
 CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(
     VkInstance inst, const char *func) {
-
-if (0 == strcmp(func, "vkCreateInstance"))
-  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateInstance;
-if (0 == strcmp(func, "vkDestroyInstance"))
-  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyInstance;
-if (0 == strcmp(func, "vkCreateDevice"))
-  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateDevice;
-if (0 == strcmp(func, "vkEnumerateInstanceExtensionProperties"))
-  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEnumerateInstanceExtensionProperties;
-if (0 == strcmp(func, "vkEnumerateDeviceExtensionProperties"))
-  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEnumerateDeviceExtensionProperties;
-if (0 == strcmp(func, "vkEnumerateInstanceLayerProperties"))
-  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEnumerateInstanceLayerProperties;
-if (0 == strcmp(func, "vkEnumerateDeviceLayerProperties"))
-  return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEnumerateDeviceLayerProperties;
+  PFN_vkVoidFunction return_func = crash_diagnostic_layer::GetInstanceFuncs(func);
+  if(return_func != nullptr) {
+    return return_func;
+  }
+  return_func = crash_diagnostic_layer::GetDeviceFuncs(func);
+  if(return_func != nullptr) {
+    return return_func;
+  }
 
   // If the function was not found, just pass it down the chain to support
   // unregistered extensions, such as vkSwapchainCallbackEXT.
@@ -4788,571 +5404,10 @@ if (0 == strcmp(func, "vkEnumerateDeviceLayerProperties"))
 
 CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(
     VkDevice dev, const char *func) {
-
-  if (0 == strcmp(func, "vkDestroyDevice"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyDevice;
-  if (0 == strcmp(func, "vkGetDeviceQueue"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetDeviceQueue;
-  if (0 == strcmp(func, "vkQueueSubmit"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueSubmit;
-  if (0 == strcmp(func, "vkQueueWaitIdle"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueWaitIdle;
-  if (0 == strcmp(func, "vkDeviceWaitIdle"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDeviceWaitIdle;
-  if (0 == strcmp(func, "vkQueueBindSparse"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueBindSparse;
-  if (0 == strcmp(func, "vkGetFenceStatus"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetFenceStatus;
-  if (0 == strcmp(func, "vkWaitForFences"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptWaitForFences;
-  if (0 == strcmp(func, "vkCreateSemaphore"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateSemaphore;
-  if (0 == strcmp(func, "vkDestroySemaphore"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroySemaphore;
-  if (0 == strcmp(func, "vkGetQueryPoolResults"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetQueryPoolResults;
-  if (0 == strcmp(func, "vkCreateShaderModule"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateShaderModule;
-  if (0 == strcmp(func, "vkDestroyShaderModule"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyShaderModule;
-  if (0 == strcmp(func, "vkCreateGraphicsPipelines"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateGraphicsPipelines;
-  if (0 == strcmp(func, "vkCreateComputePipelines"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateComputePipelines;
-  if (0 == strcmp(func, "vkDestroyPipeline"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyPipeline;
-  if (0 == strcmp(func, "vkCreateCommandPool"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCreateCommandPool;
-  if (0 == strcmp(func, "vkDestroyCommandPool"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDestroyCommandPool;
-  if (0 == strcmp(func, "vkResetCommandPool"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptResetCommandPool;
-  if (0 == strcmp(func, "vkAllocateCommandBuffers"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptAllocateCommandBuffers;
-  if (0 == strcmp(func, "vkFreeCommandBuffers"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptFreeCommandBuffers;
-  if (0 == strcmp(func, "vkBeginCommandBuffer"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptBeginCommandBuffer;
-  if (0 == strcmp(func, "vkEndCommandBuffer"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptEndCommandBuffer;
-  if (0 == strcmp(func, "vkResetCommandBuffer"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptResetCommandBuffer;
-  if (0 == strcmp(func, "vkCmdBindPipeline"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindPipeline;
-  if (0 == strcmp(func, "vkCmdSetViewport"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewport;
-  if (0 == strcmp(func, "vkCmdSetScissor"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetScissor;
-  if (0 == strcmp(func, "vkCmdSetLineWidth"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLineWidth;
-  if (0 == strcmp(func, "vkCmdSetDepthBias"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBias;
-  if (0 == strcmp(func, "vkCmdSetBlendConstants"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetBlendConstants;
-  if (0 == strcmp(func, "vkCmdSetDepthBounds"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBounds;
-  if (0 == strcmp(func, "vkCmdSetStencilCompareMask"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilCompareMask;
-  if (0 == strcmp(func, "vkCmdSetStencilWriteMask"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilWriteMask;
-  if (0 == strcmp(func, "vkCmdSetStencilReference"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilReference;
-  if (0 == strcmp(func, "vkCmdBindDescriptorSets"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindDescriptorSets;
-  if (0 == strcmp(func, "vkCmdBindIndexBuffer"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindIndexBuffer;
-  if (0 == strcmp(func, "vkCmdBindVertexBuffers"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindVertexBuffers;
-  if (0 == strcmp(func, "vkCmdDraw"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDraw;
-  if (0 == strcmp(func, "vkCmdDrawIndexed"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexed;
-  if (0 == strcmp(func, "vkCmdDrawIndirect"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirect;
-  if (0 == strcmp(func, "vkCmdDrawIndexedIndirect"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexedIndirect;
-  if (0 == strcmp(func, "vkCmdDispatch"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatch;
-  if (0 == strcmp(func, "vkCmdDispatchIndirect"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchIndirect;
-  if (0 == strcmp(func, "vkCmdCopyBuffer"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBuffer;
-  if (0 == strcmp(func, "vkCmdCopyImage"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImage;
-  if (0 == strcmp(func, "vkCmdBlitImage"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBlitImage;
-  if (0 == strcmp(func, "vkCmdCopyBufferToImage"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBufferToImage;
-  if (0 == strcmp(func, "vkCmdCopyImageToBuffer"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImageToBuffer;
-  if (0 == strcmp(func, "vkCmdUpdateBuffer"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdUpdateBuffer;
-  if (0 == strcmp(func, "vkCmdFillBuffer"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdFillBuffer;
-  if (0 == strcmp(func, "vkCmdClearColorImage"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdClearColorImage;
-  if (0 == strcmp(func, "vkCmdClearDepthStencilImage"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdClearDepthStencilImage;
-  if (0 == strcmp(func, "vkCmdClearAttachments"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdClearAttachments;
-  if (0 == strcmp(func, "vkCmdResolveImage"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResolveImage;
-  if (0 == strcmp(func, "vkCmdSetEvent"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetEvent;
-  if (0 == strcmp(func, "vkCmdResetEvent"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResetEvent;
-  if (0 == strcmp(func, "vkCmdWaitEvents"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWaitEvents;
-  if (0 == strcmp(func, "vkCmdPipelineBarrier"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPipelineBarrier;
-  if (0 == strcmp(func, "vkCmdBeginQuery"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginQuery;
-  if (0 == strcmp(func, "vkCmdEndQuery"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndQuery;
-  if (0 == strcmp(func, "vkCmdResetQueryPool"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResetQueryPool;
-  if (0 == strcmp(func, "vkCmdWriteTimestamp"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteTimestamp;
-  if (0 == strcmp(func, "vkCmdCopyQueryPoolResults"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyQueryPoolResults;
-  if (0 == strcmp(func, "vkCmdPushConstants"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPushConstants;
-  if (0 == strcmp(func, "vkCmdBeginRenderPass"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRenderPass;
-  if (0 == strcmp(func, "vkCmdNextSubpass"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdNextSubpass;
-  if (0 == strcmp(func, "vkCmdEndRenderPass"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRenderPass;
-  if (0 == strcmp(func, "vkCmdExecuteCommands"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdExecuteCommands;
-  if (0 == strcmp(func, "vkCmdSetDeviceMask"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDeviceMask;
-  if (0 == strcmp(func, "vkCmdDispatchBase"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchBase;
-  if (0 == strcmp(func, "vkGetDeviceQueue2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetDeviceQueue2;
-  if (0 == strcmp(func, "vkCmdDrawIndirectCount"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirectCount;
-  if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCount"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexedIndirectCount;
-  if (0 == strcmp(func, "vkCmdBeginRenderPass2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRenderPass2;
-  if (0 == strcmp(func, "vkCmdNextSubpass2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdNextSubpass2;
-  if (0 == strcmp(func, "vkCmdEndRenderPass2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRenderPass2;
-  if (0 == strcmp(func, "vkCmdSetEvent2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetEvent2;
-  if (0 == strcmp(func, "vkCmdResetEvent2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResetEvent2;
-  if (0 == strcmp(func, "vkCmdWaitEvents2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWaitEvents2;
-  if (0 == strcmp(func, "vkCmdPipelineBarrier2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPipelineBarrier2;
-  if (0 == strcmp(func, "vkCmdWriteTimestamp2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteTimestamp2;
-  if (0 == strcmp(func, "vkQueueSubmit2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueSubmit2;
-  if (0 == strcmp(func, "vkCmdCopyBuffer2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBuffer2;
-  if (0 == strcmp(func, "vkCmdCopyImage2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImage2;
-  if (0 == strcmp(func, "vkCmdCopyBufferToImage2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBufferToImage2;
-  if (0 == strcmp(func, "vkCmdCopyImageToBuffer2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImageToBuffer2;
-  if (0 == strcmp(func, "vkCmdBlitImage2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBlitImage2;
-  if (0 == strcmp(func, "vkCmdResolveImage2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResolveImage2;
-  if (0 == strcmp(func, "vkCmdBeginRendering"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRendering;
-  if (0 == strcmp(func, "vkCmdEndRendering"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRendering;
-  if (0 == strcmp(func, "vkCmdSetCullMode"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCullMode;
-  if (0 == strcmp(func, "vkCmdSetFrontFace"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetFrontFace;
-  if (0 == strcmp(func, "vkCmdSetPrimitiveTopology"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPrimitiveTopology;
-  if (0 == strcmp(func, "vkCmdSetViewportWithCount"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportWithCount;
-  if (0 == strcmp(func, "vkCmdSetScissorWithCount"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetScissorWithCount;
-  if (0 == strcmp(func, "vkCmdBindVertexBuffers2"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindVertexBuffers2;
-  if (0 == strcmp(func, "vkCmdSetDepthTestEnable"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthTestEnable;
-  if (0 == strcmp(func, "vkCmdSetDepthWriteEnable"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthWriteEnable;
-  if (0 == strcmp(func, "vkCmdSetDepthCompareOp"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthCompareOp;
-  if (0 == strcmp(func, "vkCmdSetDepthBoundsTestEnable"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBoundsTestEnable;
-  if (0 == strcmp(func, "vkCmdSetStencilTestEnable"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilTestEnable;
-  if (0 == strcmp(func, "vkCmdSetStencilOp"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilOp;
-  if (0 == strcmp(func, "vkCmdSetRasterizerDiscardEnable"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRasterizerDiscardEnable;
-  if (0 == strcmp(func, "vkCmdSetDepthBiasEnable"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBiasEnable;
-  if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnable"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPrimitiveRestartEnable;
-  if (0 == strcmp(func, "vkAcquireNextImageKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptAcquireNextImageKHR;
-  if (0 == strcmp(func, "vkQueuePresentKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueuePresentKHR;
-  if (0 == strcmp(func, "vkCmdBeginVideoCodingKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginVideoCodingKHR;
-  if (0 == strcmp(func, "vkCmdEndVideoCodingKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndVideoCodingKHR;
-  if (0 == strcmp(func, "vkCmdControlVideoCodingKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdControlVideoCodingKHR;
-  if (0 == strcmp(func, "vkCmdDecodeVideoKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDecodeVideoKHR;
-  if (0 == strcmp(func, "vkCmdBeginRenderingKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRenderingKHR;
-  if (0 == strcmp(func, "vkCmdEndRenderingKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRenderingKHR;
-  if (0 == strcmp(func, "vkCmdSetDeviceMaskKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDeviceMaskKHR;
-  if (0 == strcmp(func, "vkCmdDispatchBaseKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchBaseKHR;
-  if (0 == strcmp(func, "vkCmdPushDescriptorSetKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPushDescriptorSetKHR;
-  if (0 == strcmp(func, "vkCmdPushDescriptorSetWithTemplateKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPushDescriptorSetWithTemplateKHR;
-  if (0 == strcmp(func, "vkCmdBeginRenderPass2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginRenderPass2KHR;
-  if (0 == strcmp(func, "vkCmdNextSubpass2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdNextSubpass2KHR;
-  if (0 == strcmp(func, "vkCmdEndRenderPass2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndRenderPass2KHR;
-  if (0 == strcmp(func, "vkCmdDrawIndirectCountKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirectCountKHR;
-  if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexedIndirectCountKHR;
-  if (0 == strcmp(func, "vkGetSemaphoreCounterValueKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptGetSemaphoreCounterValueKHR;
-  if (0 == strcmp(func, "vkWaitSemaphoresKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptWaitSemaphoresKHR;
-  if (0 == strcmp(func, "vkSignalSemaphoreKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptSignalSemaphoreKHR;
-  if (0 == strcmp(func, "vkCmdSetFragmentShadingRateKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetFragmentShadingRateKHR;
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-  if (0 == strcmp(func, "vkCmdEncodeVideoKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEncodeVideoKHR;
-#endif //VK_ENABLE_BETA_EXTENSIONS
-  if (0 == strcmp(func, "vkCmdSetEvent2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetEvent2KHR;
-  if (0 == strcmp(func, "vkCmdResetEvent2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResetEvent2KHR;
-  if (0 == strcmp(func, "vkCmdWaitEvents2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWaitEvents2KHR;
-  if (0 == strcmp(func, "vkCmdPipelineBarrier2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPipelineBarrier2KHR;
-  if (0 == strcmp(func, "vkCmdWriteTimestamp2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteTimestamp2KHR;
-  if (0 == strcmp(func, "vkQueueSubmit2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptQueueSubmit2KHR;
-  if (0 == strcmp(func, "vkCmdWriteBufferMarker2AMD"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteBufferMarker2AMD;
-  if (0 == strcmp(func, "vkCmdCopyBuffer2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBuffer2KHR;
-  if (0 == strcmp(func, "vkCmdCopyImage2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImage2KHR;
-  if (0 == strcmp(func, "vkCmdCopyBufferToImage2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyBufferToImage2KHR;
-  if (0 == strcmp(func, "vkCmdCopyImageToBuffer2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyImageToBuffer2KHR;
-  if (0 == strcmp(func, "vkCmdBlitImage2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBlitImage2KHR;
-  if (0 == strcmp(func, "vkCmdResolveImage2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdResolveImage2KHR;
-  if (0 == strcmp(func, "vkCmdTraceRaysIndirect2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysIndirect2KHR;
-  if (0 == strcmp(func, "vkCmdBindIndexBuffer2KHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindIndexBuffer2KHR;
-  if (0 == strcmp(func, "vkDebugMarkerSetObjectNameEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptDebugMarkerSetObjectNameEXT;
-  if (0 == strcmp(func, "vkCmdDebugMarkerBeginEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDebugMarkerBeginEXT;
-  if (0 == strcmp(func, "vkCmdDebugMarkerEndEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDebugMarkerEndEXT;
-  if (0 == strcmp(func, "vkCmdDebugMarkerInsertEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDebugMarkerInsertEXT;
-  if (0 == strcmp(func, "vkCmdBindTransformFeedbackBuffersEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindTransformFeedbackBuffersEXT;
-  if (0 == strcmp(func, "vkCmdBeginTransformFeedbackEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginTransformFeedbackEXT;
-  if (0 == strcmp(func, "vkCmdEndTransformFeedbackEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndTransformFeedbackEXT;
-  if (0 == strcmp(func, "vkCmdBeginQueryIndexedEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginQueryIndexedEXT;
-  if (0 == strcmp(func, "vkCmdEndQueryIndexedEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndQueryIndexedEXT;
-  if (0 == strcmp(func, "vkCmdDrawIndirectByteCountEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirectByteCountEXT;
-  if (0 == strcmp(func, "vkCmdCuLaunchKernelNVX"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCuLaunchKernelNVX;
-  if (0 == strcmp(func, "vkCmdDrawIndirectCountAMD"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndirectCountAMD;
-  if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountAMD"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawIndexedIndirectCountAMD;
-  if (0 == strcmp(func, "vkCmdBeginConditionalRenderingEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginConditionalRenderingEXT;
-  if (0 == strcmp(func, "vkCmdEndConditionalRenderingEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndConditionalRenderingEXT;
-  if (0 == strcmp(func, "vkCmdSetViewportWScalingNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportWScalingNV;
-  if (0 == strcmp(func, "vkCmdSetDiscardRectangleEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDiscardRectangleEXT;
-  if (0 == strcmp(func, "vkCmdSetDiscardRectangleEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDiscardRectangleEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetDiscardRectangleModeEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDiscardRectangleModeEXT;
-  if (0 == strcmp(func, "vkSetDebugUtilsObjectNameEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptSetDebugUtilsObjectNameEXT;
-  if (0 == strcmp(func, "vkCmdBeginDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBeginDebugUtilsLabelEXT;
-  if (0 == strcmp(func, "vkCmdEndDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdEndDebugUtilsLabelEXT;
-  if (0 == strcmp(func, "vkCmdInsertDebugUtilsLabelEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdInsertDebugUtilsLabelEXT;
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-  if (0 == strcmp(func, "vkCmdInitializeGraphScratchMemoryAMDX"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdInitializeGraphScratchMemoryAMDX;
-#endif //VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-  if (0 == strcmp(func, "vkCmdDispatchGraphAMDX"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchGraphAMDX;
-#endif //VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-  if (0 == strcmp(func, "vkCmdDispatchGraphIndirectAMDX"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchGraphIndirectAMDX;
-#endif //VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-  if (0 == strcmp(func, "vkCmdDispatchGraphIndirectCountAMDX"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDispatchGraphIndirectCountAMDX;
-#endif //VK_ENABLE_BETA_EXTENSIONS
-  if (0 == strcmp(func, "vkCmdSetSampleLocationsEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetSampleLocationsEXT;
-  if (0 == strcmp(func, "vkCmdBindShadingRateImageNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindShadingRateImageNV;
-  if (0 == strcmp(func, "vkCmdSetViewportShadingRatePaletteNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportShadingRatePaletteNV;
-  if (0 == strcmp(func, "vkCmdSetCoarseSampleOrderNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoarseSampleOrderNV;
-  if (0 == strcmp(func, "vkCmdBuildAccelerationStructureNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBuildAccelerationStructureNV;
-  if (0 == strcmp(func, "vkCmdCopyAccelerationStructureNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyAccelerationStructureNV;
-  if (0 == strcmp(func, "vkCmdTraceRaysNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysNV;
-  if (0 == strcmp(func, "vkCmdWriteAccelerationStructuresPropertiesNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteAccelerationStructuresPropertiesNV;
-  if (0 == strcmp(func, "vkCmdWriteBufferMarkerAMD"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteBufferMarkerAMD;
-  if (0 == strcmp(func, "vkCmdDrawMeshTasksNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksNV;
-  if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksIndirectNV;
-  if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectCountNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksIndirectCountNV;
-  if (0 == strcmp(func, "vkCmdSetExclusiveScissorEnableNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetExclusiveScissorEnableNV;
-  if (0 == strcmp(func, "vkCmdSetExclusiveScissorNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetExclusiveScissorNV;
-  if (0 == strcmp(func, "vkCmdSetCheckpointNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCheckpointNV;
-  if (0 == strcmp(func, "vkCmdSetPerformanceMarkerINTEL"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPerformanceMarkerINTEL;
-  if (0 == strcmp(func, "vkCmdSetPerformanceStreamMarkerINTEL"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPerformanceStreamMarkerINTEL;
-  if (0 == strcmp(func, "vkCmdSetPerformanceOverrideINTEL"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPerformanceOverrideINTEL;
-  if (0 == strcmp(func, "vkCmdSetLineStippleEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLineStippleEXT;
-  if (0 == strcmp(func, "vkCmdSetCullModeEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCullModeEXT;
-  if (0 == strcmp(func, "vkCmdSetFrontFaceEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetFrontFaceEXT;
-  if (0 == strcmp(func, "vkCmdSetPrimitiveTopologyEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPrimitiveTopologyEXT;
-  if (0 == strcmp(func, "vkCmdSetViewportWithCountEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportWithCountEXT;
-  if (0 == strcmp(func, "vkCmdSetScissorWithCountEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetScissorWithCountEXT;
-  if (0 == strcmp(func, "vkCmdBindVertexBuffers2EXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindVertexBuffers2EXT;
-  if (0 == strcmp(func, "vkCmdSetDepthTestEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthTestEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetDepthWriteEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthWriteEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetDepthCompareOpEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthCompareOpEXT;
-  if (0 == strcmp(func, "vkCmdSetDepthBoundsTestEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBoundsTestEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetStencilTestEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilTestEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetStencilOpEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetStencilOpEXT;
-  if (0 == strcmp(func, "vkCmdPreprocessGeneratedCommandsNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdPreprocessGeneratedCommandsNV;
-  if (0 == strcmp(func, "vkCmdExecuteGeneratedCommandsNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdExecuteGeneratedCommandsNV;
-  if (0 == strcmp(func, "vkCmdBindPipelineShaderGroupNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindPipelineShaderGroupNV;
-  if (0 == strcmp(func, "vkCmdSetDepthBias2EXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBias2EXT;
-  if (0 == strcmp(func, "vkCmdBindDescriptorBuffersEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindDescriptorBuffersEXT;
-  if (0 == strcmp(func, "vkCmdSetDescriptorBufferOffsetsEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDescriptorBufferOffsetsEXT;
-  if (0 == strcmp(func, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT;
-  if (0 == strcmp(func, "vkCmdSetFragmentShadingRateEnumNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetFragmentShadingRateEnumNV;
-  if (0 == strcmp(func, "vkCmdSetVertexInputEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetVertexInputEXT;
-  if (0 == strcmp(func, "vkCmdSubpassShadingHUAWEI"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSubpassShadingHUAWEI;
-  if (0 == strcmp(func, "vkCmdBindInvocationMaskHUAWEI"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindInvocationMaskHUAWEI;
-  if (0 == strcmp(func, "vkCmdSetPatchControlPointsEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPatchControlPointsEXT;
-  if (0 == strcmp(func, "vkCmdSetRasterizerDiscardEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRasterizerDiscardEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetDepthBiasEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthBiasEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetLogicOpEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLogicOpEXT;
-  if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPrimitiveRestartEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetColorWriteEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorWriteEnableEXT;
-  if (0 == strcmp(func, "vkCmdDrawMultiEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMultiEXT;
-  if (0 == strcmp(func, "vkCmdDrawMultiIndexedEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMultiIndexedEXT;
-  if (0 == strcmp(func, "vkCmdBuildMicromapsEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBuildMicromapsEXT;
-  if (0 == strcmp(func, "vkCmdCopyMicromapEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMicromapEXT;
-  if (0 == strcmp(func, "vkCmdCopyMicromapToMemoryEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMicromapToMemoryEXT;
-  if (0 == strcmp(func, "vkCmdCopyMemoryToMicromapEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMemoryToMicromapEXT;
-  if (0 == strcmp(func, "vkCmdWriteMicromapsPropertiesEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteMicromapsPropertiesEXT;
-  if (0 == strcmp(func, "vkCmdDrawClusterHUAWEI"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawClusterHUAWEI;
-  if (0 == strcmp(func, "vkCmdDrawClusterIndirectHUAWEI"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawClusterIndirectHUAWEI;
-  if (0 == strcmp(func, "vkCmdCopyMemoryIndirectNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMemoryIndirectNV;
-  if (0 == strcmp(func, "vkCmdCopyMemoryToImageIndirectNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMemoryToImageIndirectNV;
-  if (0 == strcmp(func, "vkCmdDecompressMemoryNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDecompressMemoryNV;
-  if (0 == strcmp(func, "vkCmdDecompressMemoryIndirectCountNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDecompressMemoryIndirectCountNV;
-  if (0 == strcmp(func, "vkCmdUpdatePipelineIndirectBufferNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdUpdatePipelineIndirectBufferNV;
-  if (0 == strcmp(func, "vkCmdSetTessellationDomainOriginEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetTessellationDomainOriginEXT;
-  if (0 == strcmp(func, "vkCmdSetDepthClampEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthClampEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetPolygonModeEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetPolygonModeEXT;
-  if (0 == strcmp(func, "vkCmdSetRasterizationSamplesEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRasterizationSamplesEXT;
-  if (0 == strcmp(func, "vkCmdSetSampleMaskEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetSampleMaskEXT;
-  if (0 == strcmp(func, "vkCmdSetAlphaToCoverageEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetAlphaToCoverageEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetAlphaToOneEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetAlphaToOneEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetLogicOpEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLogicOpEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetColorBlendEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorBlendEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetColorBlendEquationEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorBlendEquationEXT;
-  if (0 == strcmp(func, "vkCmdSetColorWriteMaskEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorWriteMaskEXT;
-  if (0 == strcmp(func, "vkCmdSetRasterizationStreamEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRasterizationStreamEXT;
-  if (0 == strcmp(func, "vkCmdSetConservativeRasterizationModeEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetConservativeRasterizationModeEXT;
-  if (0 == strcmp(func, "vkCmdSetExtraPrimitiveOverestimationSizeEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetExtraPrimitiveOverestimationSizeEXT;
-  if (0 == strcmp(func, "vkCmdSetDepthClipEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthClipEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetSampleLocationsEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetSampleLocationsEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetColorBlendAdvancedEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetColorBlendAdvancedEXT;
-  if (0 == strcmp(func, "vkCmdSetProvokingVertexModeEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetProvokingVertexModeEXT;
-  if (0 == strcmp(func, "vkCmdSetLineRasterizationModeEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLineRasterizationModeEXT;
-  if (0 == strcmp(func, "vkCmdSetLineStippleEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetLineStippleEnableEXT;
-  if (0 == strcmp(func, "vkCmdSetDepthClipNegativeOneToOneEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetDepthClipNegativeOneToOneEXT;
-  if (0 == strcmp(func, "vkCmdSetViewportWScalingEnableNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportWScalingEnableNV;
-  if (0 == strcmp(func, "vkCmdSetViewportSwizzleNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetViewportSwizzleNV;
-  if (0 == strcmp(func, "vkCmdSetCoverageToColorEnableNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageToColorEnableNV;
-  if (0 == strcmp(func, "vkCmdSetCoverageToColorLocationNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageToColorLocationNV;
-  if (0 == strcmp(func, "vkCmdSetCoverageModulationModeNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageModulationModeNV;
-  if (0 == strcmp(func, "vkCmdSetCoverageModulationTableEnableNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageModulationTableEnableNV;
-  if (0 == strcmp(func, "vkCmdSetCoverageModulationTableNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageModulationTableNV;
-  if (0 == strcmp(func, "vkCmdSetShadingRateImageEnableNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetShadingRateImageEnableNV;
-  if (0 == strcmp(func, "vkCmdSetRepresentativeFragmentTestEnableNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRepresentativeFragmentTestEnableNV;
-  if (0 == strcmp(func, "vkCmdSetCoverageReductionModeNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetCoverageReductionModeNV;
-  if (0 == strcmp(func, "vkCmdOpticalFlowExecuteNV"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdOpticalFlowExecuteNV;
-  if (0 == strcmp(func, "vkCmdBindShadersEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBindShadersEXT;
-  if (0 == strcmp(func, "vkCmdSetAttachmentFeedbackLoopEnableEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetAttachmentFeedbackLoopEnableEXT;
-  if (0 == strcmp(func, "vkCmdBuildAccelerationStructuresKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBuildAccelerationStructuresKHR;
-  if (0 == strcmp(func, "vkCmdBuildAccelerationStructuresIndirectKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdBuildAccelerationStructuresIndirectKHR;
-  if (0 == strcmp(func, "vkCmdCopyAccelerationStructureKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyAccelerationStructureKHR;
-  if (0 == strcmp(func, "vkCmdCopyAccelerationStructureToMemoryKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyAccelerationStructureToMemoryKHR;
-  if (0 == strcmp(func, "vkCmdCopyMemoryToAccelerationStructureKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdCopyMemoryToAccelerationStructureKHR;
-  if (0 == strcmp(func, "vkCmdWriteAccelerationStructuresPropertiesKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdWriteAccelerationStructuresPropertiesKHR;
-  if (0 == strcmp(func, "vkCmdTraceRaysKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysKHR;
-  if (0 == strcmp(func, "vkCmdTraceRaysIndirectKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdTraceRaysIndirectKHR;
-  if (0 == strcmp(func, "vkCmdSetRayTracingPipelineStackSizeKHR"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdSetRayTracingPipelineStackSizeKHR;
-  if (0 == strcmp(func, "vkCmdDrawMeshTasksEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksEXT;
-  if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksIndirectEXT;
-  if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectCountEXT"))
-    return (PFN_vkVoidFunction)crash_diagnostic_layer::InterceptCmdDrawMeshTasksIndirectCountEXT;
+  PFN_vkVoidFunction return_func = crash_diagnostic_layer::GetDeviceFuncs(func);
+  if(return_func != nullptr) {
+    return return_func;
+  }
 
   // If the function was not found, just pass it down the chain to support
   // unregistered extensions, such as vkSwapchainCallbackEXT.

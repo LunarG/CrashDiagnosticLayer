@@ -41,6 +41,7 @@
 #include <sstream>
 
 #include "util.h"
+#include "layer_utils.h"
 
 #if defined(WIN32)
 #include <direct.h>
@@ -80,20 +81,6 @@ const char* k_path_separator = "\\";
 #else
 const char* k_path_separator = "/";
 #endif
-
-namespace {
-void MakeDir(const std::string& path) {
-#if defined(WIN32)
-    int mkdir_result = _mkdir(path.c_str());
-#else
-    int mkdir_result = mkdir(path.c_str(), ACCESSPERMS);
-#endif
-
-    if (mkdir_result && EEXIST != errno) {
-        std::cerr << "CDL: Error creating output directory \'" << path << "\': " << strerror(errno) << std::endl;
-    }
-}
-}  // namespace
 
 // =============================================================================
 // CdlContext
@@ -221,6 +208,18 @@ CdlContext::~CdlContext() {
     logger_.CloseLogFile();
 }
 
+void CdlContext::MakeDir(const std::string& path) {
+#if defined(WIN32)
+    int mkdir_result = _mkdir(path.c_str());
+#else
+    int mkdir_result = mkdir(path.c_str(), ACCESSPERMS);
+#endif
+
+    if (mkdir_result && EEXIST != errno) {
+        logger_.LogError("Error creating output directory \'%s\': %s", path.c_str(), strerror(errno));
+    }
+}
+
 template <class T>
 void CdlContext::GetEnvVal(const char* name, T* value) {
     char* p_env_value = getenv(name);
@@ -346,13 +345,21 @@ void CdlContext::GpuHangdListener() {
 
 void CdlContext::PreApiFunction(const char* api_name) {
     if (trace_all_) {
-        logger_.LogInfo("> %s", api_name);
+        logger_.LogInfo("{ %s", api_name);
     }
 }
 
 void CdlContext::PostApiFunction(const char* api_name) {
     if (trace_all_) {
-        logger_.LogInfo("< %s", api_name);
+        logger_.LogInfo("} %s", api_name);
+    }
+}
+
+void CdlContext::PostApiFunction(const char* api_name, VkResult result) {
+    if (trace_all_) {
+        std::string result_string;
+        GetResultString(result, result_string);
+        logger_.LogInfo("} %s (%s)", api_name, result_string.c_str());
     }
 }
 
@@ -945,6 +952,7 @@ void CdlContext::PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* 
 }
 
 VkResult CdlContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
+    PreApiFunction("vkQueueSubmit");
     last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
                             std::chrono::high_resolution_clock::now().time_since_epoch())
                             .count();
@@ -965,6 +973,8 @@ VkResult CdlContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount, const V
 
 VkResult CdlContext::PreQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
                                      VkFence fence) {
+    PreApiFunction("vkQueueSubmit2");
+
     last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
                             std::chrono::high_resolution_clock::now().time_since_epoch())
                             .count();
@@ -986,6 +996,7 @@ VkResult CdlContext::PreQueueSubmit2(VkQueue queue, uint32_t submitCount, const 
 
 VkResult CdlContext::PreQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
                                         VkFence fence) {
+    PreApiFunction("vkQueueSubmit2KHR");
     return PreQueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
@@ -994,6 +1005,7 @@ bool IsVkError(VkResult result) { return result == VK_ERROR_DEVICE_LOST || resul
 
 VkResult CdlContext::PostQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence,
                                      VkResult result) {
+    PostApiFunction("vkQueueSubmit", result);
     total_submits_++;
 
     bool dump = IsVkError(result) || (debug_autodump_rate_ > 0 && (total_submits_ % debug_autodump_rate_) == 0);
@@ -1006,6 +1018,7 @@ VkResult CdlContext::PostQueueSubmit(VkQueue queue, uint32_t submitCount, const 
 
 VkResult CdlContext::PostQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence,
                                       VkResult result) {
+    PostApiFunction("vkQueueSubmit2", result);
     total_submits_++;
 
     bool dump = IsVkError(result) || (debug_autodump_rate_ > 0 && (total_submits_ % debug_autodump_rate_) == 0);
@@ -1018,11 +1031,17 @@ VkResult CdlContext::PostQueueSubmit2(VkQueue queue, uint32_t submitCount, const
 
 VkResult CdlContext::PostQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
                                          VkFence fence, VkResult result) {
+    PostApiFunction("vkQueueSubmit2KHR", result);
     return PostQueueSubmit2(queue, submitCount, pSubmits, fence, result);
 }
 
+VkResult CdlContext::PreDeviceWaitIdle(VkDevice device) {
+    (void)device;
+    PreApiFunction("vkDeviceWaitIdle");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostDeviceWaitIdle(VkDevice device, VkResult result) {
-    PostApiFunction("vkDeviceWaitIdle");
+    PostApiFunction("vkDeviceWaitIdle", result);
 
     if (IsVkError(result)) {
         DumpDeviceExecutionState(device);
@@ -1031,8 +1050,13 @@ VkResult CdlContext::PostDeviceWaitIdle(VkDevice device, VkResult result) {
     return result;
 }
 
+VkResult CdlContext::PreQueueWaitIdle(VkQueue queue) {
+    (void)queue;
+    PreApiFunction("vkQueueWaitIdle");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostQueueWaitIdle(VkQueue queue, VkResult result) {
-    PostApiFunction("vkQueueWaitIdle");
+    PostApiFunction("vkQueueWaitIdle", result);
 
     if (IsVkError(result)) {
         DumpDeviceExecutionState(GetQueueDevice(queue));
@@ -1041,8 +1065,12 @@ VkResult CdlContext::PostQueueWaitIdle(VkQueue queue, VkResult result) {
     return result;
 }
 
+VkResult CdlContext::PreQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo) {
+    PreApiFunction("vkQueuePresentKHR");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo, VkResult result) {
-    PostApiFunction("vkQueuePresentKHR");
+    PostApiFunction("vkQueuePresentKHR", result);
 
     if (IsVkError(result)) {
         DumpDeviceExecutionState(GetQueueDevice(queue));
@@ -1051,9 +1079,14 @@ VkResult CdlContext::PostQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* 
     return result;
 }
 
+VkResult CdlContext::PreQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindSparseInfo const* pBindInfo,
+                                        VkFence fence) {
+    PreApiFunction("vkQueueBindSparse");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindSparseInfo const* pBindInfo,
                                          VkFence fence, VkResult result) {
-    PostApiFunction("vkQueueBindSparse");
+    PostApiFunction("vkQueueBindSparse", result);
 
     if (IsVkError(result)) {
         DumpDeviceExecutionState(GetQueueDevice(queue));
@@ -1062,9 +1095,14 @@ VkResult CdlContext::PostQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, 
     return result;
 }
 
+VkResult CdlContext::PreWaitForFences(VkDevice device, uint32_t fenceCount, VkFence const* pFences, VkBool32 waitAll,
+                                      uint64_t timeout) {
+    PreApiFunction("vkWaitForFences");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkFence const* pFences, VkBool32 waitAll,
                                        uint64_t timeout, VkResult result) {
-    PostApiFunction("vkWaitForFences");
+    PostApiFunction("vkWaitForFences", result);
 
     if (IsVkError(result)) {
         DumpDeviceExecutionState(device);
@@ -1073,8 +1111,12 @@ VkResult CdlContext::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkF
     return result;
 }
 
+VkResult CdlContext::PreGetFenceStatus(VkDevice device, VkFence fence) {
+    PreApiFunction("vkGetFenceStatus");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostGetFenceStatus(VkDevice device, VkFence fence, VkResult result) {
-    PostApiFunction("vkGetFenceStatus");
+    PostApiFunction("vkGetFenceStatus", result);
 
     if (IsVkError(result)) {
         DumpDeviceExecutionState(device);
@@ -1083,10 +1125,16 @@ VkResult CdlContext::PostGetFenceStatus(VkDevice device, VkFence fence, VkResult
     return result;
 }
 
+VkResult CdlContext::PreGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
+                                            uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride,
+                                            VkQueryResultFlags flags) {
+    PostApiFunction("vkGetQueryPoolResults");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
                                              uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride,
                                              VkQueryResultFlags flags, VkResult result) {
-    PostApiFunction("vkGetQueryPoolResults");
+    PostApiFunction("vkGetQueryPoolResults", result);
 
     if (IsVkError(result)) {
         DumpDeviceExecutionState(device);
@@ -1095,10 +1143,15 @@ VkResult CdlContext::PostGetQueryPoolResults(VkDevice device, VkQueryPool queryP
     return result;
 }
 
+VkResult CdlContext::PreAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
+                                            VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) {
+    PreApiFunction("vkAcquireNextImageKHR");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
                                              VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex,
                                              VkResult result) {
-    PostApiFunction("vkAcquireNextImageKHR");
+    PostApiFunction("vkAcquireNextImageKHR", result);
 
     if (IsVkError(result)) {
         DumpDeviceExecutionState(device);
@@ -1156,10 +1209,16 @@ void CdlContext::PostDestroyPipeline(VkDevice device, VkPipeline pipeline, const
     p_device->DeletePipeline(pipeline);
 }
 
+VkResult CdlContext::PreCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
+                                          const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) {
+    PreApiFunction("vkCreateCommandPool");
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
                                            const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool,
                                            VkResult callResult) {
     if (callResult == VK_SUCCESS) {
+        PostApiFunction("vkCreateCommandPool");
         std::lock_guard<std::mutex> lock_devices(devices_mutex_);
         Device* p_device = devices_[device].get();
         CommandPoolPtr pool = std::make_unique<CommandPool>(
@@ -1211,6 +1270,12 @@ VkResult CdlContext::PostResetCommandPool(VkDevice device, VkCommandPool command
     return callResult;
 }
 
+VkResult CdlContext::PreAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo,
+                                               VkCommandBuffer* pCommandBuffers) {
+    PreApiFunction("vkAllocateCommandBuffers");
+    return VK_SUCCESS;
+}
+
 VkResult CdlContext::PostAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo,
                                                 VkCommandBuffer* pCommandBuffers, VkResult callResult) {
     if (callResult == VK_SUCCESS) {
@@ -1237,6 +1302,10 @@ VkResult CdlContext::PostAllocateCommandBuffers(VkDevice device, const VkCommand
     return callResult;
 }
 
+void CdlContext::PreFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
+                                       const VkCommandBuffer* pCommandBuffers) {
+    PreApiFunction("vkFreeCommandBuffers");
+}
 void CdlContext::PostFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
                                         const VkCommandBuffer* pCommandBuffers) {
     PostApiFunction("vkFreeCommandBuffers");
@@ -1283,7 +1352,7 @@ VkResult CdlContext::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo 
         }
         if (trace_all_semaphores_) {
             std::stringstream log;
-            log << "[CDL] Semaphore created. VkDevice:" << GetObjectName(device, (uint64_t)device)
+            log << "Semaphore created. VkDevice:" << GetObjectName(device, (uint64_t)device)
                 << ", VkSemaphore: " << GetObjectName(device, (uint64_t)(*pSemaphore));
             if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                 log << ", Type: Binary.\n";
@@ -1302,7 +1371,7 @@ void CdlContext::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, co
         auto semaphore_tracker = devices_[device]->GetSemaphoreTracker();
         if (trace_all_semaphores_) {
             std::stringstream log;
-            log << "[CDL] Semaphore destroyed. VkDevice:" << GetObjectName(device, (uint64_t)device)
+            log << "Semaphore destroyed. VkDevice:" << GetObjectName(device, (uint64_t)device)
                 << ", VkSemaphore: " << GetObjectName(device, (uint64_t)(semaphore));
             if (semaphore_tracker->GetSemaphoreType(semaphore) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                 log << ", Type: Binary, ";
@@ -1330,7 +1399,7 @@ VkResult CdlContext::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSi
                                                                      {SemaphoreModifierType::kModifierHost});
         }
         if (trace_all_semaphores_) {
-            std::string timeline_message = "[CDL] Timeline semaphore signaled from host. VkDevice: ";
+            std::string timeline_message = "Timeline semaphore signaled from host. VkDevice: ";
             timeline_message += GetObjectName(device, (uint64_t)device) +
                                 ", VkSemaphore: " + GetObjectName(device, (uint64_t)(pSignalInfo->semaphore)) +
                                 ", Signal value: " + std::to_string(pSignalInfo->value);
@@ -1359,10 +1428,10 @@ VkResult CdlContext::PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWait
         }
         if (trace_all_semaphores_) {
             std::stringstream log;
-            log << "[CDL] Waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
+            log << "Waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
                 << ", VkDevice: " << GetObjectName(device, (uint64_t)device) << std::endl;
             for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
-                log << "[CDL]\tVkSemaphore: " << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
+                log << "\tVkSemaphore: " << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
                     << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
             }
             logger_.LogInfo(log.str());
@@ -1409,10 +1478,10 @@ VkResult CdlContext::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWai
 
         if (trace_all_semaphores_) {
             std::stringstream log;
-            log << "[CDL] Finished waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
+            log << "Finished waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
                 << ", VkDevice: " << GetObjectName(device, (uint64_t)device) << std::endl;
             for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
-                log << "[CDL]\tVkSemaphore: " << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
+                log << "\tVkSemaphore: " << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
                     << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
             }
             logger_.LogInfo(log.str());

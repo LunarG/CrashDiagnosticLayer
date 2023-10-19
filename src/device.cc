@@ -359,11 +359,9 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_command_pool, const VkComma
 
 // Write out information about an invalid command buffer reset.
 void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& os) const {
-    std::cout << "----------------------------------------------------------------\n";
-    std::cout << "- CRASH DIAGNOSTIC LAYER INVALID COMMAND BUFFER USAGE          -\n";
-    std::cout << "----------------------------------------------------------------\n\n";
-    std::cout << "Reset of VkCommandBuffer in use by GPU: " << GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer())
-              << std::endl;
+    GetCDL()->GetLogger().LogError("Invalid Command Buffer Usage");
+    GetCDL()->GetLogger().LogError("Reset of VkCommandBuffer in use by GPU: %s",
+                                   GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
     auto submitted_fence = p_cmd->GetSubmittedFence();
 
     // If there is a fence associated with this command buffer, we check
@@ -371,14 +369,12 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& 
     if (submitted_fence != VK_NULL_HANDLE) {
         auto fence_status = device_dispatch_table_.WaitForFences(vk_device_, 1, &submitted_fence, VK_TRUE, 0);
         if (VK_TIMEOUT == fence_status) {
-            std::cout << "Reset before fence was set: " << GetObjectName((uint64_t)submitted_fence) << std::endl;
+            GetCDL()->GetLogger().LogError("Reset before fence was set: %s",
+                                           GetObjectName((uint64_t)submitted_fence).c_str());
         } else {
-            std::cout << "Fence was set: " << GetObjectName((uint64_t)submitted_fence) << std::endl;
+            GetCDL()->GetLogger().LogError("Fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
         }
     }
-
-    std::cout << std::endl;
-    std::cout << "----------------------------------------------------------------\n\n";
 
     // Dump this specific command buffer to console with all commands.
     // We do this because this is a race between the GPU and the logging and
@@ -387,8 +383,7 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& 
     std::stringstream error_report;
     error_report << "InvalidCommandBuffer:\n";
     p_cmd->DumpContents(error_report, CommandBufferDumpOption::kDumpAllCommands);
-    error_report << "\n\n";
-    std::cout << error_report.str();
+    GetCDL()->GetLogger().LogError(error_report.str().c_str());
     os << error_report.str();
 }
 
@@ -533,7 +528,7 @@ void Device::CreateShaderModule(const VkShaderModuleCreateInfo* pCreateInfo, VkS
     // Parse the SPIR-V for relevant information, does not copy the SPIR-V
     // binary.
     ShaderModulePtr shader_module =
-        std::make_unique<ShaderModule>(*pShaderModule, shader_module_load_options, pCreateInfo->codeSize,
+        std::make_unique<ShaderModule>(GetCDL(), *pShaderModule, shader_module_load_options, pCreateInfo->codeSize,
                                        reinterpret_cast<const char*>(pCreateInfo->pCode), GetCDL()->GetOutputPath());
 
     // Add extra name information for shaders, used to give them names even if

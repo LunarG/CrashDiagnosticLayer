@@ -28,6 +28,7 @@
 
 namespace crash_diagnostic_layer {
 
+class CdlContext;
 class Device;
 
 class ShaderModule {
@@ -40,9 +41,10 @@ class ShaderModule {
         };
     };
 
-    ShaderModule(VkShaderModule vk_shader_module, int load_options, size_t code_size, const char* p_spirv,
-                 std::string cdl_output_path);
+    ShaderModule(CdlContext* p_cdl, VkShaderModule vk_shader_module, int load_options, size_t code_size,
+                 const char* p_spirv, std::string cdl_output_path);
 
+    CdlContext* GetCDL() const { return cdl_; }
     spv::ExecutionModel GetExecutionModel() const;
     const std::string& GetEntryPoint() const;
     const std::string& GetSourceFile() const;
@@ -54,6 +56,7 @@ class ShaderModule {
     // dumps SPRIV to file, returns filename
     std::string DumpShaderCode(const std::string& prefix, size_t code_size, const char* code) const;
 
+    CdlContext* cdl_ = nullptr;
     VkShaderModule vk_shader_module_ = VK_NULL_HANDLE;
     spv::ExecutionModel execution_model_ = static_cast<spv::ExecutionModel>(~0);
     std::string entry_point_;

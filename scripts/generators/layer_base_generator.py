@@ -647,7 +647,36 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
 
   return result;
 }
-''')
+
+PFN_vkVoidFunction GetInstanceFuncs(const char* func)
+{''')
+        self.write("".join(out))
+
+        out = []
+        for vkcommand in filter(lambda x: self.InstanceCommand(x) and self.NeedsIntercept(x), self.vk.commands.values()):
+            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
+            out.append(f'  if (0 == strcmp(func, "{vkcommand.name}"))\n')
+            out.append(f'    return (PFN_vkVoidFunction)Intercept{vkcommand.name[2:]};\n')
+            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+
+        out.append('''
+  return nullptr;
+}
+
+PFN_vkVoidFunction GetDeviceFuncs(const char* func)
+{''')
+        self.write("".join(out))
+
+        out = []
+        for vkcommand in filter(lambda x: not self.InstanceCommand(x) and self.InterceptCommand(x), self.vk.commands.values()):
+            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
+            out.append(f'  if (0 == strcmp(func, "{vkcommand.name}"))\n')
+            out.append(f'    return (PFN_vkVoidFunction)Intercept{vkcommand.name[2:]};\n')
+            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+
+        out.append('''
+  return nullptr;
+}''')
         self.write("".join(out))
 
         out = []
@@ -657,17 +686,15 @@ extern "C" {
 
 CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(
     VkInstance inst, const char *func) {
-''')
-        self.write("".join(out))
+  PFN_vkVoidFunction return_func = crash_diagnostic_layer::GetInstanceFuncs(func);
+  if(return_func != nullptr) {
+    return return_func;
+  }
+  return_func = crash_diagnostic_layer::GetDeviceFuncs(func);
+  if(return_func != nullptr) {
+    return return_func;
+  }
 
-        out = []
-        for vkcommand in filter(lambda x: self.InstanceCommand(x) and self.NeedsIntercept(x), self.vk.commands.values()):
-            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append(f'if (0 == strcmp(func, "{vkcommand.name}"))\n')
-            out.append(f'  return (PFN_vkVoidFunction)crash_diagnostic_layer::Intercept{vkcommand.name[2:]};\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
-            
-        out.append('''
   // If the function was not found, just pass it down the chain to support
   // unregistered extensions, such as vkSwapchainCallbackEXT.
   return (PFN_vkVoidFunction)crash_diagnostic_layer::PassInstanceProcDownTheChain(inst, func);
@@ -675,17 +702,11 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(
 
 CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(
     VkDevice dev, const char *func) {
-''')
-        self.write("".join(out))
+  PFN_vkVoidFunction return_func = crash_diagnostic_layer::GetDeviceFuncs(func);
+  if(return_func != nullptr) {
+    return return_func;
+  }
 
-        out = []
-        for vkcommand in filter(lambda x: not self.InstanceCommand(x) and self.InterceptCommand(x), self.vk.commands.values()):
-            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append(f'  if (0 == strcmp(func, "{vkcommand.name}"))\n')
-            out.append(f'    return (PFN_vkVoidFunction)crash_diagnostic_layer::Intercept{vkcommand.name[2:]};\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
-            
-        out.append('''
   // If the function was not found, just pass it down the chain to support
   // unregistered extensions, such as vkSwapchainCallbackEXT.
   return (PFN_vkVoidFunction)crash_diagnostic_layer::PassDeviceProcDownTheChain(dev, func);

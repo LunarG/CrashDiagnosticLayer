@@ -196,6 +196,7 @@ class CdlContext {
    public:
     void PreApiFunction(const char* api_name);
     void PostApiFunction(const char* api_name);
+    void PostApiFunction(const char* api_name, VkResult result);
 
     const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo);
     const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
@@ -275,6 +276,7 @@ class CdlContext {
     StringArray configs_;
     template <class T>
     void GetEnvVal(const char* name, T* value);
+    void MakeDir(const std::string& path);
 
     int total_submits_ = 0;
     int total_logs_ = 0;

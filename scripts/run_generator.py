@@ -53,6 +53,7 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
     from generators.dispatch_generator import DispatchOutputGenerator
     from generators.intercepts_and_prepost_generator import InterceptCommandsOutputGenerator
     from generators.layer_base_generator import LayerBaseOutputGenerator
+    from generators.layer_utils_generator import LayerUtilsOutputGenerator
     from generators.layer_manifest_generator import LayerManifestOutputGenerator
 
     # Allow downstream users to merge other (e.g. the main "vulkan") API into
@@ -192,6 +193,21 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
           LayerBaseOutputGenerator,
           BaseGeneratorOptions(
             filename          = 'layer_base.cc',
+            mergeApiNames     = mergeApiNames,
+            valid_usage_path  = scripts)
+        ]
+
+    genOpts['layer_utils.h'] = [
+          LayerUtilsOutputGenerator,
+          BaseGeneratorOptions(
+            filename          = 'layer_utils.h',
+            mergeApiNames     = mergeApiNames,
+            valid_usage_path  = scripts)
+        ]
+    genOpts['layer_utils.cc'] = [
+          LayerUtilsOutputGenerator,
+          BaseGeneratorOptions(
+            filename          = 'layer_utils.cc',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]

@@ -85,18 +85,33 @@ VkResult InterceptPostQueueSubmit(
   return g_interceptor->PostQueueSubmit(queue, submitCount, pSubmits, fence, result);
 }
 
+VkResult InterceptPreQueueWaitIdle(
+    VkQueue                                     queue) {
+  return g_interceptor->PreQueueWaitIdle(queue);
+}
 VkResult InterceptPostQueueWaitIdle(
     VkQueue                                     queue,
     VkResult                                    result) {
   return g_interceptor->PostQueueWaitIdle(queue, result);
 }
 
+VkResult InterceptPreDeviceWaitIdle(
+    VkDevice                                    device) {
+  return g_interceptor->PreDeviceWaitIdle(device);
+}
 VkResult InterceptPostDeviceWaitIdle(
     VkDevice                                    device,
     VkResult                                    result) {
   return g_interceptor->PostDeviceWaitIdle(device, result);
 }
 
+VkResult InterceptPreQueueBindSparse(
+    VkQueue                                     queue,
+    uint32_t                                    bindInfoCount,
+    const VkBindSparseInfo*                     pBindInfo,
+    VkFence                                     fence) {
+  return g_interceptor->PreQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+}
 VkResult InterceptPostQueueBindSparse(
     VkQueue                                     queue,
     uint32_t                                    bindInfoCount,
@@ -106,6 +121,11 @@ VkResult InterceptPostQueueBindSparse(
   return g_interceptor->PostQueueBindSparse(queue, bindInfoCount, pBindInfo, fence, result);
 }
 
+VkResult InterceptPreGetFenceStatus(
+    VkDevice                                    device,
+    VkFence                                     fence) {
+  return g_interceptor->PreGetFenceStatus(device, fence);
+}
 VkResult InterceptPostGetFenceStatus(
     VkDevice                                    device,
     VkFence                                     fence,
@@ -113,6 +133,14 @@ VkResult InterceptPostGetFenceStatus(
   return g_interceptor->PostGetFenceStatus(device, fence, result);
 }
 
+VkResult InterceptPreWaitForFences(
+    VkDevice                                    device,
+    uint32_t                                    fenceCount,
+    const VkFence*                              pFences,
+    VkBool32                                    waitAll,
+    uint64_t                                    timeout) {
+  return g_interceptor->PreWaitForFences(device, fenceCount, pFences, waitAll, timeout);
+}
 VkResult InterceptPostWaitForFences(
     VkDevice                                    device,
     uint32_t                                    fenceCount,
@@ -123,6 +151,13 @@ VkResult InterceptPostWaitForFences(
   return g_interceptor->PostWaitForFences(device, fenceCount, pFences, waitAll, timeout, result);
 }
 
+VkResult InterceptPreCreateSemaphore(
+    VkDevice                                    device,
+    const VkSemaphoreCreateInfo*                pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSemaphore*                                pSemaphore) {
+  return g_interceptor->PreCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
+}
 VkResult InterceptPostCreateSemaphore(
     VkDevice                                    device,
     const VkSemaphoreCreateInfo*                pCreateInfo,
@@ -132,6 +167,12 @@ VkResult InterceptPostCreateSemaphore(
   return g_interceptor->PostCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore, result);
 }
 
+void InterceptPreDestroySemaphore(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    const VkAllocationCallbacks*                pAllocator) {
+  g_interceptor->PreDestroySemaphore(device, semaphore, pAllocator);
+}
 void InterceptPostDestroySemaphore(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
@@ -139,6 +180,17 @@ void InterceptPostDestroySemaphore(
   g_interceptor->PostDestroySemaphore(device, semaphore, pAllocator);
 }
 
+VkResult InterceptPreGetQueryPoolResults(
+    VkDevice                                    device,
+    VkQueryPool                                 queryPool,
+    uint32_t                                    firstQuery,
+    uint32_t                                    queryCount,
+    size_t                                      dataSize,
+    void*                                       pData,
+    VkDeviceSize                                stride,
+    VkQueryResultFlags                          flags) {
+  return g_interceptor->PreGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
+}
 VkResult InterceptPostGetQueryPoolResults(
     VkDevice                                    device,
     VkQueryPool                                 queryPool,
@@ -190,6 +242,12 @@ VkResult InterceptPostCreateComputePipelines(
   return g_interceptor->PostCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines, result);
 }
 
+void InterceptPreDestroyPipeline(
+    VkDevice                                    device,
+    VkPipeline                                  pipeline,
+    const VkAllocationCallbacks*                pAllocator) {
+  g_interceptor->PreDestroyPipeline(device, pipeline, pAllocator);
+}
 void InterceptPostDestroyPipeline(
     VkDevice                                    device,
     VkPipeline                                  pipeline,
@@ -197,6 +255,13 @@ void InterceptPostDestroyPipeline(
   g_interceptor->PostDestroyPipeline(device, pipeline, pAllocator);
 }
 
+VkResult InterceptPreCreateCommandPool(
+    VkDevice                                    device,
+    const VkCommandPoolCreateInfo*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCommandPool*                              pCommandPool) {
+  return g_interceptor->PreCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
+}
 VkResult InterceptPostCreateCommandPool(
     VkDevice                                    device,
     const VkCommandPoolCreateInfo*              pCreateInfo,
@@ -233,6 +298,12 @@ VkResult InterceptPostResetCommandPool(
   return g_interceptor->PostResetCommandPool(device, commandPool, flags, result);
 }
 
+VkResult InterceptPreAllocateCommandBuffers(
+    VkDevice                                    device,
+    const VkCommandBufferAllocateInfo*          pAllocateInfo,
+    VkCommandBuffer*                            pCommandBuffers) {
+  return g_interceptor->PreAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
+}
 VkResult InterceptPostAllocateCommandBuffers(
     VkDevice                                    device,
     const VkCommandBufferAllocateInfo*          pAllocateInfo,
@@ -241,6 +312,13 @@ VkResult InterceptPostAllocateCommandBuffers(
   return g_interceptor->PostAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers, result);
 }
 
+void InterceptPreFreeCommandBuffers(
+    VkDevice                                    device,
+    VkCommandPool                               commandPool,
+    uint32_t                                    commandBufferCount,
+    const VkCommandBuffer*                      pCommandBuffers) {
+  g_interceptor->PreFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
+}
 void InterceptPostFreeCommandBuffers(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
@@ -1037,6 +1115,12 @@ void InterceptPostCmdDispatchBase(
   g_interceptor->PostCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 
+void InterceptPreGetDeviceQueue2(
+    VkDevice                                    device,
+    const VkDeviceQueueInfo2*                   pQueueInfo,
+    VkQueue*                                    pQueue) {
+  g_interceptor->PreGetDeviceQueue2(device, pQueueInfo, pQueue);
+}
 void InterceptPostGetDeviceQueue2(
     VkDevice                                    device,
     const VkDeviceQueueInfo2*                   pQueueInfo,
@@ -1479,6 +1563,15 @@ void InterceptPostCmdSetPrimitiveRestartEnable(
   g_interceptor->PostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 
+VkResult InterceptPreAcquireNextImageKHR(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    uint64_t                                    timeout,
+    VkSemaphore                                 semaphore,
+    VkFence                                     fence,
+    uint32_t*                                   pImageIndex) {
+  return g_interceptor->PreAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
+}
 VkResult InterceptPostAcquireNextImageKHR(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
@@ -1490,6 +1583,11 @@ VkResult InterceptPostAcquireNextImageKHR(
   return g_interceptor->PostAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex, result);
 }
 
+VkResult InterceptPreQueuePresentKHR(
+    VkQueue                                     queue,
+    const VkPresentInfoKHR*                     pPresentInfo) {
+  return g_interceptor->PreQueuePresentKHR(queue, pPresentInfo);
+}
 VkResult InterceptPostQueuePresentKHR(
     VkQueue                                     queue,
     const VkPresentInfoKHR*                     pPresentInfo,
@@ -1708,6 +1806,12 @@ void InterceptPostCmdDrawIndexedIndirectCountKHR(
   g_interceptor->PostCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
+VkResult InterceptPreGetSemaphoreCounterValueKHR(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    uint64_t*                                   pValue) {
+  return g_interceptor->PreGetSemaphoreCounterValueKHR(device, semaphore, pValue);
+}
 VkResult InterceptPostGetSemaphoreCounterValueKHR(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
@@ -1730,6 +1834,11 @@ VkResult InterceptPostWaitSemaphoresKHR(
   return g_interceptor->PostWaitSemaphoresKHR(device, pWaitInfo, timeout, result);
 }
 
+VkResult InterceptPreSignalSemaphoreKHR(
+    VkDevice                                    device,
+    const VkSemaphoreSignalInfo*                pSignalInfo) {
+  return g_interceptor->PreSignalSemaphoreKHR(device, pSignalInfo);
+}
 VkResult InterceptPostSignalSemaphoreKHR(
     VkDevice                                    device,
     const VkSemaphoreSignalInfo*                pSignalInfo,
