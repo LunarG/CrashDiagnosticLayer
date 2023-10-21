@@ -497,7 +497,7 @@ void CommandBuffer::DumpContents(std::ostream& os, CommandBufferDumpOptions opti
         indents.push_back(crash_diagnostic_layer::IncreaseIndent(indents[i - 1]));
     }
     os << indents[0] << "- # CommandBuffer:" << device_->GetObjectInfo((uint64_t)vk_command_buffer_, indents[1])
-       << indents[1] << "device:" << device_->GetObjectInfo((uint64_t)device_, indents[2]);
+       << indents[1] << "device:" << device_->GetObjectInfo((uint64_t)device_->GetVkDevice(), indents[2]);
     if (has_buffer_marker_) {
         os << indents[1] << "beginMarkerValue: " << crash_diagnostic_layer::Uint32ToStr(begin_marker_value_)
            << indents[1] << "endMarkerValue: " << crash_diagnostic_layer::Uint32ToStr(end_marker_value_);

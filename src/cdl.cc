@@ -942,6 +942,7 @@ void CdlContext::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, 
     queue_device_tracker_[*pQueue] = device;
 }
 
+void CdlContext::PreGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {}
 void CdlContext::PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {
     {
         std::lock_guard<std::mutex> lock(devices_mutex_);
@@ -1203,6 +1204,7 @@ VkResult CdlContext::PostCreateComputePipelines(VkDevice device, VkPipelineCache
     return callResult;
 }
 
+void CdlContext::PreDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) {}
 void CdlContext::PostDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     Device* p_device = devices_[device].get();
@@ -1333,6 +1335,10 @@ void CdlContext::MakeOutputPath() {
     }
 }
 
+VkResult CdlContext::PreCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
+                                        const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore) {
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
                                          const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore,
                                          VkResult result) {
@@ -1365,6 +1371,7 @@ VkResult CdlContext::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo 
     return result;
 }
 
+void CdlContext::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {}
 void CdlContext::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
     if (track_semaphores_) {
         std::lock_guard<std::mutex> lock(devices_mutex_);
@@ -1390,6 +1397,9 @@ void CdlContext::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, co
     }
 }
 
+VkResult CdlContext::PreSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo) {
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo,
                                             VkResult result) {
     if (track_semaphores_ && result == VK_SUCCESS) {
@@ -1490,6 +1500,9 @@ VkResult CdlContext::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWai
     return result;
 }
 
+VkResult CdlContext::PreGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
+    return VK_SUCCESS;
+}
 VkResult CdlContext::PostGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
                                                      VkResult result) {
     if (IsVkError(result)) {
@@ -1501,8 +1514,6 @@ VkResult CdlContext::PostGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphor
 const std::string& CdlContext::GetOutputPath() const { return output_path_; }
 
 VkResult CdlContext::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
-    PreApiFunction("vkDebugMarkerSetObjectNameEXT");
-
     auto object_id = pNameInfo->object;
 
     auto name_info = std::make_unique<ObjectInfo>();
@@ -1516,13 +1527,10 @@ VkResult CdlContext::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDeb
 
 VkResult CdlContext::PostDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo,
                                                      VkResult result) {
-    PostApiFunction("vkDebugMarkerSetObjectNameEXT");
     return result;
 };
 
 VkResult CdlContext::PreSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
-    PreApiFunction("vkSetDebugUtilsObjectNameEXT");
-
     auto object_id = pNameInfo->objectHandle;
 
     auto name_info = std::make_unique<ObjectInfo>();
@@ -1539,7 +1547,6 @@ VkResult CdlContext::PreSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebu
 
 VkResult CdlContext::PostSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo,
                                                     VkResult result) {
-    PostApiFunction("vkSetDebugUtilsObjectNameEXT");
     return VK_SUCCESS;
 }
 
