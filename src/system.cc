@@ -197,7 +197,7 @@ bool System::QueryInfoPosix() {
 #elif defined(SYSTEM_TARGET_APPLE)
 
     // Get CPU name
-#if 0 // TODO : Get this working for Mac
+#if 0  // TODO : Get this working for Mac
     fp = popen("cat /proc/cpuinfo", "r");
     if (nullptr != fp) {
         // Read the output a line at a time - output it.
@@ -376,7 +376,7 @@ bool System::QueryInfoWindows() {
     if (nullptr != fpIsWow64Process) {
         BOOL is_wow_64_process = FALSE;
         if (!fpIsWow64Process(GetCurrentProcess(), &is_wow_64_process)) {
-            GetCDL()->GetLogger().LogError("Failed to determine properly if 32-bit on Win64!");
+            GetCDL()->GetLogger()->LogError("Failed to determine properly if 32-bit on Win64!");
         }
         is_wow64 = (is_wow_64_process == TRUE);
     }
@@ -471,18 +471,24 @@ bool System::QueryInfoWindows() {
 
     switch (system_info.wProcessorArchitecture) {
         case PROCESSOR_ARCHITECTURE_AMD64:  // x64 (AMD or Intel)
-            cpu_name_ = "x64"; break;
+            cpu_name_ = "x64";
+            break;
         case PROCESSOR_ARCHITECTURE_ARM:  // ARM
-            cpu_name_ = "ARM"; break;
+            cpu_name_ = "ARM";
+            break;
         case PROCESSOR_ARCHITECTURE_ARM64:  // ARM64
-            cpu_name_ = "ARM64"; break;
+            cpu_name_ = "ARM64";
+            break;
         case PROCESSOR_ARCHITECTURE_IA64:  // Intel Itanium-based
-            cpu_name_ = "Intel Itanium"; break;
+            cpu_name_ = "Intel Itanium";
+            break;
         case PROCESSOR_ARCHITECTURE_INTEL:  // x86
-            cpu_name_ = "x86"; break;
+            cpu_name_ = "x86";
+            break;
         case PROCESSOR_ARCHITECTURE_UNKNOWN:
         default:
-            cpu_name_ = "Unknown Architecture"; break;
+            cpu_name_ = "Unknown Architecture";
+            break;
     }
 
     MEMORYSTATUSEX mem_stat;

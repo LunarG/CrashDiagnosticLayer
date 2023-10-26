@@ -363,27 +363,41 @@ void CdlContext::PostApiFunction(const char* api_name, VkResult result) {
     }
 }
 
+struct RequiredExtension {
+    char name[VK_MAX_EXTENSION_NAME_SIZE];
+    bool enabled;
+    bool* enabled_member;
+};
+
 const VkInstanceCreateInfo* CdlContext::GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) {
+    const uint32_t required_extension_count = 1;
+    RequiredExtension required_extensions[] = {{VK_EXT_DEBUG_UTILS_EXTENSION_NAME, false, nullptr}};
+
     instance_create_info_ = *pCreateInfo;
     instance_extension_names_.assign(pCreateInfo->ppEnabledExtensionNames,
                                      pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
 
-    bool requested_debug_report = false;
     for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
         const char* name = pCreateInfo->ppEnabledExtensionNames[i];
-        requested_debug_report = (strcmp(name, VK_EXT_DEBUG_REPORT_EXTENSION_NAME) == 0);
-        if (requested_debug_report) {
-            break;
+        for (uint32_t j = 0; j < required_extension_count; ++j) {
+            if (!strcmp(required_extensions[j].name, name)) {
+                required_extensions[j].enabled = true;
+            }
         }
     }
-    // Create persistent storage for the extension names
-    if (!requested_debug_report) {
-        instance_extension_names_.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-        instance_extension_names_cstr_.clear();
-        for (auto& ext : instance_extension_names_) instance_extension_names_cstr_.push_back(&ext.front());
-        instance_create_info_.enabledExtensionCount = static_cast<uint32_t>(instance_extension_names_cstr_.size());
-        instance_create_info_.ppEnabledExtensionNames = instance_extension_names_cstr_.data();
+
+    for (uint32_t j = 0; j < required_extension_count; ++j) {
+        if (!required_extensions[j].enabled) {
+            instance_extension_names_.push_back(required_extensions[j].name);
+        }
     }
+
+    // Create persistent storage for the extension names
+    instance_extension_names_cstr_.clear();
+    for (auto& ext : instance_extension_names_) instance_extension_names_cstr_.push_back(&ext.front());
+    instance_create_info_.enabledExtensionCount = static_cast<uint32_t>(instance_extension_names_cstr_.size());
+    instance_create_info_.ppEnabledExtensionNames = instance_extension_names_cstr_.data();
+
     return &instance_create_info_;
 }
 
@@ -396,13 +410,9 @@ const VkInstanceCreateInfo* CdlContext::GetModifiedInstanceCreateInfo(const VkIn
 // |extension_enabled| and |extension_added| will be set to false.
 void TryAddDeviceExtension(const VkDeviceCreateInfo* pCreateInfo,
                            const std::vector<VkExtensionProperties>& extension_properties,
-                           StringArray& enabled_extensions, const char* extension_name, bool* extension_enabled,
-                           bool* extension_added) {
+                           StringArray& enabled_extensions, const char* extension_name, bool* extension_enabled) {
     assert(extension_enabled != nullptr);
-    assert(extension_added != nullptr);
-
     *extension_enabled = false;
-    *extension_added = false;
 
     // Was the extension enabled by the main program?
     for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
@@ -423,12 +433,17 @@ void TryAddDeviceExtension(const VkDeviceCreateInfo* pCreateInfo,
 
     // Supported but we need to add it.
     *extension_enabled = true;
-    *extension_added = true;
     enabled_extensions.push_back(extension_name);
 }
 
 const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                                   const VkDeviceCreateInfo* pCreateInfo) {
+    const uint32_t required_extension_count = 2;
+    RequiredExtension required_extensions[] = {
+        {VK_AMD_BUFFER_MARKER_EXTENSION_NAME, false, &buffer_marker_enabled_},
+        {VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME, false, &device_coherent_enabled_},
+        {VK_EXT_DEVICE_FAULT_EXTENSION_NAME, false, &device_fault_enabled_}};
+
     // Get the list of device extensions.
     uint32_t extension_count = 0;
     std::vector<VkExtensionProperties> extension_properties;
@@ -441,21 +456,12 @@ const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(VkPhysicalDevi
         assert(vk_result == VK_SUCCESS);
     }
 
-    bool requested_buffer_marker = false;
     for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
         const char* name = pCreateInfo->ppEnabledExtensionNames[i];
-        requested_buffer_marker = (strcmp(name, VK_AMD_BUFFER_MARKER_EXTENSION_NAME) == 0);
-        if (requested_buffer_marker) {
-            break;
-        }
-    }
-
-    bool requested_coherent_memory = false;
-    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
-        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
-        requested_coherent_memory = (strcmp(name, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME) == 0);
-        if (requested_coherent_memory) {
-            break;
+        for (uint32_t j = 0; j < required_extension_count; ++j) {
+            if (!strcmp(required_extensions[j].name, name)) {
+                required_extensions[j].enabled = true;
+            }
         }
     }
 
@@ -465,19 +471,21 @@ const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(VkPhysicalDevi
 
     device_extension_names_ = device_extension_names_original_;
 
-    TryAddDeviceExtension(pCreateInfo, extension_properties, device_extension_names_,
-                          VK_AMD_BUFFER_MARKER_EXTENSION_NAME, &buffer_marker_enabled_, &buffer_marker_added_);
+    for (uint32_t j = 0; j < required_extension_count; ++j) {
+        if (!required_extensions[j].enabled) {
+            TryAddDeviceExtension(pCreateInfo, extension_properties, device_extension_names_,
+                                  required_extensions[j].name, required_extensions[j].enabled_member);
+        }
+    }
 
     if (!buffer_marker_enabled_) {
         logger_.LogError("No VK_AMD_buffer_marker extension, progression tracking will be disabled. ");
     }
-
-    TryAddDeviceExtension(pCreateInfo, extension_properties, device_extension_names_,
-                          VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME, &device_coherent_enabled_,
-                          &device_coherent_added_);
-
     if (!device_coherent_enabled_) {
         logger_.LogError("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
+    }
+    if (!device_fault_enabled_) {
+        logger_.LogWarning("No VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
     }
 
     auto device_create_info = std::make_unique<DeviceCreateInfo>();
@@ -777,7 +785,7 @@ void CdlContext::RecordBindSparseHelperSubmit(VkDevice vk_device, QueueBindSpars
     submit_tracker->RecordBindSparseHelperSubmit(qbind_sparse_id, vk_submit_info, vk_pool);
 }
 
-VkDevice CdlContext::GetQueueDevice(VkQueue queue) const {
+VkDevice CdlContext::GetQueueDevice(VkQueue queue) {
     std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
     auto it = queue_device_tracker_.find(queue);
     if (it == queue_device_tracker_.end()) {
@@ -833,6 +841,33 @@ VkResult CdlContext::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo, 
     return VK_SUCCESS;
 }
 
+static VkBool32 MessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+                                  VkDebugUtilsMessageTypeFlagsEXT types,
+                                  const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+    if (nullptr != pCallbackData && nullptr != pUserData) {
+        CdlContext* context = reinterpret_cast<CdlContext*>(pUserData);
+        Logger* logger = context->GetLogger();
+        switch (severity) {
+            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+                logger->LogError("[DebugCallback] %s", pCallbackData->pMessage);
+                break;
+            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+                logger->LogWarning("[DebugCallback] %s", pCallbackData->pMessage);
+                break;
+            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+                logger->LogInfo("[DebugCallback] %s", pCallbackData->pMessage);
+                break;
+            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+                logger->LogDebug("[DebugCallback] %s", pCallbackData->pMessage);
+                break;
+            default:
+                // If we get here, we don't care about the message.
+                break;
+        }
+    }
+    return VK_FALSE;
+}
+
 VkResult CdlContext::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
                                         const VkAllocationCallbacks* pAllocator, VkInstance* pInstance,
                                         VkResult result) {
@@ -854,6 +889,32 @@ VkResult CdlContext::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
     }
 
     return result;
+}
+
+void CdlContext::PreDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) {
+    if (VK_NULL_HANDLE != utils_messenger_) {
+        instance_dispatch_table_.DestroyDebugUtilsMessengerEXT(vk_instance_, utils_messenger_, nullptr);
+        utils_messenger_ = VK_NULL_HANDLE;
+    }
+}
+
+VkResult CdlContext::PreCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
+                                     const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
+    if (VK_NULL_HANDLE == utils_messenger_) {
+        VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = {
+            VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+            nullptr,
+            0,
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
+            VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+            &MessengerCallback,
+            this,
+        };
+        instance_dispatch_table_.CreateDebugUtilsMessengerEXT(vk_instance_, &messenger_create_info, nullptr,
+                                                              &utils_messenger_);
+    }
+    return VK_SUCCESS;
 }
 
 // TODO(b/141996712): extensions should be down at the intercept level, not
@@ -1518,7 +1579,7 @@ VkResult CdlContext::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDeb
 
     auto name_info = std::make_unique<ObjectInfo>();
     name_info->object = pNameInfo->object;
-    name_info->type = pNameInfo->objectType;
+    name_info->type = static_cast<VkObjectType>(pNameInfo->objectType);
     name_info->name = pNameInfo->pObjectName;
     AddObjectInfo(device, object_id, std::move(name_info));
 
@@ -1535,10 +1596,7 @@ VkResult CdlContext::PreSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebu
 
     auto name_info = std::make_unique<ObjectInfo>();
     name_info->object = pNameInfo->objectHandle;
-    name_info->type = (VkDebugReportObjectTypeEXT)pNameInfo->objectType;  // TODO(aellem): use
-                                                                          // VkObjectType as
-                                                                          // base enum, it's
-                                                                          // more future proof
+    name_info->type = pNameInfo->objectType;
     name_info->name = pNameInfo->pObjectName;
     AddObjectInfo(device, object_id, std::move(name_info));
 
@@ -1659,7 +1717,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(vk_device))->dispatch_table;
     VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
     if (vk_pool == VK_NULL_HANDLE) {
-        g_interceptor->GetLogger().LogError(
+        g_interceptor->GetLogger()->LogError(
             "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
             "state. Not tracking semaphores.");
         return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence, call_pre_queue_submit);
@@ -1686,7 +1744,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         auto result = dispatch_table.AllocateCommandBuffers(vk_device, &cb_allocate_info, new_buffers);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            g_interceptor->GetLogger().LogWarning(
+            g_interceptor->GetLogger()->LogWarning(
                 "failed to allocate helper command buffers for tracking queue submit state. vkAllocateCommandBuffers() "
                 "returned 0x%08x",
                 result);
@@ -1730,7 +1788,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         result = dispatch_table.BeginCommandBuffer(extended_cbs[0], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            g_interceptor->GetLogger().LogWarning(
+            g_interceptor->GetLogger()->LogWarning(
                 "failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
             g_interceptor->RecordSubmitStart(vk_device, queue_submit_id, submit_info_id, extended_cbs[0]);
@@ -1741,7 +1799,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         result = dispatch_table.BeginCommandBuffer(extended_cbs[cb_count + 1], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            g_interceptor->GetLogger().LogWarning(
+            g_interceptor->GetLogger()->LogWarning(
                 "failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
             g_interceptor->RecordSubmitFinish(vk_device, queue_submit_id, submit_info_id, extended_cbs[cb_count + 1]);
@@ -1785,9 +1843,9 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
     VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
     VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
     if (vk_device == VK_NULL_HANDLE || vk_pool == VK_NULL_HANDLE) {
-        g_interceptor->GetLogger().LogWarning("device handle not found for queue 0x" PRIx64
-                                              ", Ignoring semaphore signals in vkQueueBindSparse call.",
-                                              (uint64_t)queue);
+        g_interceptor->GetLogger()->LogWarning("device handle not found for queue 0x" PRIx64
+                                               ", Ignoring semaphore signals in vkQueueBindSparse call.",
+                                               (uint64_t)queue);
         return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
     }
 
@@ -1828,7 +1886,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
     auto result = dispatch_table.AllocateCommandBuffers(vk_device, &cb_allocate_info, new_buffers);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-        g_interceptor->GetLogger().LogWarning(
+        g_interceptor->GetLogger()->LogWarning(
             "failed to allocate helper command buffers for tracking queue bind sparse state. "
             "vkAllocateCommandBuffers() returned 0x%08x",
             result);
@@ -1852,7 +1910,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
         result = dispatch_table.BeginCommandBuffer(helper_cbs[i], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            g_interceptor->GetLogger().LogWarning(
+            g_interceptor->GetLogger()->LogWarning(
                 "ailed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
             g_interceptor->RecordBindSparseHelperSubmit(vk_device, qbind_sparse_id,
@@ -1906,7 +1964,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
             result = dispatch_table.QueueSubmit(
                 queue, 1, &expanded_bind_sparse_info.submit_infos[next_submit_info_index], VK_NULL_HANDLE);
             if (result != VK_SUCCESS) {
-                g_interceptor->GetLogger().LogWarning(
+                g_interceptor->GetLogger()->LogWarning(
                     "helper vkQueueSubmit failed while tracking semaphores in a vkQueueBindSparse call. Semaphore "
                     "values in the final report might be wrong. Result: 0x%08x",
                     result);
@@ -1918,7 +1976,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
         }
     }
     if (last_bind_result != VK_SUCCESS) {
-        g_interceptor->GetLogger().LogWarning(
+        g_interceptor->GetLogger()->LogWarning(
             "QueueBindSparse: Unexpected VkResult = 0x%8x after submitting %d bind sparse infos and %d "
             " helper submit infos to the queue. Submitting the remained bind sparse infos at once.",
             last_bind_result, next_bind_sparse_info_index, next_submit_info_index);

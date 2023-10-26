@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <stdio.h>
 #include <string>
 
@@ -34,19 +35,20 @@ class Logger {
     bool OpenLogFile(const std::string& filename);
     void CloseLogFile();
 
-    void LogError(const char* format, ...) const;
-    void LogError(const std::string& message) const;
-    void LogWarning(const char* format, ...) const;
-    void LogWarning(const std::string& message) const;
-    void LogInfo(const char* format, ...) const;
-    void LogInfo(const std::string& message) const;
-    void LogDebug(const char* format, ...) const;
-    void LogDebug(const std::string& message) const;
+    void LogError(const char* format, ...);
+    void LogError(const std::string& message);
+    void LogWarning(const char* format, ...);
+    void LogWarning(const std::string& message);
+    void LogInfo(const char* format, ...);
+    void LogInfo(const std::string& message);
+    void LogDebug(const char* format, ...);
+    void LogDebug(const std::string& message);
 
    private:
+    LogLevel log_level_{LOG_LEVEL_ERROR};
     std::string log_file_name_;
     FILE* log_file_{nullptr};
-    LogLevel log_level_{LOG_LEVEL_ERROR};
+    std::mutex file_access_mutex_;
 };
 
 }  // namespace crash_diagnostic_layer

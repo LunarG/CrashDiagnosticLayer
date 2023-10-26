@@ -133,7 +133,7 @@ class CdlContext {
     void MakeOutputPath();
     const std::string& GetOutputPath() const;
 
-    Logger& GetLogger() { return logger_; }
+    Logger* GetLogger() { return &logger_; }
     const ShaderModule* FindShaderModule(VkShaderModule shader) const;
 
     bool DumpShadersOnCrash() const;
@@ -160,7 +160,7 @@ class CdlContext {
     void RecordBindSparseHelperSubmit(VkDevice vk_device, QueueBindSparseId qbind_sparse_id,
                                       const VkSubmitInfo* vk_submit_info, VkCommandPool vk_pool);
 
-    VkDevice GetQueueDevice(VkQueue queue) const;
+    VkDevice GetQueueDevice(VkQueue queue);
     bool ShouldExpandQueueBindSparseToTrackSemaphores(PackedBindSparseInfo* packed_bind_sparse_info);
     void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
     void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
@@ -233,6 +233,8 @@ class CdlContext {
 
     std::unique_ptr<ApplicationInfo> application_info_;
 
+    VkDebugUtilsMessengerEXT utils_messenger_ = VK_NULL_HANDLE;
+
     mutable std::mutex devices_mutex_;
     std::unordered_map<VkDevice, DevicePtr> devices_;
     StringArray device_extension_names_;
@@ -260,9 +262,8 @@ class CdlContext {
     bool trace_all_semaphores_ = false;
 
     bool buffer_marker_enabled_ = false;
-    bool buffer_marker_added_ = false;
     bool device_coherent_enabled_ = false;
-    bool device_coherent_added_ = false;
+    bool device_fault_enabled_ = false;
 
     // TODO(aellem) some verbosity/trace modes?
     bool trace_all_ = false;

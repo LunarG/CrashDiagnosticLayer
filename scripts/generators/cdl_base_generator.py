@@ -40,11 +40,11 @@ custom_intercept_commands = [
 ]
 
 intercept_pre_functions = [
+    'vkDestroyInstance',
+    'vkCreateDevice',
 ]
 
 no_intercept_pre_functions = [
-    'vkDestroyInstance',
-    'vkCreateDevice',
     'vkEnumerateInstanceLayerProperties',
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',

@@ -41,6 +41,19 @@ VkResult InterceptPostCreateInstance(
   return g_interceptor->PostCreateInstance(pCreateInfo, pAllocator, pInstance, result);
 }
 
+void InterceptPreDestroyInstance(
+    VkInstance                                  instance,
+    const VkAllocationCallbacks*                pAllocator) {
+  g_interceptor->PreDestroyInstance(instance, pAllocator);
+}
+
+VkResult InterceptPreCreateDevice(
+    VkPhysicalDevice                            physicalDevice,
+    const VkDeviceCreateInfo*                   pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkDevice*                                   pDevice) {
+  return g_interceptor->PreCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
+}
 VkResult InterceptPostCreateDevice(
     VkPhysicalDevice                            physicalDevice,
     const VkDeviceCreateInfo*                   pCreateInfo,

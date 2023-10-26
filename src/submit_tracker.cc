@@ -41,8 +41,8 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index,
     // Reserve the markers
     bool top_marker_is_valid = device_->AllocateMarker(&submit_info.top_marker);
     if (!top_marker_is_valid || !device_->AllocateMarker(&submit_info.bottom_marker)) {
-        device_->GetCDL()->GetLogger().LogWarning("Cannot acquire marker. Not tracking submit info %s",
-                                                  device_->GetObjectName((uint64_t)vk_submit_info).c_str());
+        device_->GetCDL()->GetLogger()->LogWarning("Cannot acquire marker. Not tracking submit info %s",
+                                                   device_->GetObjectName((uint64_t)vk_submit_info).c_str());
         if (top_marker_is_valid) {
             device_->FreeMarker(submit_info.top_marker);
         }
@@ -129,8 +129,8 @@ void SubmitTracker::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId sub
             }
         }
     } else {
-        device_->GetCDL()->GetLogger().LogWarning("No previous record of queued submit in submit tracker: %d",
-                                                  submit_info_id);
+        device_->GetCDL()->GetLogger()->LogWarning("No previous record of queued submit in submit tracker: %d",
+                                                   submit_info_id);
     }
 }
 
@@ -152,7 +152,7 @@ void SubmitTracker::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId su
                                          submit_info.bottom_marker.buffer, submit_info.bottom_marker.offset,
                                          SubmitState::kFinished);
     } else {
-        device_->GetCDL()->GetLogger().LogWarning("No previous record of queued submit in submit tracker.");
+        device_->GetCDL()->GetLogger()->LogWarning("No previous record of queued submit in submit tracker.");
     }
 }
 
@@ -165,8 +165,8 @@ void SubmitTracker::CleanupSubmitInfos() {
             auto submit_info_id = *submit_it;
             auto it = submit_infos_.find(submit_info_id);
             if (it == submit_infos_.end()) {
-                device_->GetCDL()->GetLogger().LogWarning("No previous record of queued submit in submit tracker: %d",
-                                                          submit_info_id);
+                device_->GetCDL()->GetLogger()->LogWarning("No previous record of queued submit in submit tracker: %d",
+                                                           submit_info_id);
                 submit_it++;
                 continue;
             }
@@ -196,7 +196,7 @@ void SubmitTracker::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_
     HelperSubmitInfo hsubmit_info;
     // Reserve the marker
     if (!device_->AllocateMarker(&hsubmit_info.marker)) {
-        device_->GetCDL()->GetLogger().LogWarning("Cannot acquire marker for QueueBindSparse's helper submit");
+        device_->GetCDL()->GetLogger()->LogWarning("Cannot acquire marker for QueueBindSparse's helper submit");
         return;
     }
     std::lock_guard<std::mutex> lock(helper_submit_infos_mutex_);

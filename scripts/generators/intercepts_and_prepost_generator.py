@@ -41,6 +41,7 @@ custom_pre_intercept_functions = [
 ]
 
 custom_post_intercept_functions = [
+    'vkDestroyInstance',
     'vkCreateDevice',
     'vkGetDeviceQueue',
     'vkGetDeviceQueue2',

@@ -49,8 +49,9 @@ void Logger::CloseLogFile() {
     log_file_name_ = "";
 }
 
-void Logger::LogError(const char* format, ...) const {
+void Logger::LogError(const char* format, ...) {
     if (log_level_ <= LOG_LEVEL_ERROR) {
+        std::lock_guard<std::mutex> lock(file_access_mutex_);
         va_list argptr;
 #ifdef ANDROID
         va_start(argptr, format);
@@ -73,8 +74,9 @@ void Logger::LogError(const char* format, ...) const {
     }
 }
 
-void Logger::LogError(const std::string& message) const {
+void Logger::LogError(const std::string& message) {
     if (log_level_ <= LOG_LEVEL_ERROR) {
+        std::lock_guard<std::mutex> lock(file_access_mutex_);
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_ERROR, "CDL", "%s", message.c_str());
 #else  // !ANDROID
@@ -86,8 +88,9 @@ void Logger::LogError(const std::string& message) const {
     }
 }
 
-void Logger::LogWarning(const char* format, ...) const {
+void Logger::LogWarning(const char* format, ...) {
     if (log_level_ <= LOG_LEVEL_WARNING) {
+        std::lock_guard<std::mutex> lock(file_access_mutex_);
         va_list argptr;
 #ifdef ANDROID
         va_start(argptr, format);
@@ -110,8 +113,9 @@ void Logger::LogWarning(const char* format, ...) const {
     }
 }
 
-void Logger::LogWarning(const std::string& message) const {
+void Logger::LogWarning(const std::string& message) {
     if (log_level_ <= LOG_LEVEL_WARNING) {
+        std::lock_guard<std::mutex> lock(file_access_mutex_);
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_WARN, "CDL", "%s", message.c_str());
 #else  // !ANDROID
@@ -123,8 +127,9 @@ void Logger::LogWarning(const std::string& message) const {
     }
 }
 
-void Logger::LogInfo(const char* format, ...) const {
+void Logger::LogInfo(const char* format, ...) {
     if (log_level_ <= LOG_LEVEL_INFO) {
+        std::lock_guard<std::mutex> lock(file_access_mutex_);
         va_list argptr;
 #ifdef ANDROID
         va_start(argptr, format);
@@ -148,8 +153,9 @@ void Logger::LogInfo(const char* format, ...) const {
     }
 }
 
-void Logger::LogInfo(const std::string& message) const {
+void Logger::LogInfo(const std::string& message) {
     if (log_level_ <= LOG_LEVEL_INFO) {
+        std::lock_guard<std::mutex> lock(file_access_mutex_);
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_INFO, "CDL", "%s", message.c_str());
 #else  // !ANDROID
@@ -161,8 +167,9 @@ void Logger::LogInfo(const std::string& message) const {
     }
 }
 
-void Logger::LogDebug(const char* format, ...) const {
+void Logger::LogDebug(const char* format, ...) {
     if (log_level_ <= LOG_LEVEL_DEBUG) {
+        std::lock_guard<std::mutex> lock(file_access_mutex_);
         va_list argptr;
 #ifdef ANDROID
         va_start(argptr, format);
@@ -186,8 +193,9 @@ void Logger::LogDebug(const char* format, ...) const {
     }
 }
 
-void Logger::LogDebug(const std::string& message) const {
+void Logger::LogDebug(const std::string& message) {
     if (log_level_ <= LOG_LEVEL_DEBUG) {
+        std::lock_guard<std::mutex> guard(file_access_mutex_);
 #ifdef ANDROID
         __android_log_print(ANDROID_LOG_DEBUG, "CDL", "%s", message.c_str());
 #else  // !ANDROID

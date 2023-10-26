@@ -449,6 +449,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroyInstance(
 
   auto instance_key = DataKey(instance);
   InstanceData *instance_data = GetInstanceLayerData(instance_key);
+
+  InterceptPreDestroyInstance(instance, pAllocator);
+
   auto pfn_destroy_instance = instance_data->dispatch_table.DestroyInstance;
   pfn_destroy_instance(instance, pAllocator);
 
@@ -479,6 +482,8 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
 
   const VkDeviceCreateInfo *pFinalCreateInfo =
       GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
+
+  InterceptPreCreateDevice(gpu, pFinalCreateInfo, pAllocator, pDevice);
 
   VkResult result = CreateDevice(pfn_create_device, gpu, pFinalCreateInfo,
                                  pAllocator, pDevice);

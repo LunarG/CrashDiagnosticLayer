@@ -359,9 +359,9 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_command_pool, const VkComma
 
 // Write out information about an invalid command buffer reset.
 void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& os) const {
-    GetCDL()->GetLogger().LogError("Invalid Command Buffer Usage");
-    GetCDL()->GetLogger().LogError("Reset of VkCommandBuffer in use by GPU: %s",
-                                   GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
+    GetCDL()->GetLogger()->LogError("Invalid Command Buffer Usage");
+    GetCDL()->GetLogger()->LogError("Reset of VkCommandBuffer in use by GPU: %s",
+                                    GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
     auto submitted_fence = p_cmd->GetSubmittedFence();
 
     // If there is a fence associated with this command buffer, we check
@@ -369,10 +369,10 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& 
     if (submitted_fence != VK_NULL_HANDLE) {
         auto fence_status = device_dispatch_table_.WaitForFences(vk_device_, 1, &submitted_fence, VK_TRUE, 0);
         if (VK_TIMEOUT == fence_status) {
-            GetCDL()->GetLogger().LogError("Reset before fence was set: %s",
-                                           GetObjectName((uint64_t)submitted_fence).c_str());
+            GetCDL()->GetLogger()->LogError("Reset before fence was set: %s",
+                                            GetObjectName((uint64_t)submitted_fence).c_str());
         } else {
-            GetCDL()->GetLogger().LogError("Fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
+            GetCDL()->GetLogger()->LogError("Fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
         }
     }
 
@@ -383,7 +383,7 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& 
     std::stringstream error_report;
     error_report << "InvalidCommandBuffer:\n";
     p_cmd->DumpContents(error_report, CommandBufferDumpOption::kDumpAllCommands);
-    GetCDL()->GetLogger().LogError(error_report.str().c_str());
+    GetCDL()->GetLogger()->LogError(error_report.str().c_str());
     os << error_report.str();
 }
 

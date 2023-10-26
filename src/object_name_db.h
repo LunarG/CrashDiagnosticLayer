@@ -31,7 +31,7 @@
 // -----------------------------------------------------------------------------
 struct ObjectInfo {
     uint64_t object;
-    VkDebugReportObjectTypeEXT type;
+    VkObjectType type;
     std::string name;
 };
 

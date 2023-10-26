@@ -36,7 +36,7 @@ std::string PtrToStr(const T* ptr) {
 ObjectInfoDB::ObjectInfoDB() {
     // default name for unknown objects
     unknown_object_.object = 0;
-    unknown_object_.type = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT;
+    unknown_object_.type = VK_OBJECT_TYPE_UNKNOWN;
     unknown_object_.name = "<unknown>";
 }
 
