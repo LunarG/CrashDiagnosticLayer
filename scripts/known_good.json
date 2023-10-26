@@ -1,0 +1,25 @@
+{
+  "repos": [
+    {
+      "name": "Vulkan-Headers",
+      "api": "vulkan",
+      "url": "https://github.com/KhronosGroup/Vulkan-Headers.git",
+      "sub_dir": "Vulkan-Headers",
+      "build_dir": "Vulkan-Headers/build",
+      "install_dir": "Vulkan-Headers/build/install",
+      "commit": "v1.3.266"
+    },
+    {
+      "name": "SPIRV-Headers",
+      "url": "https://github.com/KhronosGroup/SPIRV-Headers.git",
+      "sub_dir": "SPIRV-Headers",
+      "build_dir": "SPIRV-Headers/build",
+      "install_dir": "SPIRV-Headers/build/install",
+      "commit": "d790ced752b5bfc06b6988baadef6eb2d16bdf96"
+    }
+  ],
+  "install_names": {
+    "Vulkan-Headers": "VULKAN_HEADERS_INSTALL_DIR",
+    "SPIRV-Headers": "SPIRV_HEADERS_INSTALL_DIR"
+  }
+}

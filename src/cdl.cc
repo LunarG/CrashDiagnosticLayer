@@ -1,0 +1,2027 @@
+/*
+ Copyright 2018 Google Inc.
+ Copyright (c) 2023 Valve Corporation
+ Copyright (c) 2023 LunarG, Inc.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+
+#include "cdl.h"
+
+#if defined(WIN32)
+// For OutputDebugString
+#include <process.h>
+#include <windows.h>
+#endif
+
+#ifdef __linux__
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <sys/un.h>
+#endif
+
+#include <algorithm>
+#include <chrono>
+#include <fstream>
+#include <inttypes.h>
+#include <iostream>
+#include <memory>
+#include <sstream>
+
+#include "util.h"
+#include "layer_utils.h"
+
+#if defined(WIN32)
+#include <direct.h>
+#endif
+
+namespace crash_diagnostic_layer {
+
+const char* kCdlVersion = "1.2.0";
+const char* kGpuHangDaemonSocketName = "/run/gpuhangd";
+
+const char* k_env_var_output_path = "CDL_OUTPUT_PATH";
+const char* k_env_var_output_name = "CDL_OUTPUT_NAME";
+const char* k_env_var_logfile_prefix = "CDL_LOGFILE_PREFIX";
+
+const char* k_env_var_log_configs = "CDL_DEBUG_LOG_CONFIGS";
+const char* k_env_var_trace_on = "CDL_TRACE_ON";
+const char* k_env_var_debug_autodump = "CDL_AUTODUMP";
+const char* k_env_var_dump_all_command_buffers = "CDL_DUMP_ALL_COMMAND_BUFFERS";
+const char* k_env_var_track_semaphores = "CDL_TRACK_SEMAPHORES";
+const char* k_env_var_trace_all_semaphores = "CDL_TRACE_ALL_SEMAPHORES";
+const char* k_env_var_instrument_all_commands = "CDL_INSTRUMENT_ALL_COMMANDS";
+
+const char* k_env_var_debug_shaders_dump = "CDL_SHADERS_DUMP";
+const char* k_env_var_debug_shaders_dump_on_crash = "CDL_SHADERS_DUMP_ON_CRASH";
+const char* k_env_var_debug_shaders_dump_on_bind = "CDL_SHADERS_DUMP_ON_BIND";
+
+const char* k_env_var_debug_buffers_dump_indirect = "CDL_BUFFERS_DUMP_INDIRECT";
+
+const char* k_env_var_watchdog_timeout = "CDL_WATCHDOG_TIMEOUT_MS";
+
+const char* k_env_var_disable_driver_hang = "CDL_DISABLE_DRIVER_HANG";
+
+constexpr int kMessageHangDetected = 0x8badf00d;
+
+#if defined(WIN32)
+const char* k_path_separator = "\\";
+#else
+const char* k_path_separator = "/";
+#endif
+
+// =============================================================================
+// CdlContext
+// =============================================================================
+CdlContext::CdlContext() {
+    system_.SetCDL(this);
+
+    logger_.LogInfo("Version %s enabled.", kCdlVersion);
+    // output path
+    {
+        char* p_env_value = getenv(k_env_var_output_path);
+        if (p_env_value) {
+            output_path_ = p_env_value;
+
+            if (output_path_.back() != k_path_separator[0]) {
+                output_path_ += k_path_separator;
+            }
+        } else {
+#if defined(WIN32)
+            output_path_ = getenv("USERPROFILE");
+#else
+            output_path_ = "/mnt/developer/ggp";
+#endif
+
+            output_path_ += k_path_separator;
+            output_path_ += +"cdl";
+            output_path_ += k_path_separator;
+        }
+
+        // ensure base path is created
+        MakeDir(output_path_);
+        base_output_path_ = output_path_;
+
+        // Calculate a unique sub directory based on time
+        auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+        // if output_name_ is given, don't create a subdirectory
+        char* d_env_value = getenv(k_env_var_output_name);
+        if (d_env_value) {
+            output_name_ = d_env_value;
+        } else {
+            std::stringstream ss;
+            ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S");
+            output_path_ += ss.str();
+            output_path_ += k_path_separator;
+        }
+
+        // If logfile prefix is given, create it with the date_time suffix
+        d_env_value = getenv(k_env_var_logfile_prefix);
+        if (d_env_value) {
+            std::stringstream ss;
+            ss << output_path_ << d_env_value << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S") << ".log";
+            logger_.OpenLogFile(ss.str());
+        }
+    }
+
+    // report cdl configs
+    {
+        char* p_env_value = getenv(k_env_var_log_configs);
+        log_configs_ = (p_env_value != nullptr) && (std::atol(p_env_value) == 1);
+        if (log_configs_) {
+            configs_.push_back(std::string(k_env_var_log_configs) + "=1");
+        }
+    }
+
+    // trace mode
+    GetEnvVal<bool>(k_env_var_trace_on, &trace_all_);
+
+    // setup shader loading modes
+    shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
+
+    {
+        bool dump_shaders = false;
+        GetEnvVal<bool>(k_env_var_debug_shaders_dump, &dump_shaders);
+        if (dump_shaders) {
+            shader_module_load_options_ |= ShaderModule::LoadOptions::kDumpOnCreate;
+        } else {
+            // if we're not dumping all shaders then check if we dump in other cases
+            {
+                GetEnvVal<bool>(k_env_var_debug_shaders_dump_on_crash, &debug_dump_shaders_on_crash_);
+                if (debug_dump_shaders_on_crash_) {
+                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
+                }
+            }
+
+            {
+                GetEnvVal<bool>(k_env_var_debug_shaders_dump_on_bind, &debug_dump_shaders_on_bind_);
+                if (debug_dump_shaders_on_bind_) {
+                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
+                }
+            }
+        }
+    }
+
+    // manage the watchdog thread
+    {
+        GetEnvVal<uint64_t>(k_env_var_watchdog_timeout, &watchdog_timer_ms_);
+
+        last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                std::chrono::high_resolution_clock::now().time_since_epoch())
+                                .count();
+
+        if (watchdog_timer_ms_ > 0) {
+            StartWatchdogTimer();
+            logger_.LogInfo("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
+        }
+    }
+
+    // Manage the gpuhangd listener thread.
+    {
+        bool disable_driver_hang_thread = false;
+        GetEnvVal<bool>(k_env_var_disable_driver_hang, &disable_driver_hang_thread);
+
+        if (!disable_driver_hang_thread) {
+            StartGpuHangdListener();
+            logger_.LogInfo("gpuhangd listener started: %s", kGpuHangDaemonSocketName);
+        }
+    }
+}
+
+CdlContext::~CdlContext() {
+    StopWatchdogTimer();
+    StopGpuHangdListener();
+    logger_.CloseLogFile();
+}
+
+void CdlContext::MakeDir(const std::string& path) {
+#if defined(WIN32)
+    int mkdir_result = _mkdir(path.c_str());
+#else
+    int mkdir_result = mkdir(path.c_str(), ACCESSPERMS);
+#endif
+
+    if (mkdir_result && EEXIST != errno) {
+        logger_.LogError("Error creating output directory \'%s\': %s", path.c_str(), strerror(errno));
+    }
+}
+
+template <class T>
+void CdlContext::GetEnvVal(const char* name, T* value) {
+    char* p_env_value = getenv(name);
+    if (p_env_value) {
+        if (log_configs_) {
+            auto config = std::string(name) + "=" + std::string(p_env_value);
+            if (std::find(configs_.begin(), configs_.end(), config) == configs_.end()) {
+                configs_.push_back(config);
+            }
+        }
+        *value = std::atol(p_env_value);
+    }
+}
+
+void CdlContext::StartWatchdogTimer() {
+    // Start up the watchdog timer thread.
+    watchdog_running_ = true;
+    watchdog_thread_ = std::make_unique<std::thread>([&]() { this->WatchdogTimer(); });
+}
+
+void CdlContext::StopWatchdogTimer() {
+    if (watchdog_running_ && watchdog_thread_->joinable()) {
+        logger_.LogInfo("Stopping Watchdog");
+        watchdog_running_ = false;  // TODO: condition variable that waits
+        watchdog_thread_->join();
+        logger_.LogInfo("Watchdog Stopped");
+    }
+}
+
+void CdlContext::WatchdogTimer() {
+    uint64_t test_interval_us = std::min((uint64_t)(1000 * 1000), watchdog_timer_ms_ * 500);
+    while (watchdog_running_) {
+        // TODO: condition variable that waits
+        std::this_thread::sleep_for(std::chrono::microseconds(test_interval_us));
+
+        auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+                       std::chrono::high_resolution_clock::now().time_since_epoch())
+                       .count();
+        auto ms = (int64_t)(now - last_submit_time_);
+
+        if (ms > (int64_t)watchdog_timer_ms_) {
+            logger_.LogInfo("CDL: Watchdog check failed, no submit in %" PRId64 "ms", ms);
+
+            DumpAllDevicesExecutionState(CrashSource::kWatchdogTimer);
+
+            // Reset the timer to prevent constantly dumping the log.
+            last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                    std::chrono::high_resolution_clock::now().time_since_epoch())
+                                    .count();
+        }
+    }
+}
+
+void CdlContext::StartGpuHangdListener() {
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
+    // Start up the hang deamon thread.
+    gpuhangd_thread_ = std::make_unique<std::thread>([&]() { this->GpuHangdListener(); });
+#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
+        // defined(SYSTEM_TARGET_BSD)
+}
+
+void CdlContext::StopGpuHangdListener() {
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
+    if (gpuhangd_thread_ && gpuhangd_thread_->joinable()) {
+        logger_.LogInfo("Stopping Listener");
+        if (gpuhangd_socket_ >= 0) {
+            shutdown(gpuhangd_socket_, SHUT_RDWR);
+        }
+        gpuhangd_thread_->join();
+        logger_.LogInfo("Listener Stopped");
+    }
+#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
+        // defined(SYSTEM_TARGET_BSD)
+}
+
+void CdlContext::GpuHangdListener() {
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
+    gpuhangd_socket_ = socket(AF_LOCAL, SOCK_STREAM, 0);
+    if (gpuhangd_socket_ < 0) {
+        logger_.LogWarning("Could not create socket: %s", strerror(errno));
+        return;
+    }
+
+    struct sockaddr_un addr = {};
+    addr.sun_family = AF_LOCAL;
+    addr.sun_path[0] = '\0';
+    strncpy(addr.sun_path + 1, kGpuHangDaemonSocketName, sizeof(addr.sun_path) - 2);
+
+    int connect_ret = connect(gpuhangd_socket_, (const struct sockaddr*)&addr, sizeof(struct sockaddr_un));
+    if (connect_ret < 0) {
+        logger_.LogWarning("Could not connect socket: %s", strerror(errno));
+        return;
+    }
+
+    for (;;) {
+        int msg = 0;
+        int read_ret = read(gpuhangd_socket_, &msg, sizeof(int));
+        if (read_ret < 0) {
+            logger_.LogWarning("Could not read socket: %s", strerror(errno));
+            break;
+        } else if (0 == read_ret) {
+            logger_.LogInfo("Socket closed");
+            break;
+        }
+
+        if (kMessageHangDetected == msg) {
+            logger_.LogError("Driver signalled a hang.");
+            read_ret = read(gpuhangd_socket_, &gpuhang_event_id_, sizeof(int));
+            if (read_ret > 0) {
+                logger_.LogError("Hang event ID: %d", gpuhang_event_id_);
+            } else {
+                logger_.LogError("Hang event ID not received from the hang daemon.");
+            }
+            DumpAllDevicesExecutionState(CrashSource::kHangDaemon);
+        }
+    }
+#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
+        // defined(SYSTEM_TARGET_BSD)
+}
+
+void CdlContext::PreApiFunction(const char* api_name) {
+    if (trace_all_) {
+        logger_.LogInfo("{ %s", api_name);
+    }
+}
+
+void CdlContext::PostApiFunction(const char* api_name) {
+    if (trace_all_) {
+        logger_.LogInfo("} %s", api_name);
+    }
+}
+
+void CdlContext::PostApiFunction(const char* api_name, VkResult result) {
+    if (trace_all_) {
+        std::string result_string;
+        GetResultString(result, result_string);
+        logger_.LogInfo("} %s (%s)", api_name, result_string.c_str());
+    }
+}
+
+struct RequiredExtension {
+    char name[VK_MAX_EXTENSION_NAME_SIZE];
+    bool enabled;
+    bool* enabled_member;
+};
+
+const VkInstanceCreateInfo* CdlContext::GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) {
+    const uint32_t required_extension_count = 1;
+    RequiredExtension required_extensions[] = {{VK_EXT_DEBUG_UTILS_EXTENSION_NAME, false, nullptr}};
+
+    instance_create_info_ = *pCreateInfo;
+    instance_extension_names_.assign(pCreateInfo->ppEnabledExtensionNames,
+                                     pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
+
+    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
+        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
+        for (uint32_t j = 0; j < required_extension_count; ++j) {
+            if (!strcmp(required_extensions[j].name, name)) {
+                required_extensions[j].enabled = true;
+            }
+        }
+    }
+
+    for (uint32_t j = 0; j < required_extension_count; ++j) {
+        if (!required_extensions[j].enabled) {
+            instance_extension_names_.push_back(required_extensions[j].name);
+        }
+    }
+
+    // Create persistent storage for the extension names
+    instance_extension_names_cstr_.clear();
+    for (auto& ext : instance_extension_names_) instance_extension_names_cstr_.push_back(&ext.front());
+    instance_create_info_.enabledExtensionCount = static_cast<uint32_t>(instance_extension_names_cstr_.size());
+    instance_create_info_.ppEnabledExtensionNames = instance_extension_names_cstr_.data();
+
+    return &instance_create_info_;
+}
+
+// TryAddExtension will try an enable an extension.
+//
+// If the extension is already part of |pCreateInfo|, |extenion_enabled| be set
+// to true and |extension_added| will be set to false. If the extension is
+// supported by the device then |extension_enabled| and |extension_added| will
+// be set to true. If the extension is not supported by the device then
+// |extension_enabled| and |extension_added| will be set to false.
+void TryAddDeviceExtension(const VkDeviceCreateInfo* pCreateInfo,
+                           const std::vector<VkExtensionProperties>& extension_properties,
+                           StringArray& enabled_extensions, const char* extension_name, bool* extension_enabled) {
+    assert(extension_enabled != nullptr);
+    *extension_enabled = false;
+
+    // Was the extension enabled by the main program?
+    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
+        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
+        if (strcmp(name, extension_name) == 0) {
+            *extension_enabled = true;
+            return;
+        }
+    }
+
+    // Does the device support this extension?
+    auto e = std::find_if(
+        std::begin(extension_properties), std::end(extension_properties),
+        [extension_name](const VkExtensionProperties& p) { return strcmp(extension_name, p.extensionName) == 0; });
+    if (e == std::end(extension_properties)) {
+        return;
+    }
+
+    // Supported but we need to add it.
+    *extension_enabled = true;
+    enabled_extensions.push_back(extension_name);
+}
+
+const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
+                                                                  const VkDeviceCreateInfo* pCreateInfo) {
+    const uint32_t required_extension_count = 2;
+    RequiredExtension required_extensions[] = {
+        {VK_AMD_BUFFER_MARKER_EXTENSION_NAME, false, &buffer_marker_enabled_},
+        {VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME, false, &device_coherent_enabled_},
+        {VK_EXT_DEVICE_FAULT_EXTENSION_NAME, false, &device_fault_enabled_}};
+
+    // Get the list of device extensions.
+    uint32_t extension_count = 0;
+    std::vector<VkExtensionProperties> extension_properties;
+    VkResult vk_result =
+        instance_dispatch_table_.EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extension_count, nullptr);
+    if (vk_result == VK_SUCCESS) {
+        extension_properties.resize(extension_count);
+        vk_result = instance_dispatch_table_.EnumerateDeviceExtensionProperties(
+            physicalDevice, nullptr, &extension_count, extension_properties.data());
+        assert(vk_result == VK_SUCCESS);
+    }
+
+    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
+        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
+        for (uint32_t j = 0; j < required_extension_count; ++j) {
+            if (!strcmp(required_extensions[j].name, name)) {
+                required_extensions[j].enabled = true;
+            }
+        }
+    }
+
+    // Keep a copy of extensions
+    device_extension_names_original_.assign(pCreateInfo->ppEnabledExtensionNames,
+                                            pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
+
+    device_extension_names_ = device_extension_names_original_;
+
+    for (uint32_t j = 0; j < required_extension_count; ++j) {
+        if (!required_extensions[j].enabled) {
+            TryAddDeviceExtension(pCreateInfo, extension_properties, device_extension_names_,
+                                  required_extensions[j].name, required_extensions[j].enabled_member);
+        }
+    }
+
+    if (!buffer_marker_enabled_) {
+        logger_.LogError("No VK_AMD_buffer_marker extension, progression tracking will be disabled. ");
+    }
+    if (!device_coherent_enabled_) {
+        logger_.LogError("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
+    }
+    if (!device_fault_enabled_) {
+        logger_.LogWarning("No VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
+    }
+
+    auto device_create_info = std::make_unique<DeviceCreateInfo>();
+    device_create_info->original_create_info = *pCreateInfo;
+
+    device_extension_names_original_cstr_.clear();
+    for (auto& ext : device_extension_names_original_) device_extension_names_original_cstr_.push_back(&ext.front());
+    device_extension_names_cstr_.clear();
+    for (auto& ext : device_extension_names_) device_extension_names_cstr_.push_back(&ext.front());
+
+    device_create_info->original_create_info.enabledExtensionCount =
+        static_cast<uint32_t>(device_extension_names_original_cstr_.size());
+    device_create_info->original_create_info.ppEnabledExtensionNames = device_extension_names_original_cstr_.data();
+    device_create_info->modified_create_info = *pCreateInfo;
+    device_create_info->modified_create_info.enabledExtensionCount =
+        static_cast<uint32_t>(device_extension_names_cstr_.size());
+    device_create_info->modified_create_info.ppEnabledExtensionNames = device_extension_names_cstr_.data();
+    auto p_modified_create_info = &(device_create_info->modified_create_info);
+    {
+        std::lock_guard<std::mutex> lock(device_create_infos_mutex_);
+        device_create_infos_[p_modified_create_info] = std::move(device_create_info);
+    }
+
+    return p_modified_create_info;
+}
+
+bool CdlContext::DumpShadersOnCrash() const { return debug_dump_shaders_on_crash_; }
+
+bool CdlContext::DumpShadersOnBind() const { return debug_dump_shaders_on_bind_; }
+
+void CdlContext::AddObjectInfo(VkDevice device, uint64_t handle, ObjectInfoPtr info) {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    if (devices_.find(device) != devices_.end()) {
+        devices_[device]->AddObjectInfo(handle, std::move(info));
+    }
+}
+
+std::string CdlContext::GetObjectName(VkDevice vk_device, uint64_t handle) {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    if (devices_.find(vk_device) != devices_.end()) {
+        return devices_[vk_device]->GetObjectName(handle);
+    }
+    return Uint64ToStr(handle);
+}
+
+std::string CdlContext::GetObjectInfo(VkDevice vk_device, uint64_t handle) {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    if (devices_.find(vk_device) != devices_.end()) {
+        return devices_[vk_device]->GetObjectInfo(handle);
+    }
+    return Uint64ToStr(handle);
+}
+
+void CdlContext::DumpAllDevicesExecutionState(CrashSource crash_source) {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    bool dump_prologue = true;
+    std::stringstream os;
+    for (auto& it : devices_) {
+        auto device = it.second.get();
+        DumpDeviceExecutionState(device, dump_prologue, crash_source, &os);
+        dump_prologue = false;
+    }
+    WriteReport(os, crash_source);
+}
+
+void CdlContext::DumpDeviceExecutionState(VkDevice vk_device, bool dump_prologue = true,
+                                          CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    if (devices_.find(vk_device) != devices_.end()) {
+        DumpDeviceExecutionState(devices_[vk_device].get(), {}, dump_prologue, crash_source, os);
+    }
+}
+
+void CdlContext::DumpDeviceExecutionState(const Device* device, bool dump_prologue = true,
+                                          CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
+    DumpDeviceExecutionState(device, {}, dump_prologue, crash_source, os);
+}
+
+void CdlContext::DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue = true,
+                                          CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
+    if (!device) {
+        return;
+    }
+
+    std::stringstream ss;
+    if (dump_prologue) {
+        DumpReportPrologue(ss, device);
+    }
+
+    device->Print(ss);
+
+    if (track_semaphores_) {
+        device->GetSubmitTracker()->DumpWaitingSubmits(ss);
+        ss << "\n";
+        device->GetSemaphoreTracker()->DumpWaitingThreads(ss);
+        ss << "\n";
+    }
+
+    ss << "\n";
+    ss << error_report;
+
+    auto options = CommandBufferDumpOption::kDefault;
+    if (debug_dump_all_command_buffers_) options |= CommandBufferDumpOption::kDumpAllCommands;
+
+    if (debug_autodump_rate_ > 0 || debug_dump_all_command_buffers_) {
+        device->DumpAllCommandBuffers(ss, options);
+    } else {
+        device->DumpIncompleteCommandBuffers(ss, options);
+    }
+
+    if (os) {
+        *os << ss.str();
+    } else {
+        WriteReport(ss, crash_source);
+    }
+}
+
+void CdlContext::DumpDeviceExecutionStateValidationFailed(const Device* device, std::ostream& os) {
+    // We force all command buffers to dump here because validation can be
+    // from a race condition and the GPU can complete work by the time we've
+    // started writing the log. (Seen in practice, not theoretical!)
+    auto dump_all = debug_dump_all_command_buffers_;
+    debug_dump_all_command_buffers_ = true;
+    std::stringstream error_report;
+    error_report << os.rdbuf();
+    DumpDeviceExecutionState(device, error_report.str(), true /* dump_prologue */, CrashSource::kDeviceLostError, &os);
+    WriteReport(os, CrashSource::kDeviceLostError);
+    debug_dump_all_command_buffers_ = dump_all;
+}
+
+void CdlContext::DumpReportPrologue(std::ostream& os, const Device* device) {
+    os << "#----------------------------------------------------------------\n";
+    os << "#-                    CRASH DIAGNOSTIC LAYER                    -\n";
+    os << "#----------------------------------------------------------------\n";
+
+#ifdef __linux__
+    if (gpuhang_event_id_) {
+        os << "# internal_use_gpu_hang_event_id " << gpuhang_event_id_ << "\n\n";
+    }
+#endif
+
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+    const char* t = "\n  ";
+    const char* tt = "\n    ";
+    os << "CDLInfo:" << t << "version: " << kCdlVersion << t << "date: \""
+       << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X") << "\"";
+    if (log_configs_) {
+        os << t << "envVars:";
+        std::string configstr;
+        for (auto& cstr : configs_) {
+            os << tt << "- " << cstr;
+        }
+    }
+    os << "\n";
+
+    os << "\nSystemInfo:" << t << "osName: " << system_.GetOsName() << t << "osVersion: " << system_.GetOsVersion() << t
+       << "osBitdepth: " << system_.GetOsBitdepth() << t << "osAdditional: " << system_.GetOsAdditionalInfo() << t
+       << "cpuName: " << system_.GetHwCpuName() << t << "numCpus: " << system_.GetHwNumCpus() << t
+       << "totalRam: " << system_.GetHwTotalRam() << t << "totalDiskSpace: " << system_.GetHwTotalDiskSpace() << t
+       << "availDiskSpace: " << system_.GetHwAvailDiskSpace() << t;
+
+    os << "\nInstance:" << device->GetObjectInfo((uint64_t)vk_instance_, t);
+    if (application_info_) {
+        os << t << "application: \"" << application_info_->applicationName << "\"";
+        os << t << "applicationVersion: " << application_info_->applicationVersion;
+        os << t << "engine: \"" << application_info_->engineName << "\"";
+        os << t << "engineVersion: " << application_info_->engineVersion;
+
+        auto majorVersion = VK_VERSION_MAJOR(application_info_->apiVersion);
+        auto minorVersion = VK_VERSION_MINOR(application_info_->apiVersion);
+        auto patchVersion = VK_VERSION_PATCH(application_info_->apiVersion);
+
+        os << t << "apiVersion: \"" << std::dec << majorVersion << "." << minorVersion << "." << patchVersion << " (0x"
+           << std::hex << std::setfill('0') << std::setw(8) << application_info_->apiVersion << std::dec << ")\"";
+    }
+
+    os << t << "instanceExtensions:";
+    for (auto& ext : instance_extension_names_original_) {
+        os << tt << "- \"" << ext << "\"";
+    }
+    os << "\n";
+}
+
+void CdlContext::WriteReport(std::ostream& os, CrashSource crash_source) {
+    // Make sure our output directory exists.
+    MakeOutputPath();
+
+    // now write our log.
+    std::stringstream ss_path;
+
+    // Keep the first log as cdl.log then add a number if more than one log is
+    // generated. Multiple logs are a new feature and we want to keep backward
+    // compatiblity for now.
+    std::string output_name = "cdl";
+    if (output_name_.size() > 0) {
+        output_name = output_name_;
+    }
+    if (total_logs_ > 0) {
+        ss_path << output_path_ << output_name << "_" << total_submits_ << "_" << total_logs_ << ".log";
+    } else {
+        ss_path << output_path_ << output_name << ".log";
+    }
+    total_logs_++;
+
+    std::string output_path = ss_path.str();
+    std::ofstream fs(output_path.c_str());
+    if (fs.is_open()) {
+        std::stringstream ss;
+        ss << os.rdbuf();
+        fs << ss.str();
+        fs.flush();
+        fs.close();
+    }
+
+#if !defined(WIN32)
+    // Create a symlink from the generated log file.
+    std::string symlink_path = base_output_path_ + "cdl.log.symlink";
+    remove(symlink_path.c_str());
+    symlink(output_path.c_str(), symlink_path.c_str());
+#endif
+
+    std::stringstream ss;
+    ss << "Device error encountered and log being recorded\n";
+    ss << "\tOutput written to: " << output_path << "\n";
+#if !defined(WIN32)
+    ss << "\tSymlink to output: " << symlink_path << "\n";
+#endif
+    ss << "----------------------------------------------------------------\n";
+#if defined(WIN32)
+    OutputDebugString(ss.str().c_str());
+#endif
+    logger_.LogError(ss.str());
+}
+
+VkCommandPool CdlContext::GetHelperCommandPool(VkDevice vk_device, VkQueue vk_queue) {
+    assert(track_semaphores_ == true);
+    if (vk_device == VK_NULL_HANDLE || vk_queue == VK_NULL_HANDLE) {
+        return VK_NULL_HANDLE;
+    }
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    uint32_t queue_family_index = devices_[vk_device]->GetQueueFamilyIndex(vk_queue);
+    return devices_[vk_device]->GetHelperCommandPool(queue_family_index);
+}
+
+SubmitInfoId CdlContext::RegisterSubmitInfo(VkDevice vk_device, QueueSubmitId queue_submit_id,
+                                            const VkSubmitInfo* vk_submit_info) {
+    assert(track_semaphores_ == true);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    auto submit_info_id = devices_[vk_device]->GetSubmitTracker()->RegisterSubmitInfo(queue_submit_id, vk_submit_info);
+    return submit_info_id;
+}
+
+void CdlContext::StoreSubmitHelperCommandBuffersInfo(VkDevice vk_device, SubmitInfoId submit_info_id,
+                                                     VkCommandPool vk_pool, VkCommandBuffer start_marker_cb,
+                                                     VkCommandBuffer end_marker_cb) {
+    assert(track_semaphores_ == true);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    devices_[vk_device]->GetSubmitTracker()->StoreSubmitHelperCommandBuffersInfo(submit_info_id, vk_pool,
+                                                                                 start_marker_cb, end_marker_cb);
+}
+
+void CdlContext::RecordSubmitStart(VkDevice vk_device, QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
+                                   VkCommandBuffer vk_command_buffer) {
+    assert(track_semaphores_ == true);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    devices_[vk_device]->GetSubmitTracker()->RecordSubmitStart(qsubmit_id, submit_info_id, vk_command_buffer);
+}
+
+void CdlContext::RecordSubmitFinish(VkDevice vk_device, QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
+                                    VkCommandBuffer vk_command_buffer) {
+    assert(track_semaphores_ == true);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    auto submit_tracker = devices_[vk_device]->GetSubmitTracker();
+    submit_tracker->RecordSubmitFinish(qsubmit_id, submit_info_id, vk_command_buffer);
+    submit_tracker->CleanupSubmitInfos();
+}
+
+void CdlContext::LogSubmitInfoSemaphores(VkDevice vk_device, VkQueue vk_queue, SubmitInfoId submit_info_id) {
+    assert(track_semaphores_ == true);
+    assert(trace_all_semaphores_ == true);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    auto submit_tracker = devices_[vk_device]->GetSubmitTracker();
+    if (submit_tracker->SubmitInfoHasSemaphores(submit_info_id)) {
+        std::string semaphore_log = submit_tracker->GetSubmitInfoSemaphoresLog(vk_device, vk_queue, submit_info_id);
+        logger_.LogInfo(semaphore_log);
+    }
+}
+
+void CdlContext::RecordBindSparseHelperSubmit(VkDevice vk_device, QueueBindSparseId qbind_sparse_id,
+                                              const VkSubmitInfo* vk_submit_info, VkCommandPool vk_pool) {
+    assert(track_semaphores_ == true);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    auto submit_tracker = devices_[vk_device]->GetSubmitTracker();
+    submit_tracker->CleanupBindSparseHelperSubmits();
+    submit_tracker->RecordBindSparseHelperSubmit(qbind_sparse_id, vk_submit_info, vk_pool);
+}
+
+VkDevice CdlContext::GetQueueDevice(VkQueue queue) {
+    std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
+    auto it = queue_device_tracker_.find(queue);
+    if (it == queue_device_tracker_.end()) {
+        logger_.LogWarning("queue 0x" PRIx64 " cannot be linked to any device.", (uint64_t)(queue));
+        return VK_NULL_HANDLE;
+    }
+    return it->second;
+}
+
+bool CdlContext::ShouldExpandQueueBindSparseToTrackSemaphores(PackedBindSparseInfo* packed_bind_sparse_info) {
+    assert(track_semaphores_ == true);
+    VkDevice vk_device = GetQueueDevice(packed_bind_sparse_info->queue);
+    assert(vk_device != VK_NULL_HANDLE);
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    packed_bind_sparse_info->semaphore_tracker = devices_[vk_device]->GetSemaphoreTracker();
+    return BindSparseUtils::ShouldExpandQueueBindSparseToTrackSemaphores(packed_bind_sparse_info);
+}
+
+void CdlContext::ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info) {
+    return BindSparseUtils::ExpandBindSparseInfo(bind_sparse_expand_info);
+}
+
+void CdlContext::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count,
+                                              const VkBindSparseInfo* bind_infos) {
+    assert(track_semaphores_ == true);
+    assert(trace_all_semaphores_ == true);
+    VkDevice vk_device = GetQueueDevice(vk_queue);
+    if (vk_device == VK_NULL_HANDLE) {
+        return;
+    }
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    auto log = BindSparseUtils::LogBindSparseInfosSemaphores(devices_[vk_device].get(), vk_device, vk_queue,
+                                                             bind_info_count, bind_infos);
+    logger_.LogInfo(log);
+}
+
+// =============================================================================
+// Define pre / post intercepted commands
+// =============================================================================
+
+VkResult CdlContext::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
+                                       VkInstance* pInstance) {
+    // Setup debug flags
+    GetEnvVal<int>(k_env_var_debug_autodump, &debug_autodump_rate_);
+    GetEnvVal<bool>(k_env_var_dump_all_command_buffers, &debug_dump_all_command_buffers_);
+    GetEnvVal<bool>(k_env_var_track_semaphores, &track_semaphores_);
+    GetEnvVal<bool>(k_env_var_trace_all_semaphores, &trace_all_semaphores_);
+    GetEnvVal<bool>(k_env_var_instrument_all_commands, &instrument_all_commands_);
+
+    instance_extension_names_original_.assign(
+        pCreateInfo->ppEnabledExtensionNames,
+        pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
+    return VK_SUCCESS;
+}
+
+static VkBool32 MessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+                                  VkDebugUtilsMessageTypeFlagsEXT types,
+                                  const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+    if (nullptr != pCallbackData && nullptr != pUserData) {
+        CdlContext* context = reinterpret_cast<CdlContext*>(pUserData);
+        Logger* logger = context->GetLogger();
+        switch (severity) {
+            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+                logger->LogError("[DebugCallback] %s", pCallbackData->pMessage);
+                break;
+            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+                logger->LogWarning("[DebugCallback] %s", pCallbackData->pMessage);
+                break;
+            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+                logger->LogInfo("[DebugCallback] %s", pCallbackData->pMessage);
+                break;
+            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+                logger->LogDebug("[DebugCallback] %s", pCallbackData->pMessage);
+                break;
+            default:
+                // If we get here, we don't care about the message.
+                break;
+        }
+    }
+    return VK_FALSE;
+}
+
+VkResult CdlContext::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
+                                        const VkAllocationCallbacks* pAllocator, VkInstance* pInstance,
+                                        VkResult result) {
+    vk_instance_ = *pInstance;
+    auto instance_layer_data = GetInstanceLayerData(crash_diagnostic_layer::DataKey(vk_instance_));
+    instance_dispatch_table_ = instance_layer_data->dispatch_table;
+
+    if (pCreateInfo->pApplicationInfo) {
+        application_info_ = std::make_unique<ApplicationInfo>();
+
+        application_info_->applicationName =
+            pCreateInfo->pApplicationInfo->pApplicationName ? pCreateInfo->pApplicationInfo->pApplicationName : "";
+        application_info_->applicationVersion = pCreateInfo->pApplicationInfo->applicationVersion;
+
+        application_info_->engineName =
+            pCreateInfo->pApplicationInfo->pEngineName ? pCreateInfo->pApplicationInfo->pEngineName : "";
+        application_info_->engineVersion = pCreateInfo->pApplicationInfo->engineVersion;
+        application_info_->apiVersion = pCreateInfo->pApplicationInfo->apiVersion;
+    }
+
+    return result;
+}
+
+void CdlContext::PreDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) {
+    if (VK_NULL_HANDLE != utils_messenger_) {
+        instance_dispatch_table_.DestroyDebugUtilsMessengerEXT(vk_instance_, utils_messenger_, nullptr);
+        utils_messenger_ = VK_NULL_HANDLE;
+    }
+}
+
+VkResult CdlContext::PreCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
+                                     const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
+    if (VK_NULL_HANDLE == utils_messenger_) {
+        VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = {
+            VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+            nullptr,
+            0,
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
+            VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+            &MessengerCallback,
+            this,
+        };
+        instance_dispatch_table_.CreateDebugUtilsMessengerEXT(vk_instance_, &messenger_create_info, nullptr,
+                                                              &utils_messenger_);
+    }
+    return VK_SUCCESS;
+}
+
+// TODO(b/141996712): extensions should be down at the intercept level, not
+// pre/post OR intercept should always extend/copy list
+VkResult CdlContext::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
+                                      const VkAllocationCallbacks* pAllocator, VkDevice* pDevice, VkResult callResult) {
+    if (callResult != VK_SUCCESS) return callResult;
+
+    bool has_buffer_marker = false;
+    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
+        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
+        has_buffer_marker = (strcmp(name, VK_AMD_BUFFER_MARKER_EXTENSION_NAME) == 0);
+        if (has_buffer_marker) {
+            break;
+        }
+    }
+
+    VkDevice vk_device = *pDevice;
+    DevicePtr device = std::make_unique<Device>(this, physicalDevice, *pDevice, has_buffer_marker);
+
+    {
+        std::lock_guard<std::mutex> lock(device_create_infos_mutex_);
+        device->SetDeviceCreateInfo(std::move(device_create_infos_[pCreateInfo]));
+        device_create_infos_.erase(pCreateInfo);
+    }
+    {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        devices_[vk_device] = std::move(device);
+    }
+
+    if (track_semaphores_) {
+        // Create a helper command pool per queue family index. This command pool
+        // will be used for allocating command buffers that track the state of
+        // submit and semaphores.
+        auto dispatch_table =
+            crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(vk_device))->dispatch_table;
+        VkCommandPoolCreateInfo command_pool_create_info = {};
+        command_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+
+        for (uint32_t i = 0; i < pCreateInfo->queueCreateInfoCount; i++) {
+            auto queue_family_index = pCreateInfo->pQueueCreateInfos[i].queueFamilyIndex;
+            command_pool_create_info.queueFamilyIndex = queue_family_index;
+            VkCommandPool command_pool;
+            auto res = dispatch_table.CreateCommandPool(vk_device, &command_pool_create_info, nullptr, &command_pool);
+            if (res != VK_SUCCESS) {
+                logger_.LogWarning("failed to create command pools for helper command  buffers. VkDevice: 0x" PRIx64
+                                   ", queueFamilyIndex: %d",
+                                   (uint64_t)(vk_device), queue_family_index);
+            } else {
+                std::lock_guard<std::mutex> lock(devices_mutex_);
+                devices_[vk_device]->RegisterHelperCommandPool(queue_family_index, command_pool);
+            }
+        }
+    }
+
+    return VK_SUCCESS;
+}
+
+void CdlContext::PreDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
+    if (track_semaphores_) {
+        auto dispatch_table =
+            crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(device))->dispatch_table;
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        auto command_pools = devices_[device]->ReturnAndEraseCommandPools();
+        for (auto& command_pool : command_pools) {
+            dispatch_table.DestroyCommandPool(device, command_pool, nullptr);
+        }
+    }
+}
+
+void CdlContext::PostDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+
+    auto it = devices_.find(device);
+    if (it != devices_.end()) {
+        devices_.erase(it);
+    }
+}
+
+void CdlContext::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) {
+    {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        devices_[device]->RegisterQueueFamilyIndex(*pQueue, queueFamilyIndex);
+    }
+    std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
+    queue_device_tracker_[*pQueue] = device;
+}
+
+void CdlContext::PreGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {}
+void CdlContext::PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {
+    {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        devices_[device]->RegisterQueueFamilyIndex(*pQueue, pQueueInfo->queueFamilyIndex);
+    }
+    std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
+    queue_device_tracker_[*pQueue] = device;
+}
+
+VkResult CdlContext::PreQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
+    PreApiFunction("vkQueueSubmit");
+    last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                            std::chrono::high_resolution_clock::now().time_since_epoch())
+                            .count();
+
+    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        const auto& submit_info = pSubmits[submit_index];
+        for (uint32_t command_buffer_index = 0; command_buffer_index < submit_info.commandBufferCount;
+             ++command_buffer_index) {
+            auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(submit_info.pCommandBuffers[command_buffer_index]);
+            if (p_cmd != nullptr) {
+                p_cmd->QueueSubmit(queue, fence);
+            }
+        }
+    }
+
+    return VK_SUCCESS;
+}
+
+VkResult CdlContext::PreQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
+                                     VkFence fence) {
+    PreApiFunction("vkQueueSubmit2");
+
+    last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                            std::chrono::high_resolution_clock::now().time_since_epoch())
+                            .count();
+
+    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        const auto& submit_info = pSubmits[submit_index];
+        for (uint32_t command_buffer_index = 0; command_buffer_index < submit_info.commandBufferInfoCount;
+             ++command_buffer_index) {
+            auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(
+                submit_info.pCommandBufferInfos[command_buffer_index].commandBuffer);
+            if (p_cmd != nullptr) {
+                p_cmd->QueueSubmit(queue, fence);
+            }
+        }
+    }
+
+    return VK_SUCCESS;
+}
+
+VkResult CdlContext::PreQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
+                                        VkFence fence) {
+    PreApiFunction("vkQueueSubmit2KHR");
+    return PreQueueSubmit2(queue, submitCount, pSubmits, fence);
+}
+
+// Return true if this is a VkResult that CDL considers an error.
+bool IsVkError(VkResult result) { return result == VK_ERROR_DEVICE_LOST || result == VK_ERROR_INITIALIZATION_FAILED; }
+
+VkResult CdlContext::PostQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence,
+                                     VkResult result) {
+    PostApiFunction("vkQueueSubmit", result);
+    total_submits_++;
+
+    bool dump = IsVkError(result) || (debug_autodump_rate_ > 0 && (total_submits_ % debug_autodump_rate_) == 0);
+
+    if (dump) {
+        DumpDeviceExecutionState(GetQueueDevice(queue));
+    }
+    return result;
+}
+
+VkResult CdlContext::PostQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence,
+                                      VkResult result) {
+    PostApiFunction("vkQueueSubmit2", result);
+    total_submits_++;
+
+    bool dump = IsVkError(result) || (debug_autodump_rate_ > 0 && (total_submits_ % debug_autodump_rate_) == 0);
+
+    if (dump) {
+        DumpDeviceExecutionState(GetQueueDevice(queue));
+    }
+    return result;
+}
+
+VkResult CdlContext::PostQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
+                                         VkFence fence, VkResult result) {
+    PostApiFunction("vkQueueSubmit2KHR", result);
+    return PostQueueSubmit2(queue, submitCount, pSubmits, fence, result);
+}
+
+VkResult CdlContext::PreDeviceWaitIdle(VkDevice device) {
+    (void)device;
+    PreApiFunction("vkDeviceWaitIdle");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostDeviceWaitIdle(VkDevice device, VkResult result) {
+    PostApiFunction("vkDeviceWaitIdle", result);
+
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(device);
+    }
+
+    return result;
+}
+
+VkResult CdlContext::PreQueueWaitIdle(VkQueue queue) {
+    (void)queue;
+    PreApiFunction("vkQueueWaitIdle");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostQueueWaitIdle(VkQueue queue, VkResult result) {
+    PostApiFunction("vkQueueWaitIdle", result);
+
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(GetQueueDevice(queue));
+    }
+
+    return result;
+}
+
+VkResult CdlContext::PreQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo) {
+    PreApiFunction("vkQueuePresentKHR");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo, VkResult result) {
+    PostApiFunction("vkQueuePresentKHR", result);
+
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(GetQueueDevice(queue));
+    }
+
+    return result;
+}
+
+VkResult CdlContext::PreQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindSparseInfo const* pBindInfo,
+                                        VkFence fence) {
+    PreApiFunction("vkQueueBindSparse");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindSparseInfo const* pBindInfo,
+                                         VkFence fence, VkResult result) {
+    PostApiFunction("vkQueueBindSparse", result);
+
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(GetQueueDevice(queue));
+    }
+
+    return result;
+}
+
+VkResult CdlContext::PreWaitForFences(VkDevice device, uint32_t fenceCount, VkFence const* pFences, VkBool32 waitAll,
+                                      uint64_t timeout) {
+    PreApiFunction("vkWaitForFences");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkFence const* pFences, VkBool32 waitAll,
+                                       uint64_t timeout, VkResult result) {
+    PostApiFunction("vkWaitForFences", result);
+
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(device);
+    }
+
+    return result;
+}
+
+VkResult CdlContext::PreGetFenceStatus(VkDevice device, VkFence fence) {
+    PreApiFunction("vkGetFenceStatus");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostGetFenceStatus(VkDevice device, VkFence fence, VkResult result) {
+    PostApiFunction("vkGetFenceStatus", result);
+
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(device);
+    }
+
+    return result;
+}
+
+VkResult CdlContext::PreGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
+                                            uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride,
+                                            VkQueryResultFlags flags) {
+    PostApiFunction("vkGetQueryPoolResults");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
+                                             uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride,
+                                             VkQueryResultFlags flags, VkResult result) {
+    PostApiFunction("vkGetQueryPoolResults", result);
+
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(device);
+    }
+
+    return result;
+}
+
+VkResult CdlContext::PreAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
+                                            VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) {
+    PreApiFunction("vkAcquireNextImageKHR");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
+                                             VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex,
+                                             VkResult result) {
+    PostApiFunction("vkAcquireNextImageKHR", result);
+
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(device);
+    }
+
+    return result;
+}
+
+VkResult CdlContext::PostCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo,
+                                            const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule,
+                                            VkResult callResult) {
+    if (callResult == VK_SUCCESS) {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        Device* p_device = devices_[device].get();
+        p_device->CreateShaderModule(pCreateInfo, pShaderModule, shader_module_load_options_);
+    }
+    return callResult;
+}
+
+void CdlContext::PostDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
+                                         const VkAllocationCallbacks* pAllocator) {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    devices_[device]->DeleteShaderModule(shaderModule);
+}
+
+VkResult CdlContext::PostCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
+                                                 uint32_t createInfoCount,
+                                                 const VkGraphicsPipelineCreateInfo* pCreateInfos,
+                                                 const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines,
+                                                 VkResult callResult) {
+    if (callResult == VK_SUCCESS) {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        Device* p_device = devices_[device].get();
+        p_device->CreatePipeline(createInfoCount, pCreateInfos, pPipelines);
+    }
+    return callResult;
+}
+
+VkResult CdlContext::PostCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache,
+                                                uint32_t createInfoCount,
+                                                const VkComputePipelineCreateInfo* pCreateInfos,
+                                                const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines,
+                                                VkResult callResult) {
+    if (callResult == VK_SUCCESS) {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        Device* p_device = devices_[device].get();
+        p_device->CreatePipeline(createInfoCount, pCreateInfos, pPipelines);
+    }
+    return callResult;
+}
+
+void CdlContext::PreDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) {}
+void CdlContext::PostDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) {
+    std::lock_guard<std::mutex> lock(devices_mutex_);
+    Device* p_device = devices_[device].get();
+    p_device->DeletePipeline(pipeline);
+}
+
+VkResult CdlContext::PreCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
+                                          const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) {
+    PreApiFunction("vkCreateCommandPool");
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
+                                           const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool,
+                                           VkResult callResult) {
+    if (callResult == VK_SUCCESS) {
+        PostApiFunction("vkCreateCommandPool");
+        std::lock_guard<std::mutex> lock_devices(devices_mutex_);
+        Device* p_device = devices_[device].get();
+        CommandPoolPtr pool = std::make_unique<CommandPool>(
+            *pCommandPool, pCreateInfo, p_device->GetVkQueueFamilyProperties(), p_device->HasBufferMarker());
+        p_device->SetCommandPool(*pCommandPool, std::move(pool));
+    }
+    return callResult;
+}
+
+void CdlContext::PreDestroyCommandPool(VkDevice device, VkCommandPool commandPool,
+                                       const VkAllocationCallbacks* pAllocator) {
+    PreApiFunction("vkDestroyCommandPool");
+
+    std::lock_guard<std::mutex> lock_devices(devices_mutex_);
+    std::stringstream os;
+    devices_[device]->ValidateCommandPoolState(commandPool, os);
+    if (os.rdbuf()->in_avail()) {
+        DumpDeviceExecutionStateValidationFailed(devices_[device].get(), os);
+    }
+}
+
+void CdlContext::PostDestroyCommandPool(VkDevice device, VkCommandPool commandPool,
+                                        const VkAllocationCallbacks* pAllocator) {
+    PostApiFunction("vkDestroyCommandPool");
+
+    std::lock_guard<std::mutex> lock_devices(devices_mutex_);
+    devices_[device]->DeleteCommandPool(commandPool);
+}
+
+VkResult CdlContext::PreResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags) {
+    PreApiFunction("vkResetCommandPool");
+
+    std::lock_guard<std::mutex> lock_devices(devices_mutex_);
+    std::stringstream os;
+    devices_[device]->ValidateCommandPoolState(commandPool, os);
+    if (os.rdbuf()->in_avail()) {
+        DumpDeviceExecutionStateValidationFailed(devices_[device].get(), os);
+    }
+    return VK_SUCCESS;
+}
+
+VkResult CdlContext::PostResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags,
+                                          VkResult callResult) {
+    PostApiFunction("vkResetCommandPool");
+
+    std::lock_guard<std::mutex> lock_devices(devices_mutex_);
+    devices_[device]->ResetCommandPool(commandPool);
+
+    return callResult;
+}
+
+VkResult CdlContext::PreAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo,
+                                               VkCommandBuffer* pCommandBuffers) {
+    PreApiFunction("vkAllocateCommandBuffers");
+    return VK_SUCCESS;
+}
+
+VkResult CdlContext::PostAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo,
+                                                VkCommandBuffer* pCommandBuffers, VkResult callResult) {
+    if (callResult == VK_SUCCESS) {
+        PostApiFunction("vkAllocateCommandBuffers");
+
+        std::lock_guard<std::mutex> lock_devices(devices_mutex_);
+
+        Device* p_device = devices_[device].get();
+        auto vk_pool = pAllocateInfo->commandPool;
+        p_device->AllocateCommandBuffers(vk_pool, pAllocateInfo, pCommandBuffers);
+        auto has_buffer_markers = p_device->GetCommandPool(vk_pool)->HasBufferMarkers();
+
+        // create command buffers tracking data
+        for (uint32_t i = 0; i < pAllocateInfo->commandBufferCount; ++i) {
+            VkCommandBuffer vk_cmd = pCommandBuffers[i];
+
+            auto cmd = std::make_unique<CommandBuffer>(p_device, vk_pool, vk_cmd, pAllocateInfo, has_buffer_markers);
+            cmd->SetInstrumentAllCommands(instrument_all_commands_);
+
+            crash_diagnostic_layer::SetCdlCommandBuffer(vk_cmd, std::move(cmd));
+            p_device->AddCommandBuffer(vk_cmd);
+        }
+    }
+    return callResult;
+}
+
+void CdlContext::PreFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
+                                       const VkCommandBuffer* pCommandBuffers) {
+    PreApiFunction("vkFreeCommandBuffers");
+}
+void CdlContext::PostFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
+                                        const VkCommandBuffer* pCommandBuffers) {
+    PostApiFunction("vkFreeCommandBuffers");
+
+    std::lock_guard<std::mutex> lock_devices(devices_mutex_);
+    std::stringstream os;
+    bool all_cb_ok = true;
+    for (uint32_t i = 0; i < commandBufferCount; ++i) {
+        all_cb_ok = all_cb_ok && devices_[device]->ValidateCommandBufferNotInUse(pCommandBuffers[i], os);
+    }
+    if (!all_cb_ok) {
+        DumpDeviceExecutionStateValidationFailed(devices_[device].get(), os);
+    }
+
+    devices_[device]->GetCommandPool(commandPool)->FreeCommandBuffers(commandBufferCount, pCommandBuffers);
+
+    // Free the command buffer objects.
+    devices_[device]->DeleteCommandBuffers(pCommandBuffers, commandBufferCount);
+}
+
+void CdlContext::MakeOutputPath() {
+    if (!output_path_created_) {
+        output_path_created_ = true;
+        MakeDir(output_path_);
+    }
+}
+
+VkResult CdlContext::PreCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
+                                        const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore) {
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
+                                         const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore,
+                                         VkResult result) {
+    if (track_semaphores_ && result == VK_SUCCESS) {
+        uint64_t s_value = 0;
+        VkSemaphoreTypeKHR s_type = VK_SEMAPHORE_TYPE_BINARY_KHR;
+        const VkSemaphoreTypeCreateInfoKHR* semaphore_info =
+            FindOnChain<VkSemaphoreTypeCreateInfoKHR, VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR>(
+                pCreateInfo->pNext);
+        if (semaphore_info) {
+            s_value = semaphore_info->initialValue;
+            s_type = semaphore_info->semaphoreType;
+        }
+        {
+            std::lock_guard<std::mutex> lock(devices_mutex_);
+            devices_[device]->GetSemaphoreTracker()->RegisterSemaphore(*pSemaphore, s_type, s_value);
+        }
+        if (trace_all_semaphores_) {
+            std::stringstream log;
+            log << "Semaphore created. VkDevice:" << GetObjectName(device, (uint64_t)device)
+                << ", VkSemaphore: " << GetObjectName(device, (uint64_t)(*pSemaphore));
+            if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
+                log << ", Type: Binary.\n";
+            } else {
+                log << ", Type: Timeline, Initial value: " << s_value << std::endl;
+            }
+            logger_.LogInfo(log.str());
+        }
+    }
+    return result;
+}
+
+void CdlContext::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {}
+void CdlContext::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
+    if (track_semaphores_) {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        auto semaphore_tracker = devices_[device]->GetSemaphoreTracker();
+        if (trace_all_semaphores_) {
+            std::stringstream log;
+            log << "Semaphore destroyed. VkDevice:" << GetObjectName(device, (uint64_t)device)
+                << ", VkSemaphore: " << GetObjectName(device, (uint64_t)(semaphore));
+            if (semaphore_tracker->GetSemaphoreType(semaphore) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
+                log << ", Type: Binary, ";
+            } else {
+                log << ", Type: Timeline, ";
+            }
+            uint64_t semaphore_value;
+            if (semaphore_tracker->GetSemaphoreValue(semaphore, semaphore_value)) {
+                log << "Latest value: " << semaphore_value << std::endl;
+            } else {
+                log << "Latest value: Unknonw.\n";
+            }
+            logger_.LogInfo(log.str());
+        }
+        semaphore_tracker->EraseSemaphore(semaphore);
+    }
+}
+
+VkResult CdlContext::PreSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo) {
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo,
+                                            VkResult result) {
+    if (track_semaphores_ && result == VK_SUCCESS) {
+        {
+            std::lock_guard<std::mutex> lock(devices_mutex_);
+            devices_[device]->GetSemaphoreTracker()->SignalSemaphore(pSignalInfo->semaphore, pSignalInfo->value,
+                                                                     {SemaphoreModifierType::kModifierHost});
+        }
+        if (trace_all_semaphores_) {
+            std::string timeline_message = "Timeline semaphore signaled from host. VkDevice: ";
+            timeline_message += GetObjectName(device, (uint64_t)device) +
+                                ", VkSemaphore: " + GetObjectName(device, (uint64_t)(pSignalInfo->semaphore)) +
+                                ", Signal value: " + std::to_string(pSignalInfo->value);
+            logger_.LogInfo(timeline_message.c_str());
+        }
+    }
+    return result;
+}
+
+VkResult CdlContext::PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout) {
+    if (track_semaphores_) {
+        int tid = 0;
+#ifdef SYS_gettid
+        tid = syscall(SYS_gettid);
+#endif  // SYS_gettid
+
+#ifdef WIN32
+        int pid = _getpid();
+#else
+        int pid = getpid();
+#endif
+
+        {
+            std::lock_guard<std::mutex> lock(devices_mutex_);
+            devices_[device]->GetSemaphoreTracker()->BeginWaitOnSemaphores(pid, tid, pWaitInfo);
+        }
+        if (trace_all_semaphores_) {
+            std::stringstream log;
+            log << "Waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
+                << ", VkDevice: " << GetObjectName(device, (uint64_t)device) << std::endl;
+            for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
+                log << "\tVkSemaphore: " << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
+                    << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
+            }
+            logger_.LogInfo(log.str());
+        }
+    }
+    return VK_SUCCESS;
+}
+
+VkResult CdlContext::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout,
+                                           VkResult result) {
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(device);
+        return result;
+    }
+    if (track_semaphores_ && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
+        int tid = 0;
+#ifdef SYS_gettid
+        tid = syscall(SYS_gettid);
+#endif  // SYS_gettid
+
+#ifdef WIN32
+        int pid = _getpid();
+#else
+        int pid = getpid();
+#endif  // WIN32
+
+        {
+            // Update semaphore values
+            uint64_t semaphore_value;
+            auto dispatch_table =
+                crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(device))->dispatch_table;
+            std::lock_guard<std::mutex> lock(devices_mutex_);
+            auto semaphore_tracker = devices_[device]->GetSemaphoreTracker();
+            for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
+                auto res =
+                    dispatch_table.GetSemaphoreCounterValueKHR(device, pWaitInfo->pSemaphores[i], &semaphore_value);
+                if (res == VK_SUCCESS) {
+                    semaphore_tracker->SignalSemaphore(pWaitInfo->pSemaphores[i], semaphore_value,
+                                                       {SemaphoreModifierType::kModifierHost});
+                }
+            }
+            semaphore_tracker->EndWaitOnSemaphores(pid, tid, pWaitInfo);
+        }
+
+        if (trace_all_semaphores_) {
+            std::stringstream log;
+            log << "Finished waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
+                << ", VkDevice: " << GetObjectName(device, (uint64_t)device) << std::endl;
+            for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
+                log << "\tVkSemaphore: " << GetObjectName(device, (uint64_t)(pWaitInfo->pSemaphores[i]))
+                    << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
+            }
+            logger_.LogInfo(log.str());
+        }
+    }
+    return result;
+}
+
+VkResult CdlContext::PreGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
+    return VK_SUCCESS;
+}
+VkResult CdlContext::PostGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
+                                                     VkResult result) {
+    if (IsVkError(result)) {
+        DumpDeviceExecutionState(device);
+    }
+    return result;
+}
+
+const std::string& CdlContext::GetOutputPath() const { return output_path_; }
+
+VkResult CdlContext::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
+    auto object_id = pNameInfo->object;
+
+    auto name_info = std::make_unique<ObjectInfo>();
+    name_info->object = pNameInfo->object;
+    name_info->type = static_cast<VkObjectType>(pNameInfo->objectType);
+    name_info->name = pNameInfo->pObjectName;
+    AddObjectInfo(device, object_id, std::move(name_info));
+
+    return VK_SUCCESS;
+};
+
+VkResult CdlContext::PostDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo,
+                                                     VkResult result) {
+    return result;
+};
+
+VkResult CdlContext::PreSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
+    auto object_id = pNameInfo->objectHandle;
+
+    auto name_info = std::make_unique<ObjectInfo>();
+    name_info->object = pNameInfo->objectHandle;
+    name_info->type = pNameInfo->objectType;
+    name_info->name = pNameInfo->pObjectName;
+    AddObjectInfo(device, object_id, std::move(name_info));
+
+    return VK_SUCCESS;
+}
+
+VkResult CdlContext::PostSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo,
+                                                    VkResult result) {
+    return VK_SUCCESS;
+}
+
+// =============================================================================
+// Include the generated implementation to forward commands to command buffer
+// =============================================================================
+#include "cdl_commands.cc.inc"
+
+// =============================================================================
+// Define the custom pre intercepted commands
+// =============================================================================
+void CdlContext::PreCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                    VkPipeline pipeline) {
+    auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+    if (DumpShadersOnBind()) {
+        p_cmd->GetDevice()->DumpShaderFromPipeline(pipeline);
+    }
+
+    p_cmd->PreCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
+}
+
+VkResult CdlContext::PreBeginCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferBeginInfo const* pBeginInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+    {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        auto device = p_cmd->GetDevice();
+        std::stringstream os;
+        if (!device->ValidateCommandBufferNotInUse(commandBuffer, os)) {
+            DumpDeviceExecutionStateValidationFailed(device, os);
+        }
+    }
+
+    return p_cmd->PreBeginCommandBuffer(commandBuffer, pBeginInfo);
+}
+
+VkResult CdlContext::PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) {
+    auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+    {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        auto device = p_cmd->GetDevice();
+        std::stringstream os;
+        if (!device->ValidateCommandBufferNotInUse(commandBuffer, os)) {
+            DumpDeviceExecutionStateValidationFailed(device, os);
+        }
+    }
+
+    return p_cmd->PreResetCommandBuffer(commandBuffer, flags);
+}
+
+// =============================================================================
+// Declare the global accessor for CdlContext
+// =============================================================================
+
+crash_diagnostic_layer::CdlContext* g_interceptor = new crash_diagnostic_layer::CdlContext();
+
+// =============================================================================
+// VkInstanceCreateInfo and VkDeviceCreateInfo modification functions
+// =============================================================================
+
+const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) {
+    return g_interceptor->GetModifiedInstanceCreateInfo(pCreateInfo);
+}
+
+const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
+                                                      const VkDeviceCreateInfo* pCreateInfo) {
+    return g_interceptor->GetModifiedDeviceCreateInfo(physicalDevice, pCreateInfo);
+}
+
+// =============================================================================
+// Include the generated implementation to forward intercepts to CdlContext
+// =============================================================================
+#include "cdl_intercepts.cc.inc"
+
+// =============================================================================
+// Custom Vulkan entry points
+// =============================================================================
+
+VkResult QueueSubmitWithoutTrackingSemaphores(VkQueue queue, uint32_t submitCount, VkSubmitInfo const* pSubmits,
+                                              VkFence fence, bool callPreQueueSubmit = true) {
+    if (callPreQueueSubmit) {
+        g_interceptor->PreQueueSubmit(queue, submitCount, pSubmits, fence);
+    }
+
+    VkResult res = VK_SUCCESS;
+    auto dispatch_table =
+        crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(queue))->dispatch_table;
+    if (dispatch_table.QueueSubmit) {
+        res = dispatch_table.QueueSubmit(queue, submitCount, pSubmits, fence);
+    }
+
+    g_interceptor->PostQueueSubmit(queue, submitCount, pSubmits, fence, res);
+
+    return res;
+}
+
+VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, VkQueue queue, uint32_t submitCount,
+                                           VkSubmitInfo const* pSubmits, VkFence fence) {
+    bool track_semaphores = g_interceptor->TrackingSemaphores();
+    if (!track_semaphores) {
+        return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
+    }
+
+    // Track semaphore values before and after each queue submit.
+    g_interceptor->PreQueueSubmit(queue, submitCount, pSubmits, fence);
+    bool call_pre_queue_submit = false;
+
+    // Define common variables and structs used for each extended queue submit
+    VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
+    auto dispatch_table =
+        crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(vk_device))->dispatch_table;
+    VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
+    if (vk_pool == VK_NULL_HANDLE) {
+        g_interceptor->GetLogger()->LogError(
+            "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
+            "state. Not tracking semaphores.");
+        return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence, call_pre_queue_submit);
+    }
+
+    bool trace_all_semaphores = g_interceptor->TracingAllSemaphores();
+    auto queue_submit_id = g_interceptor->GetNextQueueSubmitId();
+    auto semaphore_tracking_submits = reinterpret_cast<VkSubmitInfo*>(alloca(sizeof(VkSubmitInfo) * submitCount));
+
+    // VkCommandBufferAllocateInfo for helper command buffers. Two extra CBs used
+    // to track the state of submits and semaphores. We create the extra CBs from
+    // the same pool used to create the original CBs of the submit. These extra
+    // CBs are used to record vkCmdWriteBufferMarkerAMD commands into.
+    VkCommandBufferAllocateInfo cb_allocate_info = {};
+    cb_allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    cb_allocate_info.pNext = nullptr;
+    cb_allocate_info.commandPool = vk_pool;
+    cb_allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    cb_allocate_info.commandBufferCount = 2;
+
+    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        // TODO b/152057973: Recycle state tracking CBs
+        VkCommandBuffer* new_buffers = crash_diagnostic_layer::CdlNewArray<VkCommandBuffer>(2);
+        auto result = dispatch_table.AllocateCommandBuffers(vk_device, &cb_allocate_info, new_buffers);
+        assert(result == VK_SUCCESS);
+        if (result != VK_SUCCESS) {
+            g_interceptor->GetLogger()->LogWarning(
+                "failed to allocate helper command buffers for tracking queue submit state. vkAllocateCommandBuffers() "
+                "returned 0x%08x",
+                result);
+            return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence, call_pre_queue_submit);
+        }
+
+        // Add the semaphore tracking command buffers to the beginning and the end
+        // of the queue submit info.
+        semaphore_tracking_submits[submit_index] = pSubmits[submit_index];
+        auto cb_count = pSubmits[submit_index].commandBufferCount;
+        VkCommandBuffer* extended_cbs = (VkCommandBuffer*)alloca((cb_count + 2) * sizeof(VkCommandBuffer));
+        semaphore_tracking_submits[submit_index].pCommandBuffers = extended_cbs;
+        semaphore_tracking_submits[submit_index].commandBufferCount = cb_count + 2;
+
+        extended_cbs[0] = new_buffers[0];
+        for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
+            extended_cbs[cb_index + 1] = pSubmits[submit_index].pCommandBuffers[cb_index];
+        }
+        extended_cbs[cb_count + 1] = new_buffers[1];
+
+        SetDeviceLoaderData(vk_device, extended_cbs[0]);
+        SetDeviceLoaderData(vk_device, extended_cbs[cb_count + 1]);
+
+        auto submit_info_id =
+            g_interceptor->RegisterSubmitInfo(vk_device, queue_submit_id, &semaphore_tracking_submits[submit_index]);
+        g_interceptor->StoreSubmitHelperCommandBuffersInfo(vk_device, submit_info_id, vk_pool, extended_cbs[0],
+                                                           extended_cbs[cb_count + 1]);
+        for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
+            auto cdl_command_buffer =
+                crash_diagnostic_layer::GetCdlCommandBuffer(pSubmits[submit_index].pCommandBuffers[cb_index]);
+            assert(cdl_command_buffer != nullptr);
+            if (cdl_command_buffer) {
+                cdl_command_buffer->SetSubmitInfoId(submit_info_id);
+            }
+        }
+
+        // Record the two semaphore tracking command buffers.
+        VkCommandBufferBeginInfo commandBufferBeginInfo = {};
+        commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        commandBufferBeginInfo.flags = 0;
+        result = dispatch_table.BeginCommandBuffer(extended_cbs[0], &commandBufferBeginInfo);
+        assert(result == VK_SUCCESS);
+        if (result != VK_SUCCESS) {
+            g_interceptor->GetLogger()->LogWarning(
+                "failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        } else {
+            g_interceptor->RecordSubmitStart(vk_device, queue_submit_id, submit_info_id, extended_cbs[0]);
+            result = dispatch_table.EndCommandBuffer(extended_cbs[0]);
+            assert(result == VK_SUCCESS);
+        }
+
+        result = dispatch_table.BeginCommandBuffer(extended_cbs[cb_count + 1], &commandBufferBeginInfo);
+        assert(result == VK_SUCCESS);
+        if (result != VK_SUCCESS) {
+            g_interceptor->GetLogger()->LogWarning(
+                "failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        } else {
+            g_interceptor->RecordSubmitFinish(vk_device, queue_submit_id, submit_info_id, extended_cbs[cb_count + 1]);
+            result = dispatch_table.EndCommandBuffer(extended_cbs[cb_count + 1]);
+            assert(result == VK_SUCCESS);
+        }
+        if (trace_all_semaphores) {
+            g_interceptor->LogSubmitInfoSemaphores(vk_device, queue, submit_info_id);
+        }
+    }
+
+    VkResult res = VK_SUCCESS;
+    if (dispatch_table.QueueSubmit) {
+        res = dispatch_table.QueueSubmit(queue, submitCount, semaphore_tracking_submits, fence);
+    }
+
+    g_interceptor->PostQueueSubmit(queue, submitCount, semaphore_tracking_submits, fence, res);
+    return res;
+}
+
+VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bind_sparse, VkQueue queue,
+                                               uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
+                                               VkFence fence) {
+    auto dispatch_table =
+        crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(queue))->dispatch_table;
+    bool track_semaphores = g_interceptor->TrackingSemaphores();
+    // If semaphore tracking is not requested, pass the call to the dispatch table
+    // as is.
+    if (!track_semaphores) {
+        return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+    }
+
+    auto qbind_sparse_id = g_interceptor->GetNextQueueBindSparseId();
+    bool trace_all_semaphores = g_interceptor->TracingAllSemaphores();
+    if (track_semaphores && trace_all_semaphores) {
+        g_interceptor->LogBindSparseInfosSemaphores(queue, bindInfoCount, pBindInfo);
+    }
+
+    // Ensure the queue is registered before and we know which command pool use
+    // for this queue. If not, pass the call to dispatch table.
+    VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
+    VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
+    if (vk_device == VK_NULL_HANDLE || vk_pool == VK_NULL_HANDLE) {
+        g_interceptor->GetLogger()->LogWarning("device handle not found for queue 0x" PRIx64
+                                               ", Ignoring semaphore signals in vkQueueBindSparse call.",
+                                               (uint64_t)queue);
+        return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+    }
+
+    // If we don't need to expand the bind sparse info, pass the call to dispatch
+    // table.
+    crash_diagnostic_layer::PackedBindSparseInfo packed_bind_sparse_info(queue, bindInfoCount, pBindInfo);
+    if (!g_interceptor->ShouldExpandQueueBindSparseToTrackSemaphores(&packed_bind_sparse_info)) {
+        return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+    }
+
+    crash_diagnostic_layer::ExpandedBindSparseInfo expanded_bind_sparse_info(&packed_bind_sparse_info);
+    g_interceptor->ExpandBindSparseInfo(&expanded_bind_sparse_info);
+
+    // For each VkSubmitInfo added to the expanded vkQueueBindSparse, check if
+    // pNext should point to a VkTimelineSemaphoreSubmitInfoKHR struct.
+    size_t tsinfo_it = 0;
+    for (int i = 0; i < expanded_bind_sparse_info.submit_infos.size(); i++) {
+        if (expanded_bind_sparse_info.has_timeline_semaphore_info[i]) {
+            expanded_bind_sparse_info.submit_infos[i].pNext =
+                &expanded_bind_sparse_info.timeline_semaphore_infos[tsinfo_it++];
+        }
+    }
+
+    // For each VkSubmitInfo added to the expanded vkQueueBindSparse, reserve a
+    // command buffer and put in the submit.
+    // Allocate the required command buffers
+    auto num_submits = (uint32_t)expanded_bind_sparse_info.submit_infos.size();
+    VkCommandBuffer* helper_cbs = (VkCommandBuffer*)alloca((num_submits) * sizeof(VkCommandBuffer));
+
+    VkCommandBufferAllocateInfo cb_allocate_info = {};
+    cb_allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    cb_allocate_info.pNext = nullptr;
+    cb_allocate_info.commandPool = vk_pool;
+    cb_allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    cb_allocate_info.commandBufferCount = num_submits;
+    // TODO b/152057973: Recycle state tracking CBs
+    VkCommandBuffer* new_buffers = crash_diagnostic_layer::CdlNewArray<VkCommandBuffer>(num_submits);
+    auto result = dispatch_table.AllocateCommandBuffers(vk_device, &cb_allocate_info, new_buffers);
+    assert(result == VK_SUCCESS);
+    if (result != VK_SUCCESS) {
+        g_interceptor->GetLogger()->LogWarning(
+            "failed to allocate helper command buffers for tracking queue bind sparse state. "
+            "vkAllocateCommandBuffers() returned 0x%08x",
+            result);
+        // Silently pass the call to the dispatch table.
+        return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+    }
+    for (uint32_t i = 0; i < num_submits; i++) {
+        helper_cbs[i] = new_buffers[i];
+    }
+
+    VkCommandBufferBeginInfo commandBufferBeginInfo = {};
+    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    commandBufferBeginInfo.flags = 0;
+
+    uint32_t next_wait_helper_submit = 0;
+    for (uint32_t i = 0; i < num_submits; i++) {
+        expanded_bind_sparse_info.submit_infos[i].pCommandBuffers = &helper_cbs[i];
+        expanded_bind_sparse_info.submit_infos[i].commandBufferCount = 1;
+        SetDeviceLoaderData(vk_device, helper_cbs[i]);
+
+        result = dispatch_table.BeginCommandBuffer(helper_cbs[i], &commandBufferBeginInfo);
+        assert(result == VK_SUCCESS);
+        if (result != VK_SUCCESS) {
+            g_interceptor->GetLogger()->LogWarning(
+                "ailed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        } else {
+            g_interceptor->RecordBindSparseHelperSubmit(vk_device, qbind_sparse_id,
+                                                        &expanded_bind_sparse_info.submit_infos[i], vk_pool);
+            result = dispatch_table.EndCommandBuffer(helper_cbs[i]);
+            assert(result == VK_SUCCESS);
+        }
+
+        if (expanded_bind_sparse_info.submit_infos[i].signalSemaphoreCount > 0) {
+            // Rip out semaphore signal operations from signal helper submit. We
+            // needed this info to correctly record the signal semaphore markers, but
+            // we don't need the helper submits to signal the semaphores that are
+            // already signalled in a bind sparse info.
+            expanded_bind_sparse_info.submit_infos[i].signalSemaphoreCount = 0;
+            expanded_bind_sparse_info.submit_infos[i].pSignalSemaphores = nullptr;
+            expanded_bind_sparse_info.submit_infos[i].pNext = nullptr;
+        } else {
+            // This is a wait helper submit. We need to signal the wait binary
+            // semaphores that the helper submit is waiting on.
+            expanded_bind_sparse_info.submit_infos[i].signalSemaphoreCount =
+                (uint32_t)expanded_bind_sparse_info.wait_binary_semaphores[next_wait_helper_submit].size();
+            expanded_bind_sparse_info.submit_infos[i].pSignalSemaphores =
+                expanded_bind_sparse_info.wait_binary_semaphores[next_wait_helper_submit].data();
+            next_wait_helper_submit++;
+        }
+    }
+
+    uint32_t next_bind_sparse_info_index = 0;
+    uint32_t available_bind_sparse_info_counter = 0;
+    uint32_t next_submit_info_index = 0;
+    VkResult last_bind_result = VK_SUCCESS;
+    for (int i = 0; i < expanded_bind_sparse_info.queue_operation_types.size(); i++) {
+        if (expanded_bind_sparse_info.queue_operation_types[i] == crash_diagnostic_layer::kQueueSubmit) {
+            // Send all the available bind sparse infos before submit info. Signal the
+            // fence only if the last bind sparse info is included.
+            if (available_bind_sparse_info_counter) {
+                VkFence bind_fence = VK_NULL_HANDLE;
+                if (bindInfoCount == next_bind_sparse_info_index + available_bind_sparse_info_counter) {
+                    bind_fence = fence;
+                }
+                result = dispatch_table.QueueBindSparse(queue, available_bind_sparse_info_counter,
+                                                        &pBindInfo[next_bind_sparse_info_index], bind_fence);
+                if (result != VK_SUCCESS) {
+                    last_bind_result = result;
+                    break;
+                }
+                next_bind_sparse_info_index += available_bind_sparse_info_counter;
+                available_bind_sparse_info_counter = 0;
+            }
+            // Send the submit info
+            result = dispatch_table.QueueSubmit(
+                queue, 1, &expanded_bind_sparse_info.submit_infos[next_submit_info_index], VK_NULL_HANDLE);
+            if (result != VK_SUCCESS) {
+                g_interceptor->GetLogger()->LogWarning(
+                    "helper vkQueueSubmit failed while tracking semaphores in a vkQueueBindSparse call. Semaphore "
+                    "values in the final report might be wrong. Result: 0x%08x",
+                    result);
+                break;
+            }
+            next_submit_info_index++;
+        } else {
+            available_bind_sparse_info_counter++;
+        }
+    }
+    if (last_bind_result != VK_SUCCESS) {
+        g_interceptor->GetLogger()->LogWarning(
+            "QueueBindSparse: Unexpected VkResult = 0x%8x after submitting %d bind sparse infos and %d "
+            " helper submit infos to the queue. Submitting the remained bind sparse infos at once.",
+            last_bind_result, next_bind_sparse_info_index, next_submit_info_index);
+        return dispatch_table.QueueBindSparse(queue, bindInfoCount - next_bind_sparse_info_index,
+                                              &pBindInfo[next_bind_sparse_info_index], fence);
+    }
+    // If any remaining bind sparse infos, submit them all.
+    if (bindInfoCount > next_bind_sparse_info_index + available_bind_sparse_info_counter) {
+        return dispatch_table.QueueBindSparse(queue, bindInfoCount - next_submit_info_index,
+                                              &pBindInfo[next_bind_sparse_info_index], fence);
+    }
+    return last_bind_result;
+}
+
+// FindOnChain looks for a pNext of a give type.
+const void* FindOnChain(const void* pNext, VkStructureType type) {
+    const VkStruct* pStruct = reinterpret_cast<const VkStruct*>(pNext);
+    while (pStruct) {
+        if (pStruct->sType == type) {
+            return pStruct;
+        }
+        pStruct = reinterpret_cast<const VkStruct*>(pStruct->pNext);
+    }
+
+    return nullptr;
+}
+
+// CDL intercepts vkCreateDevice to enforce coherent memory
+VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(PFN_vkCreateDevice pfn_create_device, VkPhysicalDevice gpu,
+                                            const VkDeviceCreateInfo* pCreateInfo,
+                                            const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
+    VkDeviceCreateInfo local_create_info = *pCreateInfo;
+
+    if (g_interceptor->DeviceCoherentMemoryEnabled()) {
+        // Coherent memory extension enabled, check for struct, add if needed.
+        if (nullptr ==
+            FindOnChain(local_create_info.pNext, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD)) {
+            VkPhysicalDeviceCoherentMemoryFeaturesAMD enableDeviceCoherentMemoryFeature{};
+            enableDeviceCoherentMemoryFeature.deviceCoherentMemory = true;
+            enableDeviceCoherentMemoryFeature.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD;
+            enableDeviceCoherentMemoryFeature.pNext = (void*)pCreateInfo->pNext;
+            local_create_info.pNext = &enableDeviceCoherentMemoryFeature;
+        }
+    }
+    return pfn_create_device(gpu, &local_create_info, pAllocator, pDevice);
+}
+
+}  // namespace crash_diagnostic_layer

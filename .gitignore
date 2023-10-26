@@ -1,0 +1,4 @@
+build/
+external/
+.vscode/
+**/__pycache__
