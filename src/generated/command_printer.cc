@@ -2,7 +2,6 @@
 /***************************************************************************
 *
 * Copyright (C) 2021 Google Inc.
-* Copyright (c) 2023 Valve Corporation
 * Copyright (c) 2023 LunarG, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -9663,7 +9662,7 @@ std::ostream &operator<<(std::ostream & os, const VkPipelineCacheCreateInfo &t) 
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pInitialData;
         for (uint64_t i = 0; i < t.initialDataSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -9746,7 +9745,7 @@ std::ostream &operator<<(std::ostream & os, const VkSpecializationInfo &t) {
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pData;
         for (uint64_t i = 0; i < t.dataSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -21002,7 +21001,7 @@ std::ostream &operator<<(std::ostream & os, const VkWriteDescriptorSetInlineUnif
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pData;
         for (uint64_t i = 0; i < t.dataSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -27311,7 +27310,7 @@ std::ostream &operator<<(std::ostream & os, const VkPipelineExecutableInternalRe
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pData;
         for (uint64_t i = 0; i < t.dataSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -29068,7 +29067,7 @@ std::ostream &operator<<(std::ostream & os, const VkDebugMarkerObjectTagInfoEXT 
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pTag;
         for (uint64_t i = 0; i < t.tagSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -29412,7 +29411,7 @@ std::ostream &operator<<(std::ostream & os, const VkCuModuleCreateInfoNVX &t) {
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pData;
         for (uint64_t i = 0; i < t.dataSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -29550,7 +29549,7 @@ std::ostream &operator<<(std::ostream & os, const VkCuLaunchInfoNVX &t) {
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pParams;
         for (uint64_t i = 0; i < t.paramCount; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -29576,7 +29575,7 @@ std::ostream &operator<<(std::ostream & os, const VkCuLaunchInfoNVX &t) {
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pExtras;
         for (uint64_t i = 0; i < t.extraCount; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -33587,7 +33586,7 @@ std::ostream &operator<<(std::ostream & os, const VkDebugUtilsObjectTagInfoEXT &
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pTag;
         for (uint64_t i = 0; i < t.tagSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -35249,7 +35248,7 @@ std::ostream &operator<<(std::ostream & os, const VkValidationCacheCreateInfoEXT
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pInitialData;
         for (uint64_t i = 0; i < t.initialDataSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -49824,7 +49823,7 @@ std::ostream &operator<<(std::ostream & os, const VkShaderCreateInfoEXT &t) {
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)t.pCode;
         for (uint64_t i = 0; i < t.codeSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -56828,7 +56827,7 @@ void CommandPrinter::PrintCmdUpdateBufferArgs(
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)args.pData;
         for (uint64_t i = 0; i < args.dataSize; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;
@@ -57647,7 +57646,7 @@ void CommandPrinter::PrintCmdPushConstantsArgs(
         ScopedOstream soarray(os);
         const uint8_t *p = (const uint8_t *)args.pValues;
         for (uint64_t i = 0; i < args.size; ++i) {
-          os << "- 0x" << p[i] << std::endl;
+          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;
         }
       }
       os << std::dec;

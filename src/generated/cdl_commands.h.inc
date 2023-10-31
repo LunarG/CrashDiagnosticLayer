@@ -2,7 +2,6 @@
 /***************************************************************************
 *
 * Copyright (C) 2021 Google Inc.
-* Copyright (c) 2023 Valve Corporation
 * Copyright (c) 2023 LunarG, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,11 +40,6 @@ void PreDestroyInstance(
     VkInstance                                  instance,
     const VkAllocationCallbacks*                pAllocator);
 
-VkResult PreCreateDevice(
-    VkPhysicalDevice                            physicalDevice,
-    const VkDeviceCreateInfo*                   pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkDevice*                                   pDevice);
 VkResult PostCreateDevice(
     VkPhysicalDevice                            physicalDevice,
     const VkDeviceCreateInfo*                   pCreateInfo,

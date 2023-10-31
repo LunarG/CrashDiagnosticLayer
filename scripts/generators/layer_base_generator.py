@@ -1,6 +1,5 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023 Valve Corporation
 # Copyright (c) 2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -482,8 +481,6 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
 
   const VkDeviceCreateInfo *pFinalCreateInfo =
       GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
-
-  InterceptPreCreateDevice(gpu, pFinalCreateInfo, pAllocator, pDevice);
 
   VkResult result = CreateDevice(pfn_create_device, gpu, pFinalCreateInfo,
                                  pAllocator, pDevice);

@@ -1,6 +1,5 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023 Valve Corporation
 # Copyright (c) 2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,10 +40,10 @@ custom_intercept_commands = [
 
 intercept_pre_functions = [
     'vkDestroyInstance',
-    'vkCreateDevice',
 ]
 
 no_intercept_pre_functions = [
+    'vkCreateDevice',
     'vkEnumerateInstanceLayerProperties',
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',
@@ -116,7 +115,6 @@ class CdlBaseOutputGenerator(BaseGenerator):
 /***************************************************************************
 *
 * Copyright (C) 2021 Google Inc.
-* Copyright (c) 2023 Valve Corporation
 * Copyright (c) 2023 LunarG, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");

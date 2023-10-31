@@ -1,6 +1,5 @@
 /*
  Copyright 2018 Google Inc.
- Copyright (c) 2023 Valve Corporation
  Copyright (c) 2023 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -887,19 +886,6 @@ VkResult CdlContext::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
         application_info_->engineVersion = pCreateInfo->pApplicationInfo->engineVersion;
         application_info_->apiVersion = pCreateInfo->pApplicationInfo->apiVersion;
     }
-
-    return result;
-}
-
-void CdlContext::PreDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) {
-    if (VK_NULL_HANDLE != utils_messenger_) {
-        instance_dispatch_table_.DestroyDebugUtilsMessengerEXT(vk_instance_, utils_messenger_, nullptr);
-        utils_messenger_ = VK_NULL_HANDLE;
-    }
-}
-
-VkResult CdlContext::PreCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
-                                     const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
     if (VK_NULL_HANDLE == utils_messenger_) {
         VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = {
             VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
@@ -914,7 +900,15 @@ VkResult CdlContext::PreCreateDevice(VkPhysicalDevice physicalDevice, const VkDe
         instance_dispatch_table_.CreateDebugUtilsMessengerEXT(vk_instance_, &messenger_create_info, nullptr,
                                                               &utils_messenger_);
     }
-    return VK_SUCCESS;
+
+    return result;
+}
+
+void CdlContext::PreDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) {
+    if (VK_NULL_HANDLE != utils_messenger_) {
+        instance_dispatch_table_.DestroyDebugUtilsMessengerEXT(vk_instance_, utils_messenger_, nullptr);
+        utils_messenger_ = VK_NULL_HANDLE;
+    }
 }
 
 // TODO(b/141996712): extensions should be down at the intercept level, not

@@ -1,6 +1,5 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023 Valve Corporation
 # Copyright (c) 2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -233,7 +232,7 @@ class CommandPrinter {
                 out.append('        ScopedOstream soarray(os);\n')
                 out.append(f'        const uint8_t *p = (const uint8_t *){prefix}{member.name};\n')
                 out.append(f'        for (uint64_t i = 0; i < {lengths_names[0]}; ++i) {{\n')
-                out.append('          os << "- 0x" << p[i] << std::endl;\n')
+                out.append('          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;\n')
                 out.append('        }\n')
                 out.append('      }\n')
                 out.append('      os << std::dec;\n')

@@ -581,9 +581,8 @@ void CommandBuffer::DumpContents(std::ostream& os, CommandBufferDumpOptions opti
             // Command entry.
             if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete &&
                 command.id == GetLastCompleteCommand()) {
-                os << indents[2] << "- # Command:" << indents[3] << "id: " << command.id << "/" << num_commands
-                   << indents[3] << "message: "
-                   << "'>>>>>>>>>>>>>> LAST COMPLETE COMMAND <<<<<<<<<<<<<<'";
+                os << indents[3] << "message: "
+                   << "'>>>>>>>>>>>>>> LAST COMPLETE COMMAND <<<<<<<<<<<<<<'" << std::endl;
             }
         }
     }
