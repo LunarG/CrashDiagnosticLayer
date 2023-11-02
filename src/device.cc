@@ -132,8 +132,8 @@ void DestroyBuffer(VkDevice device, VkBuffer buffer) {
 // =================================================================================================
 // Device
 // =================================================================================================
-Device::Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice device, bool has_buffer_marker)
-    : cdl_(p_cdl), vk_physical_device_(vk_gpu), vk_device_(device), has_buffer_marker_(has_buffer_marker) {
+Device::Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice device, DeviceExtensionsPresent& extensions_present)
+    : cdl_(p_cdl), vk_physical_device_(vk_gpu), vk_device_(device), extensions_present_(extensions_present) {
     // Set the dispatch tables
     auto instance_layer_data = GetInstanceLayerData(DataKey(p_cdl->GetInstance()));
     instance_dispatch_table_ = instance_layer_data->dispatch_table;
@@ -155,9 +155,13 @@ Device::Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice device, bool
     instance_dispatch_table_.GetPhysicalDeviceProperties(vk_gpu, &physical_device_properties_);
 
     // Get proc address for vkCmdWriteBufferMarkerAMD
-    if (has_buffer_marker) {
+    if (extensions_present.amd_buffer_marker) {
         pfn_vkCmdWriteBufferMarkerAMD_ = (PFN_vkCmdWriteBufferMarkerAMD)device_dispatch_table_.GetDeviceProcAddr(
             device, "vkCmdWriteBufferMarkerAMD");
+    }
+    if (extensions_present.ext_device_fault) {
+        pfn_vkGetDeviceFaultInfoEXT =
+            (PFN_vkGetDeviceFaultInfoEXT)device_dispatch_table_.GetDeviceProcAddr(device, "vkGetDeviceFaultInfoEXT");
     }
 
     pfn_vkFreeCommandBuffers_ =
@@ -182,7 +186,7 @@ VkPhysicalDevice Device::GetVkGpu() const { return vk_physical_device_; }
 
 VkDevice Device::GetVkDevice() const { return vk_device_; }
 
-bool Device::HasBufferMarker() const { return has_buffer_marker_; }
+bool Device::HasBufferMarker() const { return extensions_present_.amd_buffer_marker; }
 
 const std::vector<VkQueueFamilyProperties>& Device::GetVkQueueFamilyProperties() const {
     return queue_family_properties_;
@@ -638,7 +642,78 @@ std::ostream& Device::Print(std::ostream& stream) const {
     stream << "\n";
 
     stream.flags(f);
+
+    DumpDeviceFaultInfo(stream);
+
     return stream;
+}
+
+const char address_fault_strings[][32] = {
+    "No Fault",
+    "Invalid Read",
+    "Invalid Write",
+    "Invalid Execute",
+    "Unknown Instruction Pointer",
+    "Invalid Instruction Pointer",
+    "Instruction Pointer Fault",
+};
+
+void Device::DumpDeviceFaultInfo(std::ostream& os) const {
+    if (extensions_present_.ext_device_fault && nullptr != pfn_vkGetDeviceFaultInfoEXT) {
+        VkDeviceFaultCountsEXT fault_counts = {VK_STRUCTURE_TYPE_DEVICE_FAULT_COUNTS_EXT, nullptr, 0, 0, 0UL};
+        VkResult result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
+        if (result == VK_SUCCESS) {
+            if (fault_counts.addressInfoCount > 0 || fault_counts.vendorInfoCount > 0 ||
+                fault_counts.vendorBinarySize > 0) {
+                std::vector<VkDeviceFaultAddressInfoEXT> address_infos;
+                std::vector<VkDeviceFaultVendorInfoEXT> vendor_infos;
+                std::vector<uint8_t> binary_data;
+                address_infos.resize(fault_counts.addressInfoCount);
+                vendor_infos.resize(fault_counts.vendorInfoCount);
+                binary_data.resize(fault_counts.vendorBinarySize);
+                VkDeviceFaultInfoEXT vk_device_fault_info{
+                    VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_EXT,
+                    nullptr,
+                    "",
+                    fault_counts.addressInfoCount == 0 ? nullptr : address_infos.data(),
+                    fault_counts.vendorInfoCount == 0 ? nullptr : vendor_infos.data(),
+                    fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data())};
+                result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, &vk_device_fault_info);
+                if (result == VK_SUCCESS || result == VK_INCOMPLETE) {
+                    os << "  Device Fault Info:\n";
+                    os << "    Description: " << vk_device_fault_info.description << "\n";
+                    if (fault_counts.addressInfoCount > 0) {
+                        os << "    Address Info: " << std::to_string(fault_counts.addressInfoCount) << "\n";
+                        for (uint32_t addr = 0; addr < fault_counts.addressInfoCount; ++addr) {
+                            VkDeviceAddress lower_address =
+                                (address_infos[addr].reportedAddress & ~(address_infos[addr].addressPrecision - 1));
+                            VkDeviceAddress upper_address =
+                                (address_infos[addr].reportedAddress | (address_infos[addr].addressPrecision - 1));
+                            os << "      [" << std::setfill(' ') << std::setw(4) << addr << "] "
+                               << address_fault_strings[static_cast<uint32_t>(address_infos[addr].addressType)]
+                               << " in address range [0x" << std::hex << lower_address << " - 0x" << std::hex
+                               << upper_address << "]\n";
+                        }
+                    }
+                    if (fault_counts.vendorInfoCount > 0) {
+                        os << "    Vendor Info: " << std::to_string(fault_counts.vendorInfoCount) << "\n";
+                        for (uint32_t vendor = 0; vendor < fault_counts.vendorInfoCount; ++vendor) {
+                            os << "      [" << std::setfill(' ') << std::setw(4) << vendor << "] Code 0x" << std::hex
+                               << vendor_infos[vendor].vendorFaultCode << " | Data 0x" << std::hex
+                               << vendor_infos[vendor].vendorFaultData << " : " << vendor_infos[vendor].description
+                               << "\n";
+                        }
+                    }
+                    if (fault_counts.vendorBinarySize > 0) {
+                        os << "    Vendor Binary Data: " << std::to_string(fault_counts.vendorBinarySize) << "\n";
+                        for (uint32_t byte = 0; byte < fault_counts.vendorBinarySize; ++byte) {
+                            os << "      0x" << std::hex << binary_data[byte] << "\n";
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 }  // namespace crash_diagnostic_layer

@@ -164,8 +164,6 @@ class CdlContext {
     void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
     void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
 
-    bool DeviceCoherentMemoryEnabled() const { return device_coherent_enabled_; }
-
    private:
     void AddObjectInfo(VkDevice device, uint64_t handle, ObjectInfoPtr info);
     std::string GetObjectName(VkDevice vk_device, uint64_t handle);
@@ -201,6 +199,10 @@ class CdlContext {
     const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                           const VkDeviceCreateInfo* pCreateInfo);
 
+    bool AmdDeviceCoherentExtensionEnabled(VkPhysicalDevice physicalDevice) {
+        return extensions_of_interest_enabled_[physicalDevice].amd_coherent_memory;
+    }
+
 #include "cdl_commands.h.inc"
 
    private:
@@ -216,6 +218,9 @@ class CdlContext {
 
     InstanceDispatchTable instance_dispatch_table_;
     VkInstanceCreateInfo instance_create_info_;
+
+    std::unordered_map<VkPhysicalDevice, DeviceExtensionsPresent> extensions_of_interest_present_;
+    std::unordered_map<VkPhysicalDevice, DeviceExtensionsPresent> extensions_of_interest_enabled_;
 
     mutable std::mutex device_create_infos_mutex_;
     std::unordered_map<const VkDeviceCreateInfo* /*modified_create_info*/, std::unique_ptr<DeviceCreateInfo>>
@@ -259,10 +264,6 @@ class CdlContext {
     bool instrument_all_commands_ = false;
     bool track_semaphores_ = false;
     bool trace_all_semaphores_ = false;
-
-    bool buffer_marker_enabled_ = false;
-    bool device_coherent_enabled_ = false;
-    bool device_fault_enabled_ = false;
 
     // TODO(aellem) some verbosity/trace modes?
     bool trace_all_ = false;

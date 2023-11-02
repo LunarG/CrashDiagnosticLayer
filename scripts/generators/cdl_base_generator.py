@@ -63,7 +63,6 @@ no_intercept_post_functions = [
     'vkEnumerateInstanceLayerProperties',
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',
-    'vkEnumerateDeviceExtensionProperties',
 ]
 
 intercept_functions = [

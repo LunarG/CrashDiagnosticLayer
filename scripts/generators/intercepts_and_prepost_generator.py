@@ -22,6 +22,7 @@ from generators.cdl_base_generator import CdlBaseOutputGenerator
 #  CDL has custom implementation for pre intercept #
 custom_functions = [
     'vkCreateInstance',
+    'vkEnumerateDeviceExtensionProperties',
     'vkDestroyDevice',
     'vkResetCommandPool',
     'vkDestroyCommandPool'
@@ -41,6 +42,7 @@ custom_pre_intercept_functions = [
 
 custom_post_intercept_functions = [
     'vkDestroyInstance',
+    'vkEnumerateDeviceExtensionProperties',
     'vkCreateDevice',
     'vkGetDeviceQueue',
     'vkGetDeviceQueue2',

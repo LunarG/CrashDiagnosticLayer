@@ -400,67 +400,18 @@ const VkInstanceCreateInfo* CdlContext::GetModifiedInstanceCreateInfo(const VkIn
     return &instance_create_info_;
 }
 
-// TryAddExtension will try an enable an extension.
-//
-// If the extension is already part of |pCreateInfo|, |extenion_enabled| be set
-// to true and |extension_added| will be set to false. If the extension is
-// supported by the device then |extension_enabled| and |extension_added| will
-// be set to true. If the extension is not supported by the device then
-// |extension_enabled| and |extension_added| will be set to false.
-void TryAddDeviceExtension(const VkDeviceCreateInfo* pCreateInfo,
-                           const std::vector<VkExtensionProperties>& extension_properties,
-                           StringArray& enabled_extensions, const char* extension_name, bool* extension_enabled) {
-    assert(extension_enabled != nullptr);
-    *extension_enabled = false;
-
-    // Was the extension enabled by the main program?
-    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
-        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
-        if (strcmp(name, extension_name) == 0) {
-            *extension_enabled = true;
-            return;
-        }
-    }
-
-    // Does the device support this extension?
-    auto e = std::find_if(
-        std::begin(extension_properties), std::end(extension_properties),
-        [extension_name](const VkExtensionProperties& p) { return strcmp(extension_name, p.extensionName) == 0; });
-    if (e == std::end(extension_properties)) {
-        return;
-    }
-
-    // Supported but we need to add it.
-    *extension_enabled = true;
-    enabled_extensions.push_back(extension_name);
-}
-
 const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                                   const VkDeviceCreateInfo* pCreateInfo) {
-    const uint32_t required_extension_count = 2;
-    RequiredExtension required_extensions[] = {
-        {VK_AMD_BUFFER_MARKER_EXTENSION_NAME, false, &buffer_marker_enabled_},
-        {VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME, false, &device_coherent_enabled_},
-        {VK_EXT_DEVICE_FAULT_EXTENSION_NAME, false, &device_fault_enabled_}};
-
-    // Get the list of device extensions.
-    uint32_t extension_count = 0;
-    std::vector<VkExtensionProperties> extension_properties;
-    VkResult vk_result =
-        instance_dispatch_table_.EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extension_count, nullptr);
-    if (vk_result == VK_SUCCESS) {
-        extension_properties.resize(extension_count);
-        vk_result = instance_dispatch_table_.EnumerateDeviceExtensionProperties(
-            physicalDevice, nullptr, &extension_count, extension_properties.data());
-        assert(vk_result == VK_SUCCESS);
-    }
+    DeviceExtensionsPresent extensions_enabled{};
 
     for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
         const char* name = pCreateInfo->ppEnabledExtensionNames[i];
-        for (uint32_t j = 0; j < required_extension_count; ++j) {
-            if (!strcmp(required_extensions[j].name, name)) {
-                required_extensions[j].enabled = true;
-            }
+        if (!strcmp(name, VK_AMD_BUFFER_MARKER_EXTENSION_NAME)) {
+            extensions_enabled.amd_buffer_marker = true;
+        } else if (!strcmp(name, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME)) {
+            extensions_enabled.amd_coherent_memory = true;
+        } else if (!strcmp(name, VK_EXT_DEVICE_FAULT_EXTENSION_NAME)) {
+            extensions_enabled.ext_device_fault = true;
         }
     }
 
@@ -470,22 +421,33 @@ const VkDeviceCreateInfo* CdlContext::GetModifiedDeviceCreateInfo(VkPhysicalDevi
 
     device_extension_names_ = device_extension_names_original_;
 
-    for (uint32_t j = 0; j < required_extension_count; ++j) {
-        if (!required_extensions[j].enabled) {
-            TryAddDeviceExtension(pCreateInfo, extension_properties, device_extension_names_,
-                                  required_extensions[j].name, required_extensions[j].enabled_member);
+    // If an important extension is not enabled by default, try to enable it if it is present
+    if (extensions_of_interest_present_[physicalDevice].amd_buffer_marker) {
+        if (!extensions_enabled.amd_buffer_marker) {
+            extensions_enabled.amd_buffer_marker = true;
+            device_extension_names_.push_back(VK_AMD_BUFFER_MARKER_EXTENSION_NAME);
         }
-    }
-
-    if (!buffer_marker_enabled_) {
+    } else {
         logger_.LogError("No VK_AMD_buffer_marker extension, progression tracking will be disabled. ");
     }
-    if (!device_coherent_enabled_) {
+    if (extensions_of_interest_present_[physicalDevice].amd_coherent_memory) {
+        if (!extensions_enabled.amd_coherent_memory) {
+            extensions_enabled.amd_coherent_memory = true;
+            device_extension_names_.push_back(VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
+        }
+    } else {
         logger_.LogError("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
     }
-    if (!device_fault_enabled_) {
+    if (extensions_of_interest_present_[physicalDevice].ext_device_fault) {
+        if (!extensions_enabled.ext_device_fault) {
+            extensions_enabled.ext_device_fault = true;
+            device_extension_names_.push_back(VK_EXT_DEVICE_FAULT_EXTENSION_NAME);
+        }
+    } else {
         logger_.LogWarning("No VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
     }
+
+    extensions_of_interest_enabled_[physicalDevice] = std::move(extensions_enabled);
 
     auto device_create_info = std::make_unique<DeviceCreateInfo>();
     device_create_info->original_create_info = *pCreateInfo;
@@ -620,7 +582,8 @@ void CdlContext::DumpReportPrologue(std::ostream& os, const Device* device) {
     os << "#-                    CRASH DIAGNOSTIC LAYER                    -\n";
     os << "#----------------------------------------------------------------\n";
 
-#ifdef __linux__
+#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
+    defined(SYSTEM_TARGET_BSD)
     if (gpuhang_event_id_) {
         os << "# internal_use_gpu_hang_event_id " << gpuhang_event_id_ << "\n\n";
     }
@@ -911,23 +874,47 @@ void CdlContext::PreDestroyInstance(VkInstance instance, const VkAllocationCallb
     }
 }
 
+VkResult CdlContext::PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName,
+                                                            uint32_t* pPropertyCount,
+                                                            VkExtensionProperties* pProperties, VkResult result) {
+    if (result == VK_SUCCESS && pPropertyCount != nullptr && pProperties != nullptr && *pPropertyCount > 0) {
+        DeviceExtensionsPresent extensions_present{};
+
+        // Get the list of device extensions.
+        uint32_t extension_count = *pPropertyCount;
+        for (uint32_t i = 0; i < extension_count; ++i) {
+            if (!strcmp(pProperties[i].extensionName, VK_AMD_BUFFER_MARKER_EXTENSION_NAME)) {
+                extensions_present.amd_buffer_marker = true;
+            } else if (!strcmp(pProperties[i].extensionName, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME)) {
+                extensions_present.amd_coherent_memory = true;
+            } else if (!strcmp(pProperties[i].extensionName, VK_EXT_DEVICE_FAULT_EXTENSION_NAME)) {
+                extensions_present.ext_device_fault = true;
+            }
+        }
+        extensions_of_interest_present_[physicalDevice] = std::move(extensions_present);
+    }
+    return VK_SUCCESS;
+}
+
 // TODO(b/141996712): extensions should be down at the intercept level, not
 // pre/post OR intercept should always extend/copy list
 VkResult CdlContext::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator, VkDevice* pDevice, VkResult callResult) {
     if (callResult != VK_SUCCESS) return callResult;
 
-    bool has_buffer_marker = false;
+    DeviceExtensionsPresent extensions_present{};
     for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
-        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
-        has_buffer_marker = (strcmp(name, VK_AMD_BUFFER_MARKER_EXTENSION_NAME) == 0);
-        if (has_buffer_marker) {
-            break;
+        if (!strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_AMD_BUFFER_MARKER_EXTENSION_NAME)) {
+            extensions_present.amd_buffer_marker = true;
+        } else if (!strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME)) {
+            extensions_present.amd_coherent_memory = true;
+        } else if (!strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_EXT_DEVICE_FAULT_EXTENSION_NAME)) {
+            extensions_present.ext_device_fault = true;
         }
     }
 
     VkDevice vk_device = *pDevice;
-    DevicePtr device = std::make_unique<Device>(this, physicalDevice, *pDevice, has_buffer_marker);
+    DevicePtr device = std::make_unique<Device>(this, physicalDevice, *pDevice, extensions_present);
 
     {
         std::lock_guard<std::mutex> lock(device_create_infos_mutex_);
@@ -2003,8 +1990,7 @@ VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(PFN_vkCreateDevice pfn_create_device
                                             const VkDeviceCreateInfo* pCreateInfo,
                                             const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
     VkDeviceCreateInfo local_create_info = *pCreateInfo;
-
-    if (g_interceptor->DeviceCoherentMemoryEnabled()) {
+    if (g_interceptor->AmdDeviceCoherentExtensionEnabled(gpu)) {
         // Coherent memory extension enabled, check for struct, add if needed.
         if (nullptr ==
             FindOnChain(local_create_info.pNext, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD)) {

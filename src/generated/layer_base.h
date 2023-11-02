@@ -118,6 +118,12 @@ void InterceptDestroyDevice(
     VkDevice                                    device,
     const VkAllocationCallbacks*                pAllocator);
 
+VkResult InterceptEnumerateDeviceExtensionProperties(
+    VkPhysicalDevice                            physicalDevice,
+    const char*                                 pLayerName,
+    uint32_t*                                   pPropertyCount,
+    VkExtensionProperties*                      pProperties);
+
 void InterceptGetDeviceQueue(
     VkDevice                                    device,
     uint32_t                                    queueFamilyIndex,
@@ -3180,6 +3186,13 @@ VkResult InterceptPostCreateDevice(
 void InterceptPostDestroyDevice(
     VkDevice                                    device,
     const VkAllocationCallbacks*                pAllocator);
+
+VkResult InterceptPostEnumerateDeviceExtensionProperties(
+    VkPhysicalDevice                            physicalDevice,
+    const char*                                 pLayerName,
+    uint32_t*                                   pPropertyCount,
+    VkExtensionProperties*                      pProperties,
+    VkResult                                    result);
 
 void InterceptPostGetDeviceQueue(
     VkDevice                                    device,

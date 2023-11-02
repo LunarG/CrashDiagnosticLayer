@@ -66,6 +66,15 @@ void InterceptPostDestroyDevice(
   g_interceptor->PostDestroyDevice(device, pAllocator);
 }
 
+VkResult InterceptPostEnumerateDeviceExtensionProperties(
+    VkPhysicalDevice                            physicalDevice,
+    const char*                                 pLayerName,
+    uint32_t*                                   pPropertyCount,
+    VkExtensionProperties*                      pProperties,
+    VkResult                                    result) {
+  return g_interceptor->PostEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties, result);
+}
+
 void InterceptPostGetDeviceQueue(
     VkDevice                                    device,
     uint32_t                                    queueFamilyIndex,

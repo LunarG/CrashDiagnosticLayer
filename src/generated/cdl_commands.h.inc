@@ -54,6 +54,13 @@ void PostDestroyDevice(
     VkDevice                                    device,
     const VkAllocationCallbacks*                pAllocator);
 
+VkResult PostEnumerateDeviceExtensionProperties(
+    VkPhysicalDevice                            physicalDevice,
+    const char*                                 pLayerName,
+    uint32_t*                                   pPropertyCount,
+    VkExtensionProperties*                      pProperties,
+    VkResult                                    result);
+
 void PostGetDeviceQueue(
     VkDevice                                    device,
     uint32_t                                    queueFamilyIndex,

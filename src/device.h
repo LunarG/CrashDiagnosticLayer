@@ -45,9 +45,15 @@ struct DeviceCreateInfo;
 typedef uint32_t CommandBufferDumpOptions;
 struct CommandBufferDumpOption;
 
+struct DeviceExtensionsPresent {
+    bool amd_buffer_marker{false};
+    bool amd_coherent_memory{false};
+    bool ext_device_fault{false};
+};
+
 class Device {
    public:
-    Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, bool has_buffer_marker);
+    Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, DeviceExtensionsPresent& extensions_present);
     ~Device();
     void SetDeviceCreateInfo(std::unique_ptr<DeviceCreateInfo> device_create_info);
 
@@ -122,6 +128,8 @@ class Device {
     bool AllocateMarker(Marker* marker);
     void FreeMarker(const Marker marker);
 
+    void DumpDeviceFaultInfo(std::ostream& os) const;
+
     std::ostream& Print(std::ostream& stream) const;
 
    private:
@@ -130,10 +138,10 @@ class Device {
     DeviceDispatchTable device_dispatch_table_;
     VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;
     VkDevice vk_device_ = VK_NULL_HANDLE;
-    bool has_buffer_marker_ = false;
     std::vector<VkQueueFamilyProperties> queue_family_properties_;
     VkPhysicalDeviceMemoryProperties memory_properties_ = {};
     VkPhysicalDeviceProperties physical_device_properties_ = {};
+    DeviceExtensionsPresent extensions_present_{};
 
     SubmitTrackerPtr submit_tracker_;
     SemaphoreTrackerPtr semaphore_tracker_;
@@ -186,6 +194,8 @@ class Device {
 
     PFN_vkCmdWriteBufferMarkerAMD pfn_vkCmdWriteBufferMarkerAMD_ = nullptr;
     PFN_vkFreeCommandBuffers pfn_vkFreeCommandBuffers_ = nullptr;
+
+    PFN_vkGetDeviceFaultInfoEXT pfn_vkGetDeviceFaultInfoEXT = nullptr;
 };
 
 using DevicePtr = std::unique_ptr<Device>;

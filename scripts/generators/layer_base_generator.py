@@ -647,6 +647,10 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
     }
   }
 
+  result = InterceptPostEnumerateDeviceExtensionProperties(
+                   physicalDevice, pLayerName, pPropertyCount, pProperties,
+                   result);
+
   return result;
 }
 
