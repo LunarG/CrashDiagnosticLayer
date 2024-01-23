@@ -7,7 +7,21 @@
       "sub_dir": "Vulkan-Headers",
       "build_dir": "Vulkan-Headers/build",
       "install_dir": "Vulkan-Headers/build/install",
-      "commit": "v1.3.266"
+      "commit": "v1.3.275"
+    },
+    {
+        "name": "Vulkan-Utility-Libraries",
+        "url": "https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git",
+        "sub_dir": "Vulkan-Utility-Libraries",
+        "build_dir": "Vulkan-Utility-Libraries/build",
+        "install_dir": "Vulkan-Utility-Libraries/build/install",
+        "commit": "v1.3.275",
+        "deps": [
+            {
+                "var_name": "VULKAN_HEADERS_INSTALL_DIR",
+                "repo_name": "Vulkan-Headers"
+            }
+        ]
     },
     {
       "name": "SPIRV-Headers",
@@ -15,11 +29,12 @@
       "sub_dir": "SPIRV-Headers",
       "build_dir": "SPIRV-Headers/build",
       "install_dir": "SPIRV-Headers/build/install",
-      "commit": "d790ced752b5bfc06b6988baadef6eb2d16bdf96"
+      "commit": "1c6bb2743599e6eb6f37b2969acc0aef812e32e3"
     }
   ],
   "install_names": {
     "Vulkan-Headers": "VULKAN_HEADERS_INSTALL_DIR",
+    "Vulkan-Utility-Libraries": "VULKAN_UTILITY_LIBRARIES_INSTALL_DIR",
     "SPIRV-Headers": "SPIRV_HEADERS_INSTALL_DIR"
   }
 }

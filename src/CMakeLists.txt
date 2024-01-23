@@ -88,6 +88,8 @@ set_target_properties(crash_diagnostic PROPERTIES OUTPUT_NAME ${LAYER_NAME})
 
 target_link_libraries(crash_diagnostic PUBLIC
     Vulkan::Headers
+    Vulkan::LayerSettings
+    Vulkan::UtilityHeaders
     ${CMAKE_DL_LIBS}
     $<TARGET_NAME_IF_EXISTS:PkgConfig::XCB>
     $<TARGET_NAME_IF_EXISTS:PkgConfig::X11>
@@ -140,7 +142,7 @@ endif()
 # - The respective json file
 # This code generates the appropriate json for both local testing and the installation.
 # NOTE: For WIN32 the JSON and dll MUST be placed in the same location, due to Win32 using a relative path for installation.
-set(INPUT_FILE "${GENERATED_DIR}/crash_diagnostic_layer.json.in")
+set(INPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/crash_diagnostic_layer.json.in")
 set(INTERMEDIATE_FILE "${CMAKE_CURRENT_BINARY_DIR}/json/crash_diagnostic_layer.json")
 set(OUTPUT_FILE_FINAL_NAME "${LAYER_NAME}.json")
 set(LAYER_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})

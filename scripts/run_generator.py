@@ -54,7 +54,6 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
     from generators.intercepts_and_prepost_generator import InterceptCommandsOutputGenerator
     from generators.layer_base_generator import LayerBaseOutputGenerator
     from generators.layer_utils_generator import LayerUtilsOutputGenerator
-    from generators.layer_manifest_generator import LayerManifestOutputGenerator
 
     # Allow downstream users to merge other (e.g. the main "vulkan") API into
     # the API for which code is generated
@@ -208,14 +207,6 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
           LayerUtilsOutputGenerator,
           BaseGeneratorOptions(
             filename          = 'layer_utils.cc',
-            mergeApiNames     = mergeApiNames,
-            valid_usage_path  = scripts)
-        ]
-
-    genOpts['crash_diagnostic_layer.json.in'] = [
-          LayerManifestOutputGenerator,
-          BaseGeneratorOptions(
-            filename          = 'crash_diagnostic_layer.json.in',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]

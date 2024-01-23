@@ -1,0 +1,320 @@
+
+{
+    "file_format_version": "1.2.0",
+    "layer": {
+        "name": "VK_LAYER_LUNARG_crash_diagnostic",
+        "type": "GLOBAL",
+        "library_path": "@JSON_LIBRARY_PATH@",
+        "api_version": "1.3.275",
+        "implementation_version": "1",
+        "description": "Crash Diagnostic Layer is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application.",
+        "functions": {
+            "vkNegotiateLoaderLayerInterfaceVersion": "CDL_NegotiateLoaderLayerInterfaceVersion",
+            "vkGetInstanceProcAddr": "CDL_GetInstanceProcAddr",
+            "vkGetDeviceProcAddr": "CDL_GetDeviceProcAddr"
+        },
+        "enable_environment": {
+            "VK_CRASH_DIAGNOSTIC_ENABLE": "1"
+        },
+        "disable_environment": {
+            "VK_CRASH_DIAGNOSTIC_DISABLE": "1"
+        },
+        "instance_extensions": [
+            {
+                "name": "VK_EXT_debug_report",
+                "spec_version": "1"
+            },
+            {
+                "name": "VK_EXT_debug_utils",
+                "spec_version": "1"
+            }
+        ],
+        "device_extensions": [
+            {
+                "name": "VK_EXT_debug_marker",
+                "spec_version": "1",
+                "entrypoints": [
+                    "vkDebugMarkerSetObjectTagEXT",
+                    "vkDebugMarkerSetObjectNameEXT",
+                    "vkCmdDebugMarkerBeginEXT",
+                    "vkCmdDebugMarkerEndEXT",
+                    "vkCmdDebugMarkerInsertEXT"
+                ]
+            }
+        ],
+        "features": {
+            "settings": [
+                {
+                    "key": "logging",
+                    "label": "Logging",
+                    "description": "Control of logfile names and contents.",
+                    "type": "GROUP",
+                    "expanded": true,
+                    "settings": [
+                        {
+                            "key": "output_path",
+                            "env": "CDL_OUTPUT_PATH",
+                            "label": "Output Path",
+                            "description": "The directory where log files and shader binaries are written.",
+                            "type": "STRING",
+                            "default": "",
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "output_name",
+                            "env": "CDL_OUTPUT_PATH",
+                            "label": "Output Name",
+                            "description": "TODO",
+                            "type": "STRING",
+                            "default": "",
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "logfile_prefix",
+                            "env": "CDL_LOGFILE_PREFIX",
+                            "label": "Log file prefix",
+                            "description": "TODO",
+                            "type": "STRING",
+                            "default": "",
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "trace_on",
+                            "env": "CDL_TRACE_ON",
+                            "label": "Enable Tracing",
+                            "description": "All Vulkan API calls intercepted by the layer will be logged to the console.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "log_configs",
+                            "env": "CDL_LOG_CONFIGS",
+                            "label": "Log configs",
+                            "description": "Log the active configuration settings.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "commands",
+                    "label": "Commands",
+                    "description": "Control of command buffer tracking.",
+                    "type": "GROUP",
+                    "expanded": true,
+                    "settings": [
+                        {
+                            "key": "dump_all_command_buffers",
+                            "env": "CDL_DUMP_ALL_COMMAND_BUFFERS",
+                            "label": "Dump all command buffers",
+                            "description": "All command buffers will be output when a log is created, even if they are determined to be complete.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "buffers_dump_indirect",
+                            "env": "CDL_BUFFERS_DUMP_INDIRECT",
+                            "label": "Dump indirect buffers",
+                            "description": "TODO",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "instrument_all_commands",
+                            "env": "CDL_INSTRUMENT_ALL_COMMANDS",
+                            "label": "Instrument all commands",
+                            "description": "All commands will be instrumented.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "semaphores",
+                    "label": "Semaphores",
+                    "description": "Control of semaphore tracking.",
+                    "type": "GROUP",
+                    "expanded": true,
+                    "settings": [
+                        {
+                            "key": "track_semaphores",
+                            "env": "CDL_TRACK_SEMAPHORES",
+                            "label": "Track semaphores",
+                            "description": "Enable semaphore tracking.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "trace_all_semaphores",
+                            "env": "CDL_TRACE_ALL_SEMAPHORES",
+                            "label": "Trace all semaphores",
+                            "description": "Semaphore events will be logged to console.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "shaders",
+                    "label": "Shaders",
+                    "description": "Control of shader tracking.",
+                    "type": "GROUP",
+                    "expanded": true,
+                    "settings": [
+                        {
+                            "key": "shaders_dump",
+                            "env": "CDL_SHADERS_DUMP",
+                            "label": "Dump shaders",
+                            "description": "All shaders will be dumped to disk when created.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "shaders_dump_on_bind",
+                            "env": "CDL_SHADERS_DUMP_ON_BIND",
+                            "label": "Dump shaders on bind",
+                            "description": "Shaders will be dumped to disk when bound. This can reduce the number of shaders dumped to those referenced by the application.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "shaders_dump_on_crash",
+                            "env": "CDL_SHADERS_DUMP_ON_CRASH",
+                            "label": "Dump shaders on crash",
+                            "description": "Bound shaders will be dumped to disk when a crash is detected. This will use more memory as shader code will be kept residient in case of a crash.",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "hang_detection",
+                    "label": "Hang detection",
+                    "description": "Control of hang detection features.",
+                    "type": "GROUP",
+                    "expanded": true,
+                    "settings": [
+                        {
+                            "key": "disable_driver_hang",
+                            "env": "CDL_DISABLE_DRIVER_HANG",
+                            "label": "Disable driver hang",
+                            "description": "TODO",
+                            "type": "BOOL",
+                            "default": false,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "watchdog_timeout_ms",
+                            "env": "CDL_WATCHDOG_TIMEOUT_MS",
+                            "label": "Watchdog timeout",
+                            "description": "If set to a non-zero number, a watchdog thread will be created. This will trigger if the application fails to submit new commands within a set time (in milliseconds) and a log will be created as if the a lost device error was encountered.",
+                            "type": "INT",
+                            "default": 0,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        },
+                        {
+                            "key": "autodump",
+                            "env": "CDL_AUTODUMP",
+                            "label": "Autodump??",
+                            "description": "TODO",
+                            "type": "INT",
+                            "default": 0,
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS",
+                                "ANDROID"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
+
