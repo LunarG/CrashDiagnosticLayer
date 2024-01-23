@@ -20,6 +20,7 @@
 
 #include <spirv.hpp>
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -42,7 +43,7 @@ class ShaderModule {
     };
 
     ShaderModule(CdlContext* p_cdl, VkShaderModule vk_shader_module, int load_options, size_t code_size,
-                 const char* p_spirv, std::string cdl_output_path);
+                 const char* p_spirv, const std::filesystem::path &cdl_output_path);
 
     CdlContext* GetCDL() const { return cdl_; }
     spv::ExecutionModel GetExecutionModel() const;
@@ -64,7 +65,7 @@ class ShaderModule {
 
     std::vector<char> shader_code;
 
-    const std::string cdl_output_path_;
+    const std::filesystem::path cdl_output_path_;
 };
 
 using ShaderModulePtr = std::unique_ptr<ShaderModule>;

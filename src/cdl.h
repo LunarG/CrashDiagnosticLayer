@@ -18,6 +18,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <vulkan/layer/vk_layer_settings.hpp>
 
 #if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
     defined(SYSTEM_TARGET_BSD)
@@ -29,6 +30,7 @@
 #include <atomic>
 #include <cassert>
 #include <chrono>
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -130,7 +132,7 @@ class CdlContext {
     VkInstance GetInstance() { return vk_instance_; }
 
     void MakeOutputPath();
-    const std::string& GetOutputPath() const;
+    const std::filesystem::path& GetOutputPath() const;
 
     Logger* GetLogger() { return &logger_; }
     const ShaderModule* FindShaderModule(VkShaderModule shader) const;
@@ -269,15 +271,15 @@ class CdlContext {
     bool trace_all_ = false;
 
     bool output_path_created_ = false;
-    std::string base_output_path_;
-    std::string output_path_;
+    std::filesystem::path base_output_path_;
+    std::filesystem::path output_path_;
     std::string output_name_;
 
     bool log_configs_ = false;
     StringArray configs_;
     template <class T>
-    void GetEnvVal(const char* name, T* value);
-    void MakeDir(const std::string& path);
+    void GetEnvVal(VkuLayerSettingSet settings, const char* name, T* value);
+    void MakeDir(const std::filesystem::path &path);
 
     int total_submits_ = 0;
     int total_logs_ = 0;

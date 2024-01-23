@@ -16,7 +16,6 @@
 
 #pragma once
 
-#define NOMINMAX
 #include <vulkan/vulkan.h>
 
 #include <memory>

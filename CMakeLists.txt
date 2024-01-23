@@ -36,6 +36,7 @@ include(GNUInstallDirs)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Remove when min is 3.26, see CMP0143
 
 find_package(VulkanHeaders REQUIRED CONFIG QUIET)
+find_package(VulkanUtilityLibraries CONFIG QUIET)
 
 if(WIN32)
     target_compile_definitions(Vulkan::Headers INTERFACE VK_USE_PLATFORM_WIN32_KHR)

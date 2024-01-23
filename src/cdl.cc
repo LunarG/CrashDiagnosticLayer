@@ -51,155 +51,31 @@ namespace crash_diagnostic_layer {
 const char* kCdlVersion = "1.2.0";
 const char* kGpuHangDaemonSocketName = "/run/gpuhangd";
 
-const char* k_env_var_output_path = "CDL_OUTPUT_PATH";
-const char* k_env_var_output_name = "CDL_OUTPUT_NAME";
-const char* k_env_var_logfile_prefix = "CDL_LOGFILE_PREFIX";
-
-const char* k_env_var_log_configs = "CDL_DEBUG_LOG_CONFIGS";
-const char* k_env_var_trace_on = "CDL_TRACE_ON";
-const char* k_env_var_debug_autodump = "CDL_AUTODUMP";
-const char* k_env_var_dump_all_command_buffers = "CDL_DUMP_ALL_COMMAND_BUFFERS";
-const char* k_env_var_track_semaphores = "CDL_TRACK_SEMAPHORES";
-const char* k_env_var_trace_all_semaphores = "CDL_TRACE_ALL_SEMAPHORES";
-const char* k_env_var_instrument_all_commands = "CDL_INSTRUMENT_ALL_COMMANDS";
-
-const char* k_env_var_debug_shaders_dump = "CDL_SHADERS_DUMP";
-const char* k_env_var_debug_shaders_dump_on_crash = "CDL_SHADERS_DUMP_ON_CRASH";
-const char* k_env_var_debug_shaders_dump_on_bind = "CDL_SHADERS_DUMP_ON_BIND";
-
-const char* k_env_var_debug_buffers_dump_indirect = "CDL_BUFFERS_DUMP_INDIRECT";
-
-const char* k_env_var_watchdog_timeout = "CDL_WATCHDOG_TIMEOUT_MS";
-
-const char* k_env_var_disable_driver_hang = "CDL_DISABLE_DRIVER_HANG";
-
 constexpr int kMessageHangDetected = 0x8badf00d;
 
-#if defined(WIN32)
-const char* k_path_separator = "\\";
-#else
-const char* k_path_separator = "/";
-#endif
+namespace settings {
+const char* kOutputPath = "output_path";
+const char* kOutputName = "output_name";
+const char* kLogfilePrefix = "logfile_prefix";
+const char* kLogConfigs = "log_configs";
+const char* kTraceOn = "trace_on";
+const char* kShadersDump = "shaders_dump";
+const char* kShadersDumpOnCrash = "shaders_dump_on_crash";
+const char* kShadersDumpOnBind = "shaders_dump_on_bind";
+const char* kWatchdogTimeout = "watchdog_timeout_ms";
+const char* kDisableDriverHang = "disable_driver_hang";
+const char* kAutodump = "autodump";
+const char* kDumpAllCommandBuffers = "dump_all_comamnd_buffers";
+// TODO: buffers_dump_indirect???
+const char* kTrackSemaphores = "track_semaphores";
+const char* kTraceAllSemaphores = "trace_all_semaphores";
+const char* kInstrumentAllCommands = "instrument_all_commands";
+}  // namespace settings
 
 // =============================================================================
 // CdlContext
 // =============================================================================
-CdlContext::CdlContext() {
-    system_.SetCDL(this);
-
-    logger_.LogInfo("Version %s enabled.", kCdlVersion);
-    // output path
-    {
-        char* p_env_value = getenv(k_env_var_output_path);
-        if (p_env_value) {
-            output_path_ = p_env_value;
-
-            if (output_path_.back() != k_path_separator[0]) {
-                output_path_ += k_path_separator;
-            }
-        } else {
-#if defined(WIN32)
-            output_path_ = getenv("USERPROFILE");
-#else
-            output_path_ = "/mnt/developer/ggp";
-#endif
-
-            output_path_ += k_path_separator;
-            output_path_ += +"cdl";
-            output_path_ += k_path_separator;
-        }
-
-        // ensure base path is created
-        MakeDir(output_path_);
-        base_output_path_ = output_path_;
-
-        // Calculate a unique sub directory based on time
-        auto now = std::chrono::system_clock::now();
-        auto in_time_t = std::chrono::system_clock::to_time_t(now);
-
-        // if output_name_ is given, don't create a subdirectory
-        char* d_env_value = getenv(k_env_var_output_name);
-        if (d_env_value) {
-            output_name_ = d_env_value;
-        } else {
-            std::stringstream ss;
-            ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S");
-            output_path_ += ss.str();
-            output_path_ += k_path_separator;
-        }
-
-        // If logfile prefix is given, create it with the date_time suffix
-        d_env_value = getenv(k_env_var_logfile_prefix);
-        if (d_env_value) {
-            std::stringstream ss;
-            ss << output_path_ << d_env_value << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S") << ".log";
-            logger_.OpenLogFile(ss.str());
-        }
-    }
-
-    // report cdl configs
-    {
-        char* p_env_value = getenv(k_env_var_log_configs);
-        log_configs_ = (p_env_value != nullptr) && (std::atol(p_env_value) == 1);
-        if (log_configs_) {
-            configs_.push_back(std::string(k_env_var_log_configs) + "=1");
-        }
-    }
-
-    // trace mode
-    GetEnvVal<bool>(k_env_var_trace_on, &trace_all_);
-
-    // setup shader loading modes
-    shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
-
-    {
-        bool dump_shaders = false;
-        GetEnvVal<bool>(k_env_var_debug_shaders_dump, &dump_shaders);
-        if (dump_shaders) {
-            shader_module_load_options_ |= ShaderModule::LoadOptions::kDumpOnCreate;
-        } else {
-            // if we're not dumping all shaders then check if we dump in other cases
-            {
-                GetEnvVal<bool>(k_env_var_debug_shaders_dump_on_crash, &debug_dump_shaders_on_crash_);
-                if (debug_dump_shaders_on_crash_) {
-                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
-                }
-            }
-
-            {
-                GetEnvVal<bool>(k_env_var_debug_shaders_dump_on_bind, &debug_dump_shaders_on_bind_);
-                if (debug_dump_shaders_on_bind_) {
-                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
-                }
-            }
-        }
-    }
-
-    // manage the watchdog thread
-    {
-        GetEnvVal<uint64_t>(k_env_var_watchdog_timeout, &watchdog_timer_ms_);
-
-        last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                std::chrono::high_resolution_clock::now().time_since_epoch())
-                                .count();
-
-        if (watchdog_timer_ms_ > 0) {
-            StartWatchdogTimer();
-            logger_.LogInfo("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
-        }
-    }
-
-    // Manage the gpuhangd listener thread.
-    {
-        bool disable_driver_hang_thread = false;
-        GetEnvVal<bool>(k_env_var_disable_driver_hang, &disable_driver_hang_thread);
-
-        if (!disable_driver_hang_thread) {
-            StartGpuHangdListener();
-            logger_.LogInfo("gpuhangd listener started: %s", kGpuHangDaemonSocketName);
-        }
-    }
-}
+CdlContext::CdlContext() { system_.SetCDL(this); }
 
 CdlContext::~CdlContext() {
     StopWatchdogTimer();
@@ -207,29 +83,30 @@ CdlContext::~CdlContext() {
     logger_.CloseLogFile();
 }
 
-void CdlContext::MakeDir(const std::string& path) {
+void CdlContext::MakeDir(const std::filesystem::path& path) {
 #if defined(WIN32)
-    int mkdir_result = _mkdir(path.c_str());
+    int mkdir_result = _mkdir(path.string().c_str());
 #else
-    int mkdir_result = mkdir(path.c_str(), ACCESSPERMS);
+    int mkdir_result = mkdir(path.string().c_str(), ACCESSPERMS);
 #endif
 
     if (mkdir_result && EEXIST != errno) {
-        logger_.LogError("Error creating output directory \'%s\': %s", path.c_str(), strerror(errno));
+        logger_.LogError("Error creating output directory \'%s\': %s", path.string().c_str(), strerror(errno));
     }
 }
 
 template <class T>
-void CdlContext::GetEnvVal(const char* name, T* value) {
-    char* p_env_value = getenv(name);
-    if (p_env_value) {
+void CdlContext::GetEnvVal(VkuLayerSettingSet settings, const char* name, T* value) {
+    if (vkuHasLayerSetting(settings, name)) {
+        vkuGetLayerSettingValue(settings, name, *value);
         if (log_configs_) {
-            auto config = std::string(name) + "=" + std::string(p_env_value);
+            std::stringstream ss;
+            ss << name << "=" << *value;
+            auto config = ss.str();
             if (std::find(configs_.begin(), configs_.end(), config) == configs_.end()) {
                 configs_.push_back(config);
             }
         }
-        *value = std::atol(p_env_value);
     }
 }
 
@@ -638,7 +515,7 @@ void CdlContext::WriteReport(std::ostream& os, CrashSource crash_source) {
     MakeOutputPath();
 
     // now write our log.
-    std::stringstream ss_path;
+    std::filesystem::path log_path(output_path_);
 
     // Keep the first log as cdl.log then add a number if more than one log is
     // generated. Multiple logs are a new feature and we want to keep backward
@@ -647,15 +524,16 @@ void CdlContext::WriteReport(std::ostream& os, CrashSource crash_source) {
     if (output_name_.size() > 0) {
         output_name = output_name_;
     }
+    std::stringstream ss_name;
     if (total_logs_ > 0) {
-        ss_path << output_path_ << output_name << "_" << total_submits_ << "_" << total_logs_ << ".log";
+        ss_name << output_name << "_" << total_submits_ << "_" << total_logs_ << ".log";
     } else {
-        ss_path << output_path_ << output_name << ".log";
+        ss_name << output_path_ << output_name << ".log";
     }
+    log_path /= ss_name.str();
     total_logs_++;
 
-    std::string output_path = ss_path.str();
-    std::ofstream fs(output_path.c_str());
+    std::ofstream fs(log_path);
     if (fs.is_open()) {
         std::stringstream ss;
         ss << os.rdbuf();
@@ -666,14 +544,15 @@ void CdlContext::WriteReport(std::ostream& os, CrashSource crash_source) {
 
 #if !defined(WIN32)
     // Create a symlink from the generated log file.
-    std::string symlink_path = base_output_path_ + "cdl.log.symlink";
-    remove(symlink_path.c_str());
-    symlink(output_path.c_str(), symlink_path.c_str());
+    std::filesystem::path symlink_path(base_output_path_);
+    symlink_path /= "cdl.log.symlink";
+    remove(symlink_path.string().c_str());
+    symlink(log_path.string().c_str(), symlink_path.string().c_str());
 #endif
 
     std::stringstream ss;
     ss << "Device error encountered and log being recorded\n";
-    ss << "\tOutput written to: " << output_path << "\n";
+    ss << "\tOutput written to: " << log_path << "\n";
 #if !defined(WIN32)
     ss << "\tSymlink to output: " << symlink_path << "\n";
 #endif
@@ -784,22 +663,156 @@ void CdlContext::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_in
     logger_.LogInfo(log);
 }
 
+// FindOnChain looks for a pNext of a give type.
+const void* FindOnChain(const void* pNext, VkStructureType type) {
+    const VkStruct* pStruct = reinterpret_cast<const VkStruct*>(pNext);
+    while (pStruct) {
+        if (pStruct->sType == type) {
+            return pStruct;
+        }
+        pStruct = reinterpret_cast<const VkStruct*>(pStruct->pNext);
+    }
+
+    return nullptr;
+}
+
 // =============================================================================
 // Define pre / post intercepted commands
 // =============================================================================
 
 VkResult CdlContext::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                                        VkInstance* pInstance) {
+    logger_.LogInfo("Version %s enabled.", kCdlVersion);
+
+    const VkLayerSettingsCreateInfoEXT* create_info = nullptr;
+    if (pCreateInfo) {
+        create_info = static_cast<const VkLayerSettingsCreateInfoEXT*>(
+            FindOnChain(pCreateInfo->pNext, VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT));
+    }
+    VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
+    VkResult result =
+        vkuCreateLayerSettingSet("lunarg_crash_diagnostic", create_info, pAllocator, nullptr, &layer_setting_set);
+    if (result != VK_SUCCESS) {
+        logger_.LogError("vkuCreateLayerSettingSet failed with error %d", result);
+        return result;
+    }
+
+    // output path
+    {
+        std::string path_string;
+        vkuGetLayerSettingValue(layer_setting_set, settings::kOutputPath, path_string);
+        if (!path_string.empty()) {
+            output_path_ = path_string;
+        } else {
+#if defined(WIN32)
+            output_path_ = getenv("USERPROFILE");
+#else
+            output_path_ = "/mnt/developer/ggp";
+#endif
+            output_path_ /= "cdl";
+        }
+
+        // ensure base path is created
+        MakeDir(output_path_);
+        base_output_path_ = output_path_;
+
+        // Calculate a unique sub directory based on time
+        auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+        // if output_name_ is given, don't create a subdirectory
+        vkuGetLayerSettingValue(layer_setting_set, settings::kOutputName, output_name_);
+        if (output_name_.empty()) {
+            std::stringstream ss;
+            ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S");
+            output_path_ += ss.str();
+        }
+
+        // If logfile prefix is given, create it with the date_time suffix
+        std::string logfile_prefix;
+        vkuGetLayerSettingValue(layer_setting_set, settings::kLogfilePrefix, logfile_prefix);
+        if (!logfile_prefix.empty()) {
+            std::stringstream ss;
+            ss << output_path_ << logfile_prefix << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S")
+               << ".log";
+            logger_.OpenLogFile(ss.str());
+        }
+    }
+
+    // report cdl configs
+    {
+        if (vkuHasLayerSetting(layer_setting_set, settings::kLogConfigs)) {
+            vkuGetLayerSettingValue(layer_setting_set, settings::kLogConfigs, log_configs_);
+        }
+        if (log_configs_) {
+            configs_.push_back(std::string(settings::kLogConfigs) + "=1");
+        }
+    }
+
+    // trace mode
+    GetEnvVal<bool>(layer_setting_set, settings::kTraceOn, &trace_all_);
+
+    // setup shader loading modes
+    shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
+
+    {
+        bool dump_shaders = false;
+        GetEnvVal<bool>(layer_setting_set, settings::kShadersDump, &dump_shaders);
+        if (dump_shaders) {
+            shader_module_load_options_ |= ShaderModule::LoadOptions::kDumpOnCreate;
+        } else {
+            // if we're not dumping all shaders then check if we dump in other cases
+            {
+                GetEnvVal<bool>(layer_setting_set, settings::kShadersDumpOnCrash, &debug_dump_shaders_on_crash_);
+                if (debug_dump_shaders_on_crash_) {
+                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
+                }
+            }
+
+            {
+                GetEnvVal<bool>(layer_setting_set, settings::kShadersDumpOnBind, &debug_dump_shaders_on_bind_);
+                if (debug_dump_shaders_on_bind_) {
+                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
+                }
+            }
+        }
+    }
+
+    // manage the watchdog thread
+    {
+        GetEnvVal<uint64_t>(layer_setting_set, settings::kWatchdogTimeout, &watchdog_timer_ms_);
+
+        last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                std::chrono::high_resolution_clock::now().time_since_epoch())
+                                .count();
+
+        if (watchdog_timer_ms_ > 0) {
+            StartWatchdogTimer();
+            logger_.LogInfo("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
+        }
+    }
+
+    // Manage the gpuhangd listener thread.
+    {
+        bool disable_driver_hang_thread = false;
+        GetEnvVal<bool>(layer_setting_set, settings::kDisableDriverHang, &disable_driver_hang_thread);
+
+        if (!disable_driver_hang_thread) {
+            StartGpuHangdListener();
+            logger_.LogInfo("gpuhangd listener started: %s", kGpuHangDaemonSocketName);
+        }
+    }
     // Setup debug flags
-    GetEnvVal<int>(k_env_var_debug_autodump, &debug_autodump_rate_);
-    GetEnvVal<bool>(k_env_var_dump_all_command_buffers, &debug_dump_all_command_buffers_);
-    GetEnvVal<bool>(k_env_var_track_semaphores, &track_semaphores_);
-    GetEnvVal<bool>(k_env_var_trace_all_semaphores, &trace_all_semaphores_);
-    GetEnvVal<bool>(k_env_var_instrument_all_commands, &instrument_all_commands_);
+    GetEnvVal<int>(layer_setting_set, settings::kAutodump, &debug_autodump_rate_);
+    GetEnvVal<bool>(layer_setting_set, settings::kDumpAllCommandBuffers, &debug_dump_all_command_buffers_);
+    GetEnvVal<bool>(layer_setting_set, settings::kTrackSemaphores, &track_semaphores_);
+    GetEnvVal<bool>(layer_setting_set, settings::kTraceAllSemaphores, &trace_all_semaphores_);
+    GetEnvVal<bool>(layer_setting_set, settings::kInstrumentAllCommands, &instrument_all_commands_);
 
     instance_extension_names_original_.assign(
         pCreateInfo->ppEnabledExtensionNames,
         pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
+    vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
     return VK_SUCCESS;
 }
 
@@ -1553,7 +1566,7 @@ VkResult CdlContext::PostGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphor
     return result;
 }
 
-const std::string& CdlContext::GetOutputPath() const { return output_path_; }
+const std::filesystem::path& CdlContext::GetOutputPath() const { return output_path_; }
 
 VkResult CdlContext::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
     auto object_id = pNameInfo->object;
@@ -1970,19 +1983,6 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
                                               &pBindInfo[next_bind_sparse_info_index], fence);
     }
     return last_bind_result;
-}
-
-// FindOnChain looks for a pNext of a give type.
-const void* FindOnChain(const void* pNext, VkStructureType type) {
-    const VkStruct* pStruct = reinterpret_cast<const VkStruct*>(pNext);
-    while (pStruct) {
-        if (pStruct->sType == type) {
-            return pStruct;
-        }
-        pStruct = reinterpret_cast<const VkStruct*>(pStruct->pNext);
-    }
-
-    return nullptr;
 }
 
 // CDL intercepts vkCreateDevice to enforce coherent memory

@@ -53,7 +53,6 @@ def main(argv):
         'layer_base.cc',
         'layer_utils.h',
         'layer_utils.cc',
-        'crash_diagnostic_layer.json.in'
     ]
 
     parser = argparse.ArgumentParser(description='Generate source code for this repository')
