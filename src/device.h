@@ -38,7 +38,7 @@ namespace crash_diagnostic_layer {
 const VkDeviceSize kBufferMarkerEventCount = 1024;
 const MarkerType kMarkerType = MarkerType::kUint32;
 
-class CdlContext;
+class Context;
 struct DeviceCreateInfo;
 
 // Options when dumping a command buffer to a log file.
@@ -53,11 +53,11 @@ struct DeviceExtensionsPresent {
 
 class Device {
    public:
-    Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, DeviceExtensionsPresent& extensions_present);
+    Device(Context* p_cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, DeviceExtensionsPresent& extensions_present);
     ~Device();
     void SetDeviceCreateInfo(std::unique_ptr<DeviceCreateInfo> device_create_info);
 
-    CdlContext* GetCDL() const;
+    Context* GetContext() const;
     VkPhysicalDevice GetVkGpu() const;
     VkDevice GetVkDevice() const;
 
@@ -133,7 +133,7 @@ class Device {
     std::ostream& Print(std::ostream& stream) const;
 
    private:
-    CdlContext* cdl_ = nullptr;
+    Context* context_ = nullptr;
     InstanceDispatchTable instance_dispatch_table_;
     DeviceDispatchTable device_dispatch_table_;
     VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;

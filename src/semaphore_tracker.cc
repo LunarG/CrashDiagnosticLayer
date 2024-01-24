@@ -40,13 +40,13 @@ void SemaphoreTracker::RegisterSemaphore(VkSemaphore vk_semaphore, VkSemaphoreTy
     semaphore_info.semaphore_type = type;
     // Reserve a marker to track semaphore value
     if (!device_->AllocateMarker(&semaphore_info.marker)) {
-        device_->GetCDL()->GetLogger()->LogError("CDL warning: Cannot acquire marker. Not tracking semaphore %s.\n",
-                                                 device_->GetObjectName((uint64_t)vk_semaphore).c_str());
+        device_->GetContext()->GetLogger()->LogError("CDL warning: Cannot acquire marker. Not tracking semaphore %s.\n",
+                                                     device_->GetObjectName((uint64_t)vk_semaphore).c_str());
         return;
     }
     if (track_semaphores_last_setter_) {
         if (!device_->AllocateMarker(&semaphore_info.last_modifier_marker)) {
-            device_->GetCDL()->GetLogger()->LogError(
+            device_->GetContext()->GetLogger()->LogError(
                 "CDL warning: Cannot acquire modifier tracking marker. Not "
                 "tracking semaphore %s.\n",
                 device_->GetObjectName((uint64_t)vk_semaphore).c_str());
@@ -70,8 +70,8 @@ void SemaphoreTracker::SignalSemaphore(VkSemaphore vk_semaphore, uint64_t value,
             semaphore_info.UpdateLastModifier(modifier_info);
         }
     } else {
-        device_->GetCDL()->GetLogger()->LogError("Unknown semaphore signaled: %s\n",
-                                                 device_->GetObjectName((uint64_t)vk_semaphore).c_str());
+        device_->GetContext()->GetLogger()->LogError("Unknown semaphore signaled: %s\n",
+                                                     device_->GetObjectName((uint64_t)vk_semaphore).c_str());
     }
 }
 

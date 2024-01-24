@@ -106,28 +106,28 @@ struct ExpandedBindSparseInfo {
         : packed_bind_sparse_info(packed_bind_sparse_info_){};
 };
 
-static inline void CdlNewHandler() {
+static inline void NewHandler() {
     std::cout << "CDL: Memory allocation failed!" << std::endl;
     std::cerr << "CDL: Memory allocation failed!" << std::endl;
     std::set_new_handler(nullptr);
 }
 
 template <typename T, typename... Args>
-T* CdlNew(Args&&... args) {
-    std::set_new_handler(CdlNewHandler);
+T* New(Args&&... args) {
+    std::set_new_handler(NewHandler);
     return new T(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-T* CdlNewArray(size_t size) {
-    std::set_new_handler(CdlNewHandler);
+T* NewArray(size_t size) {
+    std::set_new_handler(NewHandler);
     return new T[size];
 }
 
-class CdlContext {
+class Context {
    public:
-    CdlContext();
-    virtual ~CdlContext();
+    Context();
+    virtual ~Context();
 
     VkInstance GetInstance() { return vk_instance_; }
 

@@ -375,7 +375,7 @@ bool System::QueryInfoWindows() {
     if (nullptr != fpIsWow64Process) {
         BOOL is_wow_64_process = FALSE;
         if (!fpIsWow64Process(GetCurrentProcess(), &is_wow_64_process)) {
-            GetCDL()->GetLogger()->LogError("Failed to determine properly if 32-bit on Win64!");
+            GetContext()->GetLogger()->LogError("Failed to determine properly if 32-bit on Win64!");
         }
         is_wow64 = (is_wow_64_process == TRUE);
     }
