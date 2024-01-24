@@ -1771,7 +1771,6 @@ void CommandBuffer::PostCmdSetFragmentShadingRateKHR(
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandBuffer::PreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -1786,7 +1785,6 @@ void CommandBuffer::PostCmdEncodeVideoKHR(
   if (instrument_all_commands_)
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }
-#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void CommandBuffer::PreCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -2018,6 +2016,96 @@ void CommandBuffer::PostCmdBindIndexBuffer2KHR(
     VkDeviceSize                                size,
     VkIndexType                                 indexType) {
   tracker_.TrackPostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  tracker_.TrackPreCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  tracker_.TrackPostCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  tracker_.TrackPreCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  tracker_.TrackPostCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  tracker_.TrackPreCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  tracker_.TrackPostCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  tracker_.TrackPreCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  tracker_.TrackPostCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  tracker_.TrackPreCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  tracker_.TrackPostCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  tracker_.TrackPreCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  tracker_.TrackPostCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
   if (instrument_all_commands_)
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }
@@ -3115,6 +3203,21 @@ void CommandBuffer::PostCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkDepthBiasInfoEXT*                   pDepthBiasInfo) {
   tracker_.TrackPostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  tracker_.TrackPreCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  tracker_.TrackPostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
   if (instrument_all_commands_)
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }

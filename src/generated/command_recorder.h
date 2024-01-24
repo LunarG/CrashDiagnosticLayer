@@ -606,11 +606,9 @@ class CommandRecorder
     const VkExtent2D*                           pFragmentSize,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
   CmdEncodeVideoKHRArgs*RecordCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo);
-#endif //VK_ENABLE_BETA_EXTENSIONS
 
   CmdSetEvent2KHRArgs*RecordCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -679,6 +677,30 @@ class CommandRecorder
     VkDeviceSize                                offset,
     VkDeviceSize                                size,
     VkIndexType                                 indexType);
+
+  CmdBindDescriptorSets2KHRArgs*RecordCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo);
+
+  CmdPushConstants2KHRArgs*RecordCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo);
+
+  CmdPushDescriptorSet2KHRArgs*RecordCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo);
+
+  CmdPushDescriptorSetWithTemplate2KHRArgs*RecordCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo);
+
+  CmdSetDescriptorBufferOffsets2EXTArgs*RecordCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo);
+
+  CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs*RecordCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
 
   CmdDebugMarkerBeginEXTArgs*RecordCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
@@ -1023,6 +1045,10 @@ class CommandRecorder
   CmdSetDepthBias2EXTArgs*RecordCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkDepthBiasInfoEXT*                   pDepthBiasInfo);
+
+  CmdCudaLaunchKernelNVArgs*RecordCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo);
 
   CmdBindDescriptorBuffersEXTArgs*RecordCmdBindDescriptorBuffersEXT(
     VkCommandBuffer                             commandBuffer,

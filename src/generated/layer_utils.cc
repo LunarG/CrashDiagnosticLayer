@@ -78,9 +78,7 @@ void GetResultString(VkResult result, std::string& result_string) {
         case VK_THREAD_DONE_KHR: result_string = "VK_THREAD_DONE_KHR"; break;
         case VK_OPERATION_DEFERRED_KHR: result_string = "VK_OPERATION_DEFERRED_KHR"; break;
         case VK_OPERATION_NOT_DEFERRED_KHR: result_string = "VK_OPERATION_NOT_DEFERRED_KHR"; break;
-#ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR: result_string = "VK_ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR"; break;
-#endif // VK_ENABLE_BETA_EXTENSIONS
         case VK_ERROR_COMPRESSION_EXHAUSTED_EXT: result_string = "VK_ERROR_COMPRESSION_EXHAUSTED_EXT"; break;
         case VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT: result_string = "VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT"; break;
     }

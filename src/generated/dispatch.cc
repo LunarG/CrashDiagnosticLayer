@@ -198,12 +198,12 @@ void InitInstanceDispatchTable(VkInstance instance,
     (PFN_vkGetDisplayPlaneCapabilities2KHR)pa(instance, "vkGetDisplayPlaneCapabilities2KHR");
   dt->GetPhysicalDeviceFragmentShadingRatesKHR =
     (PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR)pa(instance, "vkGetPhysicalDeviceFragmentShadingRatesKHR");
-#ifdef VK_ENABLE_BETA_EXTENSIONS
   dt->GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR =
     (PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR)pa(instance, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR");
-#endif //VK_ENABLE_BETA_EXTENSIONS
   dt->GetPhysicalDeviceCooperativeMatrixPropertiesKHR =
     (PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR)pa(instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR");
+  dt->GetPhysicalDeviceCalibrateableTimeDomainsKHR =
+    (PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR)pa(instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR");
   dt->CreateDebugReportCallbackEXT =
     (PFN_vkCreateDebugReportCallbackEXT)pa(instance, "vkCreateDebugReportCallbackEXT");
   dt->DestroyDebugReportCallbackEXT =
@@ -844,14 +844,10 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkMapMemory2KHR)pa(device, "vkMapMemory2KHR");
   dt->UnmapMemory2KHR =
     (PFN_vkUnmapMemory2KHR)pa(device, "vkUnmapMemory2KHR");
-#ifdef VK_ENABLE_BETA_EXTENSIONS
   dt->GetEncodedVideoSessionParametersKHR =
     (PFN_vkGetEncodedVideoSessionParametersKHR)pa(device, "vkGetEncodedVideoSessionParametersKHR");
-#endif //VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
   dt->CmdEncodeVideoKHR =
     (PFN_vkCmdEncodeVideoKHR)pa(device, "vkCmdEncodeVideoKHR");
-#endif //VK_ENABLE_BETA_EXTENSIONS
   dt->CmdSetEvent2KHR =
     (PFN_vkCmdSetEvent2KHR)pa(device, "vkCmdSetEvent2KHR");
   dt->CmdResetEvent2KHR =
@@ -896,6 +892,20 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkGetDeviceImageSubresourceLayoutKHR)pa(device, "vkGetDeviceImageSubresourceLayoutKHR");
   dt->GetImageSubresourceLayout2KHR =
     (PFN_vkGetImageSubresourceLayout2KHR)pa(device, "vkGetImageSubresourceLayout2KHR");
+  dt->GetCalibratedTimestampsKHR =
+    (PFN_vkGetCalibratedTimestampsKHR)pa(device, "vkGetCalibratedTimestampsKHR");
+  dt->CmdBindDescriptorSets2KHR =
+    (PFN_vkCmdBindDescriptorSets2KHR)pa(device, "vkCmdBindDescriptorSets2KHR");
+  dt->CmdPushConstants2KHR =
+    (PFN_vkCmdPushConstants2KHR)pa(device, "vkCmdPushConstants2KHR");
+  dt->CmdPushDescriptorSet2KHR =
+    (PFN_vkCmdPushDescriptorSet2KHR)pa(device, "vkCmdPushDescriptorSet2KHR");
+  dt->CmdPushDescriptorSetWithTemplate2KHR =
+    (PFN_vkCmdPushDescriptorSetWithTemplate2KHR)pa(device, "vkCmdPushDescriptorSetWithTemplate2KHR");
+  dt->CmdSetDescriptorBufferOffsets2EXT =
+    (PFN_vkCmdSetDescriptorBufferOffsets2EXT)pa(device, "vkCmdSetDescriptorBufferOffsets2EXT");
+  dt->CmdBindDescriptorBufferEmbeddedSamplers2EXT =
+    (PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT)pa(device, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT");
   dt->DebugMarkerSetObjectTagEXT =
     (PFN_vkDebugMarkerSetObjectTagEXT)pa(device, "vkDebugMarkerSetObjectTagEXT");
   dt->DebugMarkerSetObjectNameEXT =
@@ -1180,6 +1190,18 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkSetPrivateDataEXT)pa(device, "vkSetPrivateDataEXT");
   dt->GetPrivateDataEXT =
     (PFN_vkGetPrivateDataEXT)pa(device, "vkGetPrivateDataEXT");
+  dt->CreateCudaModuleNV =
+    (PFN_vkCreateCudaModuleNV)pa(device, "vkCreateCudaModuleNV");
+  dt->GetCudaModuleCacheNV =
+    (PFN_vkGetCudaModuleCacheNV)pa(device, "vkGetCudaModuleCacheNV");
+  dt->CreateCudaFunctionNV =
+    (PFN_vkCreateCudaFunctionNV)pa(device, "vkCreateCudaFunctionNV");
+  dt->DestroyCudaModuleNV =
+    (PFN_vkDestroyCudaModuleNV)pa(device, "vkDestroyCudaModuleNV");
+  dt->DestroyCudaFunctionNV =
+    (PFN_vkDestroyCudaFunctionNV)pa(device, "vkDestroyCudaFunctionNV");
+  dt->CmdCudaLaunchKernelNV =
+    (PFN_vkCmdCudaLaunchKernelNV)pa(device, "vkCmdCudaLaunchKernelNV");
 #ifdef VK_USE_PLATFORM_METAL_EXT
   dt->ExportMetalObjectsEXT =
     (PFN_vkExportMetalObjectsEXT)pa(device, "vkExportMetalObjectsEXT");

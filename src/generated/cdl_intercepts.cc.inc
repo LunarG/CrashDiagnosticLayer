@@ -1873,7 +1873,6 @@ void InterceptPostCmdSetFragmentShadingRateKHR(
   g_interceptor->PostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 void InterceptPreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -1884,7 +1883,6 @@ void InterceptPostCmdEncodeVideoKHR(
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
   g_interceptor->PostCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
-#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void InterceptPreCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -2078,6 +2076,72 @@ void InterceptPostCmdBindIndexBuffer2KHR(
     VkDeviceSize                                size,
     VkIndexType                                 indexType) {
   g_interceptor->PostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+
+void InterceptPreCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  g_interceptor->PreCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+}
+void InterceptPostCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  g_interceptor->PostCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+}
+
+void InterceptPreCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  g_interceptor->PreCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+}
+void InterceptPostCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  g_interceptor->PostCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+}
+
+void InterceptPreCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  g_interceptor->PreCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+}
+void InterceptPostCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  g_interceptor->PostCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+}
+
+void InterceptPreCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  g_interceptor->PreCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+void InterceptPostCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  g_interceptor->PostCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+
+void InterceptPreCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  g_interceptor->PreCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+}
+void InterceptPostCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  g_interceptor->PostCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+}
+
+void InterceptPreCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  g_interceptor->PreCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+}
+void InterceptPostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  g_interceptor->PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 
 VkResult InterceptPreDebugMarkerSetObjectNameEXT(
@@ -2965,6 +3029,17 @@ void InterceptPostCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkDepthBiasInfoEXT*                   pDepthBiasInfo) {
   g_interceptor->PostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
+}
+
+void InterceptPreCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  g_interceptor->PreCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
+}
+void InterceptPostCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  g_interceptor->PostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
 
 void InterceptPreCmdBindDescriptorBuffersEXT(

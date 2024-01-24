@@ -232,10 +232,8 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdDrawIndexedIndirectCountKHR";
   case Command::Type::kCmdSetFragmentShadingRateKHR:
     return "vkCmdSetFragmentShadingRateKHR";
-#ifdef VK_ENABLE_BETA_EXTENSIONS
   case Command::Type::kCmdEncodeVideoKHR:
     return "vkCmdEncodeVideoKHR";
-#endif //VK_ENABLE_BETA_EXTENSIONS
   case Command::Type::kCmdSetEvent2KHR:
     return "vkCmdSetEvent2KHR";
   case Command::Type::kCmdResetEvent2KHR:
@@ -264,6 +262,18 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdTraceRaysIndirect2KHR";
   case Command::Type::kCmdBindIndexBuffer2KHR:
     return "vkCmdBindIndexBuffer2KHR";
+  case Command::Type::kCmdBindDescriptorSets2KHR:
+    return "vkCmdBindDescriptorSets2KHR";
+  case Command::Type::kCmdPushConstants2KHR:
+    return "vkCmdPushConstants2KHR";
+  case Command::Type::kCmdPushDescriptorSet2KHR:
+    return "vkCmdPushDescriptorSet2KHR";
+  case Command::Type::kCmdPushDescriptorSetWithTemplate2KHR:
+    return "vkCmdPushDescriptorSetWithTemplate2KHR";
+  case Command::Type::kCmdSetDescriptorBufferOffsets2EXT:
+    return "vkCmdSetDescriptorBufferOffsets2EXT";
+  case Command::Type::kCmdBindDescriptorBufferEmbeddedSamplers2EXT:
+    return "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT";
   case Command::Type::kCmdDebugMarkerBeginEXT:
     return "vkCmdDebugMarkerBeginEXT";
   case Command::Type::kCmdDebugMarkerEndEXT:
@@ -392,6 +402,8 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdBindPipelineShaderGroupNV";
   case Command::Type::kCmdSetDepthBias2EXT:
     return "vkCmdSetDepthBias2EXT";
+  case Command::Type::kCmdCudaLaunchKernelNV:
+    return "vkCmdCudaLaunchKernelNV";
   case Command::Type::kCmdBindDescriptorBuffersEXT:
     return "vkCmdBindDescriptorBuffersEXT";
   case Command::Type::kCmdSetDescriptorBufferOffsetsEXT:
