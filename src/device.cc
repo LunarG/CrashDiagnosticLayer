@@ -132,10 +132,10 @@ void DestroyBuffer(VkDevice device, VkBuffer buffer) {
 // =================================================================================================
 // Device
 // =================================================================================================
-Device::Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice device, DeviceExtensionsPresent& extensions_present)
-    : cdl_(p_cdl), vk_physical_device_(vk_gpu), vk_device_(device), extensions_present_(extensions_present) {
+Device::Device(Context* context, VkPhysicalDevice vk_gpu, VkDevice device, DeviceExtensionsPresent& extensions_present)
+    : context_(context), vk_physical_device_(vk_gpu), vk_device_(device), extensions_present_(extensions_present) {
     // Set the dispatch tables
-    auto instance_layer_data = GetInstanceLayerData(DataKey(p_cdl->GetInstance()));
+    auto instance_layer_data = GetInstanceLayerData(DataKey(context_->GetInstance()));
     instance_dispatch_table_ = instance_layer_data->dispatch_table;
     auto device_layer_data = GetDeviceLayerData(DataKey(device));
     device_dispatch_table_ = device_layer_data->dispatch_table;
@@ -171,7 +171,7 @@ Device::Device(CdlContext* p_cdl, VkPhysicalDevice vk_gpu, VkDevice device, Devi
     submit_tracker_ = std::make_unique<SubmitTracker>(this);
 
     // Create a semaphore tracker
-    semaphore_tracker_ = std::make_unique<SemaphoreTracker>(this, p_cdl->TracingAllSemaphores());
+    semaphore_tracker_ = std::make_unique<SemaphoreTracker>(this, context_->TracingAllSemaphores());
 }
 
 Device::~Device() {}
@@ -180,7 +180,7 @@ void Device::SetDeviceCreateInfo(std::unique_ptr<DeviceCreateInfo> device_create
     device_create_info_ = std::move(device_create_info);
 }
 
-CdlContext* Device::GetCDL() const { return cdl_; }
+Context* Device::GetContext() const { return context_; }
 
 VkPhysicalDevice Device::GetVkGpu() const { return vk_physical_device_; }
 
@@ -314,7 +314,7 @@ void Device::DumpCommandBuffers(std::ostream& os, CommandBufferDumpOptions optio
     std::map<uint64_t /* submit_info_id*/, std::vector<CommandBuffer*>> sorted_command_buffers;
     std::lock_guard<std::recursive_mutex> lock(command_buffers_mutex_);
     for (auto cb : command_buffers_) {
-        auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(cb);
+        auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
         if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
             if (dump_all_command_buffers ||
                 (p_cmd->HasBufferMarker() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution())) {
@@ -363,9 +363,9 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_command_pool, const VkComma
 
 // Write out information about an invalid command buffer reset.
 void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& os) const {
-    GetCDL()->GetLogger()->LogError("Invalid Command Buffer Usage");
-    GetCDL()->GetLogger()->LogError("Reset of VkCommandBuffer in use by GPU: %s",
-                                    GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
+    GetContext()->GetLogger()->LogError("Invalid Command Buffer Usage");
+    GetContext()->GetLogger()->LogError("Reset of VkCommandBuffer in use by GPU: %s",
+                                        GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
     auto submitted_fence = p_cmd->GetSubmittedFence();
 
     // If there is a fence associated with this command buffer, we check
@@ -373,10 +373,10 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& 
     if (submitted_fence != VK_NULL_HANDLE) {
         auto fence_status = device_dispatch_table_.WaitForFences(vk_device_, 1, &submitted_fence, VK_TRUE, 0);
         if (VK_TIMEOUT == fence_status) {
-            GetCDL()->GetLogger()->LogError("Reset before fence was set: %s",
-                                            GetObjectName((uint64_t)submitted_fence).c_str());
+            GetContext()->GetLogger()->LogError("Reset before fence was set: %s",
+                                                GetObjectName((uint64_t)submitted_fence).c_str());
         } else {
-            GetCDL()->GetLogger()->LogError("Fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
+            GetContext()->GetLogger()->LogError("Fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
         }
     }
 
@@ -387,7 +387,7 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& 
     std::stringstream error_report;
     error_report << "InvalidCommandBuffer:\n";
     p_cmd->DumpContents(error_report, CommandBufferDumpOption::kDumpAllCommands);
-    GetCDL()->GetLogger()->LogError(error_report.str().c_str());
+    GetContext()->GetLogger()->LogError(error_report.str().c_str());
     os << error_report.str();
 }
 
@@ -401,7 +401,7 @@ bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, std::ostream& o
 }
 
 bool Device::ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, std::ostream& os) {
-    auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(vk_command_buffer);
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_command_buffer);
     assert(p_cmd != nullptr);
     if (p_cmd != nullptr) {
         return ValidateCommandBufferNotInUse(p_cmd, os);
@@ -419,7 +419,7 @@ void Device::ValidateCommandPoolState(VkCommandPool vk_command_pool, std::ostrea
     // to.
     auto command_buffers = command_pools_[vk_command_pool]->GetCommandBuffers(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
     for (auto vk_cmd : command_buffers) {
-        auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(vk_cmd);
+        auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_cmd);
         if (p_cmd != nullptr) {
             ValidateCommandBufferNotInUse(p_cmd, os);
         }
@@ -433,7 +433,7 @@ void Device::ResetCommandPool(VkCommandPool vk_command_pool) {
     for (auto cb_level : cb_levels) {
         auto command_buffers = command_pools_[vk_command_pool]->GetCommandBuffers(cb_level);
         for (auto vk_cmd : command_buffers) {
-            auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(vk_cmd);
+            auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_cmd);
             if (p_cmd != nullptr) {
                 p_cmd->Reset();
             }
@@ -449,11 +449,11 @@ void Device::DeleteCommandPool(VkCommandPool vk_command_pool) {
     for (auto cb_level : cb_levels) {
         auto command_buffers = command_pools_[vk_command_pool]->GetCommandBuffers(cb_level);
         for (auto vk_cmd : command_buffers) {
-            auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(vk_cmd);
+            auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_cmd);
             if (p_cmd != nullptr) {
                 command_buffers_.erase(std::remove(command_buffers_.begin(), command_buffers_.end(), vk_cmd),
                                        command_buffers_.end());
-                crash_diagnostic_layer::DeleteCdlCommandBuffer(vk_cmd);
+                crash_diagnostic_layer::DeleteCommandBuffer(vk_cmd);
             }
         }
     }
@@ -466,7 +466,7 @@ void Device::DeleteCommandBuffers(const VkCommandBuffer* vk_cmds, uint32_t cb_co
         for (uint32_t i = 0; i < cb_count; ++i) {
             command_buffers_.erase(std::remove(command_buffers_.begin(), command_buffers_.end(), vk_cmds[i]),
                                    command_buffers_.end());
-            crash_diagnostic_layer::DeleteCdlCommandBuffer(vk_cmds[i]);
+            crash_diagnostic_layer::DeleteCommandBuffer(vk_cmds[i]);
         }
     }
 }
@@ -528,12 +528,12 @@ void Device::DeletePipeline(VkPipeline pipeline) {
 
 void Device::CreateShaderModule(const VkShaderModuleCreateInfo* pCreateInfo, VkShaderModule* pShaderModule,
                                 int shader_module_load_options) {
-    GetCDL()->MakeOutputPath();
+    GetContext()->MakeOutputPath();
     // Parse the SPIR-V for relevant information, does not copy the SPIR-V
     // binary.
-    ShaderModulePtr shader_module =
-        std::make_unique<ShaderModule>(GetCDL(), *pShaderModule, shader_module_load_options, pCreateInfo->codeSize,
-                                       reinterpret_cast<const char*>(pCreateInfo->pCode), GetCDL()->GetOutputPath());
+    ShaderModulePtr shader_module = std::make_unique<ShaderModule>(
+        GetContext(), *pShaderModule, shader_module_load_options, pCreateInfo->codeSize,
+        reinterpret_cast<const char*>(pCreateInfo->pCode), GetContext()->GetOutputPath());
 
     // Add extra name information for shaders, used to give them names even if
     // they don't have explict debug names.

@@ -41,8 +41,8 @@ CommandBuffer::CommandBuffer(Device* p_device, VkCommandPool vk_command_pool, Vk
         bottom_marker_.type = MarkerType::kUint32;
         bool top_marker_is_valid = p_device->AllocateMarker(&top_marker_);
         if (!top_marker_is_valid || !p_device->AllocateMarker(&bottom_marker_)) {
-            device_->GetCDL()->GetLogger()->LogWarning("Cannot acquire markers. Not tracking VkCommandBuffer %s",
-                                                       device_->GetObjectName((uint64_t)vk_command_buffer).c_str());
+            device_->GetContext()->GetLogger()->LogWarning("Cannot acquire markers. Not tracking VkCommandBuffer %s",
+                                                           device_->GetObjectName((uint64_t)vk_command_buffer).c_str());
             has_buffer_marker_ = false;
             if (top_marker_is_valid) {
                 p_device->FreeMarker(top_marker_);
@@ -173,7 +173,7 @@ VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
 
     if (cb_level_ == VK_COMMAND_BUFFER_LEVEL_SECONDARY && pBeginInfo->pInheritanceInfo) {
         if (!scb_inheritance_info_) {
-            scb_inheritance_info_ = crash_diagnostic_layer::CdlNew<VkCommandBufferInheritanceInfo>();
+            scb_inheritance_info_ = crash_diagnostic_layer::New<VkCommandBufferInheritanceInfo>();
         }
         *scb_inheritance_info_ = *pBeginInfo->pInheritanceInfo;
     }
@@ -361,7 +361,7 @@ bool CommandBuffer::DumpCmdExecuteCommands(const Command& command, CommandState 
     if (args->pCommandBuffers && args->commandBufferCount > 0) {
         os << pindent2 << "commandBuffers:";
         for (uint32_t i = 0; i < args->commandBufferCount; i++) {
-            auto secondary_command_buffer = crash_diagnostic_layer::GetCdlCommandBuffer(args->pCommandBuffers[i]);
+            auto secondary_command_buffer = crash_diagnostic_layer::GetCommandBuffer(args->pCommandBuffers[i]);
             if (secondary_command_buffer) {
                 secondary_command_buffer->DumpContents(os, options, pindent3, submit_info_id_, command_state);
             }
@@ -418,8 +418,8 @@ int GetCommandPipelineType(const Command& command) {
 // Currently used to dump shader SPIRV when a command is incomplete.
 void CommandBuffer::HandleIncompleteCommand(const Command& command, const CommandBufferInternalState& state) const {
     // Should we write our shaders on crash?
-    auto cdl_context = device_->GetCDL();
-    if (!cdl_context->DumpShadersOnCrash()) {
+    auto* context = device_->GetContext();
+    if (!context->DumpShadersOnCrash()) {
         return;
     }
 

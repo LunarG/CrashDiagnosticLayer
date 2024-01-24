@@ -28,14 +28,14 @@ static std::mutex global_commandbuffer_map_mutex_;
 
 static thread_local ThreadLocalCommandBufferCache thread_cb_cache_;
 
-void SetCdlCommandBuffer(VkCommandBuffer vk_command_buffer, CommandBufferPtr command_buffer) {
+void SetCommandBuffer(VkCommandBuffer vk_command_buffer, CommandBufferPtr command_buffer) {
     // We willingly allow to overwrite the existing key's value since Vulkan
     // command buffers can be reused.
     std::lock_guard<std::mutex> lock(global_commandbuffer_map_mutex_);
     global_commandbuffer_map_[vk_command_buffer] = std::move(command_buffer);
 }
 
-crash_diagnostic_layer::CommandBuffer* GetCdlCommandBuffer(VkCommandBuffer vk_command_buffer) {
+crash_diagnostic_layer::CommandBuffer* GetCommandBuffer(VkCommandBuffer vk_command_buffer) {
     if (thread_cb_cache_.vkcb == vk_command_buffer) {
         return thread_cb_cache_.cdlcb;
     }
@@ -49,7 +49,7 @@ crash_diagnostic_layer::CommandBuffer* GetCdlCommandBuffer(VkCommandBuffer vk_co
     return thread_cb_cache_.cdlcb;
 }
 
-void DeleteCdlCommandBuffer(VkCommandBuffer vk_command_buffer) {
+void DeleteCommandBuffer(VkCommandBuffer vk_command_buffer) {
     if (thread_cb_cache_.vkcb == vk_command_buffer) {
         thread_cb_cache_.vkcb = VK_NULL_HANDLE;
     }

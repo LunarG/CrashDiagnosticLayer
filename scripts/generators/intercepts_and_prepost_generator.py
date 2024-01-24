@@ -108,9 +108,9 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
         if self.filename == 'cdl_intercepts.cc.inc':
             self.generateInterceptsSource()
         elif self.filename == 'cdl_commands.h.inc':
-            self.generateCdlContextCommandsHeader()
+            self.generateContextCommandsHeader()
         elif self.filename == 'cdl_commands.cc.inc':
-            self.generateCdlContextCommandsSource()
+            self.generateContextCommandsSource()
         elif self.filename == 'command.h.inc':
             self.generateCommandsHeader()
         elif self.filename == 'command.cc.inc':
@@ -159,7 +159,7 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
             out.append('\n')
         self.write("".join(out))
 
-    def generateCdlContextCommandsHeader(self):
+    def generateContextCommandsHeader(self):
         out = []
         for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
@@ -175,13 +175,13 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
             out.append('\n')
         self.write("".join(out))
 
-    def generateCdlContextCommandsSource(self):
+    def generateContextCommandsSource(self):
         out = []
 
         for vkcommand in filter(lambda x: self.CommandBufferCall(x) and x.name not in custom_functions, self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' CdlContext::Post', 1)
-            pre_func_decl = post_func_decl.replace('CdlContext::Post', 'CdlContext::Pre', 1)
+            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' Context::Post', 1)
+            pre_func_decl = post_func_decl.replace('Context::Post', 'Context::Pre', 1)
             pre_func_call = '  '
             post_func_call = '  '
             if self.CommandHasReturn(vkcommand):
@@ -206,13 +206,13 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
             # Skip vkCmdBindPipeline pre call since it's implemented by hand
             if not (vkcommand.name in custom_functions or vkcommand.name in custom_pre_intercept_functions):
                 out.append(f'{pre_func_decl}\n')
-                out.append('  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);\n')
+                out.append('  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);\n')
                 out.append(f'{pre_func_call}\n')
                 out.append('}\n')
 
             if not (vkcommand.name in custom_functions or vkcommand.name in custom_post_intercept_functions):
                 out.append(f'{post_func_decl}\n')
-                out.append('  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);\n')
+                out.append('  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);\n')
                 out.append(f'{post_func_call}\n')
                 out.append('}\n')
 

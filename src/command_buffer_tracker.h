@@ -34,10 +34,10 @@ struct ThreadLocalCommandBufferCache {
     crash_diagnostic_layer::CommandBuffer *cdlcb = nullptr;
 };
 
-void SetCdlCommandBuffer(VkCommandBuffer vk_command_buffer, CommandBufferPtr command_buffer);
+void SetCommandBuffer(VkCommandBuffer vk_command_buffer, CommandBufferPtr command_buffer);
 
-crash_diagnostic_layer::CommandBuffer *GetCdlCommandBuffer(VkCommandBuffer vk_command_buffer);
+crash_diagnostic_layer::CommandBuffer *GetCommandBuffer(VkCommandBuffer vk_command_buffer);
 
-void DeleteCdlCommandBuffer(VkCommandBuffer vk_command_buffer);
+void DeleteCommandBuffer(VkCommandBuffer vk_command_buffer);
 
 }  // namespace crash_diagnostic_layer
