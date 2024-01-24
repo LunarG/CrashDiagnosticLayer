@@ -2188,7 +2188,6 @@ void InterceptCmdSetFragmentShadingRateKHR(
   InterceptPostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 void InterceptCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -2202,7 +2201,6 @@ void InterceptCmdEncodeVideoKHR(
 
   InterceptPostCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
-#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void InterceptCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -2429,6 +2427,90 @@ void InterceptCmdBindIndexBuffer2KHR(
   }
 
   InterceptPostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+
+void InterceptCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  InterceptPreCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdBindDescriptorSets2KHR pfn = layer_data->dispatch_table.CmdBindDescriptorSets2KHR;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pBindDescriptorSetsInfo);
+  }
+
+  InterceptPostCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+}
+
+void InterceptCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  InterceptPreCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdPushConstants2KHR pfn = layer_data->dispatch_table.CmdPushConstants2KHR;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pPushConstantsInfo);
+  }
+
+  InterceptPostCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+}
+
+void InterceptCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  InterceptPreCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdPushDescriptorSet2KHR pfn = layer_data->dispatch_table.CmdPushDescriptorSet2KHR;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pPushDescriptorSetInfo);
+  }
+
+  InterceptPostCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+}
+
+void InterceptCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  InterceptPreCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdPushDescriptorSetWithTemplate2KHR pfn = layer_data->dispatch_table.CmdPushDescriptorSetWithTemplate2KHR;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+  }
+
+  InterceptPostCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+
+void InterceptCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  InterceptPreCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdSetDescriptorBufferOffsets2EXT pfn = layer_data->dispatch_table.CmdSetDescriptorBufferOffsets2EXT;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+  }
+
+  InterceptPostCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+}
+
+void InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  InterceptPreCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT pfn = layer_data->dispatch_table.CmdBindDescriptorBufferEmbeddedSamplers2EXT;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+  }
+
+  InterceptPostCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 
 VkResult InterceptDebugMarkerSetObjectNameEXT(
@@ -3416,6 +3498,20 @@ void InterceptCmdSetDepthBias2EXT(
   }
 
   InterceptPostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
+}
+
+void InterceptCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  InterceptPreCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
+
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  PFN_vkCmdCudaLaunchKernelNV pfn = layer_data->dispatch_table.CmdCudaLaunchKernelNV;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pLaunchInfo);
+  }
+
+  InterceptPostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
 
 void InterceptCmdBindDescriptorBuffersEXT(
@@ -5072,10 +5168,8 @@ PFN_vkVoidFunction GetDeviceFuncs(const char* func)
     return (PFN_vkVoidFunction)InterceptSignalSemaphoreKHR;
   if (0 == strcmp(func, "vkCmdSetFragmentShadingRateKHR"))
     return (PFN_vkVoidFunction)InterceptCmdSetFragmentShadingRateKHR;
-#ifdef VK_ENABLE_BETA_EXTENSIONS
   if (0 == strcmp(func, "vkCmdEncodeVideoKHR"))
     return (PFN_vkVoidFunction)InterceptCmdEncodeVideoKHR;
-#endif //VK_ENABLE_BETA_EXTENSIONS
   if (0 == strcmp(func, "vkCmdSetEvent2KHR"))
     return (PFN_vkVoidFunction)InterceptCmdSetEvent2KHR;
   if (0 == strcmp(func, "vkCmdResetEvent2KHR"))
@@ -5106,6 +5200,18 @@ PFN_vkVoidFunction GetDeviceFuncs(const char* func)
     return (PFN_vkVoidFunction)InterceptCmdTraceRaysIndirect2KHR;
   if (0 == strcmp(func, "vkCmdBindIndexBuffer2KHR"))
     return (PFN_vkVoidFunction)InterceptCmdBindIndexBuffer2KHR;
+  if (0 == strcmp(func, "vkCmdBindDescriptorSets2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdBindDescriptorSets2KHR;
+  if (0 == strcmp(func, "vkCmdPushConstants2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdPushConstants2KHR;
+  if (0 == strcmp(func, "vkCmdPushDescriptorSet2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdPushDescriptorSet2KHR;
+  if (0 == strcmp(func, "vkCmdPushDescriptorSetWithTemplate2KHR"))
+    return (PFN_vkVoidFunction)InterceptCmdPushDescriptorSetWithTemplate2KHR;
+  if (0 == strcmp(func, "vkCmdSetDescriptorBufferOffsets2EXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetDescriptorBufferOffsets2EXT;
+  if (0 == strcmp(func, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT"))
+    return (PFN_vkVoidFunction)InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT;
   if (0 == strcmp(func, "vkDebugMarkerSetObjectNameEXT"))
     return (PFN_vkVoidFunction)InterceptDebugMarkerSetObjectNameEXT;
   if (0 == strcmp(func, "vkCmdDebugMarkerBeginEXT"))
@@ -5238,6 +5344,8 @@ PFN_vkVoidFunction GetDeviceFuncs(const char* func)
     return (PFN_vkVoidFunction)InterceptCmdBindPipelineShaderGroupNV;
   if (0 == strcmp(func, "vkCmdSetDepthBias2EXT"))
     return (PFN_vkVoidFunction)InterceptCmdSetDepthBias2EXT;
+  if (0 == strcmp(func, "vkCmdCudaLaunchKernelNV"))
+    return (PFN_vkVoidFunction)InterceptCmdCudaLaunchKernelNV;
   if (0 == strcmp(func, "vkCmdBindDescriptorBuffersEXT"))
     return (PFN_vkVoidFunction)InterceptCmdBindDescriptorBuffersEXT;
   if (0 == strcmp(func, "vkCmdSetDescriptorBufferOffsetsEXT"))

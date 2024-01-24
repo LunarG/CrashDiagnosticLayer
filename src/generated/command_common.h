@@ -138,9 +138,7 @@ struct Command
     kCmdDrawIndirectCountKHR,
     kCmdDrawIndexedIndirectCountKHR,
     kCmdSetFragmentShadingRateKHR,
-#ifdef VK_ENABLE_BETA_EXTENSIONS
     kCmdEncodeVideoKHR,
-#endif //VK_ENABLE_BETA_EXTENSIONS
     kCmdSetEvent2KHR,
     kCmdResetEvent2KHR,
     kCmdWaitEvents2KHR,
@@ -155,6 +153,12 @@ struct Command
     kCmdResolveImage2KHR,
     kCmdTraceRaysIndirect2KHR,
     kCmdBindIndexBuffer2KHR,
+    kCmdBindDescriptorSets2KHR,
+    kCmdPushConstants2KHR,
+    kCmdPushDescriptorSet2KHR,
+    kCmdPushDescriptorSetWithTemplate2KHR,
+    kCmdSetDescriptorBufferOffsets2EXT,
+    kCmdBindDescriptorBufferEmbeddedSamplers2EXT,
     kCmdDebugMarkerBeginEXT,
     kCmdDebugMarkerEndEXT,
     kCmdDebugMarkerInsertEXT,
@@ -223,6 +227,7 @@ struct Command
     kCmdExecuteGeneratedCommandsNV,
     kCmdBindPipelineShaderGroupNV,
     kCmdSetDepthBias2EXT,
+    kCmdCudaLaunchKernelNV,
     kCmdBindDescriptorBuffersEXT,
     kCmdSetDescriptorBufferOffsetsEXT,
     kCmdBindDescriptorBufferEmbeddedSamplersEXT,
@@ -973,12 +978,10 @@ struct CmdSetFragmentShadingRateKHRArgs {
     VkFragmentShadingRateCombinerOpKHR combinerOps[2];
 };
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 struct CmdEncodeVideoKHRArgs {
     VkCommandBuffer commandBuffer;
     const VkVideoEncodeInfoKHR* pEncodeInfo;
 };
-#endif //VK_ENABLE_BETA_EXTENSIONS
 
 struct CmdSetEvent2KHRArgs {
     VkCommandBuffer commandBuffer;
@@ -1060,6 +1063,36 @@ struct CmdBindIndexBuffer2KHRArgs {
     VkDeviceSize offset;
     VkDeviceSize size;
     VkIndexType indexType;
+};
+
+struct CmdBindDescriptorSets2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo;
+};
+
+struct CmdPushConstants2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkPushConstantsInfoKHR* pPushConstantsInfo;
+};
+
+struct CmdPushDescriptorSet2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo;
+};
+
+struct CmdPushDescriptorSetWithTemplate2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo;
+};
+
+struct CmdSetDescriptorBufferOffsets2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo;
+};
+
+struct CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo;
 };
 
 struct CmdDebugMarkerBeginEXTArgs {
@@ -1464,6 +1497,11 @@ struct CmdBindPipelineShaderGroupNVArgs {
 struct CmdSetDepthBias2EXTArgs {
     VkCommandBuffer commandBuffer;
     const VkDepthBiasInfoEXT* pDepthBiasInfo;
+};
+
+struct CmdCudaLaunchKernelNVArgs {
+    VkCommandBuffer commandBuffer;
+    const VkCudaLaunchInfoNV* pLaunchInfo;
 };
 
 struct CmdBindDescriptorBuffersEXTArgs {

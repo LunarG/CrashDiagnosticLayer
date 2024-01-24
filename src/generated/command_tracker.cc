@@ -719,14 +719,12 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
       }
       break;
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
     case Command::Type::kCmdEncodeVideoKHR:
       if (cmd.parameters) {
         auto args = reinterpret_cast<CmdEncodeVideoKHRArgs *>(cmd.parameters);
         printer_.PrintCmdEncodeVideoKHRArgs(os, *args);
       }
       break;
-#endif //VK_ENABLE_BETA_EXTENSIONS
 
     case Command::Type::kCmdSetEvent2KHR:
       if (cmd.parameters) {
@@ -823,6 +821,48 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
       if (cmd.parameters) {
         auto args = reinterpret_cast<CmdBindIndexBuffer2KHRArgs *>(cmd.parameters);
         printer_.PrintCmdBindIndexBuffer2KHRArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdBindDescriptorSets2KHR:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdBindDescriptorSets2KHRArgs *>(cmd.parameters);
+        printer_.PrintCmdBindDescriptorSets2KHRArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdPushConstants2KHR:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdPushConstants2KHRArgs *>(cmd.parameters);
+        printer_.PrintCmdPushConstants2KHRArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdPushDescriptorSet2KHR:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdPushDescriptorSet2KHRArgs *>(cmd.parameters);
+        printer_.PrintCmdPushDescriptorSet2KHRArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdPushDescriptorSetWithTemplate2KHR:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdPushDescriptorSetWithTemplate2KHRArgs *>(cmd.parameters);
+        printer_.PrintCmdPushDescriptorSetWithTemplate2KHRArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdSetDescriptorBufferOffsets2EXT:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdSetDescriptorBufferOffsets2EXTArgs *>(cmd.parameters);
+        printer_.PrintCmdSetDescriptorBufferOffsets2EXTArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdBindDescriptorBufferEmbeddedSamplers2EXT:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs *>(cmd.parameters);
+        printer_.PrintCmdBindDescriptorBufferEmbeddedSamplers2EXTArgs(os, *args);
       }
       break;
 
@@ -1251,6 +1291,13 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
       if (cmd.parameters) {
         auto args = reinterpret_cast<CmdSetDepthBias2EXTArgs *>(cmd.parameters);
         printer_.PrintCmdSetDepthBias2EXTArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdCudaLaunchKernelNV:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdCudaLaunchKernelNVArgs *>(cmd.parameters);
+        printer_.PrintCmdCudaLaunchKernelNVArgs(os, *args);
       }
       break;
 
@@ -3588,7 +3635,6 @@ void CommandTracker::TrackPostCmdSetFragmentShadingRateKHR(
   assert(commands_.back().type == Command::Type::kCmdSetFragmentShadingRateKHR);
 }
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandTracker::TrackPreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -3603,7 +3649,6 @@ void CommandTracker::TrackPostCmdEncodeVideoKHR(
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
   assert(commands_.back().type == Command::Type::kCmdEncodeVideoKHR);
 }
-#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void CommandTracker::TrackPreCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -3837,6 +3882,96 @@ void CommandTracker::TrackPostCmdBindIndexBuffer2KHR(
     VkDeviceSize                                size,
     VkIndexType                                 indexType) {
   assert(commands_.back().type == Command::Type::kCmdBindIndexBuffer2KHR);
+}
+
+void CommandTracker::TrackPreCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdBindDescriptorSets2KHR;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  assert(commands_.back().type == Command::Type::kCmdBindDescriptorSets2KHR);
+}
+
+void CommandTracker::TrackPreCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdPushConstants2KHR;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  assert(commands_.back().type == Command::Type::kCmdPushConstants2KHR);
+}
+
+void CommandTracker::TrackPreCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdPushDescriptorSet2KHR;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  assert(commands_.back().type == Command::Type::kCmdPushDescriptorSet2KHR);
+}
+
+void CommandTracker::TrackPreCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdPushDescriptorSetWithTemplate2KHR;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  assert(commands_.back().type == Command::Type::kCmdPushDescriptorSetWithTemplate2KHR);
+}
+
+void CommandTracker::TrackPreCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdSetDescriptorBufferOffsets2EXT;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  assert(commands_.back().type == Command::Type::kCmdSetDescriptorBufferOffsets2EXT);
+}
+
+void CommandTracker::TrackPreCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdBindDescriptorBufferEmbeddedSamplers2EXT;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  assert(commands_.back().type == Command::Type::kCmdBindDescriptorBufferEmbeddedSamplers2EXT);
 }
 
 void CommandTracker::TrackPreCmdDebugMarkerBeginEXT(
@@ -4937,6 +5072,21 @@ void CommandTracker::TrackPostCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkDepthBiasInfoEXT*                   pDepthBiasInfo) {
   assert(commands_.back().type == Command::Type::kCmdSetDepthBias2EXT);
+}
+
+void CommandTracker::TrackPreCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdCudaLaunchKernelNV;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  assert(commands_.back().type == Command::Type::kCmdCudaLaunchKernelNV);
 }
 
 void CommandTracker::TrackPreCmdBindDescriptorBuffersEXT(

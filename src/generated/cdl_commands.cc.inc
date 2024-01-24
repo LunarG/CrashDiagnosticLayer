@@ -1634,7 +1634,6 @@ void CdlContext::PostCmdSetFragmentShadingRateKHR(
   p_cmd->PostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 void CdlContext::PreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -1647,7 +1646,6 @@ void CdlContext::PostCmdEncodeVideoKHR(
   auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
-#endif //VK_ENABLE_BETA_EXTENSIONS
 
 void CdlContext::PreCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -1853,6 +1851,84 @@ void CdlContext::PostCmdBindIndexBuffer2KHR(
     VkIndexType                                 indexType) {
   auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+
+void CdlContext::PreCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+}
+void CdlContext::PostCmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+}
+
+void CdlContext::PreCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+}
+void CdlContext::PostCmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+}
+
+void CdlContext::PreCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+}
+void CdlContext::PostCmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+}
+
+void CdlContext::PreCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+void CdlContext::PostCmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+
+void CdlContext::PreCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+}
+void CdlContext::PostCmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+}
+
+void CdlContext::PreCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+}
+void CdlContext::PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 
 void CdlContext::PreCmdDebugMarkerBeginEXT(
@@ -2836,6 +2912,19 @@ void CdlContext::PostCmdSetDepthBias2EXT(
     const VkDepthBiasInfoEXT*                   pDepthBiasInfo) {
   auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
+}
+
+void CdlContext::PreCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PreCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
+}
+void CdlContext::PostCmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCdlCommandBuffer(commandBuffer);
+  p_cmd->PostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
 
 void CdlContext::PreCmdBindDescriptorBuffersEXT(
