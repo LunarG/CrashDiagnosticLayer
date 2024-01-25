@@ -51,8 +51,6 @@ def main(argv):
         'cdl_intercepts.cc.inc',
         'layer_base.h',
         'layer_base.cc',
-        'layer_utils.h',
-        'layer_utils.cc',
     ]
 
     parser = argparse.ArgumentParser(description='Generate source code for this repository')

@@ -79,8 +79,6 @@ struct VkStruct {
   const void*     pNext;
 };
 
-VkStruct *FindOnChain(VkStruct *s, VkStructureType type);
-
 VkLayerInstanceCreateInfo *GetLoaderInstanceInfo(
     const VkInstanceCreateInfo *create_info, VkLayerFunction func_type);
 VkLayerDeviceCreateInfo *GetLoaderDeviceInfo(

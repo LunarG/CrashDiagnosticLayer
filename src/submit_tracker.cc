@@ -24,6 +24,7 @@
 #include "device.h"
 #include "cdl.h"
 #include "util.h"
+#include <vulkan/utility/vk_struct_helper.hpp>
 
 namespace crash_diagnostic_layer {
 
@@ -64,9 +65,7 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index,
     }
 
     // Store type and initial value of the timeline semaphores.
-    const VkTimelineSemaphoreSubmitInfoKHR* timeline_semaphore_info =
-        FindOnChain<VkTimelineSemaphoreSubmitInfoKHR, VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR>(
-            vk_submit_info->pNext);
+    const auto* timeline_semaphore_info = vku::FindStructInPNextChain<VkTimelineSemaphoreSubmitInfoKHR>(vk_submit_info);
     if (timeline_semaphore_info) {
         auto semaphore_tracker = device_->GetSemaphoreTracker();
         for (uint32_t i = 0; i < timeline_semaphore_info->waitSemaphoreValueCount; i++) {
@@ -218,9 +217,7 @@ void SubmitTracker::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_
     }
 
     auto semaphore_tracker = device_->GetSemaphoreTracker();
-    const VkTimelineSemaphoreSubmitInfoKHR* timeline_semaphore_info =
-        FindOnChain<VkTimelineSemaphoreSubmitInfoKHR, VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR>(
-            vk_submit_info->pNext);
+    const auto* timeline_semaphore_info = vku::FindStructInPNextChain<VkTimelineSemaphoreSubmitInfoKHR>(vk_submit_info);
     if (timeline_semaphore_info) {
         for (uint32_t i = 0; i < timeline_semaphore_info->signalSemaphoreValueCount; i++) {
             if (semaphore_tracker->GetSemaphoreType(vk_submit_info->pSignalSemaphores[i]) ==

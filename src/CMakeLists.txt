@@ -44,8 +44,6 @@ target_sources(crash_diagnostic PRIVATE
     ${GENERATED_DIR}/dispatch.cc
     ${GENERATED_DIR}/layer_base.h
     ${GENERATED_DIR}/layer_base.cc
-    ${GENERATED_DIR}/layer_utils.h
-    ${GENERATED_DIR}/layer_utils.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/bind_sparse_utils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/bind_sparse_utils.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/command.h
