@@ -28,14 +28,16 @@ Logger::Logger() {}
 
 Logger::~Logger() { CloseLogFile(); }
 
-bool Logger::OpenLogFile(const std::string& filename) {
+bool Logger::OpenLogFile(const std::filesystem::path& filename) {
     if (log_file_ != nullptr) {
         CloseLogFile();
     }
-    log_file_ = fopen(filename.c_str(), "wt");
+    log_file_ = fopen(filename.string().c_str(), "wt");
     if (log_file_ != nullptr) {
-        log_file_name_ = filename;
+        log_file_name_ = filename.string();
         return true;
+    } else {
+        perror(filename.string().c_str());
     }
     return false;
 }

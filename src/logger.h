@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <mutex>
 #include <stdio.h>
 #include <string>
@@ -31,7 +32,7 @@ class Logger {
 
     void SetLogLevel(const LogLevel& level) { log_level_ = level; }
 
-    bool OpenLogFile(const std::string& filename);
+    bool OpenLogFile(const std::filesystem::path& filename);
     void CloseLogFile();
 
     void LogError(const char* format, ...);
