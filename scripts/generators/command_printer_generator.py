@@ -99,14 +99,6 @@ std::ostream & PrintNextPtr(std::ostream & os, const void *pNext);
 ''')
         self.write("".join(out))
 
-        self.write("\n// Declare enum to string functions.\n")
-        out = []
-        for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
-            out.extend([f'#ifdef {vkenum.protect}\n'] if vkenum.protect else [])
-            out.append(f'const char *{vkenum.name}ToString({vkenum.name} e);\n')
-            out.extend([f'#endif //{vkenum.protect}\n'] if vkenum.protect else [])
-        self.write("".join(out))
-
         self.write("\n// Declare ostream operators for enums.\n")
         out = []
         for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
@@ -290,6 +282,7 @@ class CommandPrinter {
         out = []
         out.append('''
 #include <streambuf>
+#include <vulkan/vk_enum_string_helper.h>
 
 #include "command_common.h"
 #include "command_printer.h"
@@ -335,29 +328,12 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
             out.append('\n')
         self.write("".join(out))
 
-        self.write("\n// Define enum to string functions.\n")
-        out = []
-        for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
-            out.extend([f'#ifdef {vkenum.protect}\n'] if vkenum.protect else [])
-            out.append(f'const char *{vkenum.name}ToString({vkenum.name} e) {{\n')
-            out.append(f'  switch (e) {{\n')
-            for enumfield in vkenum.fields:
-                out.extend([f'#ifdef {enumfield.protect}\n'] if enumfield.protect else [])
-                out.append(f'  case {enumfield.name}:\n')
-                out.append(f'    return "{enumfield.name}";\n')
-                out.extend([f'#endif //{enumfield.protect}\n'] if enumfield.protect else [])
-            out.append(f'  default: return "Unknown {vkenum.name}";\n')
-            out.append('  }\n}\n')
-            out.extend([f'#endif //{vkenum.protect}\n'] if vkenum.protect else [])
-            out.append('\n')
-        self.write("".join(out))
-
         self.write("\n// Define ostream operators for enums.\n")
         out = []
         for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
             out.extend([f'#ifdef {vkenum.protect}\n'] if vkenum.protect else [])
             out.append(f'std::ostream &operator<<(std::ostream & os, const {vkenum.name} &t) {{\n')
-            out.append(f'  os << {vkenum.name}ToString(t);\n')
+            out.append(f'  os << string_{vkenum.name}(t);\n')
             out.append('  return os;\n')
             out.append('}\n')
             out.extend([f'#endif //{vkenum.protect}\n'] if vkenum.protect else [])
