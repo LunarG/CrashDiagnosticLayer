@@ -49,9 +49,6 @@
 namespace crash_diagnostic_layer {
 
 const char* kCdlVersion = "1.2.0";
-const char* kGpuHangDaemonSocketName = "/run/gpuhangd";
-
-constexpr int kMessageHangDetected = 0x8badf00d;
 
 namespace settings {
 const char* kOutputPath = "output_path";
@@ -63,7 +60,6 @@ const char* kShadersDump = "shaders_dump";
 const char* kShadersDumpOnCrash = "shaders_dump_on_crash";
 const char* kShadersDumpOnBind = "shaders_dump_on_bind";
 const char* kWatchdogTimeout = "watchdog_timeout_ms";
-const char* kDisableDriverHang = "disable_driver_hang";
 const char* kAutodump = "autodump";
 const char* kDumpAllCommandBuffers = "dump_all_comamnd_buffers";
 // TODO: buffers_dump_indirect???
@@ -79,7 +75,6 @@ Context::Context() { system_.SetContext(this); }
 
 Context::~Context() {
     StopWatchdogTimer();
-    StopGpuHangdListener();
     logger_.CloseLogFile();
 }
 
@@ -147,76 +142,6 @@ void Context::WatchdogTimer() {
                                     .count();
         }
     }
-}
-
-void Context::StartGpuHangdListener() {
-#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
-    defined(SYSTEM_TARGET_BSD)
-    // Start up the hang deamon thread.
-    gpuhangd_thread_ = std::make_unique<std::thread>([&]() { this->GpuHangdListener(); });
-#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
-        // defined(SYSTEM_TARGET_BSD)
-}
-
-void Context::StopGpuHangdListener() {
-#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
-    defined(SYSTEM_TARGET_BSD)
-    if (gpuhangd_thread_ && gpuhangd_thread_->joinable()) {
-        logger_.LogInfo("Stopping Listener");
-        if (gpuhangd_socket_ >= 0) {
-            shutdown(gpuhangd_socket_, SHUT_RDWR);
-        }
-        gpuhangd_thread_->join();
-        logger_.LogInfo("Listener Stopped");
-    }
-#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
-        // defined(SYSTEM_TARGET_BSD)
-}
-
-void Context::GpuHangdListener() {
-#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
-    defined(SYSTEM_TARGET_BSD)
-    gpuhangd_socket_ = socket(AF_LOCAL, SOCK_STREAM, 0);
-    if (gpuhangd_socket_ < 0) {
-        logger_.LogWarning("Could not create socket: %s", strerror(errno));
-        return;
-    }
-
-    struct sockaddr_un addr = {};
-    addr.sun_family = AF_LOCAL;
-    addr.sun_path[0] = '\0';
-    strncpy(addr.sun_path + 1, kGpuHangDaemonSocketName, sizeof(addr.sun_path) - 2);
-
-    int connect_ret = connect(gpuhangd_socket_, (const struct sockaddr*)&addr, sizeof(struct sockaddr_un));
-    if (connect_ret < 0) {
-        logger_.LogWarning("Could not connect socket: %s", strerror(errno));
-        return;
-    }
-
-    for (;;) {
-        int msg = 0;
-        int read_ret = read(gpuhangd_socket_, &msg, sizeof(int));
-        if (read_ret < 0) {
-            logger_.LogWarning("Could not read socket: %s", strerror(errno));
-            break;
-        } else if (0 == read_ret) {
-            logger_.LogInfo("Socket closed");
-            break;
-        }
-
-        if (kMessageHangDetected == msg) {
-            logger_.LogError("Driver signalled a hang.");
-            read_ret = read(gpuhangd_socket_, &gpuhang_event_id_, sizeof(int));
-            if (read_ret > 0) {
-                logger_.LogError("Hang event ID: %d", gpuhang_event_id_);
-            } else {
-                logger_.LogError("Hang event ID not received from the hang daemon.");
-            }
-            DumpAllDevicesExecutionState(CrashSource::kHangDaemon);
-        }
-    }
-#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
-        // defined(SYSTEM_TARGET_BSD)
 }
 
 void Context::PreApiFunction(const char* api_name) {
@@ -458,13 +383,6 @@ void Context::DumpReportPrologue(std::ostream& os, const Device* device) {
     os << "#----------------------------------------------------------------\n";
     os << "#-                    CRASH DIAGNOSTIC LAYER                    -\n";
     os << "#----------------------------------------------------------------\n";
-
-#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
-    defined(SYSTEM_TARGET_BSD)
-    if (gpuhang_event_id_) {
-        os << "# internal_use_gpu_hang_event_id " << gpuhang_event_id_ << "\n\n";
-    }
-#endif
 
     auto now = std::chrono::system_clock::now();
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
@@ -792,16 +710,6 @@ VkResult Context::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo, con
         }
     }
 
-    // Manage the gpuhangd listener thread.
-    {
-        bool disable_driver_hang_thread = false;
-        GetEnvVal<bool>(layer_setting_set, settings::kDisableDriverHang, &disable_driver_hang_thread);
-
-        if (!disable_driver_hang_thread) {
-            StartGpuHangdListener();
-            logger_.LogInfo("gpuhangd listener started: %s", kGpuHangDaemonSocketName);
-        }
-    }
     // Setup debug flags
     GetEnvVal<int>(layer_setting_set, settings::kAutodump, &debug_autodump_rate_);
     GetEnvVal<bool>(layer_setting_set, settings::kDumpAllCommandBuffers, &debug_dump_all_command_buffers_);
