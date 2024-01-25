@@ -65,7 +65,6 @@ enum QueueOperationType {
 
 enum CrashSource {
     kDeviceLostError,
-    kHangDaemon,
     kWatchdogTimer,
 };
 
@@ -185,10 +184,6 @@ class Context {
     void StopWatchdogTimer();
     void WatchdogTimer();
 
-    void StartGpuHangdListener();
-    void StopGpuHangdListener();
-    void GpuHangdListener();
-
     void ValidateCommandBufferNotInUse(CommandBuffer* commandBuffer);
     void DumpCommandBufferState(CommandBuffer* p_cmd);
 
@@ -295,14 +290,6 @@ class Context {
     std::atomic<long long> last_submit_time_;
     uint64_t watchdog_timer_ms_ = 0;
 
-// Hang daemon listener thread.
-#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
-    defined(SYSTEM_TARGET_BSD)
-    std::unique_ptr<std::thread> gpuhangd_thread_;
-    int gpuhangd_socket_ = -1;
-    int gpuhang_event_id_ = 0;
-#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
-        // defined(SYSTEM_TARGET_BSD)
 };
 
 }  // namespace crash_diagnostic_layer

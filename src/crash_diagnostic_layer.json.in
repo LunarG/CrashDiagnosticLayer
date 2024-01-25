@@ -270,20 +270,6 @@
                     "expanded": true,
                     "settings": [
                         {
-                            "key": "disable_driver_hang",
-                            "env": "CDL_DISABLE_DRIVER_HANG",
-                            "label": "Disable driver hang",
-                            "description": "TODO",
-                            "type": "BOOL",
-                            "default": false,
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ]
-                        },
-                        {
                             "key": "watchdog_timeout_ms",
                             "env": "CDL_WATCHDOG_TIMEOUT_MS",
                             "label": "Watchdog timeout",
