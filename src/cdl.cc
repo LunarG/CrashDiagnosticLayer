@@ -69,6 +69,7 @@ const char* kTraceAllSemaphores = "trace_all_semaphores";
 const char* kInstrumentAllCommands = "instrument_all_commands";
 }  // namespace settings
 
+const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
 // =============================================================================
 // Context
 // =============================================================================
@@ -625,18 +626,20 @@ VkResult Context::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo, con
         vkuGetLayerSettingValue(layer_setting_set, settings::kOutputName, output_name_);
         if (output_name_.empty()) {
             std::stringstream ss;
-            ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S");
-            output_path_ += ss.str();
+            ss << std::put_time(std::localtime(&in_time_t), kLogTimeTag);
+            output_path_ /= ss.str();
         }
 
         // If logfile prefix is given, create it with the date_time suffix
         std::string logfile_prefix;
         vkuGetLayerSettingValue(layer_setting_set, settings::kLogfilePrefix, logfile_prefix);
         if (!logfile_prefix.empty()) {
+            MakeOutputPath();
+            std::filesystem::path log_file(output_path_);
             std::stringstream ss;
-            ss << output_path_ << logfile_prefix << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S")
-               << ".log";
-            logger_.OpenLogFile(ss.str());
+            ss << logfile_prefix << std::put_time(std::localtime(&in_time_t), kLogTimeTag) << ".log";
+            log_file /= ss.str();
+            logger_.OpenLogFile(log_file);
         }
     }
 
