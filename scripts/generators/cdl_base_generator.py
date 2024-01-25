@@ -43,6 +43,7 @@ intercept_pre_functions = [
 ]
 
 no_intercept_pre_functions = [
+    'vkCreateInstance',
     'vkCreateDevice',
     'vkEnumerateInstanceLayerProperties',
     'vkEnumerateDeviceLayerProperties',

@@ -48,7 +48,6 @@ def main(argv):
         'dispatch.cc',
         'cdl_commands.h.inc',
         'cdl_commands.cc.inc',
-        'cdl_intercepts.cc.inc',
         'layer_base.h',
         'layer_base.cc',
     ]

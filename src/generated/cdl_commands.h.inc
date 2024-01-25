@@ -26,125 +26,121 @@
 
 // NOLINTBEGIN
 
-VkResult PreCreateInstance(
-    const VkInstanceCreateInfo*                 pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkInstance*                                 pInstance);
 VkResult PostCreateInstance(
     const VkInstanceCreateInfo*                 pCreateInfo,
     const VkAllocationCallbacks*                pAllocator,
     VkInstance*                                 pInstance,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreDestroyInstance(
     VkInstance                                  instance,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 
 VkResult PostCreateDevice(
     VkPhysicalDevice                            physicalDevice,
     const VkDeviceCreateInfo*                   pCreateInfo,
     const VkAllocationCallbacks*                pAllocator,
     VkDevice*                                   pDevice,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreDestroyDevice(
     VkDevice                                    device,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 void PostDestroyDevice(
     VkDevice                                    device,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 
 VkResult PostEnumerateDeviceExtensionProperties(
     VkPhysicalDevice                            physicalDevice,
     const char*                                 pLayerName,
     uint32_t*                                   pPropertyCount,
     VkExtensionProperties*                      pProperties,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PostGetDeviceQueue(
     VkDevice                                    device,
     uint32_t                                    queueFamilyIndex,
     uint32_t                                    queueIndex,
-    VkQueue*                                    pQueue);
+    VkQueue*                                    pQueue) override;
 
 VkResult PreQueueSubmit(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
     const VkSubmitInfo*                         pSubmits,
-    VkFence                                     fence);
+    VkFence                                     fence) override;
 VkResult PostQueueSubmit(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
     const VkSubmitInfo*                         pSubmits,
     VkFence                                     fence,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreQueueWaitIdle(
-    VkQueue                                     queue);
+    VkQueue                                     queue) override;
 VkResult PostQueueWaitIdle(
     VkQueue                                     queue,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreDeviceWaitIdle(
-    VkDevice                                    device);
+    VkDevice                                    device) override;
 VkResult PostDeviceWaitIdle(
     VkDevice                                    device,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreQueueBindSparse(
     VkQueue                                     queue,
     uint32_t                                    bindInfoCount,
     const VkBindSparseInfo*                     pBindInfo,
-    VkFence                                     fence);
+    VkFence                                     fence) override;
 VkResult PostQueueBindSparse(
     VkQueue                                     queue,
     uint32_t                                    bindInfoCount,
     const VkBindSparseInfo*                     pBindInfo,
     VkFence                                     fence,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreGetFenceStatus(
     VkDevice                                    device,
-    VkFence                                     fence);
+    VkFence                                     fence) override;
 VkResult PostGetFenceStatus(
     VkDevice                                    device,
     VkFence                                     fence,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreWaitForFences(
     VkDevice                                    device,
     uint32_t                                    fenceCount,
     const VkFence*                              pFences,
     VkBool32                                    waitAll,
-    uint64_t                                    timeout);
+    uint64_t                                    timeout) override;
 VkResult PostWaitForFences(
     VkDevice                                    device,
     uint32_t                                    fenceCount,
     const VkFence*                              pFences,
     VkBool32                                    waitAll,
     uint64_t                                    timeout,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreCreateSemaphore(
     VkDevice                                    device,
     const VkSemaphoreCreateInfo*                pCreateInfo,
     const VkAllocationCallbacks*                pAllocator,
-    VkSemaphore*                                pSemaphore);
+    VkSemaphore*                                pSemaphore) override;
 VkResult PostCreateSemaphore(
     VkDevice                                    device,
     const VkSemaphoreCreateInfo*                pCreateInfo,
     const VkAllocationCallbacks*                pAllocator,
     VkSemaphore*                                pSemaphore,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreDestroySemaphore(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 void PostDestroySemaphore(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 
 VkResult PreGetQueryPoolResults(
     VkDevice                                    device,
@@ -154,7 +150,7 @@ VkResult PreGetQueryPoolResults(
     size_t                                      dataSize,
     void*                                       pData,
     VkDeviceSize                                stride,
-    VkQueryResultFlags                          flags);
+    VkQueryResultFlags                          flags) override;
 VkResult PostGetQueryPoolResults(
     VkDevice                                    device,
     VkQueryPool                                 queryPool,
@@ -164,19 +160,19 @@ VkResult PostGetQueryPoolResults(
     void*                                       pData,
     VkDeviceSize                                stride,
     VkQueryResultFlags                          flags,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PostCreateShaderModule(
     VkDevice                                    device,
     const VkShaderModuleCreateInfo*             pCreateInfo,
     const VkAllocationCallbacks*                pAllocator,
     VkShaderModule*                             pShaderModule,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PostDestroyShaderModule(
     VkDevice                                    device,
     VkShaderModule                              shaderModule,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 
 VkResult PostCreateGraphicsPipelines(
     VkDevice                                    device,
@@ -185,7 +181,7 @@ VkResult PostCreateGraphicsPipelines(
     const VkGraphicsPipelineCreateInfo*         pCreateInfos,
     const VkAllocationCallbacks*                pAllocator,
     VkPipeline*                                 pPipelines,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PostCreateComputePipelines(
     VkDevice                                    device,
@@ -194,182 +190,182 @@ VkResult PostCreateComputePipelines(
     const VkComputePipelineCreateInfo*          pCreateInfos,
     const VkAllocationCallbacks*                pAllocator,
     VkPipeline*                                 pPipelines,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreDestroyPipeline(
     VkDevice                                    device,
     VkPipeline                                  pipeline,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 void PostDestroyPipeline(
     VkDevice                                    device,
     VkPipeline                                  pipeline,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 
 VkResult PreCreateCommandPool(
     VkDevice                                    device,
     const VkCommandPoolCreateInfo*              pCreateInfo,
     const VkAllocationCallbacks*                pAllocator,
-    VkCommandPool*                              pCommandPool);
+    VkCommandPool*                              pCommandPool) override;
 VkResult PostCreateCommandPool(
     VkDevice                                    device,
     const VkCommandPoolCreateInfo*              pCreateInfo,
     const VkAllocationCallbacks*                pAllocator,
     VkCommandPool*                              pCommandPool,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreDestroyCommandPool(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 void PostDestroyCommandPool(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
-    const VkAllocationCallbacks*                pAllocator);
+    const VkAllocationCallbacks*                pAllocator) override;
 
 VkResult PreResetCommandPool(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
-    VkCommandPoolResetFlags                     flags);
+    VkCommandPoolResetFlags                     flags) override;
 VkResult PostResetCommandPool(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
     VkCommandPoolResetFlags                     flags,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreAllocateCommandBuffers(
     VkDevice                                    device,
     const VkCommandBufferAllocateInfo*          pAllocateInfo,
-    VkCommandBuffer*                            pCommandBuffers);
+    VkCommandBuffer*                            pCommandBuffers) override;
 VkResult PostAllocateCommandBuffers(
     VkDevice                                    device,
     const VkCommandBufferAllocateInfo*          pAllocateInfo,
     VkCommandBuffer*                            pCommandBuffers,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreFreeCommandBuffers(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
     uint32_t                                    commandBufferCount,
-    const VkCommandBuffer*                      pCommandBuffers);
+    const VkCommandBuffer*                      pCommandBuffers) override;
 void PostFreeCommandBuffers(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
     uint32_t                                    commandBufferCount,
-    const VkCommandBuffer*                      pCommandBuffers);
+    const VkCommandBuffer*                      pCommandBuffers) override;
 
 VkResult PreBeginCommandBuffer(
     VkCommandBuffer                             commandBuffer,
-    const VkCommandBufferBeginInfo*             pBeginInfo);
+    const VkCommandBufferBeginInfo*             pBeginInfo) override;
 VkResult PostBeginCommandBuffer(
     VkCommandBuffer                             commandBuffer,
     const VkCommandBufferBeginInfo*             pBeginInfo,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreEndCommandBuffer(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 VkResult PostEndCommandBuffer(
     VkCommandBuffer                             commandBuffer,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreResetCommandBuffer(
     VkCommandBuffer                             commandBuffer,
-    VkCommandBufferResetFlags                   flags);
+    VkCommandBufferResetFlags                   flags) override;
 VkResult PostResetCommandBuffer(
     VkCommandBuffer                             commandBuffer,
     VkCommandBufferResetFlags                   flags,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreCmdBindPipeline(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
-    VkPipeline                                  pipeline);
+    VkPipeline                                  pipeline) override;
 void PostCmdBindPipeline(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
-    VkPipeline                                  pipeline);
+    VkPipeline                                  pipeline) override;
 
 void PreCmdSetViewport(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
-    const VkViewport*                           pViewports);
+    const VkViewport*                           pViewports) override;
 void PostCmdSetViewport(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
-    const VkViewport*                           pViewports);
+    const VkViewport*                           pViewports) override;
 
 void PreCmdSetScissor(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstScissor,
     uint32_t                                    scissorCount,
-    const VkRect2D*                             pScissors);
+    const VkRect2D*                             pScissors) override;
 void PostCmdSetScissor(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstScissor,
     uint32_t                                    scissorCount,
-    const VkRect2D*                             pScissors);
+    const VkRect2D*                             pScissors) override;
 
 void PreCmdSetLineWidth(
     VkCommandBuffer                             commandBuffer,
-    float                                       lineWidth);
+    float                                       lineWidth) override;
 void PostCmdSetLineWidth(
     VkCommandBuffer                             commandBuffer,
-    float                                       lineWidth);
+    float                                       lineWidth) override;
 
 void PreCmdSetDepthBias(
     VkCommandBuffer                             commandBuffer,
     float                                       depthBiasConstantFactor,
     float                                       depthBiasClamp,
-    float                                       depthBiasSlopeFactor);
+    float                                       depthBiasSlopeFactor) override;
 void PostCmdSetDepthBias(
     VkCommandBuffer                             commandBuffer,
     float                                       depthBiasConstantFactor,
     float                                       depthBiasClamp,
-    float                                       depthBiasSlopeFactor);
+    float                                       depthBiasSlopeFactor) override;
 
 void PreCmdSetBlendConstants(
     VkCommandBuffer                             commandBuffer,
-    const float                                 blendConstants[4]);
+    const float                                 blendConstants[4]) override;
 void PostCmdSetBlendConstants(
     VkCommandBuffer                             commandBuffer,
-    const float                                 blendConstants[4]);
+    const float                                 blendConstants[4]) override;
 
 void PreCmdSetDepthBounds(
     VkCommandBuffer                             commandBuffer,
     float                                       minDepthBounds,
-    float                                       maxDepthBounds);
+    float                                       maxDepthBounds) override;
 void PostCmdSetDepthBounds(
     VkCommandBuffer                             commandBuffer,
     float                                       minDepthBounds,
-    float                                       maxDepthBounds);
+    float                                       maxDepthBounds) override;
 
 void PreCmdSetStencilCompareMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
-    uint32_t                                    compareMask);
+    uint32_t                                    compareMask) override;
 void PostCmdSetStencilCompareMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
-    uint32_t                                    compareMask);
+    uint32_t                                    compareMask) override;
 
 void PreCmdSetStencilWriteMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
-    uint32_t                                    writeMask);
+    uint32_t                                    writeMask) override;
 void PostCmdSetStencilWriteMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
-    uint32_t                                    writeMask);
+    uint32_t                                    writeMask) override;
 
 void PreCmdSetStencilReference(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
-    uint32_t                                    reference);
+    uint32_t                                    reference) override;
 void PostCmdSetStencilReference(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
-    uint32_t                                    reference);
+    uint32_t                                    reference) override;
 
 void PreCmdBindDescriptorSets(
     VkCommandBuffer                             commandBuffer,
@@ -379,7 +375,7 @@ void PreCmdBindDescriptorSets(
     uint32_t                                    descriptorSetCount,
     const VkDescriptorSet*                      pDescriptorSets,
     uint32_t                                    dynamicOffsetCount,
-    const uint32_t*                             pDynamicOffsets);
+    const uint32_t*                             pDynamicOffsets) override;
 void PostCmdBindDescriptorSets(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
@@ -388,44 +384,44 @@ void PostCmdBindDescriptorSets(
     uint32_t                                    descriptorSetCount,
     const VkDescriptorSet*                      pDescriptorSets,
     uint32_t                                    dynamicOffsetCount,
-    const uint32_t*                             pDynamicOffsets);
+    const uint32_t*                             pDynamicOffsets) override;
 
 void PreCmdBindIndexBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
-    VkIndexType                                 indexType);
+    VkIndexType                                 indexType) override;
 void PostCmdBindIndexBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
-    VkIndexType                                 indexType);
+    VkIndexType                                 indexType) override;
 
 void PreCmdBindVertexBuffers(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
-    const VkDeviceSize*                         pOffsets);
+    const VkDeviceSize*                         pOffsets) override;
 void PostCmdBindVertexBuffers(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
-    const VkDeviceSize*                         pOffsets);
+    const VkDeviceSize*                         pOffsets) override;
 
 void PreCmdDraw(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    vertexCount,
     uint32_t                                    instanceCount,
     uint32_t                                    firstVertex,
-    uint32_t                                    firstInstance);
+    uint32_t                                    firstInstance) override;
 void PostCmdDraw(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    vertexCount,
     uint32_t                                    instanceCount,
     uint32_t                                    firstVertex,
-    uint32_t                                    firstInstance);
+    uint32_t                                    firstInstance) override;
 
 void PreCmdDrawIndexed(
     VkCommandBuffer                             commandBuffer,
@@ -433,73 +429,73 @@ void PreCmdDrawIndexed(
     uint32_t                                    instanceCount,
     uint32_t                                    firstIndex,
     int32_t                                     vertexOffset,
-    uint32_t                                    firstInstance);
+    uint32_t                                    firstInstance) override;
 void PostCmdDrawIndexed(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    indexCount,
     uint32_t                                    instanceCount,
     uint32_t                                    firstIndex,
     int32_t                                     vertexOffset,
-    uint32_t                                    firstInstance);
+    uint32_t                                    firstInstance) override;
 
 void PreCmdDrawIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdDrawIndexedIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawIndexedIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdDispatch(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 void PostCmdDispatch(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 
 void PreCmdDispatchIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
-    VkDeviceSize                                offset);
+    VkDeviceSize                                offset) override;
 void PostCmdDispatchIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
-    VkDeviceSize                                offset);
+    VkDeviceSize                                offset) override;
 
 void PreCmdCopyBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    srcBuffer,
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
-    const VkBufferCopy*                         pRegions);
+    const VkBufferCopy*                         pRegions) override;
 void PostCmdCopyBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    srcBuffer,
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
-    const VkBufferCopy*                         pRegions);
+    const VkBufferCopy*                         pRegions) override;
 
 void PreCmdCopyImage(
     VkCommandBuffer                             commandBuffer,
@@ -508,7 +504,7 @@ void PreCmdCopyImage(
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
-    const VkImageCopy*                          pRegions);
+    const VkImageCopy*                          pRegions) override;
 void PostCmdCopyImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
@@ -516,7 +512,7 @@ void PostCmdCopyImage(
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
-    const VkImageCopy*                          pRegions);
+    const VkImageCopy*                          pRegions) override;
 
 void PreCmdBlitImage(
     VkCommandBuffer                             commandBuffer,
@@ -526,7 +522,7 @@ void PreCmdBlitImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkImageBlit*                          pRegions,
-    VkFilter                                    filter);
+    VkFilter                                    filter) override;
 void PostCmdBlitImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
@@ -535,7 +531,7 @@ void PostCmdBlitImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkImageBlit*                          pRegions,
-    VkFilter                                    filter);
+    VkFilter                                    filter) override;
 
 void PreCmdCopyBufferToImage(
     VkCommandBuffer                             commandBuffer,
@@ -543,14 +539,14 @@ void PreCmdCopyBufferToImage(
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
-    const VkBufferImageCopy*                    pRegions);
+    const VkBufferImageCopy*                    pRegions) override;
 void PostCmdCopyBufferToImage(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    srcBuffer,
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
-    const VkBufferImageCopy*                    pRegions);
+    const VkBufferImageCopy*                    pRegions) override;
 
 void PreCmdCopyImageToBuffer(
     VkCommandBuffer                             commandBuffer,
@@ -558,40 +554,40 @@ void PreCmdCopyImageToBuffer(
     VkImageLayout                               srcImageLayout,
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
-    const VkBufferImageCopy*                    pRegions);
+    const VkBufferImageCopy*                    pRegions) override;
 void PostCmdCopyImageToBuffer(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
     VkImageLayout                               srcImageLayout,
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
-    const VkBufferImageCopy*                    pRegions);
+    const VkBufferImageCopy*                    pRegions) override;
 
 void PreCmdUpdateBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                dataSize,
-    const void*                                 pData);
+    const void*                                 pData) override;
 void PostCmdUpdateBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                dataSize,
-    const void*                                 pData);
+    const void*                                 pData) override;
 
 void PreCmdFillBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                size,
-    uint32_t                                    data);
+    uint32_t                                    data) override;
 void PostCmdFillBuffer(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                size,
-    uint32_t                                    data);
+    uint32_t                                    data) override;
 
 void PreCmdClearColorImage(
     VkCommandBuffer                             commandBuffer,
@@ -599,14 +595,14 @@ void PreCmdClearColorImage(
     VkImageLayout                               imageLayout,
     const VkClearColorValue*                    pColor,
     uint32_t                                    rangeCount,
-    const VkImageSubresourceRange*              pRanges);
+    const VkImageSubresourceRange*              pRanges) override;
 void PostCmdClearColorImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     image,
     VkImageLayout                               imageLayout,
     const VkClearColorValue*                    pColor,
     uint32_t                                    rangeCount,
-    const VkImageSubresourceRange*              pRanges);
+    const VkImageSubresourceRange*              pRanges) override;
 
 void PreCmdClearDepthStencilImage(
     VkCommandBuffer                             commandBuffer,
@@ -614,27 +610,27 @@ void PreCmdClearDepthStencilImage(
     VkImageLayout                               imageLayout,
     const VkClearDepthStencilValue*             pDepthStencil,
     uint32_t                                    rangeCount,
-    const VkImageSubresourceRange*              pRanges);
+    const VkImageSubresourceRange*              pRanges) override;
 void PostCmdClearDepthStencilImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     image,
     VkImageLayout                               imageLayout,
     const VkClearDepthStencilValue*             pDepthStencil,
     uint32_t                                    rangeCount,
-    const VkImageSubresourceRange*              pRanges);
+    const VkImageSubresourceRange*              pRanges) override;
 
 void PreCmdClearAttachments(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkClearAttachment*                    pAttachments,
     uint32_t                                    rectCount,
-    const VkClearRect*                          pRects);
+    const VkClearRect*                          pRects) override;
 void PostCmdClearAttachments(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkClearAttachment*                    pAttachments,
     uint32_t                                    rectCount,
-    const VkClearRect*                          pRects);
+    const VkClearRect*                          pRects) override;
 
 void PreCmdResolveImage(
     VkCommandBuffer                             commandBuffer,
@@ -643,7 +639,7 @@ void PreCmdResolveImage(
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
-    const VkImageResolve*                       pRegions);
+    const VkImageResolve*                       pRegions) override;
 void PostCmdResolveImage(
     VkCommandBuffer                             commandBuffer,
     VkImage                                     srcImage,
@@ -651,25 +647,25 @@ void PostCmdResolveImage(
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
-    const VkImageResolve*                       pRegions);
+    const VkImageResolve*                       pRegions) override;
 
 void PreCmdSetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    VkPipelineStageFlags                        stageMask);
+    VkPipelineStageFlags                        stageMask) override;
 void PostCmdSetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    VkPipelineStageFlags                        stageMask);
+    VkPipelineStageFlags                        stageMask) override;
 
 void PreCmdResetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    VkPipelineStageFlags                        stageMask);
+    VkPipelineStageFlags                        stageMask) override;
 void PostCmdResetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    VkPipelineStageFlags                        stageMask);
+    VkPipelineStageFlags                        stageMask) override;
 
 void PreCmdWaitEvents(
     VkCommandBuffer                             commandBuffer,
@@ -682,7 +678,7 @@ void PreCmdWaitEvents(
     uint32_t                                    bufferMemoryBarrierCount,
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
-    const VkImageMemoryBarrier*                 pImageMemoryBarriers);
+    const VkImageMemoryBarrier*                 pImageMemoryBarriers) override;
 void PostCmdWaitEvents(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
@@ -694,7 +690,7 @@ void PostCmdWaitEvents(
     uint32_t                                    bufferMemoryBarrierCount,
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
-    const VkImageMemoryBarrier*                 pImageMemoryBarriers);
+    const VkImageMemoryBarrier*                 pImageMemoryBarriers) override;
 
 void PreCmdPipelineBarrier(
     VkCommandBuffer                             commandBuffer,
@@ -706,7 +702,7 @@ void PreCmdPipelineBarrier(
     uint32_t                                    bufferMemoryBarrierCount,
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
-    const VkImageMemoryBarrier*                 pImageMemoryBarriers);
+    const VkImageMemoryBarrier*                 pImageMemoryBarriers) override;
 void PostCmdPipelineBarrier(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags                        srcStageMask,
@@ -717,49 +713,49 @@ void PostCmdPipelineBarrier(
     uint32_t                                    bufferMemoryBarrierCount,
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
-    const VkImageMemoryBarrier*                 pImageMemoryBarriers);
+    const VkImageMemoryBarrier*                 pImageMemoryBarriers) override;
 
 void PreCmdBeginQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
-    VkQueryControlFlags                         flags);
+    VkQueryControlFlags                         flags) override;
 void PostCmdBeginQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
-    VkQueryControlFlags                         flags);
+    VkQueryControlFlags                         flags) override;
 
 void PreCmdEndQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
-    uint32_t                                    query);
+    uint32_t                                    query) override;
 void PostCmdEndQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
-    uint32_t                                    query);
+    uint32_t                                    query) override;
 
 void PreCmdResetQueryPool(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
-    uint32_t                                    queryCount);
+    uint32_t                                    queryCount) override;
 void PostCmdResetQueryPool(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
-    uint32_t                                    queryCount);
+    uint32_t                                    queryCount) override;
 
 void PreCmdWriteTimestamp(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlagBits                     pipelineStage,
     VkQueryPool                                 queryPool,
-    uint32_t                                    query);
+    uint32_t                                    query) override;
 void PostCmdWriteTimestamp(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlagBits                     pipelineStage,
     VkQueryPool                                 queryPool,
-    uint32_t                                    query);
+    uint32_t                                    query) override;
 
 void PreCmdCopyQueryPoolResults(
     VkCommandBuffer                             commandBuffer,
@@ -769,7 +765,7 @@ void PreCmdCopyQueryPoolResults(
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                stride,
-    VkQueryResultFlags                          flags);
+    VkQueryResultFlags                          flags) override;
 void PostCmdCopyQueryPoolResults(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
@@ -778,7 +774,7 @@ void PostCmdCopyQueryPoolResults(
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                stride,
-    VkQueryResultFlags                          flags);
+    VkQueryResultFlags                          flags) override;
 
 void PreCmdPushConstants(
     VkCommandBuffer                             commandBuffer,
@@ -786,51 +782,51 @@ void PreCmdPushConstants(
     VkShaderStageFlags                          stageFlags,
     uint32_t                                    offset,
     uint32_t                                    size,
-    const void*                                 pValues);
+    const void*                                 pValues) override;
 void PostCmdPushConstants(
     VkCommandBuffer                             commandBuffer,
     VkPipelineLayout                            layout,
     VkShaderStageFlags                          stageFlags,
     uint32_t                                    offset,
     uint32_t                                    size,
-    const void*                                 pValues);
+    const void*                                 pValues) override;
 
 void PreCmdBeginRenderPass(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
-    VkSubpassContents                           contents);
+    VkSubpassContents                           contents) override;
 void PostCmdBeginRenderPass(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
-    VkSubpassContents                           contents);
+    VkSubpassContents                           contents) override;
 
 void PreCmdNextSubpass(
     VkCommandBuffer                             commandBuffer,
-    VkSubpassContents                           contents);
+    VkSubpassContents                           contents) override;
 void PostCmdNextSubpass(
     VkCommandBuffer                             commandBuffer,
-    VkSubpassContents                           contents);
+    VkSubpassContents                           contents) override;
 
 void PreCmdEndRenderPass(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 void PostCmdEndRenderPass(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 
 void PreCmdExecuteCommands(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    commandBufferCount,
-    const VkCommandBuffer*                      pCommandBuffers);
+    const VkCommandBuffer*                      pCommandBuffers) override;
 void PostCmdExecuteCommands(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    commandBufferCount,
-    const VkCommandBuffer*                      pCommandBuffers);
+    const VkCommandBuffer*                      pCommandBuffers) override;
 
 void PreCmdSetDeviceMask(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    deviceMask);
+    uint32_t                                    deviceMask) override;
 void PostCmdSetDeviceMask(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    deviceMask);
+    uint32_t                                    deviceMask) override;
 
 void PreCmdDispatchBase(
     VkCommandBuffer                             commandBuffer,
@@ -839,7 +835,7 @@ void PreCmdDispatchBase(
     uint32_t                                    baseGroupZ,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 void PostCmdDispatchBase(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    baseGroupX,
@@ -847,16 +843,16 @@ void PostCmdDispatchBase(
     uint32_t                                    baseGroupZ,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 
 void PreGetDeviceQueue2(
     VkDevice                                    device,
     const VkDeviceQueueInfo2*                   pQueueInfo,
-    VkQueue*                                    pQueue);
+    VkQueue*                                    pQueue) override;
 void PostGetDeviceQueue2(
     VkDevice                                    device,
     const VkDeviceQueueInfo2*                   pQueueInfo,
-    VkQueue*                                    pQueue);
+    VkQueue*                                    pQueue) override;
 
 void PreCmdDrawIndirectCount(
     VkCommandBuffer                             commandBuffer,
@@ -865,7 +861,7 @@ void PreCmdDrawIndirectCount(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -873,7 +869,7 @@ void PostCmdDrawIndirectCount(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdDrawIndexedIndirectCount(
     VkCommandBuffer                             commandBuffer,
@@ -882,7 +878,7 @@ void PreCmdDrawIndexedIndirectCount(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawIndexedIndirectCount(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -890,184 +886,184 @@ void PostCmdDrawIndexedIndirectCount(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdBeginRenderPass2(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
-    const VkSubpassBeginInfo*                   pSubpassBeginInfo);
+    const VkSubpassBeginInfo*                   pSubpassBeginInfo) override;
 void PostCmdBeginRenderPass2(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
-    const VkSubpassBeginInfo*                   pSubpassBeginInfo);
+    const VkSubpassBeginInfo*                   pSubpassBeginInfo) override;
 
 void PreCmdNextSubpass2(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
-    const VkSubpassEndInfo*                     pSubpassEndInfo);
+    const VkSubpassEndInfo*                     pSubpassEndInfo) override;
 void PostCmdNextSubpass2(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
-    const VkSubpassEndInfo*                     pSubpassEndInfo);
+    const VkSubpassEndInfo*                     pSubpassEndInfo) override;
 
 void PreCmdEndRenderPass2(
     VkCommandBuffer                             commandBuffer,
-    const VkSubpassEndInfo*                     pSubpassEndInfo);
+    const VkSubpassEndInfo*                     pSubpassEndInfo) override;
 void PostCmdEndRenderPass2(
     VkCommandBuffer                             commandBuffer,
-    const VkSubpassEndInfo*                     pSubpassEndInfo);
+    const VkSubpassEndInfo*                     pSubpassEndInfo) override;
 
 void PreCmdSetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    const VkDependencyInfo*                     pDependencyInfo);
+    const VkDependencyInfo*                     pDependencyInfo) override;
 void PostCmdSetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    const VkDependencyInfo*                     pDependencyInfo);
+    const VkDependencyInfo*                     pDependencyInfo) override;
 
 void PreCmdResetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    VkPipelineStageFlags2                       stageMask);
+    VkPipelineStageFlags2                       stageMask) override;
 void PostCmdResetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    VkPipelineStageFlags2                       stageMask);
+    VkPipelineStageFlags2                       stageMask) override;
 
 void PreCmdWaitEvents2(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
-    const VkDependencyInfo*                     pDependencyInfos);
+    const VkDependencyInfo*                     pDependencyInfos) override;
 void PostCmdWaitEvents2(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
-    const VkDependencyInfo*                     pDependencyInfos);
+    const VkDependencyInfo*                     pDependencyInfos) override;
 
 void PreCmdPipelineBarrier2(
     VkCommandBuffer                             commandBuffer,
-    const VkDependencyInfo*                     pDependencyInfo);
+    const VkDependencyInfo*                     pDependencyInfo) override;
 void PostCmdPipelineBarrier2(
     VkCommandBuffer                             commandBuffer,
-    const VkDependencyInfo*                     pDependencyInfo);
+    const VkDependencyInfo*                     pDependencyInfo) override;
 
 void PreCmdWriteTimestamp2(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
-    uint32_t                                    query);
+    uint32_t                                    query) override;
 void PostCmdWriteTimestamp2(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
-    uint32_t                                    query);
+    uint32_t                                    query) override;
 
 VkResult PreQueueSubmit2(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
     const VkSubmitInfo2*                        pSubmits,
-    VkFence                                     fence);
+    VkFence                                     fence) override;
 VkResult PostQueueSubmit2(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
     const VkSubmitInfo2*                        pSubmits,
     VkFence                                     fence,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreCmdCopyBuffer2(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyBufferInfo2*                    pCopyBufferInfo);
+    const VkCopyBufferInfo2*                    pCopyBufferInfo) override;
 void PostCmdCopyBuffer2(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyBufferInfo2*                    pCopyBufferInfo);
+    const VkCopyBufferInfo2*                    pCopyBufferInfo) override;
 
 void PreCmdCopyImage2(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyImageInfo2*                     pCopyImageInfo);
+    const VkCopyImageInfo2*                     pCopyImageInfo) override;
 void PostCmdCopyImage2(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyImageInfo2*                     pCopyImageInfo);
+    const VkCopyImageInfo2*                     pCopyImageInfo) override;
 
 void PreCmdCopyBufferToImage2(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo);
+    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) override;
 void PostCmdCopyBufferToImage2(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo);
+    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) override;
 
 void PreCmdCopyImageToBuffer2(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo);
+    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) override;
 void PostCmdCopyImageToBuffer2(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo);
+    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) override;
 
 void PreCmdBlitImage2(
     VkCommandBuffer                             commandBuffer,
-    const VkBlitImageInfo2*                     pBlitImageInfo);
+    const VkBlitImageInfo2*                     pBlitImageInfo) override;
 void PostCmdBlitImage2(
     VkCommandBuffer                             commandBuffer,
-    const VkBlitImageInfo2*                     pBlitImageInfo);
+    const VkBlitImageInfo2*                     pBlitImageInfo) override;
 
 void PreCmdResolveImage2(
     VkCommandBuffer                             commandBuffer,
-    const VkResolveImageInfo2*                  pResolveImageInfo);
+    const VkResolveImageInfo2*                  pResolveImageInfo) override;
 void PostCmdResolveImage2(
     VkCommandBuffer                             commandBuffer,
-    const VkResolveImageInfo2*                  pResolveImageInfo);
+    const VkResolveImageInfo2*                  pResolveImageInfo) override;
 
 void PreCmdBeginRendering(
     VkCommandBuffer                             commandBuffer,
-    const VkRenderingInfo*                      pRenderingInfo);
+    const VkRenderingInfo*                      pRenderingInfo) override;
 void PostCmdBeginRendering(
     VkCommandBuffer                             commandBuffer,
-    const VkRenderingInfo*                      pRenderingInfo);
+    const VkRenderingInfo*                      pRenderingInfo) override;
 
 void PreCmdEndRendering(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 void PostCmdEndRendering(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 
 void PreCmdSetCullMode(
     VkCommandBuffer                             commandBuffer,
-    VkCullModeFlags                             cullMode);
+    VkCullModeFlags                             cullMode) override;
 void PostCmdSetCullMode(
     VkCommandBuffer                             commandBuffer,
-    VkCullModeFlags                             cullMode);
+    VkCullModeFlags                             cullMode) override;
 
 void PreCmdSetFrontFace(
     VkCommandBuffer                             commandBuffer,
-    VkFrontFace                                 frontFace);
+    VkFrontFace                                 frontFace) override;
 void PostCmdSetFrontFace(
     VkCommandBuffer                             commandBuffer,
-    VkFrontFace                                 frontFace);
+    VkFrontFace                                 frontFace) override;
 
 void PreCmdSetPrimitiveTopology(
     VkCommandBuffer                             commandBuffer,
-    VkPrimitiveTopology                         primitiveTopology);
+    VkPrimitiveTopology                         primitiveTopology) override;
 void PostCmdSetPrimitiveTopology(
     VkCommandBuffer                             commandBuffer,
-    VkPrimitiveTopology                         primitiveTopology);
+    VkPrimitiveTopology                         primitiveTopology) override;
 
 void PreCmdSetViewportWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
-    const VkViewport*                           pViewports);
+    const VkViewport*                           pViewports) override;
 void PostCmdSetViewportWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
-    const VkViewport*                           pViewports);
+    const VkViewport*                           pViewports) override;
 
 void PreCmdSetScissorWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
-    const VkRect2D*                             pScissors);
+    const VkRect2D*                             pScissors) override;
 void PostCmdSetScissorWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
-    const VkRect2D*                             pScissors);
+    const VkRect2D*                             pScissors) override;
 
 void PreCmdBindVertexBuffers2(
     VkCommandBuffer                             commandBuffer,
@@ -1076,7 +1072,7 @@ void PreCmdBindVertexBuffers2(
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
-    const VkDeviceSize*                         pStrides);
+    const VkDeviceSize*                         pStrides) override;
 void PostCmdBindVertexBuffers2(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
@@ -1084,42 +1080,42 @@ void PostCmdBindVertexBuffers2(
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
-    const VkDeviceSize*                         pStrides);
+    const VkDeviceSize*                         pStrides) override;
 
 void PreCmdSetDepthTestEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthTestEnable);
+    VkBool32                                    depthTestEnable) override;
 void PostCmdSetDepthTestEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthTestEnable);
+    VkBool32                                    depthTestEnable) override;
 
 void PreCmdSetDepthWriteEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthWriteEnable);
+    VkBool32                                    depthWriteEnable) override;
 void PostCmdSetDepthWriteEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthWriteEnable);
+    VkBool32                                    depthWriteEnable) override;
 
 void PreCmdSetDepthCompareOp(
     VkCommandBuffer                             commandBuffer,
-    VkCompareOp                                 depthCompareOp);
+    VkCompareOp                                 depthCompareOp) override;
 void PostCmdSetDepthCompareOp(
     VkCommandBuffer                             commandBuffer,
-    VkCompareOp                                 depthCompareOp);
+    VkCompareOp                                 depthCompareOp) override;
 
 void PreCmdSetDepthBoundsTestEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthBoundsTestEnable);
+    VkBool32                                    depthBoundsTestEnable) override;
 void PostCmdSetDepthBoundsTestEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthBoundsTestEnable);
+    VkBool32                                    depthBoundsTestEnable) override;
 
 void PreCmdSetStencilTestEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    stencilTestEnable);
+    VkBool32                                    stencilTestEnable) override;
 void PostCmdSetStencilTestEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    stencilTestEnable);
+    VkBool32                                    stencilTestEnable) override;
 
 void PreCmdSetStencilOp(
     VkCommandBuffer                             commandBuffer,
@@ -1127,35 +1123,35 @@ void PreCmdSetStencilOp(
     VkStencilOp                                 failOp,
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
-    VkCompareOp                                 compareOp);
+    VkCompareOp                                 compareOp) override;
 void PostCmdSetStencilOp(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     VkStencilOp                                 failOp,
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
-    VkCompareOp                                 compareOp);
+    VkCompareOp                                 compareOp) override;
 
 void PreCmdSetRasterizerDiscardEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    rasterizerDiscardEnable);
+    VkBool32                                    rasterizerDiscardEnable) override;
 void PostCmdSetRasterizerDiscardEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    rasterizerDiscardEnable);
+    VkBool32                                    rasterizerDiscardEnable) override;
 
 void PreCmdSetDepthBiasEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthBiasEnable);
+    VkBool32                                    depthBiasEnable) override;
 void PostCmdSetDepthBiasEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthBiasEnable);
+    VkBool32                                    depthBiasEnable) override;
 
 void PreCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    primitiveRestartEnable);
+    VkBool32                                    primitiveRestartEnable) override;
 void PostCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    primitiveRestartEnable);
+    VkBool32                                    primitiveRestartEnable) override;
 
 VkResult PreAcquireNextImageKHR(
     VkDevice                                    device,
@@ -1163,7 +1159,7 @@ VkResult PreAcquireNextImageKHR(
     uint64_t                                    timeout,
     VkSemaphore                                 semaphore,
     VkFence                                     fence,
-    uint32_t*                                   pImageIndex);
+    uint32_t*                                   pImageIndex) override;
 VkResult PostAcquireNextImageKHR(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
@@ -1171,62 +1167,62 @@ VkResult PostAcquireNextImageKHR(
     VkSemaphore                                 semaphore,
     VkFence                                     fence,
     uint32_t*                                   pImageIndex,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreQueuePresentKHR(
     VkQueue                                     queue,
-    const VkPresentInfoKHR*                     pPresentInfo);
+    const VkPresentInfoKHR*                     pPresentInfo) override;
 VkResult PostQueuePresentKHR(
     VkQueue                                     queue,
     const VkPresentInfoKHR*                     pPresentInfo,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreCmdBeginVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoBeginCodingInfoKHR*            pBeginInfo);
+    const VkVideoBeginCodingInfoKHR*            pBeginInfo) override;
 void PostCmdBeginVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoBeginCodingInfoKHR*            pBeginInfo);
+    const VkVideoBeginCodingInfoKHR*            pBeginInfo) override;
 
 void PreCmdEndVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoEndCodingInfoKHR*              pEndCodingInfo);
+    const VkVideoEndCodingInfoKHR*              pEndCodingInfo) override;
 void PostCmdEndVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoEndCodingInfoKHR*              pEndCodingInfo);
+    const VkVideoEndCodingInfoKHR*              pEndCodingInfo) override;
 
 void PreCmdControlVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoCodingControlInfoKHR*          pCodingControlInfo);
+    const VkVideoCodingControlInfoKHR*          pCodingControlInfo) override;
 void PostCmdControlVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoCodingControlInfoKHR*          pCodingControlInfo);
+    const VkVideoCodingControlInfoKHR*          pCodingControlInfo) override;
 
 void PreCmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoDecodeInfoKHR*                 pDecodeInfo);
+    const VkVideoDecodeInfoKHR*                 pDecodeInfo) override;
 void PostCmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoDecodeInfoKHR*                 pDecodeInfo);
+    const VkVideoDecodeInfoKHR*                 pDecodeInfo) override;
 
 void PreCmdBeginRenderingKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkRenderingInfo*                      pRenderingInfo);
+    const VkRenderingInfo*                      pRenderingInfo) override;
 void PostCmdBeginRenderingKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkRenderingInfo*                      pRenderingInfo);
+    const VkRenderingInfo*                      pRenderingInfo) override;
 
 void PreCmdEndRenderingKHR(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 void PostCmdEndRenderingKHR(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 
 void PreCmdSetDeviceMaskKHR(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    deviceMask);
+    uint32_t                                    deviceMask) override;
 void PostCmdSetDeviceMaskKHR(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    deviceMask);
+    uint32_t                                    deviceMask) override;
 
 void PreCmdDispatchBaseKHR(
     VkCommandBuffer                             commandBuffer,
@@ -1235,7 +1231,7 @@ void PreCmdDispatchBaseKHR(
     uint32_t                                    baseGroupZ,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 void PostCmdDispatchBaseKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    baseGroupX,
@@ -1243,7 +1239,7 @@ void PostCmdDispatchBaseKHR(
     uint32_t                                    baseGroupZ,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 
 void PreCmdPushDescriptorSetKHR(
     VkCommandBuffer                             commandBuffer,
@@ -1251,52 +1247,52 @@ void PreCmdPushDescriptorSetKHR(
     VkPipelineLayout                            layout,
     uint32_t                                    set,
     uint32_t                                    descriptorWriteCount,
-    const VkWriteDescriptorSet*                 pDescriptorWrites);
+    const VkWriteDescriptorSet*                 pDescriptorWrites) override;
 void PostCmdPushDescriptorSetKHR(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
     uint32_t                                    set,
     uint32_t                                    descriptorWriteCount,
-    const VkWriteDescriptorSet*                 pDescriptorWrites);
+    const VkWriteDescriptorSet*                 pDescriptorWrites) override;
 
 void PreCmdPushDescriptorSetWithTemplateKHR(
     VkCommandBuffer                             commandBuffer,
     VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
     VkPipelineLayout                            layout,
     uint32_t                                    set,
-    const void*                                 pData);
+    const void*                                 pData) override;
 void PostCmdPushDescriptorSetWithTemplateKHR(
     VkCommandBuffer                             commandBuffer,
     VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
     VkPipelineLayout                            layout,
     uint32_t                                    set,
-    const void*                                 pData);
+    const void*                                 pData) override;
 
 void PreCmdBeginRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
-    const VkSubpassBeginInfo*                   pSubpassBeginInfo);
+    const VkSubpassBeginInfo*                   pSubpassBeginInfo) override;
 void PostCmdBeginRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
-    const VkSubpassBeginInfo*                   pSubpassBeginInfo);
+    const VkSubpassBeginInfo*                   pSubpassBeginInfo) override;
 
 void PreCmdNextSubpass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
-    const VkSubpassEndInfo*                     pSubpassEndInfo);
+    const VkSubpassEndInfo*                     pSubpassEndInfo) override;
 void PostCmdNextSubpass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
-    const VkSubpassEndInfo*                     pSubpassEndInfo);
+    const VkSubpassEndInfo*                     pSubpassEndInfo) override;
 
 void PreCmdEndRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkSubpassEndInfo*                     pSubpassEndInfo);
+    const VkSubpassEndInfo*                     pSubpassEndInfo) override;
 void PostCmdEndRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkSubpassEndInfo*                     pSubpassEndInfo);
+    const VkSubpassEndInfo*                     pSubpassEndInfo) override;
 
 void PreCmdDrawIndirectCountKHR(
     VkCommandBuffer                             commandBuffer,
@@ -1305,7 +1301,7 @@ void PreCmdDrawIndirectCountKHR(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawIndirectCountKHR(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -1313,7 +1309,7 @@ void PostCmdDrawIndirectCountKHR(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdDrawIndexedIndirectCountKHR(
     VkCommandBuffer                             commandBuffer,
@@ -1322,7 +1318,7 @@ void PreCmdDrawIndexedIndirectCountKHR(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawIndexedIndirectCountKHR(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -1330,254 +1326,254 @@ void PostCmdDrawIndexedIndirectCountKHR(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 VkResult PreGetSemaphoreCounterValueKHR(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
-    uint64_t*                                   pValue);
+    uint64_t*                                   pValue) override;
 VkResult PostGetSemaphoreCounterValueKHR(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
     uint64_t*                                   pValue,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreWaitSemaphoresKHR(
     VkDevice                                    device,
     const VkSemaphoreWaitInfo*                  pWaitInfo,
-    uint64_t                                    timeout);
+    uint64_t                                    timeout) override;
 VkResult PostWaitSemaphoresKHR(
     VkDevice                                    device,
     const VkSemaphoreWaitInfo*                  pWaitInfo,
     uint64_t                                    timeout,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreSignalSemaphoreKHR(
     VkDevice                                    device,
-    const VkSemaphoreSignalInfo*                pSignalInfo);
+    const VkSemaphoreSignalInfo*                pSignalInfo) override;
 VkResult PostSignalSemaphoreKHR(
     VkDevice                                    device,
     const VkSemaphoreSignalInfo*                pSignalInfo,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
-    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
+    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) override;
 void PostCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
-    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
+    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) override;
 
 void PreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoEncodeInfoKHR*                 pEncodeInfo);
+    const VkVideoEncodeInfoKHR*                 pEncodeInfo) override;
 void PostCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoEncodeInfoKHR*                 pEncodeInfo);
+    const VkVideoEncodeInfoKHR*                 pEncodeInfo) override;
 
 void PreCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    const VkDependencyInfo*                     pDependencyInfo);
+    const VkDependencyInfo*                     pDependencyInfo) override;
 void PostCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    const VkDependencyInfo*                     pDependencyInfo);
+    const VkDependencyInfo*                     pDependencyInfo) override;
 
 void PreCmdResetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    VkPipelineStageFlags2                       stageMask);
+    VkPipelineStageFlags2                       stageMask) override;
 void PostCmdResetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
-    VkPipelineStageFlags2                       stageMask);
+    VkPipelineStageFlags2                       stageMask) override;
 
 void PreCmdWaitEvents2KHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
-    const VkDependencyInfo*                     pDependencyInfos);
+    const VkDependencyInfo*                     pDependencyInfos) override;
 void PostCmdWaitEvents2KHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
-    const VkDependencyInfo*                     pDependencyInfos);
+    const VkDependencyInfo*                     pDependencyInfos) override;
 
 void PreCmdPipelineBarrier2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkDependencyInfo*                     pDependencyInfo);
+    const VkDependencyInfo*                     pDependencyInfo) override;
 void PostCmdPipelineBarrier2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkDependencyInfo*                     pDependencyInfo);
+    const VkDependencyInfo*                     pDependencyInfo) override;
 
 void PreCmdWriteTimestamp2KHR(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
-    uint32_t                                    query);
+    uint32_t                                    query) override;
 void PostCmdWriteTimestamp2KHR(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
-    uint32_t                                    query);
+    uint32_t                                    query) override;
 
 VkResult PreQueueSubmit2KHR(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
     const VkSubmitInfo2*                        pSubmits,
-    VkFence                                     fence);
+    VkFence                                     fence) override;
 VkResult PostQueueSubmit2KHR(
     VkQueue                                     queue,
     uint32_t                                    submitCount,
     const VkSubmitInfo2*                        pSubmits,
     VkFence                                     fence,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreCmdWriteBufferMarker2AMD(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
-    uint32_t                                    marker);
+    uint32_t                                    marker) override;
 void PostCmdWriteBufferMarker2AMD(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlags2                       stage,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
-    uint32_t                                    marker);
+    uint32_t                                    marker) override;
 
 void PreCmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyBufferInfo2*                    pCopyBufferInfo);
+    const VkCopyBufferInfo2*                    pCopyBufferInfo) override;
 void PostCmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyBufferInfo2*                    pCopyBufferInfo);
+    const VkCopyBufferInfo2*                    pCopyBufferInfo) override;
 
 void PreCmdCopyImage2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyImageInfo2*                     pCopyImageInfo);
+    const VkCopyImageInfo2*                     pCopyImageInfo) override;
 void PostCmdCopyImage2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyImageInfo2*                     pCopyImageInfo);
+    const VkCopyImageInfo2*                     pCopyImageInfo) override;
 
 void PreCmdCopyBufferToImage2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo);
+    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) override;
 void PostCmdCopyBufferToImage2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo);
+    const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) override;
 
 void PreCmdCopyImageToBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo);
+    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) override;
 void PostCmdCopyImageToBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo);
+    const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) override;
 
 void PreCmdBlitImage2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkBlitImageInfo2*                     pBlitImageInfo);
+    const VkBlitImageInfo2*                     pBlitImageInfo) override;
 void PostCmdBlitImage2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkBlitImageInfo2*                     pBlitImageInfo);
+    const VkBlitImageInfo2*                     pBlitImageInfo) override;
 
 void PreCmdResolveImage2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkResolveImageInfo2*                  pResolveImageInfo);
+    const VkResolveImageInfo2*                  pResolveImageInfo) override;
 void PostCmdResolveImage2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkResolveImageInfo2*                  pResolveImageInfo);
+    const VkResolveImageInfo2*                  pResolveImageInfo) override;
 
 void PreCmdTraceRaysIndirect2KHR(
     VkCommandBuffer                             commandBuffer,
-    VkDeviceAddress                             indirectDeviceAddress);
+    VkDeviceAddress                             indirectDeviceAddress) override;
 void PostCmdTraceRaysIndirect2KHR(
     VkCommandBuffer                             commandBuffer,
-    VkDeviceAddress                             indirectDeviceAddress);
+    VkDeviceAddress                             indirectDeviceAddress) override;
 
 void PreCmdBindIndexBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     VkDeviceSize                                size,
-    VkIndexType                                 indexType);
+    VkIndexType                                 indexType) override;
 void PostCmdBindIndexBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     VkDeviceSize                                size,
-    VkIndexType                                 indexType);
+    VkIndexType                                 indexType) override;
 
 void PreCmdBindDescriptorSets2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo);
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) override;
 void PostCmdBindDescriptorSets2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo);
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) override;
 
 void PreCmdPushConstants2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushConstantsInfoKHR*               pPushConstantsInfo);
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) override;
 void PostCmdPushConstants2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushConstantsInfoKHR*               pPushConstantsInfo);
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo) override;
 
 void PreCmdPushDescriptorSet2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo);
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) override;
 void PostCmdPushDescriptorSet2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo);
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) override;
 
 void PreCmdPushDescriptorSetWithTemplate2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo);
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) override;
 void PostCmdPushDescriptorSetWithTemplate2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo);
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) override;
 
 void PreCmdSetDescriptorBufferOffsets2EXT(
     VkCommandBuffer                             commandBuffer,
-    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo);
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) override;
 void PostCmdSetDescriptorBufferOffsets2EXT(
     VkCommandBuffer                             commandBuffer,
-    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo);
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) override;
 
 void PreCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer                             commandBuffer,
-    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) override;
 void PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer                             commandBuffer,
-    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) override;
 
 VkResult PreDebugMarkerSetObjectNameEXT(
     VkDevice                                    device,
-    const VkDebugMarkerObjectNameInfoEXT*       pNameInfo);
+    const VkDebugMarkerObjectNameInfoEXT*       pNameInfo) override;
 VkResult PostDebugMarkerSetObjectNameEXT(
     VkDevice                                    device,
     const VkDebugMarkerObjectNameInfoEXT*       pNameInfo,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo);
+    const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) override;
 void PostCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo);
+    const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) override;
 
 void PreCmdDebugMarkerEndEXT(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 void PostCmdDebugMarkerEndEXT(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 
 void PreCmdDebugMarkerInsertEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo);
+    const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) override;
 void PostCmdDebugMarkerInsertEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo);
+    const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) override;
 
 void PreCmdBindTransformFeedbackBuffersEXT(
     VkCommandBuffer                             commandBuffer,
@@ -1585,64 +1581,64 @@ void PreCmdBindTransformFeedbackBuffersEXT(
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
-    const VkDeviceSize*                         pSizes);
+    const VkDeviceSize*                         pSizes) override;
 void PostCmdBindTransformFeedbackBuffersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
-    const VkDeviceSize*                         pSizes);
+    const VkDeviceSize*                         pSizes) override;
 
 void PreCmdBeginTransformFeedbackEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstCounterBuffer,
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
-    const VkDeviceSize*                         pCounterBufferOffsets);
+    const VkDeviceSize*                         pCounterBufferOffsets) override;
 void PostCmdBeginTransformFeedbackEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstCounterBuffer,
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
-    const VkDeviceSize*                         pCounterBufferOffsets);
+    const VkDeviceSize*                         pCounterBufferOffsets) override;
 
 void PreCmdEndTransformFeedbackEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstCounterBuffer,
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
-    const VkDeviceSize*                         pCounterBufferOffsets);
+    const VkDeviceSize*                         pCounterBufferOffsets) override;
 void PostCmdEndTransformFeedbackEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstCounterBuffer,
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
-    const VkDeviceSize*                         pCounterBufferOffsets);
+    const VkDeviceSize*                         pCounterBufferOffsets) override;
 
 void PreCmdBeginQueryIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     VkQueryControlFlags                         flags,
-    uint32_t                                    index);
+    uint32_t                                    index) override;
 void PostCmdBeginQueryIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     VkQueryControlFlags                         flags,
-    uint32_t                                    index);
+    uint32_t                                    index) override;
 
 void PreCmdEndQueryIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
-    uint32_t                                    index);
+    uint32_t                                    index) override;
 void PostCmdEndQueryIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
-    uint32_t                                    index);
+    uint32_t                                    index) override;
 
 void PreCmdDrawIndirectByteCountEXT(
     VkCommandBuffer                             commandBuffer,
@@ -1651,7 +1647,7 @@ void PreCmdDrawIndirectByteCountEXT(
     VkBuffer                                    counterBuffer,
     VkDeviceSize                                counterBufferOffset,
     uint32_t                                    counterOffset,
-    uint32_t                                    vertexStride);
+    uint32_t                                    vertexStride) override;
 void PostCmdDrawIndirectByteCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    instanceCount,
@@ -1659,14 +1655,14 @@ void PostCmdDrawIndirectByteCountEXT(
     VkBuffer                                    counterBuffer,
     VkDeviceSize                                counterBufferOffset,
     uint32_t                                    counterOffset,
-    uint32_t                                    vertexStride);
+    uint32_t                                    vertexStride) override;
 
 void PreCmdCuLaunchKernelNVX(
     VkCommandBuffer                             commandBuffer,
-    const VkCuLaunchInfoNVX*                    pLaunchInfo);
+    const VkCuLaunchInfoNVX*                    pLaunchInfo) override;
 void PostCmdCuLaunchKernelNVX(
     VkCommandBuffer                             commandBuffer,
-    const VkCuLaunchInfoNVX*                    pLaunchInfo);
+    const VkCuLaunchInfoNVX*                    pLaunchInfo) override;
 
 void PreCmdDrawIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
@@ -1675,7 +1671,7 @@ void PreCmdDrawIndirectCountAMD(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -1683,7 +1679,7 @@ void PostCmdDrawIndirectCountAMD(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdDrawIndexedIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
@@ -1692,7 +1688,7 @@ void PreCmdDrawIndexedIndirectCountAMD(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawIndexedIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -1700,162 +1696,162 @@ void PostCmdDrawIndexedIndirectCountAMD(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdBeginConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin);
+    const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin) override;
 void PostCmdBeginConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin);
+    const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin) override;
 
 void PreCmdEndConditionalRenderingEXT(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 void PostCmdEndConditionalRenderingEXT(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 
 void PreCmdSetViewportWScalingNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
-    const VkViewportWScalingNV*                 pViewportWScalings);
+    const VkViewportWScalingNV*                 pViewportWScalings) override;
 void PostCmdSetViewportWScalingNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
-    const VkViewportWScalingNV*                 pViewportWScalings);
+    const VkViewportWScalingNV*                 pViewportWScalings) override;
 
 void PreCmdSetDiscardRectangleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstDiscardRectangle,
     uint32_t                                    discardRectangleCount,
-    const VkRect2D*                             pDiscardRectangles);
+    const VkRect2D*                             pDiscardRectangles) override;
 void PostCmdSetDiscardRectangleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstDiscardRectangle,
     uint32_t                                    discardRectangleCount,
-    const VkRect2D*                             pDiscardRectangles);
+    const VkRect2D*                             pDiscardRectangles) override;
 
 void PreCmdSetDiscardRectangleEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    discardRectangleEnable);
+    VkBool32                                    discardRectangleEnable) override;
 void PostCmdSetDiscardRectangleEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    discardRectangleEnable);
+    VkBool32                                    discardRectangleEnable) override;
 
 void PreCmdSetDiscardRectangleModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkDiscardRectangleModeEXT                   discardRectangleMode);
+    VkDiscardRectangleModeEXT                   discardRectangleMode) override;
 void PostCmdSetDiscardRectangleModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkDiscardRectangleModeEXT                   discardRectangleMode);
+    VkDiscardRectangleModeEXT                   discardRectangleMode) override;
 
 VkResult PreSetDebugUtilsObjectNameEXT(
     VkDevice                                    device,
-    const VkDebugUtilsObjectNameInfoEXT*        pNameInfo);
+    const VkDebugUtilsObjectNameInfoEXT*        pNameInfo) override;
 VkResult PostSetDebugUtilsObjectNameEXT(
     VkDevice                                    device,
     const VkDebugUtilsObjectNameInfoEXT*        pNameInfo,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreCmdBeginDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
+    const VkDebugUtilsLabelEXT*                 pLabelInfo) override;
 void PostCmdBeginDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
+    const VkDebugUtilsLabelEXT*                 pLabelInfo) override;
 
 void PreCmdEndDebugUtilsLabelEXT(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 void PostCmdEndDebugUtilsLabelEXT(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 
 void PreCmdInsertDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
+    const VkDebugUtilsLabelEXT*                 pLabelInfo) override;
 void PostCmdInsertDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDebugUtilsLabelEXT*                 pLabelInfo);
+    const VkDebugUtilsLabelEXT*                 pLabelInfo) override;
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void PreCmdInitializeGraphScratchMemoryAMDX(
     VkCommandBuffer                             commandBuffer,
-    VkDeviceAddress                             scratch);
+    VkDeviceAddress                             scratch) override;
 void PostCmdInitializeGraphScratchMemoryAMDX(
     VkCommandBuffer                             commandBuffer,
-    VkDeviceAddress                             scratch);
+    VkDeviceAddress                             scratch) override;
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void PreCmdDispatchGraphAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
-    const VkDispatchGraphCountInfoAMDX*         pCountInfo);
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) override;
 void PostCmdDispatchGraphAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
-    const VkDispatchGraphCountInfoAMDX*         pCountInfo);
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) override;
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void PreCmdDispatchGraphIndirectAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
-    const VkDispatchGraphCountInfoAMDX*         pCountInfo);
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) override;
 void PostCmdDispatchGraphIndirectAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
-    const VkDispatchGraphCountInfoAMDX*         pCountInfo);
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo) override;
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void PreCmdDispatchGraphIndirectCountAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
-    VkDeviceAddress                             countInfo);
+    VkDeviceAddress                             countInfo) override;
 void PostCmdDispatchGraphIndirectCountAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
-    VkDeviceAddress                             countInfo);
+    VkDeviceAddress                             countInfo) override;
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
 void PreCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkSampleLocationsInfoEXT*             pSampleLocationsInfo);
+    const VkSampleLocationsInfoEXT*             pSampleLocationsInfo) override;
 void PostCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkSampleLocationsInfoEXT*             pSampleLocationsInfo);
+    const VkSampleLocationsInfoEXT*             pSampleLocationsInfo) override;
 
 void PreCmdBindShadingRateImageNV(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
-    VkImageLayout                               imageLayout);
+    VkImageLayout                               imageLayout) override;
 void PostCmdBindShadingRateImageNV(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
-    VkImageLayout                               imageLayout);
+    VkImageLayout                               imageLayout) override;
 
 void PreCmdSetViewportShadingRatePaletteNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
-    const VkShadingRatePaletteNV*               pShadingRatePalettes);
+    const VkShadingRatePaletteNV*               pShadingRatePalettes) override;
 void PostCmdSetViewportShadingRatePaletteNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
-    const VkShadingRatePaletteNV*               pShadingRatePalettes);
+    const VkShadingRatePaletteNV*               pShadingRatePalettes) override;
 
 void PreCmdSetCoarseSampleOrderNV(
     VkCommandBuffer                             commandBuffer,
     VkCoarseSampleOrderTypeNV                   sampleOrderType,
     uint32_t                                    customSampleOrderCount,
-    const VkCoarseSampleOrderCustomNV*          pCustomSampleOrders);
+    const VkCoarseSampleOrderCustomNV*          pCustomSampleOrders) override;
 void PostCmdSetCoarseSampleOrderNV(
     VkCommandBuffer                             commandBuffer,
     VkCoarseSampleOrderTypeNV                   sampleOrderType,
     uint32_t                                    customSampleOrderCount,
-    const VkCoarseSampleOrderCustomNV*          pCustomSampleOrders);
+    const VkCoarseSampleOrderCustomNV*          pCustomSampleOrders) override;
 
 void PreCmdBuildAccelerationStructureNV(
     VkCommandBuffer                             commandBuffer,
@@ -1866,7 +1862,7 @@ void PreCmdBuildAccelerationStructureNV(
     VkAccelerationStructureNV                   dst,
     VkAccelerationStructureNV                   src,
     VkBuffer                                    scratch,
-    VkDeviceSize                                scratchOffset);
+    VkDeviceSize                                scratchOffset) override;
 void PostCmdBuildAccelerationStructureNV(
     VkCommandBuffer                             commandBuffer,
     const VkAccelerationStructureInfoNV*        pInfo,
@@ -1876,18 +1872,18 @@ void PostCmdBuildAccelerationStructureNV(
     VkAccelerationStructureNV                   dst,
     VkAccelerationStructureNV                   src,
     VkBuffer                                    scratch,
-    VkDeviceSize                                scratchOffset);
+    VkDeviceSize                                scratchOffset) override;
 
 void PreCmdCopyAccelerationStructureNV(
     VkCommandBuffer                             commandBuffer,
     VkAccelerationStructureNV                   dst,
     VkAccelerationStructureNV                   src,
-    VkCopyAccelerationStructureModeKHR          mode);
+    VkCopyAccelerationStructureModeKHR          mode) override;
 void PostCmdCopyAccelerationStructureNV(
     VkCommandBuffer                             commandBuffer,
     VkAccelerationStructureNV                   dst,
     VkAccelerationStructureNV                   src,
-    VkCopyAccelerationStructureModeKHR          mode);
+    VkCopyAccelerationStructureModeKHR          mode) override;
 
 void PreCmdTraceRaysNV(
     VkCommandBuffer                             commandBuffer,
@@ -1904,7 +1900,7 @@ void PreCmdTraceRaysNV(
     VkDeviceSize                                callableShaderBindingStride,
     uint32_t                                    width,
     uint32_t                                    height,
-    uint32_t                                    depth);
+    uint32_t                                    depth) override;
 void PostCmdTraceRaysNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    raygenShaderBindingTableBuffer,
@@ -1920,7 +1916,7 @@ void PostCmdTraceRaysNV(
     VkDeviceSize                                callableShaderBindingStride,
     uint32_t                                    width,
     uint32_t                                    height,
-    uint32_t                                    depth);
+    uint32_t                                    depth) override;
 
 void PreCmdWriteAccelerationStructuresPropertiesNV(
     VkCommandBuffer                             commandBuffer,
@@ -1928,49 +1924,49 @@ void PreCmdWriteAccelerationStructuresPropertiesNV(
     const VkAccelerationStructureNV*            pAccelerationStructures,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
-    uint32_t                                    firstQuery);
+    uint32_t                                    firstQuery) override;
 void PostCmdWriteAccelerationStructuresPropertiesNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    accelerationStructureCount,
     const VkAccelerationStructureNV*            pAccelerationStructures,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
-    uint32_t                                    firstQuery);
+    uint32_t                                    firstQuery) override;
 
 void PreCmdWriteBufferMarkerAMD(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlagBits                     pipelineStage,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
-    uint32_t                                    marker);
+    uint32_t                                    marker) override;
 void PostCmdWriteBufferMarkerAMD(
     VkCommandBuffer                             commandBuffer,
     VkPipelineStageFlagBits                     pipelineStage,
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
-    uint32_t                                    marker);
+    uint32_t                                    marker) override;
 
 void PreCmdDrawMeshTasksNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    taskCount,
-    uint32_t                                    firstTask);
+    uint32_t                                    firstTask) override;
 void PostCmdDrawMeshTasksNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    taskCount,
-    uint32_t                                    firstTask);
+    uint32_t                                    firstTask) override;
 
 void PreCmdDrawMeshTasksIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawMeshTasksIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdDrawMeshTasksIndirectCountNV(
     VkCommandBuffer                             commandBuffer,
@@ -1979,7 +1975,7 @@ void PreCmdDrawMeshTasksIndirectCountNV(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawMeshTasksIndirectCountNV(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -1987,108 +1983,108 @@ void PostCmdDrawMeshTasksIndirectCountNV(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdSetExclusiveScissorEnableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
-    const VkBool32*                             pExclusiveScissorEnables);
+    const VkBool32*                             pExclusiveScissorEnables) override;
 void PostCmdSetExclusiveScissorEnableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
-    const VkBool32*                             pExclusiveScissorEnables);
+    const VkBool32*                             pExclusiveScissorEnables) override;
 
 void PreCmdSetExclusiveScissorNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
-    const VkRect2D*                             pExclusiveScissors);
+    const VkRect2D*                             pExclusiveScissors) override;
 void PostCmdSetExclusiveScissorNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
-    const VkRect2D*                             pExclusiveScissors);
+    const VkRect2D*                             pExclusiveScissors) override;
 
 void PreCmdSetCheckpointNV(
     VkCommandBuffer                             commandBuffer,
-    const void*                                 pCheckpointMarker);
+    const void*                                 pCheckpointMarker) override;
 void PostCmdSetCheckpointNV(
     VkCommandBuffer                             commandBuffer,
-    const void*                                 pCheckpointMarker);
+    const void*                                 pCheckpointMarker) override;
 
 VkResult PreCmdSetPerformanceMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
-    const VkPerformanceMarkerInfoINTEL*         pMarkerInfo);
+    const VkPerformanceMarkerInfoINTEL*         pMarkerInfo) override;
 VkResult PostCmdSetPerformanceMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceMarkerInfoINTEL*         pMarkerInfo,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreCmdSetPerformanceStreamMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
-    const VkPerformanceStreamMarkerInfoINTEL*   pMarkerInfo);
+    const VkPerformanceStreamMarkerInfoINTEL*   pMarkerInfo) override;
 VkResult PostCmdSetPerformanceStreamMarkerINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceStreamMarkerInfoINTEL*   pMarkerInfo,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 VkResult PreCmdSetPerformanceOverrideINTEL(
     VkCommandBuffer                             commandBuffer,
-    const VkPerformanceOverrideInfoINTEL*       pOverrideInfo);
+    const VkPerformanceOverrideInfoINTEL*       pOverrideInfo) override;
 VkResult PostCmdSetPerformanceOverrideINTEL(
     VkCommandBuffer                             commandBuffer,
     const VkPerformanceOverrideInfoINTEL*       pOverrideInfo,
-    VkResult                                    result);
+    VkResult                                    result) override;
 
 void PreCmdSetLineStippleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    lineStippleFactor,
-    uint16_t                                    lineStipplePattern);
+    uint16_t                                    lineStipplePattern) override;
 void PostCmdSetLineStippleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    lineStippleFactor,
-    uint16_t                                    lineStipplePattern);
+    uint16_t                                    lineStipplePattern) override;
 
 void PreCmdSetCullModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkCullModeFlags                             cullMode);
+    VkCullModeFlags                             cullMode) override;
 void PostCmdSetCullModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkCullModeFlags                             cullMode);
+    VkCullModeFlags                             cullMode) override;
 
 void PreCmdSetFrontFaceEXT(
     VkCommandBuffer                             commandBuffer,
-    VkFrontFace                                 frontFace);
+    VkFrontFace                                 frontFace) override;
 void PostCmdSetFrontFaceEXT(
     VkCommandBuffer                             commandBuffer,
-    VkFrontFace                                 frontFace);
+    VkFrontFace                                 frontFace) override;
 
 void PreCmdSetPrimitiveTopologyEXT(
     VkCommandBuffer                             commandBuffer,
-    VkPrimitiveTopology                         primitiveTopology);
+    VkPrimitiveTopology                         primitiveTopology) override;
 void PostCmdSetPrimitiveTopologyEXT(
     VkCommandBuffer                             commandBuffer,
-    VkPrimitiveTopology                         primitiveTopology);
+    VkPrimitiveTopology                         primitiveTopology) override;
 
 void PreCmdSetViewportWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
-    const VkViewport*                           pViewports);
+    const VkViewport*                           pViewports) override;
 void PostCmdSetViewportWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
-    const VkViewport*                           pViewports);
+    const VkViewport*                           pViewports) override;
 
 void PreCmdSetScissorWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
-    const VkRect2D*                             pScissors);
+    const VkRect2D*                             pScissors) override;
 void PostCmdSetScissorWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
-    const VkRect2D*                             pScissors);
+    const VkRect2D*                             pScissors) override;
 
 void PreCmdBindVertexBuffers2EXT(
     VkCommandBuffer                             commandBuffer,
@@ -2097,7 +2093,7 @@ void PreCmdBindVertexBuffers2EXT(
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
-    const VkDeviceSize*                         pStrides);
+    const VkDeviceSize*                         pStrides) override;
 void PostCmdBindVertexBuffers2EXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstBinding,
@@ -2105,42 +2101,42 @@ void PostCmdBindVertexBuffers2EXT(
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
-    const VkDeviceSize*                         pStrides);
+    const VkDeviceSize*                         pStrides) override;
 
 void PreCmdSetDepthTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthTestEnable);
+    VkBool32                                    depthTestEnable) override;
 void PostCmdSetDepthTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthTestEnable);
+    VkBool32                                    depthTestEnable) override;
 
 void PreCmdSetDepthWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthWriteEnable);
+    VkBool32                                    depthWriteEnable) override;
 void PostCmdSetDepthWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthWriteEnable);
+    VkBool32                                    depthWriteEnable) override;
 
 void PreCmdSetDepthCompareOpEXT(
     VkCommandBuffer                             commandBuffer,
-    VkCompareOp                                 depthCompareOp);
+    VkCompareOp                                 depthCompareOp) override;
 void PostCmdSetDepthCompareOpEXT(
     VkCommandBuffer                             commandBuffer,
-    VkCompareOp                                 depthCompareOp);
+    VkCompareOp                                 depthCompareOp) override;
 
 void PreCmdSetDepthBoundsTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthBoundsTestEnable);
+    VkBool32                                    depthBoundsTestEnable) override;
 void PostCmdSetDepthBoundsTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthBoundsTestEnable);
+    VkBool32                                    depthBoundsTestEnable) override;
 
 void PreCmdSetStencilTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    stencilTestEnable);
+    VkBool32                                    stencilTestEnable) override;
 void PostCmdSetStencilTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    stencilTestEnable);
+    VkBool32                                    stencilTestEnable) override;
 
 void PreCmdSetStencilOpEXT(
     VkCommandBuffer                             commandBuffer,
@@ -2148,64 +2144,64 @@ void PreCmdSetStencilOpEXT(
     VkStencilOp                                 failOp,
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
-    VkCompareOp                                 compareOp);
+    VkCompareOp                                 compareOp) override;
 void PostCmdSetStencilOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     VkStencilOp                                 failOp,
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
-    VkCompareOp                                 compareOp);
+    VkCompareOp                                 compareOp) override;
 
 void PreCmdPreprocessGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
-    const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo);
+    const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) override;
 void PostCmdPreprocessGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
-    const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo);
+    const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) override;
 
 void PreCmdExecuteGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    isPreprocessed,
-    const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo);
+    const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) override;
 void PostCmdExecuteGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    isPreprocessed,
-    const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo);
+    const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) override;
 
 void PreCmdBindPipelineShaderGroupNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline,
-    uint32_t                                    groupIndex);
+    uint32_t                                    groupIndex) override;
 void PostCmdBindPipelineShaderGroupNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline,
-    uint32_t                                    groupIndex);
+    uint32_t                                    groupIndex) override;
 
 void PreCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDepthBiasInfoEXT*                   pDepthBiasInfo);
+    const VkDepthBiasInfoEXT*                   pDepthBiasInfo) override;
 void PostCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
-    const VkDepthBiasInfoEXT*                   pDepthBiasInfo);
+    const VkDepthBiasInfoEXT*                   pDepthBiasInfo) override;
 
 void PreCmdCudaLaunchKernelNV(
     VkCommandBuffer                             commandBuffer,
-    const VkCudaLaunchInfoNV*                   pLaunchInfo);
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) override;
 void PostCmdCudaLaunchKernelNV(
     VkCommandBuffer                             commandBuffer,
-    const VkCudaLaunchInfoNV*                   pLaunchInfo);
+    const VkCudaLaunchInfoNV*                   pLaunchInfo) override;
 
 void PreCmdBindDescriptorBuffersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    bufferCount,
-    const VkDescriptorBufferBindingInfoEXT*     pBindingInfos);
+    const VkDescriptorBufferBindingInfoEXT*     pBindingInfos) override;
 void PostCmdBindDescriptorBuffersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    bufferCount,
-    const VkDescriptorBufferBindingInfoEXT*     pBindingInfos);
+    const VkDescriptorBufferBindingInfoEXT*     pBindingInfos) override;
 
 void PreCmdSetDescriptorBufferOffsetsEXT(
     VkCommandBuffer                             commandBuffer,
@@ -2214,7 +2210,7 @@ void PreCmdSetDescriptorBufferOffsetsEXT(
     uint32_t                                    firstSet,
     uint32_t                                    setCount,
     const uint32_t*                             pBufferIndices,
-    const VkDeviceSize*                         pOffsets);
+    const VkDeviceSize*                         pOffsets) override;
 void PostCmdSetDescriptorBufferOffsetsEXT(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
@@ -2222,98 +2218,98 @@ void PostCmdSetDescriptorBufferOffsetsEXT(
     uint32_t                                    firstSet,
     uint32_t                                    setCount,
     const uint32_t*                             pBufferIndices,
-    const VkDeviceSize*                         pOffsets);
+    const VkDeviceSize*                         pOffsets) override;
 
 void PreCmdBindDescriptorBufferEmbeddedSamplersEXT(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
-    uint32_t                                    set);
+    uint32_t                                    set) override;
 void PostCmdBindDescriptorBufferEmbeddedSamplersEXT(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
-    uint32_t                                    set);
+    uint32_t                                    set) override;
 
 void PreCmdSetFragmentShadingRateEnumNV(
     VkCommandBuffer                             commandBuffer,
     VkFragmentShadingRateNV                     shadingRate,
-    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
+    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) override;
 void PostCmdSetFragmentShadingRateEnumNV(
     VkCommandBuffer                             commandBuffer,
     VkFragmentShadingRateNV                     shadingRate,
-    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
+    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) override;
 
 void PreCmdSetVertexInputEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    vertexBindingDescriptionCount,
     const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
     uint32_t                                    vertexAttributeDescriptionCount,
-    const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions);
+    const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) override;
 void PostCmdSetVertexInputEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    vertexBindingDescriptionCount,
     const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
     uint32_t                                    vertexAttributeDescriptionCount,
-    const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions);
+    const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) override;
 
 void PreCmdSubpassShadingHUAWEI(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 void PostCmdSubpassShadingHUAWEI(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer) override;
 
 void PreCmdBindInvocationMaskHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
-    VkImageLayout                               imageLayout);
+    VkImageLayout                               imageLayout) override;
 void PostCmdBindInvocationMaskHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
-    VkImageLayout                               imageLayout);
+    VkImageLayout                               imageLayout) override;
 
 void PreCmdSetPatchControlPointsEXT(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    patchControlPoints);
+    uint32_t                                    patchControlPoints) override;
 void PostCmdSetPatchControlPointsEXT(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    patchControlPoints);
+    uint32_t                                    patchControlPoints) override;
 
 void PreCmdSetRasterizerDiscardEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    rasterizerDiscardEnable);
+    VkBool32                                    rasterizerDiscardEnable) override;
 void PostCmdSetRasterizerDiscardEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    rasterizerDiscardEnable);
+    VkBool32                                    rasterizerDiscardEnable) override;
 
 void PreCmdSetDepthBiasEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthBiasEnable);
+    VkBool32                                    depthBiasEnable) override;
 void PostCmdSetDepthBiasEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthBiasEnable);
+    VkBool32                                    depthBiasEnable) override;
 
 void PreCmdSetLogicOpEXT(
     VkCommandBuffer                             commandBuffer,
-    VkLogicOp                                   logicOp);
+    VkLogicOp                                   logicOp) override;
 void PostCmdSetLogicOpEXT(
     VkCommandBuffer                             commandBuffer,
-    VkLogicOp                                   logicOp);
+    VkLogicOp                                   logicOp) override;
 
 void PreCmdSetPrimitiveRestartEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    primitiveRestartEnable);
+    VkBool32                                    primitiveRestartEnable) override;
 void PostCmdSetPrimitiveRestartEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    primitiveRestartEnable);
+    VkBool32                                    primitiveRestartEnable) override;
 
 void                                    PreCmdSetColorWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
-    const VkBool32*                             pColorWriteEnables);
+    const VkBool32*                             pColorWriteEnables) override;
 void                                    PostCmdSetColorWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
-    const VkBool32*                             pColorWriteEnables);
+    const VkBool32*                             pColorWriteEnables) override;
 
 void PreCmdDrawMultiEXT(
     VkCommandBuffer                             commandBuffer,
@@ -2321,14 +2317,14 @@ void PreCmdDrawMultiEXT(
     const VkMultiDrawInfoEXT*                   pVertexInfo,
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawMultiEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    drawCount,
     const VkMultiDrawInfoEXT*                   pVertexInfo,
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdDrawMultiIndexedEXT(
     VkCommandBuffer                             commandBuffer,
@@ -2337,7 +2333,7 @@ void PreCmdDrawMultiIndexedEXT(
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
     uint32_t                                    stride,
-    const int32_t*                              pVertexOffset);
+    const int32_t*                              pVertexOffset) override;
 void PostCmdDrawMultiIndexedEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    drawCount,
@@ -2345,37 +2341,37 @@ void PostCmdDrawMultiIndexedEXT(
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
     uint32_t                                    stride,
-    const int32_t*                              pVertexOffset);
+    const int32_t*                              pVertexOffset) override;
 
 void PreCmdBuildMicromapsEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
-    const VkMicromapBuildInfoEXT*               pInfos);
+    const VkMicromapBuildInfoEXT*               pInfos) override;
 void PostCmdBuildMicromapsEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
-    const VkMicromapBuildInfoEXT*               pInfos);
+    const VkMicromapBuildInfoEXT*               pInfos) override;
 
 void PreCmdCopyMicromapEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyMicromapInfoEXT*                pInfo);
+    const VkCopyMicromapInfoEXT*                pInfo) override;
 void PostCmdCopyMicromapEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyMicromapInfoEXT*                pInfo);
+    const VkCopyMicromapInfoEXT*                pInfo) override;
 
 void PreCmdCopyMicromapToMemoryEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyMicromapToMemoryInfoEXT*        pInfo);
+    const VkCopyMicromapToMemoryInfoEXT*        pInfo) override;
 void PostCmdCopyMicromapToMemoryEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyMicromapToMemoryInfoEXT*        pInfo);
+    const VkCopyMicromapToMemoryInfoEXT*        pInfo) override;
 
 void PreCmdCopyMemoryToMicromapEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyMemoryToMicromapInfoEXT*        pInfo);
+    const VkCopyMemoryToMicromapInfoEXT*        pInfo) override;
 void PostCmdCopyMemoryToMicromapEXT(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyMemoryToMicromapInfoEXT*        pInfo);
+    const VkCopyMemoryToMicromapInfoEXT*        pInfo) override;
 
 void PreCmdWriteMicromapsPropertiesEXT(
     VkCommandBuffer                             commandBuffer,
@@ -2383,45 +2379,45 @@ void PreCmdWriteMicromapsPropertiesEXT(
     const VkMicromapEXT*                        pMicromaps,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
-    uint32_t                                    firstQuery);
+    uint32_t                                    firstQuery) override;
 void PostCmdWriteMicromapsPropertiesEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    micromapCount,
     const VkMicromapEXT*                        pMicromaps,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
-    uint32_t                                    firstQuery);
+    uint32_t                                    firstQuery) override;
 
 void PreCmdDrawClusterHUAWEI(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 void PostCmdDrawClusterHUAWEI(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 
 void PreCmdDrawClusterIndirectHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
-    VkDeviceSize                                offset);
+    VkDeviceSize                                offset) override;
 void PostCmdDrawClusterIndirectHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
-    VkDeviceSize                                offset);
+    VkDeviceSize                                offset) override;
 
 void PreCmdCopyMemoryIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
     uint32_t                                    copyCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdCopyMemoryIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
     uint32_t                                    copyCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdCopyMemoryToImageIndirectNV(
     VkCommandBuffer                             commandBuffer,
@@ -2430,7 +2426,7 @@ void PreCmdCopyMemoryToImageIndirectNV(
     uint32_t                                    stride,
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
-    const VkImageSubresourceLayers*             pImageSubresources);
+    const VkImageSubresourceLayers*             pImageSubresources) override;
 void PostCmdCopyMemoryToImageIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
@@ -2438,315 +2434,315 @@ void PostCmdCopyMemoryToImageIndirectNV(
     uint32_t                                    stride,
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
-    const VkImageSubresourceLayers*             pImageSubresources);
+    const VkImageSubresourceLayers*             pImageSubresources) override;
 
 void PreCmdDecompressMemoryNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    decompressRegionCount,
-    const VkDecompressMemoryRegionNV*           pDecompressMemoryRegions);
+    const VkDecompressMemoryRegionNV*           pDecompressMemoryRegions) override;
 void PostCmdDecompressMemoryNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    decompressRegionCount,
-    const VkDecompressMemoryRegionNV*           pDecompressMemoryRegions);
+    const VkDecompressMemoryRegionNV*           pDecompressMemoryRegions) override;
 
 void PreCmdDecompressMemoryIndirectCountNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             indirectCommandsAddress,
     VkDeviceAddress                             indirectCommandsCountAddress,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDecompressMemoryIndirectCountNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             indirectCommandsAddress,
     VkDeviceAddress                             indirectCommandsCountAddress,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdUpdatePipelineIndirectBufferNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
-    VkPipeline                                  pipeline);
+    VkPipeline                                  pipeline) override;
 void PostCmdUpdatePipelineIndirectBufferNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
-    VkPipeline                                  pipeline);
+    VkPipeline                                  pipeline) override;
 
 void PreCmdSetTessellationDomainOriginEXT(
     VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin);
+    VkTessellationDomainOrigin                  domainOrigin) override;
 void PostCmdSetTessellationDomainOriginEXT(
     VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin);
+    VkTessellationDomainOrigin                  domainOrigin) override;
 
 void PreCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthClampEnable);
+    VkBool32                                    depthClampEnable) override;
 void PostCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthClampEnable);
+    VkBool32                                    depthClampEnable) override;
 
 void PreCmdSetPolygonModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkPolygonMode                               polygonMode);
+    VkPolygonMode                               polygonMode) override;
 void PostCmdSetPolygonModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkPolygonMode                               polygonMode);
+    VkPolygonMode                               polygonMode) override;
 
 void PreCmdSetRasterizationSamplesEXT(
     VkCommandBuffer                             commandBuffer,
-    VkSampleCountFlagBits                       rasterizationSamples);
+    VkSampleCountFlagBits                       rasterizationSamples) override;
 void PostCmdSetRasterizationSamplesEXT(
     VkCommandBuffer                             commandBuffer,
-    VkSampleCountFlagBits                       rasterizationSamples);
+    VkSampleCountFlagBits                       rasterizationSamples) override;
 
 void PreCmdSetSampleMaskEXT(
     VkCommandBuffer                             commandBuffer,
     VkSampleCountFlagBits                       samples,
-    const VkSampleMask*                         pSampleMask);
+    const VkSampleMask*                         pSampleMask) override;
 void PostCmdSetSampleMaskEXT(
     VkCommandBuffer                             commandBuffer,
     VkSampleCountFlagBits                       samples,
-    const VkSampleMask*                         pSampleMask);
+    const VkSampleMask*                         pSampleMask) override;
 
 void PreCmdSetAlphaToCoverageEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    alphaToCoverageEnable);
+    VkBool32                                    alphaToCoverageEnable) override;
 void PostCmdSetAlphaToCoverageEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    alphaToCoverageEnable);
+    VkBool32                                    alphaToCoverageEnable) override;
 
 void PreCmdSetAlphaToOneEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    alphaToOneEnable);
+    VkBool32                                    alphaToOneEnable) override;
 void PostCmdSetAlphaToOneEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    alphaToOneEnable);
+    VkBool32                                    alphaToOneEnable) override;
 
 void PreCmdSetLogicOpEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    logicOpEnable);
+    VkBool32                                    logicOpEnable) override;
 void PostCmdSetLogicOpEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    logicOpEnable);
+    VkBool32                                    logicOpEnable) override;
 
 void PreCmdSetColorBlendEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
-    const VkBool32*                             pColorBlendEnables);
+    const VkBool32*                             pColorBlendEnables) override;
 void PostCmdSetColorBlendEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
-    const VkBool32*                             pColorBlendEnables);
+    const VkBool32*                             pColorBlendEnables) override;
 
 void PreCmdSetColorBlendEquationEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
-    const VkColorBlendEquationEXT*              pColorBlendEquations);
+    const VkColorBlendEquationEXT*              pColorBlendEquations) override;
 void PostCmdSetColorBlendEquationEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
-    const VkColorBlendEquationEXT*              pColorBlendEquations);
+    const VkColorBlendEquationEXT*              pColorBlendEquations) override;
 
 void PreCmdSetColorWriteMaskEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
-    const VkColorComponentFlags*                pColorWriteMasks);
+    const VkColorComponentFlags*                pColorWriteMasks) override;
 void PostCmdSetColorWriteMaskEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
-    const VkColorComponentFlags*                pColorWriteMasks);
+    const VkColorComponentFlags*                pColorWriteMasks) override;
 
 void PreCmdSetRasterizationStreamEXT(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    rasterizationStream);
+    uint32_t                                    rasterizationStream) override;
 void PostCmdSetRasterizationStreamEXT(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    rasterizationStream);
+    uint32_t                                    rasterizationStream) override;
 
 void PreCmdSetConservativeRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkConservativeRasterizationModeEXT          conservativeRasterizationMode);
+    VkConservativeRasterizationModeEXT          conservativeRasterizationMode) override;
 void PostCmdSetConservativeRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkConservativeRasterizationModeEXT          conservativeRasterizationMode);
+    VkConservativeRasterizationModeEXT          conservativeRasterizationMode) override;
 
 void PreCmdSetExtraPrimitiveOverestimationSizeEXT(
     VkCommandBuffer                             commandBuffer,
-    float                                       extraPrimitiveOverestimationSize);
+    float                                       extraPrimitiveOverestimationSize) override;
 void PostCmdSetExtraPrimitiveOverestimationSizeEXT(
     VkCommandBuffer                             commandBuffer,
-    float                                       extraPrimitiveOverestimationSize);
+    float                                       extraPrimitiveOverestimationSize) override;
 
 void PreCmdSetDepthClipEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthClipEnable);
+    VkBool32                                    depthClipEnable) override;
 void PostCmdSetDepthClipEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    depthClipEnable);
+    VkBool32                                    depthClipEnable) override;
 
 void PreCmdSetSampleLocationsEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    sampleLocationsEnable);
+    VkBool32                                    sampleLocationsEnable) override;
 void PostCmdSetSampleLocationsEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    sampleLocationsEnable);
+    VkBool32                                    sampleLocationsEnable) override;
 
 void PreCmdSetColorBlendAdvancedEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
-    const VkColorBlendAdvancedEXT*              pColorBlendAdvanced);
+    const VkColorBlendAdvancedEXT*              pColorBlendAdvanced) override;
 void PostCmdSetColorBlendAdvancedEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
-    const VkColorBlendAdvancedEXT*              pColorBlendAdvanced);
+    const VkColorBlendAdvancedEXT*              pColorBlendAdvanced) override;
 
 void PreCmdSetProvokingVertexModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkProvokingVertexModeEXT                    provokingVertexMode);
+    VkProvokingVertexModeEXT                    provokingVertexMode) override;
 void PostCmdSetProvokingVertexModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkProvokingVertexModeEXT                    provokingVertexMode);
+    VkProvokingVertexModeEXT                    provokingVertexMode) override;
 
 void PreCmdSetLineRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkLineRasterizationModeEXT                  lineRasterizationMode);
+    VkLineRasterizationModeEXT                  lineRasterizationMode) override;
 void PostCmdSetLineRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
-    VkLineRasterizationModeEXT                  lineRasterizationMode);
+    VkLineRasterizationModeEXT                  lineRasterizationMode) override;
 
 void PreCmdSetLineStippleEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    stippledLineEnable);
+    VkBool32                                    stippledLineEnable) override;
 void PostCmdSetLineStippleEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    stippledLineEnable);
+    VkBool32                                    stippledLineEnable) override;
 
 void PreCmdSetDepthClipNegativeOneToOneEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    negativeOneToOne);
+    VkBool32                                    negativeOneToOne) override;
 void PostCmdSetDepthClipNegativeOneToOneEXT(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    negativeOneToOne);
+    VkBool32                                    negativeOneToOne) override;
 
 void PreCmdSetViewportWScalingEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    viewportWScalingEnable);
+    VkBool32                                    viewportWScalingEnable) override;
 void PostCmdSetViewportWScalingEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    viewportWScalingEnable);
+    VkBool32                                    viewportWScalingEnable) override;
 
 void PreCmdSetViewportSwizzleNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
-    const VkViewportSwizzleNV*                  pViewportSwizzles);
+    const VkViewportSwizzleNV*                  pViewportSwizzles) override;
 void PostCmdSetViewportSwizzleNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
-    const VkViewportSwizzleNV*                  pViewportSwizzles);
+    const VkViewportSwizzleNV*                  pViewportSwizzles) override;
 
 void PreCmdSetCoverageToColorEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    coverageToColorEnable);
+    VkBool32                                    coverageToColorEnable) override;
 void PostCmdSetCoverageToColorEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    coverageToColorEnable);
+    VkBool32                                    coverageToColorEnable) override;
 
 void PreCmdSetCoverageToColorLocationNV(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    coverageToColorLocation);
+    uint32_t                                    coverageToColorLocation) override;
 void PostCmdSetCoverageToColorLocationNV(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    coverageToColorLocation);
+    uint32_t                                    coverageToColorLocation) override;
 
 void PreCmdSetCoverageModulationModeNV(
     VkCommandBuffer                             commandBuffer,
-    VkCoverageModulationModeNV                  coverageModulationMode);
+    VkCoverageModulationModeNV                  coverageModulationMode) override;
 void PostCmdSetCoverageModulationModeNV(
     VkCommandBuffer                             commandBuffer,
-    VkCoverageModulationModeNV                  coverageModulationMode);
+    VkCoverageModulationModeNV                  coverageModulationMode) override;
 
 void PreCmdSetCoverageModulationTableEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    coverageModulationTableEnable);
+    VkBool32                                    coverageModulationTableEnable) override;
 void PostCmdSetCoverageModulationTableEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    coverageModulationTableEnable);
+    VkBool32                                    coverageModulationTableEnable) override;
 
 void PreCmdSetCoverageModulationTableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    coverageModulationTableCount,
-    const float*                                pCoverageModulationTable);
+    const float*                                pCoverageModulationTable) override;
 void PostCmdSetCoverageModulationTableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    coverageModulationTableCount,
-    const float*                                pCoverageModulationTable);
+    const float*                                pCoverageModulationTable) override;
 
 void PreCmdSetShadingRateImageEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    shadingRateImageEnable);
+    VkBool32                                    shadingRateImageEnable) override;
 void PostCmdSetShadingRateImageEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    shadingRateImageEnable);
+    VkBool32                                    shadingRateImageEnable) override;
 
 void PreCmdSetRepresentativeFragmentTestEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    representativeFragmentTestEnable);
+    VkBool32                                    representativeFragmentTestEnable) override;
 void PostCmdSetRepresentativeFragmentTestEnableNV(
     VkCommandBuffer                             commandBuffer,
-    VkBool32                                    representativeFragmentTestEnable);
+    VkBool32                                    representativeFragmentTestEnable) override;
 
 void PreCmdSetCoverageReductionModeNV(
     VkCommandBuffer                             commandBuffer,
-    VkCoverageReductionModeNV                   coverageReductionMode);
+    VkCoverageReductionModeNV                   coverageReductionMode) override;
 void PostCmdSetCoverageReductionModeNV(
     VkCommandBuffer                             commandBuffer,
-    VkCoverageReductionModeNV                   coverageReductionMode);
+    VkCoverageReductionModeNV                   coverageReductionMode) override;
 
 void PreCmdOpticalFlowExecuteNV(
     VkCommandBuffer                             commandBuffer,
     VkOpticalFlowSessionNV                      session,
-    const VkOpticalFlowExecuteInfoNV*           pExecuteInfo);
+    const VkOpticalFlowExecuteInfoNV*           pExecuteInfo) override;
 void PostCmdOpticalFlowExecuteNV(
     VkCommandBuffer                             commandBuffer,
     VkOpticalFlowSessionNV                      session,
-    const VkOpticalFlowExecuteInfoNV*           pExecuteInfo);
+    const VkOpticalFlowExecuteInfoNV*           pExecuteInfo) override;
 
 void PreCmdBindShadersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    stageCount,
     const VkShaderStageFlagBits*                pStages,
-    const VkShaderEXT*                          pShaders);
+    const VkShaderEXT*                          pShaders) override;
 void PostCmdBindShadersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    stageCount,
     const VkShaderStageFlagBits*                pStages,
-    const VkShaderEXT*                          pShaders);
+    const VkShaderEXT*                          pShaders) override;
 
 void PreCmdSetAttachmentFeedbackLoopEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkImageAspectFlags                          aspectMask);
+    VkImageAspectFlags                          aspectMask) override;
 void PostCmdSetAttachmentFeedbackLoopEnableEXT(
     VkCommandBuffer                             commandBuffer,
-    VkImageAspectFlags                          aspectMask);
+    VkImageAspectFlags                          aspectMask) override;
 
 void PreCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
-    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos);
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) override;
 void PostCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
-    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos);
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) override;
 
 void PreCmdBuildAccelerationStructuresIndirectKHR(
     VkCommandBuffer                             commandBuffer,
@@ -2754,35 +2750,35 @@ void PreCmdBuildAccelerationStructuresIndirectKHR(
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkDeviceAddress*                      pIndirectDeviceAddresses,
     const uint32_t*                             pIndirectStrides,
-    const uint32_t* const*                      ppMaxPrimitiveCounts);
+    const uint32_t* const*                      ppMaxPrimitiveCounts) override;
 void PostCmdBuildAccelerationStructuresIndirectKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkDeviceAddress*                      pIndirectDeviceAddresses,
     const uint32_t*                             pIndirectStrides,
-    const uint32_t* const*                      ppMaxPrimitiveCounts);
+    const uint32_t* const*                      ppMaxPrimitiveCounts) override;
 
 void PreCmdCopyAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyAccelerationStructureInfoKHR*   pInfo);
+    const VkCopyAccelerationStructureInfoKHR*   pInfo) override;
 void PostCmdCopyAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyAccelerationStructureInfoKHR*   pInfo);
+    const VkCopyAccelerationStructureInfoKHR*   pInfo) override;
 
 void PreCmdCopyAccelerationStructureToMemoryKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo);
+    const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) override;
 void PostCmdCopyAccelerationStructureToMemoryKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo);
+    const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) override;
 
 void PreCmdCopyMemoryToAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo);
+    const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) override;
 void PostCmdCopyMemoryToAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo);
+    const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) override;
 
 void PreCmdWriteAccelerationStructuresPropertiesKHR(
     VkCommandBuffer                             commandBuffer,
@@ -2790,14 +2786,14 @@ void PreCmdWriteAccelerationStructuresPropertiesKHR(
     const VkAccelerationStructureKHR*           pAccelerationStructures,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
-    uint32_t                                    firstQuery);
+    uint32_t                                    firstQuery) override;
 void PostCmdWriteAccelerationStructuresPropertiesKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    accelerationStructureCount,
     const VkAccelerationStructureKHR*           pAccelerationStructures,
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
-    uint32_t                                    firstQuery);
+    uint32_t                                    firstQuery) override;
 
 void PreCmdTraceRaysKHR(
     VkCommandBuffer                             commandBuffer,
@@ -2807,7 +2803,7 @@ void PreCmdTraceRaysKHR(
     const VkStridedDeviceAddressRegionKHR*      pCallableShaderBindingTable,
     uint32_t                                    width,
     uint32_t                                    height,
-    uint32_t                                    depth);
+    uint32_t                                    depth) override;
 void PostCmdTraceRaysKHR(
     VkCommandBuffer                             commandBuffer,
     const VkStridedDeviceAddressRegionKHR*      pRaygenShaderBindingTable,
@@ -2816,7 +2812,7 @@ void PostCmdTraceRaysKHR(
     const VkStridedDeviceAddressRegionKHR*      pCallableShaderBindingTable,
     uint32_t                                    width,
     uint32_t                                    height,
-    uint32_t                                    depth);
+    uint32_t                                    depth) override;
 
 void PreCmdTraceRaysIndirectKHR(
     VkCommandBuffer                             commandBuffer,
@@ -2824,45 +2820,45 @@ void PreCmdTraceRaysIndirectKHR(
     const VkStridedDeviceAddressRegionKHR*      pMissShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pHitShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pCallableShaderBindingTable,
-    VkDeviceAddress                             indirectDeviceAddress);
+    VkDeviceAddress                             indirectDeviceAddress) override;
 void PostCmdTraceRaysIndirectKHR(
     VkCommandBuffer                             commandBuffer,
     const VkStridedDeviceAddressRegionKHR*      pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pMissShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pHitShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pCallableShaderBindingTable,
-    VkDeviceAddress                             indirectDeviceAddress);
+    VkDeviceAddress                             indirectDeviceAddress) override;
 
 void PreCmdSetRayTracingPipelineStackSizeKHR(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    pipelineStackSize);
+    uint32_t                                    pipelineStackSize) override;
 void PostCmdSetRayTracingPipelineStackSizeKHR(
     VkCommandBuffer                             commandBuffer,
-    uint32_t                                    pipelineStackSize);
+    uint32_t                                    pipelineStackSize) override;
 
 void PreCmdDrawMeshTasksEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 void PostCmdDrawMeshTasksEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
-    uint32_t                                    groupCountZ);
+    uint32_t                                    groupCountZ) override;
 
 void PreCmdDrawMeshTasksIndirectEXT(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawMeshTasksIndirectEXT(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 void PreCmdDrawMeshTasksIndirectCountEXT(
     VkCommandBuffer                             commandBuffer,
@@ -2871,7 +2867,7 @@ void PreCmdDrawMeshTasksIndirectCountEXT(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 void PostCmdDrawMeshTasksIndirectCountEXT(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
@@ -2879,7 +2875,7 @@ void PostCmdDrawMeshTasksIndirectCountEXT(
     VkBuffer                                    countBuffer,
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
-    uint32_t                                    stride);
+    uint32_t                                    stride) override;
 
 
 

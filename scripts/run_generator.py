@@ -172,14 +172,6 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['cdl_intercepts.cc.inc'] = [
-          InterceptCommandsOutputGenerator,
-          BaseGeneratorOptions(
-            filename          = 'cdl_intercepts.cc.inc',
-            mergeApiNames     = mergeApiNames,
-            valid_usage_path  = scripts)
-        ]
-
     genOpts['layer_base.h'] = [
           LayerBaseOutputGenerator,
           BaseGeneratorOptions(
