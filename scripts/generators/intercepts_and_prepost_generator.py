@@ -35,6 +35,7 @@ custom_functions = [
 ]
 
 custom_pre_intercept_functions = [
+    'vkCreateInstance',
     'vkBeginCommandBuffer',
     'vkResetCommandBuffer',
     'vkCmdBindPipeline'
@@ -105,9 +106,7 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
         file_start = self.GenerateFileStart(os.path.basename(__file__))
         self.write(file_start)
 
-        if self.filename == 'cdl_intercepts.cc.inc':
-            self.generateInterceptsSource()
-        elif self.filename == 'cdl_commands.h.inc':
+        if self.filename == 'cdl_commands.h.inc':
             self.generateContextCommandsHeader()
         elif self.filename == 'cdl_commands.cc.inc':
             self.generateContextCommandsSource()
@@ -124,46 +123,11 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
 
         self.write(self.GenerateFileEnd())
 
-    def generateInterceptsSource(self):
-        out = []
-        for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
-            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            pre_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '',).replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' InterceptPre', 1)
-            post_func_decl = pre_func_decl.replace('InterceptPre', 'InterceptPost')
-            func_call = '  '
-            if self.CommandHasReturn(vkcommand):
-                func_call += 'return '
-                post_func_decl = post_func_decl.replace(')', f',\n    {vkcommand.returnType}                                    result)')
-            func_call += f'g_interceptor->Pre{vkcommand.name[2:]}('
-            count = 0
-            for vkparam in vkcommand.params:
-                if count != 0:
-                    func_call += ', '
-                func_call += vkparam.name
-                count += 1
-            func_call += ');'
-
-            if self.InterceptPreCommand(vkcommand):
-                out.append(f'{pre_func_decl}\n')
-                out.append(f'{func_call}\n')
-                out.append('}\n')
-
-            if self.InterceptPostCommand(vkcommand):
-                func_call = func_call.replace('->Pre', '->Post', 1)
-                if self.CommandHasReturn(vkcommand):
-                    func_call = func_call.replace(')', ', result)', 1)
-                out.append(f'{post_func_decl}\n')
-                out.append(f'{func_call}\n')
-                out.append('}\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append('\n')
-        self.write("".join(out))
-
     def generateContextCommandsHeader(self):
         out = []
         for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Post', 1)
+            post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Post', 1).replace(';', ' override;')
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)
             if self.CommandHasReturn(vkcommand):
                 post_func_decl = post_func_decl.replace(')', f',\n    {vkcommand.returnType}                                    result)')

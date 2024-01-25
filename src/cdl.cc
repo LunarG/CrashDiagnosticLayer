@@ -73,7 +73,129 @@ const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
 // =============================================================================
 // Context
 // =============================================================================
-Context::Context() { system_.SetContext(this); }
+Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator) {
+    system_.SetContext(this);
+    logger_.LogInfo("Version %s enabled.", kCdlVersion);
+
+    const auto* create_info = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
+
+    VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
+    VkResult result =
+        vkuCreateLayerSettingSet("lunarg_crash_diagnostic", create_info, pAllocator, nullptr, &layer_setting_set);
+    if (result != VK_SUCCESS) {
+        logger_.LogError("vkuCreateLayerSettingSet failed with error %d", result);
+        return;
+    }
+
+    // output path
+    {
+        std::string path_string;
+        vkuGetLayerSettingValue(layer_setting_set, settings::kOutputPath, path_string);
+        if (!path_string.empty()) {
+            output_path_ = path_string;
+        } else {
+#if defined(WIN32)
+            output_path_ = getenv("USERPROFILE");
+#else
+            output_path_ = "/mnt/developer/ggp";
+#endif
+            output_path_ /= "cdl";
+        }
+
+        // ensure base path is created
+        MakeDir(output_path_);
+        base_output_path_ = output_path_;
+
+        // Calculate a unique sub directory based on time
+        auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+        // if output_name_ is given, don't create a subdirectory
+        vkuGetLayerSettingValue(layer_setting_set, settings::kOutputName, output_name_);
+        if (output_name_.empty()) {
+            std::stringstream ss;
+            ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d-%H%M%S");
+            output_path_ /= ss.str();
+        }
+
+        // If logfile prefix is given, create it with the date_time suffix
+        std::string logfile_prefix;
+        vkuGetLayerSettingValue(layer_setting_set, settings::kLogfilePrefix, logfile_prefix);
+        if (!logfile_prefix.empty()) {
+            MakeOutputPath();
+            std::filesystem::path log_file(output_path_);
+            std::stringstream ss;
+            ss << logfile_prefix << std::put_time(std::localtime(&in_time_t), kLogTimeTag) << ".log";
+            log_file /= ss.str();
+            logger_.OpenLogFile(log_file);
+        }
+    }
+
+    // report cdl configs
+    {
+        if (vkuHasLayerSetting(layer_setting_set, settings::kLogConfigs)) {
+            vkuGetLayerSettingValue(layer_setting_set, settings::kLogConfigs, log_configs_);
+        }
+        if (log_configs_) {
+            configs_.push_back(std::string(settings::kLogConfigs) + "=1");
+        }
+    }
+
+    // trace mode
+    GetEnvVal<bool>(layer_setting_set, settings::kTraceOn, &trace_all_);
+
+    // setup shader loading modes
+    shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
+
+    {
+        bool dump_shaders = false;
+        GetEnvVal<bool>(layer_setting_set, settings::kShadersDump, &dump_shaders);
+        if (dump_shaders) {
+            shader_module_load_options_ |= ShaderModule::LoadOptions::kDumpOnCreate;
+        } else {
+            // if we're not dumping all shaders then check if we dump in other cases
+            {
+                GetEnvVal<bool>(layer_setting_set, settings::kShadersDumpOnCrash, &debug_dump_shaders_on_crash_);
+                if (debug_dump_shaders_on_crash_) {
+                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
+                }
+            }
+
+            {
+                GetEnvVal<bool>(layer_setting_set, settings::kShadersDumpOnBind, &debug_dump_shaders_on_bind_);
+                if (debug_dump_shaders_on_bind_) {
+                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
+                }
+            }
+        }
+    }
+
+    // manage the watchdog thread
+    {
+        GetEnvVal<uint64_t>(layer_setting_set, settings::kWatchdogTimeout, &watchdog_timer_ms_);
+
+        last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                std::chrono::high_resolution_clock::now().time_since_epoch())
+                                .count();
+
+        if (watchdog_timer_ms_ > 0) {
+            StartWatchdogTimer();
+            logger_.LogInfo("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
+        }
+    }
+
+    // Setup debug flags
+    GetEnvVal<int>(layer_setting_set, settings::kAutodump, &debug_autodump_rate_);
+    GetEnvVal<bool>(layer_setting_set, settings::kDumpAllCommandBuffers, &debug_dump_all_command_buffers_);
+    GetEnvVal<bool>(layer_setting_set, settings::kTrackSemaphores, &track_semaphores_);
+    GetEnvVal<bool>(layer_setting_set, settings::kTraceAllSemaphores, &trace_all_semaphores_);
+    GetEnvVal<bool>(layer_setting_set, settings::kInstrumentAllCommands, &instrument_all_commands_);
+
+    instance_extension_names_original_.assign(
+        pCreateInfo->ppEnabledExtensionNames,
+        pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
+    vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
+}
 
 Context::~Context() {
     StopWatchdogTimer();
@@ -584,131 +706,6 @@ void Context::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_
 // =============================================================================
 // Define pre / post intercepted commands
 // =============================================================================
-
-VkResult Context::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
-                                    VkInstance* pInstance) {
-    logger_.LogInfo("Version %s enabled.", kCdlVersion);
-
-    const auto* create_info = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
-
-    VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
-    VkResult result =
-        vkuCreateLayerSettingSet("lunarg_crash_diagnostic", create_info, pAllocator, nullptr, &layer_setting_set);
-    if (result != VK_SUCCESS) {
-        logger_.LogError("vkuCreateLayerSettingSet failed with error %d", result);
-        return result;
-    }
-
-    // output path
-    {
-        std::string path_string;
-        vkuGetLayerSettingValue(layer_setting_set, settings::kOutputPath, path_string);
-        if (!path_string.empty()) {
-            output_path_ = path_string;
-        } else {
-#if defined(WIN32)
-            output_path_ = getenv("USERPROFILE");
-#else
-            output_path_ = "/mnt/developer/ggp";
-#endif
-            output_path_ /= "cdl";
-        }
-
-        // ensure base path is created
-        MakeDir(output_path_);
-        base_output_path_ = output_path_;
-
-        // Calculate a unique sub directory based on time
-        auto now = std::chrono::system_clock::now();
-        auto in_time_t = std::chrono::system_clock::to_time_t(now);
-
-        // if output_name_ is given, don't create a subdirectory
-        vkuGetLayerSettingValue(layer_setting_set, settings::kOutputName, output_name_);
-        if (output_name_.empty()) {
-            std::stringstream ss;
-            ss << std::put_time(std::localtime(&in_time_t), kLogTimeTag);
-            output_path_ /= ss.str();
-        }
-
-        // If logfile prefix is given, create it with the date_time suffix
-        std::string logfile_prefix;
-        vkuGetLayerSettingValue(layer_setting_set, settings::kLogfilePrefix, logfile_prefix);
-        if (!logfile_prefix.empty()) {
-            MakeOutputPath();
-            std::filesystem::path log_file(output_path_);
-            std::stringstream ss;
-            ss << logfile_prefix << std::put_time(std::localtime(&in_time_t), kLogTimeTag) << ".log";
-            log_file /= ss.str();
-            logger_.OpenLogFile(log_file);
-        }
-    }
-
-    // report cdl configs
-    {
-        if (vkuHasLayerSetting(layer_setting_set, settings::kLogConfigs)) {
-            vkuGetLayerSettingValue(layer_setting_set, settings::kLogConfigs, log_configs_);
-        }
-        if (log_configs_) {
-            configs_.push_back(std::string(settings::kLogConfigs) + "=1");
-        }
-    }
-
-    // trace mode
-    GetEnvVal<bool>(layer_setting_set, settings::kTraceOn, &trace_all_);
-
-    // setup shader loading modes
-    shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
-
-    {
-        bool dump_shaders = false;
-        GetEnvVal<bool>(layer_setting_set, settings::kShadersDump, &dump_shaders);
-        if (dump_shaders) {
-            shader_module_load_options_ |= ShaderModule::LoadOptions::kDumpOnCreate;
-        } else {
-            // if we're not dumping all shaders then check if we dump in other cases
-            {
-                GetEnvVal<bool>(layer_setting_set, settings::kShadersDumpOnCrash, &debug_dump_shaders_on_crash_);
-                if (debug_dump_shaders_on_crash_) {
-                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
-                }
-            }
-
-            {
-                GetEnvVal<bool>(layer_setting_set, settings::kShadersDumpOnBind, &debug_dump_shaders_on_bind_);
-                if (debug_dump_shaders_on_bind_) {
-                    shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
-                }
-            }
-        }
-    }
-
-    // manage the watchdog thread
-    {
-        GetEnvVal<uint64_t>(layer_setting_set, settings::kWatchdogTimeout, &watchdog_timer_ms_);
-
-        last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                std::chrono::high_resolution_clock::now().time_since_epoch())
-                                .count();
-
-        if (watchdog_timer_ms_ > 0) {
-            StartWatchdogTimer();
-            logger_.LogInfo("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
-        }
-    }
-
-    // Setup debug flags
-    GetEnvVal<int>(layer_setting_set, settings::kAutodump, &debug_autodump_rate_);
-    GetEnvVal<bool>(layer_setting_set, settings::kDumpAllCommandBuffers, &debug_dump_all_command_buffers_);
-    GetEnvVal<bool>(layer_setting_set, settings::kTrackSemaphores, &track_semaphores_);
-    GetEnvVal<bool>(layer_setting_set, settings::kTraceAllSemaphores, &trace_all_semaphores_);
-    GetEnvVal<bool>(layer_setting_set, settings::kInstrumentAllCommands, &instrument_all_commands_);
-
-    instance_extension_names_original_.assign(
-        pCreateInfo->ppEnabledExtensionNames,
-        pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
-    vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
-    return VK_SUCCESS;
-}
 
 static VkBool32 MessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
                                   VkDebugUtilsMessageTypeFlagsEXT types,
@@ -1538,37 +1535,16 @@ VkResult Context::PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
 }
 
 // =============================================================================
-// Declare the global accessor for Context
-// =============================================================================
-
-crash_diagnostic_layer::Context* g_interceptor = new crash_diagnostic_layer::Context();
-
-// =============================================================================
-// VkInstanceCreateInfo and VkDeviceCreateInfo modification functions
-// =============================================================================
-
-const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) {
-    return g_interceptor->GetModifiedInstanceCreateInfo(pCreateInfo);
-}
-
-const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
-                                                      const VkDeviceCreateInfo* pCreateInfo) {
-    return g_interceptor->GetModifiedDeviceCreateInfo(physicalDevice, pCreateInfo);
-}
-
-// =============================================================================
-// Include the generated implementation to forward intercepts to Context
-// =============================================================================
-#include "cdl_intercepts.cc.inc"
-
-// =============================================================================
 // Custom Vulkan entry points
+// TODO: these appear to be unused
 // =============================================================================
 
 VkResult QueueSubmitWithoutTrackingSemaphores(VkQueue queue, uint32_t submitCount, VkSubmitInfo const* pSubmits,
                                               VkFence fence, bool callPreQueueSubmit = true) {
+    auto* device_data = crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(queue));
+    auto* context = static_cast<Context*>(device_data->interceptor);
     if (callPreQueueSubmit) {
-        g_interceptor->PreQueueSubmit(queue, submitCount, pSubmits, fence);
+        context->PreQueueSubmit(queue, submitCount, pSubmits, fence);
     }
 
     VkResult res = VK_SUCCESS;
@@ -1578,36 +1554,38 @@ VkResult QueueSubmitWithoutTrackingSemaphores(VkQueue queue, uint32_t submitCoun
         res = dispatch_table.QueueSubmit(queue, submitCount, pSubmits, fence);
     }
 
-    g_interceptor->PostQueueSubmit(queue, submitCount, pSubmits, fence, res);
+    context->PostQueueSubmit(queue, submitCount, pSubmits, fence, res);
 
     return res;
 }
 
 VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, VkQueue queue, uint32_t submitCount,
                                            VkSubmitInfo const* pSubmits, VkFence fence) {
-    bool track_semaphores = g_interceptor->TrackingSemaphores();
+    auto* device_data = crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(queue));
+    auto* context = static_cast<Context*>(device_data->interceptor);
+    bool track_semaphores = context->TrackingSemaphores();
     if (!track_semaphores) {
         return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
     }
 
     // Track semaphore values before and after each queue submit.
-    g_interceptor->PreQueueSubmit(queue, submitCount, pSubmits, fence);
+    context->PreQueueSubmit(queue, submitCount, pSubmits, fence);
     bool call_pre_queue_submit = false;
 
     // Define common variables and structs used for each extended queue submit
-    VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
+    VkDevice vk_device = context->GetQueueDevice(queue);
     auto dispatch_table =
         crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(vk_device))->dispatch_table;
-    VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
+    VkCommandPool vk_pool = context->GetHelperCommandPool(vk_device, queue);
     if (vk_pool == VK_NULL_HANDLE) {
-        g_interceptor->GetLogger()->LogError(
+        context->GetLogger()->LogError(
             "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
             "state. Not tracking semaphores.");
         return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence, call_pre_queue_submit);
     }
 
-    bool trace_all_semaphores = g_interceptor->TracingAllSemaphores();
-    auto queue_submit_id = g_interceptor->GetNextQueueSubmitId();
+    bool trace_all_semaphores = context->TracingAllSemaphores();
+    auto queue_submit_id = context->GetNextQueueSubmitId();
     auto semaphore_tracking_submits = reinterpret_cast<VkSubmitInfo*>(alloca(sizeof(VkSubmitInfo) * submitCount));
 
     // VkCommandBufferAllocateInfo for helper command buffers. Two extra CBs used
@@ -1627,7 +1605,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         auto result = dispatch_table.AllocateCommandBuffers(vk_device, &cb_allocate_info, new_buffers);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            g_interceptor->GetLogger()->LogWarning(
+            context->GetLogger()->LogWarning(
                 "failed to allocate helper command buffers for tracking queue submit state. vkAllocateCommandBuffers() "
                 "returned 0x%08x",
                 result);
@@ -1652,9 +1630,9 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         SetDeviceLoaderData(vk_device, extended_cbs[cb_count + 1]);
 
         auto submit_info_id =
-            g_interceptor->RegisterSubmitInfo(vk_device, queue_submit_id, &semaphore_tracking_submits[submit_index]);
-        g_interceptor->StoreSubmitHelperCommandBuffersInfo(vk_device, submit_info_id, vk_pool, extended_cbs[0],
-                                                           extended_cbs[cb_count + 1]);
+            context->RegisterSubmitInfo(vk_device, queue_submit_id, &semaphore_tracking_submits[submit_index]);
+        context->StoreSubmitHelperCommandBuffersInfo(vk_device, submit_info_id, vk_pool, extended_cbs[0],
+                                                     extended_cbs[cb_count + 1]);
         for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
             auto command_buffer =
                 crash_diagnostic_layer::GetCommandBuffer(pSubmits[submit_index].pCommandBuffers[cb_index]);
@@ -1671,10 +1649,10 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         result = dispatch_table.BeginCommandBuffer(extended_cbs[0], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            g_interceptor->GetLogger()->LogWarning(
+            context->GetLogger()->LogWarning(
                 "failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
-            g_interceptor->RecordSubmitStart(vk_device, queue_submit_id, submit_info_id, extended_cbs[0]);
+            context->RecordSubmitStart(vk_device, queue_submit_id, submit_info_id, extended_cbs[0]);
             result = dispatch_table.EndCommandBuffer(extended_cbs[0]);
             assert(result == VK_SUCCESS);
         }
@@ -1682,15 +1660,15 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         result = dispatch_table.BeginCommandBuffer(extended_cbs[cb_count + 1], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            g_interceptor->GetLogger()->LogWarning(
+            context->GetLogger()->LogWarning(
                 "failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
-            g_interceptor->RecordSubmitFinish(vk_device, queue_submit_id, submit_info_id, extended_cbs[cb_count + 1]);
+            context->RecordSubmitFinish(vk_device, queue_submit_id, submit_info_id, extended_cbs[cb_count + 1]);
             result = dispatch_table.EndCommandBuffer(extended_cbs[cb_count + 1]);
             assert(result == VK_SUCCESS);
         }
         if (trace_all_semaphores) {
-            g_interceptor->LogSubmitInfoSemaphores(vk_device, queue, submit_info_id);
+            context->LogSubmitInfoSemaphores(vk_device, queue, submit_info_id);
         }
     }
 
@@ -1699,48 +1677,49 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(PFN_vkQueueSubmit fp_queue_submit, Vk
         res = dispatch_table.QueueSubmit(queue, submitCount, semaphore_tracking_submits, fence);
     }
 
-    g_interceptor->PostQueueSubmit(queue, submitCount, semaphore_tracking_submits, fence, res);
+    context->PostQueueSubmit(queue, submitCount, semaphore_tracking_submits, fence, res);
     return res;
 }
 
 VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bind_sparse, VkQueue queue,
                                                uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
                                                VkFence fence) {
-    auto dispatch_table =
-        crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(queue))->dispatch_table;
-    bool track_semaphores = g_interceptor->TrackingSemaphores();
+    auto* device_data = crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(queue));
+    auto dispatch_table = device_data->dispatch_table;
+    auto* context = static_cast<Context*>(device_data->interceptor);
+    bool track_semaphores = context->TrackingSemaphores();
     // If semaphore tracking is not requested, pass the call to the dispatch table
     // as is.
     if (!track_semaphores) {
         return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
     }
 
-    auto qbind_sparse_id = g_interceptor->GetNextQueueBindSparseId();
-    bool trace_all_semaphores = g_interceptor->TracingAllSemaphores();
+    auto qbind_sparse_id = context->GetNextQueueBindSparseId();
+    bool trace_all_semaphores = context->TracingAllSemaphores();
     if (track_semaphores && trace_all_semaphores) {
-        g_interceptor->LogBindSparseInfosSemaphores(queue, bindInfoCount, pBindInfo);
+        context->LogBindSparseInfosSemaphores(queue, bindInfoCount, pBindInfo);
     }
 
     // Ensure the queue is registered before and we know which command pool use
     // for this queue. If not, pass the call to dispatch table.
-    VkDevice vk_device = g_interceptor->GetQueueDevice(queue);
-    VkCommandPool vk_pool = g_interceptor->GetHelperCommandPool(vk_device, queue);
+    VkDevice vk_device = context->GetQueueDevice(queue);
+    VkCommandPool vk_pool = context->GetHelperCommandPool(vk_device, queue);
     if (vk_device == VK_NULL_HANDLE || vk_pool == VK_NULL_HANDLE) {
-        g_interceptor->GetLogger()->LogWarning("device handle not found for queue 0x" PRIx64
-                                               ", Ignoring semaphore signals in vkQueueBindSparse call.",
-                                               (uint64_t)queue);
+        context->GetLogger()->LogWarning("device handle not found for queue 0x" PRIx64
+                                         ", Ignoring semaphore signals in vkQueueBindSparse call.",
+                                         (uint64_t)queue);
         return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
     }
 
     // If we don't need to expand the bind sparse info, pass the call to dispatch
     // table.
     crash_diagnostic_layer::PackedBindSparseInfo packed_bind_sparse_info(queue, bindInfoCount, pBindInfo);
-    if (!g_interceptor->ShouldExpandQueueBindSparseToTrackSemaphores(&packed_bind_sparse_info)) {
+    if (!context->ShouldExpandQueueBindSparseToTrackSemaphores(&packed_bind_sparse_info)) {
         return dispatch_table.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
     }
 
     crash_diagnostic_layer::ExpandedBindSparseInfo expanded_bind_sparse_info(&packed_bind_sparse_info);
-    g_interceptor->ExpandBindSparseInfo(&expanded_bind_sparse_info);
+    context->ExpandBindSparseInfo(&expanded_bind_sparse_info);
 
     // For each VkSubmitInfo added to the expanded vkQueueBindSparse, check if
     // pNext should point to a VkTimelineSemaphoreSubmitInfoKHR struct.
@@ -1769,7 +1748,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
     auto result = dispatch_table.AllocateCommandBuffers(vk_device, &cb_allocate_info, new_buffers);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-        g_interceptor->GetLogger()->LogWarning(
+        context->GetLogger()->LogWarning(
             "failed to allocate helper command buffers for tracking queue bind sparse state. "
             "vkAllocateCommandBuffers() returned 0x%08x",
             result);
@@ -1793,11 +1772,11 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
         result = dispatch_table.BeginCommandBuffer(helper_cbs[i], &commandBufferBeginInfo);
         assert(result == VK_SUCCESS);
         if (result != VK_SUCCESS) {
-            g_interceptor->GetLogger()->LogWarning(
+            context->GetLogger()->LogWarning(
                 "ailed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         } else {
-            g_interceptor->RecordBindSparseHelperSubmit(vk_device, qbind_sparse_id,
-                                                        &expanded_bind_sparse_info.submit_infos[i], vk_pool);
+            context->RecordBindSparseHelperSubmit(vk_device, qbind_sparse_id,
+                                                  &expanded_bind_sparse_info.submit_infos[i], vk_pool);
             result = dispatch_table.EndCommandBuffer(helper_cbs[i]);
             assert(result == VK_SUCCESS);
         }
@@ -1847,7 +1826,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
             result = dispatch_table.QueueSubmit(
                 queue, 1, &expanded_bind_sparse_info.submit_infos[next_submit_info_index], VK_NULL_HANDLE);
             if (result != VK_SUCCESS) {
-                g_interceptor->GetLogger()->LogWarning(
+                context->GetLogger()->LogWarning(
                     "helper vkQueueSubmit failed while tracking semaphores in a vkQueueBindSparse call. Semaphore "
                     "values in the final report might be wrong. Result: 0x%08x",
                     result);
@@ -1859,7 +1838,7 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
         }
     }
     if (last_bind_result != VK_SUCCESS) {
-        g_interceptor->GetLogger()->LogWarning(
+        context->GetLogger()->LogWarning(
             "QueueBindSparse: Unexpected VkResult = 0x%8x after submitting %d bind sparse infos and %d "
             " helper submit infos to the queue. Submitting the remained bind sparse infos at once.",
             last_bind_result, next_bind_sparse_info_index, next_submit_info_index);
@@ -1874,12 +1853,20 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
     return last_bind_result;
 }
 
+VKAPI_ATTR VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
+                                   VkInstance* pInstance, Interceptor** interceptor) {
+    auto* context = new Context(pCreateInfo, pAllocator);
+    *interceptor = context;
+    return VK_SUCCESS;
+}
+
 // CDL intercepts vkCreateDevice to enforce coherent memory
-VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(PFN_vkCreateDevice pfn_create_device, VkPhysicalDevice gpu,
+VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(PFN_vkCreateDevice pfn_create_device, Interceptor* interceptor, VkPhysicalDevice gpu,
                                             const VkDeviceCreateInfo* pCreateInfo,
                                             const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
+    auto* context = static_cast<Context*>(interceptor);
     VkDeviceCreateInfo local_create_info = *pCreateInfo;
-    if (g_interceptor->AmdDeviceCoherentExtensionEnabled(gpu)) {
+    if (context->AmdDeviceCoherentExtensionEnabled(gpu)) {
         // Coherent memory extension enabled, check for struct, add if needed.
         if (nullptr ==
             vku::FindStructInPNextChain<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(local_create_info.pNext)) {

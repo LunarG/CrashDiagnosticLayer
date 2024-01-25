@@ -171,7 +171,7 @@ void InterceptGetDeviceQueue(
     pfn(device, queueFamilyIndex, queueIndex, pQueue);
   }
 
-  InterceptPostGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
+  layer_data->interceptor->PostGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
 }
 
 VkResult InterceptQueueSubmit(
@@ -181,15 +181,15 @@ VkResult InterceptQueueSubmit(
     VkFence                                     fence) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreQueueSubmit(queue, submitCount, pSubmits, fence);
-
   auto layer_data = GetDeviceLayerData(DataKey(queue));
+  layer_data->interceptor->PreQueueSubmit(queue, submitCount, pSubmits, fence);
+
   PFN_vkQueueSubmit pfn = layer_data->dispatch_table.QueueSubmit;
   if (pfn != nullptr) {
     result = pfn(queue, submitCount, pSubmits, fence);
   }
 
-  result = InterceptPostQueueSubmit(queue, submitCount, pSubmits, fence, result);
+  result = layer_data->interceptor->PostQueueSubmit(queue, submitCount, pSubmits, fence, result);
   return result;
 }
 
@@ -197,15 +197,15 @@ VkResult InterceptQueueWaitIdle(
     VkQueue                                     queue) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreQueueWaitIdle(queue);
-
   auto layer_data = GetDeviceLayerData(DataKey(queue));
+  layer_data->interceptor->PreQueueWaitIdle(queue);
+
   PFN_vkQueueWaitIdle pfn = layer_data->dispatch_table.QueueWaitIdle;
   if (pfn != nullptr) {
     result = pfn(queue);
   }
 
-  result = InterceptPostQueueWaitIdle(queue, result);
+  result = layer_data->interceptor->PostQueueWaitIdle(queue, result);
   return result;
 }
 
@@ -213,15 +213,15 @@ VkResult InterceptDeviceWaitIdle(
     VkDevice                                    device) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreDeviceWaitIdle(device);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreDeviceWaitIdle(device);
+
   PFN_vkDeviceWaitIdle pfn = layer_data->dispatch_table.DeviceWaitIdle;
   if (pfn != nullptr) {
     result = pfn(device);
   }
 
-  result = InterceptPostDeviceWaitIdle(device, result);
+  result = layer_data->interceptor->PostDeviceWaitIdle(device, result);
   return result;
 }
 
@@ -232,15 +232,15 @@ VkResult InterceptQueueBindSparse(
     VkFence                                     fence) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
-
   auto layer_data = GetDeviceLayerData(DataKey(queue));
+  layer_data->interceptor->PreQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+
   PFN_vkQueueBindSparse pfn = layer_data->dispatch_table.QueueBindSparse;
   if (pfn != nullptr) {
     result = pfn(queue, bindInfoCount, pBindInfo, fence);
   }
 
-  result = InterceptPostQueueBindSparse(queue, bindInfoCount, pBindInfo, fence, result);
+  result = layer_data->interceptor->PostQueueBindSparse(queue, bindInfoCount, pBindInfo, fence, result);
   return result;
 }
 
@@ -249,15 +249,15 @@ VkResult InterceptGetFenceStatus(
     VkFence                                     fence) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreGetFenceStatus(device, fence);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreGetFenceStatus(device, fence);
+
   PFN_vkGetFenceStatus pfn = layer_data->dispatch_table.GetFenceStatus;
   if (pfn != nullptr) {
     result = pfn(device, fence);
   }
 
-  result = InterceptPostGetFenceStatus(device, fence, result);
+  result = layer_data->interceptor->PostGetFenceStatus(device, fence, result);
   return result;
 }
 
@@ -269,15 +269,15 @@ VkResult InterceptWaitForFences(
     uint64_t                                    timeout) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreWaitForFences(device, fenceCount, pFences, waitAll, timeout);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreWaitForFences(device, fenceCount, pFences, waitAll, timeout);
+
   PFN_vkWaitForFences pfn = layer_data->dispatch_table.WaitForFences;
   if (pfn != nullptr) {
     result = pfn(device, fenceCount, pFences, waitAll, timeout);
   }
 
-  result = InterceptPostWaitForFences(device, fenceCount, pFences, waitAll, timeout, result);
+  result = layer_data->interceptor->PostWaitForFences(device, fenceCount, pFences, waitAll, timeout, result);
   return result;
 }
 
@@ -288,15 +288,15 @@ VkResult InterceptCreateSemaphore(
     VkSemaphore*                                pSemaphore) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
+
   PFN_vkCreateSemaphore pfn = layer_data->dispatch_table.CreateSemaphore;
   if (pfn != nullptr) {
     result = pfn(device, pCreateInfo, pAllocator, pSemaphore);
   }
 
-  result = InterceptPostCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore, result);
+  result = layer_data->interceptor->PostCreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore, result);
   return result;
 }
 
@@ -304,15 +304,15 @@ void InterceptDestroySemaphore(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
     const VkAllocationCallbacks*                pAllocator) {
-  InterceptPreDestroySemaphore(device, semaphore, pAllocator);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreDestroySemaphore(device, semaphore, pAllocator);
+
   PFN_vkDestroySemaphore pfn = layer_data->dispatch_table.DestroySemaphore;
   if (pfn != nullptr) {
     pfn(device, semaphore, pAllocator);
   }
 
-  InterceptPostDestroySemaphore(device, semaphore, pAllocator);
+  layer_data->interceptor->PostDestroySemaphore(device, semaphore, pAllocator);
 }
 
 VkResult InterceptGetQueryPoolResults(
@@ -326,15 +326,15 @@ VkResult InterceptGetQueryPoolResults(
     VkQueryResultFlags                          flags) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
+
   PFN_vkGetQueryPoolResults pfn = layer_data->dispatch_table.GetQueryPoolResults;
   if (pfn != nullptr) {
     result = pfn(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
   }
 
-  result = InterceptPostGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags, result);
+  result = layer_data->interceptor->PostGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags, result);
   return result;
 }
 
@@ -351,7 +351,7 @@ VkResult InterceptCreateShaderModule(
     result = pfn(device, pCreateInfo, pAllocator, pShaderModule);
   }
 
-  result = InterceptPostCreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule, result);
+  result = layer_data->interceptor->PostCreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule, result);
   return result;
 }
 
@@ -365,7 +365,7 @@ void InterceptDestroyShaderModule(
     pfn(device, shaderModule, pAllocator);
   }
 
-  InterceptPostDestroyShaderModule(device, shaderModule, pAllocator);
+  layer_data->interceptor->PostDestroyShaderModule(device, shaderModule, pAllocator);
 }
 
 VkResult InterceptCreateGraphicsPipelines(
@@ -383,7 +383,7 @@ VkResult InterceptCreateGraphicsPipelines(
     result = pfn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
   }
 
-  result = InterceptPostCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines, result);
+  result = layer_data->interceptor->PostCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines, result);
   return result;
 }
 
@@ -402,7 +402,7 @@ VkResult InterceptCreateComputePipelines(
     result = pfn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
   }
 
-  result = InterceptPostCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines, result);
+  result = layer_data->interceptor->PostCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines, result);
   return result;
 }
 
@@ -410,15 +410,15 @@ void InterceptDestroyPipeline(
     VkDevice                                    device,
     VkPipeline                                  pipeline,
     const VkAllocationCallbacks*                pAllocator) {
-  InterceptPreDestroyPipeline(device, pipeline, pAllocator);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreDestroyPipeline(device, pipeline, pAllocator);
+
   PFN_vkDestroyPipeline pfn = layer_data->dispatch_table.DestroyPipeline;
   if (pfn != nullptr) {
     pfn(device, pipeline, pAllocator);
   }
 
-  InterceptPostDestroyPipeline(device, pipeline, pAllocator);
+  layer_data->interceptor->PostDestroyPipeline(device, pipeline, pAllocator);
 }
 
 VkResult InterceptCreateCommandPool(
@@ -428,15 +428,15 @@ VkResult InterceptCreateCommandPool(
     VkCommandPool*                              pCommandPool) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
+
   PFN_vkCreateCommandPool pfn = layer_data->dispatch_table.CreateCommandPool;
   if (pfn != nullptr) {
     result = pfn(device, pCreateInfo, pAllocator, pCommandPool);
   }
 
-  result = InterceptPostCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool, result);
+  result = layer_data->interceptor->PostCreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool, result);
   return result;
 }
 
@@ -444,15 +444,15 @@ void InterceptDestroyCommandPool(
     VkDevice                                    device,
     VkCommandPool                               commandPool,
     const VkAllocationCallbacks*                pAllocator) {
-  InterceptPreDestroyCommandPool(device, commandPool, pAllocator);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreDestroyCommandPool(device, commandPool, pAllocator);
+
   PFN_vkDestroyCommandPool pfn = layer_data->dispatch_table.DestroyCommandPool;
   if (pfn != nullptr) {
     pfn(device, commandPool, pAllocator);
   }
 
-  InterceptPostDestroyCommandPool(device, commandPool, pAllocator);
+  layer_data->interceptor->PostDestroyCommandPool(device, commandPool, pAllocator);
 }
 
 VkResult InterceptResetCommandPool(
@@ -461,15 +461,15 @@ VkResult InterceptResetCommandPool(
     VkCommandPoolResetFlags                     flags) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreResetCommandPool(device, commandPool, flags);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreResetCommandPool(device, commandPool, flags);
+
   PFN_vkResetCommandPool pfn = layer_data->dispatch_table.ResetCommandPool;
   if (pfn != nullptr) {
     result = pfn(device, commandPool, flags);
   }
 
-  result = InterceptPostResetCommandPool(device, commandPool, flags, result);
+  result = layer_data->interceptor->PostResetCommandPool(device, commandPool, flags, result);
   return result;
 }
 
@@ -479,15 +479,15 @@ VkResult InterceptAllocateCommandBuffers(
     VkCommandBuffer*                            pCommandBuffers) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
+
   PFN_vkAllocateCommandBuffers pfn = layer_data->dispatch_table.AllocateCommandBuffers;
   if (pfn != nullptr) {
     result = pfn(device, pAllocateInfo, pCommandBuffers);
   }
 
-  result = InterceptPostAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers, result);
+  result = layer_data->interceptor->PostAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers, result);
   return result;
 }
 
@@ -496,15 +496,15 @@ void InterceptFreeCommandBuffers(
     VkCommandPool                               commandPool,
     uint32_t                                    commandBufferCount,
     const VkCommandBuffer*                      pCommandBuffers) {
-  InterceptPreFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
+
   PFN_vkFreeCommandBuffers pfn = layer_data->dispatch_table.FreeCommandBuffers;
   if (pfn != nullptr) {
     pfn(device, commandPool, commandBufferCount, pCommandBuffers);
   }
 
-  InterceptPostFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
+  layer_data->interceptor->PostFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 }
 
 VkResult InterceptBeginCommandBuffer(
@@ -512,15 +512,15 @@ VkResult InterceptBeginCommandBuffer(
     const VkCommandBufferBeginInfo*             pBeginInfo) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreBeginCommandBuffer(commandBuffer, pBeginInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreBeginCommandBuffer(commandBuffer, pBeginInfo);
+
   PFN_vkBeginCommandBuffer pfn = layer_data->dispatch_table.BeginCommandBuffer;
   if (pfn != nullptr) {
     result = pfn(commandBuffer, pBeginInfo);
   }
 
-  result = InterceptPostBeginCommandBuffer(commandBuffer, pBeginInfo, result);
+  result = layer_data->interceptor->PostBeginCommandBuffer(commandBuffer, pBeginInfo, result);
   return result;
 }
 
@@ -528,15 +528,15 @@ VkResult InterceptEndCommandBuffer(
     VkCommandBuffer                             commandBuffer) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreEndCommandBuffer(commandBuffer);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreEndCommandBuffer(commandBuffer);
+
   PFN_vkEndCommandBuffer pfn = layer_data->dispatch_table.EndCommandBuffer;
   if (pfn != nullptr) {
     result = pfn(commandBuffer);
   }
 
-  result = InterceptPostEndCommandBuffer(commandBuffer, result);
+  result = layer_data->interceptor->PostEndCommandBuffer(commandBuffer, result);
   return result;
 }
 
@@ -545,15 +545,15 @@ VkResult InterceptResetCommandBuffer(
     VkCommandBufferResetFlags                   flags) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreResetCommandBuffer(commandBuffer, flags);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreResetCommandBuffer(commandBuffer, flags);
+
   PFN_vkResetCommandBuffer pfn = layer_data->dispatch_table.ResetCommandBuffer;
   if (pfn != nullptr) {
     result = pfn(commandBuffer, flags);
   }
 
-  result = InterceptPostResetCommandBuffer(commandBuffer, flags, result);
+  result = layer_data->interceptor->PostResetCommandBuffer(commandBuffer, flags, result);
   return result;
 }
 
@@ -561,15 +561,15 @@ void InterceptCmdBindPipeline(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline) {
-  InterceptPreCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
+
   PFN_vkCmdBindPipeline pfn = layer_data->dispatch_table.CmdBindPipeline;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineBindPoint, pipeline);
   }
 
-  InterceptPostCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
+  layer_data->interceptor->PostCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 
 void InterceptCmdSetViewport(
@@ -577,15 +577,15 @@ void InterceptCmdSetViewport(
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  InterceptPreCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
+
   PFN_vkCmdSetViewport pfn = layer_data->dispatch_table.CmdSetViewport;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstViewport, viewportCount, pViewports);
   }
 
-  InterceptPostCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
+  layer_data->interceptor->PostCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
 
 void InterceptCmdSetScissor(
@@ -593,29 +593,29 @@ void InterceptCmdSetScissor(
     uint32_t                                    firstScissor,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  InterceptPreCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
+
   PFN_vkCmdSetScissor pfn = layer_data->dispatch_table.CmdSetScissor;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstScissor, scissorCount, pScissors);
   }
 
-  InterceptPostCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
+  layer_data->interceptor->PostCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
 
 void InterceptCmdSetLineWidth(
     VkCommandBuffer                             commandBuffer,
     float                                       lineWidth) {
-  InterceptPreCmdSetLineWidth(commandBuffer, lineWidth);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetLineWidth(commandBuffer, lineWidth);
+
   PFN_vkCmdSetLineWidth pfn = layer_data->dispatch_table.CmdSetLineWidth;
   if (pfn != nullptr) {
     pfn(commandBuffer, lineWidth);
   }
 
-  InterceptPostCmdSetLineWidth(commandBuffer, lineWidth);
+  layer_data->interceptor->PostCmdSetLineWidth(commandBuffer, lineWidth);
 }
 
 void InterceptCmdSetDepthBias(
@@ -623,89 +623,89 @@ void InterceptCmdSetDepthBias(
     float                                       depthBiasConstantFactor,
     float                                       depthBiasClamp,
     float                                       depthBiasSlopeFactor) {
-  InterceptPreCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
+
   PFN_vkCmdSetDepthBias pfn = layer_data->dispatch_table.CmdSetDepthBias;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
   }
 
-  InterceptPostCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
+  layer_data->interceptor->PostCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 }
 
 void InterceptCmdSetBlendConstants(
     VkCommandBuffer                             commandBuffer,
     const float                                 blendConstants[4]) {
-  InterceptPreCmdSetBlendConstants(commandBuffer, blendConstants);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetBlendConstants(commandBuffer, blendConstants);
+
   PFN_vkCmdSetBlendConstants pfn = layer_data->dispatch_table.CmdSetBlendConstants;
   if (pfn != nullptr) {
     pfn(commandBuffer, blendConstants);
   }
 
-  InterceptPostCmdSetBlendConstants(commandBuffer, blendConstants);
+  layer_data->interceptor->PostCmdSetBlendConstants(commandBuffer, blendConstants);
 }
 
 void InterceptCmdSetDepthBounds(
     VkCommandBuffer                             commandBuffer,
     float                                       minDepthBounds,
     float                                       maxDepthBounds) {
-  InterceptPreCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
+
   PFN_vkCmdSetDepthBounds pfn = layer_data->dispatch_table.CmdSetDepthBounds;
   if (pfn != nullptr) {
     pfn(commandBuffer, minDepthBounds, maxDepthBounds);
   }
 
-  InterceptPostCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
+  layer_data->interceptor->PostCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
 
 void InterceptCmdSetStencilCompareMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    compareMask) {
-  InterceptPreCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
+
   PFN_vkCmdSetStencilCompareMask pfn = layer_data->dispatch_table.CmdSetStencilCompareMask;
   if (pfn != nullptr) {
     pfn(commandBuffer, faceMask, compareMask);
   }
 
-  InterceptPostCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
+  layer_data->interceptor->PostCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
 
 void InterceptCmdSetStencilWriteMask(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    writeMask) {
-  InterceptPreCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
+
   PFN_vkCmdSetStencilWriteMask pfn = layer_data->dispatch_table.CmdSetStencilWriteMask;
   if (pfn != nullptr) {
     pfn(commandBuffer, faceMask, writeMask);
   }
 
-  InterceptPostCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
+  layer_data->interceptor->PostCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
 
 void InterceptCmdSetStencilReference(
     VkCommandBuffer                             commandBuffer,
     VkStencilFaceFlags                          faceMask,
     uint32_t                                    reference) {
-  InterceptPreCmdSetStencilReference(commandBuffer, faceMask, reference);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetStencilReference(commandBuffer, faceMask, reference);
+
   PFN_vkCmdSetStencilReference pfn = layer_data->dispatch_table.CmdSetStencilReference;
   if (pfn != nullptr) {
     pfn(commandBuffer, faceMask, reference);
   }
 
-  InterceptPostCmdSetStencilReference(commandBuffer, faceMask, reference);
+  layer_data->interceptor->PostCmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 
 void InterceptCmdBindDescriptorSets(
@@ -717,15 +717,15 @@ void InterceptCmdBindDescriptorSets(
     const VkDescriptorSet*                      pDescriptorSets,
     uint32_t                                    dynamicOffsetCount,
     const uint32_t*                             pDynamicOffsets) {
-  InterceptPreCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+
   PFN_vkCmdBindDescriptorSets pfn = layer_data->dispatch_table.CmdBindDescriptorSets;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
   }
 
-  InterceptPostCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+  layer_data->interceptor->PostCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 }
 
 void InterceptCmdBindIndexBuffer(
@@ -733,15 +733,15 @@ void InterceptCmdBindIndexBuffer(
     VkBuffer                                    buffer,
     VkDeviceSize                                offset,
     VkIndexType                                 indexType) {
-  InterceptPreCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
+
   PFN_vkCmdBindIndexBuffer pfn = layer_data->dispatch_table.CmdBindIndexBuffer;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, indexType);
   }
 
-  InterceptPostCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
+  layer_data->interceptor->PostCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
 
 void InterceptCmdBindVertexBuffers(
@@ -750,15 +750,15 @@ void InterceptCmdBindVertexBuffers(
     uint32_t                                    bindingCount,
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets) {
-  InterceptPreCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
+
   PFN_vkCmdBindVertexBuffers pfn = layer_data->dispatch_table.CmdBindVertexBuffers;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
   }
 
-  InterceptPostCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
+  layer_data->interceptor->PostCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
 
 void InterceptCmdDraw(
@@ -767,15 +767,15 @@ void InterceptCmdDraw(
     uint32_t                                    instanceCount,
     uint32_t                                    firstVertex,
     uint32_t                                    firstInstance) {
-  InterceptPreCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
+
   PFN_vkCmdDraw pfn = layer_data->dispatch_table.CmdDraw;
   if (pfn != nullptr) {
     pfn(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
   }
 
-  InterceptPostCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
+  layer_data->interceptor->PostCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void InterceptCmdDrawIndexed(
@@ -785,15 +785,15 @@ void InterceptCmdDrawIndexed(
     uint32_t                                    firstIndex,
     int32_t                                     vertexOffset,
     uint32_t                                    firstInstance) {
-  InterceptPreCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
+
   PFN_vkCmdDrawIndexed pfn = layer_data->dispatch_table.CmdDrawIndexed;
   if (pfn != nullptr) {
     pfn(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
   }
 
-  InterceptPostCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
+  layer_data->interceptor->PostCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 
 void InterceptCmdDrawIndirect(
@@ -802,15 +802,15 @@ void InterceptCmdDrawIndirect(
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
+
   PFN_vkCmdDrawIndirect pfn = layer_data->dispatch_table.CmdDrawIndirect;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, drawCount, stride);
   }
 
-  InterceptPostCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
+  layer_data->interceptor->PostCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
 void InterceptCmdDrawIndexedIndirect(
@@ -819,15 +819,15 @@ void InterceptCmdDrawIndexedIndirect(
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
+
   PFN_vkCmdDrawIndexedIndirect pfn = layer_data->dispatch_table.CmdDrawIndexedIndirect;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, drawCount, stride);
   }
 
-  InterceptPostCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
+  layer_data->interceptor->PostCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
 void InterceptCmdDispatch(
@@ -835,30 +835,30 @@ void InterceptCmdDispatch(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  InterceptPreCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+
   PFN_vkCmdDispatch pfn = layer_data->dispatch_table.CmdDispatch;
   if (pfn != nullptr) {
     pfn(commandBuffer, groupCountX, groupCountY, groupCountZ);
   }
 
-  InterceptPostCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+  layer_data->interceptor->PostCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
 void InterceptCmdDispatchIndirect(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset) {
-  InterceptPreCmdDispatchIndirect(commandBuffer, buffer, offset);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDispatchIndirect(commandBuffer, buffer, offset);
+
   PFN_vkCmdDispatchIndirect pfn = layer_data->dispatch_table.CmdDispatchIndirect;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset);
   }
 
-  InterceptPostCmdDispatchIndirect(commandBuffer, buffer, offset);
+  layer_data->interceptor->PostCmdDispatchIndirect(commandBuffer, buffer, offset);
 }
 
 void InterceptCmdCopyBuffer(
@@ -867,15 +867,15 @@ void InterceptCmdCopyBuffer(
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
     const VkBufferCopy*                         pRegions) {
-  InterceptPreCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+
   PFN_vkCmdCopyBuffer pfn = layer_data->dispatch_table.CmdCopyBuffer;
   if (pfn != nullptr) {
     pfn(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
   }
 
-  InterceptPostCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+  layer_data->interceptor->PostCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
 
 void InterceptCmdCopyImage(
@@ -886,15 +886,15 @@ void InterceptCmdCopyImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkImageCopy*                          pRegions) {
-  InterceptPreCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+
   PFN_vkCmdCopyImage pfn = layer_data->dispatch_table.CmdCopyImage;
   if (pfn != nullptr) {
     pfn(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
   }
 
-  InterceptPostCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+  layer_data->interceptor->PostCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
 void InterceptCmdBlitImage(
@@ -906,15 +906,15 @@ void InterceptCmdBlitImage(
     uint32_t                                    regionCount,
     const VkImageBlit*                          pRegions,
     VkFilter                                    filter) {
-  InterceptPreCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
+
   PFN_vkCmdBlitImage pfn = layer_data->dispatch_table.CmdBlitImage;
   if (pfn != nullptr) {
     pfn(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
   }
 
-  InterceptPostCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
+  layer_data->interceptor->PostCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 }
 
 void InterceptCmdCopyBufferToImage(
@@ -924,15 +924,15 @@ void InterceptCmdCopyBufferToImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkBufferImageCopy*                    pRegions) {
-  InterceptPreCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
+
   PFN_vkCmdCopyBufferToImage pfn = layer_data->dispatch_table.CmdCopyBufferToImage;
   if (pfn != nullptr) {
     pfn(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
   }
 
-  InterceptPostCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
+  layer_data->interceptor->PostCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
 void InterceptCmdCopyImageToBuffer(
@@ -942,15 +942,15 @@ void InterceptCmdCopyImageToBuffer(
     VkBuffer                                    dstBuffer,
     uint32_t                                    regionCount,
     const VkBufferImageCopy*                    pRegions) {
-  InterceptPreCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
+
   PFN_vkCmdCopyImageToBuffer pfn = layer_data->dispatch_table.CmdCopyImageToBuffer;
   if (pfn != nullptr) {
     pfn(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
   }
 
-  InterceptPostCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
+  layer_data->interceptor->PostCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
 
 void InterceptCmdUpdateBuffer(
@@ -959,15 +959,15 @@ void InterceptCmdUpdateBuffer(
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                dataSize,
     const void*                                 pData) {
-  InterceptPreCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+
   PFN_vkCmdUpdateBuffer pfn = layer_data->dispatch_table.CmdUpdateBuffer;
   if (pfn != nullptr) {
     pfn(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
   }
 
-  InterceptPostCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+  layer_data->interceptor->PostCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
 
 void InterceptCmdFillBuffer(
@@ -976,15 +976,15 @@ void InterceptCmdFillBuffer(
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                size,
     uint32_t                                    data) {
-  InterceptPreCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+
   PFN_vkCmdFillBuffer pfn = layer_data->dispatch_table.CmdFillBuffer;
   if (pfn != nullptr) {
     pfn(commandBuffer, dstBuffer, dstOffset, size, data);
   }
 
-  InterceptPostCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+  layer_data->interceptor->PostCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
 
 void InterceptCmdClearColorImage(
@@ -994,15 +994,15 @@ void InterceptCmdClearColorImage(
     const VkClearColorValue*                    pColor,
     uint32_t                                    rangeCount,
     const VkImageSubresourceRange*              pRanges) {
-  InterceptPreCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+
   PFN_vkCmdClearColorImage pfn = layer_data->dispatch_table.CmdClearColorImage;
   if (pfn != nullptr) {
     pfn(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
   }
 
-  InterceptPostCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+  layer_data->interceptor->PostCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 
 void InterceptCmdClearDepthStencilImage(
@@ -1012,15 +1012,15 @@ void InterceptCmdClearDepthStencilImage(
     const VkClearDepthStencilValue*             pDepthStencil,
     uint32_t                                    rangeCount,
     const VkImageSubresourceRange*              pRanges) {
-  InterceptPreCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
+
   PFN_vkCmdClearDepthStencilImage pfn = layer_data->dispatch_table.CmdClearDepthStencilImage;
   if (pfn != nullptr) {
     pfn(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
   }
 
-  InterceptPostCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
+  layer_data->interceptor->PostCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
 
 void InterceptCmdClearAttachments(
@@ -1029,15 +1029,15 @@ void InterceptCmdClearAttachments(
     const VkClearAttachment*                    pAttachments,
     uint32_t                                    rectCount,
     const VkClearRect*                          pRects) {
-  InterceptPreCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
+
   PFN_vkCmdClearAttachments pfn = layer_data->dispatch_table.CmdClearAttachments;
   if (pfn != nullptr) {
     pfn(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
   }
 
-  InterceptPostCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
+  layer_data->interceptor->PostCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
 
 void InterceptCmdResolveImage(
@@ -1048,45 +1048,45 @@ void InterceptCmdResolveImage(
     VkImageLayout                               dstImageLayout,
     uint32_t                                    regionCount,
     const VkImageResolve*                       pRegions) {
-  InterceptPreCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+
   PFN_vkCmdResolveImage pfn = layer_data->dispatch_table.CmdResolveImage;
   if (pfn != nullptr) {
     pfn(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
   }
 
-  InterceptPostCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+  layer_data->interceptor->PostCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
 void InterceptCmdSetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags                        stageMask) {
-  InterceptPreCmdSetEvent(commandBuffer, event, stageMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetEvent(commandBuffer, event, stageMask);
+
   PFN_vkCmdSetEvent pfn = layer_data->dispatch_table.CmdSetEvent;
   if (pfn != nullptr) {
     pfn(commandBuffer, event, stageMask);
   }
 
-  InterceptPostCmdSetEvent(commandBuffer, event, stageMask);
+  layer_data->interceptor->PostCmdSetEvent(commandBuffer, event, stageMask);
 }
 
 void InterceptCmdResetEvent(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags                        stageMask) {
-  InterceptPreCmdResetEvent(commandBuffer, event, stageMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdResetEvent(commandBuffer, event, stageMask);
+
   PFN_vkCmdResetEvent pfn = layer_data->dispatch_table.CmdResetEvent;
   if (pfn != nullptr) {
     pfn(commandBuffer, event, stageMask);
   }
 
-  InterceptPostCmdResetEvent(commandBuffer, event, stageMask);
+  layer_data->interceptor->PostCmdResetEvent(commandBuffer, event, stageMask);
 }
 
 void InterceptCmdWaitEvents(
@@ -1101,15 +1101,15 @@ void InterceptCmdWaitEvents(
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
     const VkImageMemoryBarrier*                 pImageMemoryBarriers) {
-  InterceptPreCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+
   PFN_vkCmdWaitEvents pfn = layer_data->dispatch_table.CmdWaitEvents;
   if (pfn != nullptr) {
     pfn(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
   }
 
-  InterceptPostCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+  layer_data->interceptor->PostCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
 void InterceptCmdPipelineBarrier(
@@ -1123,15 +1123,15 @@ void InterceptCmdPipelineBarrier(
     const VkBufferMemoryBarrier*                pBufferMemoryBarriers,
     uint32_t                                    imageMemoryBarrierCount,
     const VkImageMemoryBarrier*                 pImageMemoryBarriers) {
-  InterceptPreCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+
   PFN_vkCmdPipelineBarrier pfn = layer_data->dispatch_table.CmdPipelineBarrier;
   if (pfn != nullptr) {
     pfn(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
   }
 
-  InterceptPostCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+  layer_data->interceptor->PostCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
 void InterceptCmdBeginQuery(
@@ -1139,30 +1139,30 @@ void InterceptCmdBeginQuery(
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     VkQueryControlFlags                         flags) {
-  InterceptPreCmdBeginQuery(commandBuffer, queryPool, query, flags);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginQuery(commandBuffer, queryPool, query, flags);
+
   PFN_vkCmdBeginQuery pfn = layer_data->dispatch_table.CmdBeginQuery;
   if (pfn != nullptr) {
     pfn(commandBuffer, queryPool, query, flags);
   }
 
-  InterceptPostCmdBeginQuery(commandBuffer, queryPool, query, flags);
+  layer_data->interceptor->PostCmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 
 void InterceptCmdEndQuery(
     VkCommandBuffer                             commandBuffer,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  InterceptPreCmdEndQuery(commandBuffer, queryPool, query);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndQuery(commandBuffer, queryPool, query);
+
   PFN_vkCmdEndQuery pfn = layer_data->dispatch_table.CmdEndQuery;
   if (pfn != nullptr) {
     pfn(commandBuffer, queryPool, query);
   }
 
-  InterceptPostCmdEndQuery(commandBuffer, queryPool, query);
+  layer_data->interceptor->PostCmdEndQuery(commandBuffer, queryPool, query);
 }
 
 void InterceptCmdResetQueryPool(
@@ -1170,15 +1170,15 @@ void InterceptCmdResetQueryPool(
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
     uint32_t                                    queryCount) {
-  InterceptPreCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+
   PFN_vkCmdResetQueryPool pfn = layer_data->dispatch_table.CmdResetQueryPool;
   if (pfn != nullptr) {
     pfn(commandBuffer, queryPool, firstQuery, queryCount);
   }
 
-  InterceptPostCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+  layer_data->interceptor->PostCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
 
 void InterceptCmdWriteTimestamp(
@@ -1186,15 +1186,15 @@ void InterceptCmdWriteTimestamp(
     VkPipelineStageFlagBits                     pipelineStage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  InterceptPreCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+
   PFN_vkCmdWriteTimestamp pfn = layer_data->dispatch_table.CmdWriteTimestamp;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineStage, queryPool, query);
   }
 
-  InterceptPostCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+  layer_data->interceptor->PostCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 
 void InterceptCmdCopyQueryPoolResults(
@@ -1206,15 +1206,15 @@ void InterceptCmdCopyQueryPoolResults(
     VkDeviceSize                                dstOffset,
     VkDeviceSize                                stride,
     VkQueryResultFlags                          flags) {
-  InterceptPreCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
+
   PFN_vkCmdCopyQueryPoolResults pfn = layer_data->dispatch_table.CmdCopyQueryPoolResults;
   if (pfn != nullptr) {
     pfn(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
   }
 
-  InterceptPostCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
+  layer_data->interceptor->PostCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 }
 
 void InterceptCmdPushConstants(
@@ -1224,86 +1224,86 @@ void InterceptCmdPushConstants(
     uint32_t                                    offset,
     uint32_t                                    size,
     const void*                                 pValues) {
-  InterceptPreCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
+
   PFN_vkCmdPushConstants pfn = layer_data->dispatch_table.CmdPushConstants;
   if (pfn != nullptr) {
     pfn(commandBuffer, layout, stageFlags, offset, size, pValues);
   }
 
-  InterceptPostCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
+  layer_data->interceptor->PostCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 
 void InterceptCmdBeginRenderPass(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     VkSubpassContents                           contents) {
-  InterceptPreCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
+
   PFN_vkCmdBeginRenderPass pfn = layer_data->dispatch_table.CmdBeginRenderPass;
   if (pfn != nullptr) {
     pfn(commandBuffer, pRenderPassBegin, contents);
   }
 
-  InterceptPostCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
+  layer_data->interceptor->PostCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
 
 void InterceptCmdNextSubpass(
     VkCommandBuffer                             commandBuffer,
     VkSubpassContents                           contents) {
-  InterceptPreCmdNextSubpass(commandBuffer, contents);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdNextSubpass(commandBuffer, contents);
+
   PFN_vkCmdNextSubpass pfn = layer_data->dispatch_table.CmdNextSubpass;
   if (pfn != nullptr) {
     pfn(commandBuffer, contents);
   }
 
-  InterceptPostCmdNextSubpass(commandBuffer, contents);
+  layer_data->interceptor->PostCmdNextSubpass(commandBuffer, contents);
 }
 
 void InterceptCmdEndRenderPass(
     VkCommandBuffer                             commandBuffer) {
-  InterceptPreCmdEndRenderPass(commandBuffer);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndRenderPass(commandBuffer);
+
   PFN_vkCmdEndRenderPass pfn = layer_data->dispatch_table.CmdEndRenderPass;
   if (pfn != nullptr) {
     pfn(commandBuffer);
   }
 
-  InterceptPostCmdEndRenderPass(commandBuffer);
+  layer_data->interceptor->PostCmdEndRenderPass(commandBuffer);
 }
 
 void InterceptCmdExecuteCommands(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    commandBufferCount,
     const VkCommandBuffer*                      pCommandBuffers) {
-  InterceptPreCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
+
   PFN_vkCmdExecuteCommands pfn = layer_data->dispatch_table.CmdExecuteCommands;
   if (pfn != nullptr) {
     pfn(commandBuffer, commandBufferCount, pCommandBuffers);
   }
 
-  InterceptPostCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
+  layer_data->interceptor->PostCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 
 void InterceptCmdSetDeviceMask(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    deviceMask) {
-  InterceptPreCmdSetDeviceMask(commandBuffer, deviceMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDeviceMask(commandBuffer, deviceMask);
+
   PFN_vkCmdSetDeviceMask pfn = layer_data->dispatch_table.CmdSetDeviceMask;
   if (pfn != nullptr) {
     pfn(commandBuffer, deviceMask);
   }
 
-  InterceptPostCmdSetDeviceMask(commandBuffer, deviceMask);
+  layer_data->interceptor->PostCmdSetDeviceMask(commandBuffer, deviceMask);
 }
 
 void InterceptCmdDispatchBase(
@@ -1314,30 +1314,30 @@ void InterceptCmdDispatchBase(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  InterceptPreCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+
   PFN_vkCmdDispatchBase pfn = layer_data->dispatch_table.CmdDispatchBase;
   if (pfn != nullptr) {
     pfn(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
   }
 
-  InterceptPostCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+  layer_data->interceptor->PostCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 
 void InterceptGetDeviceQueue2(
     VkDevice                                    device,
     const VkDeviceQueueInfo2*                   pQueueInfo,
     VkQueue*                                    pQueue) {
-  InterceptPreGetDeviceQueue2(device, pQueueInfo, pQueue);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreGetDeviceQueue2(device, pQueueInfo, pQueue);
+
   PFN_vkGetDeviceQueue2 pfn = layer_data->dispatch_table.GetDeviceQueue2;
   if (pfn != nullptr) {
     pfn(device, pQueueInfo, pQueue);
   }
 
-  InterceptPostGetDeviceQueue2(device, pQueueInfo, pQueue);
+  layer_data->interceptor->PostGetDeviceQueue2(device, pQueueInfo, pQueue);
 }
 
 void InterceptCmdDrawIndirectCount(
@@ -1348,15 +1348,15 @@ void InterceptCmdDrawIndirectCount(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+
   PFN_vkCmdDrawIndirectCount pfn = layer_data->dispatch_table.CmdDrawIndirectCount;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
   }
 
-  InterceptPostCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+  layer_data->interceptor->PostCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
 void InterceptCmdDrawIndexedIndirectCount(
@@ -1367,89 +1367,89 @@ void InterceptCmdDrawIndexedIndirectCount(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+
   PFN_vkCmdDrawIndexedIndirectCount pfn = layer_data->dispatch_table.CmdDrawIndexedIndirectCount;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
   }
 
-  InterceptPostCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+  layer_data->interceptor->PostCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
 void InterceptCmdBeginRenderPass2(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo) {
-  InterceptPreCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
+
   PFN_vkCmdBeginRenderPass2 pfn = layer_data->dispatch_table.CmdBeginRenderPass2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
   }
 
-  InterceptPostCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
+  layer_data->interceptor->PostCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 
 void InterceptCmdNextSubpass2(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  InterceptPreCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
+
   PFN_vkCmdNextSubpass2 pfn = layer_data->dispatch_table.CmdNextSubpass2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
   }
 
-  InterceptPostCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
+  layer_data->interceptor->PostCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 
 void InterceptCmdEndRenderPass2(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  InterceptPreCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
+
   PFN_vkCmdEndRenderPass2 pfn = layer_data->dispatch_table.CmdEndRenderPass2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pSubpassEndInfo);
   }
 
-  InterceptPostCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
+  layer_data->interceptor->PostCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
 
 void InterceptCmdSetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     const VkDependencyInfo*                     pDependencyInfo) {
-  InterceptPreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
+
   PFN_vkCmdSetEvent2 pfn = layer_data->dispatch_table.CmdSetEvent2;
   if (pfn != nullptr) {
     pfn(commandBuffer, event, pDependencyInfo);
   }
 
-  InterceptPostCmdSetEvent2(commandBuffer, event, pDependencyInfo);
+  layer_data->interceptor->PostCmdSetEvent2(commandBuffer, event, pDependencyInfo);
 }
 
 void InterceptCmdResetEvent2(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags2                       stageMask) {
-  InterceptPreCmdResetEvent2(commandBuffer, event, stageMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdResetEvent2(commandBuffer, event, stageMask);
+
   PFN_vkCmdResetEvent2 pfn = layer_data->dispatch_table.CmdResetEvent2;
   if (pfn != nullptr) {
     pfn(commandBuffer, event, stageMask);
   }
 
-  InterceptPostCmdResetEvent2(commandBuffer, event, stageMask);
+  layer_data->interceptor->PostCmdResetEvent2(commandBuffer, event, stageMask);
 }
 
 void InterceptCmdWaitEvents2(
@@ -1457,29 +1457,29 @@ void InterceptCmdWaitEvents2(
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
     const VkDependencyInfo*                     pDependencyInfos) {
-  InterceptPreCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
+
   PFN_vkCmdWaitEvents2 pfn = layer_data->dispatch_table.CmdWaitEvents2;
   if (pfn != nullptr) {
     pfn(commandBuffer, eventCount, pEvents, pDependencyInfos);
   }
 
-  InterceptPostCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
+  layer_data->interceptor->PostCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
 void InterceptCmdPipelineBarrier2(
     VkCommandBuffer                             commandBuffer,
     const VkDependencyInfo*                     pDependencyInfo) {
-  InterceptPreCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
+
   PFN_vkCmdPipelineBarrier2 pfn = layer_data->dispatch_table.CmdPipelineBarrier2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pDependencyInfo);
   }
 
-  InterceptPostCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
+  layer_data->interceptor->PostCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
 }
 
 void InterceptCmdWriteTimestamp2(
@@ -1487,15 +1487,15 @@ void InterceptCmdWriteTimestamp2(
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  InterceptPreCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
+
   PFN_vkCmdWriteTimestamp2 pfn = layer_data->dispatch_table.CmdWriteTimestamp2;
   if (pfn != nullptr) {
     pfn(commandBuffer, stage, queryPool, query);
   }
 
-  InterceptPostCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
+  layer_data->interceptor->PostCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
 
 VkResult InterceptQueueSubmit2(
@@ -1505,199 +1505,199 @@ VkResult InterceptQueueSubmit2(
     VkFence                                     fence) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreQueueSubmit2(queue, submitCount, pSubmits, fence);
-
   auto layer_data = GetDeviceLayerData(DataKey(queue));
+  layer_data->interceptor->PreQueueSubmit2(queue, submitCount, pSubmits, fence);
+
   PFN_vkQueueSubmit2 pfn = layer_data->dispatch_table.QueueSubmit2;
   if (pfn != nullptr) {
     result = pfn(queue, submitCount, pSubmits, fence);
   }
 
-  result = InterceptPostQueueSubmit2(queue, submitCount, pSubmits, fence, result);
+  result = layer_data->interceptor->PostQueueSubmit2(queue, submitCount, pSubmits, fence, result);
   return result;
 }
 
 void InterceptCmdCopyBuffer2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferInfo2*                    pCopyBufferInfo) {
-  InterceptPreCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
+
   PFN_vkCmdCopyBuffer2 pfn = layer_data->dispatch_table.CmdCopyBuffer2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCopyBufferInfo);
   }
 
-  InterceptPostCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
+  layer_data->interceptor->PostCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
 }
 
 void InterceptCmdCopyImage2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageInfo2*                     pCopyImageInfo) {
-  InterceptPreCmdCopyImage2(commandBuffer, pCopyImageInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyImage2(commandBuffer, pCopyImageInfo);
+
   PFN_vkCmdCopyImage2 pfn = layer_data->dispatch_table.CmdCopyImage2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCopyImageInfo);
   }
 
-  InterceptPostCmdCopyImage2(commandBuffer, pCopyImageInfo);
+  layer_data->interceptor->PostCmdCopyImage2(commandBuffer, pCopyImageInfo);
 }
 
 void InterceptCmdCopyBufferToImage2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) {
-  InterceptPreCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
+
   PFN_vkCmdCopyBufferToImage2 pfn = layer_data->dispatch_table.CmdCopyBufferToImage2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCopyBufferToImageInfo);
   }
 
-  InterceptPostCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
+  layer_data->interceptor->PostCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
 }
 
 void InterceptCmdCopyImageToBuffer2(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) {
-  InterceptPreCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
+
   PFN_vkCmdCopyImageToBuffer2 pfn = layer_data->dispatch_table.CmdCopyImageToBuffer2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCopyImageToBufferInfo);
   }
 
-  InterceptPostCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
+  layer_data->interceptor->PostCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
 }
 
 void InterceptCmdBlitImage2(
     VkCommandBuffer                             commandBuffer,
     const VkBlitImageInfo2*                     pBlitImageInfo) {
-  InterceptPreCmdBlitImage2(commandBuffer, pBlitImageInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBlitImage2(commandBuffer, pBlitImageInfo);
+
   PFN_vkCmdBlitImage2 pfn = layer_data->dispatch_table.CmdBlitImage2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pBlitImageInfo);
   }
 
-  InterceptPostCmdBlitImage2(commandBuffer, pBlitImageInfo);
+  layer_data->interceptor->PostCmdBlitImage2(commandBuffer, pBlitImageInfo);
 }
 
 void InterceptCmdResolveImage2(
     VkCommandBuffer                             commandBuffer,
     const VkResolveImageInfo2*                  pResolveImageInfo) {
-  InterceptPreCmdResolveImage2(commandBuffer, pResolveImageInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdResolveImage2(commandBuffer, pResolveImageInfo);
+
   PFN_vkCmdResolveImage2 pfn = layer_data->dispatch_table.CmdResolveImage2;
   if (pfn != nullptr) {
     pfn(commandBuffer, pResolveImageInfo);
   }
 
-  InterceptPostCmdResolveImage2(commandBuffer, pResolveImageInfo);
+  layer_data->interceptor->PostCmdResolveImage2(commandBuffer, pResolveImageInfo);
 }
 
 void InterceptCmdBeginRendering(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingInfo*                      pRenderingInfo) {
-  InterceptPreCmdBeginRendering(commandBuffer, pRenderingInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginRendering(commandBuffer, pRenderingInfo);
+
   PFN_vkCmdBeginRendering pfn = layer_data->dispatch_table.CmdBeginRendering;
   if (pfn != nullptr) {
     pfn(commandBuffer, pRenderingInfo);
   }
 
-  InterceptPostCmdBeginRendering(commandBuffer, pRenderingInfo);
+  layer_data->interceptor->PostCmdBeginRendering(commandBuffer, pRenderingInfo);
 }
 
 void InterceptCmdEndRendering(
     VkCommandBuffer                             commandBuffer) {
-  InterceptPreCmdEndRendering(commandBuffer);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndRendering(commandBuffer);
+
   PFN_vkCmdEndRendering pfn = layer_data->dispatch_table.CmdEndRendering;
   if (pfn != nullptr) {
     pfn(commandBuffer);
   }
 
-  InterceptPostCmdEndRendering(commandBuffer);
+  layer_data->interceptor->PostCmdEndRendering(commandBuffer);
 }
 
 void InterceptCmdSetCullMode(
     VkCommandBuffer                             commandBuffer,
     VkCullModeFlags                             cullMode) {
-  InterceptPreCmdSetCullMode(commandBuffer, cullMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCullMode(commandBuffer, cullMode);
+
   PFN_vkCmdSetCullMode pfn = layer_data->dispatch_table.CmdSetCullMode;
   if (pfn != nullptr) {
     pfn(commandBuffer, cullMode);
   }
 
-  InterceptPostCmdSetCullMode(commandBuffer, cullMode);
+  layer_data->interceptor->PostCmdSetCullMode(commandBuffer, cullMode);
 }
 
 void InterceptCmdSetFrontFace(
     VkCommandBuffer                             commandBuffer,
     VkFrontFace                                 frontFace) {
-  InterceptPreCmdSetFrontFace(commandBuffer, frontFace);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetFrontFace(commandBuffer, frontFace);
+
   PFN_vkCmdSetFrontFace pfn = layer_data->dispatch_table.CmdSetFrontFace;
   if (pfn != nullptr) {
     pfn(commandBuffer, frontFace);
   }
 
-  InterceptPostCmdSetFrontFace(commandBuffer, frontFace);
+  layer_data->interceptor->PostCmdSetFrontFace(commandBuffer, frontFace);
 }
 
 void InterceptCmdSetPrimitiveTopology(
     VkCommandBuffer                             commandBuffer,
     VkPrimitiveTopology                         primitiveTopology) {
-  InterceptPreCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
+
   PFN_vkCmdSetPrimitiveTopology pfn = layer_data->dispatch_table.CmdSetPrimitiveTopology;
   if (pfn != nullptr) {
     pfn(commandBuffer, primitiveTopology);
   }
 
-  InterceptPostCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
+  layer_data->interceptor->PostCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
 }
 
 void InterceptCmdSetViewportWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  InterceptPreCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
+
   PFN_vkCmdSetViewportWithCount pfn = layer_data->dispatch_table.CmdSetViewportWithCount;
   if (pfn != nullptr) {
     pfn(commandBuffer, viewportCount, pViewports);
   }
 
-  InterceptPostCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
+  layer_data->interceptor->PostCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
 }
 
 void InterceptCmdSetScissorWithCount(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  InterceptPreCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
+
   PFN_vkCmdSetScissorWithCount pfn = layer_data->dispatch_table.CmdSetScissorWithCount;
   if (pfn != nullptr) {
     pfn(commandBuffer, scissorCount, pScissors);
   }
 
-  InterceptPostCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
+  layer_data->interceptor->PostCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
 }
 
 void InterceptCmdBindVertexBuffers2(
@@ -1708,85 +1708,85 @@ void InterceptCmdBindVertexBuffers2(
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
     const VkDeviceSize*                         pStrides) {
-  InterceptPreCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
+
   PFN_vkCmdBindVertexBuffers2 pfn = layer_data->dispatch_table.CmdBindVertexBuffers2;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
   }
 
-  InterceptPostCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
+  layer_data->interceptor->PostCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
 
 void InterceptCmdSetDepthTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthTestEnable) {
-  InterceptPreCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
+
   PFN_vkCmdSetDepthTestEnable pfn = layer_data->dispatch_table.CmdSetDepthTestEnable;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthTestEnable);
   }
 
-  InterceptPostCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
+  layer_data->interceptor->PostCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
 }
 
 void InterceptCmdSetDepthWriteEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthWriteEnable) {
-  InterceptPreCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
+
   PFN_vkCmdSetDepthWriteEnable pfn = layer_data->dispatch_table.CmdSetDepthWriteEnable;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthWriteEnable);
   }
 
-  InterceptPostCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
+  layer_data->interceptor->PostCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
 }
 
 void InterceptCmdSetDepthCompareOp(
     VkCommandBuffer                             commandBuffer,
     VkCompareOp                                 depthCompareOp) {
-  InterceptPreCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
+
   PFN_vkCmdSetDepthCompareOp pfn = layer_data->dispatch_table.CmdSetDepthCompareOp;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthCompareOp);
   }
 
-  InterceptPostCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
+  layer_data->interceptor->PostCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
 }
 
 void InterceptCmdSetDepthBoundsTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBoundsTestEnable) {
-  InterceptPreCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
+
   PFN_vkCmdSetDepthBoundsTestEnable pfn = layer_data->dispatch_table.CmdSetDepthBoundsTestEnable;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthBoundsTestEnable);
   }
 
-  InterceptPostCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
+  layer_data->interceptor->PostCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
 }
 
 void InterceptCmdSetStencilTestEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stencilTestEnable) {
-  InterceptPreCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
+
   PFN_vkCmdSetStencilTestEnable pfn = layer_data->dispatch_table.CmdSetStencilTestEnable;
   if (pfn != nullptr) {
     pfn(commandBuffer, stencilTestEnable);
   }
 
-  InterceptPostCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
+  layer_data->interceptor->PostCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
 }
 
 void InterceptCmdSetStencilOp(
@@ -1796,57 +1796,57 @@ void InterceptCmdSetStencilOp(
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
     VkCompareOp                                 compareOp) {
-  InterceptPreCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
+
   PFN_vkCmdSetStencilOp pfn = layer_data->dispatch_table.CmdSetStencilOp;
   if (pfn != nullptr) {
     pfn(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
   }
 
-  InterceptPostCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
+  layer_data->interceptor->PostCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 
 void InterceptCmdSetRasterizerDiscardEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    rasterizerDiscardEnable) {
-  InterceptPreCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
+
   PFN_vkCmdSetRasterizerDiscardEnable pfn = layer_data->dispatch_table.CmdSetRasterizerDiscardEnable;
   if (pfn != nullptr) {
     pfn(commandBuffer, rasterizerDiscardEnable);
   }
 
-  InterceptPostCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
+  layer_data->interceptor->PostCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
 }
 
 void InterceptCmdSetDepthBiasEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBiasEnable) {
-  InterceptPreCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
+
   PFN_vkCmdSetDepthBiasEnable pfn = layer_data->dispatch_table.CmdSetDepthBiasEnable;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthBiasEnable);
   }
 
-  InterceptPostCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
+  layer_data->interceptor->PostCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 }
 
 void InterceptCmdSetPrimitiveRestartEnable(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable) {
-  InterceptPreCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
+
   PFN_vkCmdSetPrimitiveRestartEnable pfn = layer_data->dispatch_table.CmdSetPrimitiveRestartEnable;
   if (pfn != nullptr) {
     pfn(commandBuffer, primitiveRestartEnable);
   }
 
-  InterceptPostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
+  layer_data->interceptor->PostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 
 VkResult InterceptAcquireNextImageKHR(
@@ -1858,15 +1858,15 @@ VkResult InterceptAcquireNextImageKHR(
     uint32_t*                                   pImageIndex) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
+
   PFN_vkAcquireNextImageKHR pfn = layer_data->dispatch_table.AcquireNextImageKHR;
   if (pfn != nullptr) {
     result = pfn(device, swapchain, timeout, semaphore, fence, pImageIndex);
   }
 
-  result = InterceptPostAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex, result);
+  result = layer_data->interceptor->PostAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex, result);
   return result;
 }
 
@@ -1875,113 +1875,113 @@ VkResult InterceptQueuePresentKHR(
     const VkPresentInfoKHR*                     pPresentInfo) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreQueuePresentKHR(queue, pPresentInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(queue));
+  layer_data->interceptor->PreQueuePresentKHR(queue, pPresentInfo);
+
   PFN_vkQueuePresentKHR pfn = layer_data->dispatch_table.QueuePresentKHR;
   if (pfn != nullptr) {
     result = pfn(queue, pPresentInfo);
   }
 
-  result = InterceptPostQueuePresentKHR(queue, pPresentInfo, result);
+  result = layer_data->interceptor->PostQueuePresentKHR(queue, pPresentInfo, result);
   return result;
 }
 
 void InterceptCmdBeginVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoBeginCodingInfoKHR*            pBeginInfo) {
-  InterceptPreCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
+
   PFN_vkCmdBeginVideoCodingKHR pfn = layer_data->dispatch_table.CmdBeginVideoCodingKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pBeginInfo);
   }
 
-  InterceptPostCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
+  layer_data->interceptor->PostCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
 }
 
 void InterceptCmdEndVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEndCodingInfoKHR*              pEndCodingInfo) {
-  InterceptPreCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
+
   PFN_vkCmdEndVideoCodingKHR pfn = layer_data->dispatch_table.CmdEndVideoCodingKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pEndCodingInfo);
   }
 
-  InterceptPostCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
+  layer_data->interceptor->PostCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
 }
 
 void InterceptCmdControlVideoCodingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoCodingControlInfoKHR*          pCodingControlInfo) {
-  InterceptPreCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
+
   PFN_vkCmdControlVideoCodingKHR pfn = layer_data->dispatch_table.CmdControlVideoCodingKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCodingControlInfo);
   }
 
-  InterceptPostCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
+  layer_data->interceptor->PostCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
 }
 
 void InterceptCmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoDecodeInfoKHR*                 pDecodeInfo) {
-  InterceptPreCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
+
   PFN_vkCmdDecodeVideoKHR pfn = layer_data->dispatch_table.CmdDecodeVideoKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pDecodeInfo);
   }
 
-  InterceptPostCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
+  layer_data->interceptor->PostCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
 }
 
 void InterceptCmdBeginRenderingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingInfo*                      pRenderingInfo) {
-  InterceptPreCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
+
   PFN_vkCmdBeginRenderingKHR pfn = layer_data->dispatch_table.CmdBeginRenderingKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pRenderingInfo);
   }
 
-  InterceptPostCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
+  layer_data->interceptor->PostCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 }
 
 void InterceptCmdEndRenderingKHR(
     VkCommandBuffer                             commandBuffer) {
-  InterceptPreCmdEndRenderingKHR(commandBuffer);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndRenderingKHR(commandBuffer);
+
   PFN_vkCmdEndRenderingKHR pfn = layer_data->dispatch_table.CmdEndRenderingKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer);
   }
 
-  InterceptPostCmdEndRenderingKHR(commandBuffer);
+  layer_data->interceptor->PostCmdEndRenderingKHR(commandBuffer);
 }
 
 void InterceptCmdSetDeviceMaskKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    deviceMask) {
-  InterceptPreCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
+
   PFN_vkCmdSetDeviceMaskKHR pfn = layer_data->dispatch_table.CmdSetDeviceMaskKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, deviceMask);
   }
 
-  InterceptPostCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
+  layer_data->interceptor->PostCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
 }
 
 void InterceptCmdDispatchBaseKHR(
@@ -1992,15 +1992,15 @@ void InterceptCmdDispatchBaseKHR(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  InterceptPreCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+
   PFN_vkCmdDispatchBaseKHR pfn = layer_data->dispatch_table.CmdDispatchBaseKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
   }
 
-  InterceptPostCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
+  layer_data->interceptor->PostCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 
 void InterceptCmdPushDescriptorSetKHR(
@@ -2010,15 +2010,15 @@ void InterceptCmdPushDescriptorSetKHR(
     uint32_t                                    set,
     uint32_t                                    descriptorWriteCount,
     const VkWriteDescriptorSet*                 pDescriptorWrites) {
-  InterceptPreCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
+
   PFN_vkCmdPushDescriptorSetKHR pfn = layer_data->dispatch_table.CmdPushDescriptorSetKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
   }
 
-  InterceptPostCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
+  layer_data->interceptor->PostCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 }
 
 void InterceptCmdPushDescriptorSetWithTemplateKHR(
@@ -2027,59 +2027,59 @@ void InterceptCmdPushDescriptorSetWithTemplateKHR(
     VkPipelineLayout                            layout,
     uint32_t                                    set,
     const void*                                 pData) {
-  InterceptPreCmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
+
   PFN_vkCmdPushDescriptorSetWithTemplateKHR pfn = layer_data->dispatch_table.CmdPushDescriptorSetWithTemplateKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
   }
 
-  InterceptPostCmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
+  layer_data->interceptor->PostCmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
 
 void InterceptCmdBeginRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderPassBeginInfo*                pRenderPassBegin,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo) {
-  InterceptPreCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
+
   PFN_vkCmdBeginRenderPass2KHR pfn = layer_data->dispatch_table.CmdBeginRenderPass2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
   }
 
-  InterceptPostCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
+  layer_data->interceptor->PostCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 
 void InterceptCmdNextSubpass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassBeginInfo*                   pSubpassBeginInfo,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  InterceptPreCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
+
   PFN_vkCmdNextSubpass2KHR pfn = layer_data->dispatch_table.CmdNextSubpass2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
   }
 
-  InterceptPostCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
+  layer_data->interceptor->PostCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 
 void InterceptCmdEndRenderPass2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkSubpassEndInfo*                     pSubpassEndInfo) {
-  InterceptPreCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
+
   PFN_vkCmdEndRenderPass2KHR pfn = layer_data->dispatch_table.CmdEndRenderPass2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pSubpassEndInfo);
   }
 
-  InterceptPostCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
+  layer_data->interceptor->PostCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
 }
 
 void InterceptCmdDrawIndirectCountKHR(
@@ -2090,15 +2090,15 @@ void InterceptCmdDrawIndirectCountKHR(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+
   PFN_vkCmdDrawIndirectCountKHR pfn = layer_data->dispatch_table.CmdDrawIndirectCountKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
   }
 
-  InterceptPostCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+  layer_data->interceptor->PostCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
 void InterceptCmdDrawIndexedIndirectCountKHR(
@@ -2109,15 +2109,15 @@ void InterceptCmdDrawIndexedIndirectCountKHR(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+
   PFN_vkCmdDrawIndexedIndirectCountKHR pfn = layer_data->dispatch_table.CmdDrawIndexedIndirectCountKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
   }
 
-  InterceptPostCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+  layer_data->interceptor->PostCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
 VkResult InterceptGetSemaphoreCounterValueKHR(
@@ -2126,15 +2126,15 @@ VkResult InterceptGetSemaphoreCounterValueKHR(
     uint64_t*                                   pValue) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreGetSemaphoreCounterValueKHR(device, semaphore, pValue);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreGetSemaphoreCounterValueKHR(device, semaphore, pValue);
+
   PFN_vkGetSemaphoreCounterValueKHR pfn = layer_data->dispatch_table.GetSemaphoreCounterValueKHR;
   if (pfn != nullptr) {
     result = pfn(device, semaphore, pValue);
   }
 
-  result = InterceptPostGetSemaphoreCounterValueKHR(device, semaphore, pValue, result);
+  result = layer_data->interceptor->PostGetSemaphoreCounterValueKHR(device, semaphore, pValue, result);
   return result;
 }
 
@@ -2144,15 +2144,15 @@ VkResult InterceptWaitSemaphoresKHR(
     uint64_t                                    timeout) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreWaitSemaphoresKHR(device, pWaitInfo, timeout);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreWaitSemaphoresKHR(device, pWaitInfo, timeout);
+
   PFN_vkWaitSemaphoresKHR pfn = layer_data->dispatch_table.WaitSemaphoresKHR;
   if (pfn != nullptr) {
     result = pfn(device, pWaitInfo, timeout);
   }
 
-  result = InterceptPostWaitSemaphoresKHR(device, pWaitInfo, timeout, result);
+  result = layer_data->interceptor->PostWaitSemaphoresKHR(device, pWaitInfo, timeout, result);
   return result;
 }
 
@@ -2161,15 +2161,15 @@ VkResult InterceptSignalSemaphoreKHR(
     const VkSemaphoreSignalInfo*                pSignalInfo) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreSignalSemaphoreKHR(device, pSignalInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreSignalSemaphoreKHR(device, pSignalInfo);
+
   PFN_vkSignalSemaphoreKHR pfn = layer_data->dispatch_table.SignalSemaphoreKHR;
   if (pfn != nullptr) {
     result = pfn(device, pSignalInfo);
   }
 
-  result = InterceptPostSignalSemaphoreKHR(device, pSignalInfo, result);
+  result = layer_data->interceptor->PostSignalSemaphoreKHR(device, pSignalInfo, result);
   return result;
 }
 
@@ -2177,59 +2177,59 @@ void InterceptCmdSetFragmentShadingRateKHR(
     VkCommandBuffer                             commandBuffer,
     const VkExtent2D*                           pFragmentSize,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) {
-  InterceptPreCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
+
   PFN_vkCmdSetFragmentShadingRateKHR pfn = layer_data->dispatch_table.CmdSetFragmentShadingRateKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pFragmentSize, combinerOps);
   }
 
-  InterceptPostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
+  layer_data->interceptor->PostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 
 void InterceptCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
-  InterceptPreCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
+
   PFN_vkCmdEncodeVideoKHR pfn = layer_data->dispatch_table.CmdEncodeVideoKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pEncodeInfo);
   }
 
-  InterceptPostCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
+  layer_data->interceptor->PostCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
 
 void InterceptCmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     const VkDependencyInfo*                     pDependencyInfo) {
-  InterceptPreCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
+
   PFN_vkCmdSetEvent2KHR pfn = layer_data->dispatch_table.CmdSetEvent2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, event, pDependencyInfo);
   }
 
-  InterceptPostCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
+  layer_data->interceptor->PostCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
 }
 
 void InterceptCmdResetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
     VkEvent                                     event,
     VkPipelineStageFlags2                       stageMask) {
-  InterceptPreCmdResetEvent2KHR(commandBuffer, event, stageMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdResetEvent2KHR(commandBuffer, event, stageMask);
+
   PFN_vkCmdResetEvent2KHR pfn = layer_data->dispatch_table.CmdResetEvent2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, event, stageMask);
   }
 
-  InterceptPostCmdResetEvent2KHR(commandBuffer, event, stageMask);
+  layer_data->interceptor->PostCmdResetEvent2KHR(commandBuffer, event, stageMask);
 }
 
 void InterceptCmdWaitEvents2KHR(
@@ -2237,29 +2237,29 @@ void InterceptCmdWaitEvents2KHR(
     uint32_t                                    eventCount,
     const VkEvent*                              pEvents,
     const VkDependencyInfo*                     pDependencyInfos) {
-  InterceptPreCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
+
   PFN_vkCmdWaitEvents2KHR pfn = layer_data->dispatch_table.CmdWaitEvents2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, eventCount, pEvents, pDependencyInfos);
   }
 
-  InterceptPostCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
+  layer_data->interceptor->PostCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
 void InterceptCmdPipelineBarrier2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkDependencyInfo*                     pDependencyInfo) {
-  InterceptPreCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
+
   PFN_vkCmdPipelineBarrier2KHR pfn = layer_data->dispatch_table.CmdPipelineBarrier2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pDependencyInfo);
   }
 
-  InterceptPostCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
+  layer_data->interceptor->PostCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
 }
 
 void InterceptCmdWriteTimestamp2KHR(
@@ -2267,15 +2267,15 @@ void InterceptCmdWriteTimestamp2KHR(
     VkPipelineStageFlags2                       stage,
     VkQueryPool                                 queryPool,
     uint32_t                                    query) {
-  InterceptPreCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
+
   PFN_vkCmdWriteTimestamp2KHR pfn = layer_data->dispatch_table.CmdWriteTimestamp2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, stage, queryPool, query);
   }
 
-  InterceptPostCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
+  layer_data->interceptor->PostCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
 
 VkResult InterceptQueueSubmit2KHR(
@@ -2285,15 +2285,15 @@ VkResult InterceptQueueSubmit2KHR(
     VkFence                                     fence) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreQueueSubmit2KHR(queue, submitCount, pSubmits, fence);
-
   auto layer_data = GetDeviceLayerData(DataKey(queue));
+  layer_data->interceptor->PreQueueSubmit2KHR(queue, submitCount, pSubmits, fence);
+
   PFN_vkQueueSubmit2KHR pfn = layer_data->dispatch_table.QueueSubmit2KHR;
   if (pfn != nullptr) {
     result = pfn(queue, submitCount, pSubmits, fence);
   }
 
-  result = InterceptPostQueueSubmit2KHR(queue, submitCount, pSubmits, fence, result);
+  result = layer_data->interceptor->PostQueueSubmit2KHR(queue, submitCount, pSubmits, fence, result);
   return result;
 }
 
@@ -2303,113 +2303,113 @@ void InterceptCmdWriteBufferMarker2AMD(
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker) {
-  InterceptPreCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
+
   PFN_vkCmdWriteBufferMarker2AMD pfn = layer_data->dispatch_table.CmdWriteBufferMarker2AMD;
   if (pfn != nullptr) {
     pfn(commandBuffer, stage, dstBuffer, dstOffset, marker);
   }
 
-  InterceptPostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
+  layer_data->interceptor->PostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
 
 void InterceptCmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferInfo2*                    pCopyBufferInfo) {
-  InterceptPreCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
+
   PFN_vkCmdCopyBuffer2KHR pfn = layer_data->dispatch_table.CmdCopyBuffer2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCopyBufferInfo);
   }
 
-  InterceptPostCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
+  layer_data->interceptor->PostCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
 }
 
 void InterceptCmdCopyImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageInfo2*                     pCopyImageInfo) {
-  InterceptPreCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
+
   PFN_vkCmdCopyImage2KHR pfn = layer_data->dispatch_table.CmdCopyImage2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCopyImageInfo);
   }
 
-  InterceptPostCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
+  layer_data->interceptor->PostCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
 }
 
 void InterceptCmdCopyBufferToImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferToImageInfo2*             pCopyBufferToImageInfo) {
-  InterceptPreCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
+
   PFN_vkCmdCopyBufferToImage2KHR pfn = layer_data->dispatch_table.CmdCopyBufferToImage2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCopyBufferToImageInfo);
   }
 
-  InterceptPostCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
+  layer_data->interceptor->PostCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
 }
 
 void InterceptCmdCopyImageToBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyImageToBufferInfo2*             pCopyImageToBufferInfo) {
-  InterceptPreCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
+
   PFN_vkCmdCopyImageToBuffer2KHR pfn = layer_data->dispatch_table.CmdCopyImageToBuffer2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCopyImageToBufferInfo);
   }
 
-  InterceptPostCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
+  layer_data->interceptor->PostCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
 }
 
 void InterceptCmdBlitImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkBlitImageInfo2*                     pBlitImageInfo) {
-  InterceptPreCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
+
   PFN_vkCmdBlitImage2KHR pfn = layer_data->dispatch_table.CmdBlitImage2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pBlitImageInfo);
   }
 
-  InterceptPostCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
+  layer_data->interceptor->PostCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
 }
 
 void InterceptCmdResolveImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkResolveImageInfo2*                  pResolveImageInfo) {
-  InterceptPreCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
+
   PFN_vkCmdResolveImage2KHR pfn = layer_data->dispatch_table.CmdResolveImage2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pResolveImageInfo);
   }
 
-  InterceptPostCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
+  layer_data->interceptor->PostCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
 }
 
 void InterceptCmdTraceRaysIndirect2KHR(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             indirectDeviceAddress) {
-  InterceptPreCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
+
   PFN_vkCmdTraceRaysIndirect2KHR pfn = layer_data->dispatch_table.CmdTraceRaysIndirect2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, indirectDeviceAddress);
   }
 
-  InterceptPostCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
+  layer_data->interceptor->PostCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
 
 void InterceptCmdBindIndexBuffer2KHR(
@@ -2418,99 +2418,99 @@ void InterceptCmdBindIndexBuffer2KHR(
     VkDeviceSize                                offset,
     VkDeviceSize                                size,
     VkIndexType                                 indexType) {
-  InterceptPreCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+
   PFN_vkCmdBindIndexBuffer2KHR pfn = layer_data->dispatch_table.CmdBindIndexBuffer2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, size, indexType);
   }
 
-  InterceptPostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+  layer_data->interceptor->PostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
 }
 
 void InterceptCmdBindDescriptorSets2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo) {
-  InterceptPreCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+
   PFN_vkCmdBindDescriptorSets2KHR pfn = layer_data->dispatch_table.CmdBindDescriptorSets2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pBindDescriptorSetsInfo);
   }
 
-  InterceptPostCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+  layer_data->interceptor->PostCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
 }
 
 void InterceptCmdPushConstants2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkPushConstantsInfoKHR*               pPushConstantsInfo) {
-  InterceptPreCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+
   PFN_vkCmdPushConstants2KHR pfn = layer_data->dispatch_table.CmdPushConstants2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pPushConstantsInfo);
   }
 
-  InterceptPostCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+  layer_data->interceptor->PostCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
 }
 
 void InterceptCmdPushDescriptorSet2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo) {
-  InterceptPreCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+
   PFN_vkCmdPushDescriptorSet2KHR pfn = layer_data->dispatch_table.CmdPushDescriptorSet2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pPushDescriptorSetInfo);
   }
 
-  InterceptPostCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+  layer_data->interceptor->PostCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
 }
 
 void InterceptCmdPushDescriptorSetWithTemplate2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
-  InterceptPreCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+
   PFN_vkCmdPushDescriptorSetWithTemplate2KHR pfn = layer_data->dispatch_table.CmdPushDescriptorSetWithTemplate2KHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pPushDescriptorSetWithTemplateInfo);
   }
 
-  InterceptPostCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+  layer_data->interceptor->PostCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 }
 
 void InterceptCmdSetDescriptorBufferOffsets2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo) {
-  InterceptPreCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+
   PFN_vkCmdSetDescriptorBufferOffsets2EXT pfn = layer_data->dispatch_table.CmdSetDescriptorBufferOffsets2EXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pSetDescriptorBufferOffsetsInfo);
   }
 
-  InterceptPostCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+  layer_data->interceptor->PostCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
 }
 
 void InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
-  InterceptPreCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+
   PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT pfn = layer_data->dispatch_table.CmdBindDescriptorBufferEmbeddedSamplers2EXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
   }
 
-  InterceptPostCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+  layer_data->interceptor->PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 
 VkResult InterceptDebugMarkerSetObjectNameEXT(
@@ -2518,57 +2518,57 @@ VkResult InterceptDebugMarkerSetObjectNameEXT(
     const VkDebugMarkerObjectNameInfoEXT*       pNameInfo) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreDebugMarkerSetObjectNameEXT(device, pNameInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreDebugMarkerSetObjectNameEXT(device, pNameInfo);
+
   PFN_vkDebugMarkerSetObjectNameEXT pfn = layer_data->dispatch_table.DebugMarkerSetObjectNameEXT;
   if (pfn != nullptr) {
     result = pfn(device, pNameInfo);
   }
 
-  result = InterceptPostDebugMarkerSetObjectNameEXT(device, pNameInfo, result);
+  result = layer_data->interceptor->PostDebugMarkerSetObjectNameEXT(device, pNameInfo, result);
   return result;
 }
 
 void InterceptCmdDebugMarkerBeginEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
-  InterceptPreCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
+
   PFN_vkCmdDebugMarkerBeginEXT pfn = layer_data->dispatch_table.CmdDebugMarkerBeginEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pMarkerInfo);
   }
 
-  InterceptPostCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
+  layer_data->interceptor->PostCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 }
 
 void InterceptCmdDebugMarkerEndEXT(
     VkCommandBuffer                             commandBuffer) {
-  InterceptPreCmdDebugMarkerEndEXT(commandBuffer);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDebugMarkerEndEXT(commandBuffer);
+
   PFN_vkCmdDebugMarkerEndEXT pfn = layer_data->dispatch_table.CmdDebugMarkerEndEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer);
   }
 
-  InterceptPostCmdDebugMarkerEndEXT(commandBuffer);
+  layer_data->interceptor->PostCmdDebugMarkerEndEXT(commandBuffer);
 }
 
 void InterceptCmdDebugMarkerInsertEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugMarkerMarkerInfoEXT*           pMarkerInfo) {
-  InterceptPreCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
+
   PFN_vkCmdDebugMarkerInsertEXT pfn = layer_data->dispatch_table.CmdDebugMarkerInsertEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pMarkerInfo);
   }
 
-  InterceptPostCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
+  layer_data->interceptor->PostCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
 }
 
 void InterceptCmdBindTransformFeedbackBuffersEXT(
@@ -2578,15 +2578,15 @@ void InterceptCmdBindTransformFeedbackBuffersEXT(
     const VkBuffer*                             pBuffers,
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes) {
-  InterceptPreCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
+
   PFN_vkCmdBindTransformFeedbackBuffersEXT pfn = layer_data->dispatch_table.CmdBindTransformFeedbackBuffersEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
   }
 
-  InterceptPostCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
+  layer_data->interceptor->PostCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
 }
 
 void InterceptCmdBeginTransformFeedbackEXT(
@@ -2595,15 +2595,15 @@ void InterceptCmdBeginTransformFeedbackEXT(
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
     const VkDeviceSize*                         pCounterBufferOffsets) {
-  InterceptPreCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
+
   PFN_vkCmdBeginTransformFeedbackEXT pfn = layer_data->dispatch_table.CmdBeginTransformFeedbackEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
   }
 
-  InterceptPostCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
+  layer_data->interceptor->PostCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 
 void InterceptCmdEndTransformFeedbackEXT(
@@ -2612,15 +2612,15 @@ void InterceptCmdEndTransformFeedbackEXT(
     uint32_t                                    counterBufferCount,
     const VkBuffer*                             pCounterBuffers,
     const VkDeviceSize*                         pCounterBufferOffsets) {
-  InterceptPreCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
+
   PFN_vkCmdEndTransformFeedbackEXT pfn = layer_data->dispatch_table.CmdEndTransformFeedbackEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
   }
 
-  InterceptPostCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
+  layer_data->interceptor->PostCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 
 void InterceptCmdBeginQueryIndexedEXT(
@@ -2629,15 +2629,15 @@ void InterceptCmdBeginQueryIndexedEXT(
     uint32_t                                    query,
     VkQueryControlFlags                         flags,
     uint32_t                                    index) {
-  InterceptPreCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
+
   PFN_vkCmdBeginQueryIndexedEXT pfn = layer_data->dispatch_table.CmdBeginQueryIndexedEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, queryPool, query, flags, index);
   }
 
-  InterceptPostCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
+  layer_data->interceptor->PostCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
 }
 
 void InterceptCmdEndQueryIndexedEXT(
@@ -2645,15 +2645,15 @@ void InterceptCmdEndQueryIndexedEXT(
     VkQueryPool                                 queryPool,
     uint32_t                                    query,
     uint32_t                                    index) {
-  InterceptPreCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
+
   PFN_vkCmdEndQueryIndexedEXT pfn = layer_data->dispatch_table.CmdEndQueryIndexedEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, queryPool, query, index);
   }
 
-  InterceptPostCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
+  layer_data->interceptor->PostCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
 }
 
 void InterceptCmdDrawIndirectByteCountEXT(
@@ -2664,29 +2664,29 @@ void InterceptCmdDrawIndirectByteCountEXT(
     VkDeviceSize                                counterBufferOffset,
     uint32_t                                    counterOffset,
     uint32_t                                    vertexStride) {
-  InterceptPreCmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
+
   PFN_vkCmdDrawIndirectByteCountEXT pfn = layer_data->dispatch_table.CmdDrawIndirectByteCountEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
   }
 
-  InterceptPostCmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
+  layer_data->interceptor->PostCmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
 }
 
 void InterceptCmdCuLaunchKernelNVX(
     VkCommandBuffer                             commandBuffer,
     const VkCuLaunchInfoNVX*                    pLaunchInfo) {
-  InterceptPreCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
+
   PFN_vkCmdCuLaunchKernelNVX pfn = layer_data->dispatch_table.CmdCuLaunchKernelNVX;
   if (pfn != nullptr) {
     pfn(commandBuffer, pLaunchInfo);
   }
 
-  InterceptPostCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
+  layer_data->interceptor->PostCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
 }
 
 void InterceptCmdDrawIndirectCountAMD(
@@ -2697,15 +2697,15 @@ void InterceptCmdDrawIndirectCountAMD(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+
   PFN_vkCmdDrawIndirectCountAMD pfn = layer_data->dispatch_table.CmdDrawIndirectCountAMD;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
   }
 
-  InterceptPostCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+  layer_data->interceptor->PostCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
 void InterceptCmdDrawIndexedIndirectCountAMD(
@@ -2716,42 +2716,42 @@ void InterceptCmdDrawIndexedIndirectCountAMD(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+
   PFN_vkCmdDrawIndexedIndirectCountAMD pfn = layer_data->dispatch_table.CmdDrawIndexedIndirectCountAMD;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
   }
 
-  InterceptPostCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+  layer_data->interceptor->PostCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
 void InterceptCmdBeginConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer,
     const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin) {
-  InterceptPreCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
+
   PFN_vkCmdBeginConditionalRenderingEXT pfn = layer_data->dispatch_table.CmdBeginConditionalRenderingEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pConditionalRenderingBegin);
   }
 
-  InterceptPostCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
+  layer_data->interceptor->PostCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
 }
 
 void InterceptCmdEndConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer) {
-  InterceptPreCmdEndConditionalRenderingEXT(commandBuffer);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndConditionalRenderingEXT(commandBuffer);
+
   PFN_vkCmdEndConditionalRenderingEXT pfn = layer_data->dispatch_table.CmdEndConditionalRenderingEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer);
   }
 
-  InterceptPostCmdEndConditionalRenderingEXT(commandBuffer);
+  layer_data->interceptor->PostCmdEndConditionalRenderingEXT(commandBuffer);
 }
 
 void InterceptCmdSetViewportWScalingNV(
@@ -2759,15 +2759,15 @@ void InterceptCmdSetViewportWScalingNV(
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewportWScalingNV*                 pViewportWScalings) {
-  InterceptPreCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
+
   PFN_vkCmdSetViewportWScalingNV pfn = layer_data->dispatch_table.CmdSetViewportWScalingNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
   }
 
-  InterceptPostCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
+  layer_data->interceptor->PostCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
 }
 
 void InterceptCmdSetDiscardRectangleEXT(
@@ -2775,43 +2775,43 @@ void InterceptCmdSetDiscardRectangleEXT(
     uint32_t                                    firstDiscardRectangle,
     uint32_t                                    discardRectangleCount,
     const VkRect2D*                             pDiscardRectangles) {
-  InterceptPreCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
+
   PFN_vkCmdSetDiscardRectangleEXT pfn = layer_data->dispatch_table.CmdSetDiscardRectangleEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
   }
 
-  InterceptPostCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
+  layer_data->interceptor->PostCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 }
 
 void InterceptCmdSetDiscardRectangleEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    discardRectangleEnable) {
-  InterceptPreCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
+
   PFN_vkCmdSetDiscardRectangleEnableEXT pfn = layer_data->dispatch_table.CmdSetDiscardRectangleEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, discardRectangleEnable);
   }
 
-  InterceptPostCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
+  layer_data->interceptor->PostCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
 }
 
 void InterceptCmdSetDiscardRectangleModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkDiscardRectangleModeEXT                   discardRectangleMode) {
-  InterceptPreCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
+
   PFN_vkCmdSetDiscardRectangleModeEXT pfn = layer_data->dispatch_table.CmdSetDiscardRectangleModeEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, discardRectangleMode);
   }
 
-  InterceptPostCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
+  layer_data->interceptor->PostCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 }
 
 VkResult InterceptSetDebugUtilsObjectNameEXT(
@@ -2819,72 +2819,72 @@ VkResult InterceptSetDebugUtilsObjectNameEXT(
     const VkDebugUtilsObjectNameInfoEXT*        pNameInfo) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreSetDebugUtilsObjectNameEXT(device, pNameInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(device));
+  layer_data->interceptor->PreSetDebugUtilsObjectNameEXT(device, pNameInfo);
+
   PFN_vkSetDebugUtilsObjectNameEXT pfn = layer_data->dispatch_table.SetDebugUtilsObjectNameEXT;
   if (pfn != nullptr) {
     result = pfn(device, pNameInfo);
   }
 
-  result = InterceptPostSetDebugUtilsObjectNameEXT(device, pNameInfo, result);
+  result = layer_data->interceptor->PostSetDebugUtilsObjectNameEXT(device, pNameInfo, result);
   return result;
 }
 
 void InterceptCmdBeginDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugUtilsLabelEXT*                 pLabelInfo) {
-  InterceptPreCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
+
   PFN_vkCmdBeginDebugUtilsLabelEXT pfn = layer_data->dispatch_table.CmdBeginDebugUtilsLabelEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pLabelInfo);
   }
 
-  InterceptPostCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
+  layer_data->interceptor->PostCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 
 void InterceptCmdEndDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer) {
-  InterceptPreCmdEndDebugUtilsLabelEXT(commandBuffer);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdEndDebugUtilsLabelEXT(commandBuffer);
+
   PFN_vkCmdEndDebugUtilsLabelEXT pfn = layer_data->dispatch_table.CmdEndDebugUtilsLabelEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer);
   }
 
-  InterceptPostCmdEndDebugUtilsLabelEXT(commandBuffer);
+  layer_data->interceptor->PostCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
 void InterceptCmdInsertDebugUtilsLabelEXT(
     VkCommandBuffer                             commandBuffer,
     const VkDebugUtilsLabelEXT*                 pLabelInfo) {
-  InterceptPreCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
+
   PFN_vkCmdInsertDebugUtilsLabelEXT pfn = layer_data->dispatch_table.CmdInsertDebugUtilsLabelEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pLabelInfo);
   }
 
-  InterceptPostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
+  layer_data->interceptor->PostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void InterceptCmdInitializeGraphScratchMemoryAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch) {
-  InterceptPreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+
   PFN_vkCmdInitializeGraphScratchMemoryAMDX pfn = layer_data->dispatch_table.CmdInitializeGraphScratchMemoryAMDX;
   if (pfn != nullptr) {
     pfn(commandBuffer, scratch);
   }
 
-  InterceptPostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+  layer_data->interceptor->PostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
 }
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
@@ -2893,15 +2893,15 @@ void InterceptCmdDispatchGraphAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
     const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
-  InterceptPreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+
   PFN_vkCmdDispatchGraphAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphAMDX;
   if (pfn != nullptr) {
     pfn(commandBuffer, scratch, pCountInfo);
   }
 
-  InterceptPostCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+  layer_data->interceptor->PostCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
 }
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
@@ -2910,15 +2910,15 @@ void InterceptCmdDispatchGraphIndirectAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
     const VkDispatchGraphCountInfoAMDX*         pCountInfo) {
-  InterceptPreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+
   PFN_vkCmdDispatchGraphIndirectAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphIndirectAMDX;
   if (pfn != nullptr) {
     pfn(commandBuffer, scratch, pCountInfo);
   }
 
-  InterceptPostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+  layer_data->interceptor->PostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
 }
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
@@ -2927,45 +2927,45 @@ void InterceptCmdDispatchGraphIndirectCountAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
     VkDeviceAddress                             countInfo) {
-  InterceptPreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+
   PFN_vkCmdDispatchGraphIndirectCountAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphIndirectCountAMDX;
   if (pfn != nullptr) {
     pfn(commandBuffer, scratch, countInfo);
   }
 
-  InterceptPostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+  layer_data->interceptor->PostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
 }
 #endif //VK_ENABLE_BETA_EXTENSIONS
 
 void InterceptCmdSetSampleLocationsEXT(
     VkCommandBuffer                             commandBuffer,
     const VkSampleLocationsInfoEXT*             pSampleLocationsInfo) {
-  InterceptPreCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
+
   PFN_vkCmdSetSampleLocationsEXT pfn = layer_data->dispatch_table.CmdSetSampleLocationsEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pSampleLocationsInfo);
   }
 
-  InterceptPostCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
+  layer_data->interceptor->PostCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
 }
 
 void InterceptCmdBindShadingRateImageNV(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
     VkImageLayout                               imageLayout) {
-  InterceptPreCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
+
   PFN_vkCmdBindShadingRateImageNV pfn = layer_data->dispatch_table.CmdBindShadingRateImageNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, imageView, imageLayout);
   }
 
-  InterceptPostCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
+  layer_data->interceptor->PostCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
 }
 
 void InterceptCmdSetViewportShadingRatePaletteNV(
@@ -2973,15 +2973,15 @@ void InterceptCmdSetViewportShadingRatePaletteNV(
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkShadingRatePaletteNV*               pShadingRatePalettes) {
-  InterceptPreCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
+
   PFN_vkCmdSetViewportShadingRatePaletteNV pfn = layer_data->dispatch_table.CmdSetViewportShadingRatePaletteNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
   }
 
-  InterceptPostCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
+  layer_data->interceptor->PostCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
 }
 
 void InterceptCmdSetCoarseSampleOrderNV(
@@ -2989,15 +2989,15 @@ void InterceptCmdSetCoarseSampleOrderNV(
     VkCoarseSampleOrderTypeNV                   sampleOrderType,
     uint32_t                                    customSampleOrderCount,
     const VkCoarseSampleOrderCustomNV*          pCustomSampleOrders) {
-  InterceptPreCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
+
   PFN_vkCmdSetCoarseSampleOrderNV pfn = layer_data->dispatch_table.CmdSetCoarseSampleOrderNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
   }
 
-  InterceptPostCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
+  layer_data->interceptor->PostCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
 }
 
 void InterceptCmdBuildAccelerationStructureNV(
@@ -3010,15 +3010,15 @@ void InterceptCmdBuildAccelerationStructureNV(
     VkAccelerationStructureNV                   src,
     VkBuffer                                    scratch,
     VkDeviceSize                                scratchOffset) {
-  InterceptPreCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
+
   PFN_vkCmdBuildAccelerationStructureNV pfn = layer_data->dispatch_table.CmdBuildAccelerationStructureNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
   }
 
-  InterceptPostCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
+  layer_data->interceptor->PostCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
 }
 
 void InterceptCmdCopyAccelerationStructureNV(
@@ -3026,15 +3026,15 @@ void InterceptCmdCopyAccelerationStructureNV(
     VkAccelerationStructureNV                   dst,
     VkAccelerationStructureNV                   src,
     VkCopyAccelerationStructureModeKHR          mode) {
-  InterceptPreCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
+
   PFN_vkCmdCopyAccelerationStructureNV pfn = layer_data->dispatch_table.CmdCopyAccelerationStructureNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, dst, src, mode);
   }
 
-  InterceptPostCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
+  layer_data->interceptor->PostCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
 }
 
 void InterceptCmdTraceRaysNV(
@@ -3053,15 +3053,15 @@ void InterceptCmdTraceRaysNV(
     uint32_t                                    width,
     uint32_t                                    height,
     uint32_t                                    depth) {
-  InterceptPreCmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
+
   PFN_vkCmdTraceRaysNV pfn = layer_data->dispatch_table.CmdTraceRaysNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
   }
 
-  InterceptPostCmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
+  layer_data->interceptor->PostCmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
 }
 
 void InterceptCmdWriteAccelerationStructuresPropertiesNV(
@@ -3071,15 +3071,15 @@ void InterceptCmdWriteAccelerationStructuresPropertiesNV(
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  InterceptPreCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
+
   PFN_vkCmdWriteAccelerationStructuresPropertiesNV pfn = layer_data->dispatch_table.CmdWriteAccelerationStructuresPropertiesNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
   }
 
-  InterceptPostCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
+  layer_data->interceptor->PostCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 
 void InterceptCmdWriteBufferMarkerAMD(
@@ -3088,30 +3088,30 @@ void InterceptCmdWriteBufferMarkerAMD(
     VkBuffer                                    dstBuffer,
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker) {
-  InterceptPreCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
+
   PFN_vkCmdWriteBufferMarkerAMD pfn = layer_data->dispatch_table.CmdWriteBufferMarkerAMD;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
   }
 
-  InterceptPostCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
+  layer_data->interceptor->PostCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 }
 
 void InterceptCmdDrawMeshTasksNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    taskCount,
     uint32_t                                    firstTask) {
-  InterceptPreCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
+
   PFN_vkCmdDrawMeshTasksNV pfn = layer_data->dispatch_table.CmdDrawMeshTasksNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, taskCount, firstTask);
   }
 
-  InterceptPostCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
+  layer_data->interceptor->PostCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
 }
 
 void InterceptCmdDrawMeshTasksIndirectNV(
@@ -3120,15 +3120,15 @@ void InterceptCmdDrawMeshTasksIndirectNV(
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
+
   PFN_vkCmdDrawMeshTasksIndirectNV pfn = layer_data->dispatch_table.CmdDrawMeshTasksIndirectNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, drawCount, stride);
   }
 
-  InterceptPostCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
+  layer_data->interceptor->PostCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 }
 
 void InterceptCmdDrawMeshTasksIndirectCountNV(
@@ -3139,15 +3139,15 @@ void InterceptCmdDrawMeshTasksIndirectCountNV(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+
   PFN_vkCmdDrawMeshTasksIndirectCountNV pfn = layer_data->dispatch_table.CmdDrawMeshTasksIndirectCountNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
   }
 
-  InterceptPostCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+  layer_data->interceptor->PostCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
 void InterceptCmdSetExclusiveScissorEnableNV(
@@ -3155,15 +3155,15 @@ void InterceptCmdSetExclusiveScissorEnableNV(
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
     const VkBool32*                             pExclusiveScissorEnables) {
-  InterceptPreCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
+
   PFN_vkCmdSetExclusiveScissorEnableNV pfn = layer_data->dispatch_table.CmdSetExclusiveScissorEnableNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
   }
 
-  InterceptPostCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
+  layer_data->interceptor->PostCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
 }
 
 void InterceptCmdSetExclusiveScissorNV(
@@ -3171,29 +3171,29 @@ void InterceptCmdSetExclusiveScissorNV(
     uint32_t                                    firstExclusiveScissor,
     uint32_t                                    exclusiveScissorCount,
     const VkRect2D*                             pExclusiveScissors) {
-  InterceptPreCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
+
   PFN_vkCmdSetExclusiveScissorNV pfn = layer_data->dispatch_table.CmdSetExclusiveScissorNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
   }
 
-  InterceptPostCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
+  layer_data->interceptor->PostCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
 }
 
 void InterceptCmdSetCheckpointNV(
     VkCommandBuffer                             commandBuffer,
     const void*                                 pCheckpointMarker) {
-  InterceptPreCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
+
   PFN_vkCmdSetCheckpointNV pfn = layer_data->dispatch_table.CmdSetCheckpointNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, pCheckpointMarker);
   }
 
-  InterceptPostCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
+  layer_data->interceptor->PostCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 }
 
 VkResult InterceptCmdSetPerformanceMarkerINTEL(
@@ -3201,15 +3201,15 @@ VkResult InterceptCmdSetPerformanceMarkerINTEL(
     const VkPerformanceMarkerInfoINTEL*         pMarkerInfo) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreCmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo);
+
   PFN_vkCmdSetPerformanceMarkerINTEL pfn = layer_data->dispatch_table.CmdSetPerformanceMarkerINTEL;
   if (pfn != nullptr) {
     result = pfn(commandBuffer, pMarkerInfo);
   }
 
-  result = InterceptPostCmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo, result);
+  result = layer_data->interceptor->PostCmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo, result);
   return result;
 }
 
@@ -3218,15 +3218,15 @@ VkResult InterceptCmdSetPerformanceStreamMarkerINTEL(
     const VkPerformanceStreamMarkerInfoINTEL*   pMarkerInfo) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreCmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo);
+
   PFN_vkCmdSetPerformanceStreamMarkerINTEL pfn = layer_data->dispatch_table.CmdSetPerformanceStreamMarkerINTEL;
   if (pfn != nullptr) {
     result = pfn(commandBuffer, pMarkerInfo);
   }
 
-  result = InterceptPostCmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo, result);
+  result = layer_data->interceptor->PostCmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo, result);
   return result;
 }
 
@@ -3235,15 +3235,15 @@ VkResult InterceptCmdSetPerformanceOverrideINTEL(
     const VkPerformanceOverrideInfoINTEL*       pOverrideInfo) {
   VkResult result = VK_SUCCESS;
 
-  InterceptPreCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo);
+
   PFN_vkCmdSetPerformanceOverrideINTEL pfn = layer_data->dispatch_table.CmdSetPerformanceOverrideINTEL;
   if (pfn != nullptr) {
     result = pfn(commandBuffer, pOverrideInfo);
   }
 
-  result = InterceptPostCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo, result);
+  result = layer_data->interceptor->PostCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo, result);
   return result;
 }
 
@@ -3251,87 +3251,87 @@ void InterceptCmdSetLineStippleEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    lineStippleFactor,
     uint16_t                                    lineStipplePattern) {
-  InterceptPreCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
+
   PFN_vkCmdSetLineStippleEXT pfn = layer_data->dispatch_table.CmdSetLineStippleEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, lineStippleFactor, lineStipplePattern);
   }
 
-  InterceptPostCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
+  layer_data->interceptor->PostCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 
 void InterceptCmdSetCullModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkCullModeFlags                             cullMode) {
-  InterceptPreCmdSetCullModeEXT(commandBuffer, cullMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCullModeEXT(commandBuffer, cullMode);
+
   PFN_vkCmdSetCullModeEXT pfn = layer_data->dispatch_table.CmdSetCullModeEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, cullMode);
   }
 
-  InterceptPostCmdSetCullModeEXT(commandBuffer, cullMode);
+  layer_data->interceptor->PostCmdSetCullModeEXT(commandBuffer, cullMode);
 }
 
 void InterceptCmdSetFrontFaceEXT(
     VkCommandBuffer                             commandBuffer,
     VkFrontFace                                 frontFace) {
-  InterceptPreCmdSetFrontFaceEXT(commandBuffer, frontFace);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetFrontFaceEXT(commandBuffer, frontFace);
+
   PFN_vkCmdSetFrontFaceEXT pfn = layer_data->dispatch_table.CmdSetFrontFaceEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, frontFace);
   }
 
-  InterceptPostCmdSetFrontFaceEXT(commandBuffer, frontFace);
+  layer_data->interceptor->PostCmdSetFrontFaceEXT(commandBuffer, frontFace);
 }
 
 void InterceptCmdSetPrimitiveTopologyEXT(
     VkCommandBuffer                             commandBuffer,
     VkPrimitiveTopology                         primitiveTopology) {
-  InterceptPreCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
+
   PFN_vkCmdSetPrimitiveTopologyEXT pfn = layer_data->dispatch_table.CmdSetPrimitiveTopologyEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, primitiveTopology);
   }
 
-  InterceptPostCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
+  layer_data->interceptor->PostCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
 }
 
 void InterceptCmdSetViewportWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    viewportCount,
     const VkViewport*                           pViewports) {
-  InterceptPreCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
+
   PFN_vkCmdSetViewportWithCountEXT pfn = layer_data->dispatch_table.CmdSetViewportWithCountEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, viewportCount, pViewports);
   }
 
-  InterceptPostCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
+  layer_data->interceptor->PostCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
 }
 
 void InterceptCmdSetScissorWithCountEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    scissorCount,
     const VkRect2D*                             pScissors) {
-  InterceptPreCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
+
   PFN_vkCmdSetScissorWithCountEXT pfn = layer_data->dispatch_table.CmdSetScissorWithCountEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, scissorCount, pScissors);
   }
 
-  InterceptPostCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
+  layer_data->interceptor->PostCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
 }
 
 void InterceptCmdBindVertexBuffers2EXT(
@@ -3342,85 +3342,85 @@ void InterceptCmdBindVertexBuffers2EXT(
     const VkDeviceSize*                         pOffsets,
     const VkDeviceSize*                         pSizes,
     const VkDeviceSize*                         pStrides) {
-  InterceptPreCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
+
   PFN_vkCmdBindVertexBuffers2EXT pfn = layer_data->dispatch_table.CmdBindVertexBuffers2EXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
   }
 
-  InterceptPostCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
+  layer_data->interceptor->PostCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
 
 void InterceptCmdSetDepthTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthTestEnable) {
-  InterceptPreCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
+
   PFN_vkCmdSetDepthTestEnableEXT pfn = layer_data->dispatch_table.CmdSetDepthTestEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthTestEnable);
   }
 
-  InterceptPostCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
+  layer_data->interceptor->PostCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
 }
 
 void InterceptCmdSetDepthWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthWriteEnable) {
-  InterceptPreCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
+
   PFN_vkCmdSetDepthWriteEnableEXT pfn = layer_data->dispatch_table.CmdSetDepthWriteEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthWriteEnable);
   }
 
-  InterceptPostCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
+  layer_data->interceptor->PostCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
 }
 
 void InterceptCmdSetDepthCompareOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkCompareOp                                 depthCompareOp) {
-  InterceptPreCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
+
   PFN_vkCmdSetDepthCompareOpEXT pfn = layer_data->dispatch_table.CmdSetDepthCompareOpEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthCompareOp);
   }
 
-  InterceptPostCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
+  layer_data->interceptor->PostCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
 }
 
 void InterceptCmdSetDepthBoundsTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBoundsTestEnable) {
-  InterceptPreCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
+
   PFN_vkCmdSetDepthBoundsTestEnableEXT pfn = layer_data->dispatch_table.CmdSetDepthBoundsTestEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthBoundsTestEnable);
   }
 
-  InterceptPostCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
+  layer_data->interceptor->PostCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
 }
 
 void InterceptCmdSetStencilTestEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stencilTestEnable) {
-  InterceptPreCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
+
   PFN_vkCmdSetStencilTestEnableEXT pfn = layer_data->dispatch_table.CmdSetStencilTestEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, stencilTestEnable);
   }
 
-  InterceptPostCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
+  layer_data->interceptor->PostCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
 }
 
 void InterceptCmdSetStencilOpEXT(
@@ -3430,44 +3430,44 @@ void InterceptCmdSetStencilOpEXT(
     VkStencilOp                                 passOp,
     VkStencilOp                                 depthFailOp,
     VkCompareOp                                 compareOp) {
-  InterceptPreCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
+
   PFN_vkCmdSetStencilOpEXT pfn = layer_data->dispatch_table.CmdSetStencilOpEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
   }
 
-  InterceptPostCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
+  layer_data->interceptor->PostCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 
 void InterceptCmdPreprocessGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
     const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) {
-  InterceptPreCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
+
   PFN_vkCmdPreprocessGeneratedCommandsNV pfn = layer_data->dispatch_table.CmdPreprocessGeneratedCommandsNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, pGeneratedCommandsInfo);
   }
 
-  InterceptPostCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
+  layer_data->interceptor->PostCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
 }
 
 void InterceptCmdExecuteGeneratedCommandsNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    isPreprocessed,
     const VkGeneratedCommandsInfoNV*            pGeneratedCommandsInfo) {
-  InterceptPreCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
+
   PFN_vkCmdExecuteGeneratedCommandsNV pfn = layer_data->dispatch_table.CmdExecuteGeneratedCommandsNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
   }
 
-  InterceptPostCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
+  layer_data->interceptor->PostCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 
 void InterceptCmdBindPipelineShaderGroupNV(
@@ -3475,58 +3475,58 @@ void InterceptCmdBindPipelineShaderGroupNV(
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline,
     uint32_t                                    groupIndex) {
-  InterceptPreCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
+
   PFN_vkCmdBindPipelineShaderGroupNV pfn = layer_data->dispatch_table.CmdBindPipelineShaderGroupNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
   }
 
-  InterceptPostCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
+  layer_data->interceptor->PostCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 }
 
 void InterceptCmdSetDepthBias2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkDepthBiasInfoEXT*                   pDepthBiasInfo) {
-  InterceptPreCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
+
   PFN_vkCmdSetDepthBias2EXT pfn = layer_data->dispatch_table.CmdSetDepthBias2EXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pDepthBiasInfo);
   }
 
-  InterceptPostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
+  layer_data->interceptor->PostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
 
 void InterceptCmdCudaLaunchKernelNV(
     VkCommandBuffer                             commandBuffer,
     const VkCudaLaunchInfoNV*                   pLaunchInfo) {
-  InterceptPreCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
+
   PFN_vkCmdCudaLaunchKernelNV pfn = layer_data->dispatch_table.CmdCudaLaunchKernelNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, pLaunchInfo);
   }
 
-  InterceptPostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
+  layer_data->interceptor->PostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
 
 void InterceptCmdBindDescriptorBuffersEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    bufferCount,
     const VkDescriptorBufferBindingInfoEXT*     pBindingInfos) {
-  InterceptPreCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
+
   PFN_vkCmdBindDescriptorBuffersEXT pfn = layer_data->dispatch_table.CmdBindDescriptorBuffersEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, bufferCount, pBindingInfos);
   }
 
-  InterceptPostCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
+  layer_data->interceptor->PostCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
 }
 
 void InterceptCmdSetDescriptorBufferOffsetsEXT(
@@ -3537,15 +3537,15 @@ void InterceptCmdSetDescriptorBufferOffsetsEXT(
     uint32_t                                    setCount,
     const uint32_t*                             pBufferIndices,
     const VkDeviceSize*                         pOffsets) {
-  InterceptPreCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
+
   PFN_vkCmdSetDescriptorBufferOffsetsEXT pfn = layer_data->dispatch_table.CmdSetDescriptorBufferOffsetsEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
   }
 
-  InterceptPostCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
+  layer_data->interceptor->PostCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
 }
 
 void InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT(
@@ -3553,30 +3553,30 @@ void InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT(
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipelineLayout                            layout,
     uint32_t                                    set) {
-  InterceptPreCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
+
   PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT pfn = layer_data->dispatch_table.CmdBindDescriptorBufferEmbeddedSamplersEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineBindPoint, layout, set);
   }
 
-  InterceptPostCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
+  layer_data->interceptor->PostCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
 }
 
 void InterceptCmdSetFragmentShadingRateEnumNV(
     VkCommandBuffer                             commandBuffer,
     VkFragmentShadingRateNV                     shadingRate,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) {
-  InterceptPreCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
+
   PFN_vkCmdSetFragmentShadingRateEnumNV pfn = layer_data->dispatch_table.CmdSetFragmentShadingRateEnumNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, shadingRate, combinerOps);
   }
 
-  InterceptPostCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
+  layer_data->interceptor->PostCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
 }
 
 void InterceptCmdSetVertexInputEXT(
@@ -3585,128 +3585,128 @@ void InterceptCmdSetVertexInputEXT(
     const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
     uint32_t                                    vertexAttributeDescriptionCount,
     const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) {
-  InterceptPreCmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
+
   PFN_vkCmdSetVertexInputEXT pfn = layer_data->dispatch_table.CmdSetVertexInputEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
   }
 
-  InterceptPostCmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
+  layer_data->interceptor->PostCmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
 }
 
 void InterceptCmdSubpassShadingHUAWEI(
     VkCommandBuffer                             commandBuffer) {
-  InterceptPreCmdSubpassShadingHUAWEI(commandBuffer);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSubpassShadingHUAWEI(commandBuffer);
+
   PFN_vkCmdSubpassShadingHUAWEI pfn = layer_data->dispatch_table.CmdSubpassShadingHUAWEI;
   if (pfn != nullptr) {
     pfn(commandBuffer);
   }
 
-  InterceptPostCmdSubpassShadingHUAWEI(commandBuffer);
+  layer_data->interceptor->PostCmdSubpassShadingHUAWEI(commandBuffer);
 }
 
 void InterceptCmdBindInvocationMaskHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
     VkImageLayout                               imageLayout) {
-  InterceptPreCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
+
   PFN_vkCmdBindInvocationMaskHUAWEI pfn = layer_data->dispatch_table.CmdBindInvocationMaskHUAWEI;
   if (pfn != nullptr) {
     pfn(commandBuffer, imageView, imageLayout);
   }
 
-  InterceptPostCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
+  layer_data->interceptor->PostCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
 }
 
 void InterceptCmdSetPatchControlPointsEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    patchControlPoints) {
-  InterceptPreCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
+
   PFN_vkCmdSetPatchControlPointsEXT pfn = layer_data->dispatch_table.CmdSetPatchControlPointsEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, patchControlPoints);
   }
 
-  InterceptPostCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
+  layer_data->interceptor->PostCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
 }
 
 void InterceptCmdSetRasterizerDiscardEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    rasterizerDiscardEnable) {
-  InterceptPreCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
+
   PFN_vkCmdSetRasterizerDiscardEnableEXT pfn = layer_data->dispatch_table.CmdSetRasterizerDiscardEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, rasterizerDiscardEnable);
   }
 
-  InterceptPostCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
+  layer_data->interceptor->PostCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
 }
 
 void InterceptCmdSetDepthBiasEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthBiasEnable) {
-  InterceptPreCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
+
   PFN_vkCmdSetDepthBiasEnableEXT pfn = layer_data->dispatch_table.CmdSetDepthBiasEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthBiasEnable);
   }
 
-  InterceptPostCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
+  layer_data->interceptor->PostCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
 }
 
 void InterceptCmdSetLogicOpEXT(
     VkCommandBuffer                             commandBuffer,
     VkLogicOp                                   logicOp) {
-  InterceptPreCmdSetLogicOpEXT(commandBuffer, logicOp);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetLogicOpEXT(commandBuffer, logicOp);
+
   PFN_vkCmdSetLogicOpEXT pfn = layer_data->dispatch_table.CmdSetLogicOpEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, logicOp);
   }
 
-  InterceptPostCmdSetLogicOpEXT(commandBuffer, logicOp);
+  layer_data->interceptor->PostCmdSetLogicOpEXT(commandBuffer, logicOp);
 }
 
 void InterceptCmdSetPrimitiveRestartEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    primitiveRestartEnable) {
-  InterceptPreCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
+
   PFN_vkCmdSetPrimitiveRestartEnableEXT pfn = layer_data->dispatch_table.CmdSetPrimitiveRestartEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, primitiveRestartEnable);
   }
 
-  InterceptPostCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
+  layer_data->interceptor->PostCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
 }
 
 void                                    InterceptCmdSetColorWriteEnableEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorWriteEnables) {
-  InterceptPreCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
+
   PFN_vkCmdSetColorWriteEnableEXT pfn = layer_data->dispatch_table.CmdSetColorWriteEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, attachmentCount, pColorWriteEnables);
   }
 
-  InterceptPostCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
+  layer_data->interceptor->PostCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
 }
 
 void InterceptCmdDrawMultiEXT(
@@ -3716,15 +3716,15 @@ void InterceptCmdDrawMultiEXT(
     uint32_t                                    instanceCount,
     uint32_t                                    firstInstance,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
+
   PFN_vkCmdDrawMultiEXT pfn = layer_data->dispatch_table.CmdDrawMultiEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
   }
 
-  InterceptPostCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
+  layer_data->interceptor->PostCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
 }
 
 void InterceptCmdDrawMultiIndexedEXT(
@@ -3735,72 +3735,72 @@ void InterceptCmdDrawMultiIndexedEXT(
     uint32_t                                    firstInstance,
     uint32_t                                    stride,
     const int32_t*                              pVertexOffset) {
-  InterceptPreCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
+
   PFN_vkCmdDrawMultiIndexedEXT pfn = layer_data->dispatch_table.CmdDrawMultiIndexedEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
   }
 
-  InterceptPostCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
+  layer_data->interceptor->PostCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
 }
 
 void InterceptCmdBuildMicromapsEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    infoCount,
     const VkMicromapBuildInfoEXT*               pInfos) {
-  InterceptPreCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
+
   PFN_vkCmdBuildMicromapsEXT pfn = layer_data->dispatch_table.CmdBuildMicromapsEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, infoCount, pInfos);
   }
 
-  InterceptPostCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
+  layer_data->interceptor->PostCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
 }
 
 void InterceptCmdCopyMicromapEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMicromapInfoEXT*                pInfo) {
-  InterceptPreCmdCopyMicromapEXT(commandBuffer, pInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyMicromapEXT(commandBuffer, pInfo);
+
   PFN_vkCmdCopyMicromapEXT pfn = layer_data->dispatch_table.CmdCopyMicromapEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pInfo);
   }
 
-  InterceptPostCmdCopyMicromapEXT(commandBuffer, pInfo);
+  layer_data->interceptor->PostCmdCopyMicromapEXT(commandBuffer, pInfo);
 }
 
 void InterceptCmdCopyMicromapToMemoryEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMicromapToMemoryInfoEXT*        pInfo) {
-  InterceptPreCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
+
   PFN_vkCmdCopyMicromapToMemoryEXT pfn = layer_data->dispatch_table.CmdCopyMicromapToMemoryEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pInfo);
   }
 
-  InterceptPostCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
+  layer_data->interceptor->PostCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
 }
 
 void InterceptCmdCopyMemoryToMicromapEXT(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMemoryToMicromapInfoEXT*        pInfo) {
-  InterceptPreCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
+
   PFN_vkCmdCopyMemoryToMicromapEXT pfn = layer_data->dispatch_table.CmdCopyMemoryToMicromapEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, pInfo);
   }
 
-  InterceptPostCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
+  layer_data->interceptor->PostCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
 }
 
 void InterceptCmdWriteMicromapsPropertiesEXT(
@@ -3810,15 +3810,15 @@ void InterceptCmdWriteMicromapsPropertiesEXT(
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  InterceptPreCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
+
   PFN_vkCmdWriteMicromapsPropertiesEXT pfn = layer_data->dispatch_table.CmdWriteMicromapsPropertiesEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
   }
 
-  InterceptPostCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
+  layer_data->interceptor->PostCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
 }
 
 void InterceptCmdDrawClusterHUAWEI(
@@ -3826,30 +3826,30 @@ void InterceptCmdDrawClusterHUAWEI(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  InterceptPreCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
+
   PFN_vkCmdDrawClusterHUAWEI pfn = layer_data->dispatch_table.CmdDrawClusterHUAWEI;
   if (pfn != nullptr) {
     pfn(commandBuffer, groupCountX, groupCountY, groupCountZ);
   }
 
-  InterceptPostCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
+  layer_data->interceptor->PostCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
 void InterceptCmdDrawClusterIndirectHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkBuffer                                    buffer,
     VkDeviceSize                                offset) {
-  InterceptPreCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
+
   PFN_vkCmdDrawClusterIndirectHUAWEI pfn = layer_data->dispatch_table.CmdDrawClusterIndirectHUAWEI;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset);
   }
 
-  InterceptPostCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
+  layer_data->interceptor->PostCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
 }
 
 void InterceptCmdCopyMemoryIndirectNV(
@@ -3857,15 +3857,15 @@ void InterceptCmdCopyMemoryIndirectNV(
     VkDeviceAddress                             copyBufferAddress,
     uint32_t                                    copyCount,
     uint32_t                                    stride) {
-  InterceptPreCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
+
   PFN_vkCmdCopyMemoryIndirectNV pfn = layer_data->dispatch_table.CmdCopyMemoryIndirectNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, copyBufferAddress, copyCount, stride);
   }
 
-  InterceptPostCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
+  layer_data->interceptor->PostCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
 }
 
 void InterceptCmdCopyMemoryToImageIndirectNV(
@@ -3876,30 +3876,30 @@ void InterceptCmdCopyMemoryToImageIndirectNV(
     VkImage                                     dstImage,
     VkImageLayout                               dstImageLayout,
     const VkImageSubresourceLayers*             pImageSubresources) {
-  InterceptPreCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
+
   PFN_vkCmdCopyMemoryToImageIndirectNV pfn = layer_data->dispatch_table.CmdCopyMemoryToImageIndirectNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
   }
 
-  InterceptPostCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
+  layer_data->interceptor->PostCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
 }
 
 void InterceptCmdDecompressMemoryNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    decompressRegionCount,
     const VkDecompressMemoryRegionNV*           pDecompressMemoryRegions) {
-  InterceptPreCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
+
   PFN_vkCmdDecompressMemoryNV pfn = layer_data->dispatch_table.CmdDecompressMemoryNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
   }
 
-  InterceptPostCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
+  layer_data->interceptor->PostCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 }
 
 void InterceptCmdDecompressMemoryIndirectCountNV(
@@ -3907,143 +3907,143 @@ void InterceptCmdDecompressMemoryIndirectCountNV(
     VkDeviceAddress                             indirectCommandsAddress,
     VkDeviceAddress                             indirectCommandsCountAddress,
     uint32_t                                    stride) {
-  InterceptPreCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
+
   PFN_vkCmdDecompressMemoryIndirectCountNV pfn = layer_data->dispatch_table.CmdDecompressMemoryIndirectCountNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
   }
 
-  InterceptPostCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
+  layer_data->interceptor->PostCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
 }
 
 void InterceptCmdUpdatePipelineIndirectBufferNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline) {
-  InterceptPreCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
+
   PFN_vkCmdUpdatePipelineIndirectBufferNV pfn = layer_data->dispatch_table.CmdUpdatePipelineIndirectBufferNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineBindPoint, pipeline);
   }
 
-  InterceptPostCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
+  layer_data->interceptor->PostCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
 
 void InterceptCmdSetTessellationDomainOriginEXT(
     VkCommandBuffer                             commandBuffer,
     VkTessellationDomainOrigin                  domainOrigin) {
-  InterceptPreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
+
   PFN_vkCmdSetTessellationDomainOriginEXT pfn = layer_data->dispatch_table.CmdSetTessellationDomainOriginEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, domainOrigin);
   }
 
-  InterceptPostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
+  layer_data->interceptor->PostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
 
 void InterceptCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable) {
-  InterceptPreCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
+
   PFN_vkCmdSetDepthClampEnableEXT pfn = layer_data->dispatch_table.CmdSetDepthClampEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthClampEnable);
   }
 
-  InterceptPostCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
+  layer_data->interceptor->PostCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
 }
 
 void InterceptCmdSetPolygonModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkPolygonMode                               polygonMode) {
-  InterceptPreCmdSetPolygonModeEXT(commandBuffer, polygonMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetPolygonModeEXT(commandBuffer, polygonMode);
+
   PFN_vkCmdSetPolygonModeEXT pfn = layer_data->dispatch_table.CmdSetPolygonModeEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, polygonMode);
   }
 
-  InterceptPostCmdSetPolygonModeEXT(commandBuffer, polygonMode);
+  layer_data->interceptor->PostCmdSetPolygonModeEXT(commandBuffer, polygonMode);
 }
 
 void InterceptCmdSetRasterizationSamplesEXT(
     VkCommandBuffer                             commandBuffer,
     VkSampleCountFlagBits                       rasterizationSamples) {
-  InterceptPreCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
+
   PFN_vkCmdSetRasterizationSamplesEXT pfn = layer_data->dispatch_table.CmdSetRasterizationSamplesEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, rasterizationSamples);
   }
 
-  InterceptPostCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
+  layer_data->interceptor->PostCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
 }
 
 void InterceptCmdSetSampleMaskEXT(
     VkCommandBuffer                             commandBuffer,
     VkSampleCountFlagBits                       samples,
     const VkSampleMask*                         pSampleMask) {
-  InterceptPreCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
+
   PFN_vkCmdSetSampleMaskEXT pfn = layer_data->dispatch_table.CmdSetSampleMaskEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, samples, pSampleMask);
   }
 
-  InterceptPostCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
+  layer_data->interceptor->PostCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
 }
 
 void InterceptCmdSetAlphaToCoverageEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    alphaToCoverageEnable) {
-  InterceptPreCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
+
   PFN_vkCmdSetAlphaToCoverageEnableEXT pfn = layer_data->dispatch_table.CmdSetAlphaToCoverageEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, alphaToCoverageEnable);
   }
 
-  InterceptPostCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
+  layer_data->interceptor->PostCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
 }
 
 void InterceptCmdSetAlphaToOneEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    alphaToOneEnable) {
-  InterceptPreCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
+
   PFN_vkCmdSetAlphaToOneEnableEXT pfn = layer_data->dispatch_table.CmdSetAlphaToOneEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, alphaToOneEnable);
   }
 
-  InterceptPostCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
+  layer_data->interceptor->PostCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
 }
 
 void InterceptCmdSetLogicOpEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    logicOpEnable) {
-  InterceptPreCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
+
   PFN_vkCmdSetLogicOpEnableEXT pfn = layer_data->dispatch_table.CmdSetLogicOpEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, logicOpEnable);
   }
 
-  InterceptPostCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
+  layer_data->interceptor->PostCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
 }
 
 void InterceptCmdSetColorBlendEnableEXT(
@@ -4051,15 +4051,15 @@ void InterceptCmdSetColorBlendEnableEXT(
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorBlendEnables) {
-  InterceptPreCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
+
   PFN_vkCmdSetColorBlendEnableEXT pfn = layer_data->dispatch_table.CmdSetColorBlendEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
   }
 
-  InterceptPostCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
+  layer_data->interceptor->PostCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
 }
 
 void InterceptCmdSetColorBlendEquationEXT(
@@ -4067,15 +4067,15 @@ void InterceptCmdSetColorBlendEquationEXT(
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorBlendEquationEXT*              pColorBlendEquations) {
-  InterceptPreCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
+
   PFN_vkCmdSetColorBlendEquationEXT pfn = layer_data->dispatch_table.CmdSetColorBlendEquationEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
   }
 
-  InterceptPostCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
+  layer_data->interceptor->PostCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
 }
 
 void InterceptCmdSetColorWriteMaskEXT(
@@ -4083,85 +4083,85 @@ void InterceptCmdSetColorWriteMaskEXT(
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorComponentFlags*                pColorWriteMasks) {
-  InterceptPreCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
+
   PFN_vkCmdSetColorWriteMaskEXT pfn = layer_data->dispatch_table.CmdSetColorWriteMaskEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
   }
 
-  InterceptPostCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
+  layer_data->interceptor->PostCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
 }
 
 void InterceptCmdSetRasterizationStreamEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    rasterizationStream) {
-  InterceptPreCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
+
   PFN_vkCmdSetRasterizationStreamEXT pfn = layer_data->dispatch_table.CmdSetRasterizationStreamEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, rasterizationStream);
   }
 
-  InterceptPostCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
+  layer_data->interceptor->PostCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
 }
 
 void InterceptCmdSetConservativeRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkConservativeRasterizationModeEXT          conservativeRasterizationMode) {
-  InterceptPreCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
+
   PFN_vkCmdSetConservativeRasterizationModeEXT pfn = layer_data->dispatch_table.CmdSetConservativeRasterizationModeEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, conservativeRasterizationMode);
   }
 
-  InterceptPostCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
+  layer_data->interceptor->PostCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
 }
 
 void InterceptCmdSetExtraPrimitiveOverestimationSizeEXT(
     VkCommandBuffer                             commandBuffer,
     float                                       extraPrimitiveOverestimationSize) {
-  InterceptPreCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
+
   PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT pfn = layer_data->dispatch_table.CmdSetExtraPrimitiveOverestimationSizeEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, extraPrimitiveOverestimationSize);
   }
 
-  InterceptPostCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
+  layer_data->interceptor->PostCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
 }
 
 void InterceptCmdSetDepthClipEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClipEnable) {
-  InterceptPreCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
+
   PFN_vkCmdSetDepthClipEnableEXT pfn = layer_data->dispatch_table.CmdSetDepthClipEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, depthClipEnable);
   }
 
-  InterceptPostCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
+  layer_data->interceptor->PostCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
 }
 
 void InterceptCmdSetSampleLocationsEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    sampleLocationsEnable) {
-  InterceptPreCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
+
   PFN_vkCmdSetSampleLocationsEnableEXT pfn = layer_data->dispatch_table.CmdSetSampleLocationsEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, sampleLocationsEnable);
   }
 
-  InterceptPostCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
+  layer_data->interceptor->PostCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
 }
 
 void InterceptCmdSetColorBlendAdvancedEXT(
@@ -4169,85 +4169,85 @@ void InterceptCmdSetColorBlendAdvancedEXT(
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorBlendAdvancedEXT*              pColorBlendAdvanced) {
-  InterceptPreCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
+
   PFN_vkCmdSetColorBlendAdvancedEXT pfn = layer_data->dispatch_table.CmdSetColorBlendAdvancedEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
   }
 
-  InterceptPostCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
+  layer_data->interceptor->PostCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
 }
 
 void InterceptCmdSetProvokingVertexModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkProvokingVertexModeEXT                    provokingVertexMode) {
-  InterceptPreCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
+
   PFN_vkCmdSetProvokingVertexModeEXT pfn = layer_data->dispatch_table.CmdSetProvokingVertexModeEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, provokingVertexMode);
   }
 
-  InterceptPostCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
+  layer_data->interceptor->PostCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
 }
 
 void InterceptCmdSetLineRasterizationModeEXT(
     VkCommandBuffer                             commandBuffer,
     VkLineRasterizationModeEXT                  lineRasterizationMode) {
-  InterceptPreCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
+
   PFN_vkCmdSetLineRasterizationModeEXT pfn = layer_data->dispatch_table.CmdSetLineRasterizationModeEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, lineRasterizationMode);
   }
 
-  InterceptPostCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
+  layer_data->interceptor->PostCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
 }
 
 void InterceptCmdSetLineStippleEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    stippledLineEnable) {
-  InterceptPreCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
+
   PFN_vkCmdSetLineStippleEnableEXT pfn = layer_data->dispatch_table.CmdSetLineStippleEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, stippledLineEnable);
   }
 
-  InterceptPostCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
+  layer_data->interceptor->PostCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
 }
 
 void InterceptCmdSetDepthClipNegativeOneToOneEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    negativeOneToOne) {
-  InterceptPreCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
+
   PFN_vkCmdSetDepthClipNegativeOneToOneEXT pfn = layer_data->dispatch_table.CmdSetDepthClipNegativeOneToOneEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, negativeOneToOne);
   }
 
-  InterceptPostCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
+  layer_data->interceptor->PostCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
 }
 
 void InterceptCmdSetViewportWScalingEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    viewportWScalingEnable) {
-  InterceptPreCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
+
   PFN_vkCmdSetViewportWScalingEnableNV pfn = layer_data->dispatch_table.CmdSetViewportWScalingEnableNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, viewportWScalingEnable);
   }
 
-  InterceptPostCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
+  layer_data->interceptor->PostCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
 }
 
 void InterceptCmdSetViewportSwizzleNV(
@@ -4255,143 +4255,143 @@ void InterceptCmdSetViewportSwizzleNV(
     uint32_t                                    firstViewport,
     uint32_t                                    viewportCount,
     const VkViewportSwizzleNV*                  pViewportSwizzles) {
-  InterceptPreCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
+
   PFN_vkCmdSetViewportSwizzleNV pfn = layer_data->dispatch_table.CmdSetViewportSwizzleNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
   }
 
-  InterceptPostCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
+  layer_data->interceptor->PostCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 }
 
 void InterceptCmdSetCoverageToColorEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    coverageToColorEnable) {
-  InterceptPreCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
+
   PFN_vkCmdSetCoverageToColorEnableNV pfn = layer_data->dispatch_table.CmdSetCoverageToColorEnableNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, coverageToColorEnable);
   }
 
-  InterceptPostCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
+  layer_data->interceptor->PostCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
 }
 
 void InterceptCmdSetCoverageToColorLocationNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    coverageToColorLocation) {
-  InterceptPreCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
+
   PFN_vkCmdSetCoverageToColorLocationNV pfn = layer_data->dispatch_table.CmdSetCoverageToColorLocationNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, coverageToColorLocation);
   }
 
-  InterceptPostCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
+  layer_data->interceptor->PostCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
 }
 
 void InterceptCmdSetCoverageModulationModeNV(
     VkCommandBuffer                             commandBuffer,
     VkCoverageModulationModeNV                  coverageModulationMode) {
-  InterceptPreCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
+
   PFN_vkCmdSetCoverageModulationModeNV pfn = layer_data->dispatch_table.CmdSetCoverageModulationModeNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, coverageModulationMode);
   }
 
-  InterceptPostCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
+  layer_data->interceptor->PostCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
 }
 
 void InterceptCmdSetCoverageModulationTableEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    coverageModulationTableEnable) {
-  InterceptPreCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
+
   PFN_vkCmdSetCoverageModulationTableEnableNV pfn = layer_data->dispatch_table.CmdSetCoverageModulationTableEnableNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, coverageModulationTableEnable);
   }
 
-  InterceptPostCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
+  layer_data->interceptor->PostCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
 }
 
 void InterceptCmdSetCoverageModulationTableNV(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    coverageModulationTableCount,
     const float*                                pCoverageModulationTable) {
-  InterceptPreCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
+
   PFN_vkCmdSetCoverageModulationTableNV pfn = layer_data->dispatch_table.CmdSetCoverageModulationTableNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
   }
 
-  InterceptPostCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
+  layer_data->interceptor->PostCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
 }
 
 void InterceptCmdSetShadingRateImageEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    shadingRateImageEnable) {
-  InterceptPreCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
+
   PFN_vkCmdSetShadingRateImageEnableNV pfn = layer_data->dispatch_table.CmdSetShadingRateImageEnableNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, shadingRateImageEnable);
   }
 
-  InterceptPostCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
+  layer_data->interceptor->PostCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
 }
 
 void InterceptCmdSetRepresentativeFragmentTestEnableNV(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    representativeFragmentTestEnable) {
-  InterceptPreCmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
+
   PFN_vkCmdSetRepresentativeFragmentTestEnableNV pfn = layer_data->dispatch_table.CmdSetRepresentativeFragmentTestEnableNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, representativeFragmentTestEnable);
   }
 
-  InterceptPostCmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
+  layer_data->interceptor->PostCmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
 }
 
 void InterceptCmdSetCoverageReductionModeNV(
     VkCommandBuffer                             commandBuffer,
     VkCoverageReductionModeNV                   coverageReductionMode) {
-  InterceptPreCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
+
   PFN_vkCmdSetCoverageReductionModeNV pfn = layer_data->dispatch_table.CmdSetCoverageReductionModeNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, coverageReductionMode);
   }
 
-  InterceptPostCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
+  layer_data->interceptor->PostCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
 
 void InterceptCmdOpticalFlowExecuteNV(
     VkCommandBuffer                             commandBuffer,
     VkOpticalFlowSessionNV                      session,
     const VkOpticalFlowExecuteInfoNV*           pExecuteInfo) {
-  InterceptPreCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
+
   PFN_vkCmdOpticalFlowExecuteNV pfn = layer_data->dispatch_table.CmdOpticalFlowExecuteNV;
   if (pfn != nullptr) {
     pfn(commandBuffer, session, pExecuteInfo);
   }
 
-  InterceptPostCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
+  layer_data->interceptor->PostCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
 }
 
 void InterceptCmdBindShadersEXT(
@@ -4399,29 +4399,29 @@ void InterceptCmdBindShadersEXT(
     uint32_t                                    stageCount,
     const VkShaderStageFlagBits*                pStages,
     const VkShaderEXT*                          pShaders) {
-  InterceptPreCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
+
   PFN_vkCmdBindShadersEXT pfn = layer_data->dispatch_table.CmdBindShadersEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, stageCount, pStages, pShaders);
   }
 
-  InterceptPostCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
+  layer_data->interceptor->PostCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
 
 void InterceptCmdSetAttachmentFeedbackLoopEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkImageAspectFlags                          aspectMask) {
-  InterceptPreCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
+
   PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT pfn = layer_data->dispatch_table.CmdSetAttachmentFeedbackLoopEnableEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, aspectMask);
   }
 
-  InterceptPostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
+  layer_data->interceptor->PostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
 
 void InterceptCmdBuildAccelerationStructuresKHR(
@@ -4429,15 +4429,15 @@ void InterceptCmdBuildAccelerationStructuresKHR(
     uint32_t                                    infoCount,
     const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
-  InterceptPreCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
+
   PFN_vkCmdBuildAccelerationStructuresKHR pfn = layer_data->dispatch_table.CmdBuildAccelerationStructuresKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
   }
 
-  InterceptPostCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
+  layer_data->interceptor->PostCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 }
 
 void InterceptCmdBuildAccelerationStructuresIndirectKHR(
@@ -4447,57 +4447,57 @@ void InterceptCmdBuildAccelerationStructuresIndirectKHR(
     const VkDeviceAddress*                      pIndirectDeviceAddresses,
     const uint32_t*                             pIndirectStrides,
     const uint32_t* const*                      ppMaxPrimitiveCounts) {
-  InterceptPreCmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
+
   PFN_vkCmdBuildAccelerationStructuresIndirectKHR pfn = layer_data->dispatch_table.CmdBuildAccelerationStructuresIndirectKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
   }
 
-  InterceptPostCmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
+  layer_data->interceptor->PostCmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
 }
 
 void InterceptCmdCopyAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyAccelerationStructureInfoKHR*   pInfo) {
-  InterceptPreCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
+
   PFN_vkCmdCopyAccelerationStructureKHR pfn = layer_data->dispatch_table.CmdCopyAccelerationStructureKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pInfo);
   }
 
-  InterceptPostCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
+  layer_data->interceptor->PostCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
 }
 
 void InterceptCmdCopyAccelerationStructureToMemoryKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
-  InterceptPreCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
+
   PFN_vkCmdCopyAccelerationStructureToMemoryKHR pfn = layer_data->dispatch_table.CmdCopyAccelerationStructureToMemoryKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pInfo);
   }
 
-  InterceptPostCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
+  layer_data->interceptor->PostCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
 }
 
 void InterceptCmdCopyMemoryToAccelerationStructureKHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
-  InterceptPreCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
+
   PFN_vkCmdCopyMemoryToAccelerationStructureKHR pfn = layer_data->dispatch_table.CmdCopyMemoryToAccelerationStructureKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pInfo);
   }
 
-  InterceptPostCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
+  layer_data->interceptor->PostCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
 }
 
 void InterceptCmdWriteAccelerationStructuresPropertiesKHR(
@@ -4507,15 +4507,15 @@ void InterceptCmdWriteAccelerationStructuresPropertiesKHR(
     VkQueryType                                 queryType,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery) {
-  InterceptPreCmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
+
   PFN_vkCmdWriteAccelerationStructuresPropertiesKHR pfn = layer_data->dispatch_table.CmdWriteAccelerationStructuresPropertiesKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
   }
 
-  InterceptPostCmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
+  layer_data->interceptor->PostCmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 
 void InterceptCmdTraceRaysKHR(
@@ -4527,15 +4527,15 @@ void InterceptCmdTraceRaysKHR(
     uint32_t                                    width,
     uint32_t                                    height,
     uint32_t                                    depth) {
-  InterceptPreCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
+
   PFN_vkCmdTraceRaysKHR pfn = layer_data->dispatch_table.CmdTraceRaysKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
   }
 
-  InterceptPostCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
+  layer_data->interceptor->PostCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
 }
 
 void InterceptCmdTraceRaysIndirectKHR(
@@ -4545,29 +4545,29 @@ void InterceptCmdTraceRaysIndirectKHR(
     const VkStridedDeviceAddressRegionKHR*      pHitShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR*      pCallableShaderBindingTable,
     VkDeviceAddress                             indirectDeviceAddress) {
-  InterceptPreCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
+
   PFN_vkCmdTraceRaysIndirectKHR pfn = layer_data->dispatch_table.CmdTraceRaysIndirectKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
   }
 
-  InterceptPostCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
+  layer_data->interceptor->PostCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
 }
 
 void InterceptCmdSetRayTracingPipelineStackSizeKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    pipelineStackSize) {
-  InterceptPreCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
+
   PFN_vkCmdSetRayTracingPipelineStackSizeKHR pfn = layer_data->dispatch_table.CmdSetRayTracingPipelineStackSizeKHR;
   if (pfn != nullptr) {
     pfn(commandBuffer, pipelineStackSize);
   }
 
-  InterceptPostCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
+  layer_data->interceptor->PostCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
 }
 
 void InterceptCmdDrawMeshTasksEXT(
@@ -4575,15 +4575,15 @@ void InterceptCmdDrawMeshTasksEXT(
     uint32_t                                    groupCountX,
     uint32_t                                    groupCountY,
     uint32_t                                    groupCountZ) {
-  InterceptPreCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
+
   PFN_vkCmdDrawMeshTasksEXT pfn = layer_data->dispatch_table.CmdDrawMeshTasksEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, groupCountX, groupCountY, groupCountZ);
   }
 
-  InterceptPostCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
+  layer_data->interceptor->PostCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
 void InterceptCmdDrawMeshTasksIndirectEXT(
@@ -4592,15 +4592,15 @@ void InterceptCmdDrawMeshTasksIndirectEXT(
     VkDeviceSize                                offset,
     uint32_t                                    drawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
+
   PFN_vkCmdDrawMeshTasksIndirectEXT pfn = layer_data->dispatch_table.CmdDrawMeshTasksIndirectEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, drawCount, stride);
   }
 
-  InterceptPostCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
+  layer_data->interceptor->PostCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
 }
 
 void InterceptCmdDrawMeshTasksIndirectCountEXT(
@@ -4611,15 +4611,15 @@ void InterceptCmdDrawMeshTasksIndirectCountEXT(
     VkDeviceSize                                countBufferOffset,
     uint32_t                                    maxDrawCount,
     uint32_t                                    stride) {
-  InterceptPreCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
-
   auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+
   PFN_vkCmdDrawMeshTasksIndirectCountEXT pfn = layer_data->dispatch_table.CmdDrawMeshTasksIndirectCountEXT;
   if (pfn != nullptr) {
     pfn(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
   }
 
-  InterceptPostCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
+  layer_data->interceptor->PostCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 
 
@@ -4660,11 +4660,15 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInf
   // Move chain on for the next layer.
   layer_create_info->u.pLayerInfo = layer_create_info->u.pLayerInfo->pNext;
 
-  InterceptPreCreateInstance(pCreateInfo, pAllocator, pInstance);
+  Interceptor* interceptor = nullptr;
+  auto result = CreateInstance(pCreateInfo, pAllocator, pInstance, &interceptor);
+  if (result != VK_SUCCESS) {
+    return result;
+  }
 
-  const VkInstanceCreateInfo *pFinalCreateInfo = GetModifiedInstanceCreateInfo(pCreateInfo);
+  const VkInstanceCreateInfo *pFinalCreateInfo = interceptor->GetModifiedInstanceCreateInfo(pCreateInfo);
 
-  auto result = pfn_create_instance(pFinalCreateInfo, pAllocator, pInstance);
+  result = pfn_create_instance(pFinalCreateInfo, pAllocator, pInstance);
   if (VK_SUCCESS != result)
   {
     return result;
@@ -4672,6 +4676,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInf
 
   auto id = std::make_unique<InstanceData>();
   id->instance = *pInstance;
+  id->interceptor = interceptor;
   auto chain_info = GetLoaderInstanceInfo(pFinalCreateInfo, VK_LOADER_DATA_CALLBACK);
   id->pfn_set_instance_loader_data = chain_info->u.pfnSetInstanceLoaderData;
   id->pfn_next_instance_proc_addr = pfn_get_instance_proc_addr;
@@ -4682,7 +4687,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInf
     g_instance_data[DataKey(*pInstance)] = std::move(id);
   }
 
-  result = InterceptPostCreateInstance(pFinalCreateInfo, pAllocator, pInstance, result);
+  result = interceptor->PostCreateInstance(pFinalCreateInfo, pAllocator, pInstance, result);
 
   return result;
 }
@@ -4693,11 +4698,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroyInstance(
   auto instance_key = DataKey(instance);
   InstanceData *instance_data = GetInstanceLayerData(instance_key);
 
-  InterceptPreDestroyInstance(instance, pAllocator);
+  instance_data->interceptor->PreDestroyInstance(instance, pAllocator);
 
   auto pfn_destroy_instance = instance_data->dispatch_table.DestroyInstance;
   pfn_destroy_instance(instance, pAllocator);
-
+  delete instance_data->interceptor;
   FreeInstanceLayerData(instance_key);
 }
 
@@ -4724,9 +4729,9 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
   layer_create_info->u.pLayerInfo = layer_create_info->u.pLayerInfo->pNext;
 
   const VkDeviceCreateInfo *pFinalCreateInfo =
-      GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
+      instance_data->interceptor->GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
 
-  VkResult result = CreateDevice(pfn_create_device, gpu, pFinalCreateInfo,
+  VkResult result = CreateDevice(pfn_create_device, instance_data->interceptor, gpu, pFinalCreateInfo,
                                  pAllocator, pDevice);
   if (VK_SUCCESS != result) {
     return result;
@@ -4734,6 +4739,7 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
 
   auto dd = std::make_unique<DeviceData>();
   dd->device = *pDevice;
+  dd->interceptor = instance_data->interceptor;
   auto chain_info =
       GetLoaderDeviceInfo(pFinalCreateInfo, VK_LOADER_DATA_CALLBACK);
   dd->pfn_set_device_loader_data = chain_info->u.pfnSetDeviceLoaderData;
@@ -4745,8 +4751,7 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
     g_device_data[DataKey(*pDevice)] = std::move(dd);
   }
 
-  result = InterceptPostCreateDevice(gpu, pFinalCreateInfo, pAllocator, pDevice,
-                                     result);
+  result = instance_data->interceptor->PostCreateDevice(gpu, pFinalCreateInfo, pAllocator, pDevice, result);
 
   return result;
 }
@@ -4887,9 +4892,8 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
     }
   }
 
-  result = InterceptPostEnumerateDeviceExtensionProperties(
-                   physicalDevice, pLayerName, pPropertyCount, pProperties,
-                   result);
+  result = instance_data->interceptor->PostEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount,
+                                                                              pProperties, result);
 
   return result;
 }

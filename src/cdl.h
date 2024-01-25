@@ -123,9 +123,10 @@ T* NewArray(size_t size) {
     return new T[size];
 }
 
-class Context {
+class Context : public Interceptor {
    public:
-    Context();
+    Context(const VkInstanceCreateInfo* pCreateInfo,
+            const VkAllocationCallbacks* pAllocator);
     virtual ~Context();
 
     VkInstance GetInstance() { return vk_instance_; }

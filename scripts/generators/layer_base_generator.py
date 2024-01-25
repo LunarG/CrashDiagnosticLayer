@@ -62,13 +62,21 @@ class LayerBaseOutputGenerator(CdlBaseOutputGenerator):
 typedef VkResult (VKAPI_PTR *PFN_vkSetInstanceLoaderData)(VkInstance instance, void* object);
 typedef VkResult (VKAPI_PTR *PFN_vkSetDeviceLoaderData)(VkDevice device, void* object);
 
+class Interceptor;
+
 // Functions defined elsewhere but used in the matching source file
-VkResult CreateDevice(PFN_vkCreateDevice pfn, VkPhysicalDevice physicalDevice,
+VkResult CreateDevice(PFN_vkCreateDevice pfn, Interceptor *interceptor,
+                      VkPhysicalDevice physicalDevice,
                       const VkDeviceCreateInfo *pCreateInfo,
                       const VkAllocationCallbacks *pAllocator,
                       VkDevice *pDevice);
 void DestroyDevice(PFN_vkDestroyDevice pfn, VkDevice device,
                    const VkAllocationCallbacks *pAllocator);
+
+VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo,
+                        const VkAllocationCallbacks* pAllocator,
+                        VkInstance* pInstance,
+                        Interceptor**  interceptor);
 
 // Declare our per-instance and per-device contexts.
 // These are created and initialized in vkCreateInstance and vkCreateDevice.
@@ -77,6 +85,7 @@ struct InstanceData {
   InstanceDispatchTable dispatch_table;
   PFN_vkSetInstanceLoaderData pfn_set_instance_loader_data = nullptr;
   PFN_vkGetInstanceProcAddr pfn_next_instance_proc_addr = nullptr;
+  Interceptor *interceptor;
 };
 
 struct DeviceData {
@@ -84,6 +93,7 @@ struct DeviceData {
   DeviceDispatchTable dispatch_table;
   PFN_vkSetDeviceLoaderData pfn_set_device_loader_data = nullptr;
   PFN_vkGetDeviceProcAddr pfn_next_device_proc_addr = nullptr;
+  Interceptor *interceptor;
 };
 
 uintptr_t DataKey(const void *object);
@@ -103,12 +113,6 @@ VkLayerDeviceCreateInfo *GetLoaderDeviceInfo(
 VkResult SetInstanceLoaderData(VkInstance instance, void *obj);
 VkResult SetDeviceLoaderData(VkDevice device, void *obj);
 
-const VkInstanceCreateInfo *
-GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo *pCreateInfo);
-
-const VkDeviceCreateInfo *
-GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
-                            const VkDeviceCreateInfo *pCreateInfo);
 ''')
         self.write("".join(out))
 
@@ -122,28 +126,39 @@ GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
             out.append('\n')
         self.write("".join(out))
 
-        self.write("\n// Declare pre-intercept functions.\n")
+        self.write("\n// Declare interceptor interface.\n")
+        self.write("\nclass Interceptor {\n")
+        self.write("public:\n")
+        self.write("    virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo *pCreateInfo) = 0;\n");
+        self.write("    virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo) = 0;\n")
         out = []
-        for vkcommand in filter(lambda x: self.InterceptPreCommand(x), self.vk.commands.values()):
-            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' InterceptPre')
-            out.append(f'{func_call}\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append('\n')
-        self.write("".join(out))
+        for vkcommand in self.vk.commands.values():
+            if self.InterceptPreCommand(vkcommand):
+                out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
+                func_call = '    virtual ' + vkcommand.cPrototype.replace('\n','\n    ').replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '')
+                func_call = func_call.replace(' vk', ' Pre')
+                if vkcommand.returnType is not None and vkcommand.returnType != 'void':
+                    func_call = func_call.replace(';', ' { return VK_SUCCESS; }');
+                else:
+                    func_call = func_call.replace(';', ' {}');
+                out.append(f'{func_call}\n')
+                out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+                out.append('\n')
+            if self.InterceptPostCommand(vkcommand):
+                out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
+                func_call = '    virtual ' + vkcommand.cPrototype.replace('\n', '\n    ').replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '')
+                func_call = func_call.replace(' vk', ' Post')
 
-        self.write("\n// Declare post-intercept functions.\n")
-        out = []
-        for vkcommand in filter(lambda x: self.InterceptPostCommand(x), self.vk.commands.values()):
-            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' InterceptPost')
-
-            if vkcommand.returnType is not None and vkcommand.returnType != 'void':
-                func_call = func_call.replace(');', f',\n    {vkcommand.returnType}                                    result);')
-
-            out.append(f'{func_call}\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append('\n')
+                if vkcommand.returnType is not None and vkcommand.returnType != 'void':
+                    func_call = func_call.replace(');', f',\n        {vkcommand.returnType}                                    result);')
+                if vkcommand.returnType is not None and vkcommand.returnType != 'void':
+                    func_call = func_call.replace(';', ' { return result; }');
+                else:
+                    func_call = func_call.replace(';', ' {}');
+                out.append(f'{func_call}\n')
+                out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+                out.append('\n')
+        out.append('};')
         self.write("".join(out))
 
         out = []
@@ -342,15 +357,16 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj)
                 out.append(f'  {vkcommand.returnType} result = {default_value};\n')
                 out.append('\n')
 
-            if self.InterceptPreCommand(vkcommand):
-              pre_func = lower_function_call.replace('vk', 'InterceptPre')
-              out.append(f'  {pre_func}')
-              out.append('\n')
-
             if self.InstanceCommand(vkcommand):
                 out.append(f'  auto layer_data = GetInstanceLayerData(DataKey({vkcommand.params[0].name}));\n')
             else:
                 out.append(f'  auto layer_data = GetDeviceLayerData(DataKey({vkcommand.params[0].name}));\n')
+
+            if self.InterceptPreCommand(vkcommand):
+              pre_func = lower_function_call.replace('vk', 'layer_data->interceptor->Pre')
+              out.append(f'  {pre_func}')
+              out.append('\n')
+
             out.append(f'  PFN_{vkcommand.name} pfn = layer_data->dispatch_table.{vkcommand.name[2:]};\n')
             out.append('  if (pfn != nullptr) {\n')
             out.append('    ')
@@ -363,7 +379,7 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj)
 
             if self.InterceptPostCommand(vkcommand):
               out.append('  ')
-              post_call = lower_function_call.replace('vk', 'InterceptPost')
+              post_call = lower_function_call.replace('vk', 'layer_data->interceptor->Post')
               if self.CommandHasReturn(vkcommand):
                   out.append('result = ')
                   post_call = post_call.replace(')', ', result)')
@@ -414,11 +430,15 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInf
   // Move chain on for the next layer.
   layer_create_info->u.pLayerInfo = layer_create_info->u.pLayerInfo->pNext;
 
-  InterceptPreCreateInstance(pCreateInfo, pAllocator, pInstance);
+  Interceptor* interceptor = nullptr;
+  auto result = CreateInstance(pCreateInfo, pAllocator, pInstance, &interceptor);
+  if (result != VK_SUCCESS) {
+    return result;
+  }
 
-  const VkInstanceCreateInfo *pFinalCreateInfo = GetModifiedInstanceCreateInfo(pCreateInfo);
+  const VkInstanceCreateInfo *pFinalCreateInfo = interceptor->GetModifiedInstanceCreateInfo(pCreateInfo);
 
-  auto result = pfn_create_instance(pFinalCreateInfo, pAllocator, pInstance);
+  result = pfn_create_instance(pFinalCreateInfo, pAllocator, pInstance);
   if (VK_SUCCESS != result)
   {
     return result;
@@ -426,6 +446,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInf
 
   auto id = std::make_unique<InstanceData>();
   id->instance = *pInstance;
+  id->interceptor = interceptor;
   auto chain_info = GetLoaderInstanceInfo(pFinalCreateInfo, VK_LOADER_DATA_CALLBACK);
   id->pfn_set_instance_loader_data = chain_info->u.pfnSetInstanceLoaderData;
   id->pfn_next_instance_proc_addr = pfn_get_instance_proc_addr;
@@ -436,7 +457,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInf
     g_instance_data[DataKey(*pInstance)] = std::move(id);
   }
 
-  result = InterceptPostCreateInstance(pFinalCreateInfo, pAllocator, pInstance, result);
+  result = interceptor->PostCreateInstance(pFinalCreateInfo, pAllocator, pInstance, result);
 
   return result;
 }
@@ -447,11 +468,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroyInstance(
   auto instance_key = DataKey(instance);
   InstanceData *instance_data = GetInstanceLayerData(instance_key);
 
-  InterceptPreDestroyInstance(instance, pAllocator);
+  instance_data->interceptor->PreDestroyInstance(instance, pAllocator);
 
   auto pfn_destroy_instance = instance_data->dispatch_table.DestroyInstance;
   pfn_destroy_instance(instance, pAllocator);
-
+  delete instance_data->interceptor;
   FreeInstanceLayerData(instance_key);
 }
 
@@ -478,9 +499,9 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
   layer_create_info->u.pLayerInfo = layer_create_info->u.pLayerInfo->pNext;
 
   const VkDeviceCreateInfo *pFinalCreateInfo =
-      GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
+      instance_data->interceptor->GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
 
-  VkResult result = CreateDevice(pfn_create_device, gpu, pFinalCreateInfo,
+  VkResult result = CreateDevice(pfn_create_device, instance_data->interceptor, gpu, pFinalCreateInfo,
                                  pAllocator, pDevice);
   if (VK_SUCCESS != result) {
     return result;
@@ -488,6 +509,7 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
 
   auto dd = std::make_unique<DeviceData>();
   dd->device = *pDevice;
+  dd->interceptor = instance_data->interceptor;
   auto chain_info =
       GetLoaderDeviceInfo(pFinalCreateInfo, VK_LOADER_DATA_CALLBACK);
   dd->pfn_set_device_loader_data = chain_info->u.pfnSetDeviceLoaderData;
@@ -499,8 +521,7 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
     g_device_data[DataKey(*pDevice)] = std::move(dd);
   }
 
-  result = InterceptPostCreateDevice(gpu, pFinalCreateInfo, pAllocator, pDevice,
-                                     result);
+  result = instance_data->interceptor->PostCreateDevice(gpu, pFinalCreateInfo, pAllocator, pDevice, result);
 
   return result;
 }
@@ -645,9 +666,8 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
     }
   }
 
-  result = InterceptPostEnumerateDeviceExtensionProperties(
-                   physicalDevice, pLayerName, pPropertyCount, pProperties,
-                   result);
+  result = instance_data->interceptor->PostEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount,
+                                                                              pProperties, result);
 
   return result;
 }
