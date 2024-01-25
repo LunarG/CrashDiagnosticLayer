@@ -56,16 +56,4 @@ inline std::string IncreaseIndent(const std::string& indent, const uint32_t num_
     return indent + std::string(num_indents, ' ');
 }
 
-template <typename T, uint32_t sType>
-const T* FindOnChain(const void* pNext) {
-    if (!pNext) return nullptr;
-
-    auto p = reinterpret_cast<const T*>(pNext);
-    if (p->sType == sType) {
-        return p;
-    }
-
-    return FindOnChain<T, sType>(p->pNext);
-}
-
 }  // namespace crash_diagnostic_layer

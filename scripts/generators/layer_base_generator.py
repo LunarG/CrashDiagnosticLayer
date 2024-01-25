@@ -95,8 +95,6 @@ struct VkStruct {
   const void*     pNext;
 };
 
-VkStruct *FindOnChain(VkStruct *s, VkStructureType type);
-
 VkLayerInstanceCreateInfo *GetLoaderInstanceInfo(
     const VkInstanceCreateInfo *create_info, VkLayerFunction func_type);
 VkLayerDeviceCreateInfo *GetLoaderDeviceInfo(
@@ -257,7 +255,7 @@ void FreeDeviceLayerData(uintptr_t key) {
   last_used_device_data = nullptr;
 }
 
-VkStruct *FindOnChain(VkStruct *s, VkStructureType type) {
+static VkStruct *FindOnChain(VkStruct *s, VkStructureType type) {
   VkStruct *n = (VkStruct *)s->pNext;
   while (n && n->sType != type) {
     n = (VkStruct *)n->pNext;

@@ -40,7 +40,8 @@
 #include <sstream>
 
 #include "util.h"
-#include "layer_utils.h"
+#include <vulkan/utility/vk_struct_helper.hpp>
+#include <vulkan/vk_enum_string_helper.h>
 
 #if defined(WIN32)
 #include <direct.h>
@@ -158,9 +159,7 @@ void Context::PostApiFunction(const char* api_name) {
 
 void Context::PostApiFunction(const char* api_name, VkResult result) {
     if (trace_all_) {
-        std::string result_string;
-        GetResultString(result, result_string);
-        logger_.LogInfo("} %s (%s)", api_name, result_string.c_str());
+        logger_.LogInfo("} %s (%s)", api_name, string_VkResult(result));
     }
 }
 
@@ -581,19 +580,6 @@ void Context::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_
     logger_.LogInfo(log);
 }
 
-// FindOnChain looks for a pNext of a give type.
-const void* FindOnChain(const void* pNext, VkStructureType type) {
-    const VkStruct* pStruct = reinterpret_cast<const VkStruct*>(pNext);
-    while (pStruct) {
-        if (pStruct->sType == type) {
-            return pStruct;
-        }
-        pStruct = reinterpret_cast<const VkStruct*>(pStruct->pNext);
-    }
-
-    return nullptr;
-}
-
 // =============================================================================
 // Define pre / post intercepted commands
 // =============================================================================
@@ -602,11 +588,8 @@ VkResult Context::PreCreateInstance(const VkInstanceCreateInfo* pCreateInfo, con
                                     VkInstance* pInstance) {
     logger_.LogInfo("Version %s enabled.", kCdlVersion);
 
-    const VkLayerSettingsCreateInfoEXT* create_info = nullptr;
-    if (pCreateInfo) {
-        create_info = static_cast<const VkLayerSettingsCreateInfoEXT*>(
-            FindOnChain(pCreateInfo->pNext, VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT));
-    }
+    const auto* create_info = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
+
     VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
     VkResult result =
         vkuCreateLayerSettingSet("lunarg_crash_diagnostic", create_info, pAllocator, nullptr, &layer_setting_set);
@@ -1304,9 +1287,8 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
     if (track_semaphores_ && result == VK_SUCCESS) {
         uint64_t s_value = 0;
         VkSemaphoreTypeKHR s_type = VK_SEMAPHORE_TYPE_BINARY_KHR;
-        const VkSemaphoreTypeCreateInfoKHR* semaphore_info =
-            FindOnChain<VkSemaphoreTypeCreateInfoKHR, VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR>(
-                pCreateInfo->pNext);
+
+        const auto* semaphore_info = vku::FindStructInPNextChain<VkSemaphoreTypeCreateInfoKHR>(pCreateInfo);
         if (semaphore_info) {
             s_value = semaphore_info->initialValue;
             s_type = semaphore_info->semaphoreType;
@@ -1897,7 +1879,7 @@ VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(PFN_vkCreateDevice pfn_create_device
     if (g_interceptor->AmdDeviceCoherentExtensionEnabled(gpu)) {
         // Coherent memory extension enabled, check for struct, add if needed.
         if (nullptr ==
-            FindOnChain(local_create_info.pNext, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD)) {
+            vku::FindStructInPNextChain<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(local_create_info.pNext)) {
             VkPhysicalDeviceCoherentMemoryFeaturesAMD enableDeviceCoherentMemoryFeature{};
             enableDeviceCoherentMemoryFeature.deviceCoherentMemory = true;
             enableDeviceCoherentMemoryFeature.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD;

@@ -19,6 +19,7 @@
 #include <sstream>
 
 #include "util.h"
+#include <vulkan/utility/vk_struct_helper.hpp>
 
 namespace crash_diagnostic_layer {
 
@@ -85,9 +86,8 @@ void BindSparseUtils::ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_e
     vk_timeline_semaphore_submit_info.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
     auto& packed_bind_sparse_info = bind_sparse_expand_info->packed_bind_sparse_info;
     for (uint32_t i = 0; i < packed_bind_sparse_info->bind_info_count; i++) {
-        const VkTimelineSemaphoreSubmitInfoKHR* timeline_semaphore_info =
-            FindOnChain<VkTimelineSemaphoreSubmitInfoKHR, VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR>(
-                packed_bind_sparse_info->bind_infos[i].pNext);
+        const auto* timeline_semaphore_info =
+            vku::FindStructInPNextChain<VkTimelineSemaphoreSubmitInfoKHR>(packed_bind_sparse_info->bind_infos[i].pNext);
 
         // If the bind info has a wait operation on a binary semaphore do a
         // vkQueueSubmit.
@@ -172,10 +172,8 @@ std::string BindSparseUtils::LogBindSparseInfosSemaphores(const Device* device, 
             signal_semaphore_values.push_back(1);
         }
 
-        const VkTimelineSemaphoreSubmitInfoKHR* timeline_semaphore_info =
-            FindOnChain<VkTimelineSemaphoreSubmitInfoKHR, VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR>(
-                bind_infos[i].pNext);
-
+        const auto* timeline_semaphore_info =
+            vku::FindStructInPNextChain<VkTimelineSemaphoreSubmitInfoKHR>(bind_infos[i].pNext);
         if (timeline_semaphore_info) {
             for (uint32_t j = 0; j < timeline_semaphore_info->waitSemaphoreValueCount; j++) {
                 if (semaphore_tracker->GetSemaphoreType(wait_semaphores[j]) == VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
