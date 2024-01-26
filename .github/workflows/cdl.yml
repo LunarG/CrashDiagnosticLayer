@@ -1,0 +1,141 @@
+# Copyright (c) 2021-2024 Valve Corporation
+# Copyright (c) 2021-2024 LunarG, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: CDL (Build/Tests)
+
+# https://docs.github.com/en/actions/using-jobs/using-concurrency
+concurrency:
+  # github.head_ref is only defined on pull_request
+  # Fallback to the run ID, which is guaranteed to be both unique and defined for the run.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id  }}
+  cancel-in-progress: true
+
+on:
+    push:
+    pull_request:
+        branches:
+            - main
+
+env:
+  CMAKE_GENERATOR: Ninja
+
+permissions:
+  contents: read
+
+jobs:
+  code-format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: clang-format version
+        run: clang-format --version
+      - name: Execute Source Code Format Checking Script
+        run: python3 scripts/check_code_format.py --fetch-main --target-refspec=FETCH_HEAD
+
+  # Ensure we can build on an older Ubuntu distro with an older version of CMake.
+  linux_back_compat:
+    needs: check_cdl
+    runs-on: ubuntu-22.04
+    name: "Ubuntu Backcompat"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Minimum CMake Version
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: 3.17.2
+      - uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: linux_back_compat
+      - run: sudo apt-get -qq update && sudo apt-get install -y libwayland-dev xorg-dev
+      - run: cmake -S . -B build/ -D UPDATE_DEPS=ON -D CMAKE_BUILD_TYPE=Debug
+        env:
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
+          # Linker warnings as errors
+          LDFLAGS: -Wl,--fatal-warnings
+      - run: cmake --build build
+      - run: cmake --install build --prefix /tmp
+
+  linux:
+    needs: check_cdl
+    runs-on: ubuntu-24.04
+    name: "linux (${{matrix.sanitize}} sanitizer, ${{matrix.config}})"
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitize: [ none, address, thread ]
+        config: [debug, release]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+      - uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ matrix.config }}-${{ matrix.sanitize }}
+      - run: sudo apt-get -qq update && sudo apt-get install -y libwayland-dev xorg-dev
+      # This is to combat a bug when using 6.6 linux kernels with thread/address sanitizer
+      # https://github.com/google/sanitizers/issues/1716
+      - run: sudo sysctl vm.mmap_rnd_bits=28
+      - run: python scripts/tests.py --build --config ${{ matrix.config }} --sanitize ${{ matrix.sanitize }}
+        env:
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
+      - name: Test
+        run: python scripts/tests.py --test
+
+  windows:
+    needs: check_cdl
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        arch: [ amd64, amd64_x86 ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+      - name: Cache known_good.json installations
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            build-ci/external/glslang/build/install
+            build-ci/external/googletest/build/install
+            build-ci/external/yaml-cpp/build/install
+            build-ci/external/SPIRV-Headers/build/install
+            build-ci/external/Vulkan-Headers/build/install
+            build-ci/external/Vulkan-Utility-Libraries/build/install
+          key: windows-dependencies-${{ matrix.arch }}-${{ hashfiles('scripts/known_good.json') }}
+      - name: Build
+        run: python3 scripts/tests.py --build --config debug --cmake='-DUPDATE_DEPS_SKIP_EXISTING_INSTALL=ON'
+
+  check_cdl:
+    needs: code-format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: python3 -m pip install pyparsing
+      - run: scripts/update_deps.py --dir ext --no-build
+      - run: scripts/generate_source.py --verify ext/Vulkan-Headers/registry/ ext/SPIRV-Headers/include/spirv/unified1/
