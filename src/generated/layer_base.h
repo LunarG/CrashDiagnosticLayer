@@ -1690,6 +1690,8 @@ class Interceptor {
 
 public:
 
+    virtual ~Interceptor() {}
+
     virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo *pCreateInfo) = 0;
 
     virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo) = 0;

@@ -129,6 +129,7 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj);
         self.write("\n// Declare interceptor interface.\n")
         self.write("\nclass Interceptor {\n")
         self.write("public:\n")
+        self.write("    virtual ~Interceptor() {}\n")
         self.write("    virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo *pCreateInfo) = 0;\n");
         self.write("    virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo) = 0;\n")
         out = []
@@ -414,7 +415,7 @@ VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL PassDeviceProcDownTheChain(
 /*                         Custom Intercept Functions                        */
 /*****************************************************************************/
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) {
+VkResult InterceptCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) {
   // Find the create info
   VkLayerInstanceCreateInfo *layer_create_info = GetLoaderInstanceInfo(pCreateInfo, VK_LAYER_LINK_INFO);
   if (layer_create_info == NULL)
@@ -462,7 +463,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInf
   return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptDestroyInstance(
+void InterceptDestroyInstance(
     VkInstance instance, const VkAllocationCallbacks *pAllocator) {
 
   auto instance_key = DataKey(instance);
@@ -526,7 +527,7 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
   return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptDestroyDevice(
+void InterceptDestroyDevice(
     VkDevice device, const VkAllocationCallbacks *pAllocator) {
 
   auto device_key = DataKey(device);

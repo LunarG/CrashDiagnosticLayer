@@ -50,6 +50,11 @@ std::string PtrToStr(const T* ptr) {
     return Uint64ToStr(value);
 }
 
+// specialization for non-dispatchable handles in 32 bit builds
+static inline std::string PtrToStr(uint64_t value) {
+    return Uint64ToStr(value);
+}
+
 inline std::string Indent(uint32_t indent) { return "\n" + std::string(indent, ' '); }
 
 inline std::string IncreaseIndent(const std::string& indent, const uint32_t num_indents = 2) {

@@ -312,6 +312,8 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
         out = []
         for vkhandle in self.vk.handles.values():
             out.extend([f'#ifdef {vkhandle.protect}\n'] if vkhandle.protect else [])
+            if not vkhandle.dispatchable:
+                out.append('#if VK_USE_64_BIT_PTR_DEFINES\n')
             out.append(f'std::ostream &operator<<(std::ostream& os, const {vkhandle.name} &a) {{')
             out.append('\n    auto handle = (uint64_t)(a);\n')
             namespace_ref = self.CreateNamespaceReference('Uint64ToStr(handle)')
@@ -324,6 +326,8 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
     return os;
 }
 ''')
+            if not vkhandle.dispatchable:
+                out.append('#endif //VK_USE_64_BIT_PTR_DEFINES\n')
             out.extend([f'#endif //{vkhandle.protect}\n'] if vkhandle.protect else [])
             out.append('\n')
         self.write("".join(out))
