@@ -21,9 +21,7 @@
 // For OutputDebugString
 #include <process.h>
 #include <windows.h>
-#endif
-
-#ifdef __linux__
+#else
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
@@ -707,9 +705,10 @@ void Context::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_
 // Define pre / post intercepted commands
 // =============================================================================
 
-static VkBool32 MessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-                                  VkDebugUtilsMessageTypeFlagsEXT types,
-                                  const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+static VKAPI_ATTR VkBool32 VKAPI_CALL MessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+                                                        VkDebugUtilsMessageTypeFlagsEXT types,
+                                                        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                        void* pUserData) {
     if (nullptr != pCallbackData && nullptr != pUserData) {
         Context* context = reinterpret_cast<Context*>(pUserData);
         Logger* logger = context->GetLogger();
@@ -1363,9 +1362,9 @@ VkResult Context::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSigna
 VkResult Context::PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout) {
     if (track_semaphores_) {
         int tid = 0;
-#ifdef SYS_gettid
+#ifdef __linux__
         tid = syscall(SYS_gettid);
-#endif  // SYS_gettid
+#endif
 
 #ifdef WIN32
         int pid = _getpid();
@@ -1399,15 +1398,15 @@ VkResult Context::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitIn
     }
     if (track_semaphores_ && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
         int tid = 0;
-#ifdef SYS_gettid
+#ifdef __linux__
         tid = syscall(SYS_gettid);
-#endif  // SYS_gettid
+#endif
 
 #ifdef WIN32
         int pid = _getpid();
 #else
         int pid = getpid();
-#endif  // WIN32
+#endif
 
         {
             // Update semaphore values
@@ -1853,17 +1852,17 @@ VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(PFN_vkQueueBindSparse fp_queue_bi
     return last_bind_result;
 }
 
-VKAPI_ATTR VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
-                                   VkInstance* pInstance, Interceptor** interceptor) {
+VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
+                        VkInstance* pInstance, Interceptor** interceptor) {
     auto* context = new Context(pCreateInfo, pAllocator);
     *interceptor = context;
     return VK_SUCCESS;
 }
 
 // CDL intercepts vkCreateDevice to enforce coherent memory
-VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(PFN_vkCreateDevice pfn_create_device, Interceptor* interceptor, VkPhysicalDevice gpu,
-                                            const VkDeviceCreateInfo* pCreateInfo,
-                                            const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
+VkResult CreateDevice(PFN_vkCreateDevice pfn_create_device, Interceptor* interceptor, VkPhysicalDevice gpu,
+                      const VkDeviceCreateInfo* pCreateInfo,
+                      const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
     auto* context = static_cast<Context*>(interceptor);
     VkDeviceCreateInfo local_create_info = *pCreateInfo;
     if (context->AmdDeviceCoherentExtensionEnabled(gpu)) {

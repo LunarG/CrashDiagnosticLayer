@@ -54,6 +54,7 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
 
 // Handle ostream operators
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkBuffer &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -64,7 +65,9 @@ std::ostream &operator<<(std::ostream& os, const VkBuffer &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkImage &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -75,6 +78,7 @@ std::ostream &operator<<(std::ostream& os, const VkImage &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
 std::ostream &operator<<(std::ostream& os, const VkInstance &a) {
     auto handle = (uint64_t)(a);
@@ -120,6 +124,7 @@ std::ostream &operator<<(std::ostream& os, const VkQueue &a) {
     return os;
 }
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkSemaphore &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -130,6 +135,7 @@ std::ostream &operator<<(std::ostream& os, const VkSemaphore &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
 std::ostream &operator<<(std::ostream& os, const VkCommandBuffer &a) {
     auto handle = (uint64_t)(a);
@@ -142,6 +148,7 @@ std::ostream &operator<<(std::ostream& os, const VkCommandBuffer &a) {
     return os;
 }
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkFence &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -152,7 +159,9 @@ std::ostream &operator<<(std::ostream& os, const VkFence &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDeviceMemory &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -163,7 +172,9 @@ std::ostream &operator<<(std::ostream& os, const VkDeviceMemory &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkEvent &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -174,7 +185,9 @@ std::ostream &operator<<(std::ostream& os, const VkEvent &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkQueryPool &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -185,7 +198,9 @@ std::ostream &operator<<(std::ostream& os, const VkQueryPool &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkBufferView &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -196,7 +211,9 @@ std::ostream &operator<<(std::ostream& os, const VkBufferView &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkImageView &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -207,7 +224,9 @@ std::ostream &operator<<(std::ostream& os, const VkImageView &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkShaderModule &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -218,7 +237,9 @@ std::ostream &operator<<(std::ostream& os, const VkShaderModule &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkPipelineCache &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -229,7 +250,9 @@ std::ostream &operator<<(std::ostream& os, const VkPipelineCache &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkPipelineLayout &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -240,7 +263,9 @@ std::ostream &operator<<(std::ostream& os, const VkPipelineLayout &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkPipeline &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -251,7 +276,9 @@ std::ostream &operator<<(std::ostream& os, const VkPipeline &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkRenderPass &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -262,7 +289,9 @@ std::ostream &operator<<(std::ostream& os, const VkRenderPass &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDescriptorSetLayout &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -273,7 +302,9 @@ std::ostream &operator<<(std::ostream& os, const VkDescriptorSetLayout &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkSampler &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -284,7 +315,9 @@ std::ostream &operator<<(std::ostream& os, const VkSampler &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDescriptorSet &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -295,7 +328,9 @@ std::ostream &operator<<(std::ostream& os, const VkDescriptorSet &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDescriptorPool &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -306,7 +341,9 @@ std::ostream &operator<<(std::ostream& os, const VkDescriptorPool &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkFramebuffer &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -317,7 +354,9 @@ std::ostream &operator<<(std::ostream& os, const VkFramebuffer &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkCommandPool &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -328,7 +367,9 @@ std::ostream &operator<<(std::ostream& os, const VkCommandPool &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkSamplerYcbcrConversion &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -339,7 +380,9 @@ std::ostream &operator<<(std::ostream& os, const VkSamplerYcbcrConversion &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDescriptorUpdateTemplate &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -350,7 +393,9 @@ std::ostream &operator<<(std::ostream& os, const VkDescriptorUpdateTemplate &a) 
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkPrivateDataSlot &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -361,7 +406,9 @@ std::ostream &operator<<(std::ostream& os, const VkPrivateDataSlot &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkSurfaceKHR &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -372,7 +419,9 @@ std::ostream &operator<<(std::ostream& os, const VkSurfaceKHR &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkSwapchainKHR &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -383,7 +432,9 @@ std::ostream &operator<<(std::ostream& os, const VkSwapchainKHR &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDisplayKHR &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -394,7 +445,9 @@ std::ostream &operator<<(std::ostream& os, const VkDisplayKHR &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDisplayModeKHR &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -405,7 +458,9 @@ std::ostream &operator<<(std::ostream& os, const VkDisplayModeKHR &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkVideoSessionKHR &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -416,7 +471,9 @@ std::ostream &operator<<(std::ostream& os, const VkVideoSessionKHR &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkVideoSessionParametersKHR &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -427,7 +484,9 @@ std::ostream &operator<<(std::ostream& os, const VkVideoSessionParametersKHR &a)
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDeferredOperationKHR &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -438,7 +497,9 @@ std::ostream &operator<<(std::ostream& os, const VkDeferredOperationKHR &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDebugReportCallbackEXT &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -449,7 +510,9 @@ std::ostream &operator<<(std::ostream& os, const VkDebugReportCallbackEXT &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkCuModuleNVX &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -460,7 +523,9 @@ std::ostream &operator<<(std::ostream& os, const VkCuModuleNVX &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkCuFunctionNVX &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -471,7 +536,9 @@ std::ostream &operator<<(std::ostream& os, const VkCuFunctionNVX &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkDebugUtilsMessengerEXT &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -482,7 +549,9 @@ std::ostream &operator<<(std::ostream& os, const VkDebugUtilsMessengerEXT &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkValidationCacheEXT &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -493,7 +562,9 @@ std::ostream &operator<<(std::ostream& os, const VkValidationCacheEXT &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkAccelerationStructureNV &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -504,7 +575,9 @@ std::ostream &operator<<(std::ostream& os, const VkAccelerationStructureNV &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkPerformanceConfigurationINTEL &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -515,7 +588,9 @@ std::ostream &operator<<(std::ostream& os, const VkPerformanceConfigurationINTEL
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkIndirectCommandsLayoutNV &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -526,7 +601,9 @@ std::ostream &operator<<(std::ostream& os, const VkIndirectCommandsLayoutNV &a) 
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkCudaModuleNV &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -537,7 +614,9 @@ std::ostream &operator<<(std::ostream& os, const VkCudaModuleNV &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkCudaFunctionNV &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -548,7 +627,9 @@ std::ostream &operator<<(std::ostream& os, const VkCudaFunctionNV &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkAccelerationStructureKHR &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -559,8 +640,10 @@ std::ostream &operator<<(std::ostream& os, const VkAccelerationStructureKHR &a) 
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
 #ifdef VK_USE_PLATFORM_FUCHSIA
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkBufferCollectionFUCHSIA &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -571,8 +654,10 @@ std::ostream &operator<<(std::ostream& os, const VkBufferCollectionFUCHSIA &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 #endif //VK_USE_PLATFORM_FUCHSIA
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkMicromapEXT &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -583,7 +668,9 @@ std::ostream &operator<<(std::ostream& os, const VkMicromapEXT &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkOpticalFlowSessionNV &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -594,7 +681,9 @@ std::ostream &operator<<(std::ostream& os, const VkOpticalFlowSessionNV &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
 std::ostream &operator<<(std::ostream& os, const VkShaderEXT &a) {
     auto handle = (uint64_t)(a);
     os << crash_diagnostic_layer::Uint64ToStr(handle) << std::endl;
@@ -605,6 +694,7 @@ std::ostream &operator<<(std::ostream& os, const VkShaderEXT &a) {
     }
     return os;
 }
+#endif //VK_USE_64_BIT_PTR_DEFINES
 
 
 

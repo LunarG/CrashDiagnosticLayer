@@ -116,11 +116,11 @@ bool System::QueryInfoPosix() {
                 char* colon_loc = strstr(temp_string, ":");
                 os_name_ = colon_loc + 1;
                 TrimWhitespaceAndQuotes(os_name_);
-            } else if (NULL != strstr(path, "ProductVersion")) {
+            } else if (NULL != strstr(temp_string, "ProductVersion")) {
                 char* colon_loc = strstr(temp_string, ":");
                 os_version_ = colon_loc + 1;
                 TrimWhitespaceAndQuotes(os_version_);
-            } else if (NULL != strstr(path, "BuildVersion")) {
+            } else if (NULL != strstr(temp_string, "BuildVersion")) {
                 char* colon_loc = strstr(temp_string, ":");
                 std::string build_version = colon_loc + 1;
                 TrimWhitespaceAndQuotes(build_version);

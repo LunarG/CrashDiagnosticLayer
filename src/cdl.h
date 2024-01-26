@@ -193,9 +193,9 @@ class Context : public Interceptor {
     void PostApiFunction(const char* api_name);
     void PostApiFunction(const char* api_name, VkResult result);
 
-    const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo);
+    const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) override;
     const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
-                                                          const VkDeviceCreateInfo* pCreateInfo);
+                                                          const VkDeviceCreateInfo* pCreateInfo) override;
 
     bool AmdDeviceCoherentExtensionEnabled(VkPhysicalDevice physicalDevice) {
         return extensions_of_interest_enabled_[physicalDevice].amd_coherent_memory;
