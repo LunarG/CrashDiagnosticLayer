@@ -129,3 +129,4 @@ the console.
 - If `CDL_SHADERS_DUMP_ON_BIND` is set to 1, shaders will be dumped to disk when they are bound.  This can reduce the number of shaders dumped to those referenced by the application.
 - If `CDL_SHADERS_DUMP_ON_CRASH` is set to 1, bound shaders will be dumped to disk when a crash is detected.  This will use more memory as shader code will be kept residient in case of a crash.
 
+
