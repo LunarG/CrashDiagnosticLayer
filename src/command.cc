@@ -532,7 +532,7 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
             auto command_state = GetCommandState(cb_state, command);
 
             os << YAML::BeginMap << YAML::Comment("Command:");
-            //os << YAML::Key << "id" << YAML::Value << command.id << "/" << num_commands;
+            // os << YAML::Key << "id" << YAML::Value << command.id << "/" << num_commands;
             os << YAML::Key << "id" << YAML::Value << command.id;
             os << YAML::Key << "markerValue" << YAML::Value
                << crash_diagnostic_layer::Uint32ToStr(begin_marker_value_ + command.id);
@@ -561,11 +561,11 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
                 command.id == GetLastCompleteCommand()) {
                 os << YAML::Key << "message" << YAML::Value << "'>>>>>>>>>>>>>> LAST COMPLETE COMMAND <<<<<<<<<<<<<<'";
             }
-            os << YAML::EndMap; //Command
+            os << YAML::EndMap;  // Command
         }
         os << YAML::EndSeq;
     }
-    os << YAML::EndMap; // CommandBuffer
+    os << YAML::EndMap;  // CommandBuffer
 }
 
 // =============================================================================

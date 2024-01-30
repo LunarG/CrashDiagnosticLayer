@@ -35,6 +35,8 @@
 #include "shader_module.h"
 #include "submit_tracker.h"
 
+#include <vulkan/utility/vk_sparse_range_map.hpp>
+
 namespace crash_diagnostic_layer {
 
 const VkDeviceSize kBufferMarkerEventCount = 1024;
@@ -51,6 +53,18 @@ struct DeviceExtensionsPresent {
     bool amd_buffer_marker{false};
     bool amd_coherent_memory{false};
     bool ext_device_fault{false};
+    bool ext_device_address_binding_report{false};
+};
+
+struct DeviceAddressRecord {
+    VkDeviceAddress base;
+    VkDeviceSize size;
+    VkDeviceAddressBindingFlagsEXT flags;
+    VkDeviceAddressBindingTypeEXT binding_type;
+    VkObjectType object_type;
+    uint64_t object_handle;
+    std::string object_name;
+    std::chrono::time_point<std::chrono::high_resolution_clock> when;
 };
 
 class Device {
@@ -94,7 +108,8 @@ class Device {
     bool ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, YAML::Emitter& os);
     void DeleteCommandBuffers(const VkCommandBuffer* vk_cmds, uint32_t cb_count);
 
-    void DumpCommandBuffers(YAML::Emitter& os, const char * section_name, CommandBufferDumpOptions options, bool dump_all_command_buffers) const;
+    void DumpCommandBuffers(YAML::Emitter& os, const char* section_name, CommandBufferDumpOptions options,
+                            bool dump_all_command_buffers) const;
     void DumpAllCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const;
     void DumpIncompleteCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const;
     void DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter& os) const;
@@ -133,6 +148,8 @@ class Device {
     void DumpDeviceFaultInfo(YAML::Emitter& os) const;
 
     YAML::Emitter& Print(YAML::Emitter& stream) const;
+
+    void MemoryBindEvent(const DeviceAddressRecord& record, bool multi_device);
 
    private:
     Context* context_ = nullptr;
@@ -198,6 +215,8 @@ class Device {
     PFN_vkFreeCommandBuffers pfn_vkFreeCommandBuffers_ = nullptr;
 
     PFN_vkGetDeviceFaultInfoEXT pfn_vkGetDeviceFaultInfoEXT = nullptr;
+
+    vku::sparse::range_map<VkDeviceAddress, DeviceAddressRecord> address_map_;
 };
 
 using DevicePtr = std::unique_ptr<Device>;

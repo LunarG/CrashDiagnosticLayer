@@ -4160,8 +4160,7 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu, const VkDeviceCreateInfo* p
     const VkDeviceCreateInfo* pFinalCreateInfo =
         instance_data->interceptor->GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
 
-    VkResult result =
-        CreateDevice(pfn_create_device, instance_data->interceptor, gpu, pFinalCreateInfo, pAllocator, pDevice);
+    auto result = pfn_create_device(gpu, pFinalCreateInfo, pAllocator, pDevice);
     if (VK_SUCCESS != result) {
         return result;
     }
@@ -4186,8 +4185,10 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu, const VkDeviceCreateInfo* p
 void InterceptDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
     auto device_key = DataKey(device);
     DeviceData* device_data = GetDeviceLayerData(device_key);
+    device_data->interceptor->PreDestroyDevice(device, pAllocator);
     auto pfn_destroy_device = device_data->dispatch_table.DestroyDevice;
     pfn_destroy_device(device, pAllocator);
+    device_data->interceptor->PostDestroyDevice(device, pAllocator);
 
     FreeDeviceLayerData(device_key);
 }

@@ -313,10 +313,11 @@ void CommandTracker::PrintCommandParameters(YAML::Emitter &os, const Command &cm
   {
     default:
     case Command::Type::kUnknown:
-      os << "";
+      // output an empty map for consistency with other command printers
+      os << YAML::BeginMap << YAML::EndMap;
       break;
 ''')
-        for vkcommand in filter(lambda x: x.name.startswith('vkCmd'), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'    case Command::Type::k{vkcommand.name[2:]}:\n')
             out.append('      if (cmd.parameters) {\n')
