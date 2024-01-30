@@ -88,6 +88,7 @@ set_target_properties(crash_diagnostic PROPERTIES OUTPUT_NAME ${LAYER_NAME})
 target_link_libraries(crash_diagnostic PUBLIC
     Vulkan::Headers
     Vulkan::LayerSettings
+    Vulkan::SafeStruct
     Vulkan::UtilityHeaders
     yaml-cpp::yaml-cpp
     ${CMAKE_DL_LIBS}

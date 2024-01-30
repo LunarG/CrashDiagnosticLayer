@@ -43,8 +43,30 @@ void CommandTracker::PrintCommandParameters(YAML::Emitter& os, const Command& cm
     switch (cmd.type) {
         default:
         case Command::Type::kUnknown:
-            os << "";
+            // output an empty map for consistency with other command printers
+            os << YAML::BeginMap << YAML::EndMap;
             break;
+        case Command::Type::kBeginCommandBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<BeginCommandBufferArgs*>(cmd.parameters);
+                printer_.PrintBeginCommandBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kEndCommandBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<EndCommandBufferArgs*>(cmd.parameters);
+                printer_.PrintEndCommandBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kResetCommandBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<ResetCommandBufferArgs*>(cmd.parameters);
+                printer_.PrintResetCommandBufferArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdBindPipeline:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdBindPipelineArgs*>(cmd.parameters);

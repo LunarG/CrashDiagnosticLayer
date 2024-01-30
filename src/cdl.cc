@@ -191,9 +191,6 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
     GetEnvVal<bool>(layer_setting_set, settings::kTraceAllSemaphores, &trace_all_semaphores_);
     GetEnvVal<bool>(layer_setting_set, settings::kInstrumentAllCommands, &instrument_all_commands_);
 
-    instance_extension_names_original_.assign(
-        pCreateInfo->ppEnabledExtensionNames,
-        pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
     vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
 }
 
@@ -296,105 +293,99 @@ const VkInstanceCreateInfo* Context::GetModifiedInstanceCreateInfo(const VkInsta
     const uint32_t required_extension_count = 1;
     RequiredExtension required_extensions[] = {{VK_EXT_DEBUG_UTILS_EXTENSION_NAME, false, nullptr}};
 
-    instance_create_info_ = *pCreateInfo;
-    instance_extension_names_.assign(pCreateInfo->ppEnabledExtensionNames,
-                                     pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
-
-    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
-        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
-        for (uint32_t j = 0; j < required_extension_count; ++j) {
-            if (!strcmp(required_extensions[j].name, name)) {
-                required_extensions[j].enabled = true;
-            }
-        }
-    }
+    original_create_info_.initialize(pCreateInfo);
+    modified_create_info_ = original_create_info_;
 
     for (uint32_t j = 0; j < required_extension_count; ++j) {
-        if (!required_extensions[j].enabled) {
-            instance_extension_names_.push_back(required_extensions[j].name);
-        }
+        vku::AddExtension(modified_create_info_, required_extensions[j].name);
     }
+    return modified_create_info_.ptr();
+}
 
-    // Create persistent storage for the extension names
-    instance_extension_names_cstr_.clear();
-    for (auto& ext : instance_extension_names_) instance_extension_names_cstr_.push_back(&ext.front());
-    instance_create_info_.enabledExtensionCount = static_cast<uint32_t>(instance_extension_names_cstr_.size());
-    instance_create_info_.ppEnabledExtensionNames = instance_extension_names_cstr_.data();
+static void DecodeExtensionString(DeviceExtensionsPresent& extensions, const char* name) {
+    if (!strcmp(name, VK_AMD_BUFFER_MARKER_EXTENSION_NAME)) {
+        extensions.amd_buffer_marker = true;
+    } else if (!strcmp(name, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME)) {
+        extensions.amd_coherent_memory = true;
+    } else if (!strcmp(name, VK_EXT_DEVICE_FAULT_EXTENSION_NAME)) {
+        extensions.ext_device_fault = true;
+    } else if (!strcmp(name, VK_EXT_DEVICE_ADDRESS_BINDING_REPORT_EXTENSION_NAME)) {
+        extensions.ext_device_address_binding_report = true;
+    }
+}
 
-    return &instance_create_info_;
+static DeviceExtensionsPresent DecodeExtensionStrings(uint32_t count, const char* const* names) {
+    DeviceExtensionsPresent extensions{};
+
+    for (uint32_t i = 0; i < count; ++i) {
+        DecodeExtensionString(extensions, names[i]);
+    }
+    return extensions;
 }
 
 const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                                const VkDeviceCreateInfo* pCreateInfo) {
-    DeviceExtensionsPresent extensions_enabled{};
+    auto extensions_enabled =
+        DecodeExtensionStrings(pCreateInfo->enabledExtensionCount, pCreateInfo->ppEnabledExtensionNames);
 
-    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
-        const char* name = pCreateInfo->ppEnabledExtensionNames[i];
-        if (!strcmp(name, VK_AMD_BUFFER_MARKER_EXTENSION_NAME)) {
-            extensions_enabled.amd_buffer_marker = true;
-        } else if (!strcmp(name, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME)) {
-            extensions_enabled.amd_coherent_memory = true;
-        } else if (!strcmp(name, VK_EXT_DEVICE_FAULT_EXTENSION_NAME)) {
-            extensions_enabled.ext_device_fault = true;
-        }
-    }
-
-    // Keep a copy of extensions
-    device_extension_names_original_.assign(pCreateInfo->ppEnabledExtensionNames,
-                                            pCreateInfo->ppEnabledExtensionNames + pCreateInfo->enabledExtensionCount);
-
-    device_extension_names_ = device_extension_names_original_;
+    const auto& extensions_present = extensions_of_interest_present_[physicalDevice];
+    auto device_ci = std::make_unique<DeviceCreateInfo>();
+    device_ci->original.initialize(pCreateInfo);
+    device_ci->modified = device_ci->original;
 
     // If an important extension is not enabled by default, try to enable it if it is present
-    if (extensions_of_interest_present_[physicalDevice].amd_buffer_marker) {
+    if (extensions_present.amd_buffer_marker) {
         if (!extensions_enabled.amd_buffer_marker) {
+            // NOTE: this extension does not have a feature struct
             extensions_enabled.amd_buffer_marker = true;
-            device_extension_names_.push_back(VK_AMD_BUFFER_MARKER_EXTENSION_NAME);
+            vku::AddExtension(device_ci->modified, VK_AMD_BUFFER_MARKER_EXTENSION_NAME);
         }
     } else {
         logger_.LogError("No VK_AMD_buffer_marker extension, progression tracking will be disabled. ");
     }
-    if (extensions_of_interest_present_[physicalDevice].amd_coherent_memory) {
+    if (extensions_present.amd_coherent_memory) {
         if (!extensions_enabled.amd_coherent_memory) {
             extensions_enabled.amd_coherent_memory = true;
-            device_extension_names_.push_back(VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
+            auto amd_device_coherent = vku::InitStruct<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(nullptr, VK_TRUE);
+            vku::AddToPnext(device_ci->modified, amd_device_coherent);
+            vku::AddExtension(device_ci->modified, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
         }
     } else {
         logger_.LogError("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
     }
-    if (extensions_of_interest_present_[physicalDevice].ext_device_fault) {
+    if (extensions_present.ext_device_fault) {
         if (!extensions_enabled.ext_device_fault) {
             extensions_enabled.ext_device_fault = true;
-            device_extension_names_.push_back(VK_EXT_DEVICE_FAULT_EXTENSION_NAME);
+            // TODO: query for deviceFaultVendorBinary support
+            auto ext_device_fault = vku::InitStruct<VkPhysicalDeviceFaultFeaturesEXT>(nullptr, VK_TRUE, VK_FALSE);
+            vku::AddToPnext(device_ci->modified, ext_device_fault);
+            vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_FAULT_EXTENSION_NAME);
         }
     } else {
         logger_.LogWarning("No VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
     }
+    if (extensions_present.ext_device_address_binding_report) {
+        if (!extensions_enabled.ext_device_address_binding_report) {
+            auto ext_device_address_binding_report =
+                vku::InitStruct<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(nullptr, VK_TRUE);
+            vku::AddToPnext(device_ci->modified, ext_device_address_binding_report);
+            vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_ADDRESS_BINDING_REPORT_EXTENSION_NAME);
+        }
+    } else {
+        logger_.LogWarning(
+            "No VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
+    }
 
     extensions_of_interest_enabled_[physicalDevice] = std::move(extensions_enabled);
 
-    auto device_create_info = std::make_unique<DeviceCreateInfo>();
-    device_create_info->original_create_info = *pCreateInfo;
-
-    device_extension_names_original_cstr_.clear();
-    for (auto& ext : device_extension_names_original_) device_extension_names_original_cstr_.push_back(&ext.front());
-    device_extension_names_cstr_.clear();
-    for (auto& ext : device_extension_names_) device_extension_names_cstr_.push_back(&ext.front());
-
-    device_create_info->original_create_info.enabledExtensionCount =
-        static_cast<uint32_t>(device_extension_names_original_cstr_.size());
-    device_create_info->original_create_info.ppEnabledExtensionNames = device_extension_names_original_cstr_.data();
-    device_create_info->modified_create_info = *pCreateInfo;
-    device_create_info->modified_create_info.enabledExtensionCount =
-        static_cast<uint32_t>(device_extension_names_cstr_.size());
-    device_create_info->modified_create_info.ppEnabledExtensionNames = device_extension_names_cstr_.data();
-    auto p_modified_create_info = &(device_create_info->modified_create_info);
+    // save the raw ptr before std::move of the std::unique_ptr
+    const auto* ci_ptr = device_ci->modified.ptr();
     {
         std::lock_guard<std::mutex> lock(device_create_infos_mutex_);
-        device_create_infos_[p_modified_create_info] = std::move(device_create_info);
+        device_create_infos_[ci_ptr] = std::move(device_ci);
     }
 
-    return p_modified_create_info;
+    return ci_ptr;
 }
 
 bool Context::DumpShadersOnCrash() const { return debug_dump_shaders_on_crash_; }
@@ -446,8 +437,8 @@ void Context::DumpDeviceExecutionState(VkDevice vk_device) {
     }
 }
 
-void Context::DumpDeviceExecutionState(const Device* device, bool dump_prologue,
-                                       CrashSource crash_source, YAML::Emitter& os) {
+void Context::DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source,
+                                       YAML::Emitter& os) {
     DumpDeviceExecutionState(device, {}, dump_prologue, crash_source, os);
 }
 
@@ -514,7 +505,7 @@ void Context::DumpReportPrologue(YAML::Emitter& os, const Device* device) {
         }
         os << YAML::EndSeq;
     }
-    os << YAML::EndMap; // CDLInfo
+    os << YAML::EndMap;  // CDLInfo
 
     os << YAML::Key << "SystemInfo" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "osName" << YAML::Value << system_.GetOsName();
@@ -526,7 +517,7 @@ void Context::DumpReportPrologue(YAML::Emitter& os, const Device* device) {
     os << YAML::Key << "totalRam" << YAML::Value << system_.GetHwTotalRam();
     os << YAML::Key << "totalDiskSpace" << YAML::Value << system_.GetHwTotalDiskSpace();
     os << YAML::Key << "availDiskSpace" << YAML::Value << system_.GetHwAvailDiskSpace();
-    os << YAML::EndMap; // SystemInfo
+    os << YAML::EndMap;  // SystemInfo
 
     os << YAML::Key << "Instance" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "vkHandle" << YAML::Value << device->GetObjectInfo((uint64_t)vk_instance_);
@@ -542,18 +533,19 @@ void Context::DumpReportPrologue(YAML::Emitter& os, const Device* device) {
         auto patchVersion = VK_VERSION_PATCH(application_info_->apiVersion);
 
         std::stringstream api;
-        api << majorVersion << "." << minorVersion << "." << patchVersion << " (" << Uint32ToStr(application_info_->apiVersion) << ")";
+        api << majorVersion << "." << minorVersion << "." << patchVersion << " ("
+            << Uint32ToStr(application_info_->apiVersion) << ")";
         os << YAML::Key << "apiVersion" << YAML::Value << api.str();
-        YAML::EndMap; // ApplicationInfo
+        YAML::EndMap;  // ApplicationInfo
     }
 
     os << YAML::Key << "instanceExtensions" << YAML::Value << YAML::BeginSeq;
-    for (const auto &name : instance_extension_names_original_) {
-        os << name;
+    for (uint32_t i = 0; i < original_create_info_.enabledExtensionCount; i++) {
+        os << original_create_info_.ppEnabledExtensionNames[i];
     }
     os << YAML::EndSeq;
-    os << YAML::EndMap; //Instance
-    os << YAML::EndMap; //??? TODO why do we need this extra EndMap?
+    os << YAML::EndMap;  // Instance
+    os << YAML::EndMap;  //??? TODO why do we need this extra EndMap?
 }
 
 std::ofstream Context::OpenDumpFile() {
@@ -716,28 +708,35 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL MessengerCallback(VkDebugUtilsMessageSever
                                                         VkDebugUtilsMessageTypeFlagsEXT types,
                                                         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                                                         void* pUserData) {
-    if (nullptr != pCallbackData && nullptr != pUserData) {
-        Context* context = reinterpret_cast<Context*>(pUserData);
-        Logger* logger = context->GetLogger();
-        switch (severity) {
-            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-                logger->LogError("[DebugCallback] %s", pCallbackData->pMessage);
-                break;
-            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-                logger->LogWarning("[DebugCallback] %s", pCallbackData->pMessage);
-                break;
-            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-                logger->LogInfo("[DebugCallback] %s", pCallbackData->pMessage);
-                break;
-            case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-                logger->LogDebug("[DebugCallback] %s", pCallbackData->pMessage);
-                break;
-            default:
-                // If we get here, we don't care about the message.
-                break;
+    if (nullptr == pCallbackData || nullptr == pUserData) {
+        return VK_FALSE;
+    }
+    Context* context = reinterpret_cast<Context*>(pUserData);
+    Logger* logger = context->GetLogger();
+    const auto* mem_info = vku::FindStructInPNextChain<VkDeviceAddressBindingCallbackDataEXT>(pCallbackData->pNext);
+    if (!mem_info) {
+        return VK_FALSE;
+    }
+    context->MemoryBindEvent(*mem_info, *pCallbackData->pObjects);
+    return VK_FALSE;
+}
+void Context::MemoryBindEvent(const VkDeviceAddressBindingCallbackDataEXT& mem_info,
+                              const VkDebugUtilsObjectNameInfoEXT& object) {
+    DeviceAddressRecord rec{mem_info.baseAddress,
+                            mem_info.size,
+                            mem_info.flags,
+                            mem_info.bindingType,
+                            object.objectType,
+                            object.objectHandle,
+                            object.pObjectName ? object.pObjectName : "",
+                            std::chrono::high_resolution_clock::now()};
+    {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        bool multi_device = devices_.size() > 1;
+        for (auto& dev : devices_) {
+            dev.second->MemoryBindEvent(rec, multi_device);
         }
     }
-    return VK_FALSE;
 }
 
 VkResult Context::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
@@ -765,7 +764,7 @@ VkResult Context::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, co
             0,
             VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
-            VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+            VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT,
             &MessengerCallback,
             this,
         };
@@ -792,13 +791,7 @@ VkResult Context::PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physic
         // Get the list of device extensions.
         uint32_t extension_count = *pPropertyCount;
         for (uint32_t i = 0; i < extension_count; ++i) {
-            if (!strcmp(pProperties[i].extensionName, VK_AMD_BUFFER_MARKER_EXTENSION_NAME)) {
-                extensions_present.amd_buffer_marker = true;
-            } else if (!strcmp(pProperties[i].extensionName, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME)) {
-                extensions_present.amd_coherent_memory = true;
-            } else if (!strcmp(pProperties[i].extensionName, VK_EXT_DEVICE_FAULT_EXTENSION_NAME)) {
-                extensions_present.ext_device_fault = true;
-            }
+            DecodeExtensionString(extensions_present, pProperties[i].extensionName);
         }
         extensions_of_interest_present_[physicalDevice] = std::move(extensions_present);
     }
@@ -811,16 +804,8 @@ VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDevi
                                    const VkAllocationCallbacks* pAllocator, VkDevice* pDevice, VkResult callResult) {
     if (callResult != VK_SUCCESS) return callResult;
 
-    DeviceExtensionsPresent extensions_present{};
-    for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; ++i) {
-        if (!strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_AMD_BUFFER_MARKER_EXTENSION_NAME)) {
-            extensions_present.amd_buffer_marker = true;
-        } else if (!strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME)) {
-            extensions_present.amd_coherent_memory = true;
-        } else if (!strcmp(pCreateInfo->ppEnabledExtensionNames[i], VK_EXT_DEVICE_FAULT_EXTENSION_NAME)) {
-            extensions_present.ext_device_fault = true;
-        }
-    }
+    auto extensions_present =
+        DecodeExtensionStrings(pCreateInfo->enabledExtensionCount, pCreateInfo->ppEnabledExtensionNames);
 
     VkDevice vk_device = *pDevice;
     DevicePtr device = std::make_unique<Device>(this, physicalDevice, *pDevice, extensions_present);
@@ -1310,7 +1295,7 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
             if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                 log << ", Type: Binary" << std::endl;
             } else {
-                log << ", Type: Timeline, Initial value: " << s_value << std::endl;
+                log << ", Type: Timeline, Initial value: " << s_value;
             }
             logger_.LogInfo(log.str());
         }
@@ -1318,15 +1303,15 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
     return result;
 }
 
-void Context::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {}
-void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
+void Context::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
     if (track_semaphores_) {
         std::lock_guard<std::mutex> lock(devices_mutex_);
-        auto semaphore_tracker = devices_[device]->GetSemaphoreTracker();
+        auto& dev_object = *devices_[device];
+        auto semaphore_tracker = dev_object.GetSemaphoreTracker();
         if (trace_all_semaphores_) {
             std::stringstream log;
-            log << "Semaphore destroyed. VkDevice:" << GetObjectName(device, (uint64_t)device)
-                << ", VkSemaphore: " << GetObjectName(device, (uint64_t)(semaphore));
+            log << "Semaphore destroyed. VkDevice:" << dev_object.GetObjectName((uint64_t)device)
+                << ", VkSemaphore: " << dev_object.GetObjectName((uint64_t)(semaphore));
             if (semaphore_tracker->GetSemaphoreType(semaphore) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                 log << ", Type: Binary, ";
             } else {
@@ -1334,12 +1319,18 @@ void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const
             }
             uint64_t semaphore_value;
             if (semaphore_tracker->GetSemaphoreValue(semaphore, semaphore_value)) {
-                log << "Latest value: " << semaphore_value << std::endl;
+                log << "Latest value: " << semaphore_value;
             } else {
                 log << "Latest value: Unknown" << std::endl;
             }
             logger_.LogInfo(log.str());
         }
+    }
+}
+void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
+    if (track_semaphores_) {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        auto semaphore_tracker = devices_[device]->GetSemaphoreTracker();
         semaphore_tracker->EraseSemaphore(semaphore);
     }
 }
@@ -1864,26 +1855,6 @@ VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocat
     auto* context = new Context(pCreateInfo, pAllocator);
     *interceptor = context;
     return VK_SUCCESS;
-}
-
-// CDL intercepts vkCreateDevice to enforce coherent memory
-VkResult CreateDevice(PFN_vkCreateDevice pfn_create_device, Interceptor* interceptor, VkPhysicalDevice gpu,
-                      const VkDeviceCreateInfo* pCreateInfo,
-                      const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
-    auto* context = static_cast<Context*>(interceptor);
-    VkDeviceCreateInfo local_create_info = *pCreateInfo;
-    if (context->AmdDeviceCoherentExtensionEnabled(gpu)) {
-        // Coherent memory extension enabled, check for struct, add if needed.
-        if (nullptr ==
-            vku::FindStructInPNextChain<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(local_create_info.pNext)) {
-            VkPhysicalDeviceCoherentMemoryFeaturesAMD enableDeviceCoherentMemoryFeature{};
-            enableDeviceCoherentMemoryFeature.deviceCoherentMemory = true;
-            enableDeviceCoherentMemoryFeature.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD;
-            enableDeviceCoherentMemoryFeature.pNext = (void*)pCreateInfo->pNext;
-            local_create_info.pNext = &enableDeviceCoherentMemoryFeature;
-        }
-    }
-    return pfn_create_device(gpu, &local_create_info, pAllocator, pDevice);
 }
 
 }  // namespace crash_diagnostic_layer

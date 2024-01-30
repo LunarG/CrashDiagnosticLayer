@@ -19,6 +19,8 @@
 
 #include <vulkan/vulkan.h>
 #include <vulkan/layer/vk_layer_settings.hpp>
+#include <vulkan/utility/vk_struct_helper.hpp>
+#include <vulkan/utility/vk_safe_struct.hpp>
 
 #if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
     defined(SYSTEM_TARGET_BSD)
@@ -55,8 +57,8 @@ namespace crash_diagnostic_layer {
 using StringArray = std::vector<std::string>;
 
 struct DeviceCreateInfo {
-    VkDeviceCreateInfo original_create_info;
-    VkDeviceCreateInfo modified_create_info;
+    vku::safe_VkDeviceCreateInfo original;
+    vku::safe_VkDeviceCreateInfo modified;
 };
 
 enum QueueOperationType {
@@ -126,8 +128,7 @@ T* NewArray(size_t size) {
 
 class Context : public Interceptor {
    public:
-    Context(const VkInstanceCreateInfo* pCreateInfo,
-            const VkAllocationCallbacks* pAllocator);
+    Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator);
     virtual ~Context();
 
     VkInstance GetInstance() { return vk_instance_; }
@@ -168,6 +169,9 @@ class Context : public Interceptor {
     void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
     void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
 
+    void MemoryBindEvent(const VkDeviceAddressBindingCallbackDataEXT& mem_info,
+                         const VkDebugUtilsObjectNameInfoEXT& object);
+
    private:
     void AddObjectInfo(VkDevice device, uint64_t handle, ObjectInfoPtr info);
     std::string GetObjectName(VkDevice vk_device, uint64_t handle);
@@ -175,7 +179,8 @@ class Context : public Interceptor {
 
     void DumpAllDevicesExecutionState(CrashSource crash_source);
     void DumpDeviceExecutionState(VkDevice vk_device);
-    void DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source, YAML::Emitter& os);
+    void DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source,
+                                  YAML::Emitter& os);
     void DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue,
                                   CrashSource crash_source, YAML::Emitter& os);
     void DumpDeviceExecutionStateValidationFailed(const Device* device, YAML::Emitter& os);
@@ -198,25 +203,21 @@ class Context : public Interceptor {
     const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                           const VkDeviceCreateInfo* pCreateInfo) override;
 
-    bool AmdDeviceCoherentExtensionEnabled(VkPhysicalDevice physicalDevice) {
-        return extensions_of_interest_enabled_[physicalDevice].amd_coherent_memory;
+    const DeviceExtensionsPresent& EnabledExtensions(VkPhysicalDevice physicalDevice) {
+        return extensions_of_interest_enabled_[physicalDevice];
     }
 
 #include "cdl_commands.h.inc"
 
    private:
-    using CStringArray = std::vector<char*>;
-
     Logger logger_;
     System system_;
 
-    StringArray instance_extension_names_;
-    StringArray instance_extension_names_original_;
-    CStringArray instance_extension_names_cstr_;
     VkInstance vk_instance_ = VK_NULL_HANDLE;
+    vku::safe_VkInstanceCreateInfo original_create_info_;
+    vku::safe_VkInstanceCreateInfo modified_create_info_;
 
     InstanceDispatchTable instance_dispatch_table_;
-    VkInstanceCreateInfo instance_create_info_;
 
     std::unordered_map<VkPhysicalDevice, DeviceExtensionsPresent> extensions_of_interest_present_;
     std::unordered_map<VkPhysicalDevice, DeviceExtensionsPresent> extensions_of_interest_enabled_;
@@ -240,10 +241,6 @@ class Context : public Interceptor {
 
     mutable std::mutex devices_mutex_;
     std::unordered_map<VkDevice, DevicePtr> devices_;
-    StringArray device_extension_names_;
-    StringArray device_extension_names_original_;
-    CStringArray device_extension_names_cstr_;
-    CStringArray device_extension_names_original_cstr_;
 
     // Tracks VkDevice that a VkQueue belongs to. This is needed when tracking
     // semaphores in vkQueueBindSparse, for which we need to allocate new command
@@ -276,7 +273,7 @@ class Context : public Interceptor {
     StringArray configs_;
     template <class T>
     void GetEnvVal(VkuLayerSettingSet settings, const char* name, T* value);
-    void MakeDir(const std::filesystem::path &path);
+    void MakeDir(const std::filesystem::path& path);
 
     int total_submits_ = 0;
     int total_logs_ = 0;
@@ -291,7 +288,6 @@ class Context : public Interceptor {
     std::atomic<bool> watchdog_running_;
     std::atomic<long long> last_submit_time_;
     uint64_t watchdog_timer_ms_ = 0;
-
 };
 
 }  // namespace crash_diagnostic_layer

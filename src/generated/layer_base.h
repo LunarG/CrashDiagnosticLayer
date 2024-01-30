@@ -44,12 +44,6 @@ typedef VkResult(VKAPI_PTR* PFN_vkSetDeviceLoaderData)(VkDevice device, void* ob
 
 class Interceptor;
 
-// Functions defined elsewhere but used in the matching source file
-VkResult CreateDevice(PFN_vkCreateDevice pfn, Interceptor* interceptor, VkPhysicalDevice physicalDevice,
-                      const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
-                      VkDevice* pDevice);
-void DestroyDevice(PFN_vkDestroyDevice pfn, VkDevice device, const VkAllocationCallbacks* pAllocator);
-
 VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                         VkInstance* pInstance, Interceptor** interceptor);
 
@@ -920,10 +914,9 @@ class Interceptor {
    public:
     virtual ~Interceptor() {}
 
-    virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) = 0;
+    virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo*) = 0;
 
-    virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
-                                                                  const VkDeviceCreateInfo* pCreateInfo) = 0;
+    virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice, const VkDeviceCreateInfo*) = 0;
 
     virtual VkResult PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo,
                                         const VkAllocationCallbacks* pAllocator, VkInstance* pInstance,

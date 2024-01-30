@@ -52,8 +52,6 @@ std::string PtrToStr(const T* ptr) {
 }
 
 // specialization for non-dispatchable handles in 32 bit builds
-static inline std::string PtrToStr(uint64_t value) {
-    return Uint64ToStr(value);
-}
+static inline std::string PtrToStr(uint64_t value) { return Uint64ToStr(value); }
 
 }  // namespace crash_diagnostic_layer

@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023 LunarG, Inc.
+# Copyright 2023-2024 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,15 +64,6 @@ typedef VkResult (VKAPI_PTR *PFN_vkSetDeviceLoaderData)(VkDevice device, void* o
 
 class Interceptor;
 
-// Functions defined elsewhere but used in the matching source file
-VkResult CreateDevice(PFN_vkCreateDevice pfn, Interceptor *interceptor,
-                      VkPhysicalDevice physicalDevice,
-                      const VkDeviceCreateInfo *pCreateInfo,
-                      const VkAllocationCallbacks *pAllocator,
-                      VkDevice *pDevice);
-void DestroyDevice(PFN_vkDestroyDevice pfn, VkDevice device,
-                   const VkAllocationCallbacks *pAllocator);
-
 VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo,
                         const VkAllocationCallbacks* pAllocator,
                         VkInstance* pInstance,
@@ -130,8 +121,9 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj);
         self.write("\nclass Interceptor {\n")
         self.write("public:\n")
         self.write("    virtual ~Interceptor() {}\n")
-        self.write("    virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo *pCreateInfo) = 0;\n");
-        self.write("    virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo *pCreateInfo) = 0;\n")
+        self.write("    virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo *) = 0;\n");
+        self.write("    virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice , const VkDeviceCreateInfo *) = 0;\n")
+
         out = []
         for vkcommand in self.vk.commands.values():
             if self.InterceptPreCommand(vkcommand):
@@ -502,8 +494,7 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
   const VkDeviceCreateInfo *pFinalCreateInfo =
       instance_data->interceptor->GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
 
-  VkResult result = CreateDevice(pfn_create_device, instance_data->interceptor, gpu, pFinalCreateInfo,
-                                 pAllocator, pDevice);
+  auto result = pfn_create_device(gpu, pFinalCreateInfo, pAllocator, pDevice);
   if (VK_SUCCESS != result) {
     return result;
   }
@@ -532,8 +523,10 @@ void InterceptDestroyDevice(
 
   auto device_key = DataKey(device);
   DeviceData *device_data = GetDeviceLayerData(device_key);
+  device_data->interceptor->PreDestroyDevice(device, pAllocator);
   auto pfn_destroy_device = device_data->dispatch_table.DestroyDevice;
   pfn_destroy_device(device, pAllocator);
+  device_data->interceptor->PostDestroyDevice(device, pAllocator);
 
   FreeDeviceLayerData(device_key);
 }

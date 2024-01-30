@@ -1,49 +1,49 @@
 {
-  "repos": [
-    {
-      "name": "Vulkan-Headers",
-      "api": "vulkan",
-      "url": "https://github.com/KhronosGroup/Vulkan-Headers.git",
-      "sub_dir": "Vulkan-Headers",
-      "build_dir": "Vulkan-Headers/build",
-      "install_dir": "Vulkan-Headers/build/install",
-      "commit": "v1.3.280"
-    },
-    {
-        "name": "Vulkan-Utility-Libraries",
-        "url": "https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git",
-        "sub_dir": "Vulkan-Utility-Libraries",
-        "build_dir": "Vulkan-Utility-Libraries/build",
-        "install_dir": "Vulkan-Utility-Libraries/build/install",
-        "commit": "v1.3.280",
-        "deps": [
-            {
-                "var_name": "VULKAN_HEADERS_INSTALL_DIR",
-                "repo_name": "Vulkan-Headers"
-            }
-        ]
-    },
-    {
-      "name": "SPIRV-Headers",
-      "url": "https://github.com/KhronosGroup/SPIRV-Headers.git",
-      "sub_dir": "SPIRV-Headers",
-      "build_dir": "SPIRV-Headers/build",
-      "install_dir": "SPIRV-Headers/build/install",
-      "commit": "8b246ff75c6615ba4532fe4fde20f1be090c3764"
-    },
-    {
-      "name": "yaml-cpp",
-      "url": "https://github.com/jbeder/yaml-cpp.git",
-      "sub_dir": "yaml-cpp",
-      "build_dir": "yaml-cpp/build",
-      "install_dir": "yaml-cpp/build/install",
-      "commit": "76dc6715734295ff1866bfc32872ff2278258fc8"
+    "repos": [
+        {
+            "name": "Vulkan-Headers",
+            "api": "vulkan",
+            "url": "https://github.com/KhronosGroup/Vulkan-Headers.git",
+            "sub_dir": "Vulkan-Headers",
+            "build_dir": "Vulkan-Headers/build",
+            "install_dir": "Vulkan-Headers/build/install",
+            "commit": "v1.3.280"
+        },
+        {
+            "name": "Vulkan-Utility-Libraries",
+            "url": "https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git",
+            "sub_dir": "Vulkan-Utility-Libraries",
+            "build_dir": "Vulkan-Utility-Libraries/build",
+            "install_dir": "Vulkan-Utility-Libraries/build/install",
+            "commit": "0519e66f426d13d06b4172f29a5476831382f79c",
+            "deps": [
+                {
+                    "var_name": "VULKAN_HEADERS_INSTALL_DIR",
+                    "repo_name": "Vulkan-Headers"
+                }
+            ]
+        },
+        {
+            "name": "SPIRV-Headers",
+            "url": "https://github.com/KhronosGroup/SPIRV-Headers.git",
+            "sub_dir": "SPIRV-Headers",
+            "build_dir": "SPIRV-Headers/build",
+            "install_dir": "SPIRV-Headers/build/install",
+            "commit": "8b246ff75c6615ba4532fe4fde20f1be090c3764"
+        },
+        {
+            "name": "yaml-cpp",
+            "url": "https://github.com/jbeder/yaml-cpp.git",
+            "sub_dir": "yaml-cpp",
+            "build_dir": "yaml-cpp/build",
+            "install_dir": "yaml-cpp/build/install",
+            "commit": "76dc6715734295ff1866bfc32872ff2278258fc8"
+        }
+    ],
+    "install_names": {
+        "Vulkan-Headers": "VULKAN_HEADERS_INSTALL_DIR",
+        "Vulkan-Utility-Libraries": "VULKAN_UTILITY_LIBRARIES_INSTALL_DIR",
+        "SPIRV-Headers": "SPIRV_HEADERS_INSTALL_DIR",
+        "yaml-cpp": "YAML_CPP_INSTALL_DIR"
     }
-  ],
-  "install_names": {
-    "Vulkan-Headers": "VULKAN_HEADERS_INSTALL_DIR",
-    "Vulkan-Utility-Libraries": "VULKAN_UTILITY_LIBRARIES_INSTALL_DIR",
-    "SPIRV-Headers": "SPIRV_HEADERS_INSTALL_DIR",
-    "yaml-cpp": "YAML_CPP_INSTALL_DIR"
-  }
 }

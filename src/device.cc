@@ -513,8 +513,7 @@ void Device::DumpShaderFromPipeline(VkPipeline pipeline) const {
                 auto prefix = "PIPELINE_" + GetObjectName((uint64_t)pipeline, kPreferDebugName) + "_SHADER_";
                 module->second->DumpShaderCode(prefix);
             } else {
-                GetContext()->GetLogger()->LogError("Unknown VkShaderModule handle: 0x%08X",
-                                                    bound_shader.module);
+                GetContext()->GetLogger()->LogError("Unknown VkShaderModule handle: 0x%08X", bound_shader.module);
             }
         }
     } else {
@@ -620,22 +619,24 @@ YAML::Emitter& Device::Print(YAML::Emitter& os) const {
     auto minorVersion = VK_VERSION_MINOR(physical_device_properties_.apiVersion);
     auto patchVersion = VK_VERSION_PATCH(physical_device_properties_.apiVersion);
     std::stringstream api;
-    api << majorVersion << "." << minorVersion << "." << patchVersion << " (" << Uint32ToStr(physical_device_properties_.apiVersion) << ")";
+    api << majorVersion << "." << minorVersion << "." << patchVersion << " ("
+        << Uint32ToStr(physical_device_properties_.apiVersion) << ")";
     os << YAML::Key << "apiVersion" << YAML::Value << api.str();
 
     std::stringstream icd;
-    icd <<  Uint32ToStr(physical_device_properties_.driverVersion) << " (" << physical_device_properties_.driverVersion << ")";
+    icd << Uint32ToStr(physical_device_properties_.driverVersion) << " (" << physical_device_properties_.driverVersion
+        << ")";
     os << YAML::Key << "driverVersion" << YAML::Value << icd.str();
     os << YAML::Key << "vendorID" << YAML::Value << Uint32ToStr(physical_device_properties_.vendorID);
     os << YAML::Key << "deviceID" << YAML::Value << Uint32ToStr(physical_device_properties_.deviceID);
 
     os << YAML::Key << "deviceExtensions" << YAML::Value << YAML::BeginSeq;
-    auto p_device_create_info = device_create_info_->original_create_info;
-    for (uint32_t i = 0; i < p_device_create_info.enabledExtensionCount; ++i) {
-        os << p_device_create_info.ppEnabledExtensionNames[i];
+    const auto& create_info = device_create_info_->original;
+    for (uint32_t i = 0; i < create_info.enabledExtensionCount; ++i) {
+        os << create_info.ppEnabledExtensionNames[i];
     }
     os << YAML::EndSeq;
-    os << YAML::EndMap; // Device
+    os << YAML::EndMap;  // Device
 
     DumpDeviceFaultInfo(os);
 
@@ -652,18 +653,31 @@ static const char address_fault_strings[][32] = {
     "Instruction Pointer Fault",
 };
 
+static void DumpAddressRecord(YAML::Emitter& os, const vku::sparse::range<VkDeviceAddress>& range,
+                              const DeviceAddressRecord& rec) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "begin" << YAML::Value << Uint64ToStr(range.begin);
+    os << YAML::Key << "end" << YAML::Value << Uint64ToStr(range.end);
+    os << YAML::Key << "type" << YAML::Value << rec.object_type;
+    std::stringstream handle;
+    handle << Uint64ToStr(rec.object_handle) << "[" << rec.object_name << "]";
+    os << YAML::Key << "handle" << YAML::Value << handle.str();
+    os << YAML::Key << "currentlyBound" << YAML::Value << (rec.binding_type == VK_DEVICE_ADDRESS_BINDING_TYPE_BIND_EXT);
+    // TODO when
+    os << YAML::EndMap;
+}
+
 void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
     if (!extensions_present_.ext_device_fault || !pfn_vkGetDeviceFaultInfoEXT) {
         return;
     }
-    VkDeviceFaultCountsEXT fault_counts = {VK_STRUCTURE_TYPE_DEVICE_FAULT_COUNTS_EXT, nullptr, 0, 0, 0UL};
+    auto fault_counts = vku::InitStruct<VkDeviceFaultCountsEXT>();
     VkResult result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
     if (result != VK_SUCCESS) {
         // TODO: log
         return;
     }
-    if (fault_counts.addressInfoCount == 0 && fault_counts.vendorInfoCount == 0 &&
-        fault_counts.vendorBinarySize == 0) {
+    if (fault_counts.addressInfoCount == 0 && fault_counts.vendorInfoCount == 0 && fault_counts.vendorBinarySize == 0) {
         // TODO: log
         return;
     }
@@ -673,36 +687,52 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
     address_infos.resize(fault_counts.addressInfoCount);
     vendor_infos.resize(fault_counts.vendorInfoCount);
     binary_data.resize(fault_counts.vendorBinarySize);
-    VkDeviceFaultInfoEXT vk_device_fault_info{
-        VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_EXT,
-            nullptr,
-            "",
-            fault_counts.addressInfoCount == 0 ? nullptr : address_infos.data(),
-            fault_counts.vendorInfoCount == 0 ? nullptr : vendor_infos.data(),
-            fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data())};
 
-    result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, &vk_device_fault_info);
+    auto fault_info = vku::InitStruct<VkDeviceFaultInfoEXT>();
+    fault_info.pAddressInfos = fault_counts.addressInfoCount == 0 ? nullptr : address_infos.data();
+    fault_info.pVendorInfos = fault_counts.vendorInfoCount == 0 ? nullptr : vendor_infos.data();
+    fault_info.pVendorBinaryData = fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data());
+
+    result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, &fault_info);
     if (result != VK_SUCCESS && result != VK_INCOMPLETE) {
         // TODO: log
         return;
     }
 
     os << YAML::Key << "DeviceFaultInfo" << YAML::Value << YAML::BeginMap;
-    os << YAML::Key << "description" << YAML::Value << vk_device_fault_info.description;
+    os << YAML::Key << "description" << YAML::Value << fault_info.description;
     if (fault_counts.addressInfoCount > 0) {
         os << YAML::Key << "faultAddressRanges" << YAML::Value << YAML::BeginSeq;
         for (uint32_t addr = 0; addr < fault_counts.addressInfoCount; ++addr) {
-            auto &info = address_infos[addr];
+            auto& info = address_infos[addr];
 
-            auto lower_address = (info.reportedAddress & ~(info.addressPrecision - 1));
-            auto upper_address = (info.reportedAddress | (info.addressPrecision - 1));
+            vku::sparse::range range(address_infos[addr].reportedAddress & ~(address_infos[addr].addressPrecision - 1),
+                                     address_infos[addr].reportedAddress | (address_infos[addr].addressPrecision - 1));
 
             os << YAML::BeginMap;
             os << YAML::Key << "type" << YAML::Value << address_fault_strings[info.addressType];
-            os << YAML::Key << "begin" << YAML::Value << Uint64ToStr(lower_address);
-            os << YAML::Key << "end" << YAML::Value << Uint64ToStr(upper_address);
-            os << YAML::EndMap; //Address Range
-            // TODO matching buffers, adjacent buffers
+            os << YAML::Key << "begin" << YAML::Value << Uint64ToStr(range.begin);
+            os << YAML::Key << "end" << YAML::Value << Uint64ToStr(range.end);
+
+            auto lower = address_map_.lower_bound(range);
+            auto upper = address_map_.upper_bound(range);
+            if (lower != upper) {
+                os << YAML::Key << "matchingAddressRecords" << YAML::Value << YAML::BeginSeq;
+                for (auto iter = lower; iter != upper; ++iter) {
+                    DumpAddressRecord(os, iter->first, iter->second);
+                }
+                os << YAML::EndSeq;
+            }
+            if (lower != address_map_.begin()) {
+                --lower;
+                os << YAML::Key << "priorAddressRecord" << YAML::Value;
+                DumpAddressRecord(os, lower->first, lower->second);
+            }
+            if (upper != address_map_.end()) {
+                os << YAML::Key << "nextAddressRecord" << YAML::Value;
+                DumpAddressRecord(os, upper->first, upper->second);
+            }
+            os << YAML::EndMap;
         }
         os << YAML::EndSeq;
     }
@@ -711,11 +741,9 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
         for (uint32_t vendor = 0; vendor < fault_counts.vendorInfoCount; ++vendor) {
             os << YAML::BeginMap;
             os << YAML::Key << "Description" << YAML::Value << vendor_infos[vendor].description;
-            os << YAML::Key << "Fault Code" << YAML::Value
-                << Uint64ToStr(vendor_infos[vendor].vendorFaultCode);
-            os << YAML::Key << "Fault Data" << YAML::Value
-                << Uint64ToStr(vendor_infos[vendor].vendorFaultData);
-            os << YAML::EndMap; //Vendor Info
+            os << YAML::Key << "Fault Code" << YAML::Value << Uint64ToStr(vendor_infos[vendor].vendorFaultCode);
+            os << YAML::Key << "Fault Data" << YAML::Value << Uint64ToStr(vendor_infos[vendor].vendorFaultData);
+            os << YAML::EndMap;  // Vendor Info
         }
         os << YAML::EndSeq;
     }
@@ -727,7 +755,19 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
         }
         os << YAML::Dec << YAML::EndSeq;
     }
-    os << YAML::EndMap; // DeviceFaultInfo
+    os << YAML::EndMap;  // DeviceFaultInfo
+    assert(os.good());
+}
+
+void Device::MemoryBindEvent(const DeviceAddressRecord& rec, bool multi_device) {
+    // Because log callbacks are instance level, we'll get a stream of events
+    // for all devices in the system. Th.secondis code assumes there's only one.
+    // If there are multiple devices, each will need to filter events by looking
+    // up the vulkan handle. This will be slow.
+    assert(!multi_device);
+
+    vku::sparse::range<VkDeviceAddress> range(rec.base, rec.base + rec.size);
+    address_map_.overwrite_range(std::make_pair(range, rec));
 }
 
 }  // namespace crash_diagnostic_layer
