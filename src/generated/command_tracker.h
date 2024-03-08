@@ -1082,6 +1082,20 @@ class CommandTracker
     const VkExtent2D*                           pFragmentSize,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
 
+  void TrackPreCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
+  void TrackPostCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
+
+  void TrackPreCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo);
+  void TrackPostCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo);
+
   void TrackPreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo);
@@ -1210,6 +1224,15 @@ class CommandTracker
     VkDeviceSize                                offset,
     VkDeviceSize                                size,
     VkIndexType                                 indexType);
+
+  void TrackPreCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern);
+  void TrackPostCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern);
 
   void TrackPreCmdBindDescriptorSets2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -2151,13 +2174,6 @@ class CommandTracker
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline);
 
-  void TrackPreCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin);
-  void TrackPostCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin);
-
   void TrackPreCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable);
@@ -2241,6 +2257,13 @@ class CommandTracker
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorComponentFlags*                pColorWriteMasks);
+
+  void TrackPreCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin);
+  void TrackPostCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin);
 
   void TrackPreCmdSetRasterizationStreamEXT(
     VkCommandBuffer                             commandBuffer,

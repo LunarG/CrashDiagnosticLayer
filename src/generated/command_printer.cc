@@ -995,6 +995,11 @@ std::ostream &operator<<(std::ostream & os, const VkScopeKHR &t) {
   return os;
 }
 
+std::ostream &operator<<(std::ostream & os, const VkLineRasterizationModeKHR &t) {
+  os << string_VkLineRasterizationModeKHR(t);
+  return os;
+}
+
 std::ostream &operator<<(std::ostream & os, const VkTimeDomainKHR &t) {
   os << string_VkTimeDomainKHR(t);
   return os;
@@ -1166,11 +1171,6 @@ std::ostream &operator<<(std::ostream & os, const VkFullScreenExclusiveEXT &t) {
   return os;
 }
 #endif //VK_USE_PLATFORM_WIN32_KHR
-
-std::ostream &operator<<(std::ostream & os, const VkLineRasterizationModeEXT &t) {
-  os << string_VkLineRasterizationModeEXT(t);
-  return os;
-}
 
 std::ostream &operator<<(std::ostream & os, const VkIndirectCommandsTokenTypeNV &t) {
   os << string_VkIndirectCommandsTokenTypeNV(t);
@@ -3359,13 +3359,15 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMemoryProperti
     os << "- # parameter:" << std::endl;
     ScopedOstream sop(os);
     os << "name:  memoryTypes" << std::endl;
-    // memoryTypes -> Field -> FixedArray(VkMemoryType)
-    {
+    // memoryTypes -> Field -> DynamicArray(VkMemoryType)
+    if (t.memoryTypeCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
       os << "members:" << std::endl;
       {
         ScopedOstream soarray(os);
         os << "- # VkMemoryType" << std::endl;
-        for (uint64_t i = 0; i < VK_MAX_MEMORY_TYPES; ++i) {
+        for (uint64_t i = 0; i < t.memoryTypeCount; ++i) {
           ScopedOstream somember(os);
           os << "members::" << std::endl << t.memoryTypes << std::endl;
         } // for i
@@ -3383,13 +3385,15 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMemoryProperti
     os << "- # parameter:" << std::endl;
     ScopedOstream sop(os);
     os << "name:  memoryHeaps" << std::endl;
-    // memoryHeaps -> Field -> FixedArray(VkMemoryHeap)
-    {
+    // memoryHeaps -> Field -> DynamicArray(VkMemoryHeap)
+    if (t.memoryHeapCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
       os << "members:" << std::endl;
       {
         ScopedOstream soarray(os);
         os << "- # VkMemoryHeap" << std::endl;
-        for (uint64_t i = 0; i < VK_MAX_MEMORY_HEAPS; ++i) {
+        for (uint64_t i = 0; i < t.memoryHeapCount; ++i) {
           ScopedOstream somember(os);
           os << "members::" << std::endl << t.memoryHeaps << std::endl;
         } // for i
@@ -8649,13 +8653,15 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceGroupPropertie
     os << "- # parameter:" << std::endl;
     ScopedOstream sop(os);
     os << "name:  physicalDevices" << std::endl;
-    // physicalDevices -> Field -> FixedArray(VkPhysicalDevice)
-    {
+    // physicalDevices -> Field -> DynamicArray(VkPhysicalDevice)
+    if (t.physicalDeviceCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
       os << "members:" << std::endl;
       {
         ScopedOstream soarray(os);
         os << "- # VkPhysicalDevice" << std::endl;
-        for (uint64_t i = 0; i < VK_MAX_DEVICE_GROUP_SIZE; ++i) {
+        for (uint64_t i = 0; i < t.physicalDeviceCount; ++i) {
           ScopedOstream somember(os);
           os << "value: :" << std::endl << t.physicalDevices << std::endl;
         } // for i
@@ -23735,13 +23741,15 @@ std::ostream &operator<<(std::ostream & os, const VkQueueFamilyGlobalPriorityPro
     os << "- # parameter:" << std::endl;
     ScopedOstream sop(os);
     os << "name:  priorities" << std::endl;
-    // priorities -> Field -> FixedArray(VkQueueGlobalPriorityKHR)
-    {
+    // priorities -> Field -> DynamicArray(VkQueueGlobalPriorityKHR)
+    if (t.priorityCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
       os << "members:" << std::endl;
       {
         ScopedOstream soarray(os);
         os << "- # VkQueueGlobalPriorityKHR" << std::endl;
-        for (uint64_t i = 0; i < VK_MAX_GLOBAL_PRIORITY_SIZE_KHR; ++i) {
+        for (uint64_t i = 0; i < t.priorityCount; ++i) {
           ScopedOstream somember(os);
           os << "value: :" << std::endl << t.priorities << std::endl;
         } // for i
@@ -24048,6 +24056,178 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceFragmentShadin
     os << "name:  fragmentSize" << std::endl;
     // fragmentSize -> Field -> VkExtent2D
     os <<  "members:" << std::endl << t.fragmentSize << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  dynamicRenderingLocalRead" << std::endl;
+    // dynamicRenderingLocalRead -> Field -> VkBool32
+    os << "value: " << t.dynamicRenderingLocalRead << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkRenderingAttachmentLocationInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  colorAttachmentCount" << std::endl;
+    // colorAttachmentCount -> Field -> uint32_t
+    os << "value: " << t.colorAttachmentCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pColorAttachmentLocations" << std::endl;
+    // pColorAttachmentLocations -> Field -> ConstDynamicArray(uint32_t)
+    if (t.colorAttachmentCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # uint32_t" << std::endl;
+        for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.pColorAttachmentLocations << std::endl;
+        } // for i
+      }
+    }
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkRenderingInputAttachmentIndexInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  colorAttachmentCount" << std::endl;
+    // colorAttachmentCount -> Field -> uint32_t
+    os << "value: " << t.colorAttachmentCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pColorAttachmentInputIndices" << std::endl;
+    // pColorAttachmentInputIndices -> Field -> ConstDynamicArray(uint32_t)
+    if (t.colorAttachmentCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # uint32_t" << std::endl;
+        for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.pColorAttachmentInputIndices << std::endl;
+        } // for i
+      }
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pDepthInputAttachmentIndex" << std::endl;
+    // pointer
+    if (t.pDepthInputAttachmentIndex != nullptr) {
+      os << "value: *t.pDepthInputAttachmentIndex" << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pStencilInputAttachmentIndex" << std::endl;
+    // pointer
+    if (t.pStencilInputAttachmentIndex != nullptr) {
+      os << "value: *t.pStencilInputAttachmentIndex" << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderQuadControlFeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderQuadControl" << std::endl;
+    // shaderQuadControl -> Field -> VkBool32
+    os << "value: " << t.shaderQuadControl << std::endl;
   }
   return os;
 }
@@ -25460,6 +25640,69 @@ std::ostream &operator<<(std::ostream & os, const VkTraceRaysIndirectCommand2KHR
   return os;
 }
 
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderSubgroupRotate" << std::endl;
+    // shaderSubgroupRotate -> Field -> VkBool32
+    os << "value: " << t.shaderSubgroupRotate << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderSubgroupRotateClustered" << std::endl;
+    // shaderSubgroupRotateClustered -> Field -> VkBool32
+    os << "value: " << t.shaderSubgroupRotateClustered << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderMaximalReconvergence" << std::endl;
+    // shaderMaximalReconvergence -> Field -> VkBool32
+    os << "value: " << t.shaderMaximalReconvergence << std::endl;
+  }
+  return os;
+}
+
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance5FeaturesKHR &t) {
   ScopedOstream sos(os);
   {
@@ -25949,6 +26192,234 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceCooperativeMat
   return os;
 }
 
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1ProfileInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  stdProfile" << std::endl;
+    // stdProfile -> Field -> StdVideoAV1Profile
+    os << "value: " << t.stdProfile << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  filmGrainSupport" << std::endl;
+    // filmGrainSupport -> Field -> VkBool32
+    os << "value: " << t.filmGrainSupport << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1CapabilitiesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  maxLevel" << std::endl;
+    // maxLevel -> Field -> StdVideoAV1Level
+    os << "value: " << t.maxLevel << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1SessionParametersCreateInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pStdSequenceHeader" << std::endl;
+    // pointer
+    if (t.pStdSequenceHeader != nullptr) {
+      os << "value: *t.pStdSequenceHeader" << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1PictureInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pStdPictureInfo" << std::endl;
+    // pointer
+    if (t.pStdPictureInfo != nullptr) {
+      os << "value: *t.pStdPictureInfo" << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  referenceNameSlotIndices" << std::endl;
+    // referenceNameSlotIndices -> Field -> FixedArray(int32_t)
+    {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # int32_t" << std::endl;
+        for (uint64_t i = 0; i < VK_MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.referenceNameSlotIndices << std::endl;
+        } // for i
+      }
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  frameHeaderOffset" << std::endl;
+    // frameHeaderOffset -> Field -> uint32_t
+    os << "value: " << t.frameHeaderOffset << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  tileCount" << std::endl;
+    // tileCount -> Field -> uint32_t
+    os << "value: " << t.tileCount << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pTileOffsets" << std::endl;
+    // pTileOffsets -> Field -> ConstDynamicArray(uint32_t)
+    if (t.tileCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # uint32_t" << std::endl;
+        for (uint64_t i = 0; i < t.tileCount; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.pTileOffsets << std::endl;
+        } // for i
+      }
+    }
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pTileSizes" << std::endl;
+    // pTileSizes -> Field -> ConstDynamicArray(uint32_t)
+    if (t.tileCount == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
+      os << "members:" << std::endl;
+      {
+        ScopedOstream soarray(os);
+        os << "- # uint32_t" << std::endl;
+        for (uint64_t i = 0; i < t.tileCount; ++i) {
+          ScopedOstream somember(os);
+          os << "value: :" << std::endl << t.pTileSizes << std::endl;
+        } // for i
+      }
+    }
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1DpbSlotInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pStdReferenceInfo" << std::endl;
+    // pointer
+    if (t.pStdReferenceInfo != nullptr) {
+      os << "value: *t.pStdReferenceInfo" << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+  return os;
+}
+
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceVideoMaintenance1FeaturesKHR &t) {
   ScopedOstream sos(os);
   {
@@ -26155,6 +26626,202 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceVertexAttribut
   return os;
 }
 
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderFloatControls2FeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderFloatControls2" << std::endl;
+    // shaderFloatControls2 -> Field -> VkBool32
+    os << "value: " << t.shaderFloatControls2 << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceIndexTypeUint8FeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  indexTypeUint8" << std::endl;
+    // indexTypeUint8 -> Field -> VkBool32
+    os << "value: " << t.indexTypeUint8 << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLineRasterizationFeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  rectangularLines" << std::endl;
+    // rectangularLines -> Field -> VkBool32
+    os << "value: " << t.rectangularLines << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  bresenhamLines" << std::endl;
+    // bresenhamLines -> Field -> VkBool32
+    os << "value: " << t.bresenhamLines << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  smoothLines" << std::endl;
+    // smoothLines -> Field -> VkBool32
+    os << "value: " << t.smoothLines << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  stippledRectangularLines" << std::endl;
+    // stippledRectangularLines -> Field -> VkBool32
+    os << "value: " << t.stippledRectangularLines << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  stippledBresenhamLines" << std::endl;
+    // stippledBresenhamLines -> Field -> VkBool32
+    os << "value: " << t.stippledBresenhamLines << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  stippledSmoothLines" << std::endl;
+    // stippledSmoothLines -> Field -> VkBool32
+    os << "value: " << t.stippledSmoothLines << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLineRasterizationPropertiesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  lineSubPixelPrecisionBits" << std::endl;
+    // lineSubPixelPrecisionBits -> Field -> uint32_t
+    os << "value: " << t.lineSubPixelPrecisionBits << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPipelineRasterizationLineStateCreateInfoKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  lineRasterizationMode" << std::endl;
+    // lineRasterizationMode -> Field -> VkLineRasterizationModeKHR
+    os << "value: " << t.lineRasterizationMode << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  stippledLineEnable" << std::endl;
+    // stippledLineEnable -> Field -> VkBool32
+    os << "value: " << t.stippledLineEnable << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  lineStippleFactor" << std::endl;
+    // lineStippleFactor -> Field -> uint32_t
+    os << "value: " << t.lineStippleFactor << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  lineStipplePattern" << std::endl;
+    // lineStipplePattern -> Field -> uint16_t
+    os << "value: " << t.lineStipplePattern << std::endl;
+  }
+  return os;
+}
+
 std::ostream &operator<<(std::ostream & os, const VkCalibratedTimestampInfoKHR &t) {
   ScopedOstream sos(os);
   {
@@ -26179,6 +26846,34 @@ std::ostream &operator<<(std::ostream & os, const VkCalibratedTimestampInfoKHR &
     os << "name:  timeDomain" << std::endl;
     // timeDomain -> Field -> VkTimeDomainKHR
     os << "value: " << t.timeDomain << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderExpectAssumeFeaturesKHR &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderExpectAssume" << std::endl;
+    // shaderExpectAssume -> Field -> VkBool32
+    os << "value: " << t.shaderExpectAssume << std::endl;
   }
   return os;
 }
@@ -34772,146 +35467,6 @@ std::ostream &operator<<(std::ostream & os, const VkHeadlessSurfaceCreateInfoEXT
   return os;
 }
 
-std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLineRasterizationFeaturesEXT &t) {
-  ScopedOstream sos(os);
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  sType" << std::endl;
-    // sType -> Field -> VkStructureType
-    os << "value: " << t.sType << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  pNext" << std::endl;
-    // pNext -> Field -> ConstNextPtr(void)
-    os << "value: ";
-    PrintNextPtr(os, t.pNext);
-    os << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  rectangularLines" << std::endl;
-    // rectangularLines -> Field -> VkBool32
-    os << "value: " << t.rectangularLines << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  bresenhamLines" << std::endl;
-    // bresenhamLines -> Field -> VkBool32
-    os << "value: " << t.bresenhamLines << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  smoothLines" << std::endl;
-    // smoothLines -> Field -> VkBool32
-    os << "value: " << t.smoothLines << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  stippledRectangularLines" << std::endl;
-    // stippledRectangularLines -> Field -> VkBool32
-    os << "value: " << t.stippledRectangularLines << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  stippledBresenhamLines" << std::endl;
-    // stippledBresenhamLines -> Field -> VkBool32
-    os << "value: " << t.stippledBresenhamLines << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  stippledSmoothLines" << std::endl;
-    // stippledSmoothLines -> Field -> VkBool32
-    os << "value: " << t.stippledSmoothLines << std::endl;
-  }
-  return os;
-}
-
-std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLineRasterizationPropertiesEXT &t) {
-  ScopedOstream sos(os);
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  sType" << std::endl;
-    // sType -> Field -> VkStructureType
-    os << "value: " << t.sType << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  pNext" << std::endl;
-    // pNext -> Field -> ConstNextPtr(void)
-    os << "value: ";
-    PrintNextPtr(os, t.pNext);
-    os << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  lineSubPixelPrecisionBits" << std::endl;
-    // lineSubPixelPrecisionBits -> Field -> uint32_t
-    os << "value: " << t.lineSubPixelPrecisionBits << std::endl;
-  }
-  return os;
-}
-
-std::ostream &operator<<(std::ostream & os, const VkPipelineRasterizationLineStateCreateInfoEXT &t) {
-  ScopedOstream sos(os);
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  sType" << std::endl;
-    // sType -> Field -> VkStructureType
-    os << "value: " << t.sType << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  pNext" << std::endl;
-    // pNext -> Field -> ConstNextPtr(void)
-    os << "value: ";
-    PrintNextPtr(os, t.pNext);
-    os << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  lineRasterizationMode" << std::endl;
-    // lineRasterizationMode -> Field -> VkLineRasterizationModeEXT
-    os << "value: " << t.lineRasterizationMode << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  stippledLineEnable" << std::endl;
-    // stippledLineEnable -> Field -> VkBool32
-    os << "value: " << t.stippledLineEnable << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  lineStippleFactor" << std::endl;
-    // lineStippleFactor -> Field -> uint32_t
-    os << "value: " << t.lineStippleFactor << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  lineStipplePattern" << std::endl;
-    // lineStipplePattern -> Field -> uint16_t
-    os << "value: " << t.lineStipplePattern << std::endl;
-  }
-  return os;
-}
-
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderAtomicFloatFeaturesEXT &t) {
   ScopedOstream sos(os);
   {
@@ -35013,34 +35568,6 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderAtomicFl
     os << "name:  sparseImageFloat32AtomicAdd" << std::endl;
     // sparseImageFloat32AtomicAdd -> Field -> VkBool32
     os << "value: " << t.sparseImageFloat32AtomicAdd << std::endl;
-  }
-  return os;
-}
-
-std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceIndexTypeUint8FeaturesEXT &t) {
-  ScopedOstream sos(os);
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  sType" << std::endl;
-    // sType -> Field -> VkStructureType
-    os << "value: " << t.sType << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  pNext" << std::endl;
-    // pNext -> Field -> ConstNextPtr(void)
-    os << "value: ";
-    PrintNextPtr(os, t.pNext);
-    os << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  indexTypeUint8" << std::endl;
-    // indexTypeUint8 -> Field -> VkBool32
-    os << "value: " << t.indexTypeUint8 << std::endl;
   }
   return os;
 }
@@ -35650,6 +36177,104 @@ std::ostream &operator<<(std::ostream & os, const VkHostImageCopyDevicePerforman
     os << "name:  identicalMemoryLayout" << std::endl;
     // identicalMemoryLayout -> Field -> VkBool32
     os << "value: " << t.identicalMemoryLayout << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  memoryMapPlaced" << std::endl;
+    // memoryMapPlaced -> Field -> VkBool32
+    os << "value: " << t.memoryMapPlaced << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  memoryMapRangePlaced" << std::endl;
+    // memoryMapRangePlaced -> Field -> VkBool32
+    os << "value: " << t.memoryMapRangePlaced << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  memoryUnmapReserve" << std::endl;
+    // memoryUnmapReserve -> Field -> VkBool32
+    os << "value: " << t.memoryUnmapReserve << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  minPlacedMemoryMapAlignment" << std::endl;
+    // minPlacedMemoryMapAlignment -> Field -> VkDeviceSize
+    os << "value: " << t.minPlacedMemoryMapAlignment << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkMemoryMapPlacedInfoEXT &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pPlacedAddress" << std::endl;
+    // void
+    os << "value: NOT_AVAILABLE" << std::endl;
   }
   return os;
 }
@@ -45738,13 +46363,15 @@ std::ostream &operator<<(std::ostream & os, const VkShaderModuleIdentifierEXT &t
     os << "- # parameter:" << std::endl;
     ScopedOstream sop(os);
     os << "name:  identifier" << std::endl;
-    // identifier -> Field -> FixedArray(uint8_t)
-    {
+    // identifier -> Field -> DynamicArray(uint8_t)
+    if (t.identifierSize == 0) {
+      os << "value: nullptr" << std::endl;
+    } else {
       os << "members:" << std::endl;
       {
         ScopedOstream soarray(os);
         os << "- # uint8_t" << std::endl;
-        for (uint64_t i = 0; i < VK_MAX_SHADER_MODULE_IDENTIFIER_SIZE_EXT; ++i) {
+        for (uint64_t i = 0; i < t.identifierSize; ++i) {
           ScopedOstream somember(os);
           os << "value: :" << std::endl << t.identifier << std::endl;
         } // for i
@@ -48088,6 +48715,90 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceDescriptorPool
     os << "name:  descriptorPoolOverallocation" << std::endl;
     // descriptorPoolOverallocation -> Field -> VkBool32
     os << "value: " << t.descriptorPoolOverallocation << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRawAccessChainsFeaturesNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderRawAccessChains" << std::endl;
+    // shaderRawAccessChains -> Field -> VkBool32
+    os << "value: " << t.shaderRawAccessChains << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  shaderFloat16VectorAtomics" << std::endl;
+    // shaderFloat16VectorAtomics -> Field -> VkBool32
+    os << "value: " << t.shaderFloat16VectorAtomics << std::endl;
+  }
+  return os;
+}
+
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRayTracingValidationFeaturesNV &t) {
+  ScopedOstream sos(os);
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  sType" << std::endl;
+    // sType -> Field -> VkStructureType
+    os << "value: " << t.sType << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pNext" << std::endl;
+    // pNext -> Field -> ConstNextPtr(void)
+    os << "value: ";
+    PrintNextPtr(os, t.pNext);
+    os << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  rayTracingValidation" << std::endl;
+    // rayTracingValidation -> Field -> VkBool32
+    os << "value: " << t.rayTracingValidation << std::endl;
   }
   return os;
 }
@@ -50840,6 +51551,18 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceFragmentShadingRateKHR *>(pStruct);
     break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO_KHR:
+    os << *reinterpret_cast<const VkRenderingAttachmentLocationInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR:
+    os << *reinterpret_cast<const VkRenderingInputAttachmentIndexInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_QUAD_CONTROL_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceShaderQuadControlFeaturesKHR *>(pStruct);
+    break;
   case VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR:
     os << *reinterpret_cast<const VkSurfaceProtectedCapabilitiesKHR *>(pStruct);
     break;
@@ -50933,6 +51656,12 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR *>(pStruct);
     break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MAXIMAL_RECONVERGENCE_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR *>(pStruct);
+    break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceMaintenance5FeaturesKHR *>(pStruct);
     break;
@@ -50969,6 +51698,21 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrixPropertiesKHR *>(pStruct);
     break;
+  case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR:
+    os << *reinterpret_cast<const VkVideoDecodeAV1ProfileInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR:
+    os << *reinterpret_cast<const VkVideoDecodeAV1CapabilitiesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR:
+    os << *reinterpret_cast<const VkVideoDecodeAV1SessionParametersCreateInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PICTURE_INFO_KHR:
+    os << *reinterpret_cast<const VkVideoDecodeAV1PictureInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_DPB_SLOT_INFO_KHR:
+    os << *reinterpret_cast<const VkVideoDecodeAV1DpbSlotInfoKHR *>(pStruct);
+    break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_1_FEATURES_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceVideoMaintenance1FeaturesKHR *>(pStruct);
     break;
@@ -50984,8 +51728,26 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR *>(pStruct);
     break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceShaderFloatControls2FeaturesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceIndexTypeUint8FeaturesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceLineRasterizationFeaturesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceLineRasterizationPropertiesKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR:
+    os << *reinterpret_cast<const VkPipelineRasterizationLineStateCreateInfoKHR *>(pStruct);
+    break;
   case VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR:
     os << *reinterpret_cast<const VkCalibratedTimestampInfoKHR *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR:
+    os << *reinterpret_cast<const VkPhysicalDeviceShaderExpectAssumeFeaturesKHR *>(pStruct);
     break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR:
     os << *reinterpret_cast<const VkPhysicalDeviceMaintenance6FeaturesKHR *>(pStruct);
@@ -51559,20 +52321,8 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
   case VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT:
     os << *reinterpret_cast<const VkHeadlessSurfaceCreateInfoEXT *>(pStruct);
     break;
-  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT:
-    os << *reinterpret_cast<const VkPhysicalDeviceLineRasterizationFeaturesEXT *>(pStruct);
-    break;
-  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT:
-    os << *reinterpret_cast<const VkPhysicalDeviceLineRasterizationPropertiesEXT *>(pStruct);
-    break;
-  case VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT:
-    os << *reinterpret_cast<const VkPipelineRasterizationLineStateCreateInfoEXT *>(pStruct);
-    break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDeviceShaderAtomicFloatFeaturesEXT *>(pStruct);
-    break;
-  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT:
-    os << *reinterpret_cast<const VkPhysicalDeviceIndexTypeUint8FeaturesEXT *>(pStruct);
     break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDeviceExtendedDynamicStateFeaturesEXT *>(pStruct);
@@ -51606,6 +52356,15 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
     break;
   case VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY_EXT:
     os << *reinterpret_cast<const VkHostImageCopyDevicePerformanceQueryEXT *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_FEATURES_EXT:
+    os << *reinterpret_cast<const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_PROPERTIES_EXT:
+    os << *reinterpret_cast<const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_MEMORY_MAP_PLACED_INFO_EXT:
+    os << *reinterpret_cast<const VkMemoryMapPlacedInfoEXT *>(pStruct);
     break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT:
     os << *reinterpret_cast<const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT *>(pStruct);
@@ -52493,6 +53252,15 @@ std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {
     break;
   case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV:
     os << *reinterpret_cast<const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAW_ACCESS_CHAINS_FEATURES_NV:
+    os << *reinterpret_cast<const VkPhysicalDeviceRawAccessChainsFeaturesNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV:
+    os << *reinterpret_cast<const VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV *>(pStruct);
+    break;
+  case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VALIDATION_FEATURES_NV:
+    os << *reinterpret_cast<const VkPhysicalDeviceRayTracingValidationFeaturesNV *>(pStruct);
     break;
   case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
     os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);
@@ -56116,6 +56884,50 @@ void CommandPrinter::PrintCmdSetFragmentShadingRateKHRArgs(
   }
 }
 
+void CommandPrinter::PrintCmdSetRenderingAttachmentLocationsKHRArgs(
+  std::ostream & os, const CmdSetRenderingAttachmentLocationsKHRArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pLocationInfo" << std::endl;
+    // pointer
+    if (args.pLocationInfo != nullptr) {
+      os <<  "members:" << std::endl << *args.pLocationInfo << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+}
+
+void CommandPrinter::PrintCmdSetRenderingInputAttachmentIndicesKHRArgs(
+  std::ostream & os, const CmdSetRenderingInputAttachmentIndicesKHRArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  pLocationInfo" << std::endl;
+    // pointer
+    if (args.pLocationInfo != nullptr) {
+      os <<  "members:" << std::endl << *args.pLocationInfo << std::endl;
+    } else {
+      os << "value: nullptr" << std::endl;
+    }
+  }
+}
+
 void CommandPrinter::PrintCmdEncodeVideoKHRArgs(
   std::ostream & os, const CmdEncodeVideoKHRArgs &args) {
   {
@@ -56527,6 +57339,31 @@ void CommandPrinter::PrintCmdBindIndexBuffer2KHRArgs(
     os << "name:  indexType" << std::endl;
     // indexType -> Field -> VkIndexType
     os << "value: " << args.indexType << std::endl;
+  }
+}
+
+void CommandPrinter::PrintCmdSetLineStippleKHRArgs(
+  std::ostream & os, const CmdSetLineStippleKHRArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  lineStippleFactor" << std::endl;
+    // lineStippleFactor -> Field -> uint32_t
+    os << "value: " << args.lineStippleFactor << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  lineStipplePattern" << std::endl;
+    // lineStipplePattern -> Field -> uint16_t
+    os << "value: " << args.lineStipplePattern << std::endl;
   }
 }
 
@@ -59691,24 +60528,6 @@ void CommandPrinter::PrintCmdUpdatePipelineIndirectBufferNVArgs(
   }
 }
 
-void CommandPrinter::PrintCmdSetTessellationDomainOriginEXTArgs(
-  std::ostream & os, const CmdSetTessellationDomainOriginEXTArgs &args) {
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  commandBuffer" << std::endl;
-    // commandBuffer -> Field -> VkCommandBuffer
-    os << "value: " << args.commandBuffer << std::endl;
-  }
-  {
-    os << "- # parameter:" << std::endl;
-    ScopedOstream sop(os);
-    os << "name:  domainOrigin" << std::endl;
-    // domainOrigin -> Field -> VkTessellationDomainOrigin
-    os << "value: " << args.domainOrigin << std::endl;
-  }
-}
-
 void CommandPrinter::PrintCmdSetDepthClampEnableEXTArgs(
   std::ostream & os, const CmdSetDepthClampEnableEXTArgs &args) {
   {
@@ -59983,6 +60802,24 @@ void CommandPrinter::PrintCmdSetColorWriteMaskEXTArgs(
         } // for i
       }
     }
+  }
+}
+
+void CommandPrinter::PrintCmdSetTessellationDomainOriginEXTArgs(
+  std::ostream & os, const CmdSetTessellationDomainOriginEXTArgs &args) {
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  commandBuffer" << std::endl;
+    // commandBuffer -> Field -> VkCommandBuffer
+    os << "value: " << args.commandBuffer << std::endl;
+  }
+  {
+    os << "- # parameter:" << std::endl;
+    ScopedOstream sop(os);
+    os << "name:  domainOrigin" << std::endl;
+    // domainOrigin -> Field -> VkTessellationDomainOrigin
+    os << "value: " << args.domainOrigin << std::endl;
   }
 }
 

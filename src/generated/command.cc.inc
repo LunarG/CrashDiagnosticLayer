@@ -1771,6 +1771,36 @@ void CommandBuffer::PostCmdSetFragmentShadingRateKHR(
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+  tracker_.TrackPreCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+  tracker_.TrackPostCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+  tracker_.TrackPreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+  tracker_.TrackPostCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -2016,6 +2046,23 @@ void CommandBuffer::PostCmdBindIndexBuffer2KHR(
     VkDeviceSize                                size,
     VkIndexType                                 indexType) {
   tracker_.TrackPostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern) {
+  tracker_.TrackPreCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern) {
+  tracker_.TrackPostCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
   if (instrument_all_commands_)
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }
@@ -3709,21 +3756,6 @@ void CommandBuffer::PostCmdUpdatePipelineIndirectBufferNV(
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin) {
-  tracker_.TrackPreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
-  if (instrument_all_commands_)
-    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin) {
-  tracker_.TrackPostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
-  if (instrument_all_commands_)
-    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable) {
@@ -3884,6 +3916,21 @@ void CommandBuffer::PostCmdSetColorWriteMaskEXT(
     uint32_t                                    attachmentCount,
     const VkColorComponentFlags*                pColorWriteMasks) {
   tracker_.TrackPostCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
+  if (instrument_all_commands_)
+    WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin) {
+  tracker_.TrackPreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
+  if (instrument_all_commands_)
+    WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin) {
+  tracker_.TrackPostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
   if (instrument_all_commands_)
     WriteEndCommandExecutionMarker(tracker_.GetCommands().back().id);
 }

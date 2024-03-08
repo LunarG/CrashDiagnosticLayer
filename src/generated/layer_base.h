@@ -845,6 +845,14 @@ void InterceptCmdSetFragmentShadingRateKHR(
     const VkExtent2D*                           pFragmentSize,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
 
+void InterceptCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
+
+void InterceptCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo);
+
 void InterceptCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo);
@@ -922,6 +930,11 @@ void InterceptCmdBindIndexBuffer2KHR(
     VkDeviceSize                                offset,
     VkDeviceSize                                size,
     VkIndexType                                 indexType);
+
+void InterceptCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern);
 
 void InterceptCmdBindDescriptorSets2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -1452,10 +1465,6 @@ void InterceptCmdUpdatePipelineIndirectBufferNV(
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline);
 
-void InterceptCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin);
-
 void InterceptCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable);
@@ -1502,6 +1511,10 @@ void InterceptCmdSetColorWriteMaskEXT(
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorComponentFlags*                pColorWriteMasks);
+
+void InterceptCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin);
 
 void InterceptCmdSetRasterizationStreamEXT(
     VkCommandBuffer                             commandBuffer,
@@ -3156,6 +3169,22 @@ public:
         const VkExtent2D*                           pFragmentSize,
         const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]) {}
 
+    virtual void PreCmdSetRenderingAttachmentLocationsKHR(
+        VkCommandBuffer                             commandBuffer,
+        const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {}
+
+    virtual void PostCmdSetRenderingAttachmentLocationsKHR(
+        VkCommandBuffer                             commandBuffer,
+        const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {}
+
+    virtual void PreCmdSetRenderingInputAttachmentIndicesKHR(
+        VkCommandBuffer                             commandBuffer,
+        const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {}
+
+    virtual void PostCmdSetRenderingInputAttachmentIndicesKHR(
+        VkCommandBuffer                             commandBuffer,
+        const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {}
+
     virtual void PreCmdEncodeVideoKHR(
         VkCommandBuffer                             commandBuffer,
         const VkVideoEncodeInfoKHR*                 pEncodeInfo) {}
@@ -3312,6 +3341,16 @@ public:
         VkDeviceSize                                offset,
         VkDeviceSize                                size,
         VkIndexType                                 indexType) {}
+
+    virtual void PreCmdSetLineStippleKHR(
+        VkCommandBuffer                             commandBuffer,
+        uint32_t                                    lineStippleFactor,
+        uint16_t                                    lineStipplePattern) {}
+
+    virtual void PostCmdSetLineStippleKHR(
+        VkCommandBuffer                             commandBuffer,
+        uint32_t                                    lineStippleFactor,
+        uint16_t                                    lineStipplePattern) {}
 
     virtual void PreCmdBindDescriptorSets2KHR(
         VkCommandBuffer                             commandBuffer,
@@ -4376,14 +4415,6 @@ public:
         VkPipelineBindPoint                         pipelineBindPoint,
         VkPipeline                                  pipeline) {}
 
-    virtual void PreCmdSetTessellationDomainOriginEXT(
-        VkCommandBuffer                             commandBuffer,
-        VkTessellationDomainOrigin                  domainOrigin) {}
-
-    virtual void PostCmdSetTessellationDomainOriginEXT(
-        VkCommandBuffer                             commandBuffer,
-        VkTessellationDomainOrigin                  domainOrigin) {}
-
     virtual void PreCmdSetDepthClampEnableEXT(
         VkCommandBuffer                             commandBuffer,
         VkBool32                                    depthClampEnable) {}
@@ -4477,6 +4508,14 @@ public:
         uint32_t                                    firstAttachment,
         uint32_t                                    attachmentCount,
         const VkColorComponentFlags*                pColorWriteMasks) {}
+
+    virtual void PreCmdSetTessellationDomainOriginEXT(
+        VkCommandBuffer                             commandBuffer,
+        VkTessellationDomainOrigin                  domainOrigin) {}
+
+    virtual void PostCmdSetTessellationDomainOriginEXT(
+        VkCommandBuffer                             commandBuffer,
+        VkTessellationDomainOrigin                  domainOrigin) {}
 
     virtual void PreCmdSetRasterizationStreamEXT(
         VkCommandBuffer                             commandBuffer,

@@ -138,6 +138,8 @@ struct Command
     kCmdDrawIndirectCountKHR,
     kCmdDrawIndexedIndirectCountKHR,
     kCmdSetFragmentShadingRateKHR,
+    kCmdSetRenderingAttachmentLocationsKHR,
+    kCmdSetRenderingInputAttachmentIndicesKHR,
     kCmdEncodeVideoKHR,
     kCmdSetEvent2KHR,
     kCmdResetEvent2KHR,
@@ -153,6 +155,7 @@ struct Command
     kCmdResolveImage2KHR,
     kCmdTraceRaysIndirect2KHR,
     kCmdBindIndexBuffer2KHR,
+    kCmdSetLineStippleKHR,
     kCmdBindDescriptorSets2KHR,
     kCmdPushConstants2KHR,
     kCmdPushDescriptorSet2KHR,
@@ -255,7 +258,6 @@ struct Command
     kCmdDecompressMemoryNV,
     kCmdDecompressMemoryIndirectCountNV,
     kCmdUpdatePipelineIndirectBufferNV,
-    kCmdSetTessellationDomainOriginEXT,
     kCmdSetDepthClampEnableEXT,
     kCmdSetPolygonModeEXT,
     kCmdSetRasterizationSamplesEXT,
@@ -266,6 +268,7 @@ struct Command
     kCmdSetColorBlendEnableEXT,
     kCmdSetColorBlendEquationEXT,
     kCmdSetColorWriteMaskEXT,
+    kCmdSetTessellationDomainOriginEXT,
     kCmdSetRasterizationStreamEXT,
     kCmdSetConservativeRasterizationModeEXT,
     kCmdSetExtraPrimitiveOverestimationSizeEXT,
@@ -978,6 +981,16 @@ struct CmdSetFragmentShadingRateKHRArgs {
     VkFragmentShadingRateCombinerOpKHR combinerOps[2];
 };
 
+struct CmdSetRenderingAttachmentLocationsKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo;
+};
+
+struct CmdSetRenderingInputAttachmentIndicesKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo;
+};
+
 struct CmdEncodeVideoKHRArgs {
     VkCommandBuffer commandBuffer;
     const VkVideoEncodeInfoKHR* pEncodeInfo;
@@ -1063,6 +1076,12 @@ struct CmdBindIndexBuffer2KHRArgs {
     VkDeviceSize offset;
     VkDeviceSize size;
     VkIndexType indexType;
+};
+
+struct CmdSetLineStippleKHRArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t lineStippleFactor;
+    uint16_t lineStipplePattern;
 };
 
 struct CmdBindDescriptorSets2KHRArgs {
@@ -1680,11 +1699,6 @@ struct CmdUpdatePipelineIndirectBufferNVArgs {
     VkPipeline pipeline;
 };
 
-struct CmdSetTessellationDomainOriginEXTArgs {
-    VkCommandBuffer commandBuffer;
-    VkTessellationDomainOrigin domainOrigin;
-};
-
 struct CmdSetDepthClampEnableEXTArgs {
     VkCommandBuffer commandBuffer;
     VkBool32 depthClampEnable;
@@ -1740,6 +1754,11 @@ struct CmdSetColorWriteMaskEXTArgs {
     uint32_t firstAttachment;
     uint32_t attachmentCount;
     const VkColorComponentFlags* pColorWriteMasks;
+};
+
+struct CmdSetTessellationDomainOriginEXTArgs {
+    VkCommandBuffer commandBuffer;
+    VkTessellationDomainOrigin domainOrigin;
 };
 
 struct CmdSetRasterizationStreamEXTArgs {

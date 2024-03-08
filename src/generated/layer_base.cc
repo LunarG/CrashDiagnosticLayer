@@ -2188,6 +2188,34 @@ void InterceptCmdSetFragmentShadingRateKHR(
   layer_data->interceptor->PostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 
+void InterceptCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
+
+  PFN_vkCmdSetRenderingAttachmentLocationsKHR pfn = layer_data->dispatch_table.CmdSetRenderingAttachmentLocationsKHR;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pLocationInfo);
+  }
+
+  layer_data->interceptor->PostCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
+}
+
+void InterceptCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+
+  PFN_vkCmdSetRenderingInputAttachmentIndicesKHR pfn = layer_data->dispatch_table.CmdSetRenderingInputAttachmentIndicesKHR;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, pLocationInfo);
+  }
+
+  layer_data->interceptor->PostCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+}
+
 void InterceptCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -2427,6 +2455,21 @@ void InterceptCmdBindIndexBuffer2KHR(
   }
 
   layer_data->interceptor->PostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+
+void InterceptCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern) {
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
+
+  PFN_vkCmdSetLineStippleKHR pfn = layer_data->dispatch_table.CmdSetLineStippleKHR;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, lineStippleFactor, lineStipplePattern);
+  }
+
+  layer_data->interceptor->PostCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 
 void InterceptCmdBindDescriptorSets2KHR(
@@ -3933,20 +3976,6 @@ void InterceptCmdUpdatePipelineIndirectBufferNV(
   layer_data->interceptor->PostCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
 
-void InterceptCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin) {
-  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-  layer_data->interceptor->PreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
-
-  PFN_vkCmdSetTessellationDomainOriginEXT pfn = layer_data->dispatch_table.CmdSetTessellationDomainOriginEXT;
-  if (pfn != nullptr) {
-    pfn(commandBuffer, domainOrigin);
-  }
-
-  layer_data->interceptor->PostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
-}
-
 void InterceptCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable) {
@@ -4092,6 +4121,20 @@ void InterceptCmdSetColorWriteMaskEXT(
   }
 
   layer_data->interceptor->PostCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
+}
+
+void InterceptCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin) {
+  auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+  layer_data->interceptor->PreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
+
+  PFN_vkCmdSetTessellationDomainOriginEXT pfn = layer_data->dispatch_table.CmdSetTessellationDomainOriginEXT;
+  if (pfn != nullptr) {
+    pfn(commandBuffer, domainOrigin);
+  }
+
+  layer_data->interceptor->PostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
 
 void InterceptCmdSetRasterizationStreamEXT(
@@ -5172,6 +5215,10 @@ PFN_vkVoidFunction GetDeviceFuncs(const char* func)
     return (PFN_vkVoidFunction)InterceptSignalSemaphoreKHR;
   if (0 == strcmp(func, "vkCmdSetFragmentShadingRateKHR"))
     return (PFN_vkVoidFunction)InterceptCmdSetFragmentShadingRateKHR;
+  if (0 == strcmp(func, "vkCmdSetRenderingAttachmentLocationsKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdSetRenderingAttachmentLocationsKHR;
+  if (0 == strcmp(func, "vkCmdSetRenderingInputAttachmentIndicesKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdSetRenderingInputAttachmentIndicesKHR;
   if (0 == strcmp(func, "vkCmdEncodeVideoKHR"))
     return (PFN_vkVoidFunction)InterceptCmdEncodeVideoKHR;
   if (0 == strcmp(func, "vkCmdSetEvent2KHR"))
@@ -5204,6 +5251,8 @@ PFN_vkVoidFunction GetDeviceFuncs(const char* func)
     return (PFN_vkVoidFunction)InterceptCmdTraceRaysIndirect2KHR;
   if (0 == strcmp(func, "vkCmdBindIndexBuffer2KHR"))
     return (PFN_vkVoidFunction)InterceptCmdBindIndexBuffer2KHR;
+  if (0 == strcmp(func, "vkCmdSetLineStippleKHR"))
+    return (PFN_vkVoidFunction)InterceptCmdSetLineStippleKHR;
   if (0 == strcmp(func, "vkCmdBindDescriptorSets2KHR"))
     return (PFN_vkVoidFunction)InterceptCmdBindDescriptorSets2KHR;
   if (0 == strcmp(func, "vkCmdPushConstants2KHR"))
@@ -5404,8 +5453,6 @@ PFN_vkVoidFunction GetDeviceFuncs(const char* func)
     return (PFN_vkVoidFunction)InterceptCmdDecompressMemoryIndirectCountNV;
   if (0 == strcmp(func, "vkCmdUpdatePipelineIndirectBufferNV"))
     return (PFN_vkVoidFunction)InterceptCmdUpdatePipelineIndirectBufferNV;
-  if (0 == strcmp(func, "vkCmdSetTessellationDomainOriginEXT"))
-    return (PFN_vkVoidFunction)InterceptCmdSetTessellationDomainOriginEXT;
   if (0 == strcmp(func, "vkCmdSetDepthClampEnableEXT"))
     return (PFN_vkVoidFunction)InterceptCmdSetDepthClampEnableEXT;
   if (0 == strcmp(func, "vkCmdSetPolygonModeEXT"))
@@ -5426,6 +5473,8 @@ PFN_vkVoidFunction GetDeviceFuncs(const char* func)
     return (PFN_vkVoidFunction)InterceptCmdSetColorBlendEquationEXT;
   if (0 == strcmp(func, "vkCmdSetColorWriteMaskEXT"))
     return (PFN_vkVoidFunction)InterceptCmdSetColorWriteMaskEXT;
+  if (0 == strcmp(func, "vkCmdSetTessellationDomainOriginEXT"))
+    return (PFN_vkVoidFunction)InterceptCmdSetTessellationDomainOriginEXT;
   if (0 == strcmp(func, "vkCmdSetRasterizationStreamEXT"))
     return (PFN_vkVoidFunction)InterceptCmdSetRasterizationStreamEXT;
   if (0 == strcmp(func, "vkCmdSetConservativeRasterizationModeEXT"))

@@ -816,6 +816,10 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkSignalSemaphoreKHR)pa(device, "vkSignalSemaphoreKHR");
   dt->CmdSetFragmentShadingRateKHR =
     (PFN_vkCmdSetFragmentShadingRateKHR)pa(device, "vkCmdSetFragmentShadingRateKHR");
+  dt->CmdSetRenderingAttachmentLocationsKHR =
+    (PFN_vkCmdSetRenderingAttachmentLocationsKHR)pa(device, "vkCmdSetRenderingAttachmentLocationsKHR");
+  dt->CmdSetRenderingInputAttachmentIndicesKHR =
+    (PFN_vkCmdSetRenderingInputAttachmentIndicesKHR)pa(device, "vkCmdSetRenderingInputAttachmentIndicesKHR");
   dt->WaitForPresentKHR =
     (PFN_vkWaitForPresentKHR)pa(device, "vkWaitForPresentKHR");
   dt->GetBufferDeviceAddressKHR =
@@ -892,6 +896,8 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkGetDeviceImageSubresourceLayoutKHR)pa(device, "vkGetDeviceImageSubresourceLayoutKHR");
   dt->GetImageSubresourceLayout2KHR =
     (PFN_vkGetImageSubresourceLayout2KHR)pa(device, "vkGetImageSubresourceLayout2KHR");
+  dt->CmdSetLineStippleKHR =
+    (PFN_vkCmdSetLineStippleKHR)pa(device, "vkCmdSetLineStippleKHR");
   dt->GetCalibratedTimestampsKHR =
     (PFN_vkGetCalibratedTimestampsKHR)pa(device, "vkGetCalibratedTimestampsKHR");
   dt->CmdBindDescriptorSets2KHR =
@@ -1348,8 +1354,6 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkCmdUpdatePipelineIndirectBufferNV)pa(device, "vkCmdUpdatePipelineIndirectBufferNV");
   dt->GetPipelineIndirectDeviceAddressNV =
     (PFN_vkGetPipelineIndirectDeviceAddressNV)pa(device, "vkGetPipelineIndirectDeviceAddressNV");
-  dt->CmdSetTessellationDomainOriginEXT =
-    (PFN_vkCmdSetTessellationDomainOriginEXT)pa(device, "vkCmdSetTessellationDomainOriginEXT");
   dt->CmdSetDepthClampEnableEXT =
     (PFN_vkCmdSetDepthClampEnableEXT)pa(device, "vkCmdSetDepthClampEnableEXT");
   dt->CmdSetPolygonModeEXT =
@@ -1370,6 +1374,8 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa,
     (PFN_vkCmdSetColorBlendEquationEXT)pa(device, "vkCmdSetColorBlendEquationEXT");
   dt->CmdSetColorWriteMaskEXT =
     (PFN_vkCmdSetColorWriteMaskEXT)pa(device, "vkCmdSetColorWriteMaskEXT");
+  dt->CmdSetTessellationDomainOriginEXT =
+    (PFN_vkCmdSetTessellationDomainOriginEXT)pa(device, "vkCmdSetTessellationDomainOriginEXT");
   dt->CmdSetRasterizationStreamEXT =
     (PFN_vkCmdSetRasterizationStreamEXT)pa(device, "vkCmdSetRasterizationStreamEXT");
   dt->CmdSetConservativeRasterizationModeEXT =

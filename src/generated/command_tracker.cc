@@ -719,6 +719,20 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
       }
       break;
 
+    case Command::Type::kCmdSetRenderingAttachmentLocationsKHR:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdSetRenderingAttachmentLocationsKHRArgs *>(cmd.parameters);
+        printer_.PrintCmdSetRenderingAttachmentLocationsKHRArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdSetRenderingInputAttachmentIndicesKHR:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdSetRenderingInputAttachmentIndicesKHRArgs *>(cmd.parameters);
+        printer_.PrintCmdSetRenderingInputAttachmentIndicesKHRArgs(os, *args);
+      }
+      break;
+
     case Command::Type::kCmdEncodeVideoKHR:
       if (cmd.parameters) {
         auto args = reinterpret_cast<CmdEncodeVideoKHRArgs *>(cmd.parameters);
@@ -821,6 +835,13 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
       if (cmd.parameters) {
         auto args = reinterpret_cast<CmdBindIndexBuffer2KHRArgs *>(cmd.parameters);
         printer_.PrintCmdBindIndexBuffer2KHRArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdSetLineStippleKHR:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdSetLineStippleKHRArgs *>(cmd.parameters);
+        printer_.PrintCmdSetLineStippleKHRArgs(os, *args);
       }
       break;
 
@@ -1490,13 +1511,6 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
       }
       break;
 
-    case Command::Type::kCmdSetTessellationDomainOriginEXT:
-      if (cmd.parameters) {
-        auto args = reinterpret_cast<CmdSetTessellationDomainOriginEXTArgs *>(cmd.parameters);
-        printer_.PrintCmdSetTessellationDomainOriginEXTArgs(os, *args);
-      }
-      break;
-
     case Command::Type::kCmdSetDepthClampEnableEXT:
       if (cmd.parameters) {
         auto args = reinterpret_cast<CmdSetDepthClampEnableEXTArgs *>(cmd.parameters);
@@ -1564,6 +1578,13 @@ void CommandTracker::PrintCommandParameters(std::ostream &os, const Command &cmd
       if (cmd.parameters) {
         auto args = reinterpret_cast<CmdSetColorWriteMaskEXTArgs *>(cmd.parameters);
         printer_.PrintCmdSetColorWriteMaskEXTArgs(os, *args);
+      }
+      break;
+
+    case Command::Type::kCmdSetTessellationDomainOriginEXT:
+      if (cmd.parameters) {
+        auto args = reinterpret_cast<CmdSetTessellationDomainOriginEXTArgs *>(cmd.parameters);
+        printer_.PrintCmdSetTessellationDomainOriginEXTArgs(os, *args);
       }
       break;
 
@@ -3635,6 +3656,36 @@ void CommandTracker::TrackPostCmdSetFragmentShadingRateKHR(
   assert(commands_.back().type == Command::Type::kCmdSetFragmentShadingRateKHR);
 }
 
+void CommandTracker::TrackPreCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdSetRenderingAttachmentLocationsKHR;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+  assert(commands_.back().type == Command::Type::kCmdSetRenderingAttachmentLocationsKHR);
+}
+
+void CommandTracker::TrackPreCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdSetRenderingInputAttachmentIndicesKHR;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+  assert(commands_.back().type == Command::Type::kCmdSetRenderingInputAttachmentIndicesKHR);
+}
+
 void CommandTracker::TrackPreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -3882,6 +3933,23 @@ void CommandTracker::TrackPostCmdBindIndexBuffer2KHR(
     VkDeviceSize                                size,
     VkIndexType                                 indexType) {
   assert(commands_.back().type == Command::Type::kCmdBindIndexBuffer2KHR);
+}
+
+void CommandTracker::TrackPreCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdSetLineStippleKHR;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern) {
+  assert(commands_.back().type == Command::Type::kCmdSetLineStippleKHR);
 }
 
 void CommandTracker::TrackPreCmdBindDescriptorSets2KHR(
@@ -5576,21 +5644,6 @@ void CommandTracker::TrackPostCmdUpdatePipelineIndirectBufferNV(
   assert(commands_.back().type == Command::Type::kCmdUpdatePipelineIndirectBufferNV);
 }
 
-void CommandTracker::TrackPreCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin) {
-  Command cmd {};
-  cmd.type = Command::Type::kCmdSetTessellationDomainOriginEXT;
-  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-  cmd.parameters = recorder_.RecordCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
-  commands_.push_back(cmd);
-}
-void CommandTracker::TrackPostCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin) {
-  assert(commands_.back().type == Command::Type::kCmdSetTessellationDomainOriginEXT);
-}
-
 void CommandTracker::TrackPreCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable) {
@@ -5753,6 +5806,21 @@ void CommandTracker::TrackPostCmdSetColorWriteMaskEXT(
     uint32_t                                    attachmentCount,
     const VkColorComponentFlags*                pColorWriteMasks) {
   assert(commands_.back().type == Command::Type::kCmdSetColorWriteMaskEXT);
+}
+
+void CommandTracker::TrackPreCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin) {
+  Command cmd {};
+  cmd.type = Command::Type::kCmdSetTessellationDomainOriginEXT;
+  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+  cmd.parameters = recorder_.RecordCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
+  commands_.push_back(cmd);
+}
+void CommandTracker::TrackPostCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin) {
+  assert(commands_.back().type == Command::Type::kCmdSetTessellationDomainOriginEXT);
 }
 
 void CommandTracker::TrackPreCmdSetRasterizationStreamEXT(

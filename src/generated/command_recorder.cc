@@ -925,6 +925,14 @@ VkPhysicalDeviceFragmentShadingRatePropertiesKHR* CommandRecorder::CopyArray<VkP
 template<>
 VkPhysicalDeviceFragmentShadingRateKHR* CommandRecorder::CopyArray<VkPhysicalDeviceFragmentShadingRateKHR>(const VkPhysicalDeviceFragmentShadingRateKHR* src, uint64_t start_index, uint64_t count);
 template<>
+VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR>(const VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkRenderingAttachmentLocationInfoKHR* CommandRecorder::CopyArray<VkRenderingAttachmentLocationInfoKHR>(const VkRenderingAttachmentLocationInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkRenderingInputAttachmentIndexInfoKHR* CommandRecorder::CopyArray<VkRenderingInputAttachmentIndexInfoKHR>(const VkRenderingInputAttachmentIndexInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceShaderQuadControlFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderQuadControlFeaturesKHR>(const VkPhysicalDeviceShaderQuadControlFeaturesKHR* src, uint64_t start_index, uint64_t count);
+template<>
 VkSurfaceProtectedCapabilitiesKHR* CommandRecorder::CopyArray<VkSurfaceProtectedCapabilitiesKHR>(const VkSurfaceProtectedCapabilitiesKHR* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDevicePresentWaitFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDevicePresentWaitFeaturesKHR>(const VkPhysicalDevicePresentWaitFeaturesKHR* src, uint64_t start_index, uint64_t count);
@@ -991,6 +999,10 @@ VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR* CommandRecorder::CopyArray<Vk
 template<>
 VkTraceRaysIndirectCommand2KHR* CommandRecorder::CopyArray<VkTraceRaysIndirectCommand2KHR>(const VkTraceRaysIndirectCommand2KHR* src, uint64_t start_index, uint64_t count);
 template<>
+VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR>(const VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR>(const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR* src, uint64_t start_index, uint64_t count);
+template<>
 VkPhysicalDeviceMaintenance5FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceMaintenance5FeaturesKHR>(const VkPhysicalDeviceMaintenance5FeaturesKHR* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDeviceMaintenance5PropertiesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceMaintenance5PropertiesKHR>(const VkPhysicalDeviceMaintenance5PropertiesKHR* src, uint64_t start_index, uint64_t count);
@@ -1015,6 +1027,16 @@ VkPhysicalDeviceCooperativeMatrixFeaturesKHR* CommandRecorder::CopyArray<VkPhysi
 template<>
 VkPhysicalDeviceCooperativeMatrixPropertiesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceCooperativeMatrixPropertiesKHR>(const VkPhysicalDeviceCooperativeMatrixPropertiesKHR* src, uint64_t start_index, uint64_t count);
 template<>
+VkVideoDecodeAV1ProfileInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1ProfileInfoKHR>(const VkVideoDecodeAV1ProfileInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkVideoDecodeAV1CapabilitiesKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1CapabilitiesKHR>(const VkVideoDecodeAV1CapabilitiesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkVideoDecodeAV1SessionParametersCreateInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1SessionParametersCreateInfoKHR>(const VkVideoDecodeAV1SessionParametersCreateInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkVideoDecodeAV1PictureInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1PictureInfoKHR>(const VkVideoDecodeAV1PictureInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkVideoDecodeAV1DpbSlotInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1DpbSlotInfoKHR>(const VkVideoDecodeAV1DpbSlotInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
 VkPhysicalDeviceVideoMaintenance1FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceVideoMaintenance1FeaturesKHR>(const VkPhysicalDeviceVideoMaintenance1FeaturesKHR* src, uint64_t start_index, uint64_t count);
 template<>
 VkVideoInlineQueryInfoKHR* CommandRecorder::CopyArray<VkVideoInlineQueryInfoKHR>(const VkVideoInlineQueryInfoKHR* src, uint64_t start_index, uint64_t count);
@@ -1027,7 +1049,19 @@ VkPipelineVertexInputDivisorStateCreateInfoKHR* CommandRecorder::CopyArray<VkPip
 template<>
 VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR>(const VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR* src, uint64_t start_index, uint64_t count);
 template<>
+VkPhysicalDeviceShaderFloatControls2FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderFloatControls2FeaturesKHR>(const VkPhysicalDeviceShaderFloatControls2FeaturesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceIndexTypeUint8FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceIndexTypeUint8FeaturesKHR>(const VkPhysicalDeviceIndexTypeUint8FeaturesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceLineRasterizationFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceLineRasterizationFeaturesKHR>(const VkPhysicalDeviceLineRasterizationFeaturesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceLineRasterizationPropertiesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceLineRasterizationPropertiesKHR>(const VkPhysicalDeviceLineRasterizationPropertiesKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPipelineRasterizationLineStateCreateInfoKHR* CommandRecorder::CopyArray<VkPipelineRasterizationLineStateCreateInfoKHR>(const VkPipelineRasterizationLineStateCreateInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
 VkCalibratedTimestampInfoKHR* CommandRecorder::CopyArray<VkCalibratedTimestampInfoKHR>(const VkCalibratedTimestampInfoKHR* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceShaderExpectAssumeFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderExpectAssumeFeaturesKHR>(const VkPhysicalDeviceShaderExpectAssumeFeaturesKHR* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDeviceMaintenance6FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceMaintenance6FeaturesKHR>(const VkPhysicalDeviceMaintenance6FeaturesKHR* src, uint64_t start_index, uint64_t count);
 template<>
@@ -1487,15 +1521,7 @@ VkSurfaceFullScreenExclusiveWin32InfoEXT* CommandRecorder::CopyArray<VkSurfaceFu
 template<>
 VkHeadlessSurfaceCreateInfoEXT* CommandRecorder::CopyArray<VkHeadlessSurfaceCreateInfoEXT>(const VkHeadlessSurfaceCreateInfoEXT* src, uint64_t start_index, uint64_t count);
 template<>
-VkPhysicalDeviceLineRasterizationFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceLineRasterizationFeaturesEXT>(const VkPhysicalDeviceLineRasterizationFeaturesEXT* src, uint64_t start_index, uint64_t count);
-template<>
-VkPhysicalDeviceLineRasterizationPropertiesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceLineRasterizationPropertiesEXT>(const VkPhysicalDeviceLineRasterizationPropertiesEXT* src, uint64_t start_index, uint64_t count);
-template<>
-VkPipelineRasterizationLineStateCreateInfoEXT* CommandRecorder::CopyArray<VkPipelineRasterizationLineStateCreateInfoEXT>(const VkPipelineRasterizationLineStateCreateInfoEXT* src, uint64_t start_index, uint64_t count);
-template<>
 VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceShaderAtomicFloatFeaturesEXT>(const VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* src, uint64_t start_index, uint64_t count);
-template<>
-VkPhysicalDeviceIndexTypeUint8FeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceIndexTypeUint8FeaturesEXT>(const VkPhysicalDeviceIndexTypeUint8FeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDeviceExtendedDynamicStateFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceExtendedDynamicStateFeaturesEXT>(const VkPhysicalDeviceExtendedDynamicStateFeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
@@ -1518,6 +1544,12 @@ template<>
 VkSubresourceHostMemcpySizeEXT* CommandRecorder::CopyArray<VkSubresourceHostMemcpySizeEXT>(const VkSubresourceHostMemcpySizeEXT* src, uint64_t start_index, uint64_t count);
 template<>
 VkHostImageCopyDevicePerformanceQueryEXT* CommandRecorder::CopyArray<VkHostImageCopyDevicePerformanceQueryEXT>(const VkHostImageCopyDevicePerformanceQueryEXT* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceMapMemoryPlacedFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceMapMemoryPlacedFeaturesEXT>(const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceMapMemoryPlacedPropertiesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceMapMemoryPlacedPropertiesEXT>(const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT* src, uint64_t start_index, uint64_t count);
+template<>
+VkMemoryMapPlacedInfoEXT* CommandRecorder::CopyArray<VkMemoryMapPlacedInfoEXT>(const VkMemoryMapPlacedInfoEXT* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT>(const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT* src, uint64_t start_index, uint64_t count);
 template<>
@@ -2196,6 +2228,12 @@ template<>
 VkPhysicalDeviceLayeredDriverPropertiesMSFT* CommandRecorder::CopyArray<VkPhysicalDeviceLayeredDriverPropertiesMSFT>(const VkPhysicalDeviceLayeredDriverPropertiesMSFT* src, uint64_t start_index, uint64_t count);
 template<>
 VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV>(const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceRawAccessChainsFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceRawAccessChainsFeaturesNV>(const VkPhysicalDeviceRawAccessChainsFeaturesNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV>(const VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV* src, uint64_t start_index, uint64_t count);
+template<>
+VkPhysicalDeviceRayTracingValidationFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceRayTracingValidationFeaturesNV>(const VkPhysicalDeviceRayTracingValidationFeaturesNV* src, uint64_t start_index, uint64_t count);
 template<>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(const VkAccelerationStructureBuildRangeInfoKHR* src, uint64_t start_index, uint64_t count);
 template<>
@@ -8650,6 +8688,60 @@ VkPhysicalDeviceFragmentShadingRateKHR* CommandRecorder::CopyArray<VkPhysicalDev
 }
 
 template<>
+VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR>(const VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].dynamicRenderingLocalRead = src[start_index + i].dynamicRenderingLocalRead;
+  }
+  return ptr;
+}
+
+template<>
+VkRenderingAttachmentLocationInfoKHR* CommandRecorder::CopyArray<VkRenderingAttachmentLocationInfoKHR>(const VkRenderingAttachmentLocationInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkRenderingAttachmentLocationInfoKHR*>(m_allocator.Alloc(sizeof(VkRenderingAttachmentLocationInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
+      ptr[i].pColorAttachmentLocations = nullptr;
+      if (src[start_index + i].pColorAttachmentLocations) {
+        ptr[i].pColorAttachmentLocations = CopyArray<>(src[start_index + i].pColorAttachmentLocations, 0, 1);
+      }
+  }
+  return ptr;
+}
+
+template<>
+VkRenderingInputAttachmentIndexInfoKHR* CommandRecorder::CopyArray<VkRenderingInputAttachmentIndexInfoKHR>(const VkRenderingInputAttachmentIndexInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkRenderingInputAttachmentIndexInfoKHR*>(m_allocator.Alloc(sizeof(VkRenderingInputAttachmentIndexInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
+      ptr[i].pColorAttachmentInputIndices = nullptr;
+      if (src[start_index + i].pColorAttachmentInputIndices) {
+        ptr[i].pColorAttachmentInputIndices = CopyArray<>(src[start_index + i].pColorAttachmentInputIndices, 0, 1);
+      }
+      ptr[i].pDepthInputAttachmentIndex = src[start_index + i].pDepthInputAttachmentIndex;
+      ptr[i].pStencilInputAttachmentIndex = src[start_index + i].pStencilInputAttachmentIndex;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceShaderQuadControlFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderQuadControlFeaturesKHR>(const VkPhysicalDeviceShaderQuadControlFeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceShaderQuadControlFeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderQuadControlFeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].shaderQuadControl = src[start_index + i].shaderQuadControl;
+  }
+  return ptr;
+}
+
+template<>
 VkSurfaceProtectedCapabilitiesKHR* CommandRecorder::CopyArray<VkSurfaceProtectedCapabilitiesKHR>(const VkSurfaceProtectedCapabilitiesKHR* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkSurfaceProtectedCapabilitiesKHR*>(m_allocator.Alloc(sizeof(VkSurfaceProtectedCapabilitiesKHR) * count));
   for (uint64_t i = 0; i < count; ++i) {
@@ -9085,6 +9177,29 @@ VkTraceRaysIndirectCommand2KHR* CommandRecorder::CopyArray<VkTraceRaysIndirectCo
 }
 
 template<>
+VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR>(const VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].shaderSubgroupRotate = src[start_index + i].shaderSubgroupRotate;
+      ptr[i].shaderSubgroupRotateClustered = src[start_index + i].shaderSubgroupRotateClustered;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR>(const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].shaderMaximalReconvergence = src[start_index + i].shaderMaximalReconvergence;
+  }
+  return ptr;
+}
+
+template<>
 VkPhysicalDeviceMaintenance5FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceMaintenance5FeaturesKHR>(const VkPhysicalDeviceMaintenance5FeaturesKHR* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkPhysicalDeviceMaintenance5FeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceMaintenance5FeaturesKHR) * count));
   for (uint64_t i = 0; i < count; ++i) {
@@ -9239,6 +9354,73 @@ VkPhysicalDeviceCooperativeMatrixPropertiesKHR* CommandRecorder::CopyArray<VkPhy
 }
 
 template<>
+VkVideoDecodeAV1ProfileInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1ProfileInfoKHR>(const VkVideoDecodeAV1ProfileInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkVideoDecodeAV1ProfileInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoDecodeAV1ProfileInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].stdProfile = src[start_index + i].stdProfile;
+      ptr[i].filmGrainSupport = src[start_index + i].filmGrainSupport;
+  }
+  return ptr;
+}
+
+template<>
+VkVideoDecodeAV1CapabilitiesKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1CapabilitiesKHR>(const VkVideoDecodeAV1CapabilitiesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkVideoDecodeAV1CapabilitiesKHR*>(m_allocator.Alloc(sizeof(VkVideoDecodeAV1CapabilitiesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].maxLevel = src[start_index + i].maxLevel;
+  }
+  return ptr;
+}
+
+template<>
+VkVideoDecodeAV1SessionParametersCreateInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1SessionParametersCreateInfoKHR>(const VkVideoDecodeAV1SessionParametersCreateInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkVideoDecodeAV1SessionParametersCreateInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoDecodeAV1SessionParametersCreateInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].pStdSequenceHeader = src[start_index + i].pStdSequenceHeader;
+  }
+  return ptr;
+}
+
+template<>
+VkVideoDecodeAV1PictureInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1PictureInfoKHR>(const VkVideoDecodeAV1PictureInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkVideoDecodeAV1PictureInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoDecodeAV1PictureInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].pStdPictureInfo = src[start_index + i].pStdPictureInfo;
+      std::memcpy(ptr[i].referenceNameSlotIndices, src[start_index + i].referenceNameSlotIndices, sizeof(src[start_index + 1].referenceNameSlotIndices));
+      ptr[i].frameHeaderOffset = src[start_index + i].frameHeaderOffset;
+      ptr[i].tileCount = src[start_index + i].tileCount;
+      ptr[i].pTileOffsets = nullptr;
+      if (src[start_index + i].pTileOffsets) {
+        ptr[i].pTileOffsets = CopyArray<>(src[start_index + i].pTileOffsets, 0, 1);
+      }
+      ptr[i].pTileSizes = nullptr;
+      if (src[start_index + i].pTileSizes) {
+        ptr[i].pTileSizes = CopyArray<>(src[start_index + i].pTileSizes, 0, 1);
+      }
+  }
+  return ptr;
+}
+
+template<>
+VkVideoDecodeAV1DpbSlotInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1DpbSlotInfoKHR>(const VkVideoDecodeAV1DpbSlotInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkVideoDecodeAV1DpbSlotInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoDecodeAV1DpbSlotInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].pStdReferenceInfo = src[start_index + i].pStdReferenceInfo;
+  }
+  return ptr;
+}
+
+template<>
 VkPhysicalDeviceVideoMaintenance1FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceVideoMaintenance1FeaturesKHR>(const VkPhysicalDeviceVideoMaintenance1FeaturesKHR* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkPhysicalDeviceVideoMaintenance1FeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceVideoMaintenance1FeaturesKHR) * count));
   for (uint64_t i = 0; i < count; ++i) {
@@ -9312,12 +9494,86 @@ VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR* CommandRecorder::CopyArray<Vk
 }
 
 template<>
+VkPhysicalDeviceShaderFloatControls2FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderFloatControls2FeaturesKHR>(const VkPhysicalDeviceShaderFloatControls2FeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceShaderFloatControls2FeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderFloatControls2FeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].shaderFloatControls2 = src[start_index + i].shaderFloatControls2;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceIndexTypeUint8FeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceIndexTypeUint8FeaturesKHR>(const VkPhysicalDeviceIndexTypeUint8FeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceIndexTypeUint8FeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceIndexTypeUint8FeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].indexTypeUint8 = src[start_index + i].indexTypeUint8;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceLineRasterizationFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceLineRasterizationFeaturesKHR>(const VkPhysicalDeviceLineRasterizationFeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceLineRasterizationFeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceLineRasterizationFeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].rectangularLines = src[start_index + i].rectangularLines;
+      ptr[i].bresenhamLines = src[start_index + i].bresenhamLines;
+      ptr[i].smoothLines = src[start_index + i].smoothLines;
+      ptr[i].stippledRectangularLines = src[start_index + i].stippledRectangularLines;
+      ptr[i].stippledBresenhamLines = src[start_index + i].stippledBresenhamLines;
+      ptr[i].stippledSmoothLines = src[start_index + i].stippledSmoothLines;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceLineRasterizationPropertiesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceLineRasterizationPropertiesKHR>(const VkPhysicalDeviceLineRasterizationPropertiesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceLineRasterizationPropertiesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceLineRasterizationPropertiesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].lineSubPixelPrecisionBits = src[start_index + i].lineSubPixelPrecisionBits;
+  }
+  return ptr;
+}
+
+template<>
+VkPipelineRasterizationLineStateCreateInfoKHR* CommandRecorder::CopyArray<VkPipelineRasterizationLineStateCreateInfoKHR>(const VkPipelineRasterizationLineStateCreateInfoKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPipelineRasterizationLineStateCreateInfoKHR*>(m_allocator.Alloc(sizeof(VkPipelineRasterizationLineStateCreateInfoKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].lineRasterizationMode = src[start_index + i].lineRasterizationMode;
+      ptr[i].stippledLineEnable = src[start_index + i].stippledLineEnable;
+      ptr[i].lineStippleFactor = src[start_index + i].lineStippleFactor;
+      ptr[i].lineStipplePattern = src[start_index + i].lineStipplePattern;
+  }
+  return ptr;
+}
+
+template<>
 VkCalibratedTimestampInfoKHR* CommandRecorder::CopyArray<VkCalibratedTimestampInfoKHR>(const VkCalibratedTimestampInfoKHR* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkCalibratedTimestampInfoKHR*>(m_allocator.Alloc(sizeof(VkCalibratedTimestampInfoKHR) * count));
   for (uint64_t i = 0; i < count; ++i) {
       ptr[i].sType = src[start_index + i].sType;
       ptr[i].pNext = src[start_index + i].pNext;
       ptr[i].timeDomain = src[start_index + i].timeDomain;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceShaderExpectAssumeFeaturesKHR* CommandRecorder::CopyArray<VkPhysicalDeviceShaderExpectAssumeFeaturesKHR>(const VkPhysicalDeviceShaderExpectAssumeFeaturesKHR* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceShaderExpectAssumeFeaturesKHR*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderExpectAssumeFeaturesKHR) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].shaderExpectAssume = src[start_index + i].shaderExpectAssume;
   }
   return ptr;
 }
@@ -12062,47 +12318,6 @@ VkHeadlessSurfaceCreateInfoEXT* CommandRecorder::CopyArray<VkHeadlessSurfaceCrea
 }
 
 template<>
-VkPhysicalDeviceLineRasterizationFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceLineRasterizationFeaturesEXT>(const VkPhysicalDeviceLineRasterizationFeaturesEXT* src, uint64_t start_index, uint64_t count) {
-  auto ptr = reinterpret_cast<VkPhysicalDeviceLineRasterizationFeaturesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceLineRasterizationFeaturesEXT) * count));
-  for (uint64_t i = 0; i < count; ++i) {
-      ptr[i].sType = src[start_index + i].sType;
-      ptr[i].pNext = src[start_index + i].pNext;
-      ptr[i].rectangularLines = src[start_index + i].rectangularLines;
-      ptr[i].bresenhamLines = src[start_index + i].bresenhamLines;
-      ptr[i].smoothLines = src[start_index + i].smoothLines;
-      ptr[i].stippledRectangularLines = src[start_index + i].stippledRectangularLines;
-      ptr[i].stippledBresenhamLines = src[start_index + i].stippledBresenhamLines;
-      ptr[i].stippledSmoothLines = src[start_index + i].stippledSmoothLines;
-  }
-  return ptr;
-}
-
-template<>
-VkPhysicalDeviceLineRasterizationPropertiesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceLineRasterizationPropertiesEXT>(const VkPhysicalDeviceLineRasterizationPropertiesEXT* src, uint64_t start_index, uint64_t count) {
-  auto ptr = reinterpret_cast<VkPhysicalDeviceLineRasterizationPropertiesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceLineRasterizationPropertiesEXT) * count));
-  for (uint64_t i = 0; i < count; ++i) {
-      ptr[i].sType = src[start_index + i].sType;
-      ptr[i].pNext = src[start_index + i].pNext;
-      ptr[i].lineSubPixelPrecisionBits = src[start_index + i].lineSubPixelPrecisionBits;
-  }
-  return ptr;
-}
-
-template<>
-VkPipelineRasterizationLineStateCreateInfoEXT* CommandRecorder::CopyArray<VkPipelineRasterizationLineStateCreateInfoEXT>(const VkPipelineRasterizationLineStateCreateInfoEXT* src, uint64_t start_index, uint64_t count) {
-  auto ptr = reinterpret_cast<VkPipelineRasterizationLineStateCreateInfoEXT*>(m_allocator.Alloc(sizeof(VkPipelineRasterizationLineStateCreateInfoEXT) * count));
-  for (uint64_t i = 0; i < count; ++i) {
-      ptr[i].sType = src[start_index + i].sType;
-      ptr[i].pNext = src[start_index + i].pNext;
-      ptr[i].lineRasterizationMode = src[start_index + i].lineRasterizationMode;
-      ptr[i].stippledLineEnable = src[start_index + i].stippledLineEnable;
-      ptr[i].lineStippleFactor = src[start_index + i].lineStippleFactor;
-      ptr[i].lineStipplePattern = src[start_index + i].lineStipplePattern;
-  }
-  return ptr;
-}
-
-template<>
 VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceShaderAtomicFloatFeaturesEXT>(const VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkPhysicalDeviceShaderAtomicFloatFeaturesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderAtomicFloatFeaturesEXT) * count));
   for (uint64_t i = 0; i < count; ++i) {
@@ -12120,17 +12335,6 @@ VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* CommandRecorder::CopyArray<VkPhysi
       ptr[i].shaderImageFloat32AtomicAdd = src[start_index + i].shaderImageFloat32AtomicAdd;
       ptr[i].sparseImageFloat32Atomics = src[start_index + i].sparseImageFloat32Atomics;
       ptr[i].sparseImageFloat32AtomicAdd = src[start_index + i].sparseImageFloat32AtomicAdd;
-  }
-  return ptr;
-}
-
-template<>
-VkPhysicalDeviceIndexTypeUint8FeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceIndexTypeUint8FeaturesEXT>(const VkPhysicalDeviceIndexTypeUint8FeaturesEXT* src, uint64_t start_index, uint64_t count) {
-  auto ptr = reinterpret_cast<VkPhysicalDeviceIndexTypeUint8FeaturesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceIndexTypeUint8FeaturesEXT) * count));
-  for (uint64_t i = 0; i < count; ++i) {
-      ptr[i].sType = src[start_index + i].sType;
-      ptr[i].pNext = src[start_index + i].pNext;
-      ptr[i].indexTypeUint8 = src[start_index + i].indexTypeUint8;
   }
   return ptr;
 }
@@ -12300,6 +12504,41 @@ VkHostImageCopyDevicePerformanceQueryEXT* CommandRecorder::CopyArray<VkHostImage
       ptr[i].pNext = src[start_index + i].pNext;
       ptr[i].optimalDeviceAccess = src[start_index + i].optimalDeviceAccess;
       ptr[i].identicalMemoryLayout = src[start_index + i].identicalMemoryLayout;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceMapMemoryPlacedFeaturesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceMapMemoryPlacedFeaturesEXT>(const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceMapMemoryPlacedFeaturesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceMapMemoryPlacedFeaturesEXT) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].memoryMapPlaced = src[start_index + i].memoryMapPlaced;
+      ptr[i].memoryMapRangePlaced = src[start_index + i].memoryMapRangePlaced;
+      ptr[i].memoryUnmapReserve = src[start_index + i].memoryUnmapReserve;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceMapMemoryPlacedPropertiesEXT* CommandRecorder::CopyArray<VkPhysicalDeviceMapMemoryPlacedPropertiesEXT>(const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceMapMemoryPlacedPropertiesEXT*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceMapMemoryPlacedPropertiesEXT) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].minPlacedMemoryMapAlignment = src[start_index + i].minPlacedMemoryMapAlignment;
+  }
+  return ptr;
+}
+
+template<>
+VkMemoryMapPlacedInfoEXT* CommandRecorder::CopyArray<VkMemoryMapPlacedInfoEXT>(const VkMemoryMapPlacedInfoEXT* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkMemoryMapPlacedInfoEXT*>(m_allocator.Alloc(sizeof(VkMemoryMapPlacedInfoEXT) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].pPlacedAddress = src[start_index + i].pPlacedAddress;
   }
   return ptr;
 }
@@ -16280,6 +16519,39 @@ VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV* CommandRecorder::CopyArr
 }
 
 template<>
+VkPhysicalDeviceRawAccessChainsFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceRawAccessChainsFeaturesNV>(const VkPhysicalDeviceRawAccessChainsFeaturesNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceRawAccessChainsFeaturesNV*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceRawAccessChainsFeaturesNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].shaderRawAccessChains = src[start_index + i].shaderRawAccessChains;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV>(const VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].shaderFloat16VectorAtomics = src[start_index + i].shaderFloat16VectorAtomics;
+  }
+  return ptr;
+}
+
+template<>
+VkPhysicalDeviceRayTracingValidationFeaturesNV* CommandRecorder::CopyArray<VkPhysicalDeviceRayTracingValidationFeaturesNV>(const VkPhysicalDeviceRayTracingValidationFeaturesNV* src, uint64_t start_index, uint64_t count) {
+  auto ptr = reinterpret_cast<VkPhysicalDeviceRayTracingValidationFeaturesNV*>(m_allocator.Alloc(sizeof(VkPhysicalDeviceRayTracingValidationFeaturesNV) * count));
+  for (uint64_t i = 0; i < count; ++i) {
+      ptr[i].sType = src[start_index + i].sType;
+      ptr[i].pNext = src[start_index + i].pNext;
+      ptr[i].rayTracingValidation = src[start_index + i].rayTracingValidation;
+  }
+  return ptr;
+}
+
+template<>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(const VkAccelerationStructureBuildRangeInfoKHR* src, uint64_t start_index, uint64_t count) {
   auto ptr = reinterpret_cast<VkAccelerationStructureBuildRangeInfoKHR*>(m_allocator.Alloc(sizeof(VkAccelerationStructureBuildRangeInfoKHR) * count));
   for (uint64_t i = 0; i < count; ++i) {
@@ -18068,6 +18340,28 @@ CmdSetFragmentShadingRateKHRArgs*CommandRecorder::RecordCmdSetFragmentShadingRat
   return args;
 }
 
+CmdSetRenderingAttachmentLocationsKHRArgs*CommandRecorder::RecordCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+  auto *args = Alloc<CmdSetRenderingAttachmentLocationsKHRArgs>();
+  args->commandBuffer = commandBuffer;
+  if (pLocationInfo) {
+    args->pLocationInfo = CopyArray(pLocationInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+  }
+  return args;
+}
+
+CmdSetRenderingInputAttachmentIndicesKHRArgs*CommandRecorder::RecordCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+  auto *args = Alloc<CmdSetRenderingInputAttachmentIndicesKHRArgs>();
+  args->commandBuffer = commandBuffer;
+  if (pLocationInfo) {
+    args->pLocationInfo = CopyArray(pLocationInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+  }
+  return args;
+}
+
 CmdEncodeVideoKHRArgs*CommandRecorder::RecordCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -18246,6 +18540,17 @@ CmdBindIndexBuffer2KHRArgs*CommandRecorder::RecordCmdBindIndexBuffer2KHR(
   args->offset = offset;
   args->size = size;
   args->indexType = indexType;
+  return args;
+}
+
+CmdSetLineStippleKHRArgs*CommandRecorder::RecordCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern) {
+  auto *args = Alloc<CmdSetLineStippleKHRArgs>();
+  args->commandBuffer = commandBuffer;
+  args->lineStippleFactor = lineStippleFactor;
+  args->lineStipplePattern = lineStipplePattern;
   return args;
 }
 
@@ -19497,15 +19802,6 @@ CmdUpdatePipelineIndirectBufferNVArgs*CommandRecorder::RecordCmdUpdatePipelineIn
   return args;
 }
 
-CmdSetTessellationDomainOriginEXTArgs*CommandRecorder::RecordCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin) {
-  auto *args = Alloc<CmdSetTessellationDomainOriginEXTArgs>();
-  args->commandBuffer = commandBuffer;
-  args->domainOrigin = domainOrigin;
-  return args;
-}
-
 CmdSetDepthClampEnableEXTArgs*CommandRecorder::RecordCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable) {
@@ -19615,6 +19911,15 @@ CmdSetColorWriteMaskEXTArgs*CommandRecorder::RecordCmdSetColorWriteMaskEXT(
   if (pColorWriteMasks) {
     args->pColorWriteMasks = CopyArray(pColorWriteMasks, static_cast<uint64_t>(0U), static_cast<uint64_t>(attachmentCount));
   }
+  return args;
+}
+
+CmdSetTessellationDomainOriginEXTArgs*CommandRecorder::RecordCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin) {
+  auto *args = Alloc<CmdSetTessellationDomainOriginEXTArgs>();
+  args->commandBuffer = commandBuffer;
+  args->domainOrigin = domainOrigin;
   return args;
 }
 

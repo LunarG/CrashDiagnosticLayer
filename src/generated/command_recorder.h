@@ -606,6 +606,14 @@ class CommandRecorder
     const VkExtent2D*                           pFragmentSize,
     const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
 
+  CmdSetRenderingAttachmentLocationsKHRArgs*RecordCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
+
+  CmdSetRenderingInputAttachmentIndicesKHRArgs*RecordCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo);
+
   CmdEncodeVideoKHRArgs*RecordCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo);
@@ -677,6 +685,11 @@ class CommandRecorder
     VkDeviceSize                                offset,
     VkDeviceSize                                size,
     VkIndexType                                 indexType);
+
+  CmdSetLineStippleKHRArgs*RecordCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern);
 
   CmdBindDescriptorSets2KHRArgs*RecordCmdBindDescriptorSets2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -1199,10 +1212,6 @@ class CommandRecorder
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline);
 
-  CmdSetTessellationDomainOriginEXTArgs*RecordCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin);
-
   CmdSetDepthClampEnableEXTArgs*RecordCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable);
@@ -1249,6 +1258,10 @@ class CommandRecorder
     uint32_t                                    firstAttachment,
     uint32_t                                    attachmentCount,
     const VkColorComponentFlags*                pColorWriteMasks);
+
+  CmdSetTessellationDomainOriginEXTArgs*RecordCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin);
 
   CmdSetRasterizationStreamEXTArgs*RecordCmdSetRasterizationStreamEXT(
     VkCommandBuffer                             commandBuffer,
