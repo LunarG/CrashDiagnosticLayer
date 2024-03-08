@@ -458,6 +458,8 @@ struct DeviceDispatchTable {
   PFN_vkWaitSemaphoresKHR WaitSemaphoresKHR;
   PFN_vkSignalSemaphoreKHR SignalSemaphoreKHR;
   PFN_vkCmdSetFragmentShadingRateKHR CmdSetFragmentShadingRateKHR;
+  PFN_vkCmdSetRenderingAttachmentLocationsKHR CmdSetRenderingAttachmentLocationsKHR;
+  PFN_vkCmdSetRenderingInputAttachmentIndicesKHR CmdSetRenderingInputAttachmentIndicesKHR;
   PFN_vkWaitForPresentKHR WaitForPresentKHR;
   PFN_vkGetBufferDeviceAddressKHR GetBufferDeviceAddressKHR;
   PFN_vkGetBufferOpaqueCaptureAddressKHR GetBufferOpaqueCaptureAddressKHR;
@@ -496,6 +498,7 @@ struct DeviceDispatchTable {
   PFN_vkGetRenderingAreaGranularityKHR GetRenderingAreaGranularityKHR;
   PFN_vkGetDeviceImageSubresourceLayoutKHR GetDeviceImageSubresourceLayoutKHR;
   PFN_vkGetImageSubresourceLayout2KHR GetImageSubresourceLayout2KHR;
+  PFN_vkCmdSetLineStippleKHR CmdSetLineStippleKHR;
   PFN_vkGetCalibratedTimestampsKHR GetCalibratedTimestampsKHR;
   PFN_vkCmdBindDescriptorSets2KHR CmdBindDescriptorSets2KHR;
   PFN_vkCmdPushConstants2KHR CmdPushConstants2KHR;
@@ -747,7 +750,6 @@ struct DeviceDispatchTable {
   PFN_vkGetPipelineIndirectMemoryRequirementsNV GetPipelineIndirectMemoryRequirementsNV;
   PFN_vkCmdUpdatePipelineIndirectBufferNV CmdUpdatePipelineIndirectBufferNV;
   PFN_vkGetPipelineIndirectDeviceAddressNV GetPipelineIndirectDeviceAddressNV;
-  PFN_vkCmdSetTessellationDomainOriginEXT CmdSetTessellationDomainOriginEXT;
   PFN_vkCmdSetDepthClampEnableEXT CmdSetDepthClampEnableEXT;
   PFN_vkCmdSetPolygonModeEXT CmdSetPolygonModeEXT;
   PFN_vkCmdSetRasterizationSamplesEXT CmdSetRasterizationSamplesEXT;
@@ -758,6 +760,7 @@ struct DeviceDispatchTable {
   PFN_vkCmdSetColorBlendEnableEXT CmdSetColorBlendEnableEXT;
   PFN_vkCmdSetColorBlendEquationEXT CmdSetColorBlendEquationEXT;
   PFN_vkCmdSetColorWriteMaskEXT CmdSetColorWriteMaskEXT;
+  PFN_vkCmdSetTessellationDomainOriginEXT CmdSetTessellationDomainOriginEXT;
   PFN_vkCmdSetRasterizationStreamEXT CmdSetRasterizationStreamEXT;
   PFN_vkCmdSetConservativeRasterizationModeEXT CmdSetConservativeRasterizationModeEXT;
   PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT CmdSetExtraPrimitiveOverestimationSizeEXT;

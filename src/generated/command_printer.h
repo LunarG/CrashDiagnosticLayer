@@ -144,6 +144,7 @@ std::ostream &operator<<(std::ostream & os, const VkPipelineExecutableStatisticF
 std::ostream &operator<<(std::ostream & os, const VkVideoEncodeTuningModeKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkComponentTypeKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkScopeKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkLineRasterizationModeKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkTimeDomainKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkDebugReportObjectTypeEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkRasterizationOrderAMD &t);
@@ -180,7 +181,6 @@ std::ostream &operator<<(std::ostream & os, const VkProvokingVertexModeEXT &t);
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 std::ostream &operator<<(std::ostream & os, const VkFullScreenExclusiveEXT &t);
 #endif //VK_USE_PLATFORM_WIN32_KHR
-std::ostream &operator<<(std::ostream & os, const VkLineRasterizationModeEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkIndirectCommandsTokenTypeNV &t);
 std::ostream &operator<<(std::ostream & os, const VkDepthBiasRepresentationEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkDeviceMemoryReportEventTypeEXT &t);
@@ -680,6 +680,10 @@ std::ostream &operator<<(std::ostream & os, const VkPipelineFragmentShadingRateS
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceFragmentShadingRateFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceFragmentShadingRatePropertiesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceFragmentShadingRateKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkRenderingAttachmentLocationInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkRenderingInputAttachmentIndexInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderQuadControlFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkSurfaceProtectedCapabilitiesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDevicePresentWaitFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR &t);
@@ -713,6 +717,8 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderSubgroup
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkTraceRaysIndirectCommand2KHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance5FeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance5PropertiesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkRenderingAreaInfoKHR &t);
@@ -725,13 +731,24 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRayTracingPosi
 std::ostream &operator<<(std::ostream & os, const VkCooperativeMatrixPropertiesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceCooperativeMatrixFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceCooperativeMatrixPropertiesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1ProfileInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1CapabilitiesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1SessionParametersCreateInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1PictureInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkVideoDecodeAV1DpbSlotInfoKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceVideoMaintenance1FeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkVideoInlineQueryInfoKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkVertexInputBindingDivisorDescriptionKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPipelineVertexInputDivisorStateCreateInfoKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderFloatControls2FeaturesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceIndexTypeUint8FeaturesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLineRasterizationFeaturesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLineRasterizationPropertiesKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPipelineRasterizationLineStateCreateInfoKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkCalibratedTimestampInfoKHR &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderExpectAssumeFeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance6FeaturesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMaintenance6PropertiesKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkBindMemoryStatusKHR &t);
@@ -989,11 +1006,7 @@ std::ostream &operator<<(std::ostream & os, const VkSurfaceCapabilitiesFullScree
 std::ostream &operator<<(std::ostream & os, const VkSurfaceFullScreenExclusiveWin32InfoEXT &t);
 #endif //VK_USE_PLATFORM_WIN32_KHR
 std::ostream &operator<<(std::ostream & os, const VkHeadlessSurfaceCreateInfoEXT &t);
-std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLineRasterizationFeaturesEXT &t);
-std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLineRasterizationPropertiesEXT &t);
-std::ostream &operator<<(std::ostream & os, const VkPipelineRasterizationLineStateCreateInfoEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderAtomicFloatFeaturesEXT &t);
-std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceIndexTypeUint8FeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExtendedDynamicStateFeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceHostImageCopyFeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceHostImageCopyPropertiesEXT &t);
@@ -1005,6 +1018,9 @@ std::ostream &operator<<(std::ostream & os, const VkCopyImageToImageInfoEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkHostImageLayoutTransitionInfoEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkSubresourceHostMemcpySizeEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkHostImageCopyDevicePerformanceQueryEXT &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT &t);
+std::ostream &operator<<(std::ostream & os, const VkMemoryMapPlacedInfoEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkSurfacePresentModeEXT &t);
 std::ostream &operator<<(std::ostream & os, const VkSurfacePresentScalingCapabilitiesEXT &t);
@@ -1384,6 +1400,9 @@ std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceExternalMemory
 #endif //VK_USE_PLATFORM_SCREEN_QNX
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceLayeredDriverPropertiesMSFT &t);
 std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRawAccessChainsFeaturesNV &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV &t);
+std::ostream &operator<<(std::ostream & os, const VkPhysicalDeviceRayTracingValidationFeaturesNV &t);
 std::ostream &operator<<(std::ostream & os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 std::ostream &operator<<(std::ostream & os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
@@ -1518,6 +1537,8 @@ class CommandPrinter {
   void PrintCmdDrawIndirectCountKHRArgs(std::ostream & os, const CmdDrawIndirectCountKHRArgs &args);
   void PrintCmdDrawIndexedIndirectCountKHRArgs(std::ostream & os, const CmdDrawIndexedIndirectCountKHRArgs &args);
   void PrintCmdSetFragmentShadingRateKHRArgs(std::ostream & os, const CmdSetFragmentShadingRateKHRArgs &args);
+  void PrintCmdSetRenderingAttachmentLocationsKHRArgs(std::ostream & os, const CmdSetRenderingAttachmentLocationsKHRArgs &args);
+  void PrintCmdSetRenderingInputAttachmentIndicesKHRArgs(std::ostream & os, const CmdSetRenderingInputAttachmentIndicesKHRArgs &args);
   void PrintCmdEncodeVideoKHRArgs(std::ostream & os, const CmdEncodeVideoKHRArgs &args);
   void PrintCmdSetEvent2KHRArgs(std::ostream & os, const CmdSetEvent2KHRArgs &args);
   void PrintCmdResetEvent2KHRArgs(std::ostream & os, const CmdResetEvent2KHRArgs &args);
@@ -1533,6 +1554,7 @@ class CommandPrinter {
   void PrintCmdResolveImage2KHRArgs(std::ostream & os, const CmdResolveImage2KHRArgs &args);
   void PrintCmdTraceRaysIndirect2KHRArgs(std::ostream & os, const CmdTraceRaysIndirect2KHRArgs &args);
   void PrintCmdBindIndexBuffer2KHRArgs(std::ostream & os, const CmdBindIndexBuffer2KHRArgs &args);
+  void PrintCmdSetLineStippleKHRArgs(std::ostream & os, const CmdSetLineStippleKHRArgs &args);
   void PrintCmdBindDescriptorSets2KHRArgs(std::ostream & os, const CmdBindDescriptorSets2KHRArgs &args);
   void PrintCmdPushConstants2KHRArgs(std::ostream & os, const CmdPushConstants2KHRArgs &args);
   void PrintCmdPushDescriptorSet2KHRArgs(std::ostream & os, const CmdPushDescriptorSet2KHRArgs &args);
@@ -1635,7 +1657,6 @@ class CommandPrinter {
   void PrintCmdDecompressMemoryNVArgs(std::ostream & os, const CmdDecompressMemoryNVArgs &args);
   void PrintCmdDecompressMemoryIndirectCountNVArgs(std::ostream & os, const CmdDecompressMemoryIndirectCountNVArgs &args);
   void PrintCmdUpdatePipelineIndirectBufferNVArgs(std::ostream & os, const CmdUpdatePipelineIndirectBufferNVArgs &args);
-  void PrintCmdSetTessellationDomainOriginEXTArgs(std::ostream & os, const CmdSetTessellationDomainOriginEXTArgs &args);
   void PrintCmdSetDepthClampEnableEXTArgs(std::ostream & os, const CmdSetDepthClampEnableEXTArgs &args);
   void PrintCmdSetPolygonModeEXTArgs(std::ostream & os, const CmdSetPolygonModeEXTArgs &args);
   void PrintCmdSetRasterizationSamplesEXTArgs(std::ostream & os, const CmdSetRasterizationSamplesEXTArgs &args);
@@ -1646,6 +1667,7 @@ class CommandPrinter {
   void PrintCmdSetColorBlendEnableEXTArgs(std::ostream & os, const CmdSetColorBlendEnableEXTArgs &args);
   void PrintCmdSetColorBlendEquationEXTArgs(std::ostream & os, const CmdSetColorBlendEquationEXTArgs &args);
   void PrintCmdSetColorWriteMaskEXTArgs(std::ostream & os, const CmdSetColorWriteMaskEXTArgs &args);
+  void PrintCmdSetTessellationDomainOriginEXTArgs(std::ostream & os, const CmdSetTessellationDomainOriginEXTArgs &args);
   void PrintCmdSetRasterizationStreamEXTArgs(std::ostream & os, const CmdSetRasterizationStreamEXTArgs &args);
   void PrintCmdSetConservativeRasterizationModeEXTArgs(std::ostream & os, const CmdSetConservativeRasterizationModeEXTArgs &args);
   void PrintCmdSetExtraPrimitiveOverestimationSizeEXTArgs(std::ostream & os, const CmdSetExtraPrimitiveOverestimationSizeEXTArgs &args);

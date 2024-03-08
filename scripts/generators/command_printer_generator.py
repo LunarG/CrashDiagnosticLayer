@@ -162,7 +162,6 @@ class CommandPrinter {
             prefix += '.'
         if member.length is not None:
 
-            static_array = not (member.staticArray is None or len(member.staticArray) == 0)
             lengths = []
             lengths_names = []
             if len(member.staticArray) > 1 or member.length.count(',') > 0:
@@ -171,6 +170,8 @@ class CommandPrinter {
                     lengths.pop()
             else:
                 lengths.append(member.length)
+            # for truly static arrays these are equal
+            static_array = (lengths == member.staticArray)
 
             array_type = ''
             if member.const:

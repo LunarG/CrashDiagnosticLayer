@@ -1634,6 +1634,32 @@ void Context::PostCmdSetFragmentShadingRateKHR(
   p_cmd->PostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 
+void Context::PreCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+  p_cmd->PreCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
+}
+void Context::PostCmdSetRenderingAttachmentLocationsKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+  p_cmd->PostCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
+}
+
+void Context::PreCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+  p_cmd->PreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+}
+void Context::PostCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+  p_cmd->PostCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+}
+
 void Context::PreCmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo) {
@@ -1851,6 +1877,21 @@ void Context::PostCmdBindIndexBuffer2KHR(
     VkIndexType                                 indexType) {
   auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
   p_cmd->PostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
+
+void Context::PreCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern) {
+  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+  p_cmd->PreCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
+}
+void Context::PostCmdSetLineStippleKHR(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern) {
+  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+  p_cmd->PostCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 
 void Context::PreCmdBindDescriptorSets2KHR(
@@ -3360,19 +3401,6 @@ void Context::PostCmdUpdatePipelineIndirectBufferNV(
   p_cmd->PostCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
 
-void Context::PreCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin) {
-  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-  p_cmd->PreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
-}
-void Context::PostCmdSetTessellationDomainOriginEXT(
-    VkCommandBuffer                             commandBuffer,
-    VkTessellationDomainOrigin                  domainOrigin) {
-  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-  p_cmd->PostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
-}
-
 void Context::PreCmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable) {
@@ -3515,6 +3543,19 @@ void Context::PostCmdSetColorWriteMaskEXT(
     const VkColorComponentFlags*                pColorWriteMasks) {
   auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
   p_cmd->PostCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
+}
+
+void Context::PreCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin) {
+  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+  p_cmd->PreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
+}
+void Context::PostCmdSetTessellationDomainOriginEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkTessellationDomainOrigin                  domainOrigin) {
+  auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+  p_cmd->PostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
 
 void Context::PreCmdSetRasterizationStreamEXT(

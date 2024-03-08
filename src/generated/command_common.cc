@@ -232,6 +232,10 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdDrawIndexedIndirectCountKHR";
   case Command::Type::kCmdSetFragmentShadingRateKHR:
     return "vkCmdSetFragmentShadingRateKHR";
+  case Command::Type::kCmdSetRenderingAttachmentLocationsKHR:
+    return "vkCmdSetRenderingAttachmentLocationsKHR";
+  case Command::Type::kCmdSetRenderingInputAttachmentIndicesKHR:
+    return "vkCmdSetRenderingInputAttachmentIndicesKHR";
   case Command::Type::kCmdEncodeVideoKHR:
     return "vkCmdEncodeVideoKHR";
   case Command::Type::kCmdSetEvent2KHR:
@@ -262,6 +266,8 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdTraceRaysIndirect2KHR";
   case Command::Type::kCmdBindIndexBuffer2KHR:
     return "vkCmdBindIndexBuffer2KHR";
+  case Command::Type::kCmdSetLineStippleKHR:
+    return "vkCmdSetLineStippleKHR";
   case Command::Type::kCmdBindDescriptorSets2KHR:
     return "vkCmdBindDescriptorSets2KHR";
   case Command::Type::kCmdPushConstants2KHR:
@@ -458,8 +464,6 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdDecompressMemoryIndirectCountNV";
   case Command::Type::kCmdUpdatePipelineIndirectBufferNV:
     return "vkCmdUpdatePipelineIndirectBufferNV";
-  case Command::Type::kCmdSetTessellationDomainOriginEXT:
-    return "vkCmdSetTessellationDomainOriginEXT";
   case Command::Type::kCmdSetDepthClampEnableEXT:
     return "vkCmdSetDepthClampEnableEXT";
   case Command::Type::kCmdSetPolygonModeEXT:
@@ -480,6 +484,8 @@ const char *Command::GetCommandName(const Command &cmd) {
     return "vkCmdSetColorBlendEquationEXT";
   case Command::Type::kCmdSetColorWriteMaskEXT:
     return "vkCmdSetColorWriteMaskEXT";
+  case Command::Type::kCmdSetTessellationDomainOriginEXT:
+    return "vkCmdSetTessellationDomainOriginEXT";
   case Command::Type::kCmdSetRasterizationStreamEXT:
     return "vkCmdSetRasterizationStreamEXT";
   case Command::Type::kCmdSetConservativeRasterizationModeEXT:
