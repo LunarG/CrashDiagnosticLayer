@@ -60,7 +60,7 @@ const char* kShadersDumpOnCrash = "shaders_dump_on_crash";
 const char* kShadersDumpOnBind = "shaders_dump_on_bind";
 const char* kWatchdogTimeout = "watchdog_timeout_ms";
 const char* kAutodump = "autodump";
-const char* kDumpAllCommandBuffers = "dump_all_comamnd_buffers";
+const char* kDumpAllCommandBuffers = "dump_all_command_buffers";
 // TODO: buffers_dump_indirect???
 const char* kTrackSemaphores = "track_semaphores";
 const char* kTraceAllSemaphores = "trace_all_semaphores";
@@ -425,64 +425,59 @@ std::string Context::GetObjectInfo(VkDevice vk_device, uint64_t handle) {
 void Context::DumpAllDevicesExecutionState(CrashSource crash_source) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     bool dump_prologue = true;
-    std::stringstream os;
+    auto fs = OpenLogFile();
+    std::ostream& os = fs.is_open() ? fs : std::cerr;
+
     for (auto& it : devices_) {
         auto device = it.second.get();
-        DumpDeviceExecutionState(device, dump_prologue, crash_source, &os);
+        DumpDeviceExecutionState(device, dump_prologue, crash_source, os);
         dump_prologue = false;
     }
-    WriteReport(os, crash_source);
 }
 
-void Context::DumpDeviceExecutionState(VkDevice vk_device, bool dump_prologue = true,
-                                       CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
+void Context::DumpDeviceExecutionState(VkDevice vk_device) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     if (devices_.find(vk_device) != devices_.end()) {
-        DumpDeviceExecutionState(devices_[vk_device].get(), {}, dump_prologue, crash_source, os);
+        auto fs = OpenLogFile();
+        std::ostream& os = fs.is_open() ? fs : std::cerr;
+        DumpDeviceExecutionState(devices_[vk_device].get(), {}, true, kDeviceLostError, os);
     }
 }
 
-void Context::DumpDeviceExecutionState(const Device* device, bool dump_prologue = true,
-                                       CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
+void Context::DumpDeviceExecutionState(const Device* device, bool dump_prologue,
+                                       CrashSource crash_source, std::ostream& os) {
     DumpDeviceExecutionState(device, {}, dump_prologue, crash_source, os);
 }
 
-void Context::DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue = true,
-                                       CrashSource crash_source = kDeviceLostError, std::ostream* os = nullptr) {
+void Context::DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue,
+                                       CrashSource crash_source, std::ostream& os) {
     if (!device) {
         return;
     }
 
-    std::stringstream ss;
     if (dump_prologue) {
-        DumpReportPrologue(ss, device);
+        DumpReportPrologue(os, device);
     }
 
-    device->Print(ss);
+    device->Print(os);
 
     if (track_semaphores_) {
-        device->GetSubmitTracker()->DumpWaitingSubmits(ss);
-        ss << "\n";
-        device->GetSemaphoreTracker()->DumpWaitingThreads(ss);
-        ss << "\n";
+        device->GetSubmitTracker()->DumpWaitingSubmits(os);
+        os << "\n";
+        device->GetSemaphoreTracker()->DumpWaitingThreads(os);
+        os << "\n";
     }
 
-    ss << "\n";
-    ss << error_report;
+    os << "\n";
+    os << error_report;
 
     auto options = CommandBufferDumpOption::kDefault;
     if (debug_dump_all_command_buffers_) options |= CommandBufferDumpOption::kDumpAllCommands;
 
     if (debug_autodump_rate_ > 0 || debug_dump_all_command_buffers_) {
-        device->DumpAllCommandBuffers(ss, options);
+        device->DumpAllCommandBuffers(os, options);
     } else {
-        device->DumpIncompleteCommandBuffers(ss, options);
-    }
-
-    if (os) {
-        *os << ss.str();
-    } else {
-        WriteReport(ss, crash_source);
+        device->DumpIncompleteCommandBuffers(os, options);
     }
 }
 
@@ -494,8 +489,7 @@ void Context::DumpDeviceExecutionStateValidationFailed(const Device* device, std
     debug_dump_all_command_buffers_ = true;
     std::stringstream error_report;
     error_report << os.rdbuf();
-    DumpDeviceExecutionState(device, error_report.str(), true /* dump_prologue */, CrashSource::kDeviceLostError, &os);
-    WriteReport(os, CrashSource::kDeviceLostError);
+    DumpDeviceExecutionState(device, error_report.str(), true /* dump_prologue */, CrashSource::kDeviceLostError, os);
     debug_dump_all_command_buffers_ = dump_all;
 }
 
@@ -548,7 +542,7 @@ void Context::DumpReportPrologue(std::ostream& os, const Device* device) {
     os << "\n";
 }
 
-void Context::WriteReport(std::ostream& os, CrashSource crash_source) {
+std::ofstream Context::OpenLogFile() {
     // Make sure our output directory exists.
     MakeOutputPath();
 
@@ -566,19 +560,10 @@ void Context::WriteReport(std::ostream& os, CrashSource crash_source) {
     if (total_logs_ > 0) {
         ss_name << output_name << "_" << total_submits_ << "_" << total_logs_ << ".log";
     } else {
-        ss_name << output_path_ << output_name << ".log";
+        ss_name << output_name << ".log";
     }
     log_path /= ss_name.str();
     total_logs_++;
-
-    std::ofstream fs(log_path);
-    if (fs.is_open()) {
-        std::stringstream ss;
-        ss << os.rdbuf();
-        fs << ss.str();
-        fs.flush();
-        fs.close();
-    }
 
 #if !defined(WIN32)
     // Create a symlink from the generated log file.
@@ -599,6 +584,13 @@ void Context::WriteReport(std::ostream& os, CrashSource crash_source) {
     OutputDebugString(ss.str().c_str());
 #endif
     logger_.LogError(ss.str());
+
+    std::ofstream fs(log_path);
+    if (!fs.is_open()) {
+        logger_.LogError("UNABLE TO OPEN LOG FILE");
+    }
+    fs << std::unitbuf;
+    return fs;
 }
 
 VkCommandPool Context::GetHelperCommandPool(VkDevice vk_device, VkQueue vk_queue) {

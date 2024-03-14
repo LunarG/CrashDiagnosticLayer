@@ -133,6 +133,7 @@ class Context : public Interceptor {
 
     void MakeOutputPath();
     const std::filesystem::path& GetOutputPath() const;
+    std::ofstream OpenLogFile();
 
     Logger* GetLogger() { return &logger_; }
     const ShaderModule* FindShaderModule(VkShaderModule shader) const;
@@ -172,14 +173,13 @@ class Context : public Interceptor {
     std::string GetObjectInfo(VkDevice vk_device, uint64_t handle);
 
     void DumpAllDevicesExecutionState(CrashSource crash_source);
-    void DumpDeviceExecutionState(VkDevice vk_device, bool dump_prologue, CrashSource crash_source, std::ostream* os);
-    void DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source, std::ostream* os);
+    void DumpDeviceExecutionState(VkDevice vk_device);
+    void DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source, std::ostream& os);
     void DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue,
-                                  CrashSource crash_source, std::ostream* os);
+                                  CrashSource crash_source, std::ostream& os);
     void DumpDeviceExecutionStateValidationFailed(const Device* device, std::ostream& os);
 
     void DumpReportPrologue(std::ostream& os, const Device* device);
-    void WriteReport(std::ostream& os, CrashSource crash_source);
 
     void StartWatchdogTimer();
     void StopWatchdogTimer();
