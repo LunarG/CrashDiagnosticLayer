@@ -65,7 +65,7 @@ std::string ShaderModule::DumpShaderCode(const std::string& prefix, size_t code_
     std::string shader_filename =
         prefix + PtrToStr(vk_shader_module_) + "_" + std::to_string(GetExecutionModel()) + ".spv";
     std::filesystem::path shader_output_path(output_path_);
-    shader_output_path += shader_filename;
+    shader_output_path /= shader_filename;
 
     context_->GetLogger()->LogInfo("Writing Shader: \'%s\'", shader_filename.c_str());
 
