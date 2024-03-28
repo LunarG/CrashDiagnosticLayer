@@ -112,6 +112,20 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
+    genOpts['command_printer_structs.cc'] = [
+          CommandPrinterOutputGenerator,
+          BaseGeneratorOptions(
+            filename          = 'command_printer_structs.cc',
+            mergeApiNames     = mergeApiNames,
+            valid_usage_path  = scripts)
+        ]
+    genOpts['command_printer_types.cc'] = [
+          CommandPrinterOutputGenerator,
+          BaseGeneratorOptions(
+            filename          = 'command_printer_types.cc',
+            mergeApiNames     = mergeApiNames,
+            valid_usage_path  = scripts)
+        ]
 
     genOpts['command_recorder.h'] = [
           CommandRecorderOutputGenerator,

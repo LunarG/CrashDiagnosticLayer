@@ -36,6 +36,8 @@ target_sources(crash_diagnostic PRIVATE
     ${GENERATED_DIR}/command_common.cc
     ${GENERATED_DIR}/command_printer.h
     ${GENERATED_DIR}/command_printer.cc
+    ${GENERATED_DIR}/command_printer_structs.cc
+    ${GENERATED_DIR}/command_printer_types.cc
     ${GENERATED_DIR}/command_recorder.h
     ${GENERATED_DIR}/command_recorder.cc
     ${GENERATED_DIR}/command_tracker.h
