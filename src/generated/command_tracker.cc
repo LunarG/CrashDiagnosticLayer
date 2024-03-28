@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023 LunarG, Inc.
+ * Copyright (c) 2023-2024 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,7 @@ void CommandTracker::Reset() {
 
 void CommandTracker::SetNameResolver(const ObjectInfoDB* name_resolver) { printer_.SetNameResolver(name_resolver); }
 
-void CommandTracker::PrintCommandParameters(std::ostream& os, const Command& cmd, uint32_t indentation) {
-    ScopedOstream sos(os, indentation);
+void CommandTracker::PrintCommandParameters(YAML::Emitter& os, const Command& cmd) {
     switch (cmd.type) {
         default:
         case Command::Type::kUnknown:

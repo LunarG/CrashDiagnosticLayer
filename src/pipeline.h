@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -51,8 +52,8 @@ class Pipeline {
 
     const PipelineBoundShader& FindShaderStage(VkShaderStageFlagBits shader_stage) const;
 
-    std::ostream& PrintName(std::ostream& stream, const ObjectInfoDB& name_resolver, const std::string& indent) const;
-    std::ostream& Print(std::ostream& stream, const ObjectInfoDB& name_resolver, const std::string& indent) const;
+    YAML::Emitter& PrintName(YAML::Emitter& stream, const ObjectInfoDB& name_resolver) const;
+    YAML::Emitter& Print(YAML::Emitter& stream, const ObjectInfoDB& name_resolver) const;
 
     const std::vector<PipelineBoundShader>& GetBoundShaders() const { return shaders_; }
 

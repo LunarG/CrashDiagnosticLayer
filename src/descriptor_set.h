@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License") override;
  you may not use this file except in compliance with the License.
@@ -23,6 +24,10 @@
 #include <string>
 #include <vector>
 
+namespace YAML {
+class Emitter;
+}  // namespace YAML
+
 namespace crash_diagnostic_layer {
 
 class Device;
@@ -37,7 +42,7 @@ class ActiveDescriptorSets {
     void Reset();
     void Bind(uint32_t first_set, uint32_t set_count, const VkDescriptorSet* sets);
 
-    std::ostream& Print(Device* device, std::ostream& stream, const std::string& indent) const;
+    YAML::Emitter& Print(Device* device, YAML::Emitter& stream) const;
 
    private:
     void Insert(VkDescriptorSet set, uint32_t index);

@@ -1,5 +1,5 @@
 # ~~~
-# Copyright (c) 2023 LunarG, Inc.
+# Copyright (c) 2023-2024 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -122,6 +122,9 @@ endif()
 if (VULKAN_UTILITY_LIBRARIES_INSTALL_DIR)
     list(APPEND CMAKE_PREFIX_PATH ${VULKAN_UTILITY_LIBRARIES_INSTALL_DIR})
     set(CMAKE_REQUIRE_FIND_PACKAGE_VulkanUtilityLibraries TRUE PARENT_SCOPE)
+endif()
+if (YAML_CPP_INSTALL_DIR)
+	list(APPEND CMAKE_PREFIX_PATH ${YAML_CPP_INSTALL_DIR})
 endif()
 
 if (CMAKE_CROSSCOMPILING)

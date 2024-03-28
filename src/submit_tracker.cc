@@ -1,6 +1,6 @@
 /*
  Copyright 2020 Google Inc.
- Copyright (c) 2023 LunarG, Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@
 
 #include "device.h"
 #include "cdl.h"
-#include "util.h"
 #include <vulkan/utility/vk_struct_helper.hpp>
+#include <yaml-cpp/emitter.h>
 
 namespace crash_diagnostic_layer {
 
@@ -304,40 +304,37 @@ std::string SubmitTracker::GetSubmitInfoSemaphoresLog(VkDevice vk_device, VkQueu
                                                       SubmitInfoId submit_info_id) const {
     std::lock_guard<std::mutex> lock(submit_infos_mutex_);
     std::stringstream log;
-    log << "[CDL] VkSubmitInfo with semaphores submitted to queue.\n"
+    log << "[CDL] VkSubmitInfo with semaphores submitted to queue." << std::endl
         << "[CDL]\tVkDevice: " << device_->GetObjectName((uint64_t)vk_device)
         << ", VkQueue: " << device_->GetObjectName((uint64_t)vk_queue) << ", SubmitInfoId: " << submit_info_id
         << std::endl;
     const char* tab = "[CDL]\t";
     auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info_id, kWaitOperation);
     if (wait_semaphores.size() > 0) {
-        log << tab << "*** Wait Semaphores ***\n";
+        log << tab << "*** Wait Semaphores ***" << std::endl;
         log << device_->GetSemaphoreTracker()->PrintTrackedSemaphoreInfos(wait_semaphores, tab);
     }
     auto signal_semaphores = GetTrackedSemaphoreInfos(submit_info_id, kSignalOperation);
     if (signal_semaphores.size() > 0) {
-        log << tab << "*** Signal Semaphores ***\n";
+        log << tab << "*** Signal Semaphores ***" << std::endl;
         log << device_->GetSemaphoreTracker()->PrintTrackedSemaphoreInfos(signal_semaphores, tab);
     }
     return log.str();
 }
 
-void SubmitTracker::DumpWaitingSubmits(std::ostream& os) {
+void SubmitTracker::DumpWaitingSubmits(YAML::Emitter& os) {
     std::lock_guard<std::mutex> slock(submit_infos_mutex_);
     if (submit_infos_.size() == 0) {
         return;
     }
 
-    std::string indents[16];
-    for (size_t i = 0; i < 16; i++) {
-        indents[i] = "\n" + std::string((i + 1) * 2, ' ');
-    }
-
     std::lock_guard<std::mutex> qlock(queue_submits_mutex_);
-    os << "\nIncompleteQueueSubmits:";
-    size_t index = 0;
+    os << YAML::Key << "IncompleteQueueSubmits:" << YAML::Value << YAML::BeginSeq;
     for (const auto& qit : queue_submits_) {
         uint32_t incomplete_submission_counter = 0;
+        os << YAML::BeginMap;
+        os << YAML::Key << "submission" << YAML::Value << qit.first;
+        os << YAML::Key << "batches" << YAML::Value << YAML::BeginSeq;
         for (auto& submit_info_index : qit.second) {
             SubmitInfo& submit_info = submit_infos_[submit_info_index];
             // Check submit state
@@ -345,64 +342,62 @@ void SubmitTracker::DumpWaitingSubmits(std::ostream& os) {
             if (submit_state == SubmitState::kFinished) continue;
             submit_state = *(uint32_t*)(submit_info.top_marker.cpu_mapped_address);
             if (submit_state == SubmitState::kFinished) continue;
-            if (incomplete_submission_counter++ == 0) {
-                index = 0;
-                os << indents[index] << "-";
-                os << indents[++index] << "id: " << qit.first;
-            } else {
-                index = 1;
-            }
-            os << indents[index] << "SubmitInfos:";
-            os << indents[++index] << "-";
-            os << indents[++index] << "id: " << submit_info.submit_info_id;
-            os << indents[index] << "state: ";
+
+            os << YAML::BeginMap;
+            os << YAML::Key << "id" << YAML::Value << submit_info.submit_info_id;
+            os << YAML::Key << "state";
             if (submit_state == SubmitState::kRunning) {
-                os << "[STARTED,INCOMPLETE]";
+                os << YAML::Value << "[STARTED,INCOMPLETE]";
             } else if (submit_state == SubmitState::kQueued) {
                 if (QueuedSubmitWaitingOnSemaphores(submit_info.submit_info_id)) {
-                    os << "[QUEUED,WAITING_ON_SEMAPHORES]";
+                    os << YAML::Value << "[QUEUED,WAITING_ON_SEMAPHORES]";
                 } else {
-                    os << "[QUEUED,NOT_WAITING_ON_SEMAPHORES]";
+                    os << YAML::Value << "[QUEUED,NOT_WAITING_ON_SEMAPHORES]";
                 }
                 auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info.submit_info_id, kWaitOperation);
                 if (wait_semaphores.size() > 0) {
-                    os << indents[index] << "WaitSemaphores:";
+                    os << YAML::Key << "WaitSemaphores:" << YAML::Value << YAML::BeginSeq;
                     for (auto it = wait_semaphores.begin(); it != wait_semaphores.end(); it++) {
-                        auto lindex = index;
-                        os << indents[++lindex] << "-";
-                        os << indents[++lindex];
-                        os << device_->GetObjectInfo((uint64_t)it->semaphore, indents[lindex]) << indents[lindex]
-                           << "type: ";
-                        if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR)
+                        os << YAML::BeginMap;
+                        os << YAML::Key << "vkSemaphore" << YAML::Value << YAML::BeginMap;
+                        os << device_->GetObjectInfo((uint64_t)it->semaphore);
+                        os << YAML::Key << "type" << YAML::Value;
+                        if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                             os << "Binary";
-                        else
+                        } else {
                             os << "Timeline";
-                        os << indents[lindex] << "waitValue: " << it->semaphore_operation_value << indents[lindex]
-                           << "lastValue: ";
-                        if (it->current_value_available) {
-                            os << it->current_value;
+                            os << YAML::Key << "waitValue" << YAML::Value << it->semaphore_operation_value;
+                            if (it->current_value_available) {
+                                os << YAML::Key << "lastValue" << YAML::Value << it->current_value;
+                            }
                         }
+                        os << YAML::EndMap;
                     }
                 }
                 auto signal_semaphores = GetTrackedSemaphoreInfos(submit_info.submit_info_id, kSignalOperation);
                 if (signal_semaphores.size() > 0) {
-                    os << indents[index] << "SignalSemaphores:";
+                    os << YAML::Key << "SignalSemaphores:" << YAML::Value << YAML::BeginSeq;
                     for (auto it = signal_semaphores.begin(); it != signal_semaphores.end(); it++) {
-                        auto lindex = index;
-                        os << indents[++lindex] << "-";
-                        os << indents[++lindex];
-                        os << "vkSemaphore: " << device_->GetObjectInfo((uint64_t)it->semaphore, indents[lindex])
-                           << indents[lindex] << "type: ";
-                        if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR)
+                        os << YAML::BeginMap;
+                        os << YAML::Key << "vkSemaphore" << YAML::Value << YAML::BeginMap;
+                        os << device_->GetObjectInfo((uint64_t)it->semaphore);
+                        os << YAML::Key << "type" << YAML::Value;
+                        if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                             os << "Binary";
-                        else
+                        } else {
                             os << "Timeline";
-                        os << indents[lindex] << "signalValue: " << it->semaphore_operation_value;
+                            os << YAML::Key << "signalValue" << YAML::Value << it->semaphore_operation_value;
+                        }
+                        os << YAML::BeginMap;
                     }
+                    os << YAML::EndSeq;
                 }
             }
+            os << YAML::EndMap;
         }
+        os << YAML::EndSeq << YAML::EndMap;
     }
+    os << YAML::EndSeq;
 }
 
 }  // namespace crash_diagnostic_layer

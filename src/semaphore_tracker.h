@@ -1,5 +1,6 @@
 /*
  Copyright 2020 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -17,6 +18,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <yaml-cpp/emitter.h>
 
 #include <map>
 #include <memory>
@@ -67,7 +69,7 @@ class SemaphoreTracker {
 
     void BeginWaitOnSemaphores(int pid, int tid, const VkSemaphoreWaitInfoKHR* pWaitInfo);
     void EndWaitOnSemaphores(int pid, int tid, const VkSemaphoreWaitInfoKHR* pWaitInfo);
-    void DumpWaitingThreads(std::ostream& os);
+    void DumpWaitingThreads(YAML::Emitter& os);
 
     void WriteMarker(VkSemaphore vk_semaphore, VkCommandBuffer vk_command_buffer,
                      VkPipelineStageFlagBits vk_pipeline_stage, uint64_t value, SemaphoreModifierInfo modifier_info);

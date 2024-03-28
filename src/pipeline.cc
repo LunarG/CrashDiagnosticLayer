@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -19,7 +20,6 @@
 #include <sstream>
 
 #include "cdl.h"
-#include "util.h"
 
 namespace crash_diagnostic_layer {
 
@@ -58,56 +58,54 @@ const PipelineBoundShader& Pipeline::FindShaderStage(VkShaderStageFlagBits shade
     return PipelineBoundShader::NULL_SHADER;
 }
 
-std::ostream& Pipeline::PrintName(std::ostream& stream, const ObjectInfoDB& name_resolver,
-                                  const std::string& indent) const {
-    stream << name_resolver.GetObjectInfo((uint64_t)vk_pipeline_, indent);
+YAML::Emitter& Pipeline::PrintName(YAML::Emitter& os, const ObjectInfoDB& name_resolver) const {
+    // TODO: begin / end map?
+    os << name_resolver.GetObjectInfo((uint64_t)vk_pipeline_);
     auto bind_point = GetVkPipelineBindPoint();
-    stream << indent << "bindPoint: ";
+    os << YAML::Key << "bindPoint" << YAML::Value;
     if (bind_point == VK_PIPELINE_BIND_POINT_GRAPHICS) {
-        stream << "graphics";
+        os << "graphics";
     } else if (bind_point == VK_PIPELINE_BIND_POINT_COMPUTE) {
-        stream << "compute";
+        os << "compute";
     } else {
-        stream << "unknown";
+        os << "unknown";
     }
-    return stream;
+    return os;
 }
 
-std::ostream& Pipeline::Print(std::ostream& stream, const ObjectInfoDB& name_resolver,
-                              const std::string& indent) const {
-    auto indent1 = crash_diagnostic_layer::IncreaseIndent(indent);
-    PrintName(stream, name_resolver, indent1);
+YAML::Emitter& Pipeline::Print(YAML::Emitter& os, const ObjectInfoDB& name_resolver) const {
+    // TODO: begin / end map?
+    PrintName(os, name_resolver);
 
     const auto num_shaders = shaders_.size();
     if (num_shaders) {
-        auto indent2 = crash_diagnostic_layer::IncreaseIndent(indent1);
-        auto indent3 = crash_diagnostic_layer::IncreaseIndent(indent2);
-        stream << indent1 << "shaderInfos:";
+        os << YAML::Key << "shaderInfos" << YAML::Value << YAML::BeginSeq;
         for (auto shader_index = 0u; shader_index < num_shaders; ++shader_index) {
             auto const& shader = shaders_[shader_index];
-            stream << indent2 << "- # shaderInfo:";
-            stream << indent3 << "stage: ";
+            os << YAML::BeginMap;
+            // TODO: stream << indent2 << "- # shaderInfo:";
+            os << YAML::Key << "stage" << YAML::Value;
             if (shader.stage == VK_SHADER_STAGE_VERTEX_BIT) {
-                stream << "vs";
+                os << "vs";
             } else if (shader.stage == VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT) {
-                stream << "tc";
+                os << "tc";
             } else if (shader.stage == VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT) {
-                stream << "te";
+                os << "te";
             } else if (shader.stage == VK_SHADER_STAGE_GEOMETRY_BIT) {
-                stream << "gs";
+                os << "gs";
             } else if (shader.stage == VK_SHADER_STAGE_FRAGMENT_BIT) {
-                stream << "fs";
+                os << "fs";
             } else if (shader.stage == VK_SHADER_STAGE_COMPUTE_BIT) {
-                stream << "cs";
+                os << "cs";
             }
-            stream << indent3 << "module: ";
-            stream << name_resolver.GetObjectName((uint64_t)shader.module);
-            stream << indent3 << "entry: ";
-            stream << "\"" << shader.entry_point << "\"";
+            os << YAML::Key << "module" << YAML::Value << name_resolver.GetObjectInfo((uint64_t)shader.module);
+            os << YAML::Key << "entry" << YAML::Value << shader.entry_point;
+            os << YAML::EndMap;
         }
+        os << YAML::EndSeq;
     }
 
-    return stream;
+    return os;
 }
 
 VkPipeline Pipeline::GetVkPipeline() const { return vk_pipeline_; }

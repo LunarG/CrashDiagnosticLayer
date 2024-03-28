@@ -1,5 +1,6 @@
 /*
  Copyright 2020 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -26,6 +27,10 @@
 #include "command_pool.h"
 #include "marker.h"
 #include "semaphore_tracker.h"
+
+namespace YAML {
+class Emitter;
+}  // namespace YAML
 
 namespace crash_diagnostic_layer {
 
@@ -58,7 +63,7 @@ class SubmitTracker {
     void CleanupBindSparseHelperSubmits();
 
     bool QueuedSubmitWaitingOnSemaphores(SubmitInfoId submit_info_id) const;
-    void DumpWaitingSubmits(std::ostream& os);
+    void DumpWaitingSubmits(YAML::Emitter& os);
 
     std::vector<TrackedSemaphoreInfo> GetTrackedSemaphoreInfos(SubmitInfoId submit_info_id,
                                                                SemaphoreOperation operation) const;

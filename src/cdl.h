@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright (c) 2023 LunarG, Inc.
+ Copyright (c) 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
+#include <yaml-cpp/emitter.h>
 
 #include "bind_sparse_utils.h"
 #include "command.h"
@@ -133,7 +134,7 @@ class Context : public Interceptor {
 
     void MakeOutputPath();
     const std::filesystem::path& GetOutputPath() const;
-    std::ofstream OpenLogFile();
+    std::ofstream OpenDumpFile();
 
     Logger* GetLogger() { return &logger_; }
     const ShaderModule* FindShaderModule(VkShaderModule shader) const;
@@ -174,12 +175,12 @@ class Context : public Interceptor {
 
     void DumpAllDevicesExecutionState(CrashSource crash_source);
     void DumpDeviceExecutionState(VkDevice vk_device);
-    void DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source, std::ostream& os);
+    void DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source, YAML::Emitter& os);
     void DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue,
-                                  CrashSource crash_source, std::ostream& os);
-    void DumpDeviceExecutionStateValidationFailed(const Device* device, std::ostream& os);
+                                  CrashSource crash_source, YAML::Emitter& os);
+    void DumpDeviceExecutionStateValidationFailed(const Device* device, YAML::Emitter& os);
 
-    void DumpReportPrologue(std::ostream& os, const Device* device);
+    void DumpReportPrologue(YAML::Emitter& os, const Device* device);
 
     void StartWatchdogTimer();
     void StopWatchdogTimer();

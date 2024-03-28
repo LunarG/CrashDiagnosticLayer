@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -53,12 +54,6 @@ std::string PtrToStr(const T* ptr) {
 // specialization for non-dispatchable handles in 32 bit builds
 static inline std::string PtrToStr(uint64_t value) {
     return Uint64ToStr(value);
-}
-
-inline std::string Indent(uint32_t indent) { return "\n" + std::string(indent, ' '); }
-
-inline std::string IncreaseIndent(const std::string& indent, const uint32_t num_indents = 2) {
-    return indent + std::string(num_indents, ' ');
 }
 
 }  // namespace crash_diagnostic_layer

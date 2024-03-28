@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023 LunarG, Inc.
+# Copyright (c) 2023-2024 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class CommandPrinterOutputGenerator(CdlBaseOutputGenerator):
 
         out = []
         out.append('''
-#include <iostream>
+#include <yaml-cpp/emitter.h>
 #include <vulkan/vulkan.h>
 
 #include "command_common.h"
@@ -59,63 +59,27 @@ struct VkStruct {
     void *pNext;
 };
 
-class ScopedOstream : public std::streambuf
-{
-public:
-    explicit ScopedOstream(std::ostream &os, int indent = 4):
-        os_(&os),
-        sb_(os_->rdbuf()),
-        line_start_(true),
-        indent_(indent)
-    {
-        os_->rdbuf(this);
-    }
-
-    virtual ~ScopedOstream()
-    {
-        os_->rdbuf(sb_);
-    }
-
-protected:
-    virtual int overflow(int ch) {
-        if (line_start_ && ch != \'\\n\'){
-            for (int i = 0; i < indent_; ++i) {
-                sb_->sputc(' ');
-            }
-        }
-
-        line_start_ = \'\\n\' == ch;
-        return sb_->sputc(ch);
-    }
-
-private:
-    std::ostream *os_;
-    std::streambuf *sb_;
-    bool line_start_;
-    int indent_;
-};
-
 // Declare generic struct printer.
-std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct);
+YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct);
 
 // Declare pNext chain printer.
-std::ostream & PrintNextPtr(std::ostream & os, const void *pNext);
+YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext);
 ''')
         self.write("".join(out))
 
-        self.write("\n// Declare ostream operators for enums.\n")
+        self.write("\n// Declare stream operators for enums.\n")
         out = []
         for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
             out.extend([f'#ifdef {vkenum.protect}\n'] if vkenum.protect else [])
-            out.append(f'std::ostream &operator<<(std::ostream & os, const {vkenum.name} &t);\n')
+            out.append(f'YAML::Emitter &operator<<(YAML::Emitter &os, const {vkenum.name} &t);\n')
             out.extend([f'#endif //{vkenum.protect}\n'] if vkenum.protect else [])
         self.write("".join(out))
 
-        self.write("\n// Declare all ostream operators.\n")
+        self.write("\n// Declare all stream operators.\n")
         out = []
         for vkstruct in self.vk.structs.values():
             out.extend([f'#ifdef {vkstruct.protect}\n'] if vkstruct.protect else [])
-            out.append(f'std::ostream &operator<<(std::ostream & os, const {vkstruct.name} &t);\n')
+            out.append(f'YAML::Emitter &operator<<(YAML::Emitter &os, const {vkstruct.name} &t);\n')
             out.extend([f'#endif //{vkstruct.protect}\n'] if vkstruct.protect else [])
         self.write("".join(out))
 
@@ -130,21 +94,17 @@ class CommandPrinter {
 ''')
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append(f'  void Print{vkcommand.name[2:]}Args(std::ostream & os, const {vkcommand.name[2:]}Args &args);\n')
+            out.append(f'  void Print{vkcommand.name[2:]}Args(YAML::Emitter &os, const {vkcommand.name[2:]}Args &args);\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
         out.append('};\n');
         self.write("".join(out))
 
-    def printArray(self, out, lengths, cur_length, prefix, member, usage_string, array_suffix):
+    def printArray(self, out, lengths, cur_length, prefix, member):
         variable = chr(ord('i') + cur_length)
-        index = '        '
-        for i in range(0, cur_length):
-            index += '  '
-        out.append(f'{index}for (uint64_t {variable} = 0; {variable} < {lengths[cur_length]}; ++{variable}) {{\n')
-        if cur_length == 0:
-            out.append(f'{index}  ScopedOstream somember(os);\n')
+        out.append('os << YAML::BeginSeq;\n')
+        out.append(f'for (uint64_t {variable} = 0; {variable} < {lengths[cur_length]}; ++{variable}) {{\n')
         if cur_length < (len(lengths) - 1):
-            self.printArray(out, lengths, cur_length + 1, prefix, member, usage_string, array_suffix)
+            self.printArray(out, lengths, cur_length + 1, prefix, member)
         else:
             pointer_prefix = prefix
             pointer_suffix = ''
@@ -152,14 +112,21 @@ class CommandPrinter {
             if pointer_count > len(lengths):
                 pointer_prefix = '*(' + prefix
                 pointer_suffix = ')'
-            out.append(f'{index}  os << "{usage_string}:" << std::endl << {pointer_prefix}{member.name}{array_suffix}{pointer_suffix} << std::endl;\n')
-        out.append(f'{index}}} // for {variable}\n')
+            out.append(f'os << {pointer_prefix}{member.name}{pointer_suffix}[{variable}];')
+        out.append(f'}} // for {variable}\n')
+        out.append('os << YAML::EndSeq;\n')
 
     def printMember(self, out, member, prefix, is_pointer):
-        out.append('  {\n')
-        out.append('    os << "- # parameter:" << std::endl;\n')
-        out.append('    ScopedOstream sop(os);\n')
-        out.append(f'    os << "name:  {member.name}" << std::endl;\n')
+        no_deref_structs = ('xcb_connection_t', 'Display', 'wl_display', 'wl_surface', 'ANativeWindow',
+                'SECURITY_ATTRIBUTES', 'CAMetalLayer',
+                'StdVideoEncodeH264SliceHeader', 'StdVideoEncodeH264PictureInfo', 'StdVideoEncodeH264ReferenceInfo',
+                'StdVideoEncodeH265SliceSegmentHeader', 'StdVideoEncodeH265PictureInfo',
+                'StdVideoEncodeH265ReferenceInfo', 'StdVideoDecodeH264PictureInfo', 'StdVideoDecodeH264ReferenceInfo',
+                'StdVideoDecodeH265PictureInfo', 'StdVideoDecodeH265ReferenceInfo', 'StdVideoAV1SequenceHeader',
+                'StdVideoDecodeAV1PictureInfo', 'StdVideoDecodeAV1ReferenceInfo',
+                'StdVideoH264PictureParameterSet', 'StdVideoH264SequenceParameterSet', 'StdVideoH265PictureParameterSet',
+                'StdVideoH265SequenceParameterSet', 'StdVideoH265VideoParameterSet')
+        out.append(f'    os << YAML::Key <<  "{member.name}";\n')
         if is_pointer:
             prefix += '->'
         else:
@@ -215,24 +182,22 @@ class CommandPrinter {
 
             if member.type == 'char' and len(lengths) == 1:
                 out.append(f'    // {member.name} -> Field -> {array_type}\n')
-                out.append(f'    os << "value: " << {prefix}{member.name} << std::endl;\n')
+                out.append(f'    os << YAML::Value << {prefix}{member.name};\n')
             elif member.type == 'void':
                 if static_array:
                     out.append('    {\n')
                 else:
                     out.append(f'    if ({lengths_names[0]} == 0) {{\n')
-                    out.append('      os << "value: nullptr" << std::endl;\n')
+                    out.append('      os << YAML::Value << "nullptr";\n')
                     out.append('    } else {\n')
-                out.append('      os << std::hex;\n')
-                out.append('      os << "members:" << std::endl;\n')
+                out.append('      os << YAML::Value << YAML::BeginSeq << YAML::Hex;\n')
                 out.append('      {\n')
-                out.append('        ScopedOstream soarray(os);\n')
                 out.append(f'        const uint8_t *p = (const uint8_t *){prefix}{member.name};\n')
                 out.append(f'        for (uint64_t i = 0; i < {lengths_names[0]}; ++i) {{\n')
-                out.append('          os << "- 0x" << std::hex << static_cast<uint32_t>(p[i]) << std::endl;\n')
+                out.append('          os << static_cast<uint32_t>(p[i]);\n')
                 out.append('        }\n')
                 out.append('      }\n')
-                out.append('      os << std::dec;\n')
+                out.append('      os << YAML::Dec << YAML::EndSeq;\n')
                 out.append('    }\n')
             else:
                 out.append(f'    // {member.name} -> Field -> {array_type}\n')
@@ -240,48 +205,53 @@ class CommandPrinter {
                     out.append('    {\n')
                 else:
                     out.append(f'    if ({lengths_names[0]} == 0) {{\n')
-                    out.append('      os << "value: nullptr" << std::endl;\n')
+                    out.append('      os << YAML::Value << "nullptr";\n')
                     out.append('    } else {\n')
-                out.append('      os << "members:" << std::endl;\n')
+                out.append('      os << YAML::Value;\n')
                 out.append('      {\n')
-                out.append('        ScopedOstream soarray(os);\n')
-                out.append(f'        os << "- # {member.type}" << std::endl;\n')
-                if member.type in self.vk.structs:
-                    self.printArray(out, lengths_names, 0, prefix, member, 'members:', '')
-                else:
-                    self.printArray(out, lengths_names, 0, prefix, member, 'value: ', '')
+                out.append(f'       os << YAML::Comment("{member.type}");\n')
+                if member.type not in no_deref_structs:
+                    if member.type in self.vk.structs:
+                        if member.type not in no_deref_structs:
+                            self.printArray(out, lengths_names, 0, prefix, member)
+                        else:
+                            out.append(f'       os << YAML::BeginSeq << "{member.type} not decoded" << YAML::EndSeq;\n')
+                    else:
+                        self.printArray(out, lengths_names, 0, prefix, member)
                 out.append('      }\n')
                 out.append('    }\n')
         elif member.pointer:
             if member.name == 'pNext':
                 out.append('    // pNext -> Field -> ConstNextPtr(void)\n')
-                out.append('    os << "value: ";\n')
+                out.append('    os << YAML::Value << YAML::BeginSeq;\n')
                 out.append(f'    PrintNextPtr(os, {prefix}pNext);\n')
-                out.append('    os << std::endl;\n')
+                out.append('    os << YAML::EndSeq;\n')
             elif member.type == 'void':
                 out.append('    // void\n')
-                out.append('    os << "value: NOT_AVAILABLE" << std::endl;\n')
+                out.append('    os << YAML::Value << "NOT_AVAILABLE";\n')
             elif member.type == 'char':
                 out.append(f'    // {member.name} -> Field -> string\n')
-                out.append(f'    os << "value: " << {prefix}{member.name} << std::endl;\n')
+                out.append(f'    os << YAML::Value << {prefix}{member.name};\n')
+            elif member.type in no_deref_structs:
+                out.append('    // non-dereferenced pointer\n')
+                out.append(f'   os << YAML::Value << {prefix}{member.name};\n')
             else:
                 out.append('    // pointer\n')
                 out.append(f'    if ({prefix}{member.name} != nullptr) {{\n')
                 if member.type in self.vk.structs:
-                    out.append(f'      os <<  "members:" << std::endl << *{prefix}{member.name} << std::endl;\n')
+                    out.append(f'      os << YAML::Value << *{prefix}{member.name};\n')
                 else:
-                    out.append(f'      os << "value: *{prefix}{member.name}" << std::endl;\n')
+                    out.append(f'      os << YAML::Value << *{prefix}{member.name};\n')
                 out.append('    } else {\n')
-                out.append('      os << "value: nullptr" << std::endl;\n')
+                out.append('      os << YAML::Value << "nullptr";\n')
                 out.append('    }\n')
         else:
             if member.type in self.vk.structs:
                 out.append(f'    // {member.name} -> Field -> {member.type}\n')
-                out.append(f'    os <<  "members:" << std::endl << {prefix}{member.name} << std::endl;\n')
+                out.append(f'    os << YAML::Value << {prefix}{member.name};\n')
             else:
                 out.append(f'    // {member.name} -> Field -> {member.type}\n')
-                out.append(f'    os << "value: " << {prefix}{member.name} << std::endl;\n')
-        out.append('  }\n')
+                out.append(f'    os << YAML::Value << {prefix}{member.name};\n')
 
     def generateTypesSource(self):
         out = []
@@ -300,23 +270,16 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
 ''')
         self.write("".join(out))
 
-        self.write("// Handle ostream operators\n")
+        self.write("// Handle stream operators\n")
         out = []
         for vkhandle in self.vk.handles.values():
             out.extend([f'#ifdef {vkhandle.protect}\n'] if vkhandle.protect else [])
             if not vkhandle.dispatchable:
                 out.append('#if VK_USE_64_BIT_PTR_DEFINES\n')
-            out.append(f'std::ostream &operator<<(std::ostream& os, const {vkhandle.name} &a) {{')
-            out.append('\n    auto handle = (uint64_t)(a);\n')
-            namespace_ref = self.CreateNamespaceReference('Uint64ToStr(handle)')
-            out.append(f'    os << {namespace_ref} << std::endl;\n')
-            out.append('''
-    auto debug_name = global_name_resolver->GetObjectDebugName(handle);
-    if (debug_name.length() > 0) {
-      os << "debugName: \\\"" << debug_name << "\\\"";
-    }
-    return os;
-}
+            out.append(f'''
+YAML::Emitter &operator<<(YAML::Emitter& os, const {vkhandle.name} &a) {{
+    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+}}
 ''')
             if not vkhandle.dispatchable:
                 out.append('#endif //VK_USE_64_BIT_PTR_DEFINES\n')
@@ -324,11 +287,11 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
             out.append('\n')
         self.write("".join(out))
 
-        self.write("\n// Define ostream operators for enums.\n")
+        self.write("\n// Define stream operators for enums.\n")
         out = []
         for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
             out.extend([f'#ifdef {vkenum.protect}\n'] if vkenum.protect else [])
-            out.append(f'std::ostream &operator<<(std::ostream & os, const {vkenum.name} &t) {{\n')
+            out.append(f'YAML::Emitter &operator<<(YAML::Emitter & os, const {vkenum.name} &t) {{\n')
             out.append(f'  os << string_{vkenum.name}(t);\n')
             out.append('  return os;\n')
             out.append('}\n')
@@ -338,6 +301,7 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
 
 
     def generateStructsSource(self):
+        manual_structs = ('VkWriteDescriptorSet')
         out = []
         out.append('''
 #include <streambuf>
@@ -347,31 +311,29 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
 #include "command_printer.h"
 #include "util.h"
 
-std::ostream &PrintNextPtr(std::ostream &os, const void *pNext) {
+YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext) {
   if (pNext == nullptr) {
     os << "nullptr";
     return os;
   }
 
-  os << std::endl;
-  ScopedOstream sonextptr(os);
   const VkStruct *pStruct = reinterpret_cast<const VkStruct *>(pNext);
   PrintVkStruct(os, pStruct);
   return PrintNextPtr(os, pStruct->pNext);
 }
 ''');
         self.write("".join(out))
-        self.write("\n// Define all ostream operators.\n")
+        self.write("\n// Define all stream operators.\n")
         out = []
         for vkstruct in self.vk.structs.values():
-            # The VkWriteDescriptorSet struct has it's own custom function
-            if vkstruct.name == 'VkWriteDescriptorSet':
+            if vkstruct.name in manual_structs:
                 continue
             out.extend([f'#ifdef {vkstruct.protect}\n'] if vkstruct.protect else [])
-            out.append(f'std::ostream &operator<<(std::ostream & os, const {vkstruct.name} &t) {{\n')
-            out.append('  ScopedOstream sos(os);\n')
+            out.append(f'YAML::Emitter &operator<<(YAML::Emitter & os, const {vkstruct.name} &t) {{\n')
+            out.append('  os << YAML::BeginMap;\n')
             for member in vkstruct.members:
                 self.printMember(out, member, 't', False)
+            out.append('  os << YAML::EndMap;\n')
             out.append('  return os;\n')
             out.append('}\n')
             out.extend([f'#endif //{vkstruct.protect}\n'] if vkstruct.protect else [])
@@ -380,46 +342,41 @@ std::ostream &PrintNextPtr(std::ostream &os, const void *pNext) {
 
         out = []
         out.append('''
-std::ostream &operator<<(std::ostream &os, const VkWriteDescriptorSet &t) {
-  ScopedOstream sos(os);
-  os << "sType: ";
-  os << t.sType << std::endl;
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSet &t) {
+  os << YAML::BeginMap;
+  os << YAML::Key << "sType" << YAML::Value << t.sType;
 
-  os << "pNext: ";
-  // void
+  os << YAML::Key << "pNext" << YAML::Value << t.pNext;
 
-  os << "dstSet: ";
-  os << t.dstSet << std::endl;
+  os << YAML::Key << "dstSet" << YAML::Value << t.dstSet;
 
-  os << "dstBinding: ";
-  os << t.dstBinding << std::endl;
+  os << YAML::Key << "dstBinding" << YAML::Value << t.dstBinding;
 
-  os << "dstArrayElement: ";
-  os << t.dstArrayElement << std::endl;
+  os << YAML::Key << "dstArrayElement" << YAML::Value << t.dstArrayElement;
 
-  os << "descriptorCount: ";
-  os << t.descriptorCount << std::endl;
+  os << YAML::Key << "descriptorCount" << YAML::Value << t.descriptorCount;
 
-  os << "descriptorType: ";
-  os << t.descriptorType << std::endl;
+  os << YAML::Key << "descriptorType" << YAML::Value << t.descriptorType;
 
   switch (t.descriptorType){
     case VK_DESCRIPTOR_TYPE_SAMPLER:
     case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
     case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
     case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
-      os << "pImageInfo: ";
+      os << YAML::Key << "pImageInfo" << YAML::Value << YAML::BeginSeq;
       for (uint32_t i = 0; i < t.descriptorCount; ++i) {
-        os << t.pImageInfo[i] << std::endl;
+        os << t.pImageInfo[i];
       }
+      os << YAML::EndSeq;
       break;
 
     case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
     case VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER:
-      os << "pTexelBufferView: ";
+      os << YAML::Key << "pTexelBufferView" << YAML::Value << YAML::BeginSeq;
       for (uint32_t i = 0; i < t.descriptorCount; ++i) {
-        os << t.pTexelBufferView[i] << std::endl;
+        os << t.pTexelBufferView[i];
       }
+      os << YAML::EndSeq;
       break;
 
     case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
@@ -427,16 +384,17 @@ std::ostream &operator<<(std::ostream &os, const VkWriteDescriptorSet &t) {
     case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
     case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
     case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
-      os << "pBufferInfo: ";
+      os << YAML::Key << "pBufferInfo" << YAML::Value << YAML::BeginSeq;
       for (uint32_t i = 0; i < t.descriptorCount; ++i) {
-        os << t.pBufferInfo[i] << std::endl;
+        os << t.pBufferInfo[i];
       }
+      os << YAML::EndSeq;
       break;
 
     default:
-      os << "Unknown Descriptor Type: " << t.descriptorType << std::endl;
+      os << YAML::Key << "Unknown Descriptor Type" << YAML::Value << t.descriptorType;
   }
-
+  os << YAML::EndMap;
   return os;
 }
 ''')
@@ -444,7 +402,7 @@ std::ostream &operator<<(std::ostream &os, const VkWriteDescriptorSet &t) {
 
         out = []
         out.append('//  Print out a VkStruct\n')
-        out.append('std::ostream & PrintVkStruct(std::ostream & os, const VkStruct *pStruct) {\n')
+        out.append('YAML::Emitter & PrintVkStruct(YAML::Emitter & os, const VkStruct *pStruct) {\n')
         out.append('  switch (pStruct->sType) {\n')
         for vkstruct in self.vk.structs.values():
             if vkstruct.sType is None:
@@ -478,9 +436,10 @@ std::ostream &operator<<(std::ostream &os, const VkWriteDescriptorSet &t) {
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'void CommandPrinter::Print{vkcommand.name[2:]}Args(\n')
-            out.append(f'  std::ostream & os, const {vkcommand.name[2:]}Args &args) {{\n')
+            out.append(f'  YAML::Emitter & os, const {vkcommand.name[2:]}Args &args) {{\n')
             for member in vkcommand.params:
-                self.printMember(out, member, 'args', False)
+                if member.name != 'commandBuffer':
+                    self.printMember(out, member, 'args', False)
             out.append('}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
