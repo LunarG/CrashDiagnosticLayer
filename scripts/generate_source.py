@@ -40,6 +40,8 @@ def main(argv):
         'command_common.cc',
         'command_printer.h',
         'command_printer.cc',
+        'command_printer_structs.cc',
+        'command_printer_types.cc',
         'command_recorder.h',
         'command_recorder.cc',
         'command_tracker.h',

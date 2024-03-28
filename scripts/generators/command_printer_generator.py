@@ -32,6 +32,10 @@ class CommandPrinterOutputGenerator(CdlBaseOutputGenerator):
 
         if self.filename == 'command_printer.h':
             self.generateHeader()
+        elif self.filename == 'command_printer_types.cc':
+            self.generateTypesSource()
+        elif self.filename == 'command_printer_structs.cc':
+            self.generateStructsSource()
         elif self.filename == 'command_printer.cc':
             self.generateSource()
         else:
@@ -279,7 +283,7 @@ class CommandPrinter {
                 out.append(f'    os << "value: " << {prefix}{member.name} << std::endl;\n')
         out.append('  }\n')
 
-    def generateSource(self):
+    def generateTypesSource(self):
         out = []
         out.append('''
 #include <streambuf>
@@ -288,19 +292,6 @@ class CommandPrinter {
 #include "command_common.h"
 #include "command_printer.h"
 #include "util.h"
-
-std::ostream &PrintNextPtr(std::ostream &os, const void *pNext) {
-  if (pNext == nullptr) {
-    os << "nullptr";
-    return os;
-  }
-
-  os << std::endl;
-  ScopedOstream sonextptr(os);
-  const VkStruct *pStruct = reinterpret_cast<const VkStruct *>(pNext);
-  PrintVkStruct(os, pStruct);
-  return PrintNextPtr(os, pStruct->pNext);
-}
 
 const ObjectInfoDB *global_name_resolver = nullptr;
 void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
@@ -345,6 +336,31 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
             out.append('\n')
         self.write("".join(out))
 
+
+    def generateStructsSource(self):
+        out = []
+        out.append('''
+#include <streambuf>
+#include <vulkan/vk_enum_string_helper.h>
+
+#include "command_common.h"
+#include "command_printer.h"
+#include "util.h"
+
+std::ostream &PrintNextPtr(std::ostream &os, const void *pNext) {
+  if (pNext == nullptr) {
+    os << "nullptr";
+    return os;
+  }
+
+  os << std::endl;
+  ScopedOstream sonextptr(os);
+  const VkStruct *pStruct = reinterpret_cast<const VkStruct *>(pNext);
+  PrintVkStruct(os, pStruct);
+  return PrintNextPtr(os, pStruct->pNext);
+}
+''');
+        self.write("".join(out))
         self.write("\n// Define all ostream operators.\n")
         out = []
         for vkstruct in self.vk.structs.values():
@@ -445,6 +461,18 @@ std::ostream &operator<<(std::ostream &os, const VkWriteDescriptorSet &t) {
         out.append('}\n')
         self.write("".join(out))
 
+    def generateSource(self):
+        out = []
+        out.append('''
+#include <streambuf>
+#include <vulkan/vk_enum_string_helper.h>
+
+#include "command_common.h"
+#include "command_printer.h"
+#include "util.h"
+
+''');
+        self.write("".join(out))
         self.write("\n// Define print functions.\n")
         out = []
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
