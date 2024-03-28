@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,7 +19,6 @@
 
 #include <algorithm>
 #include <iomanip>
-#include <iostream>
 
 #include "cdl.h"
 #include "util.h"
@@ -308,7 +308,7 @@ void Device::AddCommandBuffer(VkCommandBuffer vk_command_buffer) {
     command_buffers_.push_back(vk_command_buffer);
 }
 
-void Device::DumpCommandBuffers(std::ostream& os, CommandBufferDumpOptions options,
+void Device::DumpCommandBuffers(YAML::Emitter& os, const char* section_name, CommandBufferDumpOptions options,
                                 bool dump_all_command_buffers) const {
     // Sort command buffers by submit info id
     std::map<uint64_t /* submit_info_id*/, std::vector<CommandBuffer*>> sorted_command_buffers;
@@ -322,22 +322,21 @@ void Device::DumpCommandBuffers(std::ostream& os, CommandBufferDumpOptions optio
             }
         }
     }
+    os << YAML::Key << section_name << YAML::Value << YAML::BeginSeq;
     for (auto& it : sorted_command_buffers) {
         for (auto p_cmd : it.second) {
             p_cmd->DumpContents(os, options);
-            os << "\n";
         }
     }
+    YAML::EndSeq;
 }
 
-void Device::DumpAllCommandBuffers(std::ostream& os, CommandBufferDumpOptions options) const {
-    os << "AllCommandBuffers:\n";
-    DumpCommandBuffers(os, options, true /* dump_all_command_buffers */);
+void Device::DumpAllCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const {
+    DumpCommandBuffers(os, "AllCommandBuffers", options, true /* dump_all_command_buffers */);
 }
 
-void Device::DumpIncompleteCommandBuffers(std::ostream& os, CommandBufferDumpOptions options) const {
-    os << "IncompleteCommandBuffers:";
-    DumpCommandBuffers(os, options, false /* dump_all_command_buffers */);
+void Device::DumpIncompleteCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const {
+    DumpCommandBuffers(os, "IncompleteCommandBuffers", options, false /* dump_all_command_buffers */);
 }
 
 void Device::SetCommandPool(VkCommandPool vk_command_pool, CommandPoolPtr command_pool) {
@@ -362,7 +361,7 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_command_pool, const VkComma
 }
 
 // Write out information about an invalid command buffer reset.
-void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& os) const {
+void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter& os) const {
     GetContext()->GetLogger()->LogError("Invalid Command Buffer Usage");
     GetContext()->GetLogger()->LogError("Reset of VkCommandBuffer in use by GPU: %s",
                                         GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
@@ -384,14 +383,15 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& 
     // We do this because this is a race between the GPU and the logging and
     // often the logger will show the command buffer as completed where as
     // if we write a single command buffer it's less likely the GPU has completed.
-    std::stringstream error_report;
-    error_report << "InvalidCommandBuffer:\n";
+    YAML::Emitter error_report;
+    error_report << YAML::BeginMap << YAML::Key << "InvalidCommandBuffer" << YAML::Value;
     p_cmd->DumpContents(error_report, CommandBufferDumpOption::kDumpAllCommands);
-    GetContext()->GetLogger()->LogError(error_report.str().c_str());
-    os << error_report.str();
+    error_report << YAML::EndMap;
+    GetContext()->GetLogger()->LogError(error_report.c_str());
+    os << error_report.c_str();
 }
 
-bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, std::ostream& os) {
+bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, YAML::Emitter& os) {
     assert(p_cmd);
     if (p_cmd->HasBufferMarker() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution()) {
         DumpCommandBufferStateOnScreen(p_cmd, os);
@@ -400,7 +400,7 @@ bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, std::ostream& o
     return true;
 }
 
-bool Device::ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, std::ostream& os) {
+bool Device::ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, YAML::Emitter& os) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_command_buffer);
     assert(p_cmd != nullptr);
     if (p_cmd != nullptr) {
@@ -411,7 +411,7 @@ bool Device::ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, st
     return true;
 }
 
-void Device::ValidateCommandPoolState(VkCommandPool vk_command_pool, std::ostream& os) {
+void Device::ValidateCommandPoolState(VkCommandPool vk_command_pool, YAML::Emitter& os) {
     std::lock_guard<std::mutex> lock(command_pools_mutex_);
     assert(command_pools_.find(vk_command_pool) != command_pools_.end());
     // Only validate primary command buffers. If a secondary command buffer is
@@ -513,11 +513,12 @@ void Device::DumpShaderFromPipeline(VkPipeline pipeline) const {
                 auto prefix = "PIPELINE_" + GetObjectName((uint64_t)pipeline, kPreferDebugName) + "_SHADER_";
                 module->second->DumpShaderCode(prefix);
             } else {
-                // TODO(aellem) Error, unknown shader module.
+                GetContext()->GetLogger()->LogError("Unknown VkShaderModule handle: 0x%08X",
+                                                    bound_shader.module);
             }
         }
     } else {
-        // TODO(aellem) Error, unknown pipeline.
+        GetContext()->GetLogger()->LogError("Unknown VkPipeline handle: 0x%08X", pipeline);
     }
 }
 
@@ -604,51 +605,44 @@ std::string Device::GetObjectName(uint64_t handle, HandleDebugNamePreference han
     return object_info_db_.GetObjectName(handle, handle_debug_name_preference);
 }
 
-std::string Device::GetObjectInfo(uint64_t handle, const std::string& indent) const {
-    return object_info_db_.GetObjectInfo(handle, indent);
+std::string Device::GetObjectInfo(uint64_t handle) const { return object_info_db_.GetObjectInfo(handle); }
+
+std::string Device::GetObjectInfoNoHandleTag(uint64_t handle) const {
+    return object_info_db_.GetObjectInfoNoHandleTag(handle);
 }
 
-std::string Device::GetObjectInfoNoHandleTag(uint64_t handle, const std::string& indent) const {
-    return object_info_db_.GetObjectInfoNoHandleTag(handle, indent);
-}
-
-std::ostream& Device::Print(std::ostream& stream) const {
-    std::ios_base::fmtflags f(stream.flags());
-
-    const char* t = "\n  ";
-    stream << "\nDevice:" << GetObjectInfo((uint64_t)vk_device_, t) << t << "deviceName: \""
-           << physical_device_properties_.deviceName << "\"";
+YAML::Emitter& Device::Print(YAML::Emitter& os) const {
+    os << YAML::Key << "Device" << YAML::Value << YAML::BeginMap;
+    os << YAML::Key << "vkHandle" << YAML::Value << GetObjectInfo((uint64_t)vk_device_);
+    os << YAML::Key << "deviceName" << YAML::Value << physical_device_properties_.deviceName;
 
     auto majorVersion = VK_VERSION_MAJOR(physical_device_properties_.apiVersion);
     auto minorVersion = VK_VERSION_MINOR(physical_device_properties_.apiVersion);
     auto patchVersion = VK_VERSION_PATCH(physical_device_properties_.apiVersion);
-    stream << t << "apiVersion: \"" << std::dec << majorVersion << "." << minorVersion << "." << patchVersion << " (0x"
-           << std::hex << std::setfill('0') << std::setw(8) << physical_device_properties_.apiVersion << ")\"";
+    std::stringstream api;
+    api << majorVersion << "." << minorVersion << "." << patchVersion << " (" << Uint32ToStr(physical_device_properties_.apiVersion) << ")";
+    os << YAML::Key << "apiVersion" << YAML::Value << api.str();
 
-    stream << t << "driverVersion: \"" << std::hex << std::setfill('0') << std::setw(8)
-           << physical_device_properties_.driverVersion << std::dec << " (" << physical_device_properties_.driverVersion
-           << ")\"";
-    stream << t << "vendorID: \"" << std::hex << std::setfill('0') << std::setw(8)
-           << physical_device_properties_.vendorID << "\"";
-    stream << t << "deviceID: \"" << std::hex << std::setfill('0') << std::setw(8)
-           << physical_device_properties_.deviceID << "\"";
+    std::stringstream icd;
+    icd <<  Uint32ToStr(physical_device_properties_.driverVersion) << " (" << physical_device_properties_.driverVersion << ")";
+    os << YAML::Key << "driverVersion" << YAML::Value << icd.str();
+    os << YAML::Key << "vendorID" << YAML::Value << Uint32ToStr(physical_device_properties_.vendorID);
+    os << YAML::Key << "deviceID" << YAML::Value << Uint32ToStr(physical_device_properties_.deviceID);
 
-    stream << t << "deviceExtensions:";
-    const char* tt = "\n    ";
+    os << YAML::Key << "deviceExtensions" << YAML::Value << YAML::BeginSeq;
     auto p_device_create_info = device_create_info_->original_create_info;
     for (uint32_t i = 0; i < p_device_create_info.enabledExtensionCount; ++i) {
-        stream << tt << "- \"" << p_device_create_info.ppEnabledExtensionNames[i] << "\"";
+        os << p_device_create_info.ppEnabledExtensionNames[i];
     }
-    stream << "\n";
+    os << YAML::EndSeq;
+    os << YAML::EndMap; // Device
 
-    stream.flags(f);
+    DumpDeviceFaultInfo(os);
 
-    DumpDeviceFaultInfo(stream);
-
-    return stream;
+    return os;
 }
 
-const char address_fault_strings[][32] = {
+static const char address_fault_strings[][32] = {
     "No Fault",
     "Invalid Read",
     "Invalid Write",
@@ -658,62 +652,82 @@ const char address_fault_strings[][32] = {
     "Instruction Pointer Fault",
 };
 
-void Device::DumpDeviceFaultInfo(std::ostream& os) const {
-    if (extensions_present_.ext_device_fault && nullptr != pfn_vkGetDeviceFaultInfoEXT) {
-        VkDeviceFaultCountsEXT fault_counts = {VK_STRUCTURE_TYPE_DEVICE_FAULT_COUNTS_EXT, nullptr, 0, 0, 0UL};
-        VkResult result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
-        if (result == VK_SUCCESS) {
-            if (fault_counts.addressInfoCount > 0 || fault_counts.vendorInfoCount > 0 ||
-                fault_counts.vendorBinarySize > 0) {
-                std::vector<VkDeviceFaultAddressInfoEXT> address_infos;
-                std::vector<VkDeviceFaultVendorInfoEXT> vendor_infos;
-                std::vector<uint8_t> binary_data;
-                address_infos.resize(fault_counts.addressInfoCount);
-                vendor_infos.resize(fault_counts.vendorInfoCount);
-                binary_data.resize(fault_counts.vendorBinarySize);
-                VkDeviceFaultInfoEXT vk_device_fault_info{
-                    VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_EXT,
-                    nullptr,
-                    "",
-                    fault_counts.addressInfoCount == 0 ? nullptr : address_infos.data(),
-                    fault_counts.vendorInfoCount == 0 ? nullptr : vendor_infos.data(),
-                    fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data())};
-                result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, &vk_device_fault_info);
-                if (result == VK_SUCCESS || result == VK_INCOMPLETE) {
-                    os << "  Device Fault Info:\n";
-                    os << "    Description: " << vk_device_fault_info.description << "\n";
-                    if (fault_counts.addressInfoCount > 0) {
-                        os << "    Address Info: " << std::to_string(fault_counts.addressInfoCount) << "\n";
-                        for (uint32_t addr = 0; addr < fault_counts.addressInfoCount; ++addr) {
-                            VkDeviceAddress lower_address =
-                                (address_infos[addr].reportedAddress & ~(address_infos[addr].addressPrecision - 1));
-                            VkDeviceAddress upper_address =
-                                (address_infos[addr].reportedAddress | (address_infos[addr].addressPrecision - 1));
-                            os << "      [" << std::setfill(' ') << std::setw(4) << addr << "] "
-                               << address_fault_strings[static_cast<uint32_t>(address_infos[addr].addressType)]
-                               << " in address range [0x" << std::hex << lower_address << " - 0x" << std::hex
-                               << upper_address << "]\n";
-                        }
-                    }
-                    if (fault_counts.vendorInfoCount > 0) {
-                        os << "    Vendor Info: " << std::to_string(fault_counts.vendorInfoCount) << "\n";
-                        for (uint32_t vendor = 0; vendor < fault_counts.vendorInfoCount; ++vendor) {
-                            os << "      [" << std::setfill(' ') << std::setw(4) << vendor << "] Code 0x" << std::hex
-                               << vendor_infos[vendor].vendorFaultCode << " | Data 0x" << std::hex
-                               << vendor_infos[vendor].vendorFaultData << " : " << vendor_infos[vendor].description
-                               << "\n";
-                        }
-                    }
-                    if (fault_counts.vendorBinarySize > 0) {
-                        os << "    Vendor Binary Data: " << std::to_string(fault_counts.vendorBinarySize) << "\n";
-                        for (uint32_t byte = 0; byte < fault_counts.vendorBinarySize; ++byte) {
-                            os << "      0x" << std::hex << binary_data[byte] << "\n";
-                        }
-                    }
-                }
-            }
-        }
+void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
+    if (!extensions_present_.ext_device_fault || !pfn_vkGetDeviceFaultInfoEXT) {
+        return;
     }
+    VkDeviceFaultCountsEXT fault_counts = {VK_STRUCTURE_TYPE_DEVICE_FAULT_COUNTS_EXT, nullptr, 0, 0, 0UL};
+    VkResult result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
+    if (result != VK_SUCCESS) {
+        // TODO: log
+        return;
+    }
+    if (fault_counts.addressInfoCount == 0 && fault_counts.vendorInfoCount == 0 &&
+        fault_counts.vendorBinarySize == 0) {
+        // TODO: log
+        return;
+    }
+    std::vector<VkDeviceFaultAddressInfoEXT> address_infos;
+    std::vector<VkDeviceFaultVendorInfoEXT> vendor_infos;
+    std::vector<uint8_t> binary_data;
+    address_infos.resize(fault_counts.addressInfoCount);
+    vendor_infos.resize(fault_counts.vendorInfoCount);
+    binary_data.resize(fault_counts.vendorBinarySize);
+    VkDeviceFaultInfoEXT vk_device_fault_info{
+        VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_EXT,
+            nullptr,
+            "",
+            fault_counts.addressInfoCount == 0 ? nullptr : address_infos.data(),
+            fault_counts.vendorInfoCount == 0 ? nullptr : vendor_infos.data(),
+            fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data())};
+
+    result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, &vk_device_fault_info);
+    if (result != VK_SUCCESS && result != VK_INCOMPLETE) {
+        // TODO: log
+        return;
+    }
+
+    os << YAML::Key << "DeviceFaultInfo" << YAML::Value << YAML::BeginMap;
+    os << YAML::Key << "description" << YAML::Value << vk_device_fault_info.description;
+    if (fault_counts.addressInfoCount > 0) {
+        os << YAML::Key << "faultAddressRanges" << YAML::Value << YAML::BeginSeq;
+        for (uint32_t addr = 0; addr < fault_counts.addressInfoCount; ++addr) {
+            auto &info = address_infos[addr];
+
+            auto lower_address = (info.reportedAddress & ~(info.addressPrecision - 1));
+            auto upper_address = (info.reportedAddress | (info.addressPrecision - 1));
+
+            os << YAML::BeginMap;
+            os << YAML::Key << "type" << YAML::Value << address_fault_strings[info.addressType];
+            os << YAML::Key << "begin" << YAML::Value << Uint64ToStr(lower_address);
+            os << YAML::Key << "end" << YAML::Value << Uint64ToStr(upper_address);
+            os << YAML::EndMap; //Address Range
+            // TODO matching buffers, adjacent buffers
+        }
+        os << YAML::EndSeq;
+    }
+    if (fault_counts.vendorInfoCount > 0) {
+        os << YAML::Key << "Vendor Infos" << YAML::Value << YAML::BeginSeq;
+        for (uint32_t vendor = 0; vendor < fault_counts.vendorInfoCount; ++vendor) {
+            os << YAML::BeginMap;
+            os << YAML::Key << "Description" << YAML::Value << vendor_infos[vendor].description;
+            os << YAML::Key << "Fault Code" << YAML::Value
+                << Uint64ToStr(vendor_infos[vendor].vendorFaultCode);
+            os << YAML::Key << "Fault Data" << YAML::Value
+                << Uint64ToStr(vendor_infos[vendor].vendorFaultData);
+            os << YAML::EndMap; //Vendor Info
+        }
+        os << YAML::EndSeq;
+    }
+    if (fault_counts.vendorBinarySize > 0) {
+        os << YAML::Key << "Vendor Binary Data" << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        // TODO This is going to be huge
+        for (uint32_t byte = 0; byte < fault_counts.vendorBinarySize; ++byte) {
+            os << binary_data[byte];
+        }
+        os << YAML::Dec << YAML::EndSeq;
+    }
+    os << YAML::EndMap; // DeviceFaultInfo
 }
 
 }  // namespace crash_diagnostic_layer

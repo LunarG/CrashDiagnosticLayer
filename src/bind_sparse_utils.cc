@@ -1,5 +1,6 @@
 /*
  Copyright 2020 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,7 +19,6 @@
 
 #include <sstream>
 
-#include "util.h"
 #include <vulkan/utility/vk_struct_helper.hpp>
 
 namespace crash_diagnostic_layer {
@@ -156,9 +156,9 @@ std::string BindSparseUtils::LogBindSparseInfosSemaphores(const Device* device, 
             continue;
         }
         if (!msg_header_printed) {
-            log << "[CDL] VkBindSparseInfo with semaphores submitted to queue:";
-            log << "\n   VkDevice:" << device->GetObjectName((uint64_t)vk_device)
-                << "\n   VkQueue: " << device->GetObjectName((uint64_t)vk_queue) << std::endl;
+            log << "[CDL] VkBindSparseInfo with semaphores submitted to queue:" << std::endl;
+            log << "   VkDevice:" << device->GetObjectName((uint64_t)vk_device) << std::endl
+                << "   VkQueue: " << device->GetObjectName((uint64_t)vk_queue) << std::endl;
         }
 
         wait_semaphores.clear();
@@ -188,15 +188,15 @@ std::string BindSparseUtils::LogBindSparseInfosSemaphores(const Device* device, 
         }
 
         const char* tab = "\t";
-        log << tab << "****** QueueBindSparse #" << i << " ******\n";
+        log << tab << "****** QueueBindSparse #" << i << " ******" << std::endl;
         if (wait_semaphores.size() > 0) {
-            log << tab << "*** Wait Semaphores ***\n";
+            log << tab << "*** Wait Semaphores ***" << std::endl;
             const auto& tracked_semaphore_infos =
                 semaphore_tracker->GetTrackedSemaphoreInfos(wait_semaphores, wait_semaphore_values);
             log << semaphore_tracker->PrintTrackedSemaphoreInfos(tracked_semaphore_infos, tab);
         }
         if (signal_semaphores.size() > 0) {
-            log << tab << "*** Signal Semaphores ***\n";
+            log << tab << "*** Signal Semaphores ***" << std::endl;
             const auto& tracked_semaphore_infos =
                 semaphore_tracker->GetTrackedSemaphoreInfos(signal_semaphores, signal_semaphore_values);
             log << semaphore_tracker->PrintTrackedSemaphoreInfos(tracked_semaphore_infos, tab);

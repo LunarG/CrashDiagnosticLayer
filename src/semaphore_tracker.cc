@@ -1,5 +1,6 @@
 /*
  Copyright 2020 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -23,7 +24,6 @@
 #include "device.h"
 #include "cdl.h"
 #include "logger.h"
-#include "util.h"
 
 namespace crash_diagnostic_layer {
 
@@ -40,7 +40,7 @@ void SemaphoreTracker::RegisterSemaphore(VkSemaphore vk_semaphore, VkSemaphoreTy
     semaphore_info.semaphore_type = type;
     // Reserve a marker to track semaphore value
     if (!device_->AllocateMarker(&semaphore_info.marker)) {
-        device_->GetContext()->GetLogger()->LogError("CDL warning: Cannot acquire marker. Not tracking semaphore %s.\n",
+        device_->GetContext()->GetLogger()->LogError("CDL warning: Cannot acquire marker. Not tracking semaphore %s.",
                                                      device_->GetObjectName((uint64_t)vk_semaphore).c_str());
         return;
     }
@@ -48,7 +48,7 @@ void SemaphoreTracker::RegisterSemaphore(VkSemaphore vk_semaphore, VkSemaphoreTy
         if (!device_->AllocateMarker(&semaphore_info.last_modifier_marker)) {
             device_->GetContext()->GetLogger()->LogError(
                 "CDL warning: Cannot acquire modifier tracking marker. Not "
-                "tracking semaphore %s.\n",
+                "tracking semaphore %s.",
                 device_->GetObjectName((uint64_t)vk_semaphore).c_str());
             return;
         }
@@ -70,7 +70,7 @@ void SemaphoreTracker::SignalSemaphore(VkSemaphore vk_semaphore, uint64_t value,
             semaphore_info.UpdateLastModifier(modifier_info);
         }
     } else {
-        device_->GetContext()->GetLogger()->LogError("Unknown semaphore signaled: %s\n",
+        device_->GetContext()->GetLogger()->LogError("Unknown semaphore signaled: %s",
                                                      device_->GetObjectName((uint64_t)vk_semaphore).c_str());
     }
 }
@@ -171,7 +171,7 @@ std::string SemaphoreTracker::PrintTrackedSemaphoreInfos(const std::vector<Track
     log << tab << std::setfill(' ') << std::left << std::setw(24) << "Semaphore" << std::left << std::setw(12) << "Type"
         << std::left << std::setw(18) << std::left << std::setw(18) << "Operation value" << std::left << std::setw(18)
         << "Last known value"
-        << "Last modifier\n";
+        << "Last modifier" << std::endl;
     for (auto it = tracked_semaphores.begin(); it != tracked_semaphores.end(); it++) {
         log << tab << std::left << std::setw(24) << device_->GetObjectName((uint64_t)it->semaphore, kPreferDebugName);
         if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
@@ -198,50 +198,42 @@ std::string SemaphoreTracker::PrintTrackedSemaphoreInfos(const std::vector<Track
             default:
                 log << "Not modified";
         }
-        log << "\n";
+        log << std::endl;
     }
     return log.str();
 }
 
-void SemaphoreTracker::DumpWaitingThreads(std::ostream& os) {
+void SemaphoreTracker::DumpWaitingThreads(YAML::Emitter& os) {
     std::lock_guard<std::mutex> lock(waiting_threads_mutex_);
     if (waiting_threads_.size() == 0) {
         return;
     }
 
-    std::string indents[6];
-    for (size_t i = 0; i < 6; i++) {
-        indents[i] = "\n" + std::string((i + 1) * 2, ' ');
-    }
-
-    size_t index = 0;
-    os << "\nWaitingThreads:";
+    os << YAML::Key << "WaitingThreads" << YAML::Value << YAML::BeginSeq;
     uint64_t semaphore_value = 0;
     for (auto& it : waiting_threads_) {
-        auto lindex = index;
-        os << indents[lindex] << "-";
-        os << indents[++lindex] << "PID: " << it.pid;
-        os << indents[lindex] << "TID: " << it.tid;
+        os << YAML::BeginMap;
+        os << YAML::Key << "PID" << YAML::Value << it.pid;
+        os << YAML::Key << "TID" << YAML::Value << it.tid;
         if (it.wait_type == SemaphoreWaitType::kAll) {
-            os << indents[lindex] << "waitType: "
-               << "WaitForAll";
+            os << YAML::Key << "waitType" << YAML::Value << "WaitForAll";
         } else {
-            os << indents[lindex] << "waitType: "
-               << "WaitForAny";
+            os << YAML::Key << "waitType" << YAML::Value << "WaitForAny";
         }
-        os << indents[lindex] << "WaitSemaphores:";
+        os << YAML::Key << "WaitSemaphores" << YAML::Value << YAML::BeginSeq;
         for (int i = 0; i < it.semaphores.size(); i++) {
-            auto sindex = lindex;
-            os << indents[++sindex] << "-";
-            os << indents[++sindex];
-            os << "vkSemaphore: " << device_->GetObjectInfo((uint64_t)it.semaphores[i], indents[sindex])
-               << indents[sindex] << "type: Timeline" << indents[sindex] << "waitValue: " << it.wait_values[i]
-               << indents[sindex] << "lastValue: ";
+            os << YAML::BeginMap;
+            os << YAML::Key << "vkSemaphore" << YAML::Value << device_->GetObjectInfo((uint64_t)it.semaphores[i]);
+            os << YAML::Key << "type" << YAML::Value << "Timeline";
+            os << YAML::Key << "waitValue" << YAML::Value << it.wait_values[i];
             if (GetSemaphoreValue(it.semaphores[i], semaphore_value)) {
-                os << semaphore_value;
+                os << YAML::Key << "lastValue" << YAML::Value << semaphore_value;
             }
+            os << YAML::EndMap;
         }
+        os << YAML::EndSeq << YAML::EndMap;
     }
+    os << YAML::EndSeq;
 }
 
 }  // namespace crash_diagnostic_layer

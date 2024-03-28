@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -22,6 +23,7 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include <yaml-cpp/emitter.h>
 
 #include "command.h"
 #include "command_pool.h"
@@ -69,8 +71,8 @@ class Device {
     const ObjectInfoDB& GetObjectInfoDB() const { return object_info_db_; }
     std::string GetObjectName(uint64_t handle,
                               HandleDebugNamePreference handle_debug_name_preference = kReportBoth) const;
-    std::string GetObjectInfo(uint64_t handle, const std::string& indent = kDefaultIndent) const;
-    std::string GetObjectInfoNoHandleTag(uint64_t handle, const std::string& indent = kDefaultIndent) const;
+    std::string GetObjectInfo(uint64_t handle) const;
+    std::string GetObjectInfoNoHandleTag(uint64_t handle) const;
 
     bool HasBufferMarker() const;
 
@@ -88,20 +90,20 @@ class Device {
 
     void AddCommandBuffer(VkCommandBuffer vk_command_buffer);
 
-    bool ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, std::ostream& os);
-    bool ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, std::ostream& os);
+    bool ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, YAML::Emitter& os);
+    bool ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, YAML::Emitter& os);
     void DeleteCommandBuffers(const VkCommandBuffer* vk_cmds, uint32_t cb_count);
 
-    void DumpCommandBuffers(std::ostream& os, CommandBufferDumpOptions options, bool dump_all_command_buffers) const;
-    void DumpAllCommandBuffers(std::ostream& os, CommandBufferDumpOptions options) const;
-    void DumpIncompleteCommandBuffers(std::ostream& os, CommandBufferDumpOptions options) const;
-    void DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, std::ostream& os) const;
+    void DumpCommandBuffers(YAML::Emitter& os, const char * section_name, CommandBufferDumpOptions options, bool dump_all_command_buffers) const;
+    void DumpAllCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const;
+    void DumpIncompleteCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const;
+    void DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter& os) const;
 
     void SetCommandPool(VkCommandPool vk_command_pool, CommandPoolPtr command_pool);
     CommandPool* GetCommandPool(VkCommandPool vk_command_pool);
     void AllocateCommandBuffers(VkCommandPool vk_command_pool, const VkCommandBufferAllocateInfo* allocate_info,
                                 VkCommandBuffer* command_buffers);
-    void ValidateCommandPoolState(VkCommandPool vk_command_pool, std::ostream& os);
+    void ValidateCommandPoolState(VkCommandPool vk_command_pool, YAML::Emitter& os);
     void ResetCommandPool(VkCommandPool vk_command_pool);
     void DeleteCommandPool(VkCommandPool vk_command_pool);
 
@@ -128,9 +130,9 @@ class Device {
     bool AllocateMarker(Marker* marker);
     void FreeMarker(const Marker marker);
 
-    void DumpDeviceFaultInfo(std::ostream& os) const;
+    void DumpDeviceFaultInfo(YAML::Emitter& os) const;
 
-    std::ostream& Print(std::ostream& stream) const;
+    YAML::Emitter& Print(YAML::Emitter& stream) const;
 
    private:
     Context* context_ = nullptr;

@@ -1,5 +1,5 @@
 # Copyright (C) 2020 Google Inc.
-# Copyright (c) 2023 LunarG, Inc.
+# Copyright (c) 2023-2024 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,8 @@ include(GNUInstallDirs)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Remove when min is 3.26, see CMP0143
 
 find_package(VulkanHeaders REQUIRED CONFIG QUIET)
-find_package(VulkanUtilityLibraries CONFIG QUIET)
+find_package(VulkanUtilityLibraries REQUIRED CONFIG QUIET)
+find_package(yaml-cpp REQUIRED CONFIG QUIET)
 
 if(WIN32)
     target_compile_definitions(Vulkan::Headers INTERFACE VK_USE_PLATFORM_WIN32_KHR)

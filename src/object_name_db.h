@@ -1,5 +1,6 @@
 /*
  Copyright 2019 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -25,6 +26,7 @@
 #include <vector>
 #include <unordered_map>
 #include <utility>
+#include <yaml-cpp/emitter.h>
 
 // -----------------------------------------------------------------------------
 // Debug info for a Vulkan object
@@ -48,7 +50,6 @@ enum VkHandleTagRequirement {
     kIgnoreVkHandleTag,
 };
 
-static const std::string kDefaultIndent = "\n" + std::string(4, ' ');
 // -----------------------------------------------------------------------------
 // Database of debug info for multiple Vulkan objects
 // -----------------------------------------------------------------------------
@@ -61,12 +62,14 @@ class ObjectInfoDB {
 
     void RemoveObjectInfo(uint64_t handle) {}  // TODO(aellem) remove object info..
 
-    const ObjectInfo* FindObjectInfo(uint64_t handle) const;
+    ObjectInfo FindObjectInfo(uint64_t handle) const;
     std::string GetObjectDebugName(uint64_t handle) const;
     std::string GetObjectName(uint64_t handle,
                               HandleDebugNamePreference handle_debug_name_preference = kReportBoth) const;
-    std::string GetObjectInfo(uint64_t handle, const std::string& indent = kDefaultIndent) const;
-    std::string GetObjectInfoNoHandleTag(uint64_t handle, const std::string& indent = kDefaultIndent) const;
+    std::string GetObjectInfo(uint64_t handle) const;
+    std::string GetObjectInfoNoHandleTag(uint64_t handle) const;
+
+    YAML::Emitter& PrintDebugInfo(YAML::Emitter& os, uint64_t handle) const;
 
    private:
     mutable std::mutex lock_;
@@ -75,8 +78,7 @@ class ObjectInfoDB {
     std::unordered_map<uint64_t, std::vector<ExtraObjectInfo>> object_extra_info_;
     ObjectInfo unknown_object_;
 
-    std::string GetObjectInfoInternal(uint64_t handle, const std::string& indent,
-                                      VkHandleTagRequirement vkhandle_tag_requirement) const;
+    std::string GetObjectInfoInternal(uint64_t handle, VkHandleTagRequirement vkhandle_tag_requirement) const;
 };
 
 #endif  // OBJECT_NAME_DB_HEADER_

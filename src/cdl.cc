@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright (c) 2023 LunarG, Inc.
+ Copyright (c) 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 */
 
 #include "cdl.h"
+#include "util.h"
 
 #if defined(WIN32)
 // For OutputDebugString
@@ -37,9 +38,10 @@
 #include <memory>
 #include <sstream>
 
-#include "util.h"
 #include <vulkan/utility/vk_struct_helper.hpp>
 #include <vulkan/vk_enum_string_helper.h>
+
+#include <yaml-cpp/emitter.h>
 
 #if defined(WIN32)
 #include <direct.h>
@@ -425,8 +427,8 @@ std::string Context::GetObjectInfo(VkDevice vk_device, uint64_t handle) {
 void Context::DumpAllDevicesExecutionState(CrashSource crash_source) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     bool dump_prologue = true;
-    auto fs = OpenLogFile();
-    std::ostream& os = fs.is_open() ? fs : std::cerr;
+    auto file = OpenDumpFile();
+    YAML::Emitter os(file.is_open() ? file : std::cerr);
 
     for (auto& it : devices_) {
         auto device = it.second.get();
@@ -438,19 +440,19 @@ void Context::DumpAllDevicesExecutionState(CrashSource crash_source) {
 void Context::DumpDeviceExecutionState(VkDevice vk_device) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     if (devices_.find(vk_device) != devices_.end()) {
-        auto fs = OpenLogFile();
-        std::ostream& os = fs.is_open() ? fs : std::cerr;
+        auto file = OpenDumpFile();
+        YAML::Emitter os(file.is_open() ? file : std::cerr);
         DumpDeviceExecutionState(devices_[vk_device].get(), {}, true, kDeviceLostError, os);
     }
 }
 
 void Context::DumpDeviceExecutionState(const Device* device, bool dump_prologue,
-                                       CrashSource crash_source, std::ostream& os) {
+                                       CrashSource crash_source, YAML::Emitter& os) {
     DumpDeviceExecutionState(device, {}, dump_prologue, crash_source, os);
 }
 
 void Context::DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue,
-                                       CrashSource crash_source, std::ostream& os) {
+                                       CrashSource crash_source, YAML::Emitter& os) {
     if (!device) {
         return;
     }
@@ -463,14 +465,11 @@ void Context::DumpDeviceExecutionState(const Device* device, std::string error_r
 
     if (track_semaphores_) {
         device->GetSubmitTracker()->DumpWaitingSubmits(os);
-        os << "\n";
         device->GetSemaphoreTracker()->DumpWaitingThreads(os);
-        os << "\n";
     }
-
-    os << "\n";
-    os << error_report;
-
+    if (!error_report.empty()) {
+        os << error_report;
+    }
     auto options = CommandBufferDumpOption::kDefault;
     if (debug_dump_all_command_buffers_) options |= CommandBufferDumpOption::kDumpAllCommands;
 
@@ -479,75 +478,90 @@ void Context::DumpDeviceExecutionState(const Device* device, std::string error_r
     } else {
         device->DumpIncompleteCommandBuffers(os, options);
     }
+    os << YAML::EndMap;
 }
 
-void Context::DumpDeviceExecutionStateValidationFailed(const Device* device, std::ostream& os) {
+void Context::DumpDeviceExecutionStateValidationFailed(const Device* device, YAML::Emitter& os) {
     // We force all command buffers to dump here because validation can be
     // from a race condition and the GPU can complete work by the time we've
     // started writing the log. (Seen in practice, not theoretical!)
     auto dump_all = debug_dump_all_command_buffers_;
     debug_dump_all_command_buffers_ = true;
     std::stringstream error_report;
-    error_report << os.rdbuf();
+    error_report << os.c_str();  // TODO does this do what we want?
     DumpDeviceExecutionState(device, error_report.str(), true /* dump_prologue */, CrashSource::kDeviceLostError, os);
     debug_dump_all_command_buffers_ = dump_all;
 }
 
-void Context::DumpReportPrologue(std::ostream& os, const Device* device) {
-    os << "#----------------------------------------------------------------\n";
-    os << "#-                    CRASH DIAGNOSTIC LAYER                    -\n";
-    os << "#----------------------------------------------------------------\n";
+void Context::DumpReportPrologue(YAML::Emitter& os, const Device* device) {
+    os << YAML::Comment("----------------------------------------------------------------") << YAML::Newline;
+    os << YAML::Comment("-                    CRASH DIAGNOSTIC LAYER                    -") << YAML::Newline;
+    os << YAML::Comment("----------------------------------------------------------------") << YAML::Newline;
 
     auto now = std::chrono::system_clock::now();
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
-
-    const char* t = "\n  ";
-    const char* tt = "\n    ";
-    os << "CDLInfo:" << t << "version: " << kCdlVersion << t << "date: \""
-       << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X") << "\"";
+    os << YAML::Key << "CDLInfo" << YAML::Value << YAML::BeginMap;
+    os << YAML::Key << "version" << YAML::Value << kCdlVersion;
+    std::stringstream timestr;
+    timestr << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+    os << YAML::Key << "date" << YAML::Value << timestr.str();
     if (log_configs_) {
-        os << t << "envVars:";
+        // TODO this should be a map
+        os << YAML::Key << "settings" << YAML::Value << YAML::BeginSeq;
         std::string configstr;
         for (auto& cstr : configs_) {
-            os << tt << "- " << cstr;
+            os << cstr;
         }
+        os << YAML::EndSeq;
     }
-    os << "\n";
+    os << YAML::EndMap; // CDLInfo
 
-    os << "\nSystemInfo:" << t << "osName: " << system_.GetOsName() << t << "osVersion: " << system_.GetOsVersion() << t
-       << "osBitdepth: " << system_.GetOsBitdepth() << t << "osAdditional: " << system_.GetOsAdditionalInfo() << t
-       << "cpuName: " << system_.GetHwCpuName() << t << "numCpus: " << system_.GetHwNumCpus() << t
-       << "totalRam: " << system_.GetHwTotalRam() << t << "totalDiskSpace: " << system_.GetHwTotalDiskSpace() << t
-       << "availDiskSpace: " << system_.GetHwAvailDiskSpace() << t;
+    os << YAML::Key << "SystemInfo" << YAML::Value << YAML::BeginMap;
+    os << YAML::Key << "osName" << YAML::Value << system_.GetOsName();
+    os << YAML::Key << "osVersion" << YAML::Value << system_.GetOsVersion();
+    os << YAML::Key << "osBitdepth" << YAML::Value << system_.GetOsBitdepth();
+    os << YAML::Key << "osAdditional" << YAML::Value << system_.GetOsAdditionalInfo();
+    os << YAML::Key << "cpuName" << YAML::Value << system_.GetHwCpuName();
+    os << YAML::Key << "numCpus" << YAML::Value << system_.GetHwNumCpus();
+    os << YAML::Key << "totalRam" << YAML::Value << system_.GetHwTotalRam();
+    os << YAML::Key << "totalDiskSpace" << YAML::Value << system_.GetHwTotalDiskSpace();
+    os << YAML::Key << "availDiskSpace" << YAML::Value << system_.GetHwAvailDiskSpace();
+    os << YAML::EndMap; // SystemInfo
 
-    os << "\nInstance:" << device->GetObjectInfo((uint64_t)vk_instance_, t);
+    os << YAML::Key << "Instance" << YAML::Value << YAML::BeginMap;
+    os << YAML::Key << "vkHandle" << YAML::Value << device->GetObjectInfo((uint64_t)vk_instance_);
     if (application_info_) {
-        os << t << "application: \"" << application_info_->applicationName << "\"";
-        os << t << "applicationVersion: " << application_info_->applicationVersion;
-        os << t << "engine: \"" << application_info_->engineName << "\"";
-        os << t << "engineVersion: " << application_info_->engineVersion;
+        os << YAML::Key << "ApplicationInfo" << YAML::Value << YAML::BeginMap;
+        os << YAML::Key << "application" << YAML::Value << application_info_->applicationName;
+        os << YAML::Key << "applicationVersion" << YAML::Value << application_info_->applicationVersion;
+        os << YAML::Key << "engine" << YAML::Value << application_info_->engineName;
+        os << YAML::Key << "engineVersion" << YAML::Value << application_info_->engineVersion;
 
         auto majorVersion = VK_VERSION_MAJOR(application_info_->apiVersion);
         auto minorVersion = VK_VERSION_MINOR(application_info_->apiVersion);
         auto patchVersion = VK_VERSION_PATCH(application_info_->apiVersion);
 
-        os << t << "apiVersion: \"" << std::dec << majorVersion << "." << minorVersion << "." << patchVersion << " (0x"
-           << std::hex << std::setfill('0') << std::setw(8) << application_info_->apiVersion << std::dec << ")\"";
+        std::stringstream api;
+        api << majorVersion << "." << minorVersion << "." << patchVersion << " (" << Uint32ToStr(application_info_->apiVersion) << ")";
+        os << YAML::Key << "apiVersion" << YAML::Value << api.str();
+        YAML::EndMap; // ApplicationInfo
     }
 
-    os << t << "instanceExtensions:";
-    for (auto& ext : instance_extension_names_original_) {
-        os << tt << "- \"" << ext << "\"";
+    os << YAML::Key << "instanceExtensions" << YAML::Value << YAML::BeginSeq;
+    for (const auto &name : instance_extension_names_original_) {
+        os << name;
     }
-    os << "\n";
+    os << YAML::EndSeq;
+    os << YAML::EndMap; //Instance
+    os << YAML::EndMap; //??? TODO why do we need this extra EndMap?
 }
 
-std::ofstream Context::OpenLogFile() {
+std::ofstream Context::OpenDumpFile() {
     // Make sure our output directory exists.
     MakeOutputPath();
 
     // now write our log.
-    std::filesystem::path log_path(output_path_);
+    std::filesystem::path dump_file_path(output_path_);
 
     // Keep the first log as cdl.log then add a number if more than one log is
     // generated. Multiple logs are a new feature and we want to keep backward
@@ -562,7 +576,7 @@ std::ofstream Context::OpenLogFile() {
     } else {
         ss_name << output_name << ".log";
     }
-    log_path /= ss_name.str();
+    dump_file_path /= ss_name.str();
     total_logs_++;
 
 #if !defined(WIN32)
@@ -570,22 +584,23 @@ std::ofstream Context::OpenLogFile() {
     std::filesystem::path symlink_path(base_output_path_);
     symlink_path /= "cdl.log.symlink";
     remove(symlink_path.string().c_str());
-    symlink(log_path.string().c_str(), symlink_path.string().c_str());
+    symlink(dump_file_path.string().c_str(), symlink_path.string().c_str());
 #endif
 
     std::stringstream ss;
-    ss << "Device error encountered and log being recorded\n";
-    ss << "\tOutput written to: " << log_path << "\n";
+    ss << "Device error encountered and log being recorded" << std::endl;
+    ;
+    ss << "\tOutput written to: " << dump_file_path << std::endl;
 #if !defined(WIN32)
-    ss << "\tSymlink to output: " << symlink_path << "\n";
+    ss << "\tSymlink to output: " << symlink_path << std::endl;
 #endif
-    ss << "----------------------------------------------------------------\n";
+    ss << "----------------------------------------------------------------" << std::endl;
 #if defined(WIN32)
     OutputDebugString(ss.str().c_str());
 #endif
     logger_.LogError(ss.str());
 
-    std::ofstream fs(log_path);
+    std::ofstream fs(dump_file_path);
     if (!fs.is_open()) {
         logger_.LogError("UNABLE TO OPEN LOG FILE");
     }
@@ -1168,9 +1183,9 @@ void Context::PreDestroyCommandPool(VkDevice device, VkCommandPool commandPool,
     PreApiFunction("vkDestroyCommandPool");
 
     std::lock_guard<std::mutex> lock_devices(devices_mutex_);
-    std::stringstream os;
+    YAML::Emitter os;
     devices_[device]->ValidateCommandPoolState(commandPool, os);
-    if (os.rdbuf()->in_avail()) {
+    if (os.size() > 0) {
         DumpDeviceExecutionStateValidationFailed(devices_[device].get(), os);
     }
 }
@@ -1187,9 +1202,9 @@ VkResult Context::PreResetCommandPool(VkDevice device, VkCommandPool commandPool
     PreApiFunction("vkResetCommandPool");
 
     std::lock_guard<std::mutex> lock_devices(devices_mutex_);
-    std::stringstream os;
+    YAML::Emitter os;
     devices_[device]->ValidateCommandPoolState(commandPool, os);
-    if (os.rdbuf()->in_avail()) {
+    if (os.size() > 0) {
         DumpDeviceExecutionStateValidationFailed(devices_[device].get(), os);
     }
     return VK_SUCCESS;
@@ -1246,7 +1261,7 @@ void Context::PostFreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
     PostApiFunction("vkFreeCommandBuffers");
 
     std::lock_guard<std::mutex> lock_devices(devices_mutex_);
-    std::stringstream os;
+    YAML::Emitter os;
     bool all_cb_ok = true;
     for (uint32_t i = 0; i < commandBufferCount; ++i) {
         all_cb_ok = all_cb_ok && devices_[device]->ValidateCommandBufferNotInUse(pCommandBuffers[i], os);
@@ -1293,7 +1308,7 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
             log << "Semaphore created. VkDevice:" << GetObjectName(device, (uint64_t)device)
                 << ", VkSemaphore: " << GetObjectName(device, (uint64_t)(*pSemaphore));
             if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
-                log << ", Type: Binary.\n";
+                log << ", Type: Binary" << std::endl;
             } else {
                 log << ", Type: Timeline, Initial value: " << s_value << std::endl;
             }
@@ -1321,7 +1336,7 @@ void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const
             if (semaphore_tracker->GetSemaphoreValue(semaphore, semaphore_value)) {
                 log << "Latest value: " << semaphore_value << std::endl;
             } else {
-                log << "Latest value: Unknonw.\n";
+                log << "Latest value: Unknown" << std::endl;
             }
             logger_.LogInfo(log.str());
         }
@@ -1502,7 +1517,7 @@ VkResult Context::PreBeginCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
     {
         std::lock_guard<std::mutex> lock(devices_mutex_);
         auto device = p_cmd->GetDevice();
-        std::stringstream os;
+        YAML::Emitter os;
         if (!device->ValidateCommandBufferNotInUse(commandBuffer, os)) {
             DumpDeviceExecutionStateValidationFailed(device, os);
         }
@@ -1516,7 +1531,7 @@ VkResult Context::PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
     {
         std::lock_guard<std::mutex> lock(devices_mutex_);
         auto device = p_cmd->GetDevice();
-        std::stringstream os;
+        YAML::Emitter os;
         if (!device->ValidateCommandBufferNotInUse(commandBuffer, os)) {
             DumpDeviceExecutionStateValidationFailed(device, os);
         }

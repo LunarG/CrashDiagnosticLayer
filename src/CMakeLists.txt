@@ -32,53 +32,52 @@ endif()
 add_library(crash_diagnostic MODULE)
 
 target_sources(crash_diagnostic PRIVATE
-    ${GENERATED_DIR}/command_common.h
-    ${GENERATED_DIR}/command_common.cc
-    ${GENERATED_DIR}/command_printer.h
-    ${GENERATED_DIR}/command_printer.cc
-    ${GENERATED_DIR}/command_printer_structs.cc
-    ${GENERATED_DIR}/command_printer_types.cc
-    ${GENERATED_DIR}/command_recorder.h
-    ${GENERATED_DIR}/command_recorder.cc
-    ${GENERATED_DIR}/command_tracker.h
-    ${GENERATED_DIR}/command_tracker.cc
-    ${GENERATED_DIR}/dispatch.h
-    ${GENERATED_DIR}/dispatch.cc
-    ${GENERATED_DIR}/layer_base.h
-    ${GENERATED_DIR}/layer_base.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/bind_sparse_utils.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/bind_sparse_utils.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/command.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/command.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/command_buffer_tracker.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/command_buffer_tracker.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/command_pool.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/command_pool.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/descriptor_set.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/descriptor_set.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/device.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/device.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/cdl.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/cdl.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/linear_allocator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/logger.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/logger.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/marker.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/object_name_db.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/object_name_db.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/pipeline.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/pipeline.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/semaphore_tracker.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/semaphore_tracker.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/shader_module.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/shader_module.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/spirv_parse.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/submit_tracker.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/submit_tracker.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/system.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/system.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/util.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/util.cc
+    generated/command_common.h
+    generated/command_common.cc
+    generated/command_printer.h
+    generated/command_printer.cc
+    generated/command_printer_structs.cc
+    generated/command_printer_types.cc
+    generated/command_recorder.h
+    generated/command_recorder.cc
+    generated/command_tracker.h
+    generated/command_tracker.cc
+    generated/dispatch.h
+    generated/dispatch.cc
+    generated/layer_base.h
+    generated/layer_base.cc
+    bind_sparse_utils.h
+    bind_sparse_utils.cc
+    command.h
+    command.cc
+    command_buffer_tracker.h
+    command_buffer_tracker.cc
+    command_pool.h
+    command_pool.cc
+    descriptor_set.h
+    descriptor_set.cc
+    device.h
+    device.cc
+    cdl.h
+    cdl.cc
+    linear_allocator.h
+    logger.h
+    logger.cc
+    marker.h
+    object_name_db.h
+    object_name_db.cc
+    pipeline.h
+    pipeline.cc
+    semaphore_tracker.h
+    semaphore_tracker.cc
+    shader_module.h
+    shader_module.cc
+    spirv_parse.h
+    submit_tracker.h
+    submit_tracker.cc
+    system.h
+    system.cc
+    util.h
 )
 
 get_target_property(LAYER_SOURCES crash_diagnostic SOURCES)
@@ -90,6 +89,7 @@ target_link_libraries(crash_diagnostic PUBLIC
     Vulkan::Headers
     Vulkan::LayerSettings
     Vulkan::UtilityHeaders
+    yaml-cpp::yaml-cpp
     ${CMAKE_DL_LIBS}
     $<TARGET_NAME_IF_EXISTS:PkgConfig::XCB>
     $<TARGET_NAME_IF_EXISTS:PkgConfig::X11>

@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -19,7 +20,6 @@
 #include <sstream>
 
 #include "cdl.h"
-#include "util.h"
 
 namespace crash_diagnostic_layer {
 
@@ -34,17 +34,17 @@ void ActiveDescriptorSets::Bind(uint32_t first_set, uint32_t set_count, const Vk
     }
 }
 
-std::ostream& ActiveDescriptorSets::Print(Device* device, std::ostream& stream, const std::string& indent) const {
-    auto indent1 = crash_diagnostic_layer::IncreaseIndent(indent);
-    auto indent2 = crash_diagnostic_layer::IncreaseIndent(indent1);
+YAML::Emitter& ActiveDescriptorSets::Print(Device* device, YAML::Emitter& os) const {
+    os << YAML::BeginSeq;
     for (const auto& ds : descriptor_sets_) {
-        stream << indent1 << "- # descriptorSet:";
-        stream << indent2 << "index: " << ds.first;
-        stream << indent2 << "set: ";
-        stream << device->GetObjectInfoNoHandleTag((uint64_t)ds.second, indent2);
+        os << YAML::Comment("descriptorSet") << YAML::BeginMap;
+        os << YAML::Key << "index" << YAML::Value << ds.first;
+        os << YAML::Key << "set: " << YAML::Value << device->GetObjectInfoNoHandleTag((uint64_t)ds.second);
+        os << YAML::EndMap;
     }
+    os << YAML::EndSeq;
 
-    return stream;
+    return os;
 }
 
 }  // namespace crash_diagnostic_layer

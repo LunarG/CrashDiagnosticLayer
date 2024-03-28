@@ -1,5 +1,6 @@
 /*
  Copyright 2018 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,15 +16,16 @@
 */
 
 #include "command.h"
+#include "util.h"
 
 #include <cassert>
 #include <cstring>
 #include <memory>
 #include <sstream>
+#include <yaml-cpp/emitter.h>
 
 #include "device.h"
 #include "cdl.h"
-#include "util.h"
 
 namespace crash_diagnostic_layer {
 
@@ -331,47 +333,29 @@ std::string CommandBuffer::PrintCommandState(CommandState cm_state) const {
     }
 }
 
-bool CommandBuffer::DumpCommand(const Command& command, std::ostream& os, const std::string& indent) {
-    size_t stream_pos_0 = os.tellp();
-
+bool CommandBuffer::DumpCommand(const Command& command, YAML::Emitter& os) {
     tracker_.SetNameResolver(&device_->GetObjectInfoDB());
-    tracker_.PrintCommandParameters(os, command, static_cast<uint32_t>(indent.length() - 1));
-
-    size_t stream_pos_1 = os.tellp();
-    bool wrote_output = (stream_pos_0 != stream_pos_1);
-    return wrote_output;
+    tracker_.PrintCommandParameters(os, command);
+    // TODO: does this matter?
+    return true;
 }
 
-bool CommandBuffer::DumpCmdExecuteCommands(const Command& command, CommandState command_state, std::ostream& os,
-                                           CommandBufferDumpOptions options, const std::string& indent) {
-    size_t stream_pos_0 = os.tellp();
+bool CommandBuffer::DumpCmdExecuteCommands(const Command& command, CommandState command_state, YAML::Emitter& os,
+                                           CommandBufferDumpOptions options) {
     auto args = reinterpret_cast<CmdExecuteCommandsArgs*>(command.parameters);
-    auto pindent1 = crash_diagnostic_layer::IncreaseIndent(indent);
-    auto pindent2 = crash_diagnostic_layer::IncreaseIndent(pindent1);
-    auto pindent3 = crash_diagnostic_layer::IncreaseIndent(pindent2);
-    auto pindent4 = crash_diagnostic_layer::IncreaseIndent(pindent3);
-    os << pindent1 << "- # parameter:";
-    os << pindent2 << "name: commandBuffer";
-    os << pindent2 << "value: " << args->commandBuffer;
-    os << pindent1 << "- # parameter:";
-    os << pindent2 << "name: commandBufferCount";
-    os << pindent2 << "value: " << args->commandBufferCount;
-    os << pindent1 << "- # parameter:";
-    os << pindent2 << "name: pCommandBuffers";
+    os << YAML::BeginMap;
+    os << YAML::Key << "commandBufferCount" << YAML::Value << args->commandBufferCount;
+    os << YAML::Key << "pCommandBuffers" << YAML::Value << YAML::BeginSeq;
     if (args->pCommandBuffers && args->commandBufferCount > 0) {
-        os << pindent2 << "commandBuffers:";
         for (uint32_t i = 0; i < args->commandBufferCount; i++) {
             auto secondary_command_buffer = crash_diagnostic_layer::GetCommandBuffer(args->pCommandBuffers[i]);
             if (secondary_command_buffer) {
-                secondary_command_buffer->DumpContents(os, options, pindent3, submit_info_id_, command_state);
+                secondary_command_buffer->DumpContents(os, options, submit_info_id_, command_state);
             }
         }
-    } else {
-        os << pindent2 << "value: nullptr";
     }
-    size_t stream_pos_1 = os.tellp();
-    bool wrote_output = (stream_pos_0 != stream_pos_1);
-    return wrote_output;
+    os << YAML::EndSeq << YAML::EndMap;
+    return true;
 }
 
 // Mutable internal command buffer state used to determine what the
@@ -384,7 +368,7 @@ class CommandBufferInternalState {
     void Mutate(const Command& cmd);
 
     // Print the relevant state for the command.
-    bool Print(const Command& cmd, const std::string& indent, std::ostream& os, const ObjectInfoDB& name_resolver);
+    bool Print(const Command& cmd, YAML::Emitter& os, const ObjectInfoDB& name_resolver);
 
     const Pipeline* GetPipeline(VkPipelineBindPoint bind_point) const { return bound_pipelines_[bind_point]; }
 
@@ -452,8 +436,7 @@ void CommandBufferInternalState::Mutate(const Command& cmd) {
     }
 }
 
-bool CommandBufferInternalState::Print(const Command& cmd, const std::string& indent, std::ostream& os,
-                                       const ObjectInfoDB& name_resolver) {
+bool CommandBufferInternalState::Print(const Command& cmd, YAML::Emitter& os, const ObjectInfoDB& name_resolver) {
     int bind_point = -1;
     switch (cmd.type) {
         case Command::Type::kCmdDraw:
@@ -473,106 +456,101 @@ bool CommandBufferInternalState::Print(const Command& cmd, const std::string& in
     }
 
     if (-1 != bind_point) {
-        os << indent << "internalState:";
-        auto indent2 = crash_diagnostic_layer::IncreaseIndent(indent);
-        os << indent2 << "pipeline:";
-        bound_pipelines_[bind_point]->Print(os, name_resolver, indent2);
-        os << indent2 << "descriptorSets:";
-        bound_descriptors_[bind_point].Print(device_, os, indent2);
+        os << YAML::Key << "internalState" << YAML::Value << YAML::BeginMap;
+        os << YAML::Key << "pipeline" << YAML::Value;
+        bound_pipelines_[bind_point]->Print(os, name_resolver);
+        os << YAML::Key << "descriptorSets" << YAML::Value;
+        bound_descriptors_[bind_point].Print(device_, os);
+        os << YAML::EndMap;
         return true;
     }
 
     return false;
 }
 
-void CommandBuffer::DumpContents(std::ostream& os, CommandBufferDumpOptions options, const std::string& indent,
+void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions options,
                                  uint64_t secondary_cb_submit_info_id,
                                  CommandState vkcmd_execute_commands_command_state) {
     if (vk_command_buffer_ == VK_NULL_HANDLE) {
         return;
     }
     auto num_commands = tracker_.GetCommands().size();
-    StringArray indents = {indent};
-    for (uint32_t i = 1; i < 4; i++) {
-        indents.push_back(crash_diagnostic_layer::IncreaseIndent(indents[i - 1]));
-    }
-    os << indents[0] << "- # CommandBuffer:" << device_->GetObjectInfo((uint64_t)vk_command_buffer_, indents[1])
-       << indents[1] << "device:" << device_->GetObjectInfo((uint64_t)device_->GetVkDevice(), indents[2]);
-    if (has_buffer_marker_) {
-        os << indents[1] << "beginMarkerValue: " << crash_diagnostic_layer::Uint32ToStr(begin_marker_value_)
-           << indents[1] << "endMarkerValue: " << crash_diagnostic_layer::Uint32ToStr(end_marker_value_);
-        os << indents[1] << "topMarkerBuffer: " << crash_diagnostic_layer::Uint32ToStr(ReadMarker(MarkerPosition::kTop))
-           << indents[1]
-           << "bottomMarkerBuffer: " << crash_diagnostic_layer::Uint32ToStr(ReadMarker(MarkerPosition::kBottom));
-    }
-    os << indents[1] << "submitInfoId: ";
-    if (IsPrimaryCommandBuffer()) {
-        os << submit_info_id_;
-    } else {
-        os << secondary_cb_submit_info_id;
-    }
-    os << indents[1] << "commandPool:" << device_->GetObjectInfo((uint64_t)vk_command_pool_, indents[2]) << indents[1]
-       << "level: ";
-    if (IsPrimaryCommandBuffer()) {
-        os << "Primary";
-    } else {
-        os << "Secondary" << indents[1] << "stateInheritance: ";
-        if (scb_inheritance_info_ != nullptr) {
-            os << "True";
-        } else {
-            os << "False";
-        }
-    }
-    os << indents[1] << "simultaneousUse: ";
-    if (cb_simultaneous_use_) {
-        os << "True";
-    } else {
-        os << "False";
-    }
-
-    bool dump_commands = (options & CommandBufferDumpOption::kDumpAllCommands);
-
-    os << indents[1] << "status: ";
+    os << YAML::BeginMap << YAML::Comment("CommandBuffer");
+    os << YAML::Key << "status";
     CommandBufferState cb_state;
     if (IsPrimaryCommandBuffer()) {
         cb_state = GetCommandBufferState();
     } else {
         cb_state = GetSecondaryCommandBufferState(vkcmd_execute_commands_command_state);
     }
-    os << PrintCommandBufferState(cb_state);
-    if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete) {
-        os << indents[1] << "lastStartedCommand: " << GetLastStartedCommand() << indents[1]
-           << "lastCompletedCommand: " << GetLastCompleteCommand();
-        dump_commands = true;
-    }
+    os << YAML::Value << PrintCommandBufferState(cb_state);
+
+    os << YAML::Key << "vkHandle" << YAML::Value << device_->GetObjectInfo((uint64_t)vk_command_buffer_);
+    os << YAML::Key << "commandPool" << YAML::Value << device_->GetObjectInfo((uint64_t)vk_command_pool_);
     if (buffer_state_ == CommandBufferState::kPending) {
-        os << indents[1] << "queue:" << device_->GetObjectInfo((uint64_t)submitted_queue_, indents[2]) << indents[1]
-           << "fence:" << device_->GetObjectInfo((uint64_t)submitted_fence_, indents[2]);
+        os << YAML::Key << "queue" << device_->GetObjectInfo((uint64_t)submitted_queue_);
+        os << YAML::Key << "fence" << device_->GetObjectInfo((uint64_t)submitted_fence_);
     }
 
+    os << YAML::Key << "submitInfoId" << YAML::Value;
+    if (IsPrimaryCommandBuffer()) {
+        os << submit_info_id_;
+    } else {
+        os << secondary_cb_submit_info_id;
+    }
+    os << YAML::Key << "level" << YAML::Value;
+    if (IsPrimaryCommandBuffer()) {
+        os << "Primary";
+    } else {
+        os << "Secondary";
+        os << YAML::Key << "stateInheritance" << YAML::Value << (scb_inheritance_info_ != nullptr);
+    }
+    os << YAML::Key << "simultaneousUse" << YAML::Value << cb_simultaneous_use_;
+
+    bool dump_commands = (options & CommandBufferDumpOption::kDumpAllCommands);
+
+    if (has_buffer_marker_) {
+        os << YAML::Hex;
+        os << YAML::Key << "beginMarkerValue" << YAML::Value << Uint32ToStr(begin_marker_value_);
+        os << YAML::Key << "endMarkerValue" << YAML::Value << Uint32ToStr(end_marker_value_);
+        os << YAML::Key << "topMarkerBuffer" << YAML::Value << Uint32ToStr(ReadMarker(MarkerPosition::kTop));
+        os << YAML::Key << "bottomMarkerBuffer" << YAML::Value << Uint32ToStr(ReadMarker(MarkerPosition::kBottom));
+        os << YAML::Dec;
+    }
+    if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete) {
+        os << YAML::Key << "lastStartedCommand" << YAML::Value << GetLastStartedCommand();
+        os << YAML::Key << "lastCompletedCommand" << YAML::Value << GetLastCompleteCommand();
+        dump_commands = true;
+    }
     // Internal command buffer state that needs to be tracked.
     CommandBufferInternalState state(device_);
 
     if (dump_commands) {
-        os << indents[1] << "Commands:";
+        os << YAML::Key << "Commands" << YAML::Value << YAML::BeginSeq;
         for (const auto& command : tracker_.GetCommands()) {
             auto command_name = Command::GetCommandName(command);
             auto command_state = GetCommandState(cb_state, command);
-            os << indents[2] << "- # Command:" << indents[3] << "id: " << command.id << "/" << num_commands
-               << indents[3] << "markerValue: " << crash_diagnostic_layer::Uint32ToStr(begin_marker_value_ + command.id)
-               << indents[3] << "name: " << command_name << indents[3] << "state: [" << PrintCommandState(command_state)
-               << "]" << indents[3] << "parameters:" << std::endl;
+
+            os << YAML::BeginMap << YAML::Comment("Command:");
+            //os << YAML::Key << "id" << YAML::Value << command.id << "/" << num_commands;
+            os << YAML::Key << "id" << YAML::Value << command.id;
+            os << YAML::Key << "markerValue" << YAML::Value
+               << crash_diagnostic_layer::Uint32ToStr(begin_marker_value_ + command.id);
+            os << YAML::Key << "name" << YAML::Value << command_name;
+            os << YAML::Key << "state" << YAML::Value << PrintCommandState(command_state);
 
             state.Mutate(command);
             // For vkCmdExecuteCommands, CDL prints all the information about the
             // recorded command buffers. For every other command, CDL prints the
             // arguments without going deep into printing objects themselves.
+            os << YAML::Key << "parameters" << YAML::Value << YAML::BeginMap;
             if (strcmp(command_name, "vkCmdExecuteCommands") != 0) {
-                DumpCommand(command, os, indents[3]);
+                DumpCommand(command, os);
             } else {
-                DumpCmdExecuteCommands(command, command_state, os, options, indents[3]);
+                DumpCmdExecuteCommands(command, command_state, os, options);
             }
-            state.Print(command, indents[3], os, device_->GetObjectInfoDB());
+            os << YAML::EndMap;
+            state.Print(command, os, device_->GetObjectInfoDB());
             if (command_state == CommandState::kCommandIncomplete) {
                 HandleIncompleteCommand(command, state);
             }
@@ -581,11 +559,13 @@ void CommandBuffer::DumpContents(std::ostream& os, CommandBufferDumpOptions opti
             // Command entry.
             if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete &&
                 command.id == GetLastCompleteCommand()) {
-                os << indents[3] << "message: "
-                   << "'>>>>>>>>>>>>>> LAST COMPLETE COMMAND <<<<<<<<<<<<<<'" << std::endl;
+                os << YAML::Key << "message" << YAML::Value << "'>>>>>>>>>>>>>> LAST COMPLETE COMMAND <<<<<<<<<<<<<<'";
             }
+            os << YAML::EndMap; //Command
         }
+        os << YAML::EndSeq;
     }
+    os << YAML::EndMap; // CommandBuffer
 }
 
 // =============================================================================

@@ -1,5 +1,6 @@
 /*
  Copyright 2019 Google Inc.
+ Copyright 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -24,20 +25,11 @@
 
 #include "util.h"
 
-namespace {
-
-template <typename T>
-std::string PtrToStr(const T* ptr) {
-    uintptr_t value = (uintptr_t)ptr;
-    return crash_diagnostic_layer::Uint64ToStr(value);
-}
-}  // namespace
-
 ObjectInfoDB::ObjectInfoDB() {
     // default name for unknown objects
     unknown_object_.object = 0;
     unknown_object_.type = VK_OBJECT_TYPE_UNKNOWN;
-    unknown_object_.name = "<unknown>";
+    unknown_object_.name = "";
 }
 
 void ObjectInfoDB::AddObjectInfo(uint64_t handle, ObjectInfoPtr info) {
@@ -50,69 +42,81 @@ void ObjectInfoDB::AddExtraInfo(uint64_t handle, ExtraObjectInfo info) {
     object_extra_info_[handle].push_back(info);
 }
 
-const ObjectInfo* ObjectInfoDB::FindObjectInfo(uint64_t handle) const {
+ObjectInfo ObjectInfoDB::FindObjectInfo(uint64_t handle) const {
     std::lock_guard<std::mutex> lock(lock_);
 
     auto handle_info = object_info_.find(handle);
     if (end(object_info_) != handle_info) {
-        return handle_info->second.get();
+        return *handle_info->second.get();
     }
-
-    return &unknown_object_;
+    auto result = unknown_object_;
+    result.object = handle;
+    return result;
 }
 
-std::string ObjectInfoDB::GetObjectDebugName(uint64_t handle) const {
-    auto info = FindObjectInfo(handle);
-    if (info != &unknown_object_) {
-        return info->name;
-    }
-    return std::string();
-}
+std::string ObjectInfoDB::GetObjectDebugName(uint64_t handle) const { return FindObjectInfo(handle).name; }
 
 std::string ObjectInfoDB::GetObjectName(uint64_t handle, HandleDebugNamePreference handle_debug_name_preference) const {
     auto info = FindObjectInfo(handle);
     if (handle_debug_name_preference == kPreferDebugName) {
-        if (info != &unknown_object_) {
-            return info->name;
+        if (!info.name.empty()) {
+            return info.name;
         }
         return crash_diagnostic_layer::Uint64ToStr(handle);
     }
     std::stringstream object_name;
-    if (info != &unknown_object_) {
-        object_name << info->name << " ";
+    if (!info.name.empty()) {
+        object_name << info.name << " ";
     }
     object_name << "(" << crash_diagnostic_layer::Uint64ToStr(handle) << ")";
     return object_name.str();
 }
 
-std::string ObjectInfoDB::GetObjectInfoInternal(uint64_t handle, const std::string& indent,
+std::string ObjectInfoDB::GetObjectInfoInternal(uint64_t handle,
                                                 VkHandleTagRequirement vkhandle_tag_requirement) const {
     // TODO(aellem) cleanup so all object are tracked and debug object names only
     // enhance object names
     std::stringstream info_ss;
+#if 0
     if (vkhandle_tag_requirement == kPrintVkHandleTag) {
-        info_ss << indent << "vkHandle: ";
+        info_ss << "vkHandle: ";
     }
     info_ss << crash_diagnostic_layer::Uint64ToStr(handle);
     auto info = FindObjectInfo(handle);
-    if (info != &unknown_object_) {
-        info_ss << indent << "debugName: \"" << info->name << "\"";
+    if (!info.name.empty()) {
+        info_ss << "debugName: \"" << info.name << "\"";
     }
     std::lock_guard<std::mutex> lock(lock_);
     auto extra_infos = object_extra_info_.find(handle);
     if (end(object_extra_info_) != extra_infos) {
         for (auto& extra_info : extra_infos->second) {
-            info_ss << indent << extra_info.first << ": " << extra_info.second;
+            info_ss << extra_info.first << ": " << extra_info.second;
         }
     }
+#else
+    auto info = FindObjectInfo(handle);
+    info_ss << crash_diagnostic_layer::Uint64ToStr(handle) << "[" << info.name << "]";
+    // TODO: extra infos???
+#endif
 
     return info_ss.str();
 }
 
-std::string ObjectInfoDB::GetObjectInfo(uint64_t handle, const std::string& indent) const {
-    return GetObjectInfoInternal(handle, indent, kPrintVkHandleTag);
+std::string ObjectInfoDB::GetObjectInfo(uint64_t handle) const {
+    return GetObjectInfoInternal(handle, kPrintVkHandleTag);
 }
 
-std::string ObjectInfoDB::GetObjectInfoNoHandleTag(uint64_t handle, const std::string& indent) const {
-    return GetObjectInfoInternal(handle, indent, kIgnoreVkHandleTag);
+std::string ObjectInfoDB::GetObjectInfoNoHandleTag(uint64_t handle) const {
+    return GetObjectInfoInternal(handle, kIgnoreVkHandleTag);
+}
+
+YAML::Emitter& ObjectInfoDB::PrintDebugInfo(YAML::Emitter& os, uint64_t handle) const {
+    auto info = FindObjectInfo(handle);
+    os << YAML::BeginMap;
+    os << YAML::Key << "VkHandle" << YAML::Value << YAML::Hex << handle << YAML::Dec;
+    if (!info.name.empty()) {
+        os << YAML::Key << "name" << YAML::Value << info.name;
+    }
+    os << YAML::EndMap;
+    return os;
 }

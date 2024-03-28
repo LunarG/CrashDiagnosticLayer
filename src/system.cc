@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023 LunarG, Inc.
+ Copyright (c) 2023-2024 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include <stdint.h>
 #include <sstream>
 #include <stdlib.h>
