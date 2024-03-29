@@ -16,9 +16,11 @@
 # limitations under the License.
 
 import argparse
+import os
+import shutil
+import subprocess
 import sys
 import time
-import os
 from xml.etree import ElementTree
 
 # Simple timer functions
@@ -37,6 +39,10 @@ def endTimer(timeit, msg):
         startTime = None
 
 def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory: str, target: str, time: bool = False):
+
+    has_clang_format = shutil.which('clang-format') is not None
+    if not has_clang_format:
+        print("WARNING: Unable to find clang-format!")
 
     # These live in the Vulkan-Docs repo, but are pulled in via the
     # Vulkan-Headers/registry folder
@@ -231,6 +237,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
     # Finally, use the output generator to create the requested target
     startTimer(time)
     reg.apiGen()
+    # Run clang-format on the file
+    if has_clang_format:
+        subprocess.check_call(['clang-format', '-i', f'{os.path.join(directory, target)}'])
+
     endTimer(time, '* Time to generate ' + options.filename + ' =')
 
 # -extension name
