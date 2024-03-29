@@ -1,31 +1,29 @@
 
 /***************************************************************************
-*
-* Copyright (C) 2021 Google Inc.
-* Copyright (c) 2023 LunarG, Inc.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-* *** ---- WARNING! ----
-* ***   THIS FILE IS GENERATED - DO NOT EDIT
-* ***   Update source file command_common_generator.py for modifications
-* *** ---- WARNING! ----
-*
-****************************************************************************/
-
+ *
+ * Copyright (C) 2021 Google Inc.
+ * Copyright (c) 2023 LunarG, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * *** ---- WARNING! ----
+ * ***   THIS FILE IS GENERATED - DO NOT EDIT
+ * ***   Update source file command_common_generator.py for modifications
+ * *** ---- WARNING! ----
+ *
+ ****************************************************************************/
 
 // NOLINTBEGIN
-
 
 #pragma once
 
@@ -35,284 +33,283 @@
 #include <vulkan/vulkan.h>
 
 // Enumerate commands that have one parameter of type VkCommandBuffer.
-struct Command
-{
-  enum Type {
-    kUnknown,
+struct Command {
+    enum Type {
+        kUnknown,
 
-    kBeginCommandBuffer,
-    kEndCommandBuffer,
-    kResetCommandBuffer,
-    kCmdBindPipeline,
-    kCmdSetViewport,
-    kCmdSetScissor,
-    kCmdSetLineWidth,
-    kCmdSetDepthBias,
-    kCmdSetBlendConstants,
-    kCmdSetDepthBounds,
-    kCmdSetStencilCompareMask,
-    kCmdSetStencilWriteMask,
-    kCmdSetStencilReference,
-    kCmdBindDescriptorSets,
-    kCmdBindIndexBuffer,
-    kCmdBindVertexBuffers,
-    kCmdDraw,
-    kCmdDrawIndexed,
-    kCmdDrawIndirect,
-    kCmdDrawIndexedIndirect,
-    kCmdDispatch,
-    kCmdDispatchIndirect,
-    kCmdCopyBuffer,
-    kCmdCopyImage,
-    kCmdBlitImage,
-    kCmdCopyBufferToImage,
-    kCmdCopyImageToBuffer,
-    kCmdUpdateBuffer,
-    kCmdFillBuffer,
-    kCmdClearColorImage,
-    kCmdClearDepthStencilImage,
-    kCmdClearAttachments,
-    kCmdResolveImage,
-    kCmdSetEvent,
-    kCmdResetEvent,
-    kCmdWaitEvents,
-    kCmdPipelineBarrier,
-    kCmdBeginQuery,
-    kCmdEndQuery,
-    kCmdResetQueryPool,
-    kCmdWriteTimestamp,
-    kCmdCopyQueryPoolResults,
-    kCmdPushConstants,
-    kCmdBeginRenderPass,
-    kCmdNextSubpass,
-    kCmdEndRenderPass,
-    kCmdExecuteCommands,
-    kCmdSetDeviceMask,
-    kCmdDispatchBase,
-    kCmdDrawIndirectCount,
-    kCmdDrawIndexedIndirectCount,
-    kCmdBeginRenderPass2,
-    kCmdNextSubpass2,
-    kCmdEndRenderPass2,
-    kCmdSetEvent2,
-    kCmdResetEvent2,
-    kCmdWaitEvents2,
-    kCmdPipelineBarrier2,
-    kCmdWriteTimestamp2,
-    kCmdCopyBuffer2,
-    kCmdCopyImage2,
-    kCmdCopyBufferToImage2,
-    kCmdCopyImageToBuffer2,
-    kCmdBlitImage2,
-    kCmdResolveImage2,
-    kCmdBeginRendering,
-    kCmdEndRendering,
-    kCmdSetCullMode,
-    kCmdSetFrontFace,
-    kCmdSetPrimitiveTopology,
-    kCmdSetViewportWithCount,
-    kCmdSetScissorWithCount,
-    kCmdBindVertexBuffers2,
-    kCmdSetDepthTestEnable,
-    kCmdSetDepthWriteEnable,
-    kCmdSetDepthCompareOp,
-    kCmdSetDepthBoundsTestEnable,
-    kCmdSetStencilTestEnable,
-    kCmdSetStencilOp,
-    kCmdSetRasterizerDiscardEnable,
-    kCmdSetDepthBiasEnable,
-    kCmdSetPrimitiveRestartEnable,
-    kCmdBeginVideoCodingKHR,
-    kCmdEndVideoCodingKHR,
-    kCmdControlVideoCodingKHR,
-    kCmdDecodeVideoKHR,
-    kCmdBeginRenderingKHR,
-    kCmdEndRenderingKHR,
-    kCmdSetDeviceMaskKHR,
-    kCmdDispatchBaseKHR,
-    kCmdPushDescriptorSetKHR,
-    kCmdPushDescriptorSetWithTemplateKHR,
-    kCmdBeginRenderPass2KHR,
-    kCmdNextSubpass2KHR,
-    kCmdEndRenderPass2KHR,
-    kCmdDrawIndirectCountKHR,
-    kCmdDrawIndexedIndirectCountKHR,
-    kCmdSetFragmentShadingRateKHR,
-    kCmdSetRenderingAttachmentLocationsKHR,
-    kCmdSetRenderingInputAttachmentIndicesKHR,
-    kCmdEncodeVideoKHR,
-    kCmdSetEvent2KHR,
-    kCmdResetEvent2KHR,
-    kCmdWaitEvents2KHR,
-    kCmdPipelineBarrier2KHR,
-    kCmdWriteTimestamp2KHR,
-    kCmdWriteBufferMarker2AMD,
-    kCmdCopyBuffer2KHR,
-    kCmdCopyImage2KHR,
-    kCmdCopyBufferToImage2KHR,
-    kCmdCopyImageToBuffer2KHR,
-    kCmdBlitImage2KHR,
-    kCmdResolveImage2KHR,
-    kCmdTraceRaysIndirect2KHR,
-    kCmdBindIndexBuffer2KHR,
-    kCmdSetLineStippleKHR,
-    kCmdBindDescriptorSets2KHR,
-    kCmdPushConstants2KHR,
-    kCmdPushDescriptorSet2KHR,
-    kCmdPushDescriptorSetWithTemplate2KHR,
-    kCmdSetDescriptorBufferOffsets2EXT,
-    kCmdBindDescriptorBufferEmbeddedSamplers2EXT,
-    kCmdDebugMarkerBeginEXT,
-    kCmdDebugMarkerEndEXT,
-    kCmdDebugMarkerInsertEXT,
-    kCmdBindTransformFeedbackBuffersEXT,
-    kCmdBeginTransformFeedbackEXT,
-    kCmdEndTransformFeedbackEXT,
-    kCmdBeginQueryIndexedEXT,
-    kCmdEndQueryIndexedEXT,
-    kCmdDrawIndirectByteCountEXT,
-    kCmdCuLaunchKernelNVX,
-    kCmdDrawIndirectCountAMD,
-    kCmdDrawIndexedIndirectCountAMD,
-    kCmdBeginConditionalRenderingEXT,
-    kCmdEndConditionalRenderingEXT,
-    kCmdSetViewportWScalingNV,
-    kCmdSetDiscardRectangleEXT,
-    kCmdSetDiscardRectangleEnableEXT,
-    kCmdSetDiscardRectangleModeEXT,
-    kCmdBeginDebugUtilsLabelEXT,
-    kCmdEndDebugUtilsLabelEXT,
-    kCmdInsertDebugUtilsLabelEXT,
+        kBeginCommandBuffer,
+        kEndCommandBuffer,
+        kResetCommandBuffer,
+        kCmdBindPipeline,
+        kCmdSetViewport,
+        kCmdSetScissor,
+        kCmdSetLineWidth,
+        kCmdSetDepthBias,
+        kCmdSetBlendConstants,
+        kCmdSetDepthBounds,
+        kCmdSetStencilCompareMask,
+        kCmdSetStencilWriteMask,
+        kCmdSetStencilReference,
+        kCmdBindDescriptorSets,
+        kCmdBindIndexBuffer,
+        kCmdBindVertexBuffers,
+        kCmdDraw,
+        kCmdDrawIndexed,
+        kCmdDrawIndirect,
+        kCmdDrawIndexedIndirect,
+        kCmdDispatch,
+        kCmdDispatchIndirect,
+        kCmdCopyBuffer,
+        kCmdCopyImage,
+        kCmdBlitImage,
+        kCmdCopyBufferToImage,
+        kCmdCopyImageToBuffer,
+        kCmdUpdateBuffer,
+        kCmdFillBuffer,
+        kCmdClearColorImage,
+        kCmdClearDepthStencilImage,
+        kCmdClearAttachments,
+        kCmdResolveImage,
+        kCmdSetEvent,
+        kCmdResetEvent,
+        kCmdWaitEvents,
+        kCmdPipelineBarrier,
+        kCmdBeginQuery,
+        kCmdEndQuery,
+        kCmdResetQueryPool,
+        kCmdWriteTimestamp,
+        kCmdCopyQueryPoolResults,
+        kCmdPushConstants,
+        kCmdBeginRenderPass,
+        kCmdNextSubpass,
+        kCmdEndRenderPass,
+        kCmdExecuteCommands,
+        kCmdSetDeviceMask,
+        kCmdDispatchBase,
+        kCmdDrawIndirectCount,
+        kCmdDrawIndexedIndirectCount,
+        kCmdBeginRenderPass2,
+        kCmdNextSubpass2,
+        kCmdEndRenderPass2,
+        kCmdSetEvent2,
+        kCmdResetEvent2,
+        kCmdWaitEvents2,
+        kCmdPipelineBarrier2,
+        kCmdWriteTimestamp2,
+        kCmdCopyBuffer2,
+        kCmdCopyImage2,
+        kCmdCopyBufferToImage2,
+        kCmdCopyImageToBuffer2,
+        kCmdBlitImage2,
+        kCmdResolveImage2,
+        kCmdBeginRendering,
+        kCmdEndRendering,
+        kCmdSetCullMode,
+        kCmdSetFrontFace,
+        kCmdSetPrimitiveTopology,
+        kCmdSetViewportWithCount,
+        kCmdSetScissorWithCount,
+        kCmdBindVertexBuffers2,
+        kCmdSetDepthTestEnable,
+        kCmdSetDepthWriteEnable,
+        kCmdSetDepthCompareOp,
+        kCmdSetDepthBoundsTestEnable,
+        kCmdSetStencilTestEnable,
+        kCmdSetStencilOp,
+        kCmdSetRasterizerDiscardEnable,
+        kCmdSetDepthBiasEnable,
+        kCmdSetPrimitiveRestartEnable,
+        kCmdBeginVideoCodingKHR,
+        kCmdEndVideoCodingKHR,
+        kCmdControlVideoCodingKHR,
+        kCmdDecodeVideoKHR,
+        kCmdBeginRenderingKHR,
+        kCmdEndRenderingKHR,
+        kCmdSetDeviceMaskKHR,
+        kCmdDispatchBaseKHR,
+        kCmdPushDescriptorSetKHR,
+        kCmdPushDescriptorSetWithTemplateKHR,
+        kCmdBeginRenderPass2KHR,
+        kCmdNextSubpass2KHR,
+        kCmdEndRenderPass2KHR,
+        kCmdDrawIndirectCountKHR,
+        kCmdDrawIndexedIndirectCountKHR,
+        kCmdSetFragmentShadingRateKHR,
+        kCmdSetRenderingAttachmentLocationsKHR,
+        kCmdSetRenderingInputAttachmentIndicesKHR,
+        kCmdEncodeVideoKHR,
+        kCmdSetEvent2KHR,
+        kCmdResetEvent2KHR,
+        kCmdWaitEvents2KHR,
+        kCmdPipelineBarrier2KHR,
+        kCmdWriteTimestamp2KHR,
+        kCmdWriteBufferMarker2AMD,
+        kCmdCopyBuffer2KHR,
+        kCmdCopyImage2KHR,
+        kCmdCopyBufferToImage2KHR,
+        kCmdCopyImageToBuffer2KHR,
+        kCmdBlitImage2KHR,
+        kCmdResolveImage2KHR,
+        kCmdTraceRaysIndirect2KHR,
+        kCmdBindIndexBuffer2KHR,
+        kCmdSetLineStippleKHR,
+        kCmdBindDescriptorSets2KHR,
+        kCmdPushConstants2KHR,
+        kCmdPushDescriptorSet2KHR,
+        kCmdPushDescriptorSetWithTemplate2KHR,
+        kCmdSetDescriptorBufferOffsets2EXT,
+        kCmdBindDescriptorBufferEmbeddedSamplers2EXT,
+        kCmdDebugMarkerBeginEXT,
+        kCmdDebugMarkerEndEXT,
+        kCmdDebugMarkerInsertEXT,
+        kCmdBindTransformFeedbackBuffersEXT,
+        kCmdBeginTransformFeedbackEXT,
+        kCmdEndTransformFeedbackEXT,
+        kCmdBeginQueryIndexedEXT,
+        kCmdEndQueryIndexedEXT,
+        kCmdDrawIndirectByteCountEXT,
+        kCmdCuLaunchKernelNVX,
+        kCmdDrawIndirectCountAMD,
+        kCmdDrawIndexedIndirectCountAMD,
+        kCmdBeginConditionalRenderingEXT,
+        kCmdEndConditionalRenderingEXT,
+        kCmdSetViewportWScalingNV,
+        kCmdSetDiscardRectangleEXT,
+        kCmdSetDiscardRectangleEnableEXT,
+        kCmdSetDiscardRectangleModeEXT,
+        kCmdBeginDebugUtilsLabelEXT,
+        kCmdEndDebugUtilsLabelEXT,
+        kCmdInsertDebugUtilsLabelEXT,
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    kCmdInitializeGraphScratchMemoryAMDX,
-#endif //VK_ENABLE_BETA_EXTENSIONS
+        kCmdInitializeGraphScratchMemoryAMDX,
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    kCmdDispatchGraphAMDX,
-#endif //VK_ENABLE_BETA_EXTENSIONS
+        kCmdDispatchGraphAMDX,
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    kCmdDispatchGraphIndirectAMDX,
-#endif //VK_ENABLE_BETA_EXTENSIONS
+        kCmdDispatchGraphIndirectAMDX,
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    kCmdDispatchGraphIndirectCountAMDX,
-#endif //VK_ENABLE_BETA_EXTENSIONS
-    kCmdSetSampleLocationsEXT,
-    kCmdBindShadingRateImageNV,
-    kCmdSetViewportShadingRatePaletteNV,
-    kCmdSetCoarseSampleOrderNV,
-    kCmdBuildAccelerationStructureNV,
-    kCmdCopyAccelerationStructureNV,
-    kCmdTraceRaysNV,
-    kCmdWriteAccelerationStructuresPropertiesNV,
-    kCmdWriteBufferMarkerAMD,
-    kCmdDrawMeshTasksNV,
-    kCmdDrawMeshTasksIndirectNV,
-    kCmdDrawMeshTasksIndirectCountNV,
-    kCmdSetExclusiveScissorEnableNV,
-    kCmdSetExclusiveScissorNV,
-    kCmdSetCheckpointNV,
-    kCmdSetPerformanceMarkerINTEL,
-    kCmdSetPerformanceStreamMarkerINTEL,
-    kCmdSetPerformanceOverrideINTEL,
-    kCmdSetLineStippleEXT,
-    kCmdSetCullModeEXT,
-    kCmdSetFrontFaceEXT,
-    kCmdSetPrimitiveTopologyEXT,
-    kCmdSetViewportWithCountEXT,
-    kCmdSetScissorWithCountEXT,
-    kCmdBindVertexBuffers2EXT,
-    kCmdSetDepthTestEnableEXT,
-    kCmdSetDepthWriteEnableEXT,
-    kCmdSetDepthCompareOpEXT,
-    kCmdSetDepthBoundsTestEnableEXT,
-    kCmdSetStencilTestEnableEXT,
-    kCmdSetStencilOpEXT,
-    kCmdPreprocessGeneratedCommandsNV,
-    kCmdExecuteGeneratedCommandsNV,
-    kCmdBindPipelineShaderGroupNV,
-    kCmdSetDepthBias2EXT,
-    kCmdCudaLaunchKernelNV,
-    kCmdBindDescriptorBuffersEXT,
-    kCmdSetDescriptorBufferOffsetsEXT,
-    kCmdBindDescriptorBufferEmbeddedSamplersEXT,
-    kCmdSetFragmentShadingRateEnumNV,
-    kCmdSetVertexInputEXT,
-    kCmdSubpassShadingHUAWEI,
-    kCmdBindInvocationMaskHUAWEI,
-    kCmdSetPatchControlPointsEXT,
-    kCmdSetRasterizerDiscardEnableEXT,
-    kCmdSetDepthBiasEnableEXT,
-    kCmdSetLogicOpEXT,
-    kCmdSetPrimitiveRestartEnableEXT,
-    kCmdSetColorWriteEnableEXT,
-    kCmdDrawMultiEXT,
-    kCmdDrawMultiIndexedEXT,
-    kCmdBuildMicromapsEXT,
-    kCmdCopyMicromapEXT,
-    kCmdCopyMicromapToMemoryEXT,
-    kCmdCopyMemoryToMicromapEXT,
-    kCmdWriteMicromapsPropertiesEXT,
-    kCmdDrawClusterHUAWEI,
-    kCmdDrawClusterIndirectHUAWEI,
-    kCmdCopyMemoryIndirectNV,
-    kCmdCopyMemoryToImageIndirectNV,
-    kCmdDecompressMemoryNV,
-    kCmdDecompressMemoryIndirectCountNV,
-    kCmdUpdatePipelineIndirectBufferNV,
-    kCmdSetDepthClampEnableEXT,
-    kCmdSetPolygonModeEXT,
-    kCmdSetRasterizationSamplesEXT,
-    kCmdSetSampleMaskEXT,
-    kCmdSetAlphaToCoverageEnableEXT,
-    kCmdSetAlphaToOneEnableEXT,
-    kCmdSetLogicOpEnableEXT,
-    kCmdSetColorBlendEnableEXT,
-    kCmdSetColorBlendEquationEXT,
-    kCmdSetColorWriteMaskEXT,
-    kCmdSetTessellationDomainOriginEXT,
-    kCmdSetRasterizationStreamEXT,
-    kCmdSetConservativeRasterizationModeEXT,
-    kCmdSetExtraPrimitiveOverestimationSizeEXT,
-    kCmdSetDepthClipEnableEXT,
-    kCmdSetSampleLocationsEnableEXT,
-    kCmdSetColorBlendAdvancedEXT,
-    kCmdSetProvokingVertexModeEXT,
-    kCmdSetLineRasterizationModeEXT,
-    kCmdSetLineStippleEnableEXT,
-    kCmdSetDepthClipNegativeOneToOneEXT,
-    kCmdSetViewportWScalingEnableNV,
-    kCmdSetViewportSwizzleNV,
-    kCmdSetCoverageToColorEnableNV,
-    kCmdSetCoverageToColorLocationNV,
-    kCmdSetCoverageModulationModeNV,
-    kCmdSetCoverageModulationTableEnableNV,
-    kCmdSetCoverageModulationTableNV,
-    kCmdSetShadingRateImageEnableNV,
-    kCmdSetRepresentativeFragmentTestEnableNV,
-    kCmdSetCoverageReductionModeNV,
-    kCmdOpticalFlowExecuteNV,
-    kCmdBindShadersEXT,
-    kCmdSetAttachmentFeedbackLoopEnableEXT,
-    kCmdBuildAccelerationStructuresKHR,
-    kCmdBuildAccelerationStructuresIndirectKHR,
-    kCmdCopyAccelerationStructureKHR,
-    kCmdCopyAccelerationStructureToMemoryKHR,
-    kCmdCopyMemoryToAccelerationStructureKHR,
-    kCmdWriteAccelerationStructuresPropertiesKHR,
-    kCmdTraceRaysKHR,
-    kCmdTraceRaysIndirectKHR,
-    kCmdSetRayTracingPipelineStackSizeKHR,
-    kCmdDrawMeshTasksEXT,
-    kCmdDrawMeshTasksIndirectEXT,
-    kCmdDrawMeshTasksIndirectCountEXT,
-}; // enum Type
+        kCmdDispatchGraphIndirectCountAMDX,
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+        kCmdSetSampleLocationsEXT,
+        kCmdBindShadingRateImageNV,
+        kCmdSetViewportShadingRatePaletteNV,
+        kCmdSetCoarseSampleOrderNV,
+        kCmdBuildAccelerationStructureNV,
+        kCmdCopyAccelerationStructureNV,
+        kCmdTraceRaysNV,
+        kCmdWriteAccelerationStructuresPropertiesNV,
+        kCmdWriteBufferMarkerAMD,
+        kCmdDrawMeshTasksNV,
+        kCmdDrawMeshTasksIndirectNV,
+        kCmdDrawMeshTasksIndirectCountNV,
+        kCmdSetExclusiveScissorEnableNV,
+        kCmdSetExclusiveScissorNV,
+        kCmdSetCheckpointNV,
+        kCmdSetPerformanceMarkerINTEL,
+        kCmdSetPerformanceStreamMarkerINTEL,
+        kCmdSetPerformanceOverrideINTEL,
+        kCmdSetLineStippleEXT,
+        kCmdSetCullModeEXT,
+        kCmdSetFrontFaceEXT,
+        kCmdSetPrimitiveTopologyEXT,
+        kCmdSetViewportWithCountEXT,
+        kCmdSetScissorWithCountEXT,
+        kCmdBindVertexBuffers2EXT,
+        kCmdSetDepthTestEnableEXT,
+        kCmdSetDepthWriteEnableEXT,
+        kCmdSetDepthCompareOpEXT,
+        kCmdSetDepthBoundsTestEnableEXT,
+        kCmdSetStencilTestEnableEXT,
+        kCmdSetStencilOpEXT,
+        kCmdPreprocessGeneratedCommandsNV,
+        kCmdExecuteGeneratedCommandsNV,
+        kCmdBindPipelineShaderGroupNV,
+        kCmdSetDepthBias2EXT,
+        kCmdCudaLaunchKernelNV,
+        kCmdBindDescriptorBuffersEXT,
+        kCmdSetDescriptorBufferOffsetsEXT,
+        kCmdBindDescriptorBufferEmbeddedSamplersEXT,
+        kCmdSetFragmentShadingRateEnumNV,
+        kCmdSetVertexInputEXT,
+        kCmdSubpassShadingHUAWEI,
+        kCmdBindInvocationMaskHUAWEI,
+        kCmdSetPatchControlPointsEXT,
+        kCmdSetRasterizerDiscardEnableEXT,
+        kCmdSetDepthBiasEnableEXT,
+        kCmdSetLogicOpEXT,
+        kCmdSetPrimitiveRestartEnableEXT,
+        kCmdSetColorWriteEnableEXT,
+        kCmdDrawMultiEXT,
+        kCmdDrawMultiIndexedEXT,
+        kCmdBuildMicromapsEXT,
+        kCmdCopyMicromapEXT,
+        kCmdCopyMicromapToMemoryEXT,
+        kCmdCopyMemoryToMicromapEXT,
+        kCmdWriteMicromapsPropertiesEXT,
+        kCmdDrawClusterHUAWEI,
+        kCmdDrawClusterIndirectHUAWEI,
+        kCmdCopyMemoryIndirectNV,
+        kCmdCopyMemoryToImageIndirectNV,
+        kCmdDecompressMemoryNV,
+        kCmdDecompressMemoryIndirectCountNV,
+        kCmdUpdatePipelineIndirectBufferNV,
+        kCmdSetDepthClampEnableEXT,
+        kCmdSetPolygonModeEXT,
+        kCmdSetRasterizationSamplesEXT,
+        kCmdSetSampleMaskEXT,
+        kCmdSetAlphaToCoverageEnableEXT,
+        kCmdSetAlphaToOneEnableEXT,
+        kCmdSetLogicOpEnableEXT,
+        kCmdSetColorBlendEnableEXT,
+        kCmdSetColorBlendEquationEXT,
+        kCmdSetColorWriteMaskEXT,
+        kCmdSetTessellationDomainOriginEXT,
+        kCmdSetRasterizationStreamEXT,
+        kCmdSetConservativeRasterizationModeEXT,
+        kCmdSetExtraPrimitiveOverestimationSizeEXT,
+        kCmdSetDepthClipEnableEXT,
+        kCmdSetSampleLocationsEnableEXT,
+        kCmdSetColorBlendAdvancedEXT,
+        kCmdSetProvokingVertexModeEXT,
+        kCmdSetLineRasterizationModeEXT,
+        kCmdSetLineStippleEnableEXT,
+        kCmdSetDepthClipNegativeOneToOneEXT,
+        kCmdSetViewportWScalingEnableNV,
+        kCmdSetViewportSwizzleNV,
+        kCmdSetCoverageToColorEnableNV,
+        kCmdSetCoverageToColorLocationNV,
+        kCmdSetCoverageModulationModeNV,
+        kCmdSetCoverageModulationTableEnableNV,
+        kCmdSetCoverageModulationTableNV,
+        kCmdSetShadingRateImageEnableNV,
+        kCmdSetRepresentativeFragmentTestEnableNV,
+        kCmdSetCoverageReductionModeNV,
+        kCmdOpticalFlowExecuteNV,
+        kCmdBindShadersEXT,
+        kCmdSetAttachmentFeedbackLoopEnableEXT,
+        kCmdBuildAccelerationStructuresKHR,
+        kCmdBuildAccelerationStructuresIndirectKHR,
+        kCmdCopyAccelerationStructureKHR,
+        kCmdCopyAccelerationStructureToMemoryKHR,
+        kCmdCopyMemoryToAccelerationStructureKHR,
+        kCmdWriteAccelerationStructuresPropertiesKHR,
+        kCmdTraceRaysKHR,
+        kCmdTraceRaysIndirectKHR,
+        kCmdSetRayTracingPipelineStackSizeKHR,
+        kCmdDrawMeshTasksEXT,
+        kCmdDrawMeshTasksIndirectEXT,
+        kCmdDrawMeshTasksIndirectCountEXT,
+    };  // enum Type
 
-  public:
-  static const char *GetCommandName(const Command &cmd);
+   public:
+    static const char* GetCommandName(const Command& cmd);
 
-  Type type;
-  uint32_t id;
-  void *parameters;
-}; // struct Command
+    Type type;
+    uint32_t id;
+    void* parameters;
+};  // struct Command
 
 // Define structs for command parameters
 
@@ -1255,7 +1252,7 @@ struct CmdInitializeGraphScratchMemoryAMDXArgs {
     VkCommandBuffer commandBuffer;
     VkDeviceAddress scratch;
 };
-#endif //VK_ENABLE_BETA_EXTENSIONS
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 struct CmdDispatchGraphAMDXArgs {
@@ -1263,7 +1260,7 @@ struct CmdDispatchGraphAMDXArgs {
     VkDeviceAddress scratch;
     const VkDispatchGraphCountInfoAMDX* pCountInfo;
 };
-#endif //VK_ENABLE_BETA_EXTENSIONS
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 struct CmdDispatchGraphIndirectAMDXArgs {
@@ -1271,7 +1268,7 @@ struct CmdDispatchGraphIndirectAMDXArgs {
     VkDeviceAddress scratch;
     const VkDispatchGraphCountInfoAMDX* pCountInfo;
 };
-#endif //VK_ENABLE_BETA_EXTENSIONS
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 struct CmdDispatchGraphIndirectCountAMDXArgs {
@@ -1279,7 +1276,7 @@ struct CmdDispatchGraphIndirectCountAMDXArgs {
     VkDeviceAddress scratch;
     VkDeviceAddress countInfo;
 };
-#endif //VK_ENABLE_BETA_EXTENSIONS
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 struct CmdSetSampleLocationsEXTArgs {
     VkCommandBuffer commandBuffer;
@@ -1974,7 +1971,4 @@ struct CmdDrawMeshTasksIndirectCountEXTArgs {
     uint32_t stride;
 };
 
-
-
 // NOLINTEND
-
