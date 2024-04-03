@@ -97,7 +97,7 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
 #if defined(WIN32)
             output_path_ = getenv("USERPROFILE");
 #else
-            output_path_ = "/mnt/developer/ggp";
+            output_path_ = getenv("HOME");
 #endif
             output_path_ /= "cdl";
         }
