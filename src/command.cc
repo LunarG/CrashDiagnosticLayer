@@ -186,7 +186,6 @@ VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
         WriteBeginCommandBufferMarker();
     }
 
-    tracker_.TrackPostBeginCommandBuffer(commandBuffer, pBeginInfo);
     return result;
 }
 
@@ -200,7 +199,7 @@ VkResult CommandBuffer::PreEndCommandBuffer(VkCommandBuffer commandBuffer) {
 }
 
 VkResult CommandBuffer::PostEndCommandBuffer(VkCommandBuffer commandBuffer, VkResult result) {
-    tracker_.TrackPostEndCommandBuffer(commandBuffer);
+
     buffer_state_ = CommandBufferState::kExecutable;
 
     return result;
