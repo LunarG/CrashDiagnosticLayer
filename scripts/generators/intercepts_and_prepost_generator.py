@@ -234,7 +234,6 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
             tracker_call = tracker_call.replace('Begin', 'End', 1)
 
             out.append(f'{post_func_decl}\n')
-            out.append(f'{func_call}\n')
             if vkcommand.name not in default_instrumented_functions:
                 out.append('  if (instrument_all_commands_)\n')
                 out.append('  ')
@@ -273,9 +272,7 @@ class CommandTracker
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             pre_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(f'{vkcommand.returnType} ', 'void ', 1).replace('vk', 'TrackPre', 1)
-            post_func_decl = pre_func_decl.replace('Pre', 'Post', 1)
             out.append(f'  {pre_func_decl}\n')
-            out.append(f'  {post_func_decl}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
         out.append(''' private:
@@ -348,12 +345,8 @@ void CommandTracker::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             out.append(f'  {func_call});\n')
             out.append('  commands_.push_back(cmd);\n')
             out.append('}\n')
-
-
-            func_decl = func_decl.replace('TrackPre', 'TrackPost', 1)
-            out.append(f'{func_decl}\n')
-            out.append(f'  assert(commands_.back().type == Command::Type::k{vkcommand.name[2:]});\n')
-            out.append('}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
+
+
         self.write("".join(out))
