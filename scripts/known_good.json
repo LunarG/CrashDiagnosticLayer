@@ -7,7 +7,7 @@
             "sub_dir": "Vulkan-Headers",
             "build_dir": "Vulkan-Headers/build",
             "install_dir": "Vulkan-Headers/build/install",
-            "commit": "v1.3.280"
+            "commit": "v1.3.281"
         },
         {
             "name": "Vulkan-Utility-Libraries",
@@ -29,7 +29,7 @@
             "sub_dir": "SPIRV-Headers",
             "build_dir": "SPIRV-Headers/build",
             "install_dir": "SPIRV-Headers/build/install",
-            "commit": "8b246ff75c6615ba4532fe4fde20f1be090c3764"
+            "commit": "4f7b471f1a66b6d06462cd4ba57628cc0cd087d7"
         },
         {
             "name": "yaml-cpp",
