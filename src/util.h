@@ -27,6 +27,16 @@ namespace crash_diagnostic_layer {
 
 inline void ToUpper(std::string& s) { std::transform(std::begin(s), std::end(s), std::begin(s), ::toupper); }
 
+inline std::string Uint8ToStr(uint8_t value) {
+    std::stringstream ss;
+    // cast to uint32_t to avoid 'char' output
+    ss << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(value);
+    std::string s = ss.str();
+    ToUpper(s);
+    s = "0x" + s;
+    return s;
+}
+
 inline std::string Uint32ToStr(uint32_t value) {
     std::stringstream ss;
     ss << std::setw(8) << std::setfill('0') << std::hex << value;
