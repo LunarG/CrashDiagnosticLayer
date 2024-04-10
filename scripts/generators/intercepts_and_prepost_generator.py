@@ -30,6 +30,7 @@ custom_functions = [
     'vkQueueSubmit2',
     'vkWaitSemaphoresKHR',
     'vkQueueSubmit2KHR',
+    'vkQueueBindSparse',
     'vkDebugMarkerSetObjectNameEXT',
     'vkSetDebugUtilsObjectNameEXT'
 ]
@@ -129,12 +130,15 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Post', 1).replace(';', ' override;')
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)
+            override_func_decl = post_func_decl.replace('Post', '', 1)
             if self.CommandHasReturn(vkcommand):
                 post_func_decl = post_func_decl.replace(')', f',\n    {vkcommand.returnType}                                    result)')
             if self.InterceptPreCommand(vkcommand):
                 out.append(f'{pre_func_decl}\n')
             if self.InterceptPostCommand(vkcommand):
                 out.append(f'{post_func_decl}\n')
+            if self.InterceptOverrideCommand(vkcommand):
+                out.append(f'{override_func_decl}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
         self.write("".join(out))

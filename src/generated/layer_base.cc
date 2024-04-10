@@ -155,21 +155,6 @@ void InterceptGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_
     layer_data->interceptor->PostGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
 }
 
-VkResult InterceptQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(queue));
-    layer_data->interceptor->PreQueueSubmit(queue, submitCount, pSubmits, fence);
-
-    PFN_vkQueueSubmit pfn = layer_data->dispatch_table.QueueSubmit;
-    if (pfn != nullptr) {
-        result = pfn(queue, submitCount, pSubmits, fence);
-    }
-
-    result = layer_data->interceptor->PostQueueSubmit(queue, submitCount, pSubmits, fence, result);
-    return result;
-}
-
 VkResult InterceptQueueWaitIdle(VkQueue queue) {
     VkResult result = VK_SUCCESS;
 
@@ -197,22 +182,6 @@ VkResult InterceptDeviceWaitIdle(VkDevice device) {
     }
 
     result = layer_data->interceptor->PostDeviceWaitIdle(device, result);
-    return result;
-}
-
-VkResult InterceptQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
-                                  VkFence fence) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(queue));
-    layer_data->interceptor->PreQueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
-
-    PFN_vkQueueBindSparse pfn = layer_data->dispatch_table.QueueBindSparse;
-    if (pfn != nullptr) {
-        result = pfn(queue, bindInfoCount, pBindInfo, fence);
-    }
-
-    result = layer_data->interceptor->PostQueueBindSparse(queue, bindInfoCount, pBindInfo, fence, result);
     return result;
 }
 
@@ -1260,21 +1229,6 @@ void InterceptCmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageF
     layer_data->interceptor->PostCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
 
-VkResult InterceptQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(queue));
-    layer_data->interceptor->PreQueueSubmit2(queue, submitCount, pSubmits, fence);
-
-    PFN_vkQueueSubmit2 pfn = layer_data->dispatch_table.QueueSubmit2;
-    if (pfn != nullptr) {
-        result = pfn(queue, submitCount, pSubmits, fence);
-    }
-
-    result = layer_data->interceptor->PostQueueSubmit2(queue, submitCount, pSubmits, fence, result);
-    return result;
-}
-
 void InterceptCmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
@@ -1951,21 +1905,6 @@ void InterceptCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineSta
     }
 
     layer_data->interceptor->PostCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
-}
-
-VkResult InterceptQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(queue));
-    layer_data->interceptor->PreQueueSubmit2KHR(queue, submitCount, pSubmits, fence);
-
-    PFN_vkQueueSubmit2KHR pfn = layer_data->dispatch_table.QueueSubmit2KHR;
-    if (pfn != nullptr) {
-        result = pfn(queue, submitCount, pSubmits, fence);
-    }
-
-    result = layer_data->interceptor->PostQueueSubmit2KHR(queue, submitCount, pSubmits, fence, result);
-    return result;
 }
 
 void InterceptCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
@@ -4191,6 +4130,35 @@ void InterceptDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAlloc
     device_data->interceptor->PostDestroyDevice(device, pAllocator);
 
     FreeDeviceLayerData(device_key);
+}
+
+VkResult InterceptQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(queue));
+    return layer_data->interceptor->QueueSubmit(queue, submitCount, pSubmits, fence);
+}
+
+VkResult InterceptQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
+                                  VkFence fence) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(queue));
+    return layer_data->interceptor->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+}
+
+VkResult InterceptQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(queue));
+    return layer_data->interceptor->QueueSubmit2(queue, submitCount, pSubmits, fence);
+}
+
+VkResult InterceptQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(queue));
+    return layer_data->interceptor->QueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
 VkResult InterceptEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties* pProperties) {

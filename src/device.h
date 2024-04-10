@@ -19,6 +19,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -44,6 +45,7 @@ const MarkerType kMarkerType = MarkerType::kUint32;
 
 class Context;
 struct DeviceCreateInfo;
+class Logger;
 
 // Options when dumping a command buffer to a log file.
 typedef uint32_t CommandBufferDumpOptions;
@@ -65,6 +67,49 @@ struct DeviceAddressRecord {
     uint64_t object_handle;
     std::string object_name;
     std::chrono::time_point<std::chrono::high_resolution_clock> when;
+};
+
+enum QueueOperationType {
+    kQueueSubmit,
+    kQueueBindSparse,
+    kQueueSubmit2,
+};
+
+// Original bind sparse info with the submit tracker that tracks semaphores for
+// the respective device.
+struct PackedBindSparseInfo {
+    const VkQueue queue;
+    const uint32_t bind_info_count;
+    const VkBindSparseInfo* bind_infos;
+    SemaphoreTracker* semaphore_tracker;
+
+    PackedBindSparseInfo(VkQueue queue_, uint32_t bind_info_count_, const VkBindSparseInfo* bind_infos_)
+        : queue(queue_), bind_info_count(bind_info_count_), bind_infos(bind_infos_){};
+};
+
+// Expanded bind sparse info, including all the information needed to correctly
+// insert semaphore tracking VkSubmitInfos between vkQueueBindSparse calls.
+struct ExpandedBindSparseInfo {
+    // Input: original bind sparse info.
+    const PackedBindSparseInfo* packed_bind_sparse_info;
+    // Vector of queue operation types, used to control interleaving order.
+    std::vector<QueueOperationType> queue_operation_types;
+    // Vector of submit info structs to be submitted to the queue.
+    std::vector<VkSubmitInfo> submit_infos;
+    // Vector of bool, specifying if a submit info includes a signal operation on
+    // a timeline semaphore.
+    std::vector<bool> has_timeline_semaphore_info;
+    // Place holder for timeline semaphore infos used in queue submit infos.
+    std::vector<VkTimelineSemaphoreSubmitInfoKHR> timeline_semaphore_infos;
+    // Place holder for vectors of binary semaphores used in a wait semaphore
+    // operation in a bind sparse info. This is needed since we need to signal
+    // these semaphores in the same vkQueueSubmit that we consume them for
+    // tracking (so the bind sparse info which is the real consumer of the
+    // semaphore can proceed).
+    std::vector<std::vector<VkSemaphore>> wait_binary_semaphores;
+
+    ExpandedBindSparseInfo(PackedBindSparseInfo* packed_bind_sparse_info_)
+        : packed_bind_sparse_info(packed_bind_sparse_info_){};
 };
 
 class Device {
@@ -106,7 +151,7 @@ class Device {
 
     bool ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, YAML::Emitter& os);
     bool ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, YAML::Emitter& os);
-    void DeleteCommandBuffers(const VkCommandBuffer* vk_cmds, uint32_t cb_count);
+    void DeleteCommandBuffers(VkCommandPool vk_pool, const VkCommandBuffer* vk_cmds, uint32_t cb_count);
 
     void DumpCommandBuffers(YAML::Emitter& os, const char* section_name, CommandBufferDumpOptions options,
                             bool dump_all_command_buffers) const;
@@ -140,7 +185,8 @@ class Device {
 
     void RegisterHelperCommandPool(uint32_t queueFamilyIndex, VkCommandPool commandPool);
     VkCommandPool GetHelperCommandPool(uint32_t queueFamilyIndex);
-    std::vector<VkCommandPool> ReturnAndEraseCommandPools();
+    VkCommandPool GetHelperCommandPool(VkQueue queue);
+    void EraseCommandPools();
 
     bool AllocateMarker(Marker* marker);
     void FreeMarker(const Marker marker);
@@ -150,6 +196,42 @@ class Device {
     YAML::Emitter& Print(YAML::Emitter& stream) const;
 
     void MemoryBindEvent(const DeviceAddressRecord& record, bool multi_device);
+
+    VkResult QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence);
+    VkResult QueueSubmitWithoutTrackingSemaphores(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits,
+                                                  VkFence fence);
+
+    VkResult QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence);
+
+    VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence);
+    VkResult QueueSubmit2WithoutTrackingSemaphores(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
+                                                   VkFence fence);
+
+    void PostSubmit(VkQueue queue, VkResult result);
+
+    QueueSubmitId GetNextQueueSubmitId() { return ++queue_submit_index_; };
+    void LogSubmitInfoSemaphores(VkQueue vk_queue, SubmitInfoId submit_info_id);
+    void StoreSubmitHelperCommandBuffersInfo(SubmitInfoId submit_info_id, VkCommandPool vk_pool,
+                                             VkCommandBuffer start_marker_cb, VkCommandBuffer end_marker_cb);
+
+    VkResult RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
+                               VkCommandBuffer vk_command_buffer);
+
+    VkResult RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
+                                VkCommandBuffer vk_command_buffer);
+
+    QueueBindSparseId GetNextQueueBindSparseId() { return ++queue_bind_sparse_index_; };
+
+    VkResult RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id, const VkSubmitInfo* vk_submit_info,
+                                          VkCommandPool vk_pool);
+
+    bool ShouldExpandQueueBindSparseToTrackSemaphores(PackedBindSparseInfo* packed_bind_sparse_info);
+    void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
+    void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
+
+    Logger& GetLogger() const;
+
+    std::vector<VkCommandBuffer> AllocHelperCBs(VkCommandPool vk_command_pool, uint32_t count);
 
    private:
     Context* context_ = nullptr;
@@ -217,8 +299,9 @@ class Device {
     PFN_vkGetDeviceFaultInfoEXT pfn_vkGetDeviceFaultInfoEXT = nullptr;
 
     vku::sparse::range_map<VkDeviceAddress, DeviceAddressRecord> address_map_;
-};
 
-using DevicePtr = std::unique_ptr<Device>;
+    std::atomic<QueueSubmitId> queue_submit_index_{0};
+    std::atomic<QueueBindSparseId> queue_bind_sparse_index_{0};
+};
 
 }  // namespace crash_diagnostic_layer

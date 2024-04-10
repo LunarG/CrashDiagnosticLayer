@@ -18,6 +18,7 @@
 #include "device.h"
 
 #include <algorithm>
+#include <cinttypes>
 #include <iomanip>
 
 #include "cdl.h"
@@ -186,6 +187,8 @@ VkPhysicalDevice Device::GetVkGpu() const { return vk_physical_device_; }
 
 VkDevice Device::GetVkDevice() const { return vk_device_; }
 
+Logger& Device::GetLogger() const { return *context_->GetLogger(); }
+
 bool Device::HasBufferMarker() const { return extensions_present_.amd_buffer_marker; }
 
 const std::vector<VkQueueFamilyProperties>& Device::GetVkQueueFamilyProperties() const {
@@ -314,7 +317,7 @@ void Device::DumpCommandBuffers(YAML::Emitter& os, const char* section_name, Com
     std::map<uint64_t /* submit_info_id*/, std::vector<CommandBuffer*>> sorted_command_buffers;
     std::lock_guard<std::recursive_mutex> lock(command_buffers_mutex_);
     for (auto cb : command_buffers_) {
-        auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
+        auto p_cmd = GetCommandBuffer(cb);
         if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
             if (dump_all_command_buffers ||
                 (p_cmd->HasBufferMarker() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution())) {
@@ -353,11 +356,26 @@ CommandPool* Device::GetCommandPool(VkCommandPool vk_command_pool) {
     return command_pools_[vk_command_pool].get();
 }
 
-void Device::AllocateCommandBuffers(VkCommandPool vk_command_pool, const VkCommandBufferAllocateInfo* allocate_info,
+void Device::AllocateCommandBuffers(VkCommandPool vk_pool, const VkCommandBufferAllocateInfo* allocate_info,
                                     VkCommandBuffer* command_buffers) {
-    std::lock_guard<std::mutex> lock(command_pools_mutex_);
-    assert(command_pools_.find(vk_command_pool) != command_pools_.end());
-    command_pools_[vk_command_pool]->AllocateCommandBuffers(allocate_info, command_buffers);
+    bool has_buffer_markers;
+    {
+        std::lock_guard<std::mutex> lock(command_pools_mutex_);
+        assert(command_pools_.find(vk_pool) != command_pools_.end());
+        command_pools_[vk_pool]->AllocateCommandBuffers(allocate_info, command_buffers);
+        has_buffer_markers = command_pools_[vk_pool]->HasBufferMarkers();
+    }
+    // TODO locking here?
+    // create command buffers tracking data
+    for (uint32_t i = 0; i < allocate_info->commandBufferCount; ++i) {
+        VkCommandBuffer vk_cmd = command_buffers[i];
+
+        auto cmd = std::make_unique<CommandBuffer>(this, vk_pool, vk_cmd, allocate_info, has_buffer_markers);
+        cmd->SetInstrumentAllCommands(context_->InstrumentAllCommands());
+
+        SetCommandBuffer(vk_cmd, std::move(cmd));
+        AddCommandBuffer(vk_cmd);
+    }
 }
 
 // Write out information about an invalid command buffer reset.
@@ -401,7 +419,7 @@ bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, YAML::Emitter& 
 }
 
 bool Device::ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, YAML::Emitter& os) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_command_buffer);
+    auto p_cmd = GetCommandBuffer(vk_command_buffer);
     assert(p_cmd != nullptr);
     if (p_cmd != nullptr) {
         return ValidateCommandBufferNotInUse(p_cmd, os);
@@ -419,7 +437,7 @@ void Device::ValidateCommandPoolState(VkCommandPool vk_command_pool, YAML::Emitt
     // to.
     auto command_buffers = command_pools_[vk_command_pool]->GetCommandBuffers(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
     for (auto vk_cmd : command_buffers) {
-        auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_cmd);
+        auto p_cmd = GetCommandBuffer(vk_cmd);
         if (p_cmd != nullptr) {
             ValidateCommandBufferNotInUse(p_cmd, os);
         }
@@ -433,7 +451,7 @@ void Device::ResetCommandPool(VkCommandPool vk_command_pool) {
     for (auto cb_level : cb_levels) {
         auto command_buffers = command_pools_[vk_command_pool]->GetCommandBuffers(cb_level);
         for (auto vk_cmd : command_buffers) {
-            auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_cmd);
+            auto p_cmd = GetCommandBuffer(vk_cmd);
             if (p_cmd != nullptr) {
                 p_cmd->Reset();
             }
@@ -449,24 +467,25 @@ void Device::DeleteCommandPool(VkCommandPool vk_command_pool) {
     for (auto cb_level : cb_levels) {
         auto command_buffers = command_pools_[vk_command_pool]->GetCommandBuffers(cb_level);
         for (auto vk_cmd : command_buffers) {
-            auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(vk_cmd);
+            auto p_cmd = GetCommandBuffer(vk_cmd);
             if (p_cmd != nullptr) {
                 command_buffers_.erase(std::remove(command_buffers_.begin(), command_buffers_.end(), vk_cmd),
                                        command_buffers_.end());
-                crash_diagnostic_layer::DeleteCommandBuffer(vk_cmd);
+                DeleteCommandBuffer(vk_cmd);
             }
         }
     }
     command_pools_.erase(vk_command_pool);
 }
 
-void Device::DeleteCommandBuffers(const VkCommandBuffer* vk_cmds, uint32_t cb_count) {
+void Device::DeleteCommandBuffers(VkCommandPool vk_pool, const VkCommandBuffer* vk_cmds, uint32_t cb_count) {
+    GetCommandPool(vk_pool)->FreeCommandBuffers(cb_count, vk_cmds);
     {
         std::lock_guard<std::recursive_mutex> lock(command_buffers_mutex_);
         for (uint32_t i = 0; i < cb_count; ++i) {
             command_buffers_.erase(std::remove(command_buffers_.begin(), command_buffers_.end(), vk_cmds[i]),
                                    command_buffers_.end());
-            crash_diagnostic_layer::DeleteCommandBuffer(vk_cmds[i]);
+            DeleteCommandBuffer(vk_cmds[i]);
         }
     }
 }
@@ -582,15 +601,21 @@ VkCommandPool Device::GetHelperCommandPool(uint32_t queueFamilyIndex) {
     return helper_command_pools_[queueFamilyIndex];
 }
 
-std::vector<VkCommandPool> Device::ReturnAndEraseCommandPools() {
-    std::vector<VkCommandPool> command_pools;
-    std::lock_guard<std::mutex> lock(helper_command_pools_mutex_);
-    auto itr = helper_command_pools_.begin();
-    while (itr != helper_command_pools_.end()) {
-        command_pools.push_back(itr->second);
-        itr = helper_command_pools_.erase(itr);
+VkCommandPool Device::GetHelperCommandPool(VkQueue vk_queue) {
+    assert(context_->TrackingSemaphores() == true);
+    if (vk_queue == VK_NULL_HANDLE) {
+        return VK_NULL_HANDLE;
     }
-    return command_pools;
+    uint32_t queue_family_index = GetQueueFamilyIndex(vk_queue);
+    return GetHelperCommandPool(queue_family_index);
+}
+
+void Device::EraseCommandPools() {
+    std::lock_guard<std::mutex> lock(helper_command_pools_mutex_);
+    for (auto& item : helper_command_pools_) {
+        device_dispatch_table_.DestroyCommandPool(vk_device_, item.second, nullptr);
+    }
+    helper_command_pools_.clear();
 }
 
 //////////////////////////////////////
@@ -768,6 +793,448 @@ void Device::MemoryBindEvent(const DeviceAddressRecord& rec, bool multi_device) 
 
     vku::sparse::range<VkDeviceAddress> range(rec.base, rec.base + rec.size);
     address_map_.overwrite_range(std::make_pair(range, rec));
+}
+
+void Device::PostSubmit(VkQueue queue, VkResult result) {
+    bool dump = IsVkError(result) || context_->CountSubmit();
+    if (dump) {
+        context_->DumpDeviceExecutionState(vk_device_);
+    }
+}
+
+VkResult Device::QueueSubmitWithoutTrackingSemaphores(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits,
+                                                      VkFence fence) {
+    VkResult result = device_dispatch_table_.QueueSubmit(queue, submitCount, pSubmits, fence);
+    PostSubmit(queue, result);
+    return result;
+}
+
+VkResult Device::QueueSubmit2WithoutTrackingSemaphores(VkQueue queue, uint32_t submitCount,
+                                                       const VkSubmitInfo2* pSubmits, VkFence fence) {
+    VkResult result;
+    if (device_dispatch_table_.QueueSubmit2) {
+        result = device_dispatch_table_.QueueSubmit2(queue, submitCount, pSubmits, fence);
+    } else {
+        result = device_dispatch_table_.QueueSubmit2KHR(queue, submitCount, pSubmits, fence);
+    }
+    PostSubmit(queue, result);
+    return result;
+}
+
+std::vector<VkCommandBuffer> Device::AllocHelperCBs(VkCommandPool vk_command_pool, uint32_t count) {
+    std::vector<VkCommandBuffer> new_buffers(count, VK_NULL_HANDLE);
+
+    auto cb_allocate_info = vku::InitStruct<VkCommandBufferAllocateInfo>();
+    cb_allocate_info.commandPool = vk_command_pool;
+    cb_allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    cb_allocate_info.commandBufferCount = count;
+
+    auto result = device_dispatch_table_.AllocateCommandBuffers(vk_device_, &cb_allocate_info, new_buffers.data());
+    if (result != VK_SUCCESS) {
+        new_buffers.clear();
+        return new_buffers;
+    }
+    for (uint32_t i = 0; i < count; i++) {
+        SetDeviceLoaderData(vk_device_, new_buffers[i]);
+    }
+    return new_buffers;
+}
+
+VkResult Device::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
+    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        const auto& submit_info = pSubmits[submit_index];
+        for (uint32_t command_buffer_index = 0; command_buffer_index < submit_info.commandBufferCount;
+             ++command_buffer_index) {
+            auto cmd = crash_diagnostic_layer::GetCommandBuffer(submit_info.pCommandBuffers[command_buffer_index]);
+            if (cmd != nullptr) {
+                cmd->QueueSubmit(queue, fence);
+            }
+        }
+    }
+    VkResult result;
+
+    if (!context_->TrackingSemaphores()) {
+        return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
+    }
+
+    VkCommandPool vk_pool = GetHelperCommandPool(queue);
+    if (vk_pool == VK_NULL_HANDLE) {
+        GetLogger().LogError(
+            "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
+            "state. Not tracking semaphores.");
+        return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
+    }
+
+    bool trace_all_semaphores = context_->TracingAllSemaphores();
+    auto queue_submit_id = GetNextQueueSubmitId();
+    auto semaphore_tracking_submits = reinterpret_cast<VkSubmitInfo*>(alloca(sizeof(VkSubmitInfo) * submitCount));
+
+    std::vector<VkCommandBuffer> new_buffers = AllocHelperCBs(vk_pool, 2 * submitCount);
+    if (new_buffers.empty()) {
+        GetLogger().LogError(
+            "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
+            "state. Not tracking semaphores.");
+        return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
+    }
+
+    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        // Add the semaphore tracking command buffers to the beginning and the end
+        // of the queue submit info.
+        semaphore_tracking_submits[submit_index] = pSubmits[submit_index];
+        auto cb_count = pSubmits[submit_index].commandBufferCount;
+        VkCommandBuffer* extended_cbs = (VkCommandBuffer*)alloca((cb_count + 2) * sizeof(VkCommandBuffer));
+        semaphore_tracking_submits[submit_index].pCommandBuffers = extended_cbs;
+        semaphore_tracking_submits[submit_index].commandBufferCount = cb_count + 2;
+
+        extended_cbs[0] = new_buffers[submit_index];
+        for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
+            extended_cbs[cb_index + 1] = pSubmits[submit_index].pCommandBuffers[cb_index];
+        }
+        extended_cbs[cb_count + 1] = new_buffers[submit_index + 1];
+
+        auto submit_info_id =
+            submit_tracker_->RegisterSubmitInfo(queue_submit_id, &semaphore_tracking_submits[submit_index]);
+        StoreSubmitHelperCommandBuffersInfo(submit_info_id, vk_pool, extended_cbs[0], extended_cbs[cb_count + 1]);
+        for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
+            auto command_buffer = GetCommandBuffer(pSubmits[submit_index].pCommandBuffers[cb_index]);
+            assert(command_buffer != nullptr);
+            if (command_buffer) {
+                command_buffer->SetSubmitInfoId(submit_info_id);
+            }
+        }
+
+        RecordSubmitStart(queue_submit_id, submit_info_id, extended_cbs[0]);
+        RecordSubmitFinish(queue_submit_id, submit_info_id, extended_cbs[cb_count + 1]);
+
+        if (trace_all_semaphores) {
+            LogSubmitInfoSemaphores(queue, submit_info_id);
+        }
+    }
+
+    result = device_dispatch_table_.QueueSubmit(queue, submitCount, semaphore_tracking_submits, fence);
+
+    PostSubmit(queue, result);
+    return result;
+}
+
+VkResult Device::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
+    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        const auto& submit_info = pSubmits[submit_index];
+        for (uint32_t command_buffer_index = 0; command_buffer_index < submit_info.commandBufferInfoCount;
+             ++command_buffer_index) {
+            auto cmd = crash_diagnostic_layer::GetCommandBuffer(
+                submit_info.pCommandBufferInfos[command_buffer_index].commandBuffer);
+            if (cmd != nullptr) {
+                cmd->QueueSubmit(queue, fence);
+            }
+        }
+    }
+    VkResult result;
+
+    if (!context_->TrackingSemaphores()) {
+        return QueueSubmit2WithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
+    }
+
+    VkCommandPool vk_pool = GetHelperCommandPool(queue);
+    if (vk_pool == VK_NULL_HANDLE) {
+        GetLogger().LogError(
+            "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
+            "state. Not tracking semaphores.");
+        return QueueSubmit2WithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
+    }
+
+    bool trace_all_semaphores = context_->TracingAllSemaphores();
+    auto queue_submit_id = GetNextQueueSubmitId();
+    auto semaphore_tracking_submits = reinterpret_cast<VkSubmitInfo2*>(alloca(sizeof(VkSubmitInfo) * submitCount));
+
+    std::vector<VkCommandBuffer> new_buffers = AllocHelperCBs(vk_pool, 2 * submitCount);
+    if (new_buffers.empty()) {
+        GetLogger().LogError(
+            "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
+            "state. Not tracking semaphores.");
+        return QueueSubmit2WithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
+    }
+
+    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        // Add the semaphore tracking command buffers to the beginning and the end
+        // of the queue submit info.
+        semaphore_tracking_submits[submit_index] = pSubmits[submit_index];
+        auto cb_count = pSubmits[submit_index].commandBufferInfoCount;
+        VkCommandBufferSubmitInfo* extended_cbs =
+            (VkCommandBufferSubmitInfo*)alloca((cb_count + 2) * sizeof(VkCommandBufferSubmitInfo));
+        semaphore_tracking_submits[submit_index].pCommandBufferInfos = extended_cbs;
+        semaphore_tracking_submits[submit_index].commandBufferInfoCount = cb_count + 2;
+
+        extended_cbs[0] = vku::InitStruct<VkCommandBufferSubmitInfo>();
+        extended_cbs[0].commandBuffer = new_buffers[submit_index];
+        for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
+            extended_cbs[cb_index + 1] = pSubmits[submit_index].pCommandBufferInfos[cb_index];
+        }
+        extended_cbs[cb_count + 1] = vku::InitStruct<VkCommandBufferSubmitInfo>();
+        extended_cbs[cb_count + 1].commandBuffer = new_buffers[submit_index + 1];
+
+        auto submit_info_id =
+            submit_tracker_->RegisterSubmitInfo(queue_submit_id, &semaphore_tracking_submits[submit_index]);
+        StoreSubmitHelperCommandBuffersInfo(submit_info_id, vk_pool, extended_cbs[0].commandBuffer,
+                                            extended_cbs[cb_count + 1].commandBuffer);
+        for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
+            auto command_buffer = GetCommandBuffer(pSubmits[submit_index].pCommandBufferInfos[cb_index].commandBuffer);
+            assert(command_buffer != nullptr);
+            if (command_buffer) {
+                command_buffer->SetSubmitInfoId(submit_info_id);
+            }
+        }
+
+        RecordSubmitStart(queue_submit_id, submit_info_id, extended_cbs[0].commandBuffer);
+        RecordSubmitFinish(queue_submit_id, submit_info_id, extended_cbs[cb_count + 1].commandBuffer);
+
+        if (trace_all_semaphores) {
+            LogSubmitInfoSemaphores(queue, submit_info_id);
+        }
+    }
+
+    if (device_dispatch_table_.QueueSubmit2) {
+        result = device_dispatch_table_.QueueSubmit2(queue, submitCount, pSubmits, fence);
+    } else {
+        result = device_dispatch_table_.QueueSubmit2KHR(queue, submitCount, pSubmits, fence);
+    }
+
+    PostSubmit(queue, result);
+    return result;
+}
+
+VkResult Device::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
+                                 VkFence fence) {
+    VkResult result;
+    bool track_semaphores = context_->TrackingSemaphores();
+    // If semaphore tracking is not requested, pass the call to the dispatch table
+    // as is.
+    if (!track_semaphores) {
+        result = device_dispatch_table_.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+        PostSubmit(queue, result);
+        return result;
+    }
+
+    auto qbind_sparse_id = GetNextQueueBindSparseId();
+    bool trace_all_semaphores = context_->TracingAllSemaphores();
+    if (track_semaphores && trace_all_semaphores) {
+        LogBindSparseInfosSemaphores(queue, bindInfoCount, pBindInfo);
+    }
+
+    // Ensure the queue is registered before and we know which command pool use
+    // for this queue. If not, pass the call to dispatch table.
+    VkCommandPool vk_pool = GetHelperCommandPool(queue);
+    if (vk_pool == VK_NULL_HANDLE) {
+        GetLogger().LogWarning("device handle not found for queue 0x" PRIx64
+                               ", Ignoring semaphore signals in vkQueueBindSparse call.",
+                               (uint64_t)queue);
+        result = device_dispatch_table_.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+        PostSubmit(queue, result);
+        return result;
+    }
+
+    // If we don't need to expand the bind sparse info, pass the call to dispatch
+    // table.
+    PackedBindSparseInfo packed_bind_sparse_info(queue, bindInfoCount, pBindInfo);
+    if (!ShouldExpandQueueBindSparseToTrackSemaphores(&packed_bind_sparse_info)) {
+        result = device_dispatch_table_.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+        PostSubmit(queue, result);
+        return result;
+    }
+
+    ExpandedBindSparseInfo expanded_bind_sparse_info(&packed_bind_sparse_info);
+    ExpandBindSparseInfo(&expanded_bind_sparse_info);
+
+    // For each VkSubmitInfo added to the expanded vkQueueBindSparse, check if
+    // pNext should point to a VkTimelineSemaphoreSubmitInfoKHR struct.
+    size_t tsinfo_it = 0;
+    for (int i = 0; i < expanded_bind_sparse_info.submit_infos.size(); i++) {
+        if (expanded_bind_sparse_info.has_timeline_semaphore_info[i]) {
+            expanded_bind_sparse_info.submit_infos[i].pNext =
+                &expanded_bind_sparse_info.timeline_semaphore_infos[tsinfo_it++];
+        }
+    }
+
+    // For each VkSubmitInfo added to the expanded vkQueueBindSparse, reserve a
+    // command buffer and put in the submit.
+    // Allocate the required command buffers
+    auto num_submits = (uint32_t)expanded_bind_sparse_info.submit_infos.size();
+
+    std::vector<VkCommandBuffer> helper_cbs = AllocHelperCBs(vk_pool, num_submits);
+    if (helper_cbs.empty()) {
+        // Silently pass the call to the dispatch table.
+        result = device_dispatch_table_.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+        PostSubmit(queue, result);
+        return result;
+    }
+
+    uint32_t next_wait_helper_submit = 0;
+    for (uint32_t i = 0; i < num_submits; i++) {
+        auto& exp_info = expanded_bind_sparse_info.submit_infos[i];
+        exp_info.pCommandBuffers = &helper_cbs[i];
+        exp_info.commandBufferCount = 1;
+
+        RecordBindSparseHelperSubmit(qbind_sparse_id, &exp_info, vk_pool);
+
+        if (exp_info.signalSemaphoreCount > 0) {
+            // Rip out semaphore signal operations from signal helper submit. We
+            // needed this info to correctly record the signal semaphore markers, but
+            // we don't need the helper submits to signal the semaphores that are
+            // already signalled in a bind sparse info.
+            exp_info.signalSemaphoreCount = 0;
+            exp_info.pSignalSemaphores = nullptr;
+            exp_info.pNext = nullptr;
+        } else {
+            // This is a wait helper submit. We need to signal the wait binary
+            // semaphores that the helper submit is waiting on.
+            exp_info.signalSemaphoreCount =
+                (uint32_t)expanded_bind_sparse_info.wait_binary_semaphores[next_wait_helper_submit].size();
+            exp_info.pSignalSemaphores =
+                expanded_bind_sparse_info.wait_binary_semaphores[next_wait_helper_submit].data();
+            next_wait_helper_submit++;
+        }
+    }
+
+    uint32_t next_bind_sparse_info_index = 0;
+    uint32_t available_bind_sparse_info_counter = 0;
+    uint32_t next_submit_info_index = 0;
+    VkResult last_bind_result = VK_SUCCESS;
+    for (int i = 0; i < expanded_bind_sparse_info.queue_operation_types.size(); i++) {
+        if (expanded_bind_sparse_info.queue_operation_types[i] == crash_diagnostic_layer::kQueueSubmit) {
+            // Send all the available bind sparse infos before submit info. Signal the
+            // fence only if the last bind sparse info is included.
+            if (available_bind_sparse_info_counter) {
+                VkFence bind_fence = VK_NULL_HANDLE;
+                if (bindInfoCount == next_bind_sparse_info_index + available_bind_sparse_info_counter) {
+                    bind_fence = fence;
+                }
+                result = device_dispatch_table_.QueueBindSparse(queue, available_bind_sparse_info_counter,
+                                                                &pBindInfo[next_bind_sparse_info_index], bind_fence);
+                if (result != VK_SUCCESS) {
+                    last_bind_result = result;
+                    break;
+                }
+                next_bind_sparse_info_index += available_bind_sparse_info_counter;
+                available_bind_sparse_info_counter = 0;
+            }
+            // Send the submit info
+            result = device_dispatch_table_.QueueSubmit(
+                queue, 1, &expanded_bind_sparse_info.submit_infos[next_submit_info_index], VK_NULL_HANDLE);
+            if (result != VK_SUCCESS) {
+                GetLogger().LogWarning(
+                    "helper vkQueueSubmit failed while tracking semaphores in a vkQueueBindSparse call. Semaphore "
+                    "values in the final report might be wrong. Result: 0x%08x",
+                    result);
+                break;
+            }
+            next_submit_info_index++;
+        } else {
+            available_bind_sparse_info_counter++;
+        }
+    }
+    if (last_bind_result != VK_SUCCESS) {
+        GetLogger().LogWarning(
+            "QueueBindSparse: Unexpected VkResult = 0x%8x after submitting %d bind sparse infos and %d "
+            " helper submit infos to the queue. Submitting the remained bind sparse infos at once.",
+            last_bind_result, next_bind_sparse_info_index, next_submit_info_index);
+        return device_dispatch_table_.QueueBindSparse(queue, bindInfoCount - next_bind_sparse_info_index,
+                                                      &pBindInfo[next_bind_sparse_info_index], fence);
+    }
+    // If any remaining bind sparse infos, submit them all.
+    if (bindInfoCount > next_bind_sparse_info_index + available_bind_sparse_info_counter) {
+        return device_dispatch_table_.QueueBindSparse(queue, bindInfoCount - next_submit_info_index,
+                                                      &pBindInfo[next_bind_sparse_info_index], fence);
+    }
+    PostSubmit(queue, last_bind_result);
+    return last_bind_result;
+}
+
+void Device::StoreSubmitHelperCommandBuffersInfo(SubmitInfoId submit_info_id, VkCommandPool vk_pool,
+                                                 VkCommandBuffer start_marker_cb, VkCommandBuffer end_marker_cb) {
+    assert(context_->TrackingSemaphores() == true);
+    submit_tracker_->StoreSubmitHelperCommandBuffersInfo(submit_info_id, vk_pool, start_marker_cb, end_marker_cb);
+}
+
+VkResult Device::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id, VkCommandBuffer cb) {
+    assert(context_->TrackingSemaphores() == true);
+    auto commandBufferBeginInfo = vku::InitStruct<VkCommandBufferBeginInfo>();
+    VkResult result = device_dispatch_table_.BeginCommandBuffer(cb, &commandBufferBeginInfo);
+    assert(result == VK_SUCCESS);
+    if (result != VK_SUCCESS) {
+        GetLogger().LogWarning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        return result;
+    }
+
+    submit_tracker_->RecordSubmitStart(qsubmit_id, submit_info_id, cb);
+
+    result = device_dispatch_table_.EndCommandBuffer(cb);
+    assert(result == VK_SUCCESS);
+    return result;
+}
+
+VkResult Device::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id, VkCommandBuffer cb) {
+    assert(context_->TrackingSemaphores() == true);
+    auto commandBufferBeginInfo = vku::InitStruct<VkCommandBufferBeginInfo>();
+    VkResult result = device_dispatch_table_.BeginCommandBuffer(cb, &commandBufferBeginInfo);
+    assert(result == VK_SUCCESS);
+    if (result != VK_SUCCESS) {
+        GetLogger().LogWarning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        return result;
+    }
+
+    submit_tracker_->RecordSubmitFinish(qsubmit_id, submit_info_id, cb);
+    submit_tracker_->CleanupSubmitInfos();
+    result = device_dispatch_table_.EndCommandBuffer(cb);
+    assert(result == VK_SUCCESS);
+    return result;
+}
+
+void Device::LogSubmitInfoSemaphores(VkQueue vk_queue, SubmitInfoId submit_info_id) {
+    assert(context_->TrackingSemaphores() == true);
+    assert(context_->TracingAllSemaphores() == true);
+    if (submit_tracker_->SubmitInfoHasSemaphores(submit_info_id)) {
+        std::string semaphore_log = submit_tracker_->GetSubmitInfoSemaphoresLog(vk_device_, vk_queue, submit_info_id);
+        GetLogger().LogInfo(semaphore_log);
+    }
+}
+
+VkResult Device::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id, const VkSubmitInfo* vk_submit_info,
+                                              VkCommandPool vk_pool) {
+    auto commandBufferBeginInfo = vku::InitStruct<VkCommandBufferBeginInfo>();
+    VkResult result =
+        device_dispatch_table_.BeginCommandBuffer(vk_submit_info->pCommandBuffers[0], &commandBufferBeginInfo);
+    assert(result == VK_SUCCESS);
+    if (result != VK_SUCCESS) {
+        GetLogger().LogWarning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        return result;
+    }
+
+    assert(context_->TrackingSemaphores() == true);
+    submit_tracker_->CleanupBindSparseHelperSubmits();
+    submit_tracker_->RecordBindSparseHelperSubmit(qbind_sparse_id, vk_submit_info, vk_pool);
+
+    result = device_dispatch_table_.EndCommandBuffer(vk_submit_info->pCommandBuffers[0]);
+    assert(result == VK_SUCCESS);
+    return result;
+}
+
+bool Device::ShouldExpandQueueBindSparseToTrackSemaphores(PackedBindSparseInfo* packed_bind_sparse_info) {
+    assert(context_->TrackingSemaphores() == true);
+
+    packed_bind_sparse_info->semaphore_tracker = GetSemaphoreTracker();
+    return BindSparseUtils::ShouldExpandQueueBindSparseToTrackSemaphores(packed_bind_sparse_info);
+}
+
+void Device::ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info) {
+    return BindSparseUtils::ExpandBindSparseInfo(bind_sparse_expand_info);
+}
+
+void Device::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count,
+                                          const VkBindSparseInfo* bind_infos) {
+    assert(context_->TrackingSemaphores() == true);
+    assert(context_->TracingAllSemaphores() == true);
+    auto log = BindSparseUtils::LogBindSparseInfosSemaphores(this, vk_device_, vk_queue, bind_info_count, bind_infos);
+    GetLogger().LogInfo(log);
 }
 
 }  // namespace crash_diagnostic_layer
