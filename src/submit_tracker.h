@@ -50,6 +50,8 @@ class SubmitTracker {
     SubmitTracker(Device* device);
 
     SubmitInfoId RegisterSubmitInfo(QueueSubmitId queue_submit_index, const VkSubmitInfo* submit_info);
+    SubmitInfoId RegisterSubmitInfo(QueueSubmitId queue_submit_index, const VkSubmitInfo2* submit_info);
+
     void StoreSubmitHelperCommandBuffersInfo(SubmitInfoId submit_info_id, VkCommandPool vk_pool,
                                              VkCommandBuffer start_marker_cb, VkCommandBuffer end_marker_cb);
     void RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id, VkCommandBuffer vk_command_buffer);
@@ -80,7 +82,6 @@ class SubmitTracker {
 
     struct SubmitInfo {
         SubmitInfoId submit_info_id;
-        const VkSubmitInfo* vk_submit_info;
         std::vector<VkSemaphore> wait_semaphores;
         std::vector<uint64_t> wait_semaphore_values;
         std::vector<VkPipelineStageFlags> wait_semaphore_pipeline_stages;

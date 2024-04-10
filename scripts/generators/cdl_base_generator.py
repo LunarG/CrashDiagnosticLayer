@@ -36,6 +36,10 @@ custom_intercept_commands = [
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',
     'vkEnumerateDeviceExtensionProperties',
+    'vkQueueSubmit',
+    'vkQueueSubmit2',
+    'vkQueueSubmit2KHR',
+    'vkQueueBindSparse',
 ]
 
 intercept_pre_functions = [
@@ -49,6 +53,10 @@ no_intercept_pre_functions = [
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',
     'vkEnumerateDeviceExtensionProperties',
+    'vkQueueSubmit',
+    'vkQueueSubmit2',
+    'vkQueueSubmit2KHR',
+    'vkQueueBindSparse',
 ]
 
 intercept_post_functions = [
@@ -64,6 +72,17 @@ no_intercept_post_functions = [
     'vkEnumerateInstanceLayerProperties',
     'vkEnumerateDeviceLayerProperties',
     'vkEnumerateInstanceExtensionProperties',
+    'vkQueueSubmit',
+    'vkQueueSubmit2',
+    'vkQueueSubmit2KHR',
+    'vkQueueBindSparse',
+]
+
+intercept_override_functions = [
+    'vkQueueSubmit',
+    'vkQueueSubmit2',
+    'vkQueueSubmit2KHR',
+    'vkQueueBindSparse',
 ]
 
 intercept_functions = [
@@ -73,7 +92,6 @@ intercept_functions = [
     'vkFreeCommandBuffers',
     'vkDeviceWaitIdle',
     'vkQueueWaitIdle',
-    'vkQueueBindSparse',
     'vkGetFenceStatus',
     'vkWaitForFences',
     'vkCreateSemaphore',
@@ -86,12 +104,13 @@ intercept_functions = [
     'vkQueuePresentKHR',
     'vkGetSemaphoreCounterValueKHR',
     'vkSignalSemaphoreKHR',
-    'vkQueueSubmit',
-    'vkQueueSubmit2',
-    'vkQueueSubmit2KHR',
     'vkWaitSemaphoresKHR',
     'vkDebugMarkerSetObjectNameEXT',
     'vkSetDebugUtilsObjectNameEXT',
+    'vkQueueSubmit',
+    'vkQueueSubmit2',
+    'vkQueueSubmit2KHR',
+    'vkQueueBindSparse',
 ]
 
 namespace = 'crash_diagnostic_layer'
@@ -180,8 +199,14 @@ class CdlBaseOutputGenerator(BaseGenerator):
             intercept = True
         return intercept
 
+    def InterceptOverrideCommand(self, command):
+        intercept = False
+        if (command.name in intercept_override_functions):
+            intercept = True
+        return intercept
+
     def InterceptCommand(self, command):
-        return self.InterceptPreCommand(command) or self.InterceptPostCommand(command)
+        return self.InterceptPreCommand(command) or self.InterceptPostCommand(command) or self.InterceptOverrideCommand(command)
 
     def InstanceCommand(self, vkcommand):
         return vkcommand.instance or vkcommand.params[0].type == 'VkPhysicalDevice'

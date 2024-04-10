@@ -37,9 +37,10 @@ void ActiveDescriptorSets::Bind(uint32_t first_set, uint32_t set_count, const Vk
 YAML::Emitter& ActiveDescriptorSets::Print(Device* device, YAML::Emitter& os) const {
     os << YAML::BeginSeq;
     for (const auto& ds : descriptor_sets_) {
-        os << YAML::Comment("descriptorSet") << YAML::BeginMap;
+        os << YAML::BeginMap;
+        os << YAML::Comment("descriptorSet");
         os << YAML::Key << "index" << YAML::Value << ds.first;
-        os << YAML::Key << "set: " << YAML::Value << device->GetObjectInfoNoHandleTag((uint64_t)ds.second);
+        os << YAML::Key << "set" << YAML::Value << device->GetObjectInfoNoHandleTag((uint64_t)ds.second);
         os << YAML::EndMap;
     }
     os << YAML::EndSeq;

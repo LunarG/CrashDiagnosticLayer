@@ -60,8 +60,7 @@ const std::vector<VkCommandBuffer>& CommandPool::GetCommandBuffers(VkCommandBuff
 }
 
 void CommandPool::Reset() {
-    // reset all CBs
-    // TODO CB Reset/ResetByPool tracking b/113674089
+    // TODO reset all CBs
 }
 
 }  // namespace crash_diagnostic_layer

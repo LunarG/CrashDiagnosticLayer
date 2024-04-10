@@ -151,6 +151,15 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj);
                 out.append(f'{func_call}\n')
                 out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
                 out.append('\n')
+            if self.InterceptOverrideCommand(vkcommand):
+                out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
+                func_call = '    virtual ' + vkcommand.cPrototype.replace('\n', '\n    ').replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '')
+                func_call = func_call.replace(' vk', ' ')
+                if vkcommand.returnType is not None and vkcommand.returnType != 'void':
+                    func_call = func_call.replace(';', ' = 0;');
+                out.append(f'{func_call}\n')
+                out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+                out.append('\n')
         out.append('};')
         self.write("".join(out))
 
@@ -529,6 +538,35 @@ void InterceptDestroyDevice(
   device_data->interceptor->PostDestroyDevice(device, pAllocator);
 
   FreeDeviceLayerData(device_key);
+}
+
+VkResult InterceptQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(queue));
+    return layer_data->interceptor->QueueSubmit(queue, submitCount, pSubmits, fence);
+}
+
+VkResult InterceptQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
+                                  VkFence fence) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(queue));
+    return layer_data->interceptor->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+}
+
+VkResult InterceptQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(queue));
+    return layer_data->interceptor->QueueSubmit2(queue, submitCount, pSubmits, fence);
+}
+
+VkResult InterceptQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(queue));
+    return layer_data->interceptor->QueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
 VkResult

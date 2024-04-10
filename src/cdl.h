@@ -54,6 +54,10 @@
 
 namespace crash_diagnostic_layer {
 
+// Return true if this is a VkResult that CDL considers an error.
+constexpr bool IsVkError(VkResult result) {
+    return result == VK_ERROR_DEVICE_LOST || result == VK_ERROR_INITIALIZATION_FAILED;
+}
 using StringArray = std::vector<std::string>;
 
 struct DeviceCreateInfo {
@@ -61,51 +65,9 @@ struct DeviceCreateInfo {
     vku::safe_VkDeviceCreateInfo modified;
 };
 
-enum QueueOperationType {
-    kQueueSubmit,
-    kQueueBindSparse,
-};
-
 enum CrashSource {
     kDeviceLostError,
     kWatchdogTimer,
-};
-
-// Original bind sparse info with the submit tracker that tracks semaphores for
-// the respective device.
-struct PackedBindSparseInfo {
-    const VkQueue queue;
-    const uint32_t bind_info_count;
-    const VkBindSparseInfo* bind_infos;
-    SemaphoreTracker* semaphore_tracker;
-
-    PackedBindSparseInfo(VkQueue queue_, uint32_t bind_info_count_, const VkBindSparseInfo* bind_infos_)
-        : queue(queue_), bind_info_count(bind_info_count_), bind_infos(bind_infos_){};
-};
-
-// Expanded bind sparse info, including all the information needed to correctly
-// insert semaphore tracking VkSubmitInfos between vkQueueBindSparse calls.
-struct ExpandedBindSparseInfo {
-    // Input: original bind sparse info.
-    const PackedBindSparseInfo* packed_bind_sparse_info;
-    // Vector of queue operation types, used to control interleaving order.
-    std::vector<QueueOperationType> queue_operation_types;
-    // Vector of submit info structs to be submitted to the queue.
-    std::vector<VkSubmitInfo> submit_infos;
-    // Vector of bool, specifying if a submit info includes a signal operation on
-    // a timeline semaphore.
-    std::vector<bool> has_timeline_semaphore_info;
-    // Place holder for timeline semaphore infos used in queue submit infos.
-    std::vector<VkTimelineSemaphoreSubmitInfoKHR> timeline_semaphore_infos;
-    // Place holder for vectors of binary semaphores used in a wait semaphore
-    // operation in a bind sparse info. This is needed since we need to signal
-    // these semaphores in the same vkQueueSubmit that we consume them for
-    // tracking (so the bind sparse info which is the real consumer of the
-    // semaphore can proceed).
-    std::vector<std::vector<VkSemaphore>> wait_binary_semaphores;
-
-    ExpandedBindSparseInfo(PackedBindSparseInfo* packed_bind_sparse_info_)
-        : packed_bind_sparse_info(packed_bind_sparse_info_){};
 };
 
 static inline void NewHandler() {
@@ -128,6 +90,9 @@ T* NewArray(size_t size) {
 
 class Context : public Interceptor {
    public:
+    using DevicePtr = std::shared_ptr<Device>;
+    using ConstDevicePtr = std::shared_ptr<const Device>;
+
     Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator);
     virtual ~Context();
 
@@ -140,59 +105,43 @@ class Context : public Interceptor {
     Logger* GetLogger() { return &logger_; }
     const ShaderModule* FindShaderModule(VkShaderModule shader) const;
 
+    DevicePtr GetDevice(VkDevice);
+    ConstDevicePtr GetDevice(VkDevice) const;
+
+    std::vector<DevicePtr> GetAllDevices();
+    std::vector<ConstDevicePtr> GetAllDevices() const;
+
+    DevicePtr GetQueueDevice(VkQueue);
+    ConstDevicePtr GetQueueDevice(VkQueue) const;
+
     bool DumpShadersOnCrash() const;
     bool DumpShadersOnBind() const;
 
-    bool TrackingSemaphores() { return track_semaphores_; };
-    bool TracingAllSemaphores() { return trace_all_semaphores_; };
-    QueueSubmitId GetNextQueueSubmitId() { return ++queue_submit_index_; };
-    VkCommandPool GetHelperCommandPool(VkDevice vk_device, VkQueue queue);
-    SubmitInfoId RegisterSubmitInfo(VkDevice vk_device, QueueSubmitId queue_submit_id,
-                                    const VkSubmitInfo* vk_submit_info);
-    void LogSubmitInfoSemaphores(VkDevice vk_device, VkQueue vk_queue, SubmitInfoId submit_info_id);
-    void StoreSubmitHelperCommandBuffersInfo(VkDevice vk_device, SubmitInfoId submit_info_id, VkCommandPool vk_pool,
-                                             VkCommandBuffer start_marker_cb, VkCommandBuffer end_marker_cb);
-
-    void RecordSubmitStart(VkDevice vk_device, QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
-                           VkCommandBuffer vk_command_buffer);
-
-    void RecordSubmitFinish(VkDevice vk_device, QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
-                            VkCommandBuffer vk_command_buffer);
-
-    QueueBindSparseId GetNextQueueBindSparseId() { return ++queue_bind_sparse_index_; };
-
-    void RecordBindSparseHelperSubmit(VkDevice vk_device, QueueBindSparseId qbind_sparse_id,
-                                      const VkSubmitInfo* vk_submit_info, VkCommandPool vk_pool);
-
-    VkDevice GetQueueDevice(VkQueue queue);
-    bool ShouldExpandQueueBindSparseToTrackSemaphores(PackedBindSparseInfo* packed_bind_sparse_info);
-    void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
-    void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
+    bool TrackingSemaphores() const { return track_semaphores_; };
+    bool TracingAllSemaphores() const { return trace_all_semaphores_; };
+    bool InstrumentAllCommands() const { return instrument_all_commands_; };
 
     void MemoryBindEvent(const VkDeviceAddressBindingCallbackDataEXT& mem_info,
                          const VkDebugUtilsObjectNameInfoEXT& object);
 
-   private:
-    void AddObjectInfo(VkDevice device, uint64_t handle, ObjectInfoPtr info);
-    std::string GetObjectName(VkDevice vk_device, uint64_t handle);
-    std::string GetObjectInfo(VkDevice vk_device, uint64_t handle);
-
     void DumpAllDevicesExecutionState(CrashSource crash_source);
     void DumpDeviceExecutionState(VkDevice vk_device);
-    void DumpDeviceExecutionState(const Device* device, bool dump_prologue, CrashSource crash_source,
+    void DumpDeviceExecutionState(const Device& device, bool dump_prologue, CrashSource crash_source,
                                   YAML::Emitter& os);
-    void DumpDeviceExecutionState(const Device* device, std::string error_report, bool dump_prologue,
+    void DumpDeviceExecutionState(const Device& device, std::string error_report, bool dump_prologue,
                                   CrashSource crash_source, YAML::Emitter& os);
-    void DumpDeviceExecutionStateValidationFailed(const Device* device, YAML::Emitter& os);
+    void DumpDeviceExecutionStateValidationFailed(const Device& device, YAML::Emitter& os);
 
-    void DumpReportPrologue(YAML::Emitter& os, const Device* device);
+    void DumpReportPrologue(YAML::Emitter& os);
 
+    bool CountSubmit();
+
+   private:
     void StartWatchdogTimer();
     void StopWatchdogTimer();
     void WatchdogTimer();
 
     void ValidateCommandBufferNotInUse(CommandBuffer* commandBuffer);
-    void DumpCommandBufferState(CommandBuffer* p_cmd);
 
    public:
     void PreApiFunction(const char* api_name);
@@ -261,7 +210,7 @@ class Context : public Interceptor {
     bool track_semaphores_ = false;
     bool trace_all_semaphores_ = false;
 
-    // TODO(aellem) some verbosity/trace modes?
+    // TODO some verbosity/trace modes?
     bool trace_all_ = false;
 
     bool output_path_created_ = false;
@@ -275,14 +224,11 @@ class Context : public Interceptor {
     void GetEnvVal(VkuLayerSettingSet settings, const char* name, T* value);
     void MakeDir(const std::filesystem::path& path);
 
-    int total_submits_ = 0;
+    std::atomic<uint32_t> total_submits_ = 0;
     int total_logs_ = 0;
 
-    QueueSubmitId queue_submit_index_ = 0;
-    QueueBindSparseId queue_bind_sparse_index_ = 0;
-
     // Watchdog
-    // TODO(aellem) we should have a way to shut this down, but currently the
+    // TODO we should have a way to shut this down, but currently the
     // CDL context never gets destroyed
     std::unique_ptr<std::thread> watchdog_thread_;
     std::atomic<bool> watchdog_running_;

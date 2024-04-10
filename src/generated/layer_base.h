@@ -943,14 +943,7 @@ class Interceptor {
 
     virtual void PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) {}
 
-    virtual VkResult PreQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
-        return VK_SUCCESS;
-    }
-
-    virtual VkResult PostQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence,
-                                     VkResult result) {
-        return result;
-    }
+    virtual VkResult QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) = 0;
 
     virtual VkResult PreQueueWaitIdle(VkQueue queue) { return VK_SUCCESS; }
 
@@ -960,15 +953,8 @@ class Interceptor {
 
     virtual VkResult PostDeviceWaitIdle(VkDevice device, VkResult result) { return result; }
 
-    virtual VkResult PreQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
-                                        VkFence fence) {
-        return VK_SUCCESS;
-    }
-
-    virtual VkResult PostQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
-                                         VkFence fence, VkResult result) {
-        return result;
-    }
+    virtual VkResult QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
+                                     VkFence fence) = 0;
 
     virtual VkResult PreGetFenceStatus(VkDevice device, VkFence fence) { return VK_SUCCESS; }
 
@@ -1465,15 +1451,8 @@ class Interceptor {
     virtual void PostCmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
                                         VkQueryPool queryPool, uint32_t query) {}
 
-    virtual VkResult PreQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
-                                     VkFence fence) {
-        return VK_SUCCESS;
-    }
-
-    virtual VkResult PostQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence,
-                                      VkResult result) {
-        return result;
-    }
+    virtual VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
+                                  VkFence fence) = 0;
 
     virtual void PreCmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {}
 
@@ -1764,15 +1743,8 @@ class Interceptor {
     virtual void PostCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
                                            VkQueryPool queryPool, uint32_t query) {}
 
-    virtual VkResult PreQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
-                                        VkFence fence) {
-        return VK_SUCCESS;
-    }
-
-    virtual VkResult PostQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
-                                         VkFence fence, VkResult result) {
-        return result;
-    }
+    virtual VkResult QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
+                                     VkFence fence) = 0;
 
     virtual void PreCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
                                              VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {}

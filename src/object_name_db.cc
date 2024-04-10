@@ -74,7 +74,7 @@ std::string ObjectInfoDB::GetObjectName(uint64_t handle, HandleDebugNamePreferen
 
 std::string ObjectInfoDB::GetObjectInfoInternal(uint64_t handle,
                                                 VkHandleTagRequirement vkhandle_tag_requirement) const {
-    // TODO(aellem) cleanup so all object are tracked and debug object names only
+    // TODO cleanup so all object are tracked and debug object names only
     // enhance object names
     std::stringstream info_ss;
 #if 0

@@ -42,9 +42,7 @@ VkResult PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
 
 void PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) override;
 
-VkResult PreQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) override;
-VkResult PostQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence,
-                         VkResult result) override;
+VkResult QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) override;
 
 VkResult PreQueueWaitIdle(VkQueue queue) override;
 VkResult PostQueueWaitIdle(VkQueue queue, VkResult result) override;
@@ -52,10 +50,8 @@ VkResult PostQueueWaitIdle(VkQueue queue, VkResult result) override;
 VkResult PreDeviceWaitIdle(VkDevice device) override;
 VkResult PostDeviceWaitIdle(VkDevice device, VkResult result) override;
 
-VkResult PreQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
-                            VkFence fence) override;
-VkResult PostQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence,
-                             VkResult result) override;
+VkResult QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
+                         VkFence fence) override;
 
 VkResult PreGetFenceStatus(VkDevice device, VkFence fence) override;
 VkResult PostGetFenceStatus(VkDevice device, VkFence fence, VkResult result) override;
@@ -421,9 +417,7 @@ void PreCmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 
 void PostCmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool,
                             uint32_t query) override;
 
-VkResult PreQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) override;
-VkResult PostQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence,
-                          VkResult result) override;
+VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) override;
 
 void PreCmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) override;
 void PostCmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) override;
@@ -635,9 +629,7 @@ void PreCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlag
 void PostCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool,
                                uint32_t query) override;
 
-VkResult PreQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) override;
-VkResult PostQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence,
-                             VkResult result) override;
+VkResult QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) override;
 
 void PreCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
                                  VkDeviceSize dstOffset, uint32_t marker) override;

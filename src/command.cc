@@ -556,9 +556,14 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
 
             // To make this message more visible, we put it in a special
             // Command entry.
-            if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete &&
-                command.id == GetLastCompleteCommand()) {
-                os << YAML::Key << "message" << YAML::Value << "'>>>>>>>>>>>>>> LAST COMPLETE COMMAND <<<<<<<<<<<<<<'";
+            if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete) {
+                if (command.id == GetLastCompleteCommand()) {
+                    os << YAML::Key << "message" << YAML::Value
+                       << "'>>>>>>>>>>>>>> LAST COMPLETE COMMAND <<<<<<<<<<<<<<'";
+                } else if (command.id == GetLastStartedCommand()) {
+                    os << YAML::Key << "message" << YAML::Value
+                       << "'^^^^^^^^^^^^^^ LAST STARTED COMMAND ^^^^^^^^^^^^^^'";
+                }
             }
             os << YAML::EndMap;  // Command
         }

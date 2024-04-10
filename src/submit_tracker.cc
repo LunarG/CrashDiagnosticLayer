@@ -50,7 +50,6 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index,
     }
     submit_info.submit_info_id = ++submit_info_counter;
     submit_info.queue_submit_index = queue_submit_index;
-    submit_info.vk_submit_info = vk_submit_info;
     for (uint32_t i = 0; i < vk_submit_info->waitSemaphoreCount; i++) {
         submit_info.wait_semaphores.push_back(vk_submit_info->pWaitSemaphores[i]);
         submit_info.wait_semaphore_values.push_back(1);
@@ -80,6 +79,47 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index,
                 submit_info.signal_semaphore_values[i] = timeline_semaphore_info->pSignalSemaphoreValues[i];
             }
         }
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(submit_infos_mutex_);
+        submit_infos_[submit_info.submit_info_id] = submit_info;
+    }
+    {
+        std::lock_guard<std::mutex> lock(queue_submits_mutex_);
+        queue_submits_[queue_submit_index].push_back(submit_info.submit_info_id);
+    }
+    return submit_info.submit_info_id;
+}
+
+SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index, const VkSubmitInfo2* vk_submit_info) {
+    // Store the handles of command buffers and semaphores
+    SubmitInfo submit_info;
+    // Reserve the markers
+    bool top_marker_is_valid = device_->AllocateMarker(&submit_info.top_marker);
+    if (!top_marker_is_valid || !device_->AllocateMarker(&submit_info.bottom_marker)) {
+        device_->GetContext()->GetLogger()->LogWarning("Cannot acquire marker. Not tracking submit info %s",
+                                                       device_->GetObjectName((uint64_t)vk_submit_info).c_str());
+        if (top_marker_is_valid) {
+            device_->FreeMarker(submit_info.top_marker);
+        }
+        return kInvalidSubmitInfoId;
+    }
+    submit_info.submit_info_id = ++submit_info_counter;
+    submit_info.queue_submit_index = queue_submit_index;
+    for (uint32_t i = 0; i < vk_submit_info->waitSemaphoreInfoCount; i++) {
+        const auto& sem_info = vk_submit_info->pWaitSemaphoreInfos[i];
+        submit_info.wait_semaphores.push_back(sem_info.semaphore);
+        submit_info.wait_semaphore_values.push_back(sem_info.value);
+        submit_info.wait_semaphore_pipeline_stages.push_back(sem_info.stageMask);
+    }
+    for (uint32_t i = 0; i < vk_submit_info->commandBufferInfoCount; i++) {
+        submit_info.command_buffers.push_back(vk_submit_info->pCommandBufferInfos[i].commandBuffer);
+    }
+    for (uint32_t i = 0; i < vk_submit_info->signalSemaphoreInfoCount; i++) {
+        const auto& sem_info = vk_submit_info->pSignalSemaphoreInfos[i];
+        submit_info.signal_semaphores.push_back(sem_info.semaphore);
+        submit_info.signal_semaphore_values.push_back(sem_info.value);
     }
 
     {
@@ -304,11 +344,11 @@ std::string SubmitTracker::GetSubmitInfoSemaphoresLog(VkDevice vk_device, VkQueu
                                                       SubmitInfoId submit_info_id) const {
     std::lock_guard<std::mutex> lock(submit_infos_mutex_);
     std::stringstream log;
-    log << "[CDL] VkSubmitInfo with semaphores submitted to queue." << std::endl
-        << "[CDL]\tVkDevice: " << device_->GetObjectName((uint64_t)vk_device)
+    log << "VkSubmitInfo with semaphores submitted to queue." << std::endl
+        << "\tVkDevice: " << device_->GetObjectName((uint64_t)vk_device)
         << ", VkQueue: " << device_->GetObjectName((uint64_t)vk_queue) << ", SubmitInfoId: " << submit_info_id
         << std::endl;
-    const char* tab = "[CDL]\t";
+    const char* tab = "\t";
     auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info_id, kWaitOperation);
     if (wait_semaphores.size() > 0) {
         log << tab << "*** Wait Semaphores ***" << std::endl;
@@ -329,7 +369,7 @@ void SubmitTracker::DumpWaitingSubmits(YAML::Emitter& os) {
     }
 
     std::lock_guard<std::mutex> qlock(queue_submits_mutex_);
-    os << YAML::Key << "IncompleteQueueSubmits:" << YAML::Value << YAML::BeginSeq;
+    os << YAML::Key << "IncompleteQueueSubmits" << YAML::Value << YAML::BeginSeq;
     for (const auto& qit : queue_submits_) {
         uint32_t incomplete_submission_counter = 0;
         os << YAML::BeginMap;
@@ -356,11 +396,11 @@ void SubmitTracker::DumpWaitingSubmits(YAML::Emitter& os) {
                 }
                 auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info.submit_info_id, kWaitOperation);
                 if (wait_semaphores.size() > 0) {
-                    os << YAML::Key << "WaitSemaphores:" << YAML::Value << YAML::BeginSeq;
+                    os << YAML::Key << "WaitSemaphores" << YAML::Value << YAML::BeginSeq;
                     for (auto it = wait_semaphores.begin(); it != wait_semaphores.end(); it++) {
                         os << YAML::BeginMap;
-                        os << YAML::Key << "vkSemaphore" << YAML::Value << YAML::BeginMap;
-                        os << device_->GetObjectInfo((uint64_t)it->semaphore);
+                        os << YAML::Key << "vkSemaphore" << YAML::Value
+                           << device_->GetObjectInfo((uint64_t)it->semaphore);
                         os << YAML::Key << "type" << YAML::Value;
                         if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                             os << "Binary";
@@ -372,15 +412,18 @@ void SubmitTracker::DumpWaitingSubmits(YAML::Emitter& os) {
                             }
                         }
                         os << YAML::EndMap;
+                        assert(os.good());
                     }
+                    os << YAML::EndSeq;
+                    assert(os.good());
                 }
                 auto signal_semaphores = GetTrackedSemaphoreInfos(submit_info.submit_info_id, kSignalOperation);
                 if (signal_semaphores.size() > 0) {
-                    os << YAML::Key << "SignalSemaphores:" << YAML::Value << YAML::BeginSeq;
+                    os << YAML::Key << "SignalSemaphores" << YAML::Value << YAML::BeginSeq;
                     for (auto it = signal_semaphores.begin(); it != signal_semaphores.end(); it++) {
                         os << YAML::BeginMap;
-                        os << YAML::Key << "vkSemaphore" << YAML::Value << YAML::BeginMap;
-                        os << device_->GetObjectInfo((uint64_t)it->semaphore);
+                        os << YAML::Key << "vkSemaphore" << YAML::Value
+                           << device_->GetObjectInfo((uint64_t)it->semaphore);
                         os << YAML::Key << "type" << YAML::Value;
                         if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                             os << "Binary";
@@ -388,7 +431,7 @@ void SubmitTracker::DumpWaitingSubmits(YAML::Emitter& os) {
                             os << "Timeline";
                             os << YAML::Key << "signalValue" << YAML::Value << it->semaphore_operation_value;
                         }
-                        os << YAML::BeginMap;
+                        os << YAML::EndMap;
                     }
                     os << YAML::EndSeq;
                 }

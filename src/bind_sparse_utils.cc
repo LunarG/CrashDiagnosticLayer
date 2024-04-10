@@ -156,7 +156,7 @@ std::string BindSparseUtils::LogBindSparseInfosSemaphores(const Device* device, 
             continue;
         }
         if (!msg_header_printed) {
-            log << "[CDL] VkBindSparseInfo with semaphores submitted to queue:" << std::endl;
+            log << "VkBindSparseInfo with semaphores submitted to queue:" << std::endl;
             log << "   VkDevice:" << device->GetObjectName((uint64_t)vk_device) << std::endl
                 << "   VkQueue: " << device->GetObjectName((uint64_t)vk_queue) << std::endl;
         }

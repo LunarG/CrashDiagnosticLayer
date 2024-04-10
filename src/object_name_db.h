@@ -60,7 +60,7 @@ class ObjectInfoDB {
     void AddObjectInfo(uint64_t handle, ObjectInfoPtr info);
     void AddExtraInfo(uint64_t handle, ExtraObjectInfo info);
 
-    void RemoveObjectInfo(uint64_t handle) {}  // TODO(aellem) remove object info..
+    void RemoveObjectInfo(uint64_t handle) {}  // TODO remove object info..
 
     ObjectInfo FindObjectInfo(uint64_t handle) const;
     std::string GetObjectDebugName(uint64_t handle) const;
