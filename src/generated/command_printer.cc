@@ -532,14 +532,14 @@ void CommandPrinter::PrintCmdUpdateBufferArgs(YAML::Emitter &os, const CmdUpdate
     if (args.dataSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)args.pData;
             for (uint64_t i = 0; i < args.dataSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
 }
 
@@ -949,14 +949,14 @@ void CommandPrinter::PrintCmdPushConstantsArgs(YAML::Emitter &os, const CmdPushC
     if (args.size == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)args.pValues;
             for (uint64_t i = 0; i < args.size; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
 }
 

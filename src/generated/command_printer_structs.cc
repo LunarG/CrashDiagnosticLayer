@@ -2071,14 +2071,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCacheCreateInfo &t)
     if (t.initialDataSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pInitialData;
             for (uint64_t i = 0; i < t.initialDataSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -2126,14 +2126,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSpecializationInfo &t) {
     if (t.dataSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pData;
             for (uint64_t i = 0; i < t.dataSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -8537,14 +8537,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSetInlineUni
     if (t.dataSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pData;
             for (uint64_t i = 0; i < t.dataSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -13127,14 +13127,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineExecutableInternalR
     if (t.dataSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pData;
             for (uint64_t i = 0; i < t.dataSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -14614,14 +14614,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPushConstantsInfoKHR &t) {
     if (t.size == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pValues;
             for (uint64_t i = 0; i < t.size; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -14866,14 +14866,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugMarkerObjectTagInfoEXT
     if (t.tagSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pTag;
             for (uint64_t i = 0; i < t.tagSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -15064,14 +15064,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuModuleCreateInfoNVX &t) {
     if (t.dataSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pData;
             for (uint64_t i = 0; i < t.dataSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -15138,14 +15138,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuLaunchInfoNVX &t) {
     if (t.paramCount == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pParams;
             for (uint64_t i = 0; i < t.paramCount; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::Key << "extraCount";
     // extraCount -> Field -> size_t
@@ -15154,14 +15154,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuLaunchInfoNVX &t) {
     if (t.extraCount == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pExtras;
             for (uint64_t i = 0; i < t.extraCount; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -16499,14 +16499,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugUtilsObjectTagInfoEXT 
     if (t.tagSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pTag;
             for (uint64_t i = 0; i < t.tagSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -17498,14 +17498,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkValidationCacheCreateInfoEX
     if (t.initialDataSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pInitialData;
             for (uint64_t i = 0; i < t.initialDataSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -21174,14 +21174,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaModuleCreateInfoNV &t) 
     if (t.dataSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pData;
             for (uint64_t i = 0; i < t.dataSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -21248,14 +21248,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaLaunchInfoNV &t) {
     if (t.paramCount == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pParams;
             for (uint64_t i = 0; i < t.paramCount; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::Key << "extraCount";
     // extraCount -> Field -> size_t
@@ -21264,14 +21264,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaLaunchInfoNV &t) {
     if (t.extraCount == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pExtras;
             for (uint64_t i = 0; i < t.extraCount; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -23675,14 +23675,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFrameBoundaryEXT &t) {
     if (t.tagSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pTag;
             for (uint64_t i = 0; i < t.tagSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
@@ -26229,14 +26229,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCreateInfoEXT &t) {
     if (t.codeSize == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pCode;
             for (uint64_t i = 0; i < t.codeSize; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::Key << "pName";
     // pName -> Field -> string
@@ -26474,14 +26474,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingEXT &t) {
     if (t.valueCount == 0) {
         os << YAML::Value << "nullptr";
     } else {
-        os << YAML::Value << YAML::BeginSeq << YAML::Hex;
+        os << YAML::Value << YAML::BeginSeq;
         {
             const uint8_t *p = (const uint8_t *)t.pValues;
             for (uint64_t i = 0; i < t.valueCount; ++i) {
-                os << static_cast<uint32_t>(p[i]);
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
             }
         }
-        os << YAML::Dec << YAML::EndSeq;
+        os << YAML::EndSeq;
     }
     os << YAML::EndMap;
     return os;
