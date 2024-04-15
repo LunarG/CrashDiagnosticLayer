@@ -78,11 +78,11 @@ enum class CommandBufferState {
 // =================================================================================================
 class CommandBuffer {
    public:
-    CommandBuffer(Device* p_device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
+    CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
                   const VkCommandBufferAllocateInfo* allocate_info, bool has_buffer_marker);
     ~CommandBuffer();
 
-    Device* GetDevice() const { return device_; }
+    Device& GetDevice() const { return device_; }
     VkQueue GetSubmittedQueue() const { return submitted_queue_; }
     VkFence GetSubmittedFence() const { return submitted_fence_; }
     VkCommandPool GetVkCommandPool() { return vk_command_pool_; }
@@ -146,7 +146,7 @@ class CommandBuffer {
     void HandleIncompleteCommand(const Command& command, const class CommandBufferInternalState& state) const;
 
    private:
-    Device* device_ = nullptr;
+    Device& device_;
     uintptr_t vk_submit_info_ = 0;
     uint64_t submit_info_id_ = 0;
     VkCommandPool vk_command_pool_ = VK_NULL_HANDLE;

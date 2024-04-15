@@ -47,7 +47,7 @@ typedef uint32_t QueueBindSparseId;
 
 class SubmitTracker {
    public:
-    SubmitTracker(Device* device);
+    SubmitTracker(Device& device);
 
     const Logger& Log() const;
 
@@ -73,7 +73,7 @@ class SubmitTracker {
                                                                SemaphoreOperation operation) const;
 
    private:
-    Device* device_ = nullptr;
+    Device& device_;
 
     enum SubmitState {
         kInvalid = 0,

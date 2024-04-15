@@ -141,13 +141,13 @@ void BindSparseUtils::ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_e
     }
 }
 
-std::string BindSparseUtils::LogBindSparseInfosSemaphores(const Device* device, VkDevice vk_device, VkQueue vk_queue,
+std::string BindSparseUtils::LogBindSparseInfosSemaphores(const Device& device, VkDevice vk_device, VkQueue vk_queue,
                                                           uint32_t bind_info_count,
                                                           const VkBindSparseInfo* bind_infos) {
     std::stringstream log;
     bool msg_header_printed = false;
 
-    auto semaphore_tracker = device->GetSemaphoreTracker();
+    auto semaphore_tracker = device.GetSemaphoreTracker();
     std::vector<VkSemaphore> wait_semaphores, signal_semaphores;
     std::vector<uint64_t> wait_semaphore_values, signal_semaphore_values;
 
@@ -157,8 +157,8 @@ std::string BindSparseUtils::LogBindSparseInfosSemaphores(const Device* device, 
         }
         if (!msg_header_printed) {
             log << "VkBindSparseInfo with semaphores submitted to queue:" << std::endl;
-            log << "   VkDevice:" << device->GetObjectName((uint64_t)vk_device) << std::endl
-                << "   VkQueue: " << device->GetObjectName((uint64_t)vk_queue) << std::endl;
+            log << "   VkDevice:" << device.GetObjectName((uint64_t)vk_device) << std::endl
+                << "   VkQueue: " << device.GetObjectName((uint64_t)vk_queue) << std::endl;
         }
 
         wait_semaphores.clear();

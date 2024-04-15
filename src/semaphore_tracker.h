@@ -59,7 +59,7 @@ struct TrackedSemaphoreInfo {
 
 class SemaphoreTracker {
    public:
-    SemaphoreTracker(Device* device, bool track_semaphores_last_setter);
+    SemaphoreTracker(Device& device, bool track_semaphores_last_setter);
 
     const Logger& Log() const;
 
@@ -84,7 +84,7 @@ class SemaphoreTracker {
                                            const char* tab) const;
 
    private:
-    Device* device_ = nullptr;
+    Device& device_;
     bool track_semaphores_last_setter_ = false;
 
     struct SemaphoreInfo {

@@ -28,9 +28,9 @@
 
 namespace crash_diagnostic_layer {
 
-SubmitTracker::SubmitTracker(Device* p_device) : device_(p_device) {}
+SubmitTracker::SubmitTracker(Device& device) : device_(device) {}
 
-const Logger& SubmitTracker::Log() const { return device_->Log(); }
+const Logger& SubmitTracker::Log() const { return device_.Log(); }
 
 SubmitTracker::SubmitInfo::SubmitInfo() {
     top_marker.type = MarkerType::kUint32;
@@ -41,12 +41,12 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index,
     // Store the handles of command buffers and semaphores
     SubmitInfo submit_info;
     // Reserve the markers
-    bool top_marker_is_valid = device_->AllocateMarker(&submit_info.top_marker);
-    if (!top_marker_is_valid || !device_->AllocateMarker(&submit_info.bottom_marker)) {
+    bool top_marker_is_valid = device_.AllocateMarker(&submit_info.top_marker);
+    if (!top_marker_is_valid || !device_.AllocateMarker(&submit_info.bottom_marker)) {
         Log().Warning("Cannot acquire marker. Not tracking submit info %s",
-                      device_->GetObjectName((uint64_t)vk_submit_info).c_str());
+                      device_.GetObjectName((uint64_t)vk_submit_info).c_str());
         if (top_marker_is_valid) {
-            device_->FreeMarker(submit_info.top_marker);
+            device_.FreeMarker(submit_info.top_marker);
         }
         return kInvalidSubmitInfoId;
     }
@@ -68,7 +68,7 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index,
     // Store type and initial value of the timeline semaphores.
     const auto* timeline_semaphore_info = vku::FindStructInPNextChain<VkTimelineSemaphoreSubmitInfoKHR>(vk_submit_info);
     if (timeline_semaphore_info) {
-        auto semaphore_tracker = device_->GetSemaphoreTracker();
+        auto semaphore_tracker = device_.GetSemaphoreTracker();
         for (uint32_t i = 0; i < timeline_semaphore_info->waitSemaphoreValueCount; i++) {
             if (semaphore_tracker->GetSemaphoreType(vk_submit_info->pWaitSemaphores[i]) ==
                 VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
@@ -98,12 +98,12 @@ SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index,
     // Store the handles of command buffers and semaphores
     SubmitInfo submit_info;
     // Reserve the markers
-    bool top_marker_is_valid = device_->AllocateMarker(&submit_info.top_marker);
-    if (!top_marker_is_valid || !device_->AllocateMarker(&submit_info.bottom_marker)) {
+    bool top_marker_is_valid = device_.AllocateMarker(&submit_info.top_marker);
+    if (!top_marker_is_valid || !device_.AllocateMarker(&submit_info.bottom_marker)) {
         Log().Warning("Cannot acquire marker. Not tracking submit info %s",
-                      device_->GetObjectName((uint64_t)vk_submit_info).c_str());
+                      device_.GetObjectName((uint64_t)vk_submit_info).c_str());
         if (top_marker_is_valid) {
-            device_->FreeMarker(submit_info.top_marker);
+            device_.FreeMarker(submit_info.top_marker);
         }
         return kInvalidSubmitInfoId;
     }
@@ -156,11 +156,11 @@ void SubmitTracker::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId sub
         SubmitInfo& submit_info = submit_infos_[submit_info_id];
         // Write the state of the submit
         *(uint32_t*)(submit_info.top_marker.cpu_mapped_address) = SubmitState::kQueued;
-        device_->CmdWriteBufferMarkerAMD(vk_command_buffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                                         submit_info.top_marker.buffer, submit_info.top_marker.offset,
-                                         SubmitState::kRunning);
+        device_.CmdWriteBufferMarkerAMD(vk_command_buffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                        submit_info.top_marker.buffer, submit_info.top_marker.offset,
+                                        SubmitState::kRunning);
         // Reset binary wait semaphores
-        auto semaphore_tracker = device_->GetSemaphoreTracker();
+        auto semaphore_tracker = device_.GetSemaphoreTracker();
         for (size_t i = 0; i < submit_info.wait_semaphores.size(); i++) {
             if (semaphore_tracker->GetSemaphoreType(submit_info.wait_semaphores[i]) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                 semaphore_tracker->WriteMarker(submit_info.wait_semaphores[i], vk_command_buffer,
@@ -180,16 +180,16 @@ void SubmitTracker::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId su
     if (submit_infos_.find(submit_info_id) != submit_infos_.end()) {
         SubmitInfo& submit_info = submit_infos_[submit_info_id];
         // Update the value of signal semaphores
-        auto semaphore_tracker = device_->GetSemaphoreTracker();
+        auto semaphore_tracker = device_.GetSemaphoreTracker();
         for (size_t i = 0; i < submit_info.signal_semaphores.size(); i++) {
             semaphore_tracker->WriteMarker(submit_info.signal_semaphores[i], vk_command_buffer,
                                            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, submit_info.signal_semaphore_values[i],
                                            {SemaphoreModifierType::kModifierQueueSubmit, qsubmit_id});
         }
         // Write the state of the submit
-        device_->CmdWriteBufferMarkerAMD(vk_command_buffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                                         submit_info.bottom_marker.buffer, submit_info.bottom_marker.offset,
-                                         SubmitState::kFinished);
+        device_.CmdWriteBufferMarkerAMD(vk_command_buffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                        submit_info.bottom_marker.buffer, submit_info.bottom_marker.offset,
+                                        SubmitState::kFinished);
     } else {
         Log().Warning("No previous record of queued submit in submit tracker.");
     }
@@ -214,7 +214,7 @@ void SubmitTracker::CleanupSubmitInfos() {
                 // Free extra command buffers used to track the state of the submit and
                 // the values of the semaphores
                 std::vector<VkCommandBuffer> tracking_buffers{submit_info.start_marker_cb, submit_info.end_marker_cb};
-                device_->FreeCommandBuffers(submit_info.helper_cbs_command_pool, 2, tracking_buffers.data());
+                device_.FreeCommandBuffers(submit_info.helper_cbs_command_pool, 2, tracking_buffers.data());
                 submit_infos_.erase(it);
                 submit_it = queue_submit_info_ids.erase(submit_it);
             } else {
@@ -233,7 +233,7 @@ void SubmitTracker::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_
                                                  VkCommandPool vk_pool) {
     HelperSubmitInfo hsubmit_info;
     // Reserve the marker
-    if (!device_->AllocateMarker(&hsubmit_info.marker)) {
+    if (!device_.AllocateMarker(&hsubmit_info.marker)) {
         Log().Warning("Cannot acquire marker for QueueBindSparse's helper submit");
         return;
     }
@@ -246,9 +246,9 @@ void SubmitTracker::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_
     // Write the state of the submit
     *(uint32_t*)(helper_submit_info.marker.cpu_mapped_address) = SubmitState::kQueued;
 
-    device_->CmdWriteBufferMarkerAMD(helper_submit_info.marker_cb, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                                     helper_submit_info.marker.buffer, helper_submit_info.marker.offset,
-                                     SubmitState::kFinished);
+    device_.CmdWriteBufferMarkerAMD(helper_submit_info.marker_cb, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                    helper_submit_info.marker.buffer, helper_submit_info.marker.offset,
+                                    SubmitState::kFinished);
 
     // Extract signal semaphore values from submit info
     std::unordered_map<VkSemaphore, uint64_t /*signal_value*/> signal_semaphores;
@@ -256,7 +256,7 @@ void SubmitTracker::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_
         signal_semaphores[vk_submit_info->pSignalSemaphores[i]] = 1;
     }
 
-    auto semaphore_tracker = device_->GetSemaphoreTracker();
+    auto semaphore_tracker = device_.GetSemaphoreTracker();
     const auto* timeline_semaphore_info = vku::FindStructInPNextChain<VkTimelineSemaphoreSubmitInfoKHR>(vk_submit_info);
     if (timeline_semaphore_info) {
         for (uint32_t i = 0; i < timeline_semaphore_info->signalSemaphoreValueCount; i++) {
@@ -291,8 +291,8 @@ void SubmitTracker::CleanupBindSparseHelperSubmits() {
         if (submit_status == SubmitState::kFinished) {
             // Free the command buffer used to track the state of the submit and
             // the values of the semaphores
-            device_->FreeCommandBuffers(helper_submit_info->command_pool, 1, &(helper_submit_info->marker_cb));
-            device_->FreeMarker(helper_submit_info->marker);
+            device_.FreeCommandBuffers(helper_submit_info->command_pool, 1, &(helper_submit_info->marker_cb));
+            device_.FreeMarker(helper_submit_info->marker);
             helper_submit_info = helper_submit_infos_.erase(helper_submit_info);
         } else {
             helper_submit_info++;
@@ -305,7 +305,7 @@ bool SubmitTracker::QueuedSubmitWaitingOnSemaphores(SubmitInfoId submit_info_id)
     const SubmitInfo& submit_info = it->second;
     uint64_t semaphore_value = 0;
     bool current_value_available = false;
-    auto semaphore_tracker = device_->GetSemaphoreTracker();
+    auto semaphore_tracker = device_.GetSemaphoreTracker();
     for (uint32_t i = 0; i < submit_info.wait_semaphores.size(); i++) {
         current_value_available = semaphore_tracker->GetSemaphoreValue(submit_info.wait_semaphores[i], semaphore_value);
         if (current_value_available && submit_info.wait_semaphore_values[i] > semaphore_value) return true;
@@ -321,7 +321,7 @@ std::vector<TrackedSemaphoreInfo> SubmitTracker::GetTrackedSemaphoreInfos(Submit
         return tracked_semaphores;
     }
     const SubmitInfo& submit_info = it->second;
-    auto semaphore_tracker = device_->GetSemaphoreTracker();
+    auto semaphore_tracker = device_.GetSemaphoreTracker();
     if (operation == SemaphoreOperation::kWaitOperation) {
         return semaphore_tracker->GetTrackedSemaphoreInfos(submit_info.wait_semaphores,
                                                            submit_info.wait_semaphore_values);
@@ -345,19 +345,19 @@ std::string SubmitTracker::GetSubmitInfoSemaphoresLog(VkDevice vk_device, VkQueu
     std::lock_guard<std::mutex> lock(submit_infos_mutex_);
     std::stringstream log;
     log << "VkSubmitInfo with semaphores submitted to queue." << std::endl
-        << "\tVkDevice: " << device_->GetObjectName((uint64_t)vk_device)
-        << ", VkQueue: " << device_->GetObjectName((uint64_t)vk_queue) << ", SubmitInfoId: " << submit_info_id
+        << "\tVkDevice: " << device_.GetObjectName((uint64_t)vk_device)
+        << ", VkQueue: " << device_.GetObjectName((uint64_t)vk_queue) << ", SubmitInfoId: " << submit_info_id
         << std::endl;
     const char* tab = "\t";
     auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info_id, kWaitOperation);
     if (wait_semaphores.size() > 0) {
         log << tab << "*** Wait Semaphores ***" << std::endl;
-        log << device_->GetSemaphoreTracker()->PrintTrackedSemaphoreInfos(wait_semaphores, tab);
+        log << device_.GetSemaphoreTracker()->PrintTrackedSemaphoreInfos(wait_semaphores, tab);
     }
     auto signal_semaphores = GetTrackedSemaphoreInfos(submit_info_id, kSignalOperation);
     if (signal_semaphores.size() > 0) {
         log << tab << "*** Signal Semaphores ***" << std::endl;
-        log << device_->GetSemaphoreTracker()->PrintTrackedSemaphoreInfos(signal_semaphores, tab);
+        log << device_.GetSemaphoreTracker()->PrintTrackedSemaphoreInfos(signal_semaphores, tab);
     }
     return log.str();
 }
@@ -400,7 +400,7 @@ void SubmitTracker::DumpWaitingSubmits(YAML::Emitter& os) {
                     for (auto it = wait_semaphores.begin(); it != wait_semaphores.end(); it++) {
                         os << YAML::BeginMap;
                         os << YAML::Key << "vkSemaphore" << YAML::Value
-                           << device_->GetObjectInfo((uint64_t)it->semaphore);
+                           << device_.GetObjectInfo((uint64_t)it->semaphore);
                         os << YAML::Key << "type" << YAML::Value;
                         if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                             os << "Binary";
@@ -423,7 +423,7 @@ void SubmitTracker::DumpWaitingSubmits(YAML::Emitter& os) {
                     for (auto it = signal_semaphores.begin(); it != signal_semaphores.end(); it++) {
                         os << YAML::BeginMap;
                         os << YAML::Key << "vkSemaphore" << YAML::Value
-                           << device_->GetObjectInfo((uint64_t)it->semaphore);
+                           << device_.GetObjectInfo((uint64_t)it->semaphore);
                         os << YAML::Key << "type" << YAML::Value;
                         if (it->semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                             os << "Binary";

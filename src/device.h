@@ -114,11 +114,11 @@ struct ExpandedBindSparseInfo {
 
 class Device {
    public:
-    Device(Context* p_cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, DeviceExtensionsPresent& extensions_present);
+    Device(Context& cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, DeviceExtensionsPresent& extensions_present);
     ~Device();
     void SetDeviceCreateInfo(std::unique_ptr<DeviceCreateInfo> device_create_info);
 
-    Context* GetContext() const;
+    Context& GetContext() const;
     VkPhysicalDevice GetVkGpu() const;
     VkDevice GetVkDevice() const;
 
@@ -234,7 +234,7 @@ class Device {
     std::vector<VkCommandBuffer> AllocHelperCBs(VkCommandPool vk_command_pool, uint32_t count);
 
    private:
-    Context* context_ = nullptr;
+    Context& context_;
     InstanceDispatchTable instance_dispatch_table_;
     DeviceDispatchTable device_dispatch_table_;
     VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;

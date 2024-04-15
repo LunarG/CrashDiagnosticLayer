@@ -45,7 +45,7 @@
 
 namespace crash_diagnostic_layer {
 
-System::System() {
+System::System(Context& context) : context_(context) {
     bool success;
 #ifdef SYSTEM_TARGET_ANDROID
     success = QueryInfoAndroid();
@@ -374,7 +374,7 @@ bool System::QueryInfoWindows() {
     if (nullptr != fpIsWow64Process) {
         BOOL is_wow_64_process = FALSE;
         if (!fpIsWow64Process(GetCurrentProcess(), &is_wow_64_process)) {
-            GetContext()->Log().Error("Failed to determine properly if 32-bit on Win64!");
+            context_.Log().Error("Failed to determine properly if 32-bit on Win64!");
         }
         is_wow64 = (is_wow_64_process == TRUE);
     }
