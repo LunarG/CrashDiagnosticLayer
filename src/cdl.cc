@@ -981,8 +981,7 @@ VkResult Context::PostCreateCommandPool(VkDevice device, const VkCommandPoolCrea
     if (callResult == VK_SUCCESS) {
         PostApiFunction("vkCreateCommandPool");
         auto device_state = GetDevice(device);
-        CommandPoolPtr pool = std::make_unique<CommandPool>(
-            *pCommandPool, pCreateInfo, device_state->GetVkQueueFamilyProperties(), device_state->HasBufferMarker());
+        CommandPoolPtr pool = std::make_unique<CommandPool>(*pCommandPool, pCreateInfo);
         device_state->SetCommandPool(*pCommandPool, std::move(pool));
     }
     return callResult;

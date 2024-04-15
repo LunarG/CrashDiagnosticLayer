@@ -32,20 +32,20 @@ namespace crash_diagnostic_layer {
 static std::atomic<uint16_t> command_buffer_marker_high_bits{1};
 
 CommandBuffer::CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
-                             const VkCommandBufferAllocateInfo* allocate_info, bool has_buffer_marker)
+                             const VkCommandBufferAllocateInfo* allocate_info, bool has_markers)
     : device_(device),
       vk_command_pool_(vk_command_pool),
       vk_command_buffer_(vk_command_buffer),
       cb_level_(allocate_info->level),
-      has_buffer_marker_(has_buffer_marker) {
-    if (has_buffer_marker_) {
+      has_markers_(has_markers) {
+    if (has_markers_) {
         top_marker_.type = MarkerType::kUint32;
         bottom_marker_.type = MarkerType::kUint32;
         bool top_marker_is_valid = device_.AllocateMarker(&top_marker_);
         if (!top_marker_is_valid || !device_.AllocateMarker(&bottom_marker_)) {
             device_.Log().Warning("Cannot acquire markers. Not tracking VkCommandBuffer %s",
                                   device_.GetObjectName((uint64_t)vk_command_buffer).c_str());
-            has_buffer_marker_ = false;
+            has_markers_ = false;
             if (top_marker_is_valid) {
                 device_.FreeMarker(top_marker_);
             }
@@ -66,59 +66,52 @@ CommandBuffer::~CommandBuffer() {
     if (scb_inheritance_info_) {
         delete scb_inheritance_info_;
     }
-    if (has_buffer_marker_) {
+    if (has_markers_) {
         device_.FreeMarker(top_marker_);
         device_.FreeMarker(bottom_marker_);
     }
     vk_command_pool_ = VK_NULL_HANDLE;
     vk_command_buffer_ = VK_NULL_HANDLE;
-    has_buffer_marker_ = false;
+    has_markers_ = false;
 }
 
 void CommandBuffer::SetSubmitInfoId(uint64_t submit_info_id) { submit_info_id_ = submit_info_id; }
 
 void CommandBuffer::WriteMarker(MarkerPosition position, uint32_t marker_value) {
-    assert(has_buffer_marker_);
+    if (!has_markers_) {
+        return;
+    }
     auto& marker = (position == MarkerPosition::kTop) ? top_marker_ : bottom_marker_;
     auto pipelineStage =
         (position == MarkerPosition::kTop) ? VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT : VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    device_.CmdWriteBufferMarkerAMD(vk_command_buffer_, pipelineStage, marker.buffer, marker.offset, marker_value);
+    device_.WriteMarker(vk_command_buffer_, pipelineStage, marker, marker_value);
 }
 
 uint32_t CommandBuffer::ReadMarker(MarkerPosition position) const {
-    assert(has_buffer_marker_);
+    if (!has_markers_) {
+        return 0;
+    }
     auto& marker = (position == MarkerPosition::kTop) ? top_marker_ : bottom_marker_;
-    auto value = *(uint32_t*)(marker.cpu_mapped_address);
-    return value;
+    return device_->ReadMarker(marker);
 }
 
 void CommandBuffer::WriteBeginCommandBufferMarker() {
-    if (has_buffer_marker_) {
-        // CDL log lables the commands inside a command buffer as follows:
-        // - vkBeginCommandBuffer: 1
-        // - n vkCmd commands recorded into command buffer: 2 ... n+1
-        // - vkEndCommandBuffer: n+2
-        WriteMarker(MarkerPosition::kTop, begin_marker_value_ + 1);
-        WriteMarker(MarkerPosition::kBottom, begin_marker_value_ + 1);
-    }
+    // CDL log lables the commands inside a command buffer as follows:
+    // - vkBeginCommandBuffer: 1
+    // - n vkCmd commands recorded into command buffer: 2 ... n+1
+    // - vkEndCommandBuffer: n+2
+    WriteMarker(MarkerPosition::kTop, begin_marker_value_ + 1);
+    WriteMarker(MarkerPosition::kBottom, begin_marker_value_ + 1);
 }
 
-void CommandBuffer::WriteEndCommandBufferMarker() {
-    if (has_buffer_marker_) {
-        WriteMarker(MarkerPosition::kBottom, end_marker_value_);
-    }
-}
+void CommandBuffer::WriteEndCommandBufferMarker() { WriteMarker(MarkerPosition::kBottom, end_marker_value_); }
 
 void CommandBuffer::WriteBeginCommandExecutionMarker(uint32_t command_id) {
-    if (has_buffer_marker_) {
-        WriteMarker(MarkerPosition::kTop, begin_marker_value_ + command_id);
-    }
+    WriteMarker(MarkerPosition::kTop, begin_marker_value_ + command_id);
 }
 
 void CommandBuffer::WriteEndCommandExecutionMarker(uint32_t command_id) {
-    if (has_buffer_marker_) {
-        WriteMarker(MarkerPosition::kBottom, begin_marker_value_ + command_id);
-    }
+    WriteMarker(MarkerPosition::kBottom, begin_marker_value_ + command_id);
 }
 
 bool CommandBuffer::WasSubmittedToQueue() const { return buffer_state_ == CommandBufferState::kPending; }
@@ -131,9 +124,9 @@ void CommandBuffer::Reset() {
     buffer_state_ = CommandBufferState::kInitialReset;
 
     // Reset marker state.
-    if (has_buffer_marker_) {
-        *(uint32_t*)(top_marker_.cpu_mapped_address) = 0;
-        *(uint32_t*)(bottom_marker_.cpu_mapped_address) = 0;
+    if (has_markers_) {
+        device_->WriteMarker(top_marker_, 0);
+        device_->WriteMarker(bottom_marker_, 0);
     }
 
     // Clear inheritance info
@@ -181,9 +174,7 @@ VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
 
     // All our markers go in post for begin because they must be recorded after
     // the driver starts recording
-    if (has_buffer_marker_) {
-        WriteBeginCommandBufferMarker();
-    }
+    WriteBeginCommandBufferMarker();
 
     return result;
 }
@@ -191,9 +182,7 @@ VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
 VkResult CommandBuffer::PreEndCommandBuffer(VkCommandBuffer commandBuffer) {
     tracker_.TrackPreEndCommandBuffer(commandBuffer);
 
-    if (has_buffer_marker_) {
-        WriteEndCommandBufferMarker();
-    }
+    WriteEndCommandBufferMarker();
     return VK_SUCCESS;
 }
 
@@ -227,7 +216,7 @@ uint32_t CommandBuffer::GetLastCompleteCommand() const {
 }
 
 CommandBufferState CommandBuffer::GetCommandBufferState() const {
-    if (!has_buffer_marker_ || (IsPrimaryCommandBuffer() && !WasSubmittedToQueue())) {
+    if (!has_markers_ || (IsPrimaryCommandBuffer() && !WasSubmittedToQueue())) {
         return buffer_state_;
     }
     // If the command buffer is submitted and markers can be used, determine the
@@ -288,7 +277,7 @@ CommandState CommandBuffer::GetCommandState(CommandBufferState cb_state, const C
     if (IsPrimaryCommandBuffer() && !WasSubmittedToQueue()) {
         return CommandState::kCommandNotSubmitted;
     }
-    if (!has_buffer_marker_) {
+    if (!has_markers_) {
         return CommandState::kCommandPending;
     }
     if (!IsPrimaryCommandBuffer()) {
@@ -506,7 +495,7 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
 
     bool dump_commands = (options & CommandBufferDumpOption::kDumpAllCommands);
 
-    if (has_buffer_marker_) {
+    if (has_markers_) {
         os << YAML::Hex;
         os << YAML::Key << "beginMarkerValue" << YAML::Value << Uint32ToStr(begin_marker_value_);
         os << YAML::Key << "endMarkerValue" << YAML::Value << Uint32ToStr(end_marker_value_);

@@ -32,10 +32,7 @@ SubmitTracker::SubmitTracker(Device& device) : device_(device) {}
 
 const Logger& SubmitTracker::Log() const { return device_.Log(); }
 
-SubmitTracker::SubmitInfo::SubmitInfo() {
-    top_marker.type = MarkerType::kUint32;
-    bottom_marker.type = MarkerType::kUint32;
-}
+SubmitTracker::SubmitInfo::SubmitInfo() {}
 
 SubmitInfoId SubmitTracker::RegisterSubmitInfo(QueueSubmitId queue_submit_index, const VkSubmitInfo* vk_submit_info) {
     // Store the handles of command buffers and semaphores
@@ -155,10 +152,9 @@ void SubmitTracker::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId sub
     if (submit_infos_.find(submit_info_id) != submit_infos_.end()) {
         SubmitInfo& submit_info = submit_infos_[submit_info_id];
         // Write the state of the submit
-        *(uint32_t*)(submit_info.top_marker.cpu_mapped_address) = SubmitState::kQueued;
-        device_.CmdWriteBufferMarkerAMD(vk_command_buffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                                        submit_info.top_marker.buffer, submit_info.top_marker.offset,
-                                        SubmitState::kRunning);
+        device_.WriteMarker(submit_info.top_marker, SubmitState::kQueued);
+        device_.WriteMarker(vk_command_buffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, submit_info.top_marker,
+                            SubmitState::kRunning);
         // Reset binary wait semaphores
         auto semaphore_tracker = device_.GetSemaphoreTracker();
         for (size_t i = 0; i < submit_info.wait_semaphores.size(); i++) {
@@ -187,9 +183,8 @@ void SubmitTracker::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId su
                                            {SemaphoreModifierType::kModifierQueueSubmit, qsubmit_id});
         }
         // Write the state of the submit
-        device_.CmdWriteBufferMarkerAMD(vk_command_buffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                                        submit_info.bottom_marker.buffer, submit_info.bottom_marker.offset,
-                                        SubmitState::kFinished);
+        device_.WriteMarker(vk_command_buffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, submit_info.bottom_marker,
+                            SubmitState::kFinished);
     } else {
         Log().Warning("No previous record of queued submit in submit tracker.");
     }
@@ -209,7 +204,7 @@ void SubmitTracker::CleanupSubmitInfos() {
                 continue;
             }
             const SubmitInfo& submit_info = it->second;
-            auto submit_status = *(uint32_t*)(submit_info.bottom_marker.cpu_mapped_address);
+            auto submit_status = device_->ReadMarker(submit_info.bottom_marker);
             if (submit_status == SubmitState::kFinished) {
                 // Free extra command buffers used to track the state of the submit and
                 // the values of the semaphores
@@ -244,11 +239,9 @@ void SubmitTracker::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_
     helper_submit_info.command_pool = vk_pool;
 
     // Write the state of the submit
-    *(uint32_t*)(helper_submit_info.marker.cpu_mapped_address) = SubmitState::kQueued;
-
-    device_.CmdWriteBufferMarkerAMD(helper_submit_info.marker_cb, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                                    helper_submit_info.marker.buffer, helper_submit_info.marker.offset,
-                                    SubmitState::kFinished);
+    device_.WriteMarker(helper_submit_info.marker, uint32_t(SubmitState::kQueued));
+    device_.WriteMarker(helper_submit_info.marker_cb, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, helper_submit_info.marker,
+                        uint32_t(SubmitState::kFinished));
 
     // Extract signal semaphore values from submit info
     std::unordered_map<VkSemaphore, uint64_t /*signal_value*/> signal_semaphores;
@@ -287,7 +280,7 @@ void SubmitTracker::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_
 void SubmitTracker::CleanupBindSparseHelperSubmits() {
     std::lock_guard<std::mutex> lock(helper_submit_infos_mutex_);
     for (auto helper_submit_info = helper_submit_infos_.begin(); helper_submit_info != helper_submit_infos_.end();) {
-        auto submit_status = *(uint32_t*)(helper_submit_info->marker.cpu_mapped_address);
+        auto submit_status = device_->ReadMarker(helper_submit_info->marker);
         if (submit_status == SubmitState::kFinished) {
             // Free the command buffer used to track the state of the submit and
             // the values of the semaphores
@@ -378,9 +371,9 @@ void SubmitTracker::DumpWaitingSubmits(YAML::Emitter& os) {
         for (auto& submit_info_index : qit.second) {
             SubmitInfo& submit_info = submit_infos_[submit_info_index];
             // Check submit state
-            auto submit_state = *(uint32_t*)(submit_info.bottom_marker.cpu_mapped_address);
+            auto submit_state = device_->ReadMarker(submit_info.bottom_marker);
             if (submit_state == SubmitState::kFinished) continue;
-            submit_state = *(uint32_t*)(submit_info.top_marker.cpu_mapped_address);
+            submit_state = device_->ReadMarker(submit_info.top_marker);
             if (submit_state == SubmitState::kFinished) continue;
 
             os << YAML::BeginMap;

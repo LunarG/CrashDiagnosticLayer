@@ -50,9 +50,9 @@ bool FindMemoryType(const VkPhysicalDeviceMemoryProperties* p_mem_props, uint32_
     return found;
 }
 
-VkResult CreateHostBuffer(VkDevice device, const VkPhysicalDeviceMemoryProperties* p_mem_props,
-                          VkDeviceSize buffer_size, VkBuffer* p_buffer, VkDeviceSize heap_offset,
-                          VkDeviceMemory* p_heap) {
+static VkResult CreateHostBuffer(DeviceDispatchTable& dt, VkDevice device,
+                                 const VkPhysicalDeviceMemoryProperties* p_mem_props, VkDeviceSize buffer_size,
+                                 VkBuffer* p_buffer, VkDeviceSize heap_offset, VkDeviceMemory* p_heap) {
     assert(p_buffer != nullptr);
     buffer_size = std::max<VkDeviceSize>(buffer_size, 256);
     if (heap_offset + buffer_size >= kBuffermarkerHeapSize) {
@@ -69,15 +69,14 @@ VkResult CreateHostBuffer(VkDevice device, const VkPhysicalDeviceMemoryPropertie
     create_info.queueFamilyIndexCount = 0;
     create_info.pQueueFamilyIndices = nullptr;
 
-    auto dispatch_table = GetDeviceLayerData(DataKey(device))->dispatch_table;
-    VkResult vk_res = dispatch_table.CreateBuffer(device, &create_info, nullptr, p_buffer);
+    VkResult vk_res = dt.CreateBuffer(device, &create_info, nullptr, p_buffer);
     assert(VK_SUCCESS == vk_res);
     if (vk_res != VK_SUCCESS) {
         return vk_res;
     }
 
     VkMemoryRequirements mem_reqs = {};
-    dispatch_table.GetBufferMemoryRequirements(device, *p_buffer, &mem_reqs);
+    dt.GetBufferMemoryRequirements(device, *p_buffer, &mem_reqs);
 
     if (*p_heap == VK_NULL_HANDLE) {
         VkMemoryPropertyFlags mem_flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
@@ -97,7 +96,7 @@ VkResult CreateHostBuffer(VkDevice device, const VkPhysicalDeviceMemoryPropertie
 
         assert(found_memory);
         if (!found_memory) {
-            dispatch_table.DestroyBuffer(device, *p_buffer, nullptr);
+            dt.DestroyBuffer(device, *p_buffer, nullptr);
             return VK_ERROR_INITIALIZATION_FAILED;
         }
 
@@ -106,33 +105,25 @@ VkResult CreateHostBuffer(VkDevice device, const VkPhysicalDeviceMemoryPropertie
         alloc_info.pNext = nullptr;
         alloc_info.allocationSize = kBuffermarkerHeapSize;
         alloc_info.memoryTypeIndex = memory_type_index;
-        vk_res = dispatch_table.AllocateMemory(device, &alloc_info, nullptr, p_heap);
+        vk_res = dt.AllocateMemory(device, &alloc_info, nullptr, p_heap);
         assert(VK_SUCCESS == vk_res);
         if (vk_res != VK_SUCCESS) {
-            dispatch_table.DestroyBuffer(device, *p_buffer, nullptr);
+            dt.DestroyBuffer(device, *p_buffer, nullptr);
             return VK_ERROR_INITIALIZATION_FAILED;
         }
     }
 
-    vk_res = dispatch_table.BindBufferMemory(device, *p_buffer, *p_heap, heap_offset);
+    vk_res = dt.BindBufferMemory(device, *p_buffer, *p_heap, heap_offset);
     assert(VK_SUCCESS == vk_res);
     if (vk_res != VK_SUCCESS) {
-        dispatch_table.FreeMemory(device, *p_heap, nullptr);
-        dispatch_table.DestroyBuffer(device, *p_buffer, nullptr);
+        dt.FreeMemory(device, *p_heap, nullptr);
+        dt.DestroyBuffer(device, *p_buffer, nullptr);
         return VK_ERROR_INITIALIZATION_FAILED;
     }
 
     return VK_SUCCESS;
 }
 
-void DestroyBuffer(VkDevice device, VkBuffer buffer) {
-    auto dispatch_table = GetDeviceLayerData(DataKey(device))->dispatch_table;
-    dispatch_table.DestroyBuffer(device, buffer, nullptr);
-}
-
-// =================================================================================================
-// Device
-// =================================================================================================
 Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, DeviceExtensionsPresent& extensions_present)
     : context_(context), vk_physical_device_(vk_gpu), vk_device_(device), extensions_present_(extensions_present) {
     // Set the dispatch tables
@@ -140,14 +131,6 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
     instance_dispatch_table_ = instance_layer_data->dispatch_table;
     auto device_layer_data = GetDeviceLayerData(DataKey(device));
     device_dispatch_table_ = device_layer_data->dispatch_table;
-
-    uint32_t count = 0;
-    instance_dispatch_table_.GetPhysicalDeviceQueueFamilyProperties(vk_physical_device_, &count, nullptr);
-    if (count > 0) {
-        queue_family_properties_.resize(count);
-        instance_dispatch_table_.GetPhysicalDeviceQueueFamilyProperties(vk_physical_device_, &count,
-                                                                        queue_family_properties_.data());
-    }
 
     // Get memory properties
     instance_dispatch_table_.GetPhysicalDeviceMemoryProperties(vk_gpu, &memory_properties_);
@@ -157,16 +140,13 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
 
     // Get proc address for vkCmdWriteBufferMarkerAMD
     if (extensions_present.amd_buffer_marker) {
-        pfn_vkCmdWriteBufferMarkerAMD_ = (PFN_vkCmdWriteBufferMarkerAMD)device_dispatch_table_.GetDeviceProcAddr(
+        CmdWriteBufferMarkerAMD = (PFN_vkCmdWriteBufferMarkerAMD)device_dispatch_table_.GetDeviceProcAddr(
             device, "vkCmdWriteBufferMarkerAMD");
     }
     if (extensions_present.ext_device_fault) {
-        pfn_vkGetDeviceFaultInfoEXT =
+        GetDeviceFaultInfoEXT =
             (PFN_vkGetDeviceFaultInfoEXT)device_dispatch_table_.GetDeviceProcAddr(device, "vkGetDeviceFaultInfoEXT");
     }
-
-    pfn_vkFreeCommandBuffers_ =
-        (PFN_vkFreeCommandBuffers)device_dispatch_table_.GetDeviceProcAddr(device, "vkFreeCommandBuffers");
 
     // Create a submit tracker
     submit_tracker_ = std::make_unique<SubmitTracker>(*this);
@@ -189,22 +169,7 @@ VkDevice Device::GetVkDevice() const { return vk_device_; }
 
 const Logger& Device::Log() const { return context_.Log(); }
 
-bool Device::HasBufferMarker() const { return extensions_present_.amd_buffer_marker; }
-
-const std::vector<VkQueueFamilyProperties>& Device::GetVkQueueFamilyProperties() const {
-    return queue_family_properties_;
-}
-
-VkResult Device::CreateBuffer(VkDeviceSize size, VkBuffer* p_buffer, void** cpu_mapped_address) {
-    std::lock_guard<std::mutex> lock(marker_buffers_mutex_);
-    VkResult vk_res =
-        CreateHostBuffer(vk_device_, &memory_properties_, size, p_buffer, current_heap_offset_, &marker_buffers_heap_);
-    if (vk_res == VK_SUCCESS) {
-        *cpu_mapped_address = (void*)((uintptr_t)marker_buffers_heap_mapped_base_ + current_heap_offset_);
-        current_heap_offset_ += size;
-    }
-    return vk_res;
-}
+bool Device::HasMarkers() const { return extensions_present_.amd_buffer_marker; }
 
 VkResult Device::AcquireMarkerBuffer() {
     // No need to lock on marker_buffers_mutex_, already locked on callsite.
@@ -213,8 +178,8 @@ VkResult Device::AcquireMarkerBuffer() {
     marker_buffer.heap_offset = current_heap_offset_;
     current_heap_offset_ += kBufferMarkerBufferSize;
 
-    VkResult vk_res = CreateHostBuffer(vk_device_, &memory_properties_, marker_buffer.size, &marker_buffer.buffer,
-                                       marker_buffer.heap_offset, &marker_buffers_heap_);
+    VkResult vk_res = CreateHostBuffer(device_dispatch_table_, vk_device_, &memory_properties_, marker_buffer.size,
+                                       &marker_buffer.buffer, marker_buffer.heap_offset, &marker_buffers_heap_);
     if (vk_res != VK_SUCCESS) {
         return vk_res;
     }
@@ -235,14 +200,52 @@ VkResult Device::AcquireMarkerBuffer() {
 
 bool Device::AllocateMarker(Marker* marker) {
     // If there is a recycled marker, use it.
-    if (marker->type == MarkerType::kUint32) {
+    {
         std::lock_guard<std::mutex> lock(recycled_markers_u32_mutex_);
         if (recycled_markers_u32_.size() > 0) {
             *marker = recycled_markers_u32_.back();
             recycled_markers_u32_.pop_back();
             return true;
         }
-    } else {
+    }
+
+    std::lock_guard<std::mutex> mlock(marker_buffers_mutex_);
+    // Check if we have the required marker already allocated
+    auto marker_buffer_index = current_marker_index_ / kBufferMarkerEventCount;
+
+    // Out of space, allocate a new buffer
+    if (marker_buffer_index >= marker_buffers_.size()) {
+        // zakerinasab: This causes a glitch if CDL is on while a user plays
+        // the game. If CDL goes to be activated for end users, this should be
+        // done out of markers_buffers_mutex_ lock in a predictive mode.
+        if (AcquireMarkerBuffer() != VK_SUCCESS) {
+            return false;
+        }
+        assert(marker_buffer_index < marker_buffers_.size());
+    }
+    auto& marker_buffer = marker_buffers_.back();
+    marker->buffer = marker_buffer.buffer;
+    marker->offset = (current_marker_index_ % kBufferMarkerEventCount) * sizeof(uint32_t);
+    marker->cpu_mapped_address = (uint32_t*)((uintptr_t)marker_buffer.cpu_mapped_address + marker->offset);
+    current_marker_index_ += 1;
+    return true;
+}
+
+void Device::FreeMarker(const Marker marker) {
+    std::lock_guard<std::mutex> lock(recycled_markers_u32_mutex_);
+    recycled_markers_u32_.push_back(marker);
+}
+
+void Device::WriteMarker(VkCommandBuffer cb, VkPipelineStageFlagBits stage, Marker& marker, uint32_t value) {
+    CmdWriteBufferMarkerAMD(cb, stage, marker.buffer, marker.offset, value);
+}
+
+void Device::WriteMarker(Marker& marker, uint32_t value) { *marker.cpu_mapped_address = value; }
+
+uint32_t Device::ReadMarker(const Marker& marker) { return *marker.cpu_mapped_address; }
+
+bool Device::AllocateMarker(Marker64* marker) {
+    {
         std::lock_guard<std::mutex> lock(recycled_markers_u64_mutex_);
         if (recycled_markers_u64_.size() > 0) {
             *marker = recycled_markers_u64_.back();
@@ -253,7 +256,7 @@ bool Device::AllocateMarker(Marker* marker) {
 
     std::lock_guard<std::mutex> mlock(marker_buffers_mutex_);
     // Check if we have the required marker already allocated
-    auto marker_index_inc = (marker->type == MarkerType::kUint32) ? 0 : 1;
+    auto marker_index_inc = 1;
     auto marker_buffer_index = (current_marker_index_ + marker_index_inc) / kBufferMarkerEventCount;
 
     // Out of space, allocate a new buffer
@@ -265,44 +268,36 @@ bool Device::AllocateMarker(Marker* marker) {
             return false;
         }
         assert(marker_buffer_index < marker_buffers_.size());
-        if (marker->type == MarkerType::kUint64) {
-            // Make sure current_marker_index_ is even
-            current_marker_index_ = ((current_marker_index_ + 1) & -2);
-        }
+        // Make sure current_marker_index_ is even
+        current_marker_index_ = ((current_marker_index_ + 1) & -2);
     }
     auto& marker_buffer = marker_buffers_.back();
     marker->buffer = marker_buffer.buffer;
     marker->offset = (current_marker_index_ % kBufferMarkerEventCount) * sizeof(uint32_t);
-    marker->cpu_mapped_address = (void*)((uintptr_t)marker_buffer.cpu_mapped_address + marker->offset);
+    marker->cpu_mapped_address = (uint64_t*)((uintptr_t)marker_buffer.cpu_mapped_address + marker->offset);
     current_marker_index_ += 1 + marker_index_inc;
     return true;
 }
 
-void Device::FreeMarker(const Marker marker) {
-    if (marker.type == MarkerType::kUint32) {
-        std::lock_guard<std::mutex> lock(recycled_markers_u32_mutex_);
-        recycled_markers_u32_.push_back(marker);
-    } else {
-        std::lock_guard<std::mutex> lock(recycled_markers_u64_mutex_);
-        recycled_markers_u64_.push_back(marker);
-    }
+void Device::FreeMarker(const Marker64 marker) {
+    std::lock_guard<std::mutex> lock(recycled_markers_u64_mutex_);
+    recycled_markers_u64_.push_back(marker);
 }
+
+void Device::WriteMarker(VkCommandBuffer cb, VkPipelineStageFlagBits stage, Marker64& marker, uint64_t value) {
+    uint32_t u32_value = value & 0xffffffff;
+    CmdWriteBufferMarkerAMD(cb, stage, marker.buffer, marker.offset, u32_value);
+    u32_value = value >> 32;
+    CmdWriteBufferMarkerAMD(cb, stage, marker.buffer, marker.offset + sizeof(uint32_t), u32_value);
+}
+
+void Device::WriteMarker(Marker64& marker, uint64_t value) { *marker.cpu_mapped_address = value; }
+
+uint64_t Device::ReadMarker(const Marker64& marker) { return *marker.cpu_mapped_address; }
 
 void Device::FreeCommandBuffers(VkCommandPool command_pool, uint32_t command_buffer_count,
                                 const VkCommandBuffer* command_buffers) {
-    if (pfn_vkFreeCommandBuffers_ == nullptr) {
-        return;
-    }
-    pfn_vkFreeCommandBuffers_(vk_device_, command_pool, command_buffer_count, command_buffers);
-}
-
-void Device::CmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                     VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    if (pfn_vkCmdWriteBufferMarkerAMD_ == nullptr) {
-        return;
-    }
-
-    pfn_vkCmdWriteBufferMarkerAMD_(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
+    device_dispatch_table_.FreeCommandBuffers(vk_device_, command_pool, command_buffer_count, command_buffers);
 }
 
 void Device::AddCommandBuffer(VkCommandBuffer vk_command_buffer) {
@@ -320,7 +315,7 @@ void Device::DumpCommandBuffers(YAML::Emitter& os, const char* section_name, Com
         auto p_cmd = GetCommandBuffer(cb);
         if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
             if (dump_all_command_buffers ||
-                (p_cmd->HasBufferMarker() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution())) {
+                (p_cmd->HasMarkers() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution())) {
                 sorted_command_buffers[p_cmd->GetSubmitInfoId()].push_back(p_cmd);
             }
         }
@@ -358,20 +353,18 @@ CommandPool* Device::GetCommandPool(VkCommandPool vk_command_pool) {
 
 void Device::AllocateCommandBuffers(VkCommandPool vk_pool, const VkCommandBufferAllocateInfo* allocate_info,
                                     VkCommandBuffer* command_buffers) {
-    bool has_buffer_markers;
     {
         std::lock_guard<std::mutex> lock(command_pools_mutex_);
         assert(command_pools_.find(vk_pool) != command_pools_.end());
         command_pools_[vk_pool]->AllocateCommandBuffers(allocate_info, command_buffers);
-        has_buffer_markers = command_pools_[vk_pool]->HasBufferMarkers();
     }
     // TODO locking here?
     // create command buffers tracking data
     for (uint32_t i = 0; i < allocate_info->commandBufferCount; ++i) {
         VkCommandBuffer vk_cmd = command_buffers[i];
 
-        auto cmd = std::make_unique<CommandBuffer>(*this, vk_pool, vk_cmd, allocate_info, has_buffer_markers);
-        cmd->SetInstrumentAllCommands(context_.InstrumentAllCommands());
+        auto cmd = std::make_unique<CommandBuffer>(*this, vk_pool, vk_cmd, allocate_info, HasMarkers());
+        cmd->SetInstrumentAllCommands(context_->InstrumentAllCommands());
 
         SetCommandBuffer(vk_cmd, std::move(cmd));
         AddCommandBuffer(vk_cmd);
@@ -410,7 +403,7 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter&
 
 bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, YAML::Emitter& os) {
     assert(p_cmd);
-    if (p_cmd->HasBufferMarker() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution()) {
+    if (p_cmd->HasMarkers() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution()) {
         DumpCommandBufferStateOnScreen(p_cmd, os);
         return false;
     }
@@ -692,11 +685,11 @@ static void DumpAddressRecord(YAML::Emitter& os, const vku::sparse::range<VkDevi
 }
 
 void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
-    if (!extensions_present_.ext_device_fault || !pfn_vkGetDeviceFaultInfoEXT) {
+    if (!extensions_present_.ext_device_fault || !GetDeviceFaultInfoEXT) {
         return;
     }
     auto fault_counts = vku::InitStruct<VkDeviceFaultCountsEXT>();
-    VkResult result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
+    VkResult result = GetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
     if (result != VK_SUCCESS) {
         // TODO: log
         return;
@@ -718,7 +711,7 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
     fault_info.pVendorBinaryData =
         fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data());
 
-    result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, &fault_info);
+    result = GetDeviceFaultInfoEXT(vk_device_, &fault_counts, &fault_info);
     if (result != VK_SUCCESS && result != VK_INCOMPLETE) {
         // TODO: log
         return;

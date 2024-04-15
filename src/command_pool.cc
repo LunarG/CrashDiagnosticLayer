@@ -22,9 +22,8 @@
 
 namespace crash_diagnostic_layer {
 
-CommandPool::CommandPool(VkCommandPool vk_command_pool, const VkCommandPoolCreateInfo* p_create_info,
-                         const std::vector<VkQueueFamilyProperties>& queue_family_properties, bool has_buffer_markers)
-    : vk_command_pool_(vk_command_pool), has_buffer_markers_(has_buffer_markers), m_flags(p_create_info->flags) {}
+CommandPool::CommandPool(VkCommandPool vk_command_pool, const VkCommandPoolCreateInfo* p_create_info)
+    : vk_command_pool_(vk_command_pool), m_flags(p_create_info->flags) {}
 
 void CommandPool::AllocateCommandBuffers(const VkCommandBufferAllocateInfo* allocate_info,
                                          const VkCommandBuffer* p_command_buffers) {

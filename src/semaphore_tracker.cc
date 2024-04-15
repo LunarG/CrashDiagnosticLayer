@@ -27,6 +27,17 @@
 
 namespace crash_diagnostic_layer {
 
+SemaphoreModifierInfo SemaphoreTracker::SemaphoreInfo::GetLastModifier(Device& device) {
+    SemaphoreModifierInfo last_modifier;
+    last_modifier.type = static_cast<SemaphoreModifierType>(device.ReadMarker(last_type));
+    last_modifier.id = device.ReadMarker(last_id);
+    return last_modifier;
+}
+void SemaphoreTracker::SemaphoreInfo::UpdateLastModifier(Device& device, SemaphoreModifierInfo modifier_info) {
+    device.WriteMarker(last_type, modifier_info.type);
+    device.WriteMarker(last_id, modifier_info.id);
+}
+
 SemaphoreTracker::SemaphoreTracker(Device& device, bool track_semaphores_last_setter)
     : device_(device), track_semaphores_last_setter_(track_semaphores_last_setter) {}
 
@@ -47,9 +58,9 @@ void SemaphoreTracker::RegisterSemaphore(VkSemaphore vk_semaphore, VkSemaphoreTy
         return;
     }
     if (track_semaphores_last_setter_) {
-        if (!device_.AllocateMarker(&semaphore_info.last_modifier_marker)) {
+        if (!device_.AllocateMarker(&semaphore_info.last_type) || !device_.AllocateMarker(&semaphore_info.last_id)) {
             Log().Error(
-                "CDL warning: Cannot acquire modifier tracking marker. Not "
+                "CDL warning: Cannot acquire modifier tracking markers. Not "
                 "tracking semaphore %s.",
                 device_.GetObjectName((uint64_t)vk_semaphore).c_str());
             return;
@@ -67,9 +78,9 @@ void SemaphoreTracker::SignalSemaphore(VkSemaphore vk_semaphore, uint64_t value,
     std::lock_guard<std::mutex> slock(semaphores_mutex_);
     if (semaphores_.find(vk_semaphore) != semaphores_.end()) {
         auto& semaphore_info = semaphores_[vk_semaphore];
-        *(uint64_t*)(semaphore_info.marker.cpu_mapped_address) = value;
+        device_->WriteMarker(semaphore_info.marker, value);
         if (track_semaphores_last_setter_) {
-            semaphore_info.UpdateLastModifier(modifier_info);
+            semaphore_info.UpdateLastModifier(*device_, modifier_info);
         }
     } else {
         Log().Error("Unknown semaphore signaled: %s", device_.GetObjectName((uint64_t)vk_semaphore).c_str());
@@ -111,8 +122,7 @@ bool SemaphoreTracker::GetSemaphoreValue(VkSemaphore vk_semaphore, uint64_t& val
     std::lock_guard<std::mutex> slock(semaphores_mutex_);
     if (semaphores_.find(vk_semaphore) == semaphores_.end()) return false;
     auto& semaphore_info = semaphores_.find(vk_semaphore)->second;
-    value = *(uint64_t*)(semaphore_info.marker.cpu_mapped_address);
-    return true;
+    return device_->ReadMarker(semaphore_info.marker);
 }
 
 VkSemaphoreTypeKHR SemaphoreTracker::GetSemaphoreType(VkSemaphore vk_semaphore) const {
@@ -130,18 +140,11 @@ void SemaphoreTracker::WriteMarker(VkSemaphore vk_semaphore, VkCommandBuffer vk_
     if (semaphores_.find(vk_semaphore) == semaphores_.end()) return;
     auto& semaphore_info = semaphores_[vk_semaphore];
     auto& marker = semaphore_info.marker;
-    uint32_t u32_value = value & 0xffffffff;
-    device_.CmdWriteBufferMarkerAMD(vk_command_buffer, vk_pipeline_stage, marker.buffer, marker.offset, u32_value);
-    u32_value = value >> 32;
-    device_.CmdWriteBufferMarkerAMD(vk_command_buffer, vk_pipeline_stage, marker.buffer,
-                                    marker.offset + sizeof(uint32_t), u32_value);
+    device_.WriteMarker(vk_command_buffer, vk_pipeline_stage, marker, value);
 
     if (track_semaphores_last_setter_) {
-        auto& marker = semaphore_info.last_modifier_marker;
-        device_.CmdWriteBufferMarkerAMD(vk_command_buffer, vk_pipeline_stage, marker.buffer, marker.offset,
-                                        modifier_info.type);
-        device_.CmdWriteBufferMarkerAMD(vk_command_buffer, vk_pipeline_stage, marker.buffer,
-                                        marker.offset + sizeof(uint32_t), modifier_info.id);
+        device_.WriteMarker(vk_command_buffer, vk_pipeline_stage, semaphore_info.last_type, modifier_info.type);
+        device_.WriteMarker(vk_command_buffer, vk_pipeline_stage, semaphore_info.last_id, modifier_info.id);
     }
 }
 
@@ -156,10 +159,10 @@ std::vector<TrackedSemaphoreInfo> SemaphoreTracker::GetTrackedSemaphoreInfos(
         tracked_semaphore.semaphore = semaphores[i];
         tracked_semaphore.semaphore_type = semaphore_info.semaphore_type;
         tracked_semaphore.semaphore_operation_value = semaphore_values[i];
-        tracked_semaphore.current_value = *(uint64_t*)(semaphore_info.marker.cpu_mapped_address);
+        tracked_semaphore.current_value = device_->ReadMarker(semaphore_info.marker);
         tracked_semaphore.current_value_available = true;
         if (track_semaphores_last_setter_) {
-            tracked_semaphore.last_modifier = semaphore_info.GetLastModifier();
+            tracked_semaphore.last_modifier = semaphore_info.GetLastModifier(*device_);
         }
         tracked_semaphores.push_back(tracked_semaphore);
     }

@@ -19,14 +19,14 @@
 
 #include <vulkan/vulkan.h>
 
-enum MarkerType {
-    kUint32,
-    kUint64,
-};
-
 struct Marker {
-    MarkerType type;
     VkBuffer buffer = VK_NULL_HANDLE;
     uint32_t offset = 0;
-    void* cpu_mapped_address = nullptr;
+    uint32_t* cpu_mapped_address = nullptr;
+};
+
+struct Marker64 {
+    VkBuffer buffer = VK_NULL_HANDLE;
+    uint32_t offset = 0;
+    uint64_t* cpu_mapped_address = nullptr;
 };

@@ -79,7 +79,7 @@ enum class CommandBufferState {
 class CommandBuffer {
    public:
     CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
-                  const VkCommandBufferAllocateInfo* allocate_info, bool has_buffer_marker);
+                  const VkCommandBufferAllocateInfo* allocate_info, bool has_markers);
     ~CommandBuffer();
 
     Device& GetDevice() const { return device_; }
@@ -89,7 +89,7 @@ class CommandBuffer {
     VkCommandBuffer GetVkCommandBuffer() { return vk_command_buffer_; }
 
     bool IsPrimaryCommandBuffer() const { return cb_level_ == VK_COMMAND_BUFFER_LEVEL_PRIMARY; }
-    bool HasBufferMarker() const { return has_buffer_marker_; }
+    bool HasMarkers() const { return has_markers_; }
 
     void SetSubmitInfoId(uint64_t submit_info_id);
     uint64_t GetSubmitInfoId() { return submit_info_id_; }
@@ -159,7 +159,7 @@ class CommandBuffer {
     VkCommandBufferInheritanceInfo* scb_inheritance_info_ = nullptr;
 
     bool instrument_all_commands_ = false;
-    bool has_buffer_marker_ = false;
+    bool has_markers_ = false;
 
     Marker top_marker_;
     Marker bottom_marker_;

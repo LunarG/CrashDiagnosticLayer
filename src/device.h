@@ -41,7 +41,6 @@
 namespace crash_diagnostic_layer {
 
 const VkDeviceSize kBufferMarkerEventCount = 1024;
-const MarkerType kMarkerType = MarkerType::kUint32;
 
 class Context;
 struct DeviceCreateInfo;
@@ -133,16 +132,11 @@ class Device {
     std::string GetObjectInfo(uint64_t handle) const;
     std::string GetObjectInfoNoHandleTag(uint64_t handle) const;
 
-    bool HasBufferMarker() const;
-
-    const std::vector<VkQueueFamilyProperties>& GetVkQueueFamilyProperties() const;
+    bool HasMarkers() const;
 
     VkResult CreateBuffer(VkDeviceSize size, VkBuffer* p_buffer, void** cpu_mapped_address);
 
     VkResult AcquireMarkerBuffer();
-
-    void CmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                 VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker);
 
     void FreeCommandBuffers(VkCommandPool command_pool, uint32_t command_buffer_count,
                             const VkCommandBuffer* command_buffers);
@@ -190,6 +184,17 @@ class Device {
 
     bool AllocateMarker(Marker* marker);
     void FreeMarker(const Marker marker);
+
+    void WriteMarker(VkCommandBuffer cb, VkPipelineStageFlagBits stage, Marker& marker, uint32_t value);
+    void WriteMarker(Marker& marker, uint32_t value);
+    uint32_t ReadMarker(const Marker& marker);
+
+    bool AllocateMarker(Marker64* marker);
+    void FreeMarker(Marker64 marker);
+
+    void WriteMarker(VkCommandBuffer cb, VkPipelineStageFlagBits stage, Marker64& marker, uint64_t value);
+    void WriteMarker(Marker64& marker, uint64_t value);
+    uint64_t ReadMarker(const Marker64& marker);
 
     void DumpDeviceFaultInfo(YAML::Emitter& os) const;
 
@@ -239,7 +244,6 @@ class Device {
     DeviceDispatchTable device_dispatch_table_;
     VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;
     VkDevice vk_device_ = VK_NULL_HANDLE;
-    std::vector<VkQueueFamilyProperties> queue_family_properties_;
     VkPhysicalDeviceMemoryProperties memory_properties_ = {};
     VkPhysicalDeviceProperties physical_device_properties_ = {};
     DeviceExtensionsPresent extensions_present_{};
@@ -291,12 +295,11 @@ class Device {
     std::vector<Marker> recycled_markers_u32_;
 
     std::mutex recycled_markers_u64_mutex_;
-    std::vector<Marker> recycled_markers_u64_;
+    std::vector<Marker64> recycled_markers_u64_;
 
-    PFN_vkCmdWriteBufferMarkerAMD pfn_vkCmdWriteBufferMarkerAMD_ = nullptr;
-    PFN_vkFreeCommandBuffers pfn_vkFreeCommandBuffers_ = nullptr;
+    PFN_vkCmdWriteBufferMarkerAMD CmdWriteBufferMarkerAMD = nullptr;
 
-    PFN_vkGetDeviceFaultInfoEXT pfn_vkGetDeviceFaultInfoEXT = nullptr;
+    PFN_vkGetDeviceFaultInfoEXT GetDeviceFaultInfoEXT = nullptr;
 
     vku::sparse::range_map<VkDeviceAddress, DeviceAddressRecord> address_map_;
 
