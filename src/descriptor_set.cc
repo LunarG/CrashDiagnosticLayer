@@ -40,7 +40,7 @@ YAML::Emitter& ActiveDescriptorSets::Print(Device& device, YAML::Emitter& os) co
         os << YAML::BeginMap;
         os << YAML::Comment("descriptorSet");
         os << YAML::Key << "index" << YAML::Value << ds.first;
-        os << YAML::Key << "set" << YAML::Value << device.GetObjectInfoNoHandleTag((uint64_t)ds.second);
+        os << YAML::Key << "set" << YAML::Value << device.GetObjectInfo((uint64_t)ds.second);
         os << YAML::EndMap;
     }
     os << YAML::EndSeq;

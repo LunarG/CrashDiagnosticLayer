@@ -39,8 +39,6 @@ CommandBuffer::CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCo
       cb_level_(allocate_info->level),
       has_markers_(has_markers) {
     if (has_markers_) {
-        top_marker_.type = MarkerType::kUint32;
-        bottom_marker_.type = MarkerType::kUint32;
         bool top_marker_is_valid = device_.AllocateMarker(&top_marker_);
         if (!top_marker_is_valid || !device_.AllocateMarker(&bottom_marker_)) {
             device_.Log().Warning("Cannot acquire markers. Not tracking VkCommandBuffer %s",
@@ -92,7 +90,7 @@ uint32_t CommandBuffer::ReadMarker(MarkerPosition position) const {
         return 0;
     }
     auto& marker = (position == MarkerPosition::kTop) ? top_marker_ : bottom_marker_;
-    return device_->ReadMarker(marker);
+    return device_.ReadMarker(marker);
 }
 
 void CommandBuffer::WriteBeginCommandBufferMarker() {
@@ -125,8 +123,8 @@ void CommandBuffer::Reset() {
 
     // Reset marker state.
     if (has_markers_) {
-        device_->WriteMarker(top_marker_, 0);
-        device_->WriteMarker(bottom_marker_, 0);
+        device_.WriteMarker(top_marker_, 0);
+        device_.WriteMarker(bottom_marker_, 0);
     }
 
     // Clear inheritance info

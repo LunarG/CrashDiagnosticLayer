@@ -72,7 +72,7 @@ class SemaphoreTracker {
 
     void BeginWaitOnSemaphores(int pid, int tid, const VkSemaphoreWaitInfoKHR* pWaitInfo);
     void EndWaitOnSemaphores(int pid, int tid, const VkSemaphoreWaitInfoKHR* pWaitInfo);
-    void DumpWaitingThreads(YAML::Emitter& os);
+    void DumpWaitingThreads(YAML::Emitter& os) const;
 
     void WriteMarker(VkSemaphore vk_semaphore, VkCommandBuffer vk_command_buffer,
                      VkPipelineStageFlagBits vk_pipeline_stage, uint64_t value, SemaphoreModifierInfo modifier_info);

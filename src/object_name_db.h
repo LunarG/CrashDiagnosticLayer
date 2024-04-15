@@ -32,6 +32,9 @@
 // Debug info for a Vulkan object
 // -----------------------------------------------------------------------------
 struct ObjectInfo {
+    ObjectInfo(uint64_t o, VkObjectType t, const char* n) : object(o), type(t), name(n) {}
+    ObjectInfo() : object(0), type(VK_OBJECT_TYPE_UNKNOWN), name("") {}
+
     uint64_t object;
     VkObjectType type;
     std::string name;
@@ -45,11 +48,6 @@ enum HandleDebugNamePreference {
     kReportBoth,
 };
 
-enum VkHandleTagRequirement {
-    kPrintVkHandleTag,
-    kIgnoreVkHandleTag,
-};
-
 // -----------------------------------------------------------------------------
 // Database of debug info for multiple Vulkan objects
 // -----------------------------------------------------------------------------
@@ -57,17 +55,15 @@ class ObjectInfoDB {
    public:
     ObjectInfoDB();
 
-    void AddObjectInfo(uint64_t handle, ObjectInfoPtr info);
+    void AddObjectInfo(uint64_t handle, VkObjectType type, const char* name);
     void AddExtraInfo(uint64_t handle, ExtraObjectInfo info);
 
     void RemoveObjectInfo(uint64_t handle) {}  // TODO remove object info..
 
     ObjectInfo FindObjectInfo(uint64_t handle) const;
-    std::string GetObjectDebugName(uint64_t handle) const;
     std::string GetObjectName(uint64_t handle,
                               HandleDebugNamePreference handle_debug_name_preference = kReportBoth) const;
     std::string GetObjectInfo(uint64_t handle) const;
-    std::string GetObjectInfoNoHandleTag(uint64_t handle) const;
 
     YAML::Emitter& PrintDebugInfo(YAML::Emitter& os, uint64_t handle) const;
 
@@ -77,8 +73,6 @@ class ObjectInfoDB {
     std::unordered_map<uint64_t, ObjectInfoPtr> object_info_;
     std::unordered_map<uint64_t, std::vector<ExtraObjectInfo>> object_extra_info_;
     ObjectInfo unknown_object_;
-
-    std::string GetObjectInfoInternal(uint64_t handle, VkHandleTagRequirement vkhandle_tag_requirement) const;
 };
 
 #endif  // OBJECT_NAME_DB_HEADER_

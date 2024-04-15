@@ -351,8 +351,11 @@ struct RequiredExtension {
 };
 
 const VkInstanceCreateInfo* Context::GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) {
-    const uint32_t required_extension_count = 1;
-    RequiredExtension required_extensions[] = {{VK_EXT_DEBUG_UTILS_EXTENSION_NAME, false, nullptr}};
+    const uint32_t required_extension_count = 2;
+    RequiredExtension required_extensions[] = {
+        {VK_EXT_DEBUG_UTILS_EXTENSION_NAME, false, nullptr},
+        {VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, false, nullptr},
+    };
 
     original_create_info_.initialize(pCreateInfo);
     modified_create_info_ = original_create_info_;
@@ -372,6 +375,8 @@ static void DecodeExtensionString(DeviceExtensionsPresent& extensions, const cha
         extensions.ext_device_fault = true;
     } else if (!strcmp(name, VK_EXT_DEVICE_ADDRESS_BINDING_REPORT_EXTENSION_NAME)) {
         extensions.ext_device_address_binding_report = true;
+    } else if (!strcmp(name, VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME)) {
+        extensions.nv_device_diagnostic_checkpoints = true;
     }
 }
 
@@ -395,24 +400,32 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
     device_ci->modified = device_ci->original;
 
     // If an important extension is not enabled by default, try to enable it if it is present
-    if (extensions_present.amd_buffer_marker) {
+    if (extensions_present.nv_device_diagnostic_checkpoints) {
+        if (!extensions_enabled.nv_device_diagnostic_checkpoints) {
+            // NOTE: this extension does not have a feature struct
+            extensions_enabled.nv_device_diagnostic_checkpoints = true;
+            vku::AddExtension(device_ci->modified, VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);
+        }
+    } else if (extensions_present.amd_buffer_marker) {
         if (!extensions_enabled.amd_buffer_marker) {
             // NOTE: this extension does not have a feature struct
             extensions_enabled.amd_buffer_marker = true;
             vku::AddExtension(device_ci->modified, VK_AMD_BUFFER_MARKER_EXTENSION_NAME);
         }
-    } else {
-        Log().Error("No VK_AMD_buffer_marker extension, progression tracking will be disabled. ");
-    }
-    if (extensions_present.amd_coherent_memory) {
-        if (!extensions_enabled.amd_coherent_memory) {
-            extensions_enabled.amd_coherent_memory = true;
-            auto amd_device_coherent = vku::InitStruct<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(nullptr, VK_TRUE);
-            vku::AddToPnext(device_ci->modified, amd_device_coherent);
-            vku::AddExtension(device_ci->modified, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
+        if (extensions_present.amd_coherent_memory) {
+            if (!extensions_enabled.amd_coherent_memory) {
+                extensions_enabled.amd_coherent_memory = true;
+                auto amd_device_coherent = vku::InitStruct<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(nullptr, VK_TRUE);
+                vku::AddToPnext(device_ci->modified, amd_device_coherent);
+                vku::AddExtension(device_ci->modified, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
+            }
+        } else {
+            Log().Error("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
         }
     } else {
-        Log().Error("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
+        Log().Error(
+            "No VK_NV_device_diagnostic_checkpoints or VK_AMD_buffer_marker extension, progression tracking will be "
+            "disabled. ");
     }
     if (extensions_present.ext_device_fault) {
         if (!extensions_enabled.ext_device_fault) {
@@ -487,10 +500,6 @@ void Context::DumpDeviceExecutionState(const Device& device, std::string error_r
 
     device.Print(os);
 
-    if (track_semaphores_) {
-        device.GetSubmitTracker()->DumpWaitingSubmits(os);
-        device.GetSemaphoreTracker()->DumpWaitingThreads(os);
-    }
     if (!error_report.empty()) {
         os << error_report;
     }
@@ -568,7 +577,7 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
         api << majorVersion << "." << minorVersion << "." << patchVersion << " ("
             << Uint32ToStr(application_info_->apiVersion) << ")";
         os << YAML::Key << "apiVersion" << YAML::Value << api.str();
-        YAML::EndMap;  // ApplicationInfo
+        os << YAML::EndMap;  // ApplicationInfo
     }
 
     os << YAML::Key << "instanceExtensions" << YAML::Value << YAML::BeginSeq;
@@ -577,7 +586,6 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     }
     os << YAML::EndSeq;
     os << YAML::EndMap;  // Instance
-    os << YAML::EndMap;  //??? TODO why do we need this extra EndMap?
 }
 
 std::ofstream Context::OpenDumpFile() {
@@ -742,41 +750,18 @@ VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDevi
         DecodeExtensionStrings(pCreateInfo->enabledExtensionCount, pCreateInfo->ppEnabledExtensionNames);
 
     VkDevice vk_device = *pDevice;
-    auto device = std::make_shared<Device>(*this, physicalDevice, *pDevice, extensions_present);
-
+    std::unique_ptr<DeviceCreateInfo> device_create_info;
     {
         std::lock_guard<std::mutex> lock(device_create_infos_mutex_);
-        device->SetDeviceCreateInfo(std::move(device_create_infos_[pCreateInfo]));
+        device_create_info = std::move(device_create_infos_[pCreateInfo]);
         device_create_infos_.erase(pCreateInfo);
     }
+    auto device =
+        std::make_shared<Device>(*this, physicalDevice, *pDevice, extensions_present, std::move(device_create_info));
     {
         std::lock_guard<std::mutex> lock(devices_mutex_);
         // the device pointer is used below, so no std::move() here.
         devices_[vk_device] = device;
-    }
-
-    if (track_semaphores_) {
-        // Create a helper command pool per queue family index. This command pool
-        // will be used for allocating command buffers that track the state of
-        // submit and semaphores.
-        auto dispatch_table =
-            crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(vk_device))->dispatch_table;
-        VkCommandPoolCreateInfo command_pool_create_info = {};
-        command_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-
-        for (uint32_t i = 0; i < pCreateInfo->queueCreateInfoCount; i++) {
-            auto queue_family_index = pCreateInfo->pQueueCreateInfos[i].queueFamilyIndex;
-            command_pool_create_info.queueFamilyIndex = queue_family_index;
-            VkCommandPool command_pool;
-            auto res = dispatch_table.CreateCommandPool(vk_device, &command_pool_create_info, nullptr, &command_pool);
-            if (res != VK_SUCCESS) {
-                Log().Warning("failed to create command pools for helper command  buffers. VkDevice: 0x" PRIx64
-                              ", queueFamilyIndex: %d",
-                              (uint64_t)(vk_device), queue_family_index);
-            } else {
-                device->RegisterHelperCommandPool(queue_family_index, command_pool);
-            }
-        }
     }
 
     return VK_SUCCESS;
@@ -785,7 +770,7 @@ VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDevi
 void Context::PreDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
     if (track_semaphores_) {
         auto device_state = GetDevice(device);
-        device_state->EraseCommandPools();
+        device_state->Destroy();
     }
 }
 
@@ -797,7 +782,7 @@ void Context::PostDestroyDevice(VkDevice device, const VkAllocationCallbacks* pA
 void Context::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) {
     {
         auto device_state = GetDevice(device);
-        device_state->RegisterQueueFamilyIndex(*pQueue, queueFamilyIndex);
+        device_state->RegisterQueue(*pQueue, queueFamilyIndex, queueIndex);
     }
     std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
     queue_device_tracker_[*pQueue] = device;
@@ -807,7 +792,7 @@ void Context::PreGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQue
 void Context::PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {
     {
         auto device_state = GetDevice(device);
-        device_state->RegisterQueueFamilyIndex(*pQueue, pQueueInfo->queueFamilyIndex);
+        device_state->RegisterQueue(*pQueue, pQueueInfo->queueFamilyIndex, pQueueInfo->queueIndex);
     }
     std::lock_guard<std::mutex> lock(queue_device_tracker_mutex_);
     queue_device_tracker_[*pQueue] = device;
@@ -821,7 +806,7 @@ VkResult Context::PreDeviceWaitIdle(VkDevice device) {
 VkResult Context::PostDeviceWaitIdle(VkDevice device, VkResult result) {
     PostApiFunction("vkDeviceWaitIdle", result);
 
-    if (IsVkError(result)) {
+    if (IsVkError(result) || result == VK_TIMEOUT) {
         DumpDeviceExecutionState(device);
     }
 
@@ -836,7 +821,8 @@ VkResult Context::PreQueueWaitIdle(VkQueue queue) {
 VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
     PostApiFunction("vkQueueWaitIdle", result);
 
-    if (IsVkError(result)) {
+    // some drivers return VK_TIMEOUT on a hang
+    if (IsVkError(result) || result == VK_TIMEOUT) {
         auto file = OpenDumpFile();
         YAML::Emitter os(file.is_open() ? file : std::cerr);
         DumpDeviceExecutionState(*GetQueueDevice(queue), {}, true, kDeviceLostError, os);
@@ -1259,16 +1245,9 @@ VkResult Context::PostGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore s
 const std::filesystem::path& Context::GetOutputPath() const { return output_path_; }
 
 VkResult Context::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
-    auto object_id = pNameInfo->object;
-
-    auto name_info = std::make_unique<ObjectInfo>();
-    name_info->object = pNameInfo->object;
-    name_info->type = static_cast<VkObjectType>(pNameInfo->objectType);
-    name_info->name = pNameInfo->pObjectName;
-
     auto device_state = GetDevice(device);
-    device_state->AddObjectInfo(object_id, std::move(name_info));
-
+    device_state->AddObjectInfo(pNameInfo->object, static_cast<VkObjectType>(pNameInfo->objectType),
+                                pNameInfo->pObjectName);
     return VK_SUCCESS;
 };
 
@@ -1278,16 +1257,8 @@ VkResult Context::PostDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebug
 };
 
 VkResult Context::PreSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
-    auto object_id = pNameInfo->objectHandle;
-
-    auto name_info = std::make_unique<ObjectInfo>();
-    name_info->object = pNameInfo->objectHandle;
-    name_info->type = pNameInfo->objectType;
-    name_info->name = pNameInfo->pObjectName;
-
     auto device_state = GetDevice(device);
-    device_state->AddObjectInfo(object_id, std::move(name_info));
-
+    device_state->AddObjectInfo(pNameInfo->objectHandle, pNameInfo->objectType, pNameInfo->pObjectName);
     return VK_SUCCESS;
 }
 
@@ -1342,24 +1313,24 @@ VkResult Context::PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
 
 VkResult Context::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit");
-    auto device_state = GetQueueDevice(queue);
-    auto result = device_state->QueueSubmit(queue, submitCount, pSubmits, fence);
+    auto queue_state = GetQueueDevice(queue)->GetQueue(queue);
+    auto result = queue_state->Submit(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit", result);
     return result;
 }
 
 VkResult Context::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit2");
-    auto device_state = GetQueueDevice(queue);
-    auto result = device_state->QueueSubmit2(queue, submitCount, pSubmits, fence);
+    auto queue_state = GetQueueDevice(queue)->GetQueue(queue);
+    auto result = queue_state->Submit2(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit2", result);
     return result;
 }
 
 VkResult Context::QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit2KHR");
-    auto device_state = GetQueueDevice(queue);
-    auto result = device_state->QueueSubmit2(queue, submitCount, pSubmits, fence);
+    auto queue_state = GetQueueDevice(queue)->GetQueue(queue);
+    auto result = queue_state->Submit2(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit2KHR", result);
     return result;
 }
@@ -1367,8 +1338,8 @@ VkResult Context::QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkS
 VkResult Context::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindSparseInfo const* pBindInfo,
                                   VkFence fence) {
     PreApiFunction("vkQueueBindSparse");
-    auto device_state = GetQueueDevice(queue);
-    auto result = device_state->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
+    auto queue_state = GetQueueDevice(queue)->GetQueue(queue);
+    auto result = queue_state->BindSparse(bindInfoCount, pBindInfo, fence);
     PostApiFunction("vkQueueBindSparse", result);
     return result;
 }

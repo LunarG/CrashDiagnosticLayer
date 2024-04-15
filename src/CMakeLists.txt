@@ -68,13 +68,13 @@ target_sources(crash_diagnostic PRIVATE
     object_name_db.cc
     pipeline.h
     pipeline.cc
+    queue.h
+    queue.cc
     semaphore_tracker.h
     semaphore_tracker.cc
     shader_module.h
     shader_module.cc
     spirv_parse.h
-    submit_tracker.h
-    submit_tracker.cc
     system.h
     system.cc
     util.h
