@@ -35,20 +35,20 @@ class Logger {
     bool OpenLogFile(const std::filesystem::path& filename);
     void CloseLogFile();
 
-    void LogError(const char* format, ...);
-    void LogError(const std::string& message);
-    void LogWarning(const char* format, ...);
-    void LogWarning(const std::string& message);
-    void LogInfo(const char* format, ...);
-    void LogInfo(const std::string& message);
-    void LogDebug(const char* format, ...);
-    void LogDebug(const std::string& message);
+    void Error(const char* format, ...) const;
+    void Error(const std::string& message) const;
+    void Warning(const char* format, ...) const;
+    void Warning(const std::string& message) const;
+    void Info(const char* format, ...) const;
+    void Info(const std::string& message) const;
+    void Debug(const char* format, ...) const;
+    void Debug(const std::string& message) const;
 
    private:
     LogLevel log_level_{LOG_LEVEL_ERROR};
     std::string log_file_name_;
-    FILE* log_file_{nullptr};
-    std::mutex file_access_mutex_;
+    mutable FILE* log_file_{nullptr};
+    mutable std::mutex file_access_mutex_;
 };
 
 }  // namespace crash_diagnostic_layer

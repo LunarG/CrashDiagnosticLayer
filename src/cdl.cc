@@ -75,7 +75,7 @@ const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
 // =============================================================================
 Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator) {
     system_.SetContext(this);
-    logger_.LogInfo("Version %s enabled.", kCdlVersion);
+    Log().Info("Version %s enabled.", kCdlVersion);
 
     const auto* create_info = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
 
@@ -83,7 +83,7 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
     VkResult result =
         vkuCreateLayerSettingSet("lunarg_crash_diagnostic", create_info, pAllocator, nullptr, &layer_setting_set);
     if (result != VK_SUCCESS) {
-        logger_.LogError("vkuCreateLayerSettingSet failed with error %d", result);
+        Log().Error("vkuCreateLayerSettingSet failed with error %d", result);
         return;
     }
 
@@ -180,7 +180,7 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
 
         if (watchdog_timer_ms_ > 0) {
             StartWatchdogTimer();
-            logger_.LogInfo("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
+            Log().Info("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
         }
     }
 
@@ -269,7 +269,7 @@ void Context::MakeDir(const std::filesystem::path& path) {
 #endif
 
     if (mkdir_result && EEXIST != errno) {
-        logger_.LogError("Error creating output directory \'%s\': %s", path.string().c_str(), strerror(errno));
+        Log().Error("Error creating output directory \'%s\': %s", path.string().c_str(), strerror(errno));
     }
 }
 
@@ -296,10 +296,10 @@ void Context::StartWatchdogTimer() {
 
 void Context::StopWatchdogTimer() {
     if (watchdog_running_ && watchdog_thread_->joinable()) {
-        logger_.LogInfo("Stopping Watchdog");
+        Log().Info("Stopping Watchdog");
         watchdog_running_ = false;  // TODO: condition variable that waits
         watchdog_thread_->join();
-        logger_.LogInfo("Watchdog Stopped");
+        Log().Info("Watchdog Stopped");
     }
 }
 
@@ -315,7 +315,7 @@ void Context::WatchdogTimer() {
         auto ms = (int64_t)(now - last_submit_time_);
 
         if (ms > (int64_t)watchdog_timer_ms_) {
-            logger_.LogInfo("CDL: Watchdog check failed, no submit in %" PRId64 "ms", ms);
+            Log().Info("CDL: Watchdog check failed, no submit in %" PRId64 "ms", ms);
 
             DumpAllDevicesExecutionState(CrashSource::kWatchdogTimer);
 
@@ -329,19 +329,19 @@ void Context::WatchdogTimer() {
 
 void Context::PreApiFunction(const char* api_name) {
     if (trace_all_) {
-        logger_.LogInfo("{ %s", api_name);
+        Log().Info("{ %s", api_name);
     }
 }
 
 void Context::PostApiFunction(const char* api_name) {
     if (trace_all_) {
-        logger_.LogInfo("} %s", api_name);
+        Log().Info("} %s", api_name);
     }
 }
 
 void Context::PostApiFunction(const char* api_name, VkResult result) {
     if (trace_all_) {
-        logger_.LogInfo("} %s (%s)", api_name, string_VkResult(result));
+        Log().Info("} %s (%s)", api_name, string_VkResult(result));
     }
 }
 
@@ -403,7 +403,7 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             vku::AddExtension(device_ci->modified, VK_AMD_BUFFER_MARKER_EXTENSION_NAME);
         }
     } else {
-        logger_.LogError("No VK_AMD_buffer_marker extension, progression tracking will be disabled. ");
+        Log().Error("No VK_AMD_buffer_marker extension, progression tracking will be disabled. ");
     }
     if (extensions_present.amd_coherent_memory) {
         if (!extensions_enabled.amd_coherent_memory) {
@@ -413,7 +413,7 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             vku::AddExtension(device_ci->modified, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
         }
     } else {
-        logger_.LogError("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
+        Log().Error("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
     }
     if (extensions_present.ext_device_fault) {
         if (!extensions_enabled.ext_device_fault) {
@@ -424,7 +424,7 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_FAULT_EXTENSION_NAME);
         }
     } else {
-        logger_.LogWarning("No VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
+        Log().Warning("No VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
     }
     if (extensions_present.ext_device_address_binding_report) {
         if (!extensions_enabled.ext_device_address_binding_report) {
@@ -434,7 +434,7 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_ADDRESS_BINDING_REPORT_EXTENSION_NAME);
         }
     } else {
-        logger_.LogWarning(
+        Log().Warning(
             "No VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
     }
 
@@ -623,11 +623,11 @@ std::ofstream Context::OpenDumpFile() {
 #if defined(WIN32)
     OutputDebugString(ss.str().c_str());
 #endif
-    logger_.LogError(ss.str());
+    Log().Error(ss.str());
 
     std::ofstream fs(dump_file_path);
     if (!fs.is_open()) {
-        logger_.LogError("UNABLE TO OPEN LOG FILE");
+        Log().Error("UNABLE TO OPEN LOG FILE");
     }
     fs << std::unitbuf;
     return fs;
@@ -645,7 +645,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL MessengerCallback(VkDebugUtilsMessageSever
         return VK_FALSE;
     }
     Context* context = reinterpret_cast<Context*>(pUserData);
-    Logger* logger = context->GetLogger();
     const auto* mem_info = vku::FindStructInPNextChain<VkDeviceAddressBindingCallbackDataEXT>(pCallbackData->pNext);
     if (!mem_info) {
         return VK_FALSE;
@@ -772,9 +771,9 @@ VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDevi
             VkCommandPool command_pool;
             auto res = dispatch_table.CreateCommandPool(vk_device, &command_pool_create_info, nullptr, &command_pool);
             if (res != VK_SUCCESS) {
-                logger_.LogWarning("failed to create command pools for helper command  buffers. VkDevice: 0x" PRIx64
-                                   ", queueFamilyIndex: %d",
-                                   (uint64_t)(vk_device), queue_family_index);
+                Log().Warning("failed to create command pools for helper command  buffers. VkDevice: 0x" PRIx64
+                              ", queueFamilyIndex: %d",
+                              (uint64_t)(vk_device), queue_family_index);
             } else {
                 device->RegisterHelperCommandPool(queue_family_index, command_pool);
             }
@@ -1109,7 +1108,7 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
             } else {
                 log << ", Type: Timeline, Initial value: " << s_value;
             }
-            logger_.LogInfo(log.str());
+            Log().Info(log.str());
         }
     }
     return result;
@@ -1136,7 +1135,7 @@ void Context::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const 
         } else {
             log << "Latest value: Unknown" << std::endl;
         }
-        logger_.LogInfo(log.str());
+        Log().Info(log.str());
     }
 }
 
@@ -1162,7 +1161,7 @@ VkResult Context::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSigna
             timeline_message += device_state->GetObjectName((uint64_t)device) +
                                 ", VkSemaphore: " + device_state->GetObjectName((uint64_t)(pSignalInfo->semaphore)) +
                                 ", Signal value: " + std::to_string(pSignalInfo->value);
-            logger_.LogInfo(timeline_message.c_str());
+            Log().Info(timeline_message.c_str());
         }
     }
     return result;
@@ -1192,7 +1191,7 @@ VkResult Context::PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInf
                 log << "\tVkSemaphore: " << device_state->GetObjectName((uint64_t)(pWaitInfo->pSemaphores[i]))
                     << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
             }
-            logger_.LogInfo(log.str());
+            Log().Info(log.str());
         }
     }
     return VK_SUCCESS;
@@ -1242,7 +1241,7 @@ VkResult Context::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitIn
                 log << "\tVkSemaphore: " << device_state->GetObjectName((uint64_t)(pWaitInfo->pSemaphores[i]))
                     << ", Wait value: " << pWaitInfo->pValues[i] << std::endl;
             }
-            logger_.LogInfo(log.str());
+            Log().Info(log.str());
         }
     }
     return result;
