@@ -229,7 +229,7 @@ class Device {
     void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
     void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
 
-    Logger& GetLogger() const;
+    const Logger& Log() const;
 
     std::vector<VkCommandBuffer> AllocHelperCBs(VkCommandPool vk_command_pool, uint32_t count);
 

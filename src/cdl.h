@@ -101,8 +101,8 @@ class Context : public Interceptor {
     void MakeOutputPath();
     const std::filesystem::path& GetOutputPath() const;
     std::ofstream OpenDumpFile();
+    const Logger& Log() const { return logger_; }
 
-    Logger* GetLogger() { return &logger_; }
     const ShaderModule* FindShaderModule(VkShaderModule shader) const;
 
     DevicePtr GetDevice(VkDevice);

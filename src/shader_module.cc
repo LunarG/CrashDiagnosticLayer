@@ -68,7 +68,7 @@ std::string ShaderModule::DumpShaderCode(const std::string& prefix, size_t code_
     std::filesystem::path shader_output_path(output_path_);
     shader_output_path /= shader_filename;
 
-    context_->GetLogger()->LogInfo("Writing Shader: \'%s\'", shader_filename.c_str());
+    context_->Log().Info("Writing Shader: \'%s\'", shader_filename.c_str());
 
     std::ofstream os(shader_output_path);
     if (os.is_open()) {

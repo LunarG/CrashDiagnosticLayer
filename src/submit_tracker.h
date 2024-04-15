@@ -49,6 +49,8 @@ class SubmitTracker {
    public:
     SubmitTracker(Device* device);
 
+    const Logger& Log() const;
+
     SubmitInfoId RegisterSubmitInfo(QueueSubmitId queue_submit_index, const VkSubmitInfo* submit_info);
     SubmitInfoId RegisterSubmitInfo(QueueSubmitId queue_submit_index, const VkSubmitInfo2* submit_info);
 

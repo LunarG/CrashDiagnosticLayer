@@ -30,6 +30,8 @@ namespace crash_diagnostic_layer {
 SemaphoreTracker::SemaphoreTracker(Device* p_device, bool track_semaphores_last_setter)
     : device_(p_device), track_semaphores_last_setter_(track_semaphores_last_setter) {}
 
+const Logger& SemaphoreTracker::Log() const { return device_->Log(); }
+
 void SemaphoreTracker::RegisterSemaphore(VkSemaphore vk_semaphore, VkSemaphoreTypeKHR type, uint64_t value) {
     {
         std::lock_guard<std::mutex> lock(semaphores_mutex_);
@@ -40,13 +42,13 @@ void SemaphoreTracker::RegisterSemaphore(VkSemaphore vk_semaphore, VkSemaphoreTy
     semaphore_info.semaphore_type = type;
     // Reserve a marker to track semaphore value
     if (!device_->AllocateMarker(&semaphore_info.marker)) {
-        device_->GetContext()->GetLogger()->LogError("CDL warning: Cannot acquire marker. Not tracking semaphore %s.",
-                                                     device_->GetObjectName((uint64_t)vk_semaphore).c_str());
+        Log().Error("CDL warning: Cannot acquire marker. Not tracking semaphore %s.",
+                    device_->GetObjectName((uint64_t)vk_semaphore).c_str());
         return;
     }
     if (track_semaphores_last_setter_) {
         if (!device_->AllocateMarker(&semaphore_info.last_modifier_marker)) {
-            device_->GetContext()->GetLogger()->LogError(
+            Log().Error(
                 "CDL warning: Cannot acquire modifier tracking marker. Not "
                 "tracking semaphore %s.",
                 device_->GetObjectName((uint64_t)vk_semaphore).c_str());
@@ -70,8 +72,7 @@ void SemaphoreTracker::SignalSemaphore(VkSemaphore vk_semaphore, uint64_t value,
             semaphore_info.UpdateLastModifier(modifier_info);
         }
     } else {
-        device_->GetContext()->GetLogger()->LogError("Unknown semaphore signaled: %s",
-                                                     device_->GetObjectName((uint64_t)vk_semaphore).c_str());
+        Log().Error("Unknown semaphore signaled: %s", device_->GetObjectName((uint64_t)vk_semaphore).c_str());
     }
 }
 

@@ -31,6 +31,7 @@
 namespace crash_diagnostic_layer {
 
 class Device;
+class Logger;
 
 enum SemaphoreOperation { kWaitOperation, kSignalOperation };
 
@@ -59,6 +60,8 @@ struct TrackedSemaphoreInfo {
 class SemaphoreTracker {
    public:
     SemaphoreTracker(Device* device, bool track_semaphores_last_setter);
+
+    const Logger& Log() const;
 
     void RegisterSemaphore(VkSemaphore vk_semaphore, VkSemaphoreTypeKHR type, uint64_t value);
     void SignalSemaphore(VkSemaphore vk_semaphore, uint64_t value, SemaphoreModifierInfo modifier_info);

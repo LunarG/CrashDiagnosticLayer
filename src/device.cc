@@ -187,7 +187,7 @@ VkPhysicalDevice Device::GetVkGpu() const { return vk_physical_device_; }
 
 VkDevice Device::GetVkDevice() const { return vk_device_; }
 
-Logger& Device::GetLogger() const { return *context_->GetLogger(); }
+const Logger& Device::Log() const { return context_->Log(); }
 
 bool Device::HasBufferMarker() const { return extensions_present_.amd_buffer_marker; }
 
@@ -380,9 +380,9 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_pool, const VkCommandBuffer
 
 // Write out information about an invalid command buffer reset.
 void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter& os) const {
-    GetContext()->GetLogger()->LogError("Invalid Command Buffer Usage");
-    GetContext()->GetLogger()->LogError("Reset of VkCommandBuffer in use by GPU: %s",
-                                        GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
+    Log().Error("Invalid Command Buffer Usage");
+    Log().Error("Reset of VkCommandBuffer in use by GPU: %s",
+                GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
     auto submitted_fence = p_cmd->GetSubmittedFence();
 
     // If there is a fence associated with this command buffer, we check
@@ -390,10 +390,9 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter&
     if (submitted_fence != VK_NULL_HANDLE) {
         auto fence_status = device_dispatch_table_.WaitForFences(vk_device_, 1, &submitted_fence, VK_TRUE, 0);
         if (VK_TIMEOUT == fence_status) {
-            GetContext()->GetLogger()->LogError("Reset before fence was set: %s",
-                                                GetObjectName((uint64_t)submitted_fence).c_str());
+            Log().Error("Reset before fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
         } else {
-            GetContext()->GetLogger()->LogError("Fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
+            Log().Error("Fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
         }
     }
 
@@ -405,7 +404,7 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter&
     error_report << YAML::BeginMap << YAML::Key << "InvalidCommandBuffer" << YAML::Value;
     p_cmd->DumpContents(error_report, CommandBufferDumpOption::kDumpAllCommands);
     error_report << YAML::EndMap;
-    GetContext()->GetLogger()->LogError(error_report.c_str());
+    Log().Error(error_report.c_str());
     os << error_report.c_str();
 }
 
@@ -532,11 +531,11 @@ void Device::DumpShaderFromPipeline(VkPipeline pipeline) const {
                 auto prefix = "PIPELINE_" + GetObjectName((uint64_t)pipeline, kPreferDebugName) + "_SHADER_";
                 module->second->DumpShaderCode(prefix);
             } else {
-                GetContext()->GetLogger()->LogError("Unknown VkShaderModule handle: 0x%08X", bound_shader.module);
+                Log().Error("Unknown VkShaderModule handle: 0x%08X", bound_shader.module);
             }
         }
     } else {
-        GetContext()->GetLogger()->LogError("Unknown VkPipeline handle: 0x%08X", pipeline);
+        Log().Error("Unknown VkPipeline handle: 0x%08X", pipeline);
     }
 }
 
@@ -716,7 +715,8 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
     auto fault_info = vku::InitStruct<VkDeviceFaultInfoEXT>();
     fault_info.pAddressInfos = fault_counts.addressInfoCount == 0 ? nullptr : address_infos.data();
     fault_info.pVendorInfos = fault_counts.vendorInfoCount == 0 ? nullptr : vendor_infos.data();
-    fault_info.pVendorBinaryData = fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data());
+    fault_info.pVendorBinaryData =
+        fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data());
 
     result = pfn_vkGetDeviceFaultInfoEXT(vk_device_, &fault_counts, &fault_info);
     if (result != VK_SUCCESS && result != VK_INCOMPLETE) {
@@ -859,7 +859,7 @@ VkResult Device::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmit
 
     VkCommandPool vk_pool = GetHelperCommandPool(queue);
     if (vk_pool == VK_NULL_HANDLE) {
-        GetLogger().LogError(
+        Log().Error(
             "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
             "state. Not tracking semaphores.");
         return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
@@ -871,7 +871,7 @@ VkResult Device::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmit
 
     std::vector<VkCommandBuffer> new_buffers = AllocHelperCBs(vk_pool, 2 * submitCount);
     if (new_buffers.empty()) {
-        GetLogger().LogError(
+        Log().Error(
             "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
             "state. Not tracking semaphores.");
         return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
@@ -937,7 +937,7 @@ VkResult Device::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmi
 
     VkCommandPool vk_pool = GetHelperCommandPool(queue);
     if (vk_pool == VK_NULL_HANDLE) {
-        GetLogger().LogError(
+        Log().Error(
             "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
             "state. Not tracking semaphores.");
         return QueueSubmit2WithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
@@ -949,7 +949,7 @@ VkResult Device::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmi
 
     std::vector<VkCommandBuffer> new_buffers = AllocHelperCBs(vk_pool, 2 * submitCount);
     if (new_buffers.empty()) {
-        GetLogger().LogError(
+        Log().Error(
             "failed to find the helper command pool to allocate helper command buffers for tracking queue submit "
             "state. Not tracking semaphores.");
         return QueueSubmit2WithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
@@ -1025,9 +1025,9 @@ VkResult Device::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const Vk
     // for this queue. If not, pass the call to dispatch table.
     VkCommandPool vk_pool = GetHelperCommandPool(queue);
     if (vk_pool == VK_NULL_HANDLE) {
-        GetLogger().LogWarning("device handle not found for queue 0x" PRIx64
-                               ", Ignoring semaphore signals in vkQueueBindSparse call.",
-                               (uint64_t)queue);
+        Log().Warning("device handle not found for queue 0x" PRIx64
+                      ", Ignoring semaphore signals in vkQueueBindSparse call.",
+                      (uint64_t)queue);
         result = device_dispatch_table_.QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
         PostSubmit(queue, result);
         return result;
@@ -1121,7 +1121,7 @@ VkResult Device::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const Vk
             result = device_dispatch_table_.QueueSubmit(
                 queue, 1, &expanded_bind_sparse_info.submit_infos[next_submit_info_index], VK_NULL_HANDLE);
             if (result != VK_SUCCESS) {
-                GetLogger().LogWarning(
+                Log().Warning(
                     "helper vkQueueSubmit failed while tracking semaphores in a vkQueueBindSparse call. Semaphore "
                     "values in the final report might be wrong. Result: 0x%08x",
                     result);
@@ -1133,7 +1133,7 @@ VkResult Device::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const Vk
         }
     }
     if (last_bind_result != VK_SUCCESS) {
-        GetLogger().LogWarning(
+        Log().Warning(
             "QueueBindSparse: Unexpected VkResult = 0x%8x after submitting %d bind sparse infos and %d "
             " helper submit infos to the queue. Submitting the remained bind sparse infos at once.",
             last_bind_result, next_bind_sparse_info_index, next_submit_info_index);
@@ -1161,7 +1161,7 @@ VkResult Device::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit
     VkResult result = device_dispatch_table_.BeginCommandBuffer(cb, &commandBufferBeginInfo);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-        GetLogger().LogWarning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        Log().Warning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         return result;
     }
 
@@ -1178,7 +1178,7 @@ VkResult Device::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId submi
     VkResult result = device_dispatch_table_.BeginCommandBuffer(cb, &commandBufferBeginInfo);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-        GetLogger().LogWarning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        Log().Warning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         return result;
     }
 
@@ -1194,7 +1194,7 @@ void Device::LogSubmitInfoSemaphores(VkQueue vk_queue, SubmitInfoId submit_info_
     assert(context_->TracingAllSemaphores() == true);
     if (submit_tracker_->SubmitInfoHasSemaphores(submit_info_id)) {
         std::string semaphore_log = submit_tracker_->GetSubmitInfoSemaphoresLog(vk_device_, vk_queue, submit_info_id);
-        GetLogger().LogInfo(semaphore_log);
+        Log().Info(semaphore_log);
     }
 }
 
@@ -1205,7 +1205,7 @@ VkResult Device::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id,
         device_dispatch_table_.BeginCommandBuffer(vk_submit_info->pCommandBuffers[0], &commandBufferBeginInfo);
     assert(result == VK_SUCCESS);
     if (result != VK_SUCCESS) {
-        GetLogger().LogWarning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
+        Log().Warning("failed to begin helper command buffer. vkBeginCommandBuffer() returned 0x%08x", result);
         return result;
     }
 
@@ -1234,7 +1234,7 @@ void Device::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_c
     assert(context_->TrackingSemaphores() == true);
     assert(context_->TracingAllSemaphores() == true);
     auto log = BindSparseUtils::LogBindSparseInfosSemaphores(this, vk_device_, vk_queue, bind_info_count, bind_infos);
-    GetLogger().LogInfo(log);
+    Log().Info(log);
 }
 
 }  // namespace crash_diagnostic_layer
