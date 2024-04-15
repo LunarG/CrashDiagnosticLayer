@@ -31,10 +31,8 @@ class Device;
 // =================================================================================================
 class CommandPool {
    public:
-    CommandPool(VkCommandPool vk_command_pool, const VkCommandPoolCreateInfo* p_create_info,
-                const std::vector<VkQueueFamilyProperties>& queue_family_properties, bool has_buffer_markers);
+    CommandPool(VkCommandPool vk_command_pool, const VkCommandPoolCreateInfo* p_create_info);
 
-    bool HasBufferMarkers() const { return has_buffer_markers_; }
     bool CanResetBuffer() const { return m_flags & VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; }
 
     void Reset();
@@ -50,7 +48,6 @@ class CommandPool {
    private:
     VkCommandPool vk_command_pool_;
 
-    const bool has_buffer_markers_;
     VkCommandPoolCreateFlags m_flags;
 
     std::vector<VkCommandBuffer> primary_command_buffers_;

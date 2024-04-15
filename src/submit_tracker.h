@@ -75,7 +75,7 @@ class SubmitTracker {
    private:
     Device& device_;
 
-    enum SubmitState {
+    enum SubmitState : uint32_t {
         kInvalid = 0,
         kQueued = 1,
         kRunning = 2,
@@ -122,7 +122,7 @@ class SubmitTracker {
         VkCommandBuffer marker_cb = VK_NULL_HANDLE;
         VkCommandPool command_pool = VK_NULL_HANDLE;
 
-        HelperSubmitInfo() { marker.type = MarkerType::kUint32; }
+        HelperSubmitInfo() {}
     };
 
     std::mutex helper_submit_infos_mutex_;

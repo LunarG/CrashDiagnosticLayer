@@ -35,7 +35,7 @@ class Logger;
 
 enum SemaphoreOperation { kWaitOperation, kSignalOperation };
 
-enum SemaphoreModifierType {
+enum SemaphoreModifierType : uint32_t {
     kNotModified = 0,
     kModifierHost = 1,
     kModifierQueueSubmit = 2,
@@ -90,24 +90,12 @@ class SemaphoreTracker {
     struct SemaphoreInfo {
         // VkSemaphore used as the key in the container, so not included here.
         VkSemaphoreTypeKHR semaphore_type = VK_SEMAPHORE_TYPE_BINARY_KHR;
-        Marker marker, last_modifier_marker;
-        SemaphoreInfo() {
-            marker.type = MarkerType::kUint64;
-            last_modifier_marker.type = MarkerType::kUint64;
-        }
-        uint64_t EncodeModifierInfo(SemaphoreModifierInfo modifier_info) {
-            return ((uint64_t)modifier_info.type << 32) | modifier_info.id;
-        }
-        void UpdateLastModifier(SemaphoreModifierInfo modifier_info) {
-            *(uint64_t*)(last_modifier_marker.cpu_mapped_address) = EncodeModifierInfo(modifier_info);
-        }
-        SemaphoreModifierInfo GetLastModifier() {
-            SemaphoreModifierInfo last_modifier;
-            uint64_t last_modifier_64 = *(uint64_t*)(last_modifier_marker.cpu_mapped_address);
-            last_modifier.type = (SemaphoreModifierType)(last_modifier_64 & 0xffffffff);
-            last_modifier.id = last_modifier_64 >> 32;
-            return last_modifier;
-        }
+        Marker64 marker;
+        Marker last_id, last_type;
+        SemaphoreInfo() {}
+
+        void UpdateLastModifier(Device& device, SemaphoreModifierInfo modifier_info);
+        SemaphoreModifierInfo GetLastModifier(Device& device);
     };
 
     mutable std::mutex semaphores_mutex_;
