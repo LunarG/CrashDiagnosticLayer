@@ -28,7 +28,7 @@
 
 namespace crash_diagnostic_layer {
 
-ShaderModule::ShaderModule(Context* context, VkShaderModule vk_shader_module, int load_options, size_t code_size,
+ShaderModule::ShaderModule(Context& context, VkShaderModule vk_shader_module, int load_options, size_t code_size,
                            const char* p_spirv, const std::filesystem::path& output_path)
     : context_(context), vk_shader_module_(vk_shader_module), output_path_(output_path) {
     if (load_options & LoadOptions::kKeepInMemory) {
@@ -68,7 +68,7 @@ std::string ShaderModule::DumpShaderCode(const std::string& prefix, size_t code_
     std::filesystem::path shader_output_path(output_path_);
     shader_output_path /= shader_filename;
 
-    context_->Log().Info("Writing Shader: \'%s\'", shader_filename.c_str());
+    context_.Log().Info("Writing Shader: \'%s\'", shader_filename.c_str());
 
     std::ofstream os(shader_output_path);
     if (os.is_open()) {

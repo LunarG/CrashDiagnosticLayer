@@ -24,10 +24,7 @@ class Context;
 
 class System {
    public:
-    System();
-
-    void SetContext(Context* context) { context_ = context; }
-    Context* GetContext() const { return context_; }
+    System(Context& context);
 
     const std::string& GetOsName() { return os_name_; }
     const std::string& GetOsVersion() { return os_version_; }
@@ -44,7 +41,7 @@ class System {
     bool QueryInfoPosix();
     bool QueryInfoWindows();
 
-    Context* context_ = nullptr;
+    Context& context_;
 
     std::string os_name_;
     std::string os_version_;

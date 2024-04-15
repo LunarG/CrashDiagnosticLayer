@@ -38,7 +38,7 @@ class BindSparseUtils {
 
     static void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
 
-    static std::string LogBindSparseInfosSemaphores(const Device* device, VkDevice vk_device, VkQueue vk_queue,
+    static std::string LogBindSparseInfosSemaphores(const Device& device, VkDevice vk_device, VkQueue vk_queue,
                                                     uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
 
    private:

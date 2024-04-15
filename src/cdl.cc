@@ -73,8 +73,7 @@ const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
 // =============================================================================
 // Context
 // =============================================================================
-Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator) {
-    system_.SetContext(this);
+Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator) : system_(*this) {
     Log().Info("Version %s enabled.", kCdlVersion);
 
     const auto* create_info = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
@@ -743,7 +742,7 @@ VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDevi
         DecodeExtensionStrings(pCreateInfo->enabledExtensionCount, pCreateInfo->ppEnabledExtensionNames);
 
     VkDevice vk_device = *pDevice;
-    auto device = std::make_shared<Device>(this, physicalDevice, *pDevice, extensions_present);
+    auto device = std::make_shared<Device>(*this, physicalDevice, *pDevice, extensions_present);
 
     {
         std::lock_guard<std::mutex> lock(device_create_infos_mutex_);
@@ -1310,7 +1309,7 @@ void Context::PreCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPo
                                  VkPipeline pipeline) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     if (DumpShadersOnBind()) {
-        p_cmd->GetDevice()->DumpShaderFromPipeline(pipeline);
+        p_cmd->GetDevice().DumpShaderFromPipeline(pipeline);
     }
 
     p_cmd->PreCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
@@ -1319,10 +1318,10 @@ void Context::PreCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPo
 VkResult Context::PreBeginCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferBeginInfo const* pBeginInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     {
-        auto device = p_cmd->GetDevice();
+        auto& device = p_cmd->GetDevice();
         YAML::Emitter os;
-        if (!device->ValidateCommandBufferNotInUse(commandBuffer, os)) {
-            DumpDeviceExecutionStateValidationFailed(*device, os);
+        if (!device.ValidateCommandBufferNotInUse(commandBuffer, os)) {
+            DumpDeviceExecutionStateValidationFailed(device, os);
         }
     }
 
@@ -1332,10 +1331,10 @@ VkResult Context::PreBeginCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
 VkResult Context::PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     {
-        auto device = p_cmd->GetDevice();
+        auto& device = p_cmd->GetDevice();
         YAML::Emitter os;
-        if (!device->ValidateCommandBufferNotInUse(commandBuffer, os)) {
-            DumpDeviceExecutionStateValidationFailed(*device, os);
+        if (!device.ValidateCommandBufferNotInUse(commandBuffer, os)) {
+            DumpDeviceExecutionStateValidationFailed(device, os);
         }
     }
 

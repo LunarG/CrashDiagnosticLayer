@@ -133,10 +133,10 @@ void DestroyBuffer(VkDevice device, VkBuffer buffer) {
 // =================================================================================================
 // Device
 // =================================================================================================
-Device::Device(Context* context, VkPhysicalDevice vk_gpu, VkDevice device, DeviceExtensionsPresent& extensions_present)
+Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, DeviceExtensionsPresent& extensions_present)
     : context_(context), vk_physical_device_(vk_gpu), vk_device_(device), extensions_present_(extensions_present) {
     // Set the dispatch tables
-    auto instance_layer_data = GetInstanceLayerData(DataKey(context_->GetInstance()));
+    auto instance_layer_data = GetInstanceLayerData(DataKey(context_.GetInstance()));
     instance_dispatch_table_ = instance_layer_data->dispatch_table;
     auto device_layer_data = GetDeviceLayerData(DataKey(device));
     device_dispatch_table_ = device_layer_data->dispatch_table;
@@ -169,10 +169,10 @@ Device::Device(Context* context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
         (PFN_vkFreeCommandBuffers)device_dispatch_table_.GetDeviceProcAddr(device, "vkFreeCommandBuffers");
 
     // Create a submit tracker
-    submit_tracker_ = std::make_unique<SubmitTracker>(this);
+    submit_tracker_ = std::make_unique<SubmitTracker>(*this);
 
     // Create a semaphore tracker
-    semaphore_tracker_ = std::make_unique<SemaphoreTracker>(this, context_->TracingAllSemaphores());
+    semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this, context_.TracingAllSemaphores());
 }
 
 Device::~Device() {}
@@ -181,13 +181,13 @@ void Device::SetDeviceCreateInfo(std::unique_ptr<DeviceCreateInfo> device_create
     device_create_info_ = std::move(device_create_info);
 }
 
-Context* Device::GetContext() const { return context_; }
+Context& Device::GetContext() const { return context_; }
 
 VkPhysicalDevice Device::GetVkGpu() const { return vk_physical_device_; }
 
 VkDevice Device::GetVkDevice() const { return vk_device_; }
 
-const Logger& Device::Log() const { return context_->Log(); }
+const Logger& Device::Log() const { return context_.Log(); }
 
 bool Device::HasBufferMarker() const { return extensions_present_.amd_buffer_marker; }
 
@@ -370,8 +370,8 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_pool, const VkCommandBuffer
     for (uint32_t i = 0; i < allocate_info->commandBufferCount; ++i) {
         VkCommandBuffer vk_cmd = command_buffers[i];
 
-        auto cmd = std::make_unique<CommandBuffer>(this, vk_pool, vk_cmd, allocate_info, has_buffer_markers);
-        cmd->SetInstrumentAllCommands(context_->InstrumentAllCommands());
+        auto cmd = std::make_unique<CommandBuffer>(*this, vk_pool, vk_cmd, allocate_info, has_buffer_markers);
+        cmd->SetInstrumentAllCommands(context_.InstrumentAllCommands());
 
         SetCommandBuffer(vk_cmd, std::move(cmd));
         AddCommandBuffer(vk_cmd);
@@ -546,12 +546,12 @@ void Device::DeletePipeline(VkPipeline pipeline) {
 
 void Device::CreateShaderModule(const VkShaderModuleCreateInfo* pCreateInfo, VkShaderModule* pShaderModule,
                                 int shader_module_load_options) {
-    GetContext()->MakeOutputPath();
+    context_.MakeOutputPath();
     // Parse the SPIR-V for relevant information, does not copy the SPIR-V
     // binary.
-    ShaderModulePtr shader_module = std::make_unique<ShaderModule>(
-        GetContext(), *pShaderModule, shader_module_load_options, pCreateInfo->codeSize,
-        reinterpret_cast<const char*>(pCreateInfo->pCode), GetContext()->GetOutputPath());
+    ShaderModulePtr shader_module =
+        std::make_unique<ShaderModule>(GetContext(), *pShaderModule, shader_module_load_options, pCreateInfo->codeSize,
+                                       reinterpret_cast<const char*>(pCreateInfo->pCode), context_.GetOutputPath());
 
     // Add extra name information for shaders, used to give them names even if
     // they don't have explict debug names.
@@ -601,7 +601,7 @@ VkCommandPool Device::GetHelperCommandPool(uint32_t queueFamilyIndex) {
 }
 
 VkCommandPool Device::GetHelperCommandPool(VkQueue vk_queue) {
-    assert(context_->TrackingSemaphores() == true);
+    assert(context_.TrackingSemaphores() == true);
     if (vk_queue == VK_NULL_HANDLE) {
         return VK_NULL_HANDLE;
     }
@@ -796,9 +796,9 @@ void Device::MemoryBindEvent(const DeviceAddressRecord& rec, bool multi_device) 
 }
 
 void Device::PostSubmit(VkQueue queue, VkResult result) {
-    bool dump = IsVkError(result) || context_->CountSubmit();
+    bool dump = IsVkError(result) || context_.CountSubmit();
     if (dump) {
-        context_->DumpDeviceExecutionState(vk_device_);
+        context_.DumpDeviceExecutionState(vk_device_);
     }
 }
 
@@ -853,7 +853,7 @@ VkResult Device::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmit
     }
     VkResult result;
 
-    if (!context_->TrackingSemaphores()) {
+    if (!context_.TrackingSemaphores()) {
         return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
     }
 
@@ -865,7 +865,7 @@ VkResult Device::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmit
         return QueueSubmitWithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
     }
 
-    bool trace_all_semaphores = context_->TracingAllSemaphores();
+    bool trace_all_semaphores = context_.TracingAllSemaphores();
     auto queue_submit_id = GetNextQueueSubmitId();
     auto semaphore_tracking_submits = reinterpret_cast<VkSubmitInfo*>(alloca(sizeof(VkSubmitInfo) * submitCount));
 
@@ -931,7 +931,7 @@ VkResult Device::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmi
     }
     VkResult result;
 
-    if (!context_->TrackingSemaphores()) {
+    if (!context_.TrackingSemaphores()) {
         return QueueSubmit2WithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
     }
 
@@ -943,7 +943,7 @@ VkResult Device::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmi
         return QueueSubmit2WithoutTrackingSemaphores(queue, submitCount, pSubmits, fence);
     }
 
-    bool trace_all_semaphores = context_->TracingAllSemaphores();
+    bool trace_all_semaphores = context_.TracingAllSemaphores();
     auto queue_submit_id = GetNextQueueSubmitId();
     auto semaphore_tracking_submits = reinterpret_cast<VkSubmitInfo2*>(alloca(sizeof(VkSubmitInfo) * submitCount));
 
@@ -1006,7 +1006,7 @@ VkResult Device::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmi
 VkResult Device::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
                                  VkFence fence) {
     VkResult result;
-    bool track_semaphores = context_->TrackingSemaphores();
+    bool track_semaphores = context_.TrackingSemaphores();
     // If semaphore tracking is not requested, pass the call to the dispatch table
     // as is.
     if (!track_semaphores) {
@@ -1016,7 +1016,7 @@ VkResult Device::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const Vk
     }
 
     auto qbind_sparse_id = GetNextQueueBindSparseId();
-    bool trace_all_semaphores = context_->TracingAllSemaphores();
+    bool trace_all_semaphores = context_.TracingAllSemaphores();
     if (track_semaphores && trace_all_semaphores) {
         LogBindSparseInfosSemaphores(queue, bindInfoCount, pBindInfo);
     }
@@ -1151,12 +1151,12 @@ VkResult Device::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const Vk
 
 void Device::StoreSubmitHelperCommandBuffersInfo(SubmitInfoId submit_info_id, VkCommandPool vk_pool,
                                                  VkCommandBuffer start_marker_cb, VkCommandBuffer end_marker_cb) {
-    assert(context_->TrackingSemaphores() == true);
+    assert(context_.TrackingSemaphores() == true);
     submit_tracker_->StoreSubmitHelperCommandBuffersInfo(submit_info_id, vk_pool, start_marker_cb, end_marker_cb);
 }
 
 VkResult Device::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id, VkCommandBuffer cb) {
-    assert(context_->TrackingSemaphores() == true);
+    assert(context_.TrackingSemaphores() == true);
     auto commandBufferBeginInfo = vku::InitStruct<VkCommandBufferBeginInfo>();
     VkResult result = device_dispatch_table_.BeginCommandBuffer(cb, &commandBufferBeginInfo);
     assert(result == VK_SUCCESS);
@@ -1173,7 +1173,7 @@ VkResult Device::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit
 }
 
 VkResult Device::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id, VkCommandBuffer cb) {
-    assert(context_->TrackingSemaphores() == true);
+    assert(context_.TrackingSemaphores() == true);
     auto commandBufferBeginInfo = vku::InitStruct<VkCommandBufferBeginInfo>();
     VkResult result = device_dispatch_table_.BeginCommandBuffer(cb, &commandBufferBeginInfo);
     assert(result == VK_SUCCESS);
@@ -1190,8 +1190,8 @@ VkResult Device::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId submi
 }
 
 void Device::LogSubmitInfoSemaphores(VkQueue vk_queue, SubmitInfoId submit_info_id) {
-    assert(context_->TrackingSemaphores() == true);
-    assert(context_->TracingAllSemaphores() == true);
+    assert(context_.TrackingSemaphores() == true);
+    assert(context_.TracingAllSemaphores() == true);
     if (submit_tracker_->SubmitInfoHasSemaphores(submit_info_id)) {
         std::string semaphore_log = submit_tracker_->GetSubmitInfoSemaphoresLog(vk_device_, vk_queue, submit_info_id);
         Log().Info(semaphore_log);
@@ -1209,7 +1209,7 @@ VkResult Device::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id,
         return result;
     }
 
-    assert(context_->TrackingSemaphores() == true);
+    assert(context_.TrackingSemaphores() == true);
     submit_tracker_->CleanupBindSparseHelperSubmits();
     submit_tracker_->RecordBindSparseHelperSubmit(qbind_sparse_id, vk_submit_info, vk_pool);
 
@@ -1219,7 +1219,7 @@ VkResult Device::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id,
 }
 
 bool Device::ShouldExpandQueueBindSparseToTrackSemaphores(PackedBindSparseInfo* packed_bind_sparse_info) {
-    assert(context_->TrackingSemaphores() == true);
+    assert(context_.TrackingSemaphores() == true);
 
     packed_bind_sparse_info->semaphore_tracker = GetSemaphoreTracker();
     return BindSparseUtils::ShouldExpandQueueBindSparseToTrackSemaphores(packed_bind_sparse_info);
@@ -1231,9 +1231,9 @@ void Device::ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_inf
 
 void Device::LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count,
                                           const VkBindSparseInfo* bind_infos) {
-    assert(context_->TrackingSemaphores() == true);
-    assert(context_->TracingAllSemaphores() == true);
-    auto log = BindSparseUtils::LogBindSparseInfosSemaphores(this, vk_device_, vk_queue, bind_info_count, bind_infos);
+    assert(context_.TrackingSemaphores() == true);
+    assert(context_.TracingAllSemaphores() == true);
+    auto log = BindSparseUtils::LogBindSparseInfosSemaphores(*this, vk_device_, vk_queue, bind_info_count, bind_infos);
     Log().Info(log);
 }
 

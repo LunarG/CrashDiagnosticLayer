@@ -42,7 +42,7 @@ class ActiveDescriptorSets {
     void Reset();
     void Bind(uint32_t first_set, uint32_t set_count, const VkDescriptorSet* sets);
 
-    YAML::Emitter& Print(Device* device, YAML::Emitter& stream) const;
+    YAML::Emitter& Print(Device& device, YAML::Emitter& stream) const;
 
    private:
     void Insert(VkDescriptorSet set, uint32_t index);

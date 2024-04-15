@@ -31,9 +31,9 @@ namespace crash_diagnostic_layer {
 
 static std::atomic<uint16_t> command_buffer_marker_high_bits{1};
 
-CommandBuffer::CommandBuffer(Device* p_device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
+CommandBuffer::CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
                              const VkCommandBufferAllocateInfo* allocate_info, bool has_buffer_marker)
-    : device_(p_device),
+    : device_(device),
       vk_command_pool_(vk_command_pool),
       vk_command_buffer_(vk_command_buffer),
       cb_level_(allocate_info->level),
@@ -41,13 +41,13 @@ CommandBuffer::CommandBuffer(Device* p_device, VkCommandPool vk_command_pool, Vk
     if (has_buffer_marker_) {
         top_marker_.type = MarkerType::kUint32;
         bottom_marker_.type = MarkerType::kUint32;
-        bool top_marker_is_valid = p_device->AllocateMarker(&top_marker_);
-        if (!top_marker_is_valid || !p_device->AllocateMarker(&bottom_marker_)) {
-            device_->Log().Warning("Cannot acquire markers. Not tracking VkCommandBuffer %s",
-                                   device_->GetObjectName((uint64_t)vk_command_buffer).c_str());
+        bool top_marker_is_valid = device_.AllocateMarker(&top_marker_);
+        if (!top_marker_is_valid || !device_.AllocateMarker(&bottom_marker_)) {
+            device_.Log().Warning("Cannot acquire markers. Not tracking VkCommandBuffer %s",
+                                  device_.GetObjectName((uint64_t)vk_command_buffer).c_str());
             has_buffer_marker_ = false;
             if (top_marker_is_valid) {
-                p_device->FreeMarker(top_marker_);
+                device_.FreeMarker(top_marker_);
             }
         } else {
             // We have top and bottom markers initialized. We need to set begin and
@@ -67,10 +67,9 @@ CommandBuffer::~CommandBuffer() {
         delete scb_inheritance_info_;
     }
     if (has_buffer_marker_) {
-        device_->FreeMarker(top_marker_);
-        device_->FreeMarker(bottom_marker_);
+        device_.FreeMarker(top_marker_);
+        device_.FreeMarker(bottom_marker_);
     }
-    device_ = nullptr;
     vk_command_pool_ = VK_NULL_HANDLE;
     vk_command_buffer_ = VK_NULL_HANDLE;
     has_buffer_marker_ = false;
@@ -83,7 +82,7 @@ void CommandBuffer::WriteMarker(MarkerPosition position, uint32_t marker_value) 
     auto& marker = (position == MarkerPosition::kTop) ? top_marker_ : bottom_marker_;
     auto pipelineStage =
         (position == MarkerPosition::kTop) ? VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT : VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    device_->CmdWriteBufferMarkerAMD(vk_command_buffer_, pipelineStage, marker.buffer, marker.offset, marker_value);
+    device_.CmdWriteBufferMarkerAMD(vk_command_buffer_, pipelineStage, marker.buffer, marker.offset, marker_value);
 }
 
 uint32_t CommandBuffer::ReadMarker(MarkerPosition position) const {
@@ -332,7 +331,7 @@ std::string CommandBuffer::PrintCommandState(CommandState cm_state) const {
 }
 
 bool CommandBuffer::DumpCommand(const Command& command, YAML::Emitter& os) {
-    tracker_.SetNameResolver(&device_->GetObjectInfoDB());
+    tracker_.SetNameResolver(&device_.GetObjectInfoDB());
     tracker_.PrintCommandParameters(os, command);
     // TODO: does this matter?
     return true;
@@ -360,7 +359,7 @@ bool CommandBuffer::DumpCmdExecuteCommands(const Command& command, CommandState 
 // state should be at a given command
 class CommandBufferInternalState {
    public:
-    CommandBufferInternalState(Device* device) : device_(device) {}
+    CommandBufferInternalState(Device& device) : device_(device) {}
 
     // Mutate the internal state by the command.
     void Mutate(const Command& cmd);
@@ -373,7 +372,7 @@ class CommandBufferInternalState {
    private:
     static constexpr int kNumBindPoints = 2;  // graphics, compute
 
-    Device* device_;
+    Device& device_;
     std::array<const Pipeline*, kNumBindPoints> bound_pipelines_;
     std::array<ActiveDescriptorSets, kNumBindPoints> bound_descriptors_;
 };
@@ -400,8 +399,8 @@ int GetCommandPipelineType(const Command& command) {
 // Currently used to dump shader SPIRV when a command is incomplete.
 void CommandBuffer::HandleIncompleteCommand(const Command& command, const CommandBufferInternalState& state) const {
     // Should we write our shaders on crash?
-    auto* context = device_->GetContext();
-    if (!context->DumpShadersOnCrash()) {
+    auto& context = device_.GetContext();
+    if (!context.DumpShadersOnCrash()) {
         return;
     }
 
@@ -414,7 +413,7 @@ void CommandBuffer::HandleIncompleteCommand(const Command& command, const Comman
     auto pipeline = state.GetPipeline(static_cast<VkPipelineBindPoint>(pipeline_type));
     auto vk_pipeline = pipeline->GetVkPipeline();
 
-    device_->DumpShaderFromPipeline(vk_pipeline);
+    device_.DumpShaderFromPipeline(vk_pipeline);
 }
 
 void CommandBufferInternalState::Mutate(const Command& cmd) {
@@ -429,7 +428,7 @@ void CommandBufferInternalState::Mutate(const Command& cmd) {
         if (cmd.parameters) {
             // Update the currently bound pipeline.
             auto args = reinterpret_cast<CmdBindPipelineArgs*>(cmd.parameters);
-            bound_pipelines_[args->pipelineBindPoint] = device_->FindPipeline(args->pipeline);
+            bound_pipelines_[args->pipelineBindPoint] = device_.FindPipeline(args->pipeline);
         }
     }
 }
@@ -483,11 +482,11 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
     }
     os << YAML::Value << PrintCommandBufferState(cb_state);
 
-    os << YAML::Key << "vkHandle" << YAML::Value << device_->GetObjectInfo((uint64_t)vk_command_buffer_);
-    os << YAML::Key << "commandPool" << YAML::Value << device_->GetObjectInfo((uint64_t)vk_command_pool_);
+    os << YAML::Key << "vkHandle" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_command_buffer_);
+    os << YAML::Key << "commandPool" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_command_pool_);
     if (buffer_state_ == CommandBufferState::kPending) {
-        os << YAML::Key << "queue" << device_->GetObjectInfo((uint64_t)submitted_queue_);
-        os << YAML::Key << "fence" << device_->GetObjectInfo((uint64_t)submitted_fence_);
+        os << YAML::Key << "queue" << device_.GetObjectInfo((uint64_t)submitted_queue_);
+        os << YAML::Key << "fence" << device_.GetObjectInfo((uint64_t)submitted_fence_);
     }
 
     os << YAML::Key << "submitInfoId" << YAML::Value;
@@ -548,7 +547,7 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
                 DumpCmdExecuteCommands(command, command_state, os, options);
             }
             os << YAML::EndMap;
-            state.Print(command, os, device_->GetObjectInfoDB());
+            state.Print(command, os, device_.GetObjectInfoDB());
             if (command_state == CommandState::kCommandIncomplete) {
                 HandleIncompleteCommand(command, state);
             }
