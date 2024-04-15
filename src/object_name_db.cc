@@ -25,14 +25,10 @@
 
 #include "util.h"
 
-ObjectInfoDB::ObjectInfoDB() {
-    // default name for unknown objects
-    unknown_object_.object = 0;
-    unknown_object_.type = VK_OBJECT_TYPE_UNKNOWN;
-    unknown_object_.name = "";
-}
+ObjectInfoDB::ObjectInfoDB() {}
 
-void ObjectInfoDB::AddObjectInfo(uint64_t handle, ObjectInfoPtr info) {
+void ObjectInfoDB::AddObjectInfo(uint64_t handle, VkObjectType type, const char* name) {
+    ObjectInfoPtr info = std::make_unique<ObjectInfo>(handle, type, name);
     std::lock_guard<std::mutex> lock(lock_);
     object_info_[handle] = std::move(info);
 }
@@ -54,8 +50,6 @@ ObjectInfo ObjectInfoDB::FindObjectInfo(uint64_t handle) const {
     return result;
 }
 
-std::string ObjectInfoDB::GetObjectDebugName(uint64_t handle) const { return FindObjectInfo(handle).name; }
-
 std::string ObjectInfoDB::GetObjectName(uint64_t handle, HandleDebugNamePreference handle_debug_name_preference) const {
     auto info = FindObjectInfo(handle);
     if (handle_debug_name_preference == kPreferDebugName) {
@@ -72,42 +66,13 @@ std::string ObjectInfoDB::GetObjectName(uint64_t handle, HandleDebugNamePreferen
     return object_name.str();
 }
 
-std::string ObjectInfoDB::GetObjectInfoInternal(uint64_t handle,
-                                                VkHandleTagRequirement vkhandle_tag_requirement) const {
+std::string ObjectInfoDB::GetObjectInfo(uint64_t handle) const {
     // TODO cleanup so all object are tracked and debug object names only
     // enhance object names
     std::stringstream info_ss;
-#if 0
-    if (vkhandle_tag_requirement == kPrintVkHandleTag) {
-        info_ss << "vkHandle: ";
-    }
-    info_ss << crash_diagnostic_layer::Uint64ToStr(handle);
-    auto info = FindObjectInfo(handle);
-    if (!info.name.empty()) {
-        info_ss << "debugName: \"" << info.name << "\"";
-    }
-    std::lock_guard<std::mutex> lock(lock_);
-    auto extra_infos = object_extra_info_.find(handle);
-    if (end(object_extra_info_) != extra_infos) {
-        for (auto& extra_info : extra_infos->second) {
-            info_ss << extra_info.first << ": " << extra_info.second;
-        }
-    }
-#else
     auto info = FindObjectInfo(handle);
     info_ss << crash_diagnostic_layer::Uint64ToStr(handle) << "[" << info.name << "]";
-    // TODO: extra infos???
-#endif
-
     return info_ss.str();
-}
-
-std::string ObjectInfoDB::GetObjectInfo(uint64_t handle) const {
-    return GetObjectInfoInternal(handle, kPrintVkHandleTag);
-}
-
-std::string ObjectInfoDB::GetObjectInfoNoHandleTag(uint64_t handle) const {
-    return GetObjectInfoInternal(handle, kIgnoreVkHandleTag);
 }
 
 YAML::Emitter& ObjectInfoDB::PrintDebugInfo(YAML::Emitter& os, uint64_t handle) const {

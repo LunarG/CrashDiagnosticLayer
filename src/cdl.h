@@ -50,7 +50,6 @@
 #include "layer_base.h"
 #include "logger.h"
 #include "system.h"
-#include "submit_tracker.h"
 
 namespace crash_diagnostic_layer {
 
@@ -96,6 +95,7 @@ class Context : public Interceptor {
     Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator);
     virtual ~Context();
 
+    const InstanceDispatchTable& Dispatch() { return instance_dispatch_table_; }
     VkInstance GetInstance() { return vk_instance_; }
 
     void MakeOutputPath();

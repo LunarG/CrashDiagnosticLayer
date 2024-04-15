@@ -32,9 +32,9 @@
 #include "marker.h"
 #include "object_name_db.h"
 #include "pipeline.h"
+#include "queue.h"
 #include "semaphore_tracker.h"
 #include "shader_module.h"
-#include "submit_tracker.h"
 
 #include <vulkan/utility/vk_sparse_range_map.hpp>
 
@@ -55,6 +55,7 @@ struct DeviceExtensionsPresent {
     bool amd_coherent_memory{false};
     bool ext_device_fault{false};
     bool ext_device_address_binding_report{false};
+    bool nv_device_diagnostic_checkpoints{false};
 };
 
 struct DeviceAddressRecord {
@@ -68,69 +69,31 @@ struct DeviceAddressRecord {
     std::chrono::time_point<std::chrono::high_resolution_clock> when;
 };
 
-enum QueueOperationType {
-    kQueueSubmit,
-    kQueueBindSparse,
-    kQueueSubmit2,
-};
-
-// Original bind sparse info with the submit tracker that tracks semaphores for
-// the respective device.
-struct PackedBindSparseInfo {
-    const VkQueue queue;
-    const uint32_t bind_info_count;
-    const VkBindSparseInfo* bind_infos;
-    SemaphoreTracker* semaphore_tracker;
-
-    PackedBindSparseInfo(VkQueue queue_, uint32_t bind_info_count_, const VkBindSparseInfo* bind_infos_)
-        : queue(queue_), bind_info_count(bind_info_count_), bind_infos(bind_infos_){};
-};
-
-// Expanded bind sparse info, including all the information needed to correctly
-// insert semaphore tracking VkSubmitInfos between vkQueueBindSparse calls.
-struct ExpandedBindSparseInfo {
-    // Input: original bind sparse info.
-    const PackedBindSparseInfo* packed_bind_sparse_info;
-    // Vector of queue operation types, used to control interleaving order.
-    std::vector<QueueOperationType> queue_operation_types;
-    // Vector of submit info structs to be submitted to the queue.
-    std::vector<VkSubmitInfo> submit_infos;
-    // Vector of bool, specifying if a submit info includes a signal operation on
-    // a timeline semaphore.
-    std::vector<bool> has_timeline_semaphore_info;
-    // Place holder for timeline semaphore infos used in queue submit infos.
-    std::vector<VkTimelineSemaphoreSubmitInfoKHR> timeline_semaphore_infos;
-    // Place holder for vectors of binary semaphores used in a wait semaphore
-    // operation in a bind sparse info. This is needed since we need to signal
-    // these semaphores in the same vkQueueSubmit that we consume them for
-    // tracking (so the bind sparse info which is the real consumer of the
-    // semaphore can proceed).
-    std::vector<std::vector<VkSemaphore>> wait_binary_semaphores;
-
-    ExpandedBindSparseInfo(PackedBindSparseInfo* packed_bind_sparse_info_)
-        : packed_bind_sparse_info(packed_bind_sparse_info_){};
-};
-
 class Device {
    public:
-    Device(Context& cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, DeviceExtensionsPresent& extensions_present);
+    using QueuePtr = std::shared_ptr<Queue>;
+    using ConstQueuePtr = std::shared_ptr<const Queue>;
+
+    Device(Context& cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, DeviceExtensionsPresent& extensions_present,
+           std::unique_ptr<DeviceCreateInfo> dci);
+    void Destroy();
     ~Device();
-    void SetDeviceCreateInfo(std::unique_ptr<DeviceCreateInfo> device_create_info);
+
+    const Logger& Log() const;
+    const DeviceDispatchTable& Dispatch() const { return device_dispatch_table_; }
 
     Context& GetContext() const;
     VkPhysicalDevice GetVkGpu() const;
     VkDevice GetVkDevice() const;
 
-    SubmitTracker* GetSubmitTracker() const { return submit_tracker_.get(); }
     SemaphoreTracker* GetSemaphoreTracker() const { return semaphore_tracker_.get(); }
 
-    void AddObjectInfo(uint64_t handle, ObjectInfoPtr info);
+    void AddObjectInfo(uint64_t handle, VkObjectType type, const char* name);
     void AddExtraInfo(uint64_t handle, ExtraObjectInfo info);
     const ObjectInfoDB& GetObjectInfoDB() const { return object_info_db_; }
     std::string GetObjectName(uint64_t handle,
                               HandleDebugNamePreference handle_debug_name_preference = kReportBoth) const;
     std::string GetObjectInfo(uint64_t handle) const;
-    std::string GetObjectInfoNoHandleTag(uint64_t handle) const;
 
     bool HasMarkers() const;
 
@@ -174,12 +137,13 @@ class Device {
     const ShaderModule* FindShaderModule(VkShaderModule shader_module) const;
     void DeleteShaderModule(VkShaderModule shaderModule);
 
-    void RegisterQueueFamilyIndex(VkQueue queue, uint32_t queueFamilyIndex);
-    uint32_t GetQueueFamilyIndex(VkQueue queue);
+    void RegisterQueue(VkQueue queue, uint32_t queueFamilyIndex, uint32_t queueIndex);
+    QueuePtr GetQueue(VkQueue queue);
+    ConstQueuePtr GetQueue(VkQueue queue) const;
 
-    void RegisterHelperCommandPool(uint32_t queueFamilyIndex, VkCommandPool commandPool);
-    VkCommandPool GetHelperCommandPool(uint32_t queueFamilyIndex);
-    VkCommandPool GetHelperCommandPool(VkQueue queue);
+    std::vector<QueuePtr> GetAllQueues();
+    std::vector<ConstQueuePtr> GetAllQueues() const;
+
     void EraseCommandPools();
 
     bool AllocateMarker(Marker* marker);
@@ -203,44 +167,13 @@ class Device {
     void MemoryBindEvent(const DeviceAddressRecord& record, bool multi_device);
 
     VkResult QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence);
-    VkResult QueueSubmitWithoutTrackingSemaphores(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits,
-                                                  VkFence fence);
 
     VkResult QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence);
 
     VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence);
-    VkResult QueueSubmit2WithoutTrackingSemaphores(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
-                                                   VkFence fence);
-
-    void PostSubmit(VkQueue queue, VkResult result);
-
-    QueueSubmitId GetNextQueueSubmitId() { return ++queue_submit_index_; };
-    void LogSubmitInfoSemaphores(VkQueue vk_queue, SubmitInfoId submit_info_id);
-    void StoreSubmitHelperCommandBuffersInfo(SubmitInfoId submit_info_id, VkCommandPool vk_pool,
-                                             VkCommandBuffer start_marker_cb, VkCommandBuffer end_marker_cb);
-
-    VkResult RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
-                               VkCommandBuffer vk_command_buffer);
-
-    VkResult RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id,
-                                VkCommandBuffer vk_command_buffer);
-
-    QueueBindSparseId GetNextQueueBindSparseId() { return ++queue_bind_sparse_index_; };
-
-    VkResult RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id, const VkSubmitInfo* vk_submit_info,
-                                          VkCommandPool vk_pool);
-
-    bool ShouldExpandQueueBindSparseToTrackSemaphores(PackedBindSparseInfo* packed_bind_sparse_info);
-    void ExpandBindSparseInfo(ExpandedBindSparseInfo* bind_sparse_expand_info);
-    void LogBindSparseInfosSemaphores(VkQueue vk_queue, uint32_t bind_info_count, const VkBindSparseInfo* bind_infos);
-
-    const Logger& Log() const;
-
-    std::vector<VkCommandBuffer> AllocHelperCBs(VkCommandPool vk_command_pool, uint32_t count);
 
    private:
     Context& context_;
-    InstanceDispatchTable instance_dispatch_table_;
     DeviceDispatchTable device_dispatch_table_;
     VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;
     VkDevice vk_device_ = VK_NULL_HANDLE;
@@ -248,7 +181,8 @@ class Device {
     VkPhysicalDeviceProperties physical_device_properties_ = {};
     DeviceExtensionsPresent extensions_present_{};
 
-    SubmitTrackerPtr submit_tracker_;
+    std::vector<VkQueueFamilyProperties> queue_family_properties_;
+
     SemaphoreTrackerPtr semaphore_tracker_;
 
     std::unique_ptr<DeviceCreateInfo> device_create_info_;
@@ -267,14 +201,8 @@ class Device {
     mutable std::mutex shader_modules_mutex_;
     std::unordered_map<VkShaderModule, ShaderModulePtr> shader_modules_;
 
-    // Tracks the queue index family used when creating queues. We need this info
-    // to use a proper command pool when we create helper command buffers to
-    // track the state of submits and semaphores.
-    mutable std::mutex queue_family_index_trackers_mutex_;
-    std::unordered_map<VkQueue, uint32_t /* queueFamilyIndex */> queue_family_index_trackers_;
-
-    mutable std::mutex helper_command_pools_mutex_;
-    std::unordered_map<uint32_t /* queueFamilyIndex */, VkCommandPool> helper_command_pools_;
+    mutable std::mutex queues_mutex_;
+    std::unordered_map<VkQueue, QueuePtr> queues_;
 
     struct MarkerBuffer {
         VkDeviceSize size = 0;
@@ -302,9 +230,6 @@ class Device {
     PFN_vkGetDeviceFaultInfoEXT GetDeviceFaultInfoEXT = nullptr;
 
     vku::sparse::range_map<VkDeviceAddress, DeviceAddressRecord> address_map_;
-
-    std::atomic<QueueSubmitId> queue_submit_index_{0};
-    std::atomic<QueueBindSparseId> queue_bind_sparse_index_{0};
 };
 
 }  // namespace crash_diagnostic_layer
