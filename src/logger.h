@@ -26,6 +26,8 @@ namespace crash_diagnostic_layer {
 class Logger {
    public:
     Logger();
+    Logger(Logger&) = delete;
+    Logger& operator=(Logger&) = delete;
     ~Logger();
 
     enum LogLevel { LOG_LEVEL_ERROR = 0, LOG_LEVEL_WARNING, LOG_LEVEL_INFO, LOG_LEVEL_DEBUG };

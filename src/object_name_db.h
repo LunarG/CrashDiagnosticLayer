@@ -54,6 +54,8 @@ enum HandleDebugNamePreference {
 class ObjectInfoDB {
    public:
     ObjectInfoDB();
+    ObjectInfoDB(ObjectInfoDB&) = delete;
+    ObjectInfoDB& operator=(ObjectInfoDB&) = delete;
 
     void AddObjectInfo(uint64_t handle, VkObjectType type, const char* name);
     void AddExtraInfo(uint64_t handle, ExtraObjectInfo info);

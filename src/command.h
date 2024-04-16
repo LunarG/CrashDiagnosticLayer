@@ -26,7 +26,7 @@
 #include "command_common.h"
 #include "command_tracker.h"
 #include "descriptor_set.h"
-#include "marker.h"
+#include "checkpoint.h"
 
 namespace YAML {
 class Emitter;
@@ -64,7 +64,7 @@ enum class CommandBufferState {
     // Additional state since we know if a command buffer is reset
     kInitialReset,  // reset
     // The following are extensions of kPending and only can be verified when
-    // a hang or crash is detected and marker values are read.
+    // a hang or crash is detected and checkpoint values are read.
     kSubmittedExecutionNotStarted,  // submitted but not started
     kSubmittedExecutionIncomplete,  // submitted and started, but not finished
     kSubmittedExecutionCompleted,   // submitted and finished
@@ -79,7 +79,7 @@ enum class CommandBufferState {
 class CommandBuffer {
    public:
     CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
-                  const VkCommandBufferAllocateInfo* allocate_info, bool has_markers);
+                  const VkCommandBufferAllocateInfo* allocate_info, bool has_checkpoints);
     ~CommandBuffer();
 
     Device& GetDevice() const { return device_; }
@@ -89,7 +89,7 @@ class CommandBuffer {
     VkCommandBuffer GetVkCommandBuffer() { return vk_command_buffer_; }
 
     bool IsPrimaryCommandBuffer() const { return cb_level_ == VK_COMMAND_BUFFER_LEVEL_PRIMARY; }
-    bool HasMarkers() const { return has_markers_; }
+    bool HasCheckpoints() const { return checkpoint_ != nullptr; }
 
     void SetSubmitInfoId(uint64_t submit_info_id);
     uint64_t GetSubmitInfoId() { return submit_info_id_; }
@@ -159,13 +159,11 @@ class CommandBuffer {
     VkCommandBufferInheritanceInfo* scb_inheritance_info_ = nullptr;
 
     bool instrument_all_commands_ = false;
-    bool has_markers_ = false;
 
-    Marker top_marker_;
-    Marker bottom_marker_;
+    std::unique_ptr<Checkpoint> checkpoint_;
 
-    uint32_t begin_marker_value_;
-    uint32_t end_marker_value_;
+    uint32_t begin_value_;
+    uint32_t end_value_;
 
     CommandBufferState buffer_state_ = CommandBufferState::kInitial;
     VkQueue submitted_queue_ = VK_NULL_HANDLE;
@@ -173,18 +171,10 @@ class CommandBuffer {
 
     CommandTracker tracker_;
 
-    enum MarkerPosition {
-        kTop,
-        kBottom,
-    };
-
-    void WriteMarker(MarkerPosition position, uint32_t marker_value);
-    uint32_t ReadMarker(MarkerPosition position) const;
-
-    void WriteBeginCommandBufferMarker();
-    void WriteEndCommandBufferMarker();
-    void WriteBeginCommandExecutionMarker(uint32_t command_id);
-    void WriteEndCommandExecutionMarker(uint32_t command_id);
+    void WriteBeginCheckpoint();
+    void WriteEndCheckpoint();
+    void WriteCommandBeginCheckpoint(uint32_t command_id);
+    void WriteCommandEndCheckpoint(uint32_t command_id);
 };
 
 using CommandBufferPtr = std::unique_ptr<CommandBuffer>;

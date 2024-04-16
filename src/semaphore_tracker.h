@@ -60,6 +60,8 @@ struct TrackedSemaphoreInfo {
 class SemaphoreTracker {
    public:
     SemaphoreTracker(Device& device, bool track_semaphores_last_setter);
+    SemaphoreTracker(SemaphoreTracker&) = delete;
+    SemaphoreTracker& operator=(SemaphoreTracker&) = delete;
 
     const Logger& Log() const;
 
@@ -85,13 +87,14 @@ class SemaphoreTracker {
 
    private:
     Device& device_;
+    BufferMarkerMgr markers_;
     bool track_semaphores_last_setter_ = false;
 
     struct SemaphoreInfo {
         // VkSemaphore used as the key in the container, so not included here.
         VkSemaphoreTypeKHR semaphore_type = VK_SEMAPHORE_TYPE_BINARY_KHR;
-        Marker64 marker;
-        Marker last_id, last_type;
+        std::unique_ptr<Marker64> marker;
+        std::unique_ptr<Marker> last_id, last_type;
         SemaphoreInfo() {}
 
         void UpdateLastModifier(Device& device, SemaphoreModifierInfo modifier_info);

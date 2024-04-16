@@ -93,6 +93,8 @@ class Context : public Interceptor {
     using ConstDevicePtr = std::shared_ptr<const Device>;
 
     Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator);
+    Context(Context&) = delete;
+    Context& operator=(Context&) = delete;
     virtual ~Context();
 
     const InstanceDispatchTable& Dispatch() { return instance_dispatch_table_; }
