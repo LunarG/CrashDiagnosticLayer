@@ -29,33 +29,21 @@
 
 namespace crash_diagnostic_layer {
 
-static std::atomic<uint16_t> command_buffer_marker_high_bits{1};
-
 CommandBuffer::CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCommandBuffer vk_command_buffer,
-                             const VkCommandBufferAllocateInfo* allocate_info, bool has_markers)
+                             const VkCommandBufferAllocateInfo* allocate_info, bool has_checkpoints)
     : device_(device),
       vk_command_pool_(vk_command_pool),
       vk_command_buffer_(vk_command_buffer),
-      cb_level_(allocate_info->level),
-      has_markers_(has_markers) {
-    if (has_markers_) {
-        bool top_marker_is_valid = device_.AllocateMarker(&top_marker_);
-        if (!top_marker_is_valid || !device_.AllocateMarker(&bottom_marker_)) {
-            device_.Log().Warning("Cannot acquire markers. Not tracking VkCommandBuffer %s",
+      cb_level_(allocate_info->level) {
+    if (has_checkpoints) {
+        begin_value_ = 0x10000;
+        end_value_ = begin_value_ | 0x0000FFFF;
+
+        checkpoint_ = device_.AllocateCheckpoint(begin_value_);
+
+        if (!checkpoint_) {
+            device_.Log().Warning("Cannot acquire checkpoint. Not tracking VkCommandBuffer %s",
                                   device_.GetObjectName((uint64_t)vk_command_buffer).c_str());
-            has_markers_ = false;
-            if (top_marker_is_valid) {
-                device_.FreeMarker(top_marker_);
-            }
-        } else {
-            // We have top and bottom markers initialized. We need to set begin and
-            // end command buffer marker values.
-            begin_marker_value_ = ((uint32_t)command_buffer_marker_high_bits.fetch_add(1)) << 16;
-            // Double check begin_marker_value to make sure it's not zero.
-            if (!begin_marker_value_) {
-                begin_marker_value_ = ((uint32_t)command_buffer_marker_high_bits.fetch_add(1)) << 16;
-            }
-            end_marker_value_ = begin_marker_value_ | 0x0000FFFF;
         }
     }
 }
@@ -64,67 +52,62 @@ CommandBuffer::~CommandBuffer() {
     if (scb_inheritance_info_) {
         delete scb_inheritance_info_;
     }
-    if (has_markers_) {
-        device_.FreeMarker(top_marker_);
-        device_.FreeMarker(bottom_marker_);
-    }
     vk_command_pool_ = VK_NULL_HANDLE;
     vk_command_buffer_ = VK_NULL_HANDLE;
-    has_markers_ = false;
 }
 
 void CommandBuffer::SetSubmitInfoId(uint64_t submit_info_id) { submit_info_id_ = submit_info_id; }
 
-void CommandBuffer::WriteMarker(MarkerPosition position, uint32_t marker_value) {
-    if (!has_markers_) {
-        return;
-    }
-    auto& marker = (position == MarkerPosition::kTop) ? top_marker_ : bottom_marker_;
-    auto pipelineStage =
-        (position == MarkerPosition::kTop) ? VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT : VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    device_.WriteMarker(vk_command_buffer_, pipelineStage, marker, marker_value);
-}
-
-uint32_t CommandBuffer::ReadMarker(MarkerPosition position) const {
-    if (!has_markers_) {
-        return 0;
-    }
-    auto& marker = (position == MarkerPosition::kTop) ? top_marker_ : bottom_marker_;
-    return device_.ReadMarker(marker);
-}
-
-void CommandBuffer::WriteBeginCommandBufferMarker() {
+void CommandBuffer::WriteBeginCheckpoint() {
     // CDL log lables the commands inside a command buffer as follows:
     // - vkBeginCommandBuffer: 1
     // - n vkCmd commands recorded into command buffer: 2 ... n+1
     // - vkEndCommandBuffer: n+2
-    WriteMarker(MarkerPosition::kTop, begin_marker_value_ + 1);
-    WriteMarker(MarkerPosition::kBottom, begin_marker_value_ + 1);
+    if (checkpoint_) {
+        checkpoint_->WriteTop(vk_command_buffer_, begin_value_ + 1);
+    }
 }
 
-void CommandBuffer::WriteEndCommandBufferMarker() { WriteMarker(MarkerPosition::kBottom, end_marker_value_); }
-
-void CommandBuffer::WriteBeginCommandExecutionMarker(uint32_t command_id) {
-    WriteMarker(MarkerPosition::kTop, begin_marker_value_ + command_id);
+void CommandBuffer::WriteEndCheckpoint() {
+    if (checkpoint_) {
+        checkpoint_->WriteBottom(vk_command_buffer_, end_value_);
+    }
 }
 
-void CommandBuffer::WriteEndCommandExecutionMarker(uint32_t command_id) {
-    WriteMarker(MarkerPosition::kBottom, begin_marker_value_ + command_id);
+void CommandBuffer::WriteCommandBeginCheckpoint(uint32_t command_id) {
+    if (checkpoint_) {
+        checkpoint_->WriteTop(vk_command_buffer_, begin_value_ + command_id);
+    }
+}
+
+void CommandBuffer::WriteCommandEndCheckpoint(uint32_t command_id) {
+    if (checkpoint_) {
+        checkpoint_->WriteBottom(vk_command_buffer_, begin_value_ + command_id);
+    }
 }
 
 bool CommandBuffer::WasSubmittedToQueue() const { return buffer_state_ == CommandBufferState::kPending; }
 
-bool CommandBuffer::StartedExecution() const { return (ReadMarker(MarkerPosition::kTop) >= begin_marker_value_); }
+bool CommandBuffer::StartedExecution() const {
+    if (!checkpoint_) {
+        return false;
+    }
+    return (checkpoint_->ReadTop() >= begin_value_);
+}
 
-bool CommandBuffer::CompletedExecution() const { return (ReadMarker(MarkerPosition::kBottom) == end_marker_value_); }
+bool CommandBuffer::CompletedExecution() const {
+    if (!checkpoint_) {
+        return false;
+    }
+    return (checkpoint_->ReadBottom() >= end_value_);
+}
 
 void CommandBuffer::Reset() {
     buffer_state_ = CommandBufferState::kInitialReset;
 
     // Reset marker state.
-    if (has_markers_) {
-        device_.WriteMarker(top_marker_, 0);
-        device_.WriteMarker(bottom_marker_, 0);
+    if (checkpoint_) {
+        // TODO checkpoint_->Reset();
     }
 
     // Clear inheritance info
@@ -172,7 +155,7 @@ VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
 
     // All our markers go in post for begin because they must be recorded after
     // the driver starts recording
-    WriteBeginCommandBufferMarker();
+    WriteBeginCheckpoint();
 
     return result;
 }
@@ -180,7 +163,7 @@ VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
 VkResult CommandBuffer::PreEndCommandBuffer(VkCommandBuffer commandBuffer) {
     tracker_.TrackPreEndCommandBuffer(commandBuffer);
 
-    WriteEndCommandBufferMarker();
+    WriteEndCheckpoint();
     return VK_SUCCESS;
 }
 
@@ -201,20 +184,25 @@ VkResult CommandBuffer::PostResetCommandBuffer(VkCommandBuffer commandBuffer, Vk
 }
 
 uint32_t CommandBuffer::GetLastStartedCommand() const {
-    auto marker = ReadMarker(MarkerPosition::kTop);
-    return marker - begin_marker_value_;
+    if (!checkpoint_) {
+        return 0;
+    }
+    return checkpoint_->ReadTop() - begin_value_;
 }
 
 uint32_t CommandBuffer::GetLastCompleteCommand() const {
-    auto marker = ReadMarker(MarkerPosition::kBottom);
-    if (marker == end_marker_value_) {
+    if (!checkpoint_) {
+        return 0;
+    }
+    uint32_t marker = checkpoint_->ReadBottom();
+    if (marker == end_value_) {
         return tracker_.GetCommands().back().id;
     }
-    return marker - begin_marker_value_;
+    return marker - begin_value_;
 }
 
 CommandBufferState CommandBuffer::GetCommandBufferState() const {
-    if (!has_markers_ || (IsPrimaryCommandBuffer() && !WasSubmittedToQueue())) {
+    if (!checkpoint_ || (IsPrimaryCommandBuffer() && !WasSubmittedToQueue())) {
         return buffer_state_;
     }
     // If the command buffer is submitted and markers can be used, determine the
@@ -275,7 +263,7 @@ CommandState CommandBuffer::GetCommandState(CommandBufferState cb_state, const C
     if (IsPrimaryCommandBuffer() && !WasSubmittedToQueue()) {
         return CommandState::kCommandNotSubmitted;
     }
-    if (!has_markers_) {
+    if (!checkpoint_) {
         return CommandState::kCommandPending;
     }
     if (!IsPrimaryCommandBuffer()) {
@@ -478,9 +466,9 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
 
     os << YAML::Key << "submitInfoId" << YAML::Value;
     if (IsPrimaryCommandBuffer()) {
-        os << submit_info_id_;
+        os << Uint64ToStr(submit_info_id_);
     } else {
-        os << secondary_cb_submit_info_id;
+        os << Uint64ToStr(secondary_cb_submit_info_id);
     }
     os << YAML::Key << "level" << YAML::Value;
     if (IsPrimaryCommandBuffer()) {
@@ -493,12 +481,12 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
 
     bool dump_commands = (options & CommandBufferDumpOption::kDumpAllCommands);
 
-    if (has_markers_) {
+    if (checkpoint_) {
         os << YAML::Hex;
-        os << YAML::Key << "beginMarkerValue" << YAML::Value << Uint32ToStr(begin_marker_value_);
-        os << YAML::Key << "endMarkerValue" << YAML::Value << Uint32ToStr(end_marker_value_);
-        os << YAML::Key << "topMarkerBuffer" << YAML::Value << Uint32ToStr(ReadMarker(MarkerPosition::kTop));
-        os << YAML::Key << "bottomMarkerBuffer" << YAML::Value << Uint32ToStr(ReadMarker(MarkerPosition::kBottom));
+        os << YAML::Key << "beginValue" << YAML::Value << Uint32ToStr(begin_value_);
+        os << YAML::Key << "endValue" << YAML::Value << Uint32ToStr(end_value_);
+        os << YAML::Key << "topCheckpointValue" << YAML::Value << Uint32ToStr(checkpoint_->ReadTop());
+        os << YAML::Key << "bottomCheckpointValue" << YAML::Value << Uint32ToStr(checkpoint_->ReadBottom());
         os << YAML::Dec;
     }
     if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete) {
@@ -518,8 +506,8 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
             os << YAML::BeginMap << YAML::Comment("Command:");
             // os << YAML::Key << "id" << YAML::Value << command.id << "/" << num_commands;
             os << YAML::Key << "id" << YAML::Value << command.id;
-            os << YAML::Key << "markerValue" << YAML::Value
-               << crash_diagnostic_layer::Uint32ToStr(begin_marker_value_ + command.id);
+            os << YAML::Key << "checkpointValue" << YAML::Value
+               << crash_diagnostic_layer::Uint32ToStr(begin_value_ + command.id);
             os << YAML::Key << "name" << YAML::Value << command_name;
             os << YAML::Key << "state" << YAML::Value << PrintCommandState(command_state);
 

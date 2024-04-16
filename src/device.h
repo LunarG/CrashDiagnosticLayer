@@ -40,8 +40,7 @@
 
 namespace crash_diagnostic_layer {
 
-const VkDeviceSize kBufferMarkerEventCount = 1024;
-
+class CheckpointMgr;
 class Context;
 struct DeviceCreateInfo;
 class Logger;
@@ -76,6 +75,8 @@ class Device {
 
     Device(Context& cdl, VkPhysicalDevice vk_gpu, VkDevice vk_device, DeviceExtensionsPresent& extensions_present,
            std::unique_ptr<DeviceCreateInfo> dci);
+    Device(Device&) = delete;
+    Device& operator=(Device&) = delete;
     void Destroy();
     ~Device();
 
@@ -95,11 +96,10 @@ class Device {
                               HandleDebugNamePreference handle_debug_name_preference = kReportBoth) const;
     std::string GetObjectInfo(uint64_t handle) const;
 
-    bool HasMarkers() const;
+    bool HasCheckpoints() const;
+    std::unique_ptr<Checkpoint> AllocateCheckpoint(uint32_t initial_value);
 
     VkResult CreateBuffer(VkDeviceSize size, VkBuffer* p_buffer, void** cpu_mapped_address);
-
-    VkResult AcquireMarkerBuffer();
 
     void FreeCommandBuffers(VkCommandPool command_pool, uint32_t command_buffer_count,
                             const VkCommandBuffer* command_buffers);
@@ -146,20 +146,6 @@ class Device {
 
     void EraseCommandPools();
 
-    bool AllocateMarker(Marker* marker);
-    void FreeMarker(const Marker marker);
-
-    void WriteMarker(VkCommandBuffer cb, VkPipelineStageFlagBits stage, Marker& marker, uint32_t value);
-    void WriteMarker(Marker& marker, uint32_t value);
-    uint32_t ReadMarker(const Marker& marker);
-
-    bool AllocateMarker(Marker64* marker);
-    void FreeMarker(Marker64 marker);
-
-    void WriteMarker(VkCommandBuffer cb, VkPipelineStageFlagBits stage, Marker64& marker, uint64_t value);
-    void WriteMarker(Marker64& marker, uint64_t value);
-    uint64_t ReadMarker(const Marker64& marker);
-
     void DumpDeviceFaultInfo(YAML::Emitter& os) const;
 
     YAML::Emitter& Print(YAML::Emitter& stream) const;
@@ -175,10 +161,9 @@ class Device {
    private:
     Context& context_;
     DeviceDispatchTable device_dispatch_table_;
-    VkPhysicalDevice vk_physical_device_ = VK_NULL_HANDLE;
-    VkDevice vk_device_ = VK_NULL_HANDLE;
-    VkPhysicalDeviceMemoryProperties memory_properties_ = {};
-    VkPhysicalDeviceProperties physical_device_properties_ = {};
+    VkPhysicalDevice vk_physical_device_{VK_NULL_HANDLE};
+    VkDevice vk_device_{VK_NULL_HANDLE};
+    VkPhysicalDeviceProperties physical_device_properties_{};
     DeviceExtensionsPresent extensions_present_{};
 
     std::vector<VkQueueFamilyProperties> queue_family_properties_;
@@ -204,32 +189,9 @@ class Device {
     mutable std::mutex queues_mutex_;
     std::unordered_map<VkQueue, QueuePtr> queues_;
 
-    struct MarkerBuffer {
-        VkDeviceSize size = 0;
-        VkBuffer buffer = VK_NULL_HANDLE;
-        void* cpu_mapped_address = nullptr;
-        VkDeviceSize heap_offset = 0;
-    };
-
-    VkDeviceMemory marker_buffers_heap_ = VK_NULL_HANDLE;
-    void* marker_buffers_heap_mapped_base_ = nullptr;
-    VkDeviceSize current_heap_offset_ = 0;
-
-    std::mutex marker_buffers_mutex_;
-    std::vector<MarkerBuffer> marker_buffers_;
-    uint32_t current_marker_index_ = 0;
-
-    std::mutex recycled_markers_u32_mutex_;
-    std::vector<Marker> recycled_markers_u32_;
-
-    std::mutex recycled_markers_u64_mutex_;
-    std::vector<Marker64> recycled_markers_u64_;
-
-    PFN_vkCmdWriteBufferMarkerAMD CmdWriteBufferMarkerAMD = nullptr;
-
-    PFN_vkGetDeviceFaultInfoEXT GetDeviceFaultInfoEXT = nullptr;
-
     vku::sparse::range_map<VkDeviceAddress, DeviceAddressRecord> address_map_;
+
+    std::unique_ptr<CheckpointMgr> checkpoints_;
 };
 
 }  // namespace crash_diagnostic_layer

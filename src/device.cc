@@ -22,108 +22,11 @@
 #include <iomanip>
 
 #include "cdl.h"
+#include "checkpoint.h"
 #include "semaphore_tracker.h"
 #include "util.h"
 
 namespace crash_diagnostic_layer {
-
-const VkDeviceSize kBufferMarkerBufferSize = kBufferMarkerEventCount * sizeof(uint32_t);
-const VkDeviceSize kBuffermarkerHeapSize = 64 * 1024 * 1024;
-
-// =================================================================================================
-// Support functions
-// =================================================================================================
-bool FindMemoryType(const VkPhysicalDeviceMemoryProperties* p_mem_props, uint32_t type_bits,
-                    VkMemoryPropertyFlags flags, uint32_t* p_index) {
-    bool found = false;
-    for (uint32_t i = 0; i < p_mem_props->memoryTypeCount; ++i) {
-        if (type_bits & 1) {
-            if (flags == (p_mem_props->memoryTypes[i].propertyFlags & flags)) {
-                if (p_index) {
-                    *p_index = i;
-                }
-                found = true;
-                break;
-            }
-        }
-        type_bits >>= 1;
-    }
-    return found;
-}
-
-static VkResult CreateHostBuffer(const DeviceDispatchTable& dt, VkDevice device,
-                                 const VkPhysicalDeviceMemoryProperties* p_mem_props, VkDeviceSize buffer_size,
-                                 VkBuffer* p_buffer, VkDeviceSize heap_offset, VkDeviceMemory* p_heap) {
-    assert(p_buffer != nullptr);
-    buffer_size = std::max<VkDeviceSize>(buffer_size, 256);
-    if (heap_offset + buffer_size >= kBuffermarkerHeapSize) {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
-
-    VkBufferCreateInfo create_info = {};
-    create_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    create_info.pNext = nullptr;
-    create_info.flags = 0;
-    create_info.size = buffer_size;
-    create_info.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-    create_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    create_info.queueFamilyIndexCount = 0;
-    create_info.pQueueFamilyIndices = nullptr;
-
-    VkResult vk_res = dt.CreateBuffer(device, &create_info, nullptr, p_buffer);
-    assert(VK_SUCCESS == vk_res);
-    if (vk_res != VK_SUCCESS) {
-        return vk_res;
-    }
-
-    VkMemoryRequirements mem_reqs = {};
-    dt.GetBufferMemoryRequirements(device, *p_buffer, &mem_reqs);
-
-    if (*p_heap == VK_NULL_HANDLE) {
-        VkMemoryPropertyFlags mem_flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
-                                          VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD;
-
-        uint32_t memory_type_index = UINT32_MAX;
-        bool found_memory = FindMemoryType(p_mem_props, mem_reqs.memoryTypeBits, mem_flags, &memory_type_index);
-
-        if (!found_memory) {
-            std::cerr << "CDL Warning: No device coherent memory found, results "
-                         "might not be accurate."
-                      << std::endl;
-            mem_flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-
-            found_memory = FindMemoryType(p_mem_props, mem_reqs.memoryTypeBits, mem_flags, &memory_type_index);
-        }
-
-        assert(found_memory);
-        if (!found_memory) {
-            dt.DestroyBuffer(device, *p_buffer, nullptr);
-            return VK_ERROR_INITIALIZATION_FAILED;
-        }
-
-        VkMemoryAllocateInfo alloc_info = {};
-        alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        alloc_info.pNext = nullptr;
-        alloc_info.allocationSize = kBuffermarkerHeapSize;
-        alloc_info.memoryTypeIndex = memory_type_index;
-        vk_res = dt.AllocateMemory(device, &alloc_info, nullptr, p_heap);
-        assert(VK_SUCCESS == vk_res);
-        if (vk_res != VK_SUCCESS) {
-            dt.DestroyBuffer(device, *p_buffer, nullptr);
-            return VK_ERROR_INITIALIZATION_FAILED;
-        }
-    }
-
-    vk_res = dt.BindBufferMemory(device, *p_buffer, *p_heap, heap_offset);
-    assert(VK_SUCCESS == vk_res);
-    if (vk_res != VK_SUCCESS) {
-        dt.FreeMemory(device, *p_heap, nullptr);
-        dt.DestroyBuffer(device, *p_buffer, nullptr);
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
-
-    return VK_SUCCESS;
-}
 
 Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, DeviceExtensionsPresent& extensions_present,
                std::unique_ptr<DeviceCreateInfo> device_create_info)
@@ -135,8 +38,6 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
     auto device_layer_data = GetDeviceLayerData(DataKey(device));
     device_dispatch_table_ = device_layer_data->dispatch_table;
 
-    context_.Dispatch().GetPhysicalDeviceMemoryProperties(vk_gpu, &memory_properties_);
-
     context_.Dispatch().GetPhysicalDeviceProperties(vk_gpu, &physical_device_properties_);
 
     uint32_t count = 0;
@@ -146,34 +47,20 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
         context_.Dispatch().GetPhysicalDeviceQueueFamilyProperties(vk_physical_device_, &count,
                                                                    queue_family_properties_.data());
     }
-
-    if (extensions_present.amd_buffer_marker) {
-        CmdWriteBufferMarkerAMD =
-            (PFN_vkCmdWriteBufferMarkerAMD)Dispatch().GetDeviceProcAddr(device, "vkCmdWriteBufferMarkerAMD");
+    if (extensions_present_.nv_device_diagnostic_checkpoints) {
+        checkpoints_ = std::make_unique<DiagnosticCheckpointMgr>(*this);
+    } else if (extensions_present_.amd_buffer_marker) {
+        checkpoints_ = std::make_unique<BufferMarkerCheckpointMgr>(*this);
     }
-    if (extensions_present.ext_device_fault) {
-        GetDeviceFaultInfoEXT =
-            (PFN_vkGetDeviceFaultInfoEXT)Dispatch().GetDeviceProcAddr(device, "vkGetDeviceFaultInfoEXT");
-    }
-
     // Create a semaphore tracker
     semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this, context_.TracingAllSemaphores());
 }
 
 void Device::Destroy() {
-    for (auto &item: queues_) {
+    for (auto& item : queues_) {
         item.second->Destroy();
     }
     queues_.clear();
-
-    for (auto &marker_buffer: marker_buffers_) {
-            Dispatch().DestroyBuffer(vk_device_, marker_buffer.buffer, nullptr);
-    }
-    marker_buffers_.clear();
-    if (marker_buffers_heap_ != VK_NULL_HANDLE) {
-        Dispatch().FreeMemory(vk_device_, marker_buffers_heap_, nullptr);
-        marker_buffers_heap_ = VK_NULL_HANDLE;
-    }
 }
 
 Device::~Device() { Destroy(); }
@@ -186,133 +73,9 @@ VkDevice Device::GetVkDevice() const { return vk_device_; }
 
 const Logger& Device::Log() const { return context_.Log(); }
 
-bool Device::HasMarkers() const {
+bool Device::HasCheckpoints() const {
     return extensions_present_.nv_device_diagnostic_checkpoints || extensions_present_.amd_buffer_marker;
 }
-
-VkResult Device::AcquireMarkerBuffer() {
-    // No need to lock on marker_buffers_mutex_, already locked on callsite.
-    MarkerBuffer marker_buffer = {};
-    marker_buffer.size = kBufferMarkerBufferSize;
-    marker_buffer.heap_offset = current_heap_offset_;
-    current_heap_offset_ += kBufferMarkerBufferSize;
-
-    VkResult vk_res = CreateHostBuffer(Dispatch(), vk_device_, &memory_properties_, marker_buffer.size,
-                                       &marker_buffer.buffer, marker_buffer.heap_offset, &marker_buffers_heap_);
-    if (vk_res != VK_SUCCESS) {
-        return vk_res;
-    }
-    if (marker_buffers_heap_mapped_base_ == nullptr) {
-        vk_res = Dispatch().MapMemory(vk_device_, marker_buffers_heap_, 0, kBuffermarkerHeapSize, 0,
-                                      &marker_buffers_heap_mapped_base_);
-        assert(VK_SUCCESS == vk_res);
-        if (vk_res != VK_SUCCESS) {
-            Dispatch().FreeMemory(vk_device_, marker_buffers_heap_, nullptr);
-            Dispatch().DestroyBuffer(vk_device_, marker_buffer.buffer, nullptr);
-            return VK_ERROR_INITIALIZATION_FAILED;
-        }
-    }
-    marker_buffer.cpu_mapped_address = (void*)((uintptr_t)marker_buffers_heap_mapped_base_ + marker_buffer.heap_offset);
-    marker_buffers_.push_back(marker_buffer);
-    return VK_SUCCESS;
-}
-
-bool Device::AllocateMarker(Marker* marker) {
-    // If there is a recycled marker, use it.
-    {
-        std::lock_guard<std::mutex> lock(recycled_markers_u32_mutex_);
-        if (recycled_markers_u32_.size() > 0) {
-            *marker = recycled_markers_u32_.back();
-            recycled_markers_u32_.pop_back();
-            return true;
-        }
-    }
-
-    std::lock_guard<std::mutex> mlock(marker_buffers_mutex_);
-    // Check if we have the required marker already allocated
-    auto marker_buffer_index = current_marker_index_ / kBufferMarkerEventCount;
-
-    // Out of space, allocate a new buffer
-    if (marker_buffer_index >= marker_buffers_.size()) {
-        // zakerinasab: This causes a glitch if CDL is on while a user plays
-        // the game. If CDL goes to be activated for end users, this should be
-        // done out of markers_buffers_mutex_ lock in a predictive mode.
-        if (AcquireMarkerBuffer() != VK_SUCCESS) {
-            return false;
-        }
-        assert(marker_buffer_index < marker_buffers_.size());
-    }
-    auto& marker_buffer = marker_buffers_.back();
-    marker->buffer = marker_buffer.buffer;
-    marker->offset = (current_marker_index_ % kBufferMarkerEventCount) * sizeof(uint32_t);
-    marker->cpu_mapped_address = (uint32_t*)((uintptr_t)marker_buffer.cpu_mapped_address + marker->offset);
-    current_marker_index_ += 1;
-    return true;
-}
-
-void Device::FreeMarker(const Marker marker) {
-    std::lock_guard<std::mutex> lock(recycled_markers_u32_mutex_);
-    recycled_markers_u32_.push_back(marker);
-}
-
-void Device::WriteMarker(VkCommandBuffer cb, VkPipelineStageFlagBits stage, Marker& marker, uint32_t value) {
-    CmdWriteBufferMarkerAMD(cb, stage, marker.buffer, marker.offset, value);
-}
-
-void Device::WriteMarker(Marker& marker, uint32_t value) { *marker.cpu_mapped_address = value; }
-
-uint32_t Device::ReadMarker(const Marker& marker) { return *marker.cpu_mapped_address; }
-
-bool Device::AllocateMarker(Marker64* marker) {
-    {
-        std::lock_guard<std::mutex> lock(recycled_markers_u64_mutex_);
-        if (recycled_markers_u64_.size() > 0) {
-            *marker = recycled_markers_u64_.back();
-            recycled_markers_u64_.pop_back();
-            return true;
-        }
-    }
-
-    std::lock_guard<std::mutex> mlock(marker_buffers_mutex_);
-    // Check if we have the required marker already allocated
-    auto marker_index_inc = 1;
-    auto marker_buffer_index = (current_marker_index_ + marker_index_inc) / kBufferMarkerEventCount;
-
-    // Out of space, allocate a new buffer
-    if (marker_buffer_index >= marker_buffers_.size()) {
-        // zakerinasab: This causes a glitch if CDL is on while a user plays
-        // the game. If CDL goes to be activated for end users, this should be
-        // done out of markers_buffers_mutex_ lock in a predictive mode.
-        if (AcquireMarkerBuffer() != VK_SUCCESS) {
-            return false;
-        }
-        assert(marker_buffer_index < marker_buffers_.size());
-        // Make sure current_marker_index_ is even
-        current_marker_index_ = ((current_marker_index_ + 1) & -2);
-    }
-    auto& marker_buffer = marker_buffers_.back();
-    marker->buffer = marker_buffer.buffer;
-    marker->offset = (current_marker_index_ % kBufferMarkerEventCount) * sizeof(uint32_t);
-    marker->cpu_mapped_address = (uint64_t*)((uintptr_t)marker_buffer.cpu_mapped_address + marker->offset);
-    current_marker_index_ += 1 + marker_index_inc;
-    return true;
-}
-
-void Device::FreeMarker(const Marker64 marker) {
-    std::lock_guard<std::mutex> lock(recycled_markers_u64_mutex_);
-    recycled_markers_u64_.push_back(marker);
-}
-
-void Device::WriteMarker(VkCommandBuffer cb, VkPipelineStageFlagBits stage, Marker64& marker, uint64_t value) {
-    uint32_t u32_value = value & 0xffffffff;
-    CmdWriteBufferMarkerAMD(cb, stage, marker.buffer, marker.offset, u32_value);
-    u32_value = value >> 32;
-    CmdWriteBufferMarkerAMD(cb, stage, marker.buffer, marker.offset + sizeof(uint32_t), u32_value);
-}
-
-void Device::WriteMarker(Marker64& marker, uint64_t value) { *marker.cpu_mapped_address = value; }
-
-uint64_t Device::ReadMarker(const Marker64& marker) { return *marker.cpu_mapped_address; }
 
 void Device::FreeCommandBuffers(VkCommandPool command_pool, uint32_t command_buffer_count,
                                 const VkCommandBuffer* command_buffers) {
@@ -334,7 +97,7 @@ void Device::DumpCommandBuffers(YAML::Emitter& os, const char* section_name, Com
         auto p_cmd = GetCommandBuffer(cb);
         if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
             if (dump_all_command_buffers ||
-                (p_cmd->HasMarkers() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution())) {
+                (p_cmd->HasCheckpoints() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution())) {
                 sorted_command_buffers[p_cmd->GetSubmitInfoId()].push_back(p_cmd);
             }
         }
@@ -382,7 +145,7 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_pool, const VkCommandBuffer
     for (uint32_t i = 0; i < allocate_info->commandBufferCount; ++i) {
         VkCommandBuffer vk_cmd = command_buffers[i];
 
-        auto cmd = std::make_unique<CommandBuffer>(*this, vk_pool, vk_cmd, allocate_info, HasMarkers());
+        auto cmd = std::make_unique<CommandBuffer>(*this, vk_pool, vk_cmd, allocate_info, HasCheckpoints());
         cmd->SetInstrumentAllCommands(context_.InstrumentAllCommands());
 
         SetCommandBuffer(vk_cmd, std::move(cmd));
@@ -422,7 +185,7 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter&
 
 bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, YAML::Emitter& os) {
     assert(p_cmd);
-    if (p_cmd->HasMarkers() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution()) {
+    if (p_cmd->HasCheckpoints() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution()) {
         DumpCommandBufferStateOnScreen(p_cmd, os);
         return false;
     }
@@ -632,7 +395,6 @@ std::vector<Device::ConstQueuePtr> Device::GetAllQueues() const {
     return qs;
 }
 
-//////////////////////////////////////
 void Device::AddObjectInfo(uint64_t handle, VkObjectType type, const char* name) {
     return object_info_db_.AddObjectInfo(handle, type, name);
 }
@@ -646,6 +408,9 @@ std::string Device::GetObjectName(uint64_t handle, HandleDebugNamePreference han
 std::string Device::GetObjectInfo(uint64_t handle) const { return object_info_db_.GetObjectInfo(handle); }
 
 YAML::Emitter& Device::Print(YAML::Emitter& os) const {
+    if (checkpoints_) {
+        checkpoints_->Update();
+    }
     os << YAML::Key << "Device" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "vkHandle" << YAML::Value << GetObjectInfo((uint64_t)vk_device_);
     os << YAML::Key << "deviceName" << YAML::Value << physical_device_properties_.deviceName;
@@ -714,11 +479,11 @@ static void DumpAddressRecord(YAML::Emitter& os, const vku::sparse::range<VkDevi
 }
 
 void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
-    if (!extensions_present_.ext_device_fault || !GetDeviceFaultInfoEXT) {
+    if (!extensions_present_.ext_device_fault) {
         return;
     }
     auto fault_counts = vku::InitStruct<VkDeviceFaultCountsEXT>();
-    VkResult result = GetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
+    VkResult result = Dispatch().GetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
     if (result != VK_SUCCESS) {
         // TODO: log
         return;
@@ -740,7 +505,7 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
     fault_info.pVendorBinaryData =
         fault_counts.vendorBinarySize == 0 ? nullptr : reinterpret_cast<void*>(binary_data.data());
 
-    result = GetDeviceFaultInfoEXT(vk_device_, &fault_counts, &fault_info);
+    result = Dispatch().GetDeviceFaultInfoEXT(vk_device_, &fault_counts, &fault_info);
     if (result != VK_SUCCESS && result != VK_INCOMPLETE) {
         // TODO: log
         return;
@@ -815,6 +580,10 @@ void Device::MemoryBindEvent(const DeviceAddressRecord& rec, bool multi_device) 
 
     vku::sparse::range<VkDeviceAddress> range(rec.base, rec.base + rec.size);
     address_map_.overwrite_range(std::make_pair(range, rec));
+}
+
+std::unique_ptr<Checkpoint> Device::AllocateCheckpoint(uint32_t initial_value) {
+    return checkpoints_ ? checkpoints_->Allocate(initial_value) : nullptr;
 }
 
 }  // namespace crash_diagnostic_layer

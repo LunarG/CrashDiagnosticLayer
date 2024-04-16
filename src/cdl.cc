@@ -406,7 +406,8 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             extensions_enabled.nv_device_diagnostic_checkpoints = true;
             vku::AddExtension(device_ci->modified, VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);
         }
-    } else if (extensions_present.amd_buffer_marker) {
+    }
+    if (extensions_present.amd_buffer_marker) {
         if (!extensions_enabled.amd_buffer_marker) {
             // NOTE: this extension does not have a feature struct
             extensions_enabled.amd_buffer_marker = true;
@@ -420,9 +421,13 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
                 vku::AddExtension(device_ci->modified, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
             }
         } else {
-            Log().Error("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
+            Log().Warning("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
         }
     } else {
+        Log().Warning("No VK_AMD_buffer_marker extension, semaphore tracking will be disabled.");
+    }
+
+    if (!extensions_present.nv_device_diagnostic_checkpoints && !extensions_present.amd_buffer_marker) {
         Log().Error(
             "No VK_NV_device_diagnostic_checkpoints or VK_AMD_buffer_marker extension, progression tracking will be "
             "disabled. ");
@@ -440,6 +445,7 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
     }
     if (extensions_present.ext_device_address_binding_report) {
         if (!extensions_enabled.ext_device_address_binding_report) {
+            extensions_enabled.ext_device_address_binding_report = true;
             auto ext_device_address_binding_report =
                 vku::InitStruct<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(nullptr, VK_TRUE);
             vku::AddToPnext(device_ci->modified, ext_device_address_binding_report);
@@ -806,6 +812,7 @@ VkResult Context::PreDeviceWaitIdle(VkDevice device) {
 VkResult Context::PostDeviceWaitIdle(VkDevice device, VkResult result) {
     PostApiFunction("vkDeviceWaitIdle", result);
 
+    // some drivers return VK_TIMEOUT on a hang
     if (IsVkError(result) || result == VK_TIMEOUT) {
         DumpDeviceExecutionState(device);
     }

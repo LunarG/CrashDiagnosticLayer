@@ -21,12 +21,17 @@
 #include <iomanip>
 #include <sstream>
 
-#include "device.h"
 #include "cdl.h"
+#include "device.h"
+#include "util.h"
+
 #include <vulkan/utility/vk_struct_helper.hpp>
 #include <yaml-cpp/emitter.h>
 
 namespace crash_diagnostic_layer {
+
+std::atomic<QueueSubmitId> Queue::queue_submit_index_{0};
+std::atomic<QueueBindSparseId> Queue::queue_bind_sparse_index_{0};
 
 Queue::Queue(Device& device, VkQueue queue, uint32_t family_index, uint32_t index, const VkQueueFamilyProperties& props)
     : device_(device),
@@ -59,21 +64,25 @@ Queue::~Queue() { Destroy(); }
 
 const Logger& Queue::Log() const { return device_.Log(); }
 
-SubmitInfoId Queue::RegisterSubmitInfo(QueueSubmitId queue_submit_index, const VkSubmitInfo* vk_submit_info) {
+void Queue::SetupTrackingInfo(SubmitInfo& submit_info, const VkSubmitInfo* vk_submit_info, VkCommandBuffer start_cb,
+                              VkCommandBuffer end_cb) {
     // Store the handles of command buffers and semaphores
-    SubmitInfo submit_info;
-    // Reserve the markers
-    bool top_marker_is_valid = device_.AllocateMarker(&submit_info.top_marker);
-    if (!top_marker_is_valid || !device_.AllocateMarker(&submit_info.bottom_marker)) {
-        Log().Warning("Cannot acquire marker. Not tracking submit info %s",
+    // Reserve the checkpoint
+    submit_info.checkpoint = device_.AllocateCheckpoint(uint32_t(SubmitState::kQueued));
+    if (!submit_info.checkpoint) {
+        Log().Warning("Cannot acquire checkpoint. Not tracking submit info %s",
                       device_.GetObjectName((uint64_t)vk_submit_info).c_str());
-        if (top_marker_is_valid) {
-            device_.FreeMarker(submit_info.top_marker);
-        }
-        return kInvalidSubmitInfoId;
+        return;
     }
-    submit_info.submit_info_id = ++submit_info_counter;
-    submit_info.queue_submit_index = queue_submit_index;
+
+    RecordSubmitStart(submit_info, start_cb);
+    device_.AddObjectInfo((uint64_t)start_cb, VK_OBJECT_TYPE_COMMAND_BUFFER, "CDL start checkpoint");
+    submit_info.start_cb = start_cb;
+
+    RecordSubmitFinish(submit_info, end_cb);
+    device_.AddObjectInfo((uint64_t)end_cb, VK_OBJECT_TYPE_COMMAND_BUFFER, "CDL end checkpoint");
+    submit_info.end_cb = end_cb;
+
     for (uint32_t i = 0; i < vk_submit_info->waitSemaphoreCount; i++) {
         submit_info.wait_semaphores.push_back(vk_submit_info->pWaitSemaphores[i]);
         submit_info.wait_semaphore_values.push_back(1);
@@ -104,37 +113,41 @@ SubmitInfoId Queue::RegisterSubmitInfo(QueueSubmitId queue_submit_index, const V
             }
         }
     }
-
-    {
-        std::lock_guard<std::mutex> lock(submit_infos_mutex_);
-        submit_infos_[submit_info.submit_info_id] = submit_info;
+    if (trace_all_semaphores_) {
+        LogSubmitInfoSemaphores(submit_info);
     }
-    {
-        std::lock_guard<std::mutex> lock(queue_submits_mutex_);
-        queue_submits_[queue_submit_index].push_back(submit_info.submit_info_id);
-    }
-    return submit_info.submit_info_id;
 }
 
-SubmitInfoId Queue::RegisterSubmitInfo(QueueSubmitId queue_submit_index, const VkSubmitInfo2* vk_submit_info) {
-    // Store the handles of command buffers and semaphores
-    SubmitInfo submit_info;
-    // Reserve the markers
-    bool top_marker_is_valid = device_.AllocateMarker(&submit_info.top_marker);
-    if (!top_marker_is_valid || !device_.AllocateMarker(&submit_info.bottom_marker)) {
-        Log().Warning("Cannot acquire marker. Not tracking submit info %s",
+void Queue::SetupTrackingInfo(SubmitInfo& submit_info, const VkSubmitInfo2* vk_submit_info, VkCommandBuffer start_cb,
+                              VkCommandBuffer end_cb) {
+    submit_info.checkpoint = device_.AllocateCheckpoint(0);
+    if (!submit_info.checkpoint) {
+        Log().Warning("Cannot acquire checkpoint. Not tracking submit info %s",
                       device_.GetObjectName((uint64_t)vk_submit_info).c_str());
-        if (top_marker_is_valid) {
-            device_.FreeMarker(submit_info.top_marker);
-        }
-        return kInvalidSubmitInfoId;
+        return;
     }
-    submit_info.submit_info_id = ++submit_info_counter;
-    submit_info.queue_submit_index = queue_submit_index;
+
+    device_.AddObjectInfo((uint64_t)submit_info.end_cb, VK_OBJECT_TYPE_COMMAND_BUFFER, "CDL end checkpoint");
+    RecordSubmitStart(submit_info, start_cb);
+    device_.AddObjectInfo((uint64_t)start_cb, VK_OBJECT_TYPE_COMMAND_BUFFER, "CDL start checkpoint");
+    submit_info.start_cb = start_cb;
+
+    RecordSubmitFinish(submit_info, end_cb);
+    device_.AddObjectInfo((uint64_t)end_cb, VK_OBJECT_TYPE_COMMAND_BUFFER, "CDL end checkpoint");
+    submit_info.end_cb = end_cb;
+
+    auto semaphore_tracker = device_.GetSemaphoreTracker();
+
     for (uint32_t i = 0; i < vk_submit_info->waitSemaphoreInfoCount; i++) {
         const auto& sem_info = vk_submit_info->pWaitSemaphoreInfos[i];
         submit_info.wait_semaphores.push_back(sem_info.semaphore);
-        submit_info.wait_semaphore_values.push_back(sem_info.value);
+        uint64_t value;
+        if (semaphore_tracker->GetSemaphoreType(sem_info.semaphore) == VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
+            value = sem_info.value;
+        } else {
+            value = 1;
+        }
+        submit_info.wait_semaphore_values.push_back(value);
         submit_info.wait_semaphore_pipeline_stages.push_back(sem_info.stageMask);
     }
     for (uint32_t i = 0; i < vk_submit_info->commandBufferInfoCount; i++) {
@@ -143,35 +156,20 @@ SubmitInfoId Queue::RegisterSubmitInfo(QueueSubmitId queue_submit_index, const V
     for (uint32_t i = 0; i < vk_submit_info->signalSemaphoreInfoCount; i++) {
         const auto& sem_info = vk_submit_info->pSignalSemaphoreInfos[i];
         submit_info.signal_semaphores.push_back(sem_info.semaphore);
-        submit_info.signal_semaphore_values.push_back(sem_info.value);
+        uint64_t value;
+        if (semaphore_tracker->GetSemaphoreType(sem_info.semaphore) == VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
+            value = sem_info.value;
+        } else {
+            value = 1;
+        }
+        submit_info.signal_semaphore_values.push_back(value);
     }
-
-    {
-        std::lock_guard<std::mutex> lock(submit_infos_mutex_);
-        submit_infos_[submit_info.submit_info_id] = submit_info;
-    }
-    {
-        std::lock_guard<std::mutex> lock(queue_submits_mutex_);
-        queue_submits_[queue_submit_index].push_back(submit_info.submit_info_id);
-    }
-    return submit_info.submit_info_id;
-}
-
-void Queue::StoreSubmitHelperCommandBuffersInfo(SubmitInfoId submit_info_id, VkCommandBuffer start_marker_cb,
-                                                VkCommandBuffer end_marker_cb) {
-    assert(submit_info_id != kInvalidSubmitInfoId);
-    std::lock_guard<std::mutex> lock(submit_infos_mutex_);
-    if (submit_infos_.find(submit_info_id) != submit_infos_.end()) {
-        SubmitInfo& submit_info = submit_infos_[submit_info_id];
-        submit_info.start_marker_cb = start_marker_cb;
-        device_.AddObjectInfo((uint64_t)submit_info.start_marker_cb, VK_OBJECT_TYPE_COMMAND_BUFFER, "CDL start marker");
-        submit_info.end_marker_cb = end_marker_cb;
-        device_.AddObjectInfo((uint64_t)submit_info.end_marker_cb, VK_OBJECT_TYPE_COMMAND_BUFFER, "CDL end marker");
+    if (trace_all_semaphores_) {
+        LogSubmitInfoSemaphores(submit_info);
     }
 }
 
-void Queue::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id, VkCommandBuffer cb) {
-    assert(submit_info_id != kInvalidSubmitInfoId);
+void Queue::RecordSubmitStart(SubmitInfo& submit_info, VkCommandBuffer cb) {
     assert(tracking_semaphores_ == true);
 
     auto begin_info = vku::InitStruct<VkCommandBufferBeginInfo>();
@@ -182,30 +180,22 @@ void Queue::RecordSubmitStart(QueueSubmitId qsubmit_id, SubmitInfoId submit_info
         return;
     }
 
-    std::lock_guard<std::mutex> slock(submit_infos_mutex_);
-    if (submit_infos_.find(submit_info_id) != submit_infos_.end()) {
-        SubmitInfo& submit_info = submit_infos_[submit_info_id];
-        // Write the state of the submit
-        device_.WriteMarker(submit_info.top_marker, SubmitState::kQueued);
-        device_.WriteMarker(cb, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, submit_info.top_marker, SubmitState::kRunning);
-        // Reset binary wait semaphores
-        auto semaphore_tracker = device_.GetSemaphoreTracker();
-        for (size_t i = 0; i < submit_info.wait_semaphores.size(); i++) {
-            if (semaphore_tracker->GetSemaphoreType(submit_info.wait_semaphores[i]) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
-                semaphore_tracker->WriteMarker(submit_info.wait_semaphores[i], cb, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0,
-                                               {SemaphoreModifierType::kModifierQueueSubmit, qsubmit_id});
-            }
+    // Write the state of the submit
+    submit_info.checkpoint->WriteBottom(cb, uint32_t(SubmitState::kRunning));
+    // Reset binary wait semaphores
+    auto semaphore_tracker = device_.GetSemaphoreTracker();
+    for (size_t i = 0; i < submit_info.wait_semaphores.size(); i++) {
+        if (semaphore_tracker->GetSemaphoreType(submit_info.wait_semaphores[i]) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
+            semaphore_tracker->WriteMarker(
+                submit_info.wait_semaphores[i], cb, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0,
+                {SemaphoreModifierType::kModifierQueueSubmit, submit_info.queue_submit_index});
         }
-    } else {
-        Log().Warning("No previous record of queued submit in submit tracker: %d", submit_info_id);
     }
     result = device_.Dispatch().EndCommandBuffer(cb);
     assert(result == VK_SUCCESS);
 }
 
-void Queue::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId submit_info_id, VkCommandBuffer cb) {
-    assert(submit_info_id != kInvalidSubmitInfoId);
-
+void Queue::RecordSubmitFinish(SubmitInfo& submit_info, VkCommandBuffer cb) {
     auto begin_info = vku::InitStruct<VkCommandBufferBeginInfo>();
     VkResult result = device_.Dispatch().BeginCommandBuffer(cb, &begin_info);
     assert(result == VK_SUCCESS);
@@ -214,53 +204,43 @@ void Queue::RecordSubmitFinish(QueueSubmitId qsubmit_id, SubmitInfoId submit_inf
         return;
     }
 
-    std::lock_guard<std::mutex> slock(submit_infos_mutex_);
-    if (submit_infos_.find(submit_info_id) != submit_infos_.end()) {
-        SubmitInfo& submit_info = submit_infos_[submit_info_id];
-        // Update the value of signal semaphores
-        auto semaphore_tracker = device_.GetSemaphoreTracker();
-        for (size_t i = 0; i < submit_info.signal_semaphores.size(); i++) {
-            semaphore_tracker->WriteMarker(submit_info.signal_semaphores[i], cb, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                                           submit_info.signal_semaphore_values[i],
-                                           {SemaphoreModifierType::kModifierQueueSubmit, qsubmit_id});
-        }
-        // Write the state of the submit
-        device_.WriteMarker(cb, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, submit_info.bottom_marker,
-                            SubmitState::kFinished);
-    } else {
-        Log().Warning("No previous record of queued submit in submit tracker.");
+    // Update the value of signal semaphores
+    auto semaphore_tracker = device_.GetSemaphoreTracker();
+    for (size_t i = 0; i < submit_info.signal_semaphores.size(); i++) {
+        semaphore_tracker->WriteMarker(submit_info.signal_semaphores[i], cb, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                       submit_info.signal_semaphore_values[i],
+                                       {SemaphoreModifierType::kModifierQueueSubmit, submit_info.queue_submit_index});
     }
+    // Write the state of the submit
+    submit_info.checkpoint->WriteBottom(cb, SubmitState::kFinished);
     result = device_.Dispatch().EndCommandBuffer(cb);
     assert(result == VK_SUCCESS);
 }
 
 void Queue::CleanupSubmitInfos() {
     std::lock_guard<std::mutex> qlock(queue_submits_mutex_);
-    std::lock_guard<std::mutex> slock(submit_infos_mutex_);
     for (auto qsubmit_it = queue_submits_.begin(); qsubmit_it != queue_submits_.end();) {
-        auto& queue_submit_info_ids = qsubmit_it->second;
-        for (auto submit_it = queue_submit_info_ids.begin(); submit_it != queue_submit_info_ids.end();) {
-            auto submit_info_id = *submit_it;
-            auto it = submit_infos_.find(submit_info_id);
-            if (it == submit_infos_.end()) {
-                Log().Warning("No previous record of queued submit in submit tracker: %d", submit_info_id);
-                submit_it++;
+        auto& queue_submit_infos = qsubmit_it->second;
+        size_t finished_count = 0;
+        for (auto& submit_info : queue_submit_infos) {
+            if (!submit_info.checkpoint) {
+                finished_count++;
                 continue;
             }
-            const SubmitInfo& submit_info = it->second;
-            auto submit_status = device_.ReadMarker(submit_info.bottom_marker);
+            auto submit_status = submit_info.checkpoint->ReadBottom();
             if (submit_status == SubmitState::kFinished) {
+                finished_count++;
                 // Free extra command buffers used to track the state of the submit and
                 // the values of the semaphores
-                std::vector<VkCommandBuffer> tracking_buffers{submit_info.start_marker_cb, submit_info.end_marker_cb};
-                device_.FreeCommandBuffers(helper_command_pool_, 2, tracking_buffers.data());
-                submit_infos_.erase(it);
-                submit_it = queue_submit_info_ids.erase(submit_it);
-            } else {
-                submit_it++;
+                if (submit_info.start_cb != VK_NULL_HANDLE && submit_info.end_cb != VK_NULL_HANDLE) {
+                    std::vector<VkCommandBuffer> tracking_buffers{submit_info.start_cb, submit_info.end_cb};
+                    device_.FreeCommandBuffers(helper_command_pool_, 2, tracking_buffers.data());
+                    submit_info.start_cb = VK_NULL_HANDLE;
+                    submit_info.end_cb = VK_NULL_HANDLE;
+                };
             }
         }
-        if (queue_submit_info_ids.size() == 0) {
+        if (queue_submit_infos.size() == finished_count) {
             qsubmit_it = queue_submits_.erase(qsubmit_it);
         } else {
             qsubmit_it++;
@@ -272,18 +252,16 @@ void Queue::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id, cons
     CleanupBindSparseHelperSubmits();
 
     HelperSubmitInfo hsubmit_info;
-    // Reserve the marker
-    if (!device_.AllocateMarker(&hsubmit_info.marker)) {
-        Log().Warning("Cannot acquire marker for QueueBindSparse's helper submit");
+    hsubmit_info.checkpoint = device_.AllocateCheckpoint(uint32_t(SubmitState::kQueued));
+    //  Reserve the checkpoint
+    if (!hsubmit_info.checkpoint) {
+        Log().Warning("Cannot acquire checkpoint for QueueBindSparse's helper submit");
         return;
     }
     std::lock_guard<std::mutex> lock(helper_submit_infos_mutex_);
-    helper_submit_infos_.push_back(hsubmit_info);
+    helper_submit_infos_.emplace_back(std::move(hsubmit_info));
     auto& helper_submit_info = helper_submit_infos_.back();
-    helper_submit_info.marker_cb = vk_submit_info->pCommandBuffers[0];
-
-    // Write the state of the submit
-    device_.WriteMarker(helper_submit_info.marker, uint32_t(SubmitState::kQueued));
+    helper_submit_info.checkpoint_cb = vk_submit_info->pCommandBuffers[0];
 
     auto begin_info = vku::InitStruct<VkCommandBufferBeginInfo>();
     VkResult result = device_.Dispatch().BeginCommandBuffer(vk_submit_info->pCommandBuffers[0], &begin_info);
@@ -293,8 +271,7 @@ void Queue::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id, cons
         return;
     }
 
-    device_.WriteMarker(helper_submit_info.marker_cb, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, helper_submit_info.marker,
-                        uint32_t(SubmitState::kFinished));
+    helper_submit_info.checkpoint->WriteBottom(helper_submit_info.checkpoint_cb, uint32_t(SubmitState::kFinished));
 
     // Extract signal semaphore values from submit info
     std::unordered_map<VkSemaphore, uint64_t /*signal_value*/> signal_semaphores;
@@ -316,14 +293,14 @@ void Queue::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id, cons
 
     // Update the value of signal semaphores
     for (auto& it : signal_semaphores) {
-        semaphore_tracker->WriteMarker(it.first, helper_submit_info.marker_cb, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+        semaphore_tracker->WriteMarker(it.first, helper_submit_info.checkpoint_cb, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
                                        it.second, {SemaphoreModifierType::kModifierQueueBindSparse, qbind_sparse_id});
     }
 
     // Reset binary wait semaphores
     for (size_t i = 0; i < vk_submit_info->waitSemaphoreCount; i++) {
         if (semaphore_tracker->GetSemaphoreType(vk_submit_info->pWaitSemaphores[i]) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
-            semaphore_tracker->WriteMarker(vk_submit_info->pWaitSemaphores[i], helper_submit_info.marker_cb,
+            semaphore_tracker->WriteMarker(vk_submit_info->pWaitSemaphores[i], helper_submit_info.checkpoint_cb,
                                            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0,
                                            {SemaphoreModifierType::kModifierQueueBindSparse, qbind_sparse_id});
         }
@@ -335,12 +312,12 @@ void Queue::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id, cons
 void Queue::CleanupBindSparseHelperSubmits() {
     std::lock_guard<std::mutex> lock(helper_submit_infos_mutex_);
     for (auto helper_submit_info = helper_submit_infos_.begin(); helper_submit_info != helper_submit_infos_.end();) {
-        auto submit_status = device_.ReadMarker(helper_submit_info->marker);
+        auto submit_status = helper_submit_info->checkpoint->ReadBottom();
         if (submit_status == SubmitState::kFinished) {
             // Free the command buffer used to track the state of the submit and
             // the values of the semaphores
-            device_.FreeCommandBuffers(helper_command_pool_, 1, &(helper_submit_info->marker_cb));
-            device_.FreeMarker(helper_submit_info->marker);
+            device_.FreeCommandBuffers(helper_command_pool_, 1, &(helper_submit_info->checkpoint_cb));
+            helper_submit_info->checkpoint.reset();
             helper_submit_info = helper_submit_infos_.erase(helper_submit_info);
         } else {
             helper_submit_info++;
@@ -348,9 +325,7 @@ void Queue::CleanupBindSparseHelperSubmits() {
     }
 }
 
-bool Queue::QueuedSubmitWaitingOnSemaphores(SubmitInfoId submit_info_id) const {
-    auto it = submit_infos_.find(submit_info_id);
-    const SubmitInfo& submit_info = it->second;
+bool Queue::QueuedSubmitWaitingOnSemaphores(const SubmitInfo& submit_info) const {
     uint64_t semaphore_value = 0;
     bool current_value_available = false;
     auto semaphore_tracker = device_.GetSemaphoreTracker();
@@ -361,14 +336,9 @@ bool Queue::QueuedSubmitWaitingOnSemaphores(SubmitInfoId submit_info_id) const {
     return false;
 }
 
-std::vector<TrackedSemaphoreInfo> Queue::GetTrackedSemaphoreInfos(SubmitInfoId submit_info_id,
+std::vector<TrackedSemaphoreInfo> Queue::GetTrackedSemaphoreInfos(const SubmitInfo& submit_info,
                                                                   SemaphoreOperation operation) const {
     std::vector<TrackedSemaphoreInfo> tracked_semaphores;
-    auto it = submit_infos_.find(submit_info_id);
-    if (it == submit_infos_.end()) {
-        return tracked_semaphores;
-    }
-    const SubmitInfo& submit_info = it->second;
     auto semaphore_tracker = device_.GetSemaphoreTracker();
     if (operation == SemaphoreOperation::kWaitOperation) {
         return semaphore_tracker->GetTrackedSemaphoreInfos(submit_info.wait_semaphores,
@@ -378,30 +348,23 @@ std::vector<TrackedSemaphoreInfo> Queue::GetTrackedSemaphoreInfos(SubmitInfoId s
                                                        submit_info.signal_semaphore_values);
 }
 
-bool Queue::SubmitInfoHasSemaphores(SubmitInfoId submit_info_id) const {
-    std::lock_guard<std::mutex> lock(submit_infos_mutex_);
-    auto it = submit_infos_.find(submit_info_id);
-    if (it == submit_infos_.end()) {
-        return false;
-    }
-    const SubmitInfo& submit_info = it->second;
+bool Queue::SubmitInfoHasSemaphores(const SubmitInfo& submit_info) const {
     return (submit_info.wait_semaphores.size() > 0 || submit_info.signal_semaphores.size() > 0);
 }
 
-std::string Queue::GetSubmitInfoSemaphoresLog(SubmitInfoId submit_info_id) const {
-    std::lock_guard<std::mutex> lock(submit_infos_mutex_);
+std::string Queue::GetSubmitInfoSemaphoresLog(const SubmitInfo& submit_info) const {
     std::stringstream log;
     log << "VkSubmitInfo with semaphores submitted to queue." << std::endl
         << "\tVkDevice: " << device_.GetObjectName((uint64_t)device_.GetVkDevice())
-        << ", VkQueue: " << device_.GetObjectName((uint64_t)vk_queue_) << ", SubmitInfoId: " << submit_info_id
-        << std::endl;
+        << ", VkQueue: " << device_.GetObjectName((uint64_t)vk_queue_)
+        << ", SubmitInfoId: " << Uint64ToStr(submit_info.id) << std::endl;
     const char* tab = "\t";
-    auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info_id, kWaitOperation);
+    auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info, kWaitOperation);
     if (wait_semaphores.size() > 0) {
         log << tab << "*** Wait Semaphores ***" << std::endl;
         log << device_.GetSemaphoreTracker()->PrintTrackedSemaphoreInfos(wait_semaphores, tab);
     }
-    auto signal_semaphores = GetTrackedSemaphoreInfos(submit_info_id, kSignalOperation);
+    auto signal_semaphores = GetTrackedSemaphoreInfos(submit_info, kSignalOperation);
     if (signal_semaphores.size() > 0) {
         log << tab << "*** Signal Semaphores ***" << std::endl;
         log << device_.GetSemaphoreTracker()->PrintTrackedSemaphoreInfos(signal_semaphores, tab);
@@ -410,7 +373,7 @@ std::string Queue::GetSubmitInfoSemaphoresLog(SubmitInfoId submit_info_id) const
 }
 
 void Queue::Print(YAML::Emitter& os) const {
-    os << YAML::BeginMap;
+    os << YAML::BeginMap << YAML::Comment("Queue");
     os << YAML::Key << "vkHandle" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_queue_);
     os << YAML::Key << "queueFamilyIndex" << YAML::Value << queue_family_index_;
     os << YAML::Key << "index" << YAML::Value << queue_index_;
@@ -441,38 +404,30 @@ void Queue::Print(YAML::Emitter& os) const {
     }
     os << YAML::EndSeq;
 
-    std::lock_guard<std::mutex> slock(submit_infos_mutex_);
-    if (submit_infos_.size() == 0) {
+    std::lock_guard<std::mutex> qlock(queue_submits_mutex_);
+    if (queue_submits_.size() == 0) {
         os << YAML::EndMap;
         return;
     }
-
-    std::lock_guard<std::mutex> qlock(queue_submits_mutex_);
     os << YAML::Key << "IncompleteSubmits" << YAML::Value << YAML::BeginSeq;
     for (const auto& qit : queue_submits_) {
         uint32_t incomplete_submission_counter = 0;
         os << YAML::BeginMap;
         os << YAML::Key << "submission" << YAML::Value << qit.first;
         os << YAML::Key << "batches" << YAML::Value << YAML::BeginSeq;
-        for (auto& submit_info_index : qit.second) {
-            auto iter = submit_infos_.find(submit_info_index);
-            assert(iter != submit_infos_.end());
-            const SubmitInfo& submit_info = iter->second;
+        for (const auto& submit_info : qit.second) {
             // Check submit state
-            auto submit_state = device_.ReadMarker(submit_info.bottom_marker);
-            if (submit_state == SubmitState::kFinished) continue;
-            submit_state = device_.ReadMarker(submit_info.top_marker);
+            auto submit_state = submit_info.checkpoint->ReadBottom();
             if (submit_state == SubmitState::kFinished) continue;
 
-            assert(submit_state != SubmitState::kInvalid);
             os << YAML::BeginMap;
-            os << YAML::Key << "id" << YAML::Value << submit_info.submit_info_id;
+            os << YAML::Key << "id" << YAML::Value << Uint64ToStr(submit_info.id);
             os << YAML::Key << "state";
 
             if (submit_state == SubmitState::kRunning) {
                 os << YAML::Value << "[STARTED,INCOMPLETE]";
             } else if (submit_state == SubmitState::kQueued) {
-                if (QueuedSubmitWaitingOnSemaphores(submit_info.submit_info_id)) {
+                if (QueuedSubmitWaitingOnSemaphores(submit_info)) {
                     os << YAML::Value << "[QUEUED,WAITING_ON_SEMAPHORES]";
                 } else {
                     os << YAML::Value << "[QUEUED,NOT_WAITING_ON_SEMAPHORES]";
@@ -485,7 +440,7 @@ void Queue::Print(YAML::Emitter& os) const {
                 }
                 os << YAML::EndSeq;
             }
-            auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info.submit_info_id, kWaitOperation);
+            auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info, kWaitOperation);
             if (wait_semaphores.size() > 0) {
                 os << YAML::Key << "WaitSemaphores" << YAML::Value << YAML::BeginSeq;
                 for (const auto& wait : wait_semaphores) {
@@ -507,7 +462,7 @@ void Queue::Print(YAML::Emitter& os) const {
                 os << YAML::EndSeq;
                 assert(os.good());
             }
-            auto signal_semaphores = GetTrackedSemaphoreInfos(submit_info.submit_info_id, kSignalOperation);
+            auto signal_semaphores = GetTrackedSemaphoreInfos(submit_info, kSignalOperation);
             if (signal_semaphores.size() > 0) {
                 os << YAML::Key << "SignalSemaphores" << YAML::Value << YAML::BeginSeq;
                 for (auto signal : signal_semaphores) {
@@ -583,10 +538,10 @@ std::vector<VkCommandBuffer> Queue::AllocHelperCBs(uint32_t count) {
 
 VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
     for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
-        const auto& submit_info = pSubmits[submit_index];
-        for (uint32_t command_buffer_index = 0; command_buffer_index < submit_info.commandBufferCount;
+        const auto& submit = pSubmits[submit_index];
+        for (uint32_t command_buffer_index = 0; command_buffer_index < submit.commandBufferCount;
              ++command_buffer_index) {
-            auto cmd = crash_diagnostic_layer::GetCommandBuffer(submit_info.pCommandBuffers[command_buffer_index]);
+            auto cmd = crash_diagnostic_layer::GetCommandBuffer(submit.pCommandBuffers[command_buffer_index]);
             if (cmd != nullptr) {
                 cmd->QueueSubmit(vk_queue_, fence);
             }
@@ -609,6 +564,9 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
     }
 
     for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        SubmitInfo submit_info;
+        submit_info.queue_submit_index = queue_submit_id;
+        submit_info.id = (uint64_t(queue_submit_id) << 32ull) | submit_index;
         // Add the semaphore tracking command buffers to the beginning and the end
         // of the queue submit info.
         semaphore_tracking_submits[submit_index] = pSubmits[submit_index];
@@ -623,21 +581,18 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
         }
         extended_cbs[cb_count + 1] = new_buffers[submit_index + 1];
 
-        auto submit_info_id = RegisterSubmitInfo(queue_submit_id, &semaphore_tracking_submits[submit_index]);
-        StoreSubmitHelperCommandBuffersInfo(submit_info_id, extended_cbs[0], extended_cbs[cb_count + 1]);
         for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
             auto command_buffer = GetCommandBuffer(pSubmits[submit_index].pCommandBuffers[cb_index]);
             assert(command_buffer != nullptr);
             if (command_buffer) {
-                command_buffer->SetSubmitInfoId(submit_info_id);
+                command_buffer->SetSubmitInfoId(submit_info.id);
             }
         }
-
-        RecordSubmitStart(queue_submit_id, submit_info_id, extended_cbs[0]);
-        RecordSubmitFinish(queue_submit_id, submit_info_id, extended_cbs[cb_count + 1]);
-
-        if (trace_all_semaphores_) {
-            LogSubmitInfoSemaphores(submit_info_id);
+        SetupTrackingInfo(submit_info, &semaphore_tracking_submits[submit_index], extended_cbs[0],
+                          extended_cbs[cb_count + 1]);
+        {
+            std::lock_guard<std::mutex> lock(queue_submits_mutex_);
+            queue_submits_[queue_submit_id].push_back(std::move(submit_info));
         }
     }
 
@@ -648,11 +603,11 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
 
 VkResult Queue::Submit2(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
-        const auto& submit_info = pSubmits[submit_index];
-        for (uint32_t command_buffer_index = 0; command_buffer_index < submit_info.commandBufferInfoCount;
+        const auto& submit = pSubmits[submit_index];
+        for (uint32_t command_buffer_index = 0; command_buffer_index < submit.commandBufferInfoCount;
              ++command_buffer_index) {
             auto cmd = crash_diagnostic_layer::GetCommandBuffer(
-                submit_info.pCommandBufferInfos[command_buffer_index].commandBuffer);
+                submit.pCommandBufferInfos[command_buffer_index].commandBuffer);
             if (cmd != nullptr) {
                 cmd->QueueSubmit(vk_queue_, fence);
             }
@@ -676,6 +631,9 @@ VkResult Queue::Submit2(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkF
     }
 
     for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
+        SubmitInfo submit_info;
+        submit_info.queue_submit_index = queue_submit_id;
+        submit_info.id = (uint64_t(queue_submit_id) << 32ull) | submit_index;
         // Add the semaphore tracking command buffers to the beginning and the end
         // of the queue submit info.
         semaphore_tracking_submits[submit_index] = pSubmits[submit_index];
@@ -693,22 +651,19 @@ VkResult Queue::Submit2(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkF
         extended_cbs[cb_count + 1] = vku::InitStruct<VkCommandBufferSubmitInfo>();
         extended_cbs[cb_count + 1].commandBuffer = new_buffers[submit_index + 1];
 
-        auto submit_info_id = RegisterSubmitInfo(queue_submit_id, &semaphore_tracking_submits[submit_index]);
-        StoreSubmitHelperCommandBuffersInfo(submit_info_id, extended_cbs[0].commandBuffer,
-                                            extended_cbs[cb_count + 1].commandBuffer);
+        SetupTrackingInfo(submit_info, &semaphore_tracking_submits[submit_index], extended_cbs[0].commandBuffer,
+                          extended_cbs[cb_count + 1].commandBuffer);
         for (uint32_t cb_index = 0; cb_index < cb_count; ++cb_index) {
             auto command_buffer = GetCommandBuffer(pSubmits[submit_index].pCommandBufferInfos[cb_index].commandBuffer);
             assert(command_buffer != nullptr);
             if (command_buffer) {
-                command_buffer->SetSubmitInfoId(submit_info_id);
+                command_buffer->SetSubmitInfoId(submit_info.id);
             }
         }
 
-        RecordSubmitStart(queue_submit_id, submit_info_id, extended_cbs[0].commandBuffer);
-        RecordSubmitFinish(queue_submit_id, submit_info_id, extended_cbs[cb_count + 1].commandBuffer);
-
-        if (trace_all_semaphores_) {
-            LogSubmitInfoSemaphores(submit_info_id);
+        {
+            std::lock_guard<std::mutex> lock(queue_submits_mutex_);
+            queue_submits_[queue_submit_id].push_back(std::move(submit_info));
         }
     }
 
@@ -853,11 +808,11 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
     return last_bind_result;
 }
 
-void Queue::LogSubmitInfoSemaphores(SubmitInfoId submit_info_id) {
+void Queue::LogSubmitInfoSemaphores(const SubmitInfo& submit_info) {
     assert(tracking_semaphores_ == true);
     assert(trace_all_semaphores_ == true);
-    if (SubmitInfoHasSemaphores(submit_info_id)) {
-        std::string semaphore_log = GetSubmitInfoSemaphoresLog(submit_info_id);
+    if (SubmitInfoHasSemaphores(submit_info)) {
+        std::string semaphore_log = GetSubmitInfoSemaphoresLog(submit_info);
         Log().Info(semaphore_log);
     }
 }

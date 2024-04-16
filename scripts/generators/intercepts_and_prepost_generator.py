@@ -217,7 +217,7 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
                 count += 1
             func_call += ');'
 
-            tracker_call = '  WriteBeginCommandExecutionMarker(tracker_.GetCommands().back().id);'
+            tracker_call = '  WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);'
 
             out.append(f'{pre_func_decl}\n')
             out.append(f'{func_call}\n')
@@ -235,7 +235,7 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
             if self.CommandHasReturn(vkcommand):
                 post_func_decl = post_func_decl.replace(')', f',\n    {vkcommand.returnType}                                    result)')
             func_call = func_call.replace('TrackPre', 'TrackPost', 1)
-            tracker_call = tracker_call.replace('Begin', 'End', 1)
+            tracker_call = '  WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);'
 
             out.append(f'{post_func_decl}\n')
             if vkcommand.name not in default_instrumented_functions:

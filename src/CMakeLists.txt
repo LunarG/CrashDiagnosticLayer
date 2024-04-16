@@ -60,10 +60,13 @@ target_sources(crash_diagnostic PRIVATE
     device.cc
     cdl.h
     cdl.cc
+    checkpoint.h
+    checkpoint.cc
     linear_allocator.h
     logger.h
     logger.cc
     marker.h
+    marker.cc
     object_name_db.h
     object_name_db.cc
     pipeline.h
