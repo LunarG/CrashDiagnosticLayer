@@ -32,7 +32,7 @@ custom_functions = [
     'vkQueueSubmit2KHR',
     'vkQueueBindSparse',
     'vkDebugMarkerSetObjectNameEXT',
-    'vkSetDebugUtilsObjectNameEXT'
+    'vkSetDebugUtilsObjectNameEXT',
 ]
 
 custom_pre_intercept_functions = [
