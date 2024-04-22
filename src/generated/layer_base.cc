@@ -41,9 +41,19 @@
 
 namespace crash_diagnostic_layer {
 
-constexpr VkLayerProperties layer_properties = {"VK_LAYER_LUNARG_crash_diagnostic", VK_HEADER_VERSION, 1,
-                                                "Crash Diagnostic Layer is a crash/hang debugging tool that helps "
-                                                "determines GPU progress in a Vulkan application."};
+constexpr VkLayerProperties kLayerProperties{"VK_LAYER_LUNARG_crash_diagnostic", VK_HEADER_VERSION, 1,
+                                             "Crash Diagnostic Layer is a crash/hang debugging tool that helps "
+                                             "determines GPU progress in a Vulkan application."};
+
+constexpr VkPhysicalDeviceToolPropertiesEXT kToolProperties{
+    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES_EXT,
+    nullptr,
+    "VK_LAYER_LUNARG_crash_diagnostic",
+    "1",
+    VK_TOOL_PURPOSE_TRACING_BIT_EXT | VK_TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT | VK_TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT,
+    "Crash Diagnostic Layer is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application.",
+    "VK_LAYER_LUNARG_crash_diagnostic",
+};
 
 namespace {
 
@@ -139,8 +149,9 @@ static constexpr std::array<VkExtensionProperties, 2> instance_extensions{{
     {VK_EXT_DEBUG_REPORT_EXTENSION_NAME, VK_EXT_DEBUG_REPORT_SPEC_VERSION},
     {VK_EXT_DEBUG_UTILS_EXTENSION_NAME, VK_EXT_DEBUG_UTILS_SPEC_VERSION},
 }};
-static constexpr std::array<VkExtensionProperties, 1> device_extensions{{
+static constexpr std::array<VkExtensionProperties, 2> device_extensions{{
     {VK_EXT_DEBUG_MARKER_EXTENSION_NAME, VK_EXT_DEBUG_MARKER_SPEC_VERSION},
+    {VK_EXT_TOOLING_INFO_EXTENSION_NAME, VK_EXT_TOOLING_INFO_SPEC_VERSION},
 }};
 
 // Implement layer version of Vulkan API functions.
@@ -4165,7 +4176,7 @@ VkResult InterceptEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkL
     VkResult result = VK_SUCCESS;
     uint32_t copy_count = *pPropertyCount;
     if (pProperties != nullptr && *pPropertyCount > 0) {
-        *pProperties = layer_properties;
+        *pProperties = kLayerProperties;
     }
     *pPropertyCount = 1;
     return result;
@@ -4177,7 +4188,7 @@ VkResult InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice
     VkResult result = VK_SUCCESS;
     uint32_t copy_count = *pPropertyCount;
     if (pProperties != nullptr && *pPropertyCount > 0) {
-        *pProperties = layer_properties;
+        *pProperties = kLayerProperties;
     }
     *pPropertyCount = 1;
     return result;
@@ -4185,7 +4196,7 @@ VkResult InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice
 
 VkResult InterceptEnumerateInstanceExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount,
                                                        VkExtensionProperties* pProperties) {
-    bool layer_requested = (nullptr == pLayerName || strcmp(pLayerName, "VK_LAYER_LUNARG_crash_diagnostic"));
+    bool layer_requested = (nullptr == pLayerName || !strcmp(pLayerName, kLayerProperties.layerName));
     if (!layer_requested) {
         return VK_ERROR_LAYER_NOT_PRESENT;
     }
@@ -4219,7 +4230,7 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
                                                                               &num_other_extensions, &extensions[0]);
 
     // add our extensions if we have any and requested
-    bool layer_requested = (nullptr == pLayerName || strcmp(pLayerName, "VK_LAYER_LUNARG_crash_diagnostic"));
+    bool layer_requested = (nullptr == pLayerName || !strcmp(pLayerName, kLayerProperties.layerName));
 
     if (result == VK_SUCCESS && layer_requested) {
         // not just our layer, we expose all our extensions
@@ -4275,6 +4286,44 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
     return result;
 }
 
+VkResult InterceptGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, uint32_t* pToolCount,
+                                                  VkPhysicalDeviceToolProperties* pToolProperties) {
+    InstanceData* instance_data = GetInstanceLayerData(DataKey(physicalDevice));
+    VkResult result = VK_SUCCESS;
+    if (pToolProperties != nullptr && *pToolCount > 0) {
+        *pToolProperties = kToolProperties;
+        pToolProperties = ((*pToolCount > 1) ? &pToolProperties[1] : nullptr);
+        (*pToolCount)--;
+    }
+    if (instance_data->dispatch_table.GetPhysicalDeviceToolProperties == nullptr) {
+        // This layer is the terminator.
+        *pToolCount = 0;
+    } else {
+        result =
+            instance_data->dispatch_table.GetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties);
+    }
+    return result;
+}
+
+VkResult InterceptGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice physicalDevice, uint32_t* pToolCount,
+                                                     VkPhysicalDeviceToolProperties* pToolProperties) {
+    InstanceData* instance_data = GetInstanceLayerData(DataKey(physicalDevice));
+    VkResult result = VK_SUCCESS;
+    if (pToolProperties != nullptr && *pToolCount > 0) {
+        *pToolProperties = kToolProperties;
+        pToolProperties = ((*pToolCount > 1) ? &pToolProperties[1] : nullptr);
+        (*pToolCount)--;
+    }
+    if (instance_data->dispatch_table.GetPhysicalDeviceToolPropertiesEXT == nullptr) {
+        // This layer is the terminator.
+        *pToolCount = 0;
+    } else {
+        result = instance_data->dispatch_table.GetPhysicalDeviceToolPropertiesEXT(physicalDevice, pToolCount,
+                                                                                  pToolProperties);
+    }
+    return result;
+}
+
 PFN_vkVoidFunction GetInstanceFuncs(const char* func) {
     if (0 == strcmp(func, "vkCreateInstance")) return (PFN_vkVoidFunction)InterceptCreateInstance;
     if (0 == strcmp(func, "vkDestroyInstance")) return (PFN_vkVoidFunction)InterceptDestroyInstance;
@@ -4287,6 +4336,10 @@ PFN_vkVoidFunction GetInstanceFuncs(const char* func) {
         return (PFN_vkVoidFunction)InterceptEnumerateInstanceLayerProperties;
     if (0 == strcmp(func, "vkEnumerateDeviceLayerProperties"))
         return (PFN_vkVoidFunction)InterceptEnumerateDeviceLayerProperties;
+    if (0 == strcmp(func, "vkGetPhysicalDeviceToolProperties"))
+        return (PFN_vkVoidFunction)InterceptGetPhysicalDeviceToolProperties;
+    if (0 == strcmp(func, "vkGetPhysicalDeviceToolPropertiesEXT"))
+        return (PFN_vkVoidFunction)InterceptGetPhysicalDeviceToolPropertiesEXT;
 
     return nullptr;
 }

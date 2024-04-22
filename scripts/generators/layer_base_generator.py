@@ -107,16 +107,6 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj);
 ''')
         self.write("".join(out))
 
-        self.write("\n// Declare layer version of Vulkan API functions.\n")
-        out = []
-        for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
-            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Intercept')
-            out.append(f'{func_call}\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append('\n')
-        self.write("".join(out))
-
         self.write("\n// Declare interceptor interface.\n")
         self.write("\nclass Interceptor {\n")
         self.write("public:\n")
@@ -210,13 +200,22 @@ CDL_NegotiateLoaderLayerInterfaceVersion(
 
         out.append(self.GenerateNamespaceBegin())
 
-        out.append('\nconstexpr VkLayerProperties layer_properties = {\n')
+        out.append('\nconstexpr VkLayerProperties kLayerProperties {\n')
         layer_name = self.GetLayerName()
         layer_version = self.GetLayerVersion()
         layer_description = self.GetLayerDescription()
         out.append(f'    "{layer_name}", VK_HEADER_VERSION,\n')
         out.append(f'    {layer_version},\n')
         out.append(f'    "{layer_description}"\n')
+        out.append('};\n')
+        out.append('\nconstexpr VkPhysicalDeviceToolPropertiesEXT kToolProperties {\n')
+        out.append('    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES_EXT,\n')
+        out.append('    nullptr,\n')
+        out.append(f'   "{layer_name}",\n')
+        out.append(f'   "{layer_version}",\n')
+        out.append('    VK_TOOL_PURPOSE_TRACING_BIT_EXT | VK_TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT | VK_TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT,\n')
+        out.append(f'   "{layer_description}",\n')
+        out.append(f'   "{layer_name}",\n')
         out.append('};\n')
 
         out.append('''
@@ -576,7 +575,7 @@ InterceptEnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
   VkResult result = VK_SUCCESS;
   uint32_t copy_count = *pPropertyCount;
   if (pProperties != nullptr && *pPropertyCount > 0) {
-    *pProperties = layer_properties;
+    *pProperties = kLayerProperties;
   }
   *pPropertyCount = 1;
   return result;
@@ -590,7 +589,7 @@ InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
   VkResult result = VK_SUCCESS;
   uint32_t copy_count = *pPropertyCount;
   if (pProperties != nullptr && *pPropertyCount > 0) {
-    *pProperties = layer_properties;
+    *pProperties = kLayerProperties;
   }
   *pPropertyCount = 1;
   return result;
@@ -601,7 +600,7 @@ VkResult InterceptEnumerateInstanceExtensionProperties(const char *pLayerName,
                                                        VkExtensionProperties *pProperties) {
   bool layer_requested = (nullptr == pLayerName ||''')
         layer_name = self.GetLayerName()
-        out.append(f'        strcmp(pLayerName, "{layer_name}"));\n')
+        out.append(f'        !strcmp(pLayerName, kLayerProperties.layerName));\n')
         out.append('''  if (!layer_requested) {
     return VK_ERROR_LAYER_NOT_PRESENT;
   }
@@ -642,7 +641,7 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
   // add our extensions if we have any and requested
   bool layer_requested =''')
         layer_name = self.GetLayerName()
-        out.append(f'      (nullptr == pLayerName || strcmp(pLayerName, "{layer_name}"));\n')
+        out.append(f'      (nullptr == pLayerName || !strcmp(pLayerName, kLayerProperties.layerName));\n')
         out.append('''
   if (result == VK_SUCCESS && layer_requested) {
     // not just our layer, we expose all our extensions
@@ -702,6 +701,43 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
                                                                               pProperties, result);
 
   return result;
+}
+
+VkResult InterceptGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, uint32_t* pToolCount,
+                                                  VkPhysicalDeviceToolProperties* pToolProperties) {
+    InstanceData *instance_data = GetInstanceLayerData(DataKey(physicalDevice));
+    VkResult result = VK_SUCCESS;
+    if (pToolProperties != nullptr && *pToolCount > 0) {
+        *pToolProperties = kToolProperties;
+        pToolProperties = ((*pToolCount > 1) ? &pToolProperties[1] : nullptr);
+        (*pToolCount)--;
+    }
+    if (instance_data->dispatch_table.GetPhysicalDeviceToolProperties == nullptr) {
+        // This layer is the terminator.
+        *pToolCount = 0;
+    } else {
+        result = instance_data->dispatch_table.GetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties);
+    }
+    return result;
+}
+
+
+VkResult InterceptGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice physicalDevice, uint32_t* pToolCount,
+                                                     VkPhysicalDeviceToolProperties* pToolProperties) {
+    InstanceData *instance_data = GetInstanceLayerData(DataKey(physicalDevice));
+    VkResult result = VK_SUCCESS;
+    if (pToolProperties != nullptr && *pToolCount > 0) {
+        *pToolProperties = kToolProperties;
+        pToolProperties = ((*pToolCount > 1) ? &pToolProperties[1] : nullptr);
+        (*pToolCount)--;
+    }
+    if (instance_data->dispatch_table.GetPhysicalDeviceToolPropertiesEXT == nullptr) {
+        // This layer is the terminator.
+        *pToolCount = 0;
+    } else {
+        result = instance_data->dispatch_table.GetPhysicalDeviceToolPropertiesEXT(physicalDevice, pToolCount, pToolProperties);
+    }
+    return result;
 }
 
 PFN_vkVoidFunction GetInstanceFuncs(const char* func)

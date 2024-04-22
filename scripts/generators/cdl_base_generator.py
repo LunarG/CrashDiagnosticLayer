@@ -24,7 +24,8 @@ implemented_instance_extensions = [
 ]
 
 implemented_device_extensions = [
-    'VK_EXT_debug_marker'
+    'VK_EXT_debug_marker',
+    'VK_EXT_tooling_info',
 ]
 
 custom_intercept_commands = [
@@ -40,6 +41,8 @@ custom_intercept_commands = [
     'vkQueueSubmit2',
     'vkQueueSubmit2KHR',
     'vkQueueBindSparse',
+    'vkGetPhysicalDeviceToolPropertiesEXT',
+    'vkGetPhysicalDeviceToolProperties',
 ]
 
 intercept_pre_functions = [
@@ -57,6 +60,8 @@ no_intercept_pre_functions = [
     'vkQueueSubmit2',
     'vkQueueSubmit2KHR',
     'vkQueueBindSparse',
+    'vkGetPhysicalDeviceToolPropertiesEXT',
+    'vkGetPhysicalDeviceToolProperties',
 ]
 
 intercept_post_functions = [
@@ -76,6 +81,8 @@ no_intercept_post_functions = [
     'vkQueueSubmit2',
     'vkQueueSubmit2KHR',
     'vkQueueBindSparse',
+    'vkGetPhysicalDeviceToolPropertiesEXT',
+    'vkGetPhysicalDeviceToolProperties',
 ]
 
 intercept_override_functions = [
@@ -111,6 +118,8 @@ intercept_functions = [
     'vkQueueSubmit2',
     'vkQueueSubmit2KHR',
     'vkQueueBindSparse',
+    'vkGetPhysicalDeviceToolPropertiesEXT',
+    'vkGetPhysicalDeviceToolProperties',
 ]
 
 namespace = 'crash_diagnostic_layer'
