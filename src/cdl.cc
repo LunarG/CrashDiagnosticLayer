@@ -707,6 +707,7 @@ VkResult Context::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, co
         application_info_->engineVersion = pCreateInfo->pApplicationInfo->engineVersion;
         application_info_->apiVersion = pCreateInfo->pApplicationInfo->apiVersion;
     }
+    // This messenger is for messages we recieve from the ICD for device address binding events.
     if (VK_NULL_HANDLE == utils_messenger_) {
         VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = {
             VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
@@ -721,7 +722,17 @@ VkResult Context::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, co
         instance_dispatch_table_.CreateDebugUtilsMessengerEXT(vk_instance_, &messenger_create_info, nullptr,
                                                               &utils_messenger_);
     }
-
+    // Now we need to possibly create messengers for the application to recieve messages from us.
+    // Note that since there aren't real handles for these messengers, we're using the create info pointers
+    // as fake handles so that they can go into the logger callback map.
+    auto* utils_ci = vku::FindStructInPNextChain<VkDebugUtilsMessengerCreateInfoEXT>(original_create_info_.pNext);
+    if (utils_ci) {
+        logger_.AddLogCallback(utils_ci, *utils_ci);
+    }
+    auto* report_ci = vku::FindStructInPNextChain<VkDebugUtilsMessengerCreateInfoEXT>(original_create_info_.pNext);
+    if (report_ci) {
+        logger_.AddLogCallback(report_ci, *report_ci);
+    }
     return result;
 }
 
@@ -1350,6 +1361,56 @@ VkResult Context::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindS
     PostApiFunction("vkQueueBindSparse", result);
     return result;
 }
+
+VkResult Context::PreCreateDebugUtilsMessengerEXT(VkInstance instance,
+                                                  const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                                  const VkAllocationCallbacks* pAllocator,
+                                                  VkDebugUtilsMessengerEXT* pMessenger) {
+    return VK_SUCCESS;
+}
+
+VkResult Context::PostCreateDebugUtilsMessengerEXT(VkInstance instance,
+                                                   const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                                   const VkAllocationCallbacks* pAllocator,
+                                                   VkDebugUtilsMessengerEXT* pMessenger, VkResult result) {
+    if (result == VK_SUCCESS) {
+        logger_.AddLogCallback(*pMessenger, *pCreateInfo);
+    }
+    return result;
+}
+
+void Context::PreDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
+                                               const VkAllocationCallbacks* pAllocator) {
+    logger_.RemoveLogCallback(messenger);
+}
+
+void Context::PostDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
+                                                const VkAllocationCallbacks* pAllocator) {}
+
+VkResult Context::PreCreateDebugReportCallbackEXT(VkInstance instance,
+                                                  const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+                                                  const VkAllocationCallbacks* pAllocator,
+                                                  VkDebugReportCallbackEXT* pCallback) {
+    return VK_SUCCESS;
+}
+
+VkResult Context::PostCreateDebugReportCallbackEXT(VkInstance instance,
+                                                   const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+                                                   const VkAllocationCallbacks* pAllocator,
+                                                   VkDebugReportCallbackEXT* pCallback, VkResult result) {
+    if (result == VK_SUCCESS) {
+        logger_.AddLogCallback(*pCallback, *pCreateInfo);
+    }
+    return result;
+}
+
+void Context::PreDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
+                                               const VkAllocationCallbacks* pAllocator) {
+    logger_.RemoveLogCallback(callback);
+}
+
+void Context::PostDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
+                                                const VkAllocationCallbacks* pAllocator) {}
 
 VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                         VkInstance* pInstance, Interceptor** interceptor) {

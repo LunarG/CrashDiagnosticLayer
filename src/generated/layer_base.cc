@@ -2125,6 +2125,38 @@ void InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT(
                                                                              pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 
+VkResult InterceptCreateDebugReportCallbackEXT(VkInstance instance,
+                                               const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+                                               const VkAllocationCallbacks* pAllocator,
+                                               VkDebugReportCallbackEXT* pCallback) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetInstanceLayerData(DataKey(instance));
+    layer_data->interceptor->PreCreateDebugReportCallbackEXT(instance, pCreateInfo, pAllocator, pCallback);
+
+    PFN_vkCreateDebugReportCallbackEXT pfn = layer_data->dispatch_table.CreateDebugReportCallbackEXT;
+    if (pfn != nullptr) {
+        result = pfn(instance, pCreateInfo, pAllocator, pCallback);
+    }
+
+    result =
+        layer_data->interceptor->PostCreateDebugReportCallbackEXT(instance, pCreateInfo, pAllocator, pCallback, result);
+    return result;
+}
+
+void InterceptDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
+                                            const VkAllocationCallbacks* pAllocator) {
+    auto layer_data = GetInstanceLayerData(DataKey(instance));
+    layer_data->interceptor->PreDestroyDebugReportCallbackEXT(instance, callback, pAllocator);
+
+    PFN_vkDestroyDebugReportCallbackEXT pfn = layer_data->dispatch_table.DestroyDebugReportCallbackEXT;
+    if (pfn != nullptr) {
+        pfn(instance, callback, pAllocator);
+    }
+
+    layer_data->interceptor->PostDestroyDebugReportCallbackEXT(instance, callback, pAllocator);
+}
+
 VkResult InterceptDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
     VkResult result = VK_SUCCESS;
 
@@ -2440,6 +2472,38 @@ void InterceptCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const V
     }
 
     layer_data->interceptor->PostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
+}
+
+VkResult InterceptCreateDebugUtilsMessengerEXT(VkInstance instance,
+                                               const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                               const VkAllocationCallbacks* pAllocator,
+                                               VkDebugUtilsMessengerEXT* pMessenger) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetInstanceLayerData(DataKey(instance));
+    layer_data->interceptor->PreCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
+
+    PFN_vkCreateDebugUtilsMessengerEXT pfn = layer_data->dispatch_table.CreateDebugUtilsMessengerEXT;
+    if (pfn != nullptr) {
+        result = pfn(instance, pCreateInfo, pAllocator, pMessenger);
+    }
+
+    result = layer_data->interceptor->PostCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger,
+                                                                       result);
+    return result;
+}
+
+void InterceptDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
+                                            const VkAllocationCallbacks* pAllocator) {
+    auto layer_data = GetInstanceLayerData(DataKey(instance));
+    layer_data->interceptor->PreDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
+
+    PFN_vkDestroyDebugUtilsMessengerEXT pfn = layer_data->dispatch_table.DestroyDebugUtilsMessengerEXT;
+    if (pfn != nullptr) {
+        pfn(instance, messenger, pAllocator);
+    }
+
+    layer_data->interceptor->PostDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 }
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS

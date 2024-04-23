@@ -703,6 +703,18 @@ void PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) override;
 
+VkResult PreCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+                                         const VkAllocationCallbacks* pAllocator,
+                                         VkDebugReportCallbackEXT* pCallback) override;
+VkResult PostCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+                                          const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback,
+                                          VkResult result) override;
+
+void PreDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
+                                      const VkAllocationCallbacks* pAllocator) override;
+void PostDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
+                                       const VkAllocationCallbacks* pAllocator) override;
+
 VkResult PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) override;
 VkResult PostDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo,
                                          VkResult result) override;
@@ -809,6 +821,18 @@ void PostCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) override;
 
 void PreCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) override;
 void PostCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) override;
+
+VkResult PreCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                         const VkAllocationCallbacks* pAllocator,
+                                         VkDebugUtilsMessengerEXT* pMessenger) override;
+VkResult PostCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                          const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger,
+                                          VkResult result) override;
+
+void PreDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
+                                      const VkAllocationCallbacks* pAllocator) override;
+void PostDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
+                                       const VkAllocationCallbacks* pAllocator) override;
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) override;

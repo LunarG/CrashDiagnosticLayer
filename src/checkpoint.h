@@ -93,7 +93,7 @@ class DiagnosticCheckpointMgr : public CheckpointMgr {
     void Update() override;
 
    private:
-    static constexpr uintptr_t kIdShift = 32;
+    static constexpr uintptr_t kIdShift = (sizeof(uintptr_t) * 8 / 2);
     static constexpr uintptr_t kValueMask = ((uintptr_t(1) << kIdShift) - 1);
 
     struct Data {
