@@ -120,6 +120,10 @@ intercept_functions = [
     'vkQueueBindSparse',
     'vkGetPhysicalDeviceToolPropertiesEXT',
     'vkGetPhysicalDeviceToolProperties',
+    'vkCreateDebugUtilsMessengerEXT',
+    'vkDestroyDebugUtilsMessengerEXT',
+    'vkCreateDebugReportCallbackEXT',
+    'vkDestroyDebugReportCallbackEXT',
 ]
 
 namespace = 'crash_diagnostic_layer'

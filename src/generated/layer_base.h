@@ -1008,6 +1008,26 @@ class Interceptor {
         VkCommandBuffer commandBuffer,
         const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {}
 
+    virtual VkResult PreCreateDebugReportCallbackEXT(VkInstance instance,
+                                                     const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+                                                     const VkAllocationCallbacks* pAllocator,
+                                                     VkDebugReportCallbackEXT* pCallback) {
+        return VK_SUCCESS;
+    }
+
+    virtual VkResult PostCreateDebugReportCallbackEXT(VkInstance instance,
+                                                      const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
+                                                      const VkAllocationCallbacks* pAllocator,
+                                                      VkDebugReportCallbackEXT* pCallback, VkResult result) {
+        return result;
+    }
+
+    virtual void PreDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
+                                                  const VkAllocationCallbacks* pAllocator) {}
+
+    virtual void PostDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
+                                                   const VkAllocationCallbacks* pAllocator) {}
+
     virtual VkResult PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
         return VK_SUCCESS;
     }
@@ -1154,6 +1174,26 @@ class Interceptor {
 
     virtual void PostCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
                                                  const VkDebugUtilsLabelEXT* pLabelInfo) {}
+
+    virtual VkResult PreCreateDebugUtilsMessengerEXT(VkInstance instance,
+                                                     const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                                     const VkAllocationCallbacks* pAllocator,
+                                                     VkDebugUtilsMessengerEXT* pMessenger) {
+        return VK_SUCCESS;
+    }
+
+    virtual VkResult PostCreateDebugUtilsMessengerEXT(VkInstance instance,
+                                                      const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                                      const VkAllocationCallbacks* pAllocator,
+                                                      VkDebugUtilsMessengerEXT* pMessenger, VkResult result) {
+        return result;
+    }
+
+    virtual void PreDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
+                                                  const VkAllocationCallbacks* pAllocator) {}
+
+    virtual void PostDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
+                                                   const VkAllocationCallbacks* pAllocator) {}
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     virtual void PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {}
