@@ -20,7 +20,8 @@ from generators.base_generator import BaseGenerator
 
 implemented_instance_extensions = [
     'VK_EXT_debug_report',
-    'VK_EXT_debug_utils'
+    'VK_EXT_debug_utils',
+    'VK_EXT_layer_settings',
 ]
 
 implemented_device_extensions = [
