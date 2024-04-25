@@ -81,10 +81,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['command.cc.inc'] = [
+    genOpts['command.cpp.inc'] = [
           InterceptCommandsOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'command.cc.inc',
+            filename          = 'command.cpp.inc',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
@@ -96,10 +96,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['command_common.cc'] = [
+    genOpts['command_common.cpp'] = [
           CommandCommonOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'command_common.cc',
+            filename          = 'command_common.cpp',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
@@ -111,24 +111,24 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['command_printer.cc'] = [
+    genOpts['command_printer.cpp'] = [
           CommandPrinterOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'command_printer.cc',
+            filename          = 'command_printer.cpp',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['command_printer_structs.cc'] = [
+    genOpts['command_printer_structs.cpp'] = [
           CommandPrinterOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'command_printer_structs.cc',
+            filename          = 'command_printer_structs.cpp',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['command_printer_types.cc'] = [
+    genOpts['command_printer_types.cpp'] = [
           CommandPrinterOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'command_printer_types.cc',
+            filename          = 'command_printer_types.cpp',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
@@ -140,10 +140,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['command_recorder.cc'] = [
+    genOpts['command_recorder.cpp'] = [
           CommandRecorderOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'command_recorder.cc',
+            filename          = 'command_recorder.cpp',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
@@ -155,10 +155,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['command_tracker.cc'] = [
+    genOpts['command_tracker.cpp'] = [
           InterceptCommandsOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'command_tracker.cc',
+            filename          = 'command_tracker.cpp',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
@@ -170,10 +170,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['dispatch.cc'] = [
+    genOpts['dispatch.cpp'] = [
           DispatchOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'dispatch.cc',
+            filename          = 'dispatch.cpp',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
@@ -185,10 +185,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['cdl_commands.cc.inc'] = [
+    genOpts['cdl_commands.cpp.inc'] = [
           InterceptCommandsOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'cdl_commands.cc.inc',
+            filename          = 'cdl_commands.cpp.inc',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
@@ -199,10 +199,10 @@ def RunGenerator(api: str, registry: str, grammar: str, scripts: str, directory:
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]
-    genOpts['layer_base.cc'] = [
+    genOpts['layer_base.cpp'] = [
           LayerBaseOutputGenerator,
           BaseGeneratorOptions(
-            filename          = 'layer_base.cc',
+            filename          = 'layer_base.cpp',
             mergeApiNames     = mergeApiNames,
             valid_usage_path  = scripts)
         ]

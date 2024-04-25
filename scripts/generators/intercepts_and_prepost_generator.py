@@ -109,15 +109,15 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
 
         if self.filename == 'cdl_commands.h.inc':
             self.generateContextCommandsHeader()
-        elif self.filename == 'cdl_commands.cc.inc':
+        elif self.filename == 'cdl_commands.cpp.inc':
             self.generateContextCommandsSource()
         elif self.filename == 'command.h.inc':
             self.generateCommandsHeader()
-        elif self.filename == 'command.cc.inc':
+        elif self.filename == 'command.cpp.inc':
             self.generateCommandsSource()
         elif self.filename == 'command_tracker.h':
             self.generateCommandTrackerHeader()
-        elif self.filename == 'command_tracker.cc':
+        elif self.filename == 'command_tracker.cpp':
             self.generateCommandTrackerSource()
         else:
             self.write(f'\nFile name {self.filename} has no code to generate\n')

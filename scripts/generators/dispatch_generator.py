@@ -32,7 +32,7 @@ class DispatchOutputGenerator(CdlBaseOutputGenerator):
 
         if self.filename == 'dispatch.h':
             self.generateHeader()
-        elif self.filename == 'dispatch.cc':
+        elif self.filename == 'dispatch.cpp':
             self.generateSource()
         else:
             self.write(f'\nFile name {self.filename} has no code to generate\n')

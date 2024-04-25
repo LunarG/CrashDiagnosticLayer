@@ -32,7 +32,7 @@ class LayerBaseOutputGenerator(CdlBaseOutputGenerator):
         self.write(file_start)
         if self.filename == 'layer_base.h':
             self.generateHeader()
-        elif self.filename == 'layer_base.cc':
+        elif self.filename == 'layer_base.cpp':
             self.generateSource()
         else:
             self.write(f'\nFile name {self.filename} has no code to generate\n')
