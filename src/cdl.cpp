@@ -1288,7 +1288,7 @@ VkResult Context::PostSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugU
 // =============================================================================
 // Include the generated implementation to forward commands to command buffer
 // =============================================================================
-#include "cdl_commands.cc.inc"
+#include "cdl_commands.cpp.inc"
 
 // =============================================================================
 // Define the custom pre intercepted commands

@@ -548,6 +548,6 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
 // =============================================================================
 // Include the generated command tracking code
 // =============================================================================
-#include "command.cc.inc"
+#include "command.cpp.inc"
 
 }  // namespace crash_diagnostic_layer

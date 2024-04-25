@@ -32,11 +32,11 @@ class CommandPrinterOutputGenerator(CdlBaseOutputGenerator):
 
         if self.filename == 'command_printer.h':
             self.generateHeader()
-        elif self.filename == 'command_printer_types.cc':
+        elif self.filename == 'command_printer_types.cpp':
             self.generateTypesSource()
-        elif self.filename == 'command_printer_structs.cc':
+        elif self.filename == 'command_printer_structs.cpp':
             self.generateStructsSource()
-        elif self.filename == 'command_printer.cc':
+        elif self.filename == 'command_printer.cpp':
             self.generateSource()
         else:
             self.write(f'\nFile name {self.filename} has no code to generate\n')

@@ -33,53 +33,53 @@ add_library(crash_diagnostic MODULE)
 
 target_sources(crash_diagnostic PRIVATE
     generated/command_common.h
-    generated/command_common.cc
+    generated/command_common.cpp
     generated/command_printer.h
-    generated/command_printer.cc
-    generated/command_printer_structs.cc
-    generated/command_printer_types.cc
+    generated/command_printer.cpp
+    generated/command_printer_structs.cpp
+    generated/command_printer_types.cpp
     generated/command_recorder.h
-    generated/command_recorder.cc
+    generated/command_recorder.cpp
     generated/command_tracker.h
-    generated/command_tracker.cc
+    generated/command_tracker.cpp
     generated/dispatch.h
-    generated/dispatch.cc
+    generated/dispatch.cpp
     generated/layer_base.h
-    generated/layer_base.cc
+    generated/layer_base.cpp
     bind_sparse_utils.h
-    bind_sparse_utils.cc
+    bind_sparse_utils.cpp
     command.h
-    command.cc
+    command.cpp
     command_buffer_tracker.h
-    command_buffer_tracker.cc
+    command_buffer_tracker.cpp
     command_pool.h
-    command_pool.cc
+    command_pool.cpp
     descriptor_set.h
-    descriptor_set.cc
+    descriptor_set.cpp
     device.h
-    device.cc
+    device.cpp
     cdl.h
-    cdl.cc
+    cdl.cpp
     checkpoint.h
-    checkpoint.cc
+    checkpoint.cpp
     linear_allocator.h
     logger.h
-    logger.cc
+    logger.cpp
     marker.h
-    marker.cc
+    marker.cpp
     object_name_db.h
-    object_name_db.cc
+    object_name_db.cpp
     pipeline.h
-    pipeline.cc
+    pipeline.cpp
     queue.h
-    queue.cc
+    queue.cpp
     semaphore_tracker.h
-    semaphore_tracker.cc
+    semaphore_tracker.cpp
     shader_module.h
-    shader_module.cc
+    shader_module.cpp
     spirv_parse.h
     system.h
-    system.cc
+    system.cpp
     util.h
 )
 

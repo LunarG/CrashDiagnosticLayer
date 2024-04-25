@@ -32,7 +32,7 @@ class CommandCommonOutputGenerator(CdlBaseOutputGenerator):
 
         if self.filename == 'command_common.h':
             self.generateHeader()
-        elif self.filename == 'command_common.cc':
+        elif self.filename == 'command_common.cpp':
             self.generateSource()
         else:
             self.write(f'\nFile name {self.filename} has no code to generate\n')

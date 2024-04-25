@@ -35,23 +35,23 @@ def main(argv):
 
     generated_layer_files = [
         'command.h.inc',
-        'command.cc.inc',
+        'command.cpp.inc',
         'command_common.h',
-        'command_common.cc',
+        'command_common.cpp',
         'command_printer.h',
-        'command_printer.cc',
-        'command_printer_structs.cc',
-        'command_printer_types.cc',
+        'command_printer.cpp',
+        'command_printer_structs.cpp',
+        'command_printer_types.cpp',
         'command_recorder.h',
-        'command_recorder.cc',
+        'command_recorder.cpp',
         'command_tracker.h',
-        'command_tracker.cc',
+        'command_tracker.cpp',
         'dispatch.h',
-        'dispatch.cc',
+        'dispatch.cpp',
         'cdl_commands.h.inc',
-        'cdl_commands.cc.inc',
+        'cdl_commands.cpp.inc',
         'layer_base.h',
-        'layer_base.cc',
+        'layer_base.cpp',
     ]
 
     parser = argparse.ArgumentParser(description='Generate source code for this repository')
