@@ -38,12 +38,29 @@
             "build_dir": "yaml-cpp/build",
             "install_dir": "yaml-cpp/build/install",
             "commit": "76dc6715734295ff1866bfc32872ff2278258fc8"
+        },
+        {
+            "name": "googletest",
+            "url": "https://github.com/google/googletest.git",
+            "sub_dir": "googletest",
+            "build_dir": "googletest/build",
+            "install_dir": "googletest/build/install",
+            "cmake_options": [
+                "-DBUILD_GMOCK=OFF",
+                "-Dgtest_force_shared_crt=ON",
+                "-DBUILD_SHARED_LIBS=OFF"
+            ],
+            "commit": "v1.14.0",
+            "optional": [
+                "tests"
+            ]
         }
     ],
     "install_names": {
         "Vulkan-Headers": "VULKAN_HEADERS_INSTALL_DIR",
         "Vulkan-Utility-Libraries": "VULKAN_UTILITY_LIBRARIES_INSTALL_DIR",
         "SPIRV-Headers": "SPIRV_HEADERS_INSTALL_DIR",
-        "yaml-cpp": "YAML_CPP_INSTALL_DIR"
+        "yaml-cpp": "YAML_CPP_INSTALL_DIR",
+        "googletest": "GOOGLETEST_INSTALL_DIR"
     }
 }
