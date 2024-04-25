@@ -165,3 +165,9 @@ if(MSVC)
 endif()
 
 add_subdirectory(src)
+
+option(BUILD_TESTS "Build the tests")
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

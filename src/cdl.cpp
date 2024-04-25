@@ -74,13 +74,27 @@ const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
 // Context
 // =============================================================================
 Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator) : system_(*this) {
+    // Possibly create messengers for the application to recieve messages from us.
+    // Note that since there aren't real handles for these messengers, we're using the create info pointers
+    // as fake handles so that they can go into the logger callback map.
+    auto* pnext = pCreateInfo->pNext;
+    while (auto* utils_ci = vku::FindStructInPNextChain<VkDebugUtilsMessengerCreateInfoEXT>(pnext)) {
+        logger_.AddLogCallback(utils_ci, *utils_ci);
+        pnext = utils_ci->pNext;
+    }
+    pnext = pCreateInfo->pNext;
+    while (auto* report_ci = vku::FindStructInPNextChain<VkDebugReportCallbackCreateInfoEXT>(pnext)) {
+        logger_.AddLogCallback(report_ci, *report_ci);
+        pnext = report_ci->pNext;
+    }
+
     Log().Info("Version %s enabled.", kCdlVersion);
 
-    const auto* create_info = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
+    const auto* settings_ci = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
 
     VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
     VkResult result =
-        vkuCreateLayerSettingSet("lunarg_crash_diagnostic", create_info, pAllocator, nullptr, &layer_setting_set);
+        vkuCreateLayerSettingSet("lunarg_crash_diagnostic", settings_ci, pAllocator, nullptr, &layer_setting_set);
     if (result != VK_SUCCESS) {
         Log().Error("vkuCreateLayerSettingSet failed with error %d", result);
         return;
@@ -721,17 +735,6 @@ VkResult Context::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, co
         };
         instance_dispatch_table_.CreateDebugUtilsMessengerEXT(vk_instance_, &messenger_create_info, nullptr,
                                                               &utils_messenger_);
-    }
-    // Now we need to possibly create messengers for the application to recieve messages from us.
-    // Note that since there aren't real handles for these messengers, we're using the create info pointers
-    // as fake handles so that they can go into the logger callback map.
-    auto* utils_ci = vku::FindStructInPNextChain<VkDebugUtilsMessengerCreateInfoEXT>(original_create_info_.pNext);
-    if (utils_ci) {
-        logger_.AddLogCallback(utils_ci, *utils_ci);
-    }
-    auto* report_ci = vku::FindStructInPNextChain<VkDebugUtilsMessengerCreateInfoEXT>(original_create_info_.pNext);
-    if (report_ci) {
-        logger_.AddLogCallback(report_ci, *report_ci);
     }
     return result;
 }
