@@ -493,18 +493,16 @@ void Context::DumpAllDevicesExecutionState(CrashSource crash_source) {
     YAML::Emitter os(file.is_open() ? file : std::cerr);
 
     for (auto& device : devs) {
+        device->SetHangDetected();
         DumpDeviceExecutionState(*device, dump_prologue, crash_source, os);
         dump_prologue = false;
     }
 }
 
-void Context::DumpDeviceExecutionState(VkDevice vk_device) {
-    auto device_state = GetDevice(vk_device);
-    if (device_state) {
-        auto file = OpenDumpFile();
-        YAML::Emitter os(file.is_open() ? file : std::cerr);
-        DumpDeviceExecutionState(*device_state, {}, true, kDeviceLostError, os);
-    }
+void Context::DumpDeviceExecutionState(const Device& device) {
+    auto file = OpenDumpFile();
+    YAML::Emitter os(file.is_open() ? file : std::cerr);
+    DumpDeviceExecutionState(device, {}, true, kDeviceLostError, os);
 }
 
 void Context::DumpDeviceExecutionState(const Device& device, bool dump_prologue, CrashSource crash_source,
@@ -534,6 +532,9 @@ void Context::DumpDeviceExecutionState(const Device& device, std::string error_r
 }
 
 void Context::DumpDeviceExecutionStateValidationFailed(const Device& device, YAML::Emitter& os) {
+    if (device.HangDetected()) {
+        return;
+    }
     // We force all command buffers to dump here because validation can be
     // from a race condition and the GPU can complete work by the time we've
     // started writing the log. (Seen in practice, not theoretical!)
@@ -808,7 +809,6 @@ void Context::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uin
     queue_device_tracker_[*pQueue] = device;
 }
 
-void Context::PreGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {}
 void Context::PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {
     {
         auto device_state = GetDevice(device);
@@ -826,9 +826,13 @@ VkResult Context::PreDeviceWaitIdle(VkDevice device) {
 VkResult Context::PostDeviceWaitIdle(VkDevice device, VkResult result) {
     PostApiFunction("vkDeviceWaitIdle", result);
 
+    auto device_state = GetDevice(device);
     // some drivers return VK_TIMEOUT on a hang
     if (IsVkError(result) || result == VK_TIMEOUT) {
-        DumpDeviceExecutionState(device);
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
+    } else {
+        device_state->UpdateIdleState();
     }
 
     return result;
@@ -842,11 +846,15 @@ VkResult Context::PreQueueWaitIdle(VkQueue queue) {
 VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
     PostApiFunction("vkQueueWaitIdle", result);
 
+    auto device_state = GetQueueDevice(queue);
     // some drivers return VK_TIMEOUT on a hang
     if (IsVkError(result) || result == VK_TIMEOUT) {
+        device_state->SetHangDetected();
         auto file = OpenDumpFile();
         YAML::Emitter os(file.is_open() ? file : std::cerr);
-        DumpDeviceExecutionState(*GetQueueDevice(queue), {}, true, kDeviceLostError, os);
+        DumpDeviceExecutionState(*device_state, {}, true, kDeviceLostError, os);
+    } else {
+        device_state->UpdateIdleState();
     }
 
     return result;
@@ -860,9 +868,11 @@ VkResult Context::PostQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPr
     PostApiFunction("vkQueuePresentKHR", result);
 
     if (IsVkError(result)) {
+        auto device_state = GetQueueDevice(queue);
+        device_state->SetHangDetected();
         auto file = OpenDumpFile();
         YAML::Emitter os(file.is_open() ? file : std::cerr);
-        DumpDeviceExecutionState(*GetQueueDevice(queue), {}, true, kDeviceLostError, os);
+        DumpDeviceExecutionState(*device_state, {}, true, kDeviceLostError, os);
     }
 
     return result;
@@ -877,8 +887,12 @@ VkResult Context::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkFenc
                                     uint64_t timeout, VkResult result) {
     PostApiFunction("vkWaitForFences", result);
 
+    auto device_state = GetDevice(device);
     if (IsVkError(result)) {
-        DumpDeviceExecutionState(device);
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
+    } else {
+        device_state->UpdateIdleState();
     }
 
     return result;
@@ -892,7 +906,9 @@ VkResult Context::PostGetFenceStatus(VkDevice device, VkFence fence, VkResult re
     PostApiFunction("vkGetFenceStatus", result);
 
     if (IsVkError(result)) {
-        DumpDeviceExecutionState(device);
+        auto device_state = GetDevice(device);
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
     }
 
     return result;
@@ -910,7 +926,9 @@ VkResult Context::PostGetQueryPoolResults(VkDevice device, VkQueryPool queryPool
     PostApiFunction("vkGetQueryPoolResults", result);
 
     if (IsVkError(result)) {
-        DumpDeviceExecutionState(device);
+        auto device_state = GetDevice(device);
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
     }
 
     return result;
@@ -927,7 +945,9 @@ VkResult Context::PostAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapch
     PostApiFunction("vkAcquireNextImageKHR", result);
 
     if (IsVkError(result)) {
-        DumpDeviceExecutionState(device);
+        auto device_state = GetDevice(device);
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
     }
 
     return result;
@@ -971,7 +991,6 @@ VkResult Context::PostCreateComputePipelines(VkDevice device, VkPipelineCache pi
     return callResult;
 }
 
-void Context::PreDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) {}
 void Context::PostDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) {
     auto device_state = GetDevice(device);
     device_state->DeletePipeline(pipeline);
@@ -1064,13 +1083,15 @@ void Context::PostFreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
     PostApiFunction("vkFreeCommandBuffers");
 
     auto device_state = GetDevice(device);
-    YAML::Emitter os;
-    bool all_cb_ok = true;
-    for (uint32_t i = 0; i < commandBufferCount; ++i) {
-        all_cb_ok = all_cb_ok && device_state->ValidateCommandBufferNotInUse(pCommandBuffers[i], os);
-    }
-    if (!all_cb_ok) {
-        DumpDeviceExecutionStateValidationFailed(*device_state, os);
+    if (!device_state->HangDetected()) {
+        YAML::Emitter os;
+        bool all_cb_ok = true;
+        for (uint32_t i = 0; i < commandBufferCount; ++i) {
+            all_cb_ok = all_cb_ok && device_state->ValidateCommandBufferNotInUse(pCommandBuffers[i], os);
+        }
+        if (!all_cb_ok) {
+            DumpDeviceExecutionStateValidationFailed(*device_state, os);
+        }
     }
 
     device_state->DeleteCommandBuffers(commandPool, pCommandBuffers, commandBufferCount);
@@ -1083,10 +1104,6 @@ void Context::MakeOutputPath() {
     }
 }
 
-VkResult Context::PreCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
-                                     const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore) {
-    return VK_SUCCESS;
-}
 VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore,
                                       VkResult result) {
@@ -1152,9 +1169,6 @@ void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const
     }
 }
 
-VkResult Context::PreSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo) {
-    return VK_SUCCESS;
-}
 VkResult Context::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo,
                                          VkResult result) {
     if (track_semaphores_ && result == VK_SUCCESS) {
@@ -1204,8 +1218,10 @@ VkResult Context::PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInf
 
 VkResult Context::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout,
                                         VkResult result) {
+    auto device_state = GetDevice(device);
     if (IsVkError(result)) {
-        DumpDeviceExecutionState(device);
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
         return result;
     }
     if (track_semaphores_ && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
@@ -1219,8 +1235,6 @@ VkResult Context::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitIn
 #else
         int pid = getpid();
 #endif
-        auto device_state = GetDevice(device);
-
         {
             // Update semaphore values
             uint64_t semaphore_value;
@@ -1252,13 +1266,12 @@ VkResult Context::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitIn
     return result;
 }
 
-VkResult Context::PreGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
-    return VK_SUCCESS;
-}
 VkResult Context::PostGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
                                                   VkResult result) {
     if (IsVkError(result)) {
-        DumpDeviceExecutionState(device);
+        auto device_state = GetDevice(device);
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
     }
     return result;
 }
@@ -1272,19 +1285,9 @@ VkResult Context::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugM
     return VK_SUCCESS;
 };
 
-VkResult Context::PostDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo,
-                                                  VkResult result) {
-    return result;
-};
-
 VkResult Context::PreSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
     auto device_state = GetDevice(device);
     device_state->AddObjectInfo(pNameInfo->objectHandle, pNameInfo->objectType, pNameInfo->pObjectName);
-    return VK_SUCCESS;
-}
-
-VkResult Context::PostSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo,
-                                                 VkResult result) {
     return VK_SUCCESS;
 }
 
@@ -1365,13 +1368,6 @@ VkResult Context::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindS
     return result;
 }
 
-VkResult Context::PreCreateDebugUtilsMessengerEXT(VkInstance instance,
-                                                  const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-                                                  const VkAllocationCallbacks* pAllocator,
-                                                  VkDebugUtilsMessengerEXT* pMessenger) {
-    return VK_SUCCESS;
-}
-
 VkResult Context::PostCreateDebugUtilsMessengerEXT(VkInstance instance,
                                                    const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
                                                    const VkAllocationCallbacks* pAllocator,
@@ -1385,16 +1381,6 @@ VkResult Context::PostCreateDebugUtilsMessengerEXT(VkInstance instance,
 void Context::PreDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
                                                const VkAllocationCallbacks* pAllocator) {
     logger_.RemoveLogCallback(messenger);
-}
-
-void Context::PostDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
-                                                const VkAllocationCallbacks* pAllocator) {}
-
-VkResult Context::PreCreateDebugReportCallbackEXT(VkInstance instance,
-                                                  const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
-                                                  const VkAllocationCallbacks* pAllocator,
-                                                  VkDebugReportCallbackEXT* pCallback) {
-    return VK_SUCCESS;
 }
 
 VkResult Context::PostCreateDebugReportCallbackEXT(VkInstance instance,
@@ -1411,9 +1397,6 @@ void Context::PreDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugRepor
                                                const VkAllocationCallbacks* pAllocator) {
     logger_.RemoveLogCallback(callback);
 }
-
-void Context::PostDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
-                                                const VkAllocationCallbacks* pAllocator) {}
 
 VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                         VkInstance* pInstance, Interceptor** interceptor) {

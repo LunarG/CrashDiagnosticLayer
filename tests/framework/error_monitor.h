@@ -53,6 +53,7 @@ class ErrorMonitor {
     ErrorMonitor(ErrorMonitor &&) noexcept = delete;
     ErrorMonitor &operator=(ErrorMonitor &&) noexcept = delete;
 
+    bool PrintAllMessages() const { return print_all_errors_; }
     // Set monitor to pristine state
     void Reset();
 

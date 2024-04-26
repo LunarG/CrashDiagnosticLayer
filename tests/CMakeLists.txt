@@ -23,7 +23,10 @@ target_sources(cdl_tests PRIVATE
     framework/cdl_tests.cpp
     framework/error_monitor.h
     framework/error_monitor.cpp
+    framework/test_fixtures.h
+    framework/test_fixtures.cpp
     unit/create_instance.cpp
+    unit/gpu_crash.cpp
 )
 
 get_target_property(TEST_SOURCES cdl_tests SOURCES)
@@ -32,10 +35,13 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${TEST_SOURCES})
 add_dependencies(cdl_tests crash_diagnostic)
 
 find_package(GTest CONFIG)
+find_package(glslang CONFIG)
 
 target_link_libraries(cdl_tests PRIVATE
     Vulkan::Headers
     GTest::gtest
+    glslang::SPIRV
+    glslang::glslang-default-resource-limits
 )
 
 # setup framework/config.h using framework/config.h.in as a source
