@@ -33,7 +33,7 @@ class CommandRecorderOutputGenerator(CdlBaseOutputGenerator):
 
         if self.filename == 'command_recorder.h':
             self.generateHeader()
-        elif self.filename == 'command_recorder.cc':
+        elif self.filename == 'command_recorder.cpp':
             self.generateSource()
         else:
             self.write(f'\nFile name {self.filename} has no code to generate\n')
