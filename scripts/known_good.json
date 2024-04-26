@@ -54,6 +54,20 @@
             "optional": [
                 "tests"
             ]
+        },
+        {
+            "name": "glslang",
+            "url": "https://github.com/KhronosGroup/glslang.git",
+            "sub_dir": "glslang",
+            "build_dir": "glslang/build",
+            "install_dir": "glslang/build/install",
+            "commit": "68df2230566b02c6495ffd8c200db523392fa797",
+            "cmake_options": [
+                "-DENABLE_OPT=OFF"
+            ],
+            "optional": [
+                "tests"
+            ]
         }
     ],
     "install_names": {
@@ -61,6 +75,7 @@
         "Vulkan-Utility-Libraries": "VULKAN_UTILITY_LIBRARIES_INSTALL_DIR",
         "SPIRV-Headers": "SPIRV_HEADERS_INSTALL_DIR",
         "yaml-cpp": "YAML_CPP_INSTALL_DIR",
-        "googletest": "GOOGLETEST_INSTALL_DIR"
+        "googletest": "GOOGLETEST_INSTALL_DIR",
+        "glslang": "GLSLANG_INSTALL_DIR"
     }
 }

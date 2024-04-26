@@ -407,10 +407,14 @@ std::string Device::GetObjectName(uint64_t handle, HandleDebugNamePreference han
 
 std::string Device::GetObjectInfo(uint64_t handle) const { return object_info_db_.GetObjectInfo(handle); }
 
-YAML::Emitter& Device::Print(YAML::Emitter& os) const {
+void Device::UpdateIdleState() const {
     if (checkpoints_) {
         checkpoints_->Update();
     }
+}
+
+YAML::Emitter& Device::Print(YAML::Emitter& os) const {
+    UpdateIdleState();
     os << YAML::Key << "Device" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "vkHandle" << YAML::Value << GetObjectInfo((uint64_t)vk_device_);
     os << YAML::Key << "deviceName" << YAML::Value << physical_device_properties_.deviceName;

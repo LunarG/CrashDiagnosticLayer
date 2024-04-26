@@ -198,7 +198,7 @@
                             "label": "Track semaphores",
                             "description": "Enable semaphore tracking.",
                             "type": "BOOL",
-                            "default": false,
+                            "default": true,
                             "platforms": [
                                 "WINDOWS",
                                 "LINUX",
@@ -286,7 +286,7 @@
                             "label": "Watchdog timeout",
                             "description": "If set to a non-zero number, a watchdog thread will be created. This will trigger if the application fails to submit new commands within a set time (in milliseconds) and a log will be created as if the a lost device error was encountered.",
                             "type": "INT",
-                            "default": 0,
+                            "default": 30000,
                             "platforms": [
                                 "WINDOWS",
                                 "LINUX",

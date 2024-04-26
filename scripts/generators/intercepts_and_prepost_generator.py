@@ -19,58 +19,19 @@ import sys
 from generators.vulkan_object import (Queues, CommandScope)
 from generators.cdl_base_generator import CdlBaseOutputGenerator
 
-#  CDL has custom implementation for pre intercept #
-custom_functions = [
-    'vkCreateInstance',
-    'vkEnumerateDeviceExtensionProperties',
-    'vkDestroyDevice',
-    'vkResetCommandPool',
-    'vkDestroyCommandPool'
-    'vkQueueSubmit',
-    'vkQueueSubmit2',
-    'vkWaitSemaphoresKHR',
-    'vkQueueSubmit2KHR',
-    'vkQueueBindSparse',
-    'vkDebugMarkerSetObjectNameEXT',
-    'vkSetDebugUtilsObjectNameEXT',
-]
+#NOTE: This generator only handle command buffer related overrides.
+# Everything else should be done manually in cdl.h/cpp.
+custom_functions = ()
 
-custom_pre_intercept_functions = [
-    'vkCreateInstance',
-    'vkBeginCommandBuffer',
-    'vkResetCommandBuffer',
-    'vkCmdBindPipeline'
-]
+custom_pre_intercept_functions = (
+   'vkBeginCommandBuffer',
+   'vkResetCommandBuffer',
+   'vkCmdBindPipeline'
+)
 
-custom_post_intercept_functions = [
-    'vkDestroyInstance',
-    'vkEnumerateDeviceExtensionProperties',
-    'vkCreateDevice',
-    'vkGetDeviceQueue',
-    'vkGetDeviceQueue2',
-    'vkDeviceWaitIdle',
-    'vkQueueWaitIdle',
-    'vkQueuePresentKHR',
-    'vkQueueBindSparse',
-    'vkWaitForFences',
-    'vkGetFenceStatus',
-    'vkGetQueryPoolResults',
-    'vkAcquireNextImageKHR',
-    'vkCreateShaderModule',
-    'vkDestroyShaderModule',
-    'vkCreateGraphicsPipelines',
-    'vkCreateComputePipelines',
-    'vkDestroyPipeline',
-    'vkCreateCommandPool',
-    'vkAllocateCommandBuffers',
-    'vkFreeCommandBuffers',
-    'vkCreateSemaphore',
-    'vkDestroySemaphore',
-    'vkSignalSemaphoreKHR',
-    'vkGetSemaphoreCounterValueKHR'
-]
+custom_post_intercept_functions = ()
 
-default_instrumented_functions = [
+default_instrumented_functions = (
     'vkCmdDispatch',
     'vkCmdDispatchIndirect',
     'vkCmdDraw',
@@ -93,7 +54,7 @@ default_instrumented_functions = [
     'vkCmdBeginDebugUtilsLabelEXT',
     'vkCmdEndDebugUtilsLabelEXT',
     'vkCmdInsertDebugUtilsLabelEXT',
-]
+)
 
 #
 # InterceptCommandsOutputGenerator - Generate the dispatch tables
@@ -126,7 +87,7 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
 
     def generateContextCommandsHeader(self):
         out = []
-        for vkcommand in filter(lambda x: self.InterceptCommand(x), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Post', 1).replace(';', ' override;')
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)

@@ -11,6 +11,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  */
 #include <gtest/gtest.h>
+#include <glslang/Public/ShaderLang.h>
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -218,6 +219,7 @@ static void CheckAndSetEnvironmentVariables() {
 class TestEnvironment : public ::testing::Environment {
    public:
     void SetUp();
+    void TearDown();
 };
 
 void TestEnvironment::SetUp() {
@@ -225,7 +227,9 @@ void TestEnvironment::SetUp() {
     // Helps ensure common developer environment variables are set correctly
     CheckAndSetEnvironmentVariables();
 #endif
+    glslang::InitializeProcess();
 }
+void TestEnvironment::TearDown() { glslang::FinalizeProcess(); }
 
 void print_android(const char *c) {
 #ifdef VK_USE_PLATFORM_ANDROID_KHR

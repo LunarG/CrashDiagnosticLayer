@@ -80,6 +80,9 @@ class Device {
     void Destroy();
     ~Device();
 
+    bool HangDetected() const { return hang_detected_; }
+    void SetHangDetected() { hang_detected_ = true; }
+
     const Logger& Log() const;
     const DeviceDispatchTable& Dispatch() const { return device_dispatch_table_; }
 
@@ -158,6 +161,8 @@ class Device {
 
     VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence);
 
+    void UpdateIdleState() const;
+
    private:
     Context& context_;
     DeviceDispatchTable device_dispatch_table_;
@@ -165,6 +170,8 @@ class Device {
     VkDevice vk_device_{VK_NULL_HANDLE};
     VkPhysicalDeviceProperties physical_device_properties_{};
     DeviceExtensionsPresent extensions_present_{};
+
+    std::atomic<bool> hang_detected_{false};
 
     std::vector<VkQueueFamilyProperties> queue_family_properties_;
 

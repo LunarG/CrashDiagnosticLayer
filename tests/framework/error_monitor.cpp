@@ -40,15 +40,18 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
     const char *message = callback_data->pMessage;
     auto *error_monitor = reinterpret_cast<ErrorMonitor *>(user_data);
 
-    if (error_monitor->GetPrefix() == callback_data->pMessageIdName &&
-        ErrorMonitor::SeverityBits(message_severity) & error_monitor->GetMessageFlags()) {
-        return error_monitor->CheckForDesiredMsg(message);
+    if (error_monitor->GetPrefix() == callback_data->pMessageIdName) {
+        if (ErrorMonitor::SeverityBits(message_severity) & error_monitor->GetMessageFlags()) {
+	    return error_monitor->CheckForDesiredMsg(message);
+	} else if (error_monitor->PrintAllMessages()) {
+	    std::cout << message << std::endl;
+	}
     }
     return VK_FALSE;
 }
 #endif
 
-ErrorMonitor::ErrorMonitor(const char* prefix, bool print_all_errors)
+ErrorMonitor::ErrorMonitor(const char *prefix, bool print_all_errors)
     : msg_prefix_(prefix),
 #if !defined(VK_USE_PLATFORM_ANDROID_KHR)
       debug_create_info_({},
@@ -118,7 +121,7 @@ VkBool32 ErrorMonitor::CheckForDesiredMsg(const char *const msg_string) {
     bool found_expected = false;
 
     if (print_all_errors_) {
-        std::cout << error_string << "\n\n";
+        std::cout << error_string << std::endl;
     }
     if (!IgnoreMessage(error_string)) {
         for (auto desired_msg_it = desired_message_strings_.begin(); desired_msg_it != desired_message_strings_.end();
