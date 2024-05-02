@@ -42,10 +42,10 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
 
     if (error_monitor->GetPrefix() == callback_data->pMessageIdName) {
         if (ErrorMonitor::SeverityBits(message_severity) & error_monitor->GetMessageFlags()) {
-	    return error_monitor->CheckForDesiredMsg(message);
-	} else if (error_monitor->PrintAllMessages()) {
-	    std::cout << message << std::endl;
-	}
+            return error_monitor->CheckForDesiredMsg(message);
+        } else if (error_monitor->PrintAllMessages()) {
+            std::cout << message << std::endl;
+        }
     }
     return VK_FALSE;
 }

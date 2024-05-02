@@ -161,14 +161,10 @@ void Logger::CloseLogFile() {
 
 void Logger::UpdateSeverityMask() {
     // rebuild the severity mask from scratch
-    if (log_cbs_.empty()) {
-        severity_mask_ = default_cb_.SeverityMask();
-    } else {
-        severity_mask_ = 0;
-        for (const auto& item : log_cbs_) {
-            if (item.second.TypeMask() & kMessageType) {
-                severity_mask_ |= item.second.SeverityMask();
-            }
+    severity_mask_ = default_cb_.SeverityMask();
+    for (const auto& item : log_cbs_) {
+        if (item.second.TypeMask() & kMessageType) {
+            severity_mask_ |= item.second.SeverityMask();
         }
     }
 }
@@ -263,16 +259,13 @@ void Logger::Log(VkDebugUtilsMessageSeverityFlagBitsEXT severity, const std::str
     if ((severity & severity_mask_) == 0) {
         return;
     }
-    if (!log_cbs_.empty()) {
-        for (auto& entry : log_cbs_) {
-            auto& logger = entry.second;
-            if ((logger.TypeMask() & kMessageType) && (logger.SeverityMask() & severity)) {
-                logger.Log(severity, kMessageType, &cb_data);
-            }
+    for (auto& entry : log_cbs_) {
+        auto& logger = entry.second;
+        if ((logger.TypeMask() & kMessageType) && (logger.SeverityMask() & severity)) {
+            logger.Log(severity, kMessageType, &cb_data);
         }
-    } else {
-        default_cb_.Log(severity, kMessageType, &cb_data);
     }
+    default_cb_.Log(severity, kMessageType, &cb_data);
 }
 
 #ifdef ANDROID

@@ -19,8 +19,10 @@
 
 #include <gtest/gtest.h>
 #include <vulkan/vulkan_raii.hpp>
+#include <filesystem>
+
 #include "error_monitor.h"
-// #include "layer_settings.h"
+#include "layer_settings.h"
 
 struct BoundBuffer {
     vk::raii::Buffer buffer;
@@ -36,20 +38,14 @@ struct BoundBuffer {
     }
 };
 
+static const char* kTestOutputBaseDir = "cdl_test_output";
+
 class CDLTestBase : public ::testing::Test {
    public:
-    CDLTestBase()
-        : monitor_("CDL", false),
-          instance_(VK_NULL_HANDLE),
-          physical_device_(VK_NULL_HANDLE),
-          device_(VK_NULL_HANDLE),
-          compute_queue_(VK_NULL_HANDLE),
-          cmd_pool_(VK_NULL_HANDLE),
-          cmd_buff_(VK_NULL_HANDLE) {}
+    CDLTestBase();
     ~CDLTestBase() {}
     void InitInstance();
-    void InitDevice(std::vector<const char*> extensions = {},
-                    const vk::PhysicalDeviceFeatures2 *features2 = nullptr);
+    void InitDevice(std::vector<const char*> extensions = {}, const vk::PhysicalDeviceFeatures2* features2 = nullptr);
 
     template <typename T>
     void SetObjectName(T& object, const std::string& name) {
@@ -65,8 +61,7 @@ class CDLTestBase : public ::testing::Test {
                             vk::MemoryPropertyFlags forbid);
 
     BoundBuffer AllocateMemory(vk::DeviceSize size, const std::string& name, vk::BufferUsageFlags usage,
-                               vk::MemoryAllocateFlags alloc_flags = {},
-                               vk::MemoryPropertyFlags flags = kMemoryFlags,
+                               vk::MemoryAllocateFlags alloc_flags = {}, vk::MemoryPropertyFlags flags = kMemoryFlags,
                                vk::MemoryPropertyFlags forbid = kMemoryForbid);
 
     vk::raii::ShaderModule CreateShaderModuleGLSL(const char* src, vk::ShaderStageFlagBits stage);
@@ -78,6 +73,8 @@ class CDLTestBase : public ::testing::Test {
 
     vk::raii::PhysicalDevice physical_device_;
     vk::raii::Device device_;
+    std::filesystem::path output_path_;
+    LayerSettings layer_settings_;
 
     uint32_t compute_qfi_{~0u};
     vk::raii::Queue compute_queue_;
@@ -85,5 +82,3 @@ class CDLTestBase : public ::testing::Test {
     vk::raii::CommandPool cmd_pool_;
     vk::raii::CommandBuffer cmd_buff_;
 };
-
-class GpuCrash : public CDLTestBase {};

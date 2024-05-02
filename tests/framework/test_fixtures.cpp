@@ -19,6 +19,30 @@
 #include <glslang/Public/ShaderLang.h>
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <glslang/Public/ResourceLimits.h>
+#include <filesystem>
+
+CDLTestBase::CDLTestBase()
+    : monitor_("CDL", false),
+      instance_(VK_NULL_HANDLE),
+      physical_device_(VK_NULL_HANDLE),
+      device_(VK_NULL_HANDLE),
+      layer_settings_(monitor_.GetDebugCreateInfo()),
+      compute_queue_(VK_NULL_HANDLE),
+      cmd_pool_(VK_NULL_HANDLE),
+      cmd_buff_(VK_NULL_HANDLE) {
+    const auto* test_info = testing::UnitTest::GetInstance()->current_test_info();
+
+    // Set default settings here rather than InitInstance(). This allows tests cases
+    // to change them before calling it.
+    output_path_ = kTestOutputBaseDir;
+    output_path_ /= test_info->test_suite_name();
+    output_path_ /= test_info->name();
+
+    layer_settings_.SetOutputPath(output_path_.string().c_str());
+
+    // Turn off the default logger
+    layer_settings_.SetLogFile("none");
+}
 
 void CDLTestBase::InitInstance() {
     const auto* test_info = testing::UnitTest::GetInstance()->current_test_info();
@@ -27,14 +51,14 @@ void CDLTestBase::InitInstance() {
     std::vector<const char*> layers{"VK_LAYER_LUNARG_crash_diagnostic"};
     std::vector<const char*> instance_extensions{"VK_EXT_debug_utils", "VK_EXT_layer_settings"};
 
-    vk::InstanceCreateInfo ci({}, &app_info, layers, instance_extensions, monitor_.GetDebugCreateInfo());
+    vk::InstanceCreateInfo ci({}, &app_info, layers, instance_extensions, layer_settings_.GetCreateInfo());
 
     instance_ = vk::raii::Instance(context_, ci);
 
     physical_device_ = vk::raii::PhysicalDevices(instance_).back();
 }
 
-void CDLTestBase::InitDevice(std::vector<const char*> extensions, const vk::PhysicalDeviceFeatures2 * features2) {
+void CDLTestBase::InitDevice(std::vector<const char*> extensions, const vk::PhysicalDeviceFeatures2* features2) {
     if (!*instance_) {
         InitInstance();
     }
@@ -89,7 +113,7 @@ BoundBuffer CDLTestBase::AllocateMemory(vk::DeviceSize size, const std::string& 
 
     auto mem_props = physical_device_.getMemoryProperties();
     auto reqs = buff.getMemoryRequirements();
-    
+
     vk::MemoryAllocateFlagsInfo flags_info(alloc_flags);
     vk::MemoryAllocateInfo alloc_info(reqs.size, FindMemoryType(reqs, flags, forbid), &flags_info);
 

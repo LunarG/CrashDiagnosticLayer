@@ -23,10 +23,13 @@ target_sources(cdl_tests PRIVATE
     framework/cdl_tests.cpp
     framework/error_monitor.h
     framework/error_monitor.cpp
+    framework/layer_settings.h
+    framework/layer_settings.cpp
     framework/test_fixtures.h
     framework/test_fixtures.cpp
     unit/create_instance.cpp
     unit/gpu_crash.cpp
+    unit/settings.cpp
 )
 
 get_target_property(TEST_SOURCES cdl_tests SOURCES)

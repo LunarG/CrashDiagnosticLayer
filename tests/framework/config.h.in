@@ -22,3 +22,8 @@ static const char *kLayerBuildPath = "$<TARGET_FILE_DIR:crash_diagnostic>";
 // TODO this should be generated
 static const char *kLayerJsonFile = "VkLayer_crash_diagnostic.json";
 
+static const char* kLayerName = "VK_LAYER_LUNARG_crash_diagnostic";
+static const char* kLayerSettingsName = "lunarg_crash_diagnostic";
+static const char* kMessagePrefix = "CDL";
+
+

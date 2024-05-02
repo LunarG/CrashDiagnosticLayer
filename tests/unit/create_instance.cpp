@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2024 The Khronos Group Inc.
+/* * Copyright (c) 2024 The Khronos Group Inc.
  * Copyright (c) 2024 Valve Corporation
  * Copyright (c) 2024 LunarG, Inc.
  *
@@ -21,10 +20,8 @@
 #include <iostream>
 
 #include "error_monitor.h"
-
-static const char* kLayerName = "VK_LAYER_LUNARG_crash_diagnostic";
-static const char* kLayerSettingsName = "lunarg_crash_diagnostic";
-static const char* kMessagePrefix = "CDL";
+#include "layer_settings.h"
+#include "config.h"
 
 TEST(CreateInstance, Basic) {
     vk::raii::Context context;
@@ -127,4 +124,24 @@ TEST(CreateInstance, LayerSettings) {
     vk::raii::Instance instance(context, ci);
 
     monitor.VerifyFound();
+}
+
+TEST(CreateInstance, AllLayerSettings) {
+    vk::raii::Context context;
+
+    const auto* test_info = testing::UnitTest::GetInstance()->current_test_info();
+    vk::ApplicationInfo applicationInfo(test_info->test_suite_name(), 1, test_info->name(), 1, VK_API_VERSION_1_1);
+
+    std::vector<const char*> layers{kLayerName};
+    std::vector<const char*> instance_extensions{"VK_EXT_debug_utils", "VK_EXT_layer_settings"};
+
+    bool got_message = false;
+    vk::DebugUtilsMessengerCreateInfoEXT utils_ci({}, vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo,
+                                                  vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral, DebugUtilsCallback,
+                                                  &got_message, nullptr);
+
+    LayerSettings layer_settings;
+
+    vk::InstanceCreateInfo ci({}, nullptr, layers, instance_extensions, layer_settings.GetCreateInfo());
+    vk::raii::Instance instance(context, ci);
 }
