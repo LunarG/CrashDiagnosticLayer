@@ -18,6 +18,7 @@
 #pragma once
 
 #include <algorithm>
+#include <chrono>
 #include <cstdint>
 #include <iomanip>
 #include <sstream>
@@ -64,4 +65,21 @@ std::string PtrToStr(const T* ptr) {
 // specialization for non-dispatchable handles in 32 bit builds
 static inline std::string PtrToStr(uint64_t value) { return Uint64ToStr(value); }
 
+static inline std::string DurationToStr(std::chrono::system_clock::duration elapsed) {
+    using namespace std::chrono;
+    using namespace std::literals::chrono_literals;
+
+    auto h = duration_cast<hours>(elapsed);
+    elapsed -= h;
+    auto m = duration_cast<minutes>(elapsed);
+    elapsed -= m;
+    auto s = duration_cast<seconds>(elapsed);
+    elapsed -= s;
+    auto ms = duration_cast<milliseconds>(elapsed);
+
+    std::stringstream ss;
+    ss << std::setfill('0') << std::setw(2) << (h / 1h) << ":" << std::setw(2) << (m / 1min) << ":" << std::setw(2)
+       << (s / 1s) << "." << std::setw(3) << (ms / 1ms);
+    return ss.str();
+}
 }  // namespace crash_diagnostic_layer

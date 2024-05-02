@@ -493,8 +493,7 @@ void Queue::Print(YAML::Emitter& os) const {
 }
 
 void Queue::PostSubmit(VkResult result) {
-    bool dump = IsVkError(result) || device_.GetContext().CountSubmit();
-    if (dump) {
+    if (IsVkError(result)) {
         device_.GetContext().DumpDeviceExecutionState(device_);
     }
 }

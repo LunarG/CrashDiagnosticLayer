@@ -57,7 +57,6 @@ namespace crash_diagnostic_layer {
 constexpr bool IsVkError(VkResult result) {
     return result == VK_ERROR_DEVICE_LOST || result == VK_ERROR_INITIALIZATION_FAILED;
 }
-using StringArray = std::vector<std::string>;
 
 struct DeviceCreateInfo {
     vku::safe_VkDeviceCreateInfo original;
@@ -67,6 +66,13 @@ struct DeviceCreateInfo {
 enum CrashSource {
     kDeviceLostError,
     kWatchdogTimer,
+};
+
+enum DumpShaders {
+    kOff = 0,
+    kOnCrash,
+    kOnBind,
+    kAll,
 };
 
 static inline void NewHandler() {
@@ -91,6 +97,7 @@ class Context : public Interceptor {
    public:
     using DevicePtr = std::shared_ptr<Device>;
     using ConstDevicePtr = std::shared_ptr<const Device>;
+    using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
 
     Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator);
     Context(Context&) = delete;
@@ -100,7 +107,6 @@ class Context : public Interceptor {
     const InstanceDispatchTable& Dispatch() { return instance_dispatch_table_; }
     VkInstance GetInstance() { return vk_instance_; }
 
-    void MakeOutputPath();
     const std::filesystem::path& GetOutputPath() const;
     std::ofstream OpenDumpFile();
     const Logger& Log() const { return logger_; }
@@ -135,8 +141,6 @@ class Context : public Interceptor {
     void DumpDeviceExecutionStateValidationFailed(const Device& device, YAML::Emitter& os);
 
     void DumpReportPrologue(YAML::Emitter& os);
-
-    bool CountSubmit();
 
    private:
     void StartWatchdogTimer();
@@ -298,6 +302,10 @@ class Context : public Interceptor {
                                           const VkAllocationCallbacks* pAllocator) override;
 
    private:
+    template <class T>
+    void GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value);
+
+    TimePoint start_time_;
     Logger logger_;
     System system_;
 
@@ -338,10 +346,8 @@ class Context : public Interceptor {
     std::unordered_map<VkQueue, VkDevice> queue_device_tracker_;
 
     // Debug flags
-    int debug_autodump_rate_ = 0;
     bool debug_dump_all_command_buffers_ = false;
-    bool debug_dump_shaders_on_crash_ = false;
-    bool debug_dump_shaders_on_bind_ = false;
+    DumpShaders dump_shaders_{DumpShaders::kOff};
 
     int shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
 
@@ -349,26 +355,16 @@ class Context : public Interceptor {
     bool track_semaphores_ = false;
     bool trace_all_semaphores_ = false;
 
-    // TODO some verbosity/trace modes?
     bool trace_all_ = false;
 
-    bool output_path_created_ = false;
     std::filesystem::path base_output_path_;
     std::filesystem::path output_path_;
-    std::string output_name_;
-
-    bool log_configs_ = false;
-    StringArray configs_;
-    template <class T>
-    void GetEnvVal(VkuLayerSettingSet settings, const char* name, T* value);
-    void MakeDir(const std::filesystem::path& path);
-
-    std::atomic<uint32_t> total_submits_ = 0;
     int total_logs_ = 0;
 
+    bool dump_configs_ = false;
+    std::vector<std::pair<std::string, std::string>> configs_;
+
     // Watchdog
-    // TODO we should have a way to shut this down, but currently the
-    // CDL context never gets destroyed
     std::unique_ptr<std::thread> watchdog_thread_;
     std::atomic<bool> watchdog_running_;
     std::atomic<long long> last_submit_time_;

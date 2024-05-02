@@ -31,7 +31,7 @@ namespace crash_diagnostic_layer {
 ShaderModule::ShaderModule(Context& context, VkShaderModule vk_shader_module, int load_options, size_t code_size,
                            const char* p_spirv, const std::filesystem::path& output_path)
     : context_(context), vk_shader_module_(vk_shader_module), output_path_(output_path) {
-    if (load_options & LoadOptions::kKeepInMemory) {
+    if (load_options & LoadOptions::kDumpOnCreate) {
         DumpShaderCode("SHADER_", code_size, p_spirv);
     }
 
@@ -65,6 +65,7 @@ std::string ShaderModule::DumpShaderCode(const std::string& prefix) const {
 std::string ShaderModule::DumpShaderCode(const std::string& prefix, size_t code_size, const char* p_spirv) const {
     std::string shader_filename =
         prefix + PtrToStr(vk_shader_module_) + "_" + std::to_string(GetExecutionModel()) + ".spv";
+    std::filesystem::create_directories(output_path_);
     std::filesystem::path shader_output_path(output_path_);
     shader_output_path /= shader_filename;
 

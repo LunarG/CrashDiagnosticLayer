@@ -321,7 +321,6 @@ void Device::DeletePipeline(VkPipeline pipeline) {
 
 void Device::CreateShaderModule(const VkShaderModuleCreateInfo* pCreateInfo, VkShaderModule* pShaderModule,
                                 int shader_module_load_options) {
-    context_.MakeOutputPath();
     // Parse the SPIR-V for relevant information, does not copy the SPIR-V
     // binary.
     ShaderModulePtr shader_module =
