@@ -16,13 +16,13 @@
 
 #pragma once
 
+#include <chrono>
 #include <filesystem>
 #include <map>
 #include <mutex>
 #include <cstdio>
 #include <string>
 #include <shared_mutex>
-#include <optional>
 #include <vulkan/vulkan_core.h>
 
 namespace crash_diagnostic_layer {
@@ -36,6 +36,7 @@ class LogCallback {
              const VkDebugUtilsMessengerCallbackDataEXT* cb_data) const;
 
     VkDebugUtilsMessageSeverityFlagsEXT SeverityMask() const { return severity_mask_; }
+    void SetSeverityMask(VkDebugUtilsMessageSeverityFlagsEXT mask) { severity_mask_ = mask; }
     VkDebugUtilsMessageTypeFlagsEXT TypeMask() const { return type_mask_; };
 
    private:
@@ -48,13 +49,20 @@ class LogCallback {
 
 class Logger {
    public:
-    Logger();
+    using Timepoint = std::chrono::time_point<std::chrono::system_clock>;
+
+    Logger(const Timepoint& start_time);
     Logger(Logger&) = delete;
     Logger& operator=(Logger&) = delete;
     ~Logger();
 
-    bool OpenLogFile(const std::filesystem::path& filename);
+    void LogToStdout();
+    void LogToStderr();
+    bool OpenLogFile(const std::filesystem::path& log_file);
     void CloseLogFile();
+    const Timepoint& StartTime() const { return start_time_; }
+
+    void SetSeverity(VkDebugUtilsMessageSeverityFlagsEXT mask);
 
     void Error(const char* format, ...) const;
     void Error(const std::string& message) const;
@@ -70,31 +78,17 @@ class Logger {
 
     template <typename Handle, typename CreateInfo>
     void AddLogCallback(Handle handle, const CreateInfo& create_info) {
-        // if we were using the default logger, remove it from the severity mask
-        if (log_cbs_.empty()) {
-            severity_mask_ = 0;
-        }
+        std::lock_guard<std::shared_mutex> guard(log_cb_mutex_);
         LogCallback cb(create_info);
-        if (cb.TypeMask() & kMessageType) {
-            severity_mask_ |= cb.SeverityMask();
-        }
         log_cbs_.emplace(std::make_pair(uint64_t(handle), std::move(cb)));
+        UpdateSeverityMask();
     }
 
     template <typename Handle>
     void RemoveLogCallback(Handle handle) {
+        std::lock_guard<std::shared_mutex> guard(log_cb_mutex_);
         log_cbs_.erase(uint64_t(handle));
-        // rebuild the severity mask from scratch
-        if (log_cbs_.empty()) {
-            severity_mask_ = default_cb_->SeverityMask();
-        } else {
-            severity_mask_ = 0;
-            for (const auto& item : log_cbs_) {
-                if (item.second.TypeMask() & kMessageType) {
-                    severity_mask_ |= item.second.SeverityMask();
-                }
-            }
-        }
+        UpdateSeverityMask();
     }
 
    private:
@@ -106,14 +100,18 @@ class Logger {
                                                              VkDebugUtilsMessageTypeFlagsEXT messageTypes,
                                                              const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                                                              void* pUserData);
+    void UpdateSeverityMask();
+
+    const Timepoint start_time_;
 
     mutable std::shared_mutex log_cb_mutex_;
-    VkDebugUtilsMessageSeverityFlagsEXT severity_mask_;
     std::map<uint64_t, LogCallback> log_cbs_;
+    VkDebugUtilsMessageSeverityFlagsEXT severity_mask_{VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+                                                       VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                                       VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT};
 
     // default logging state
-    std::optional<LogCallback> default_cb_;
-    std::string log_file_name_;
+    LogCallback default_cb_;
     mutable FILE* log_file_{nullptr};
     mutable std::mutex file_access_mutex_;
 };

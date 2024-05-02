@@ -15,6 +15,7 @@
 */
 
 #include "logger.h"
+#include "util.h"
 
 #include <cassert>
 #include <cstdarg>
@@ -113,40 +114,69 @@ static constexpr VkDebugUtilsMessengerCreateInfoEXT kDefaultCreateInfo{
     VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT,
 };
 
-Logger::Logger() {
-    auto ci = vku::InitStruct<VkDebugUtilsMessengerCreateInfoEXT>();
-    ci.messageSeverity =
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-    ci.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT;
-    ci.pfnUserCallback = DefaultLogCallback;
-    ci.pUserData = this;
-    default_cb_.emplace(ci);
-    severity_mask_ = default_cb_->SeverityMask();
-}
+Logger::Logger(const Logger::Timepoint& start_time)
+    : start_time_(start_time),
+      default_cb_(vku::InitStruct<VkDebugUtilsMessengerCreateInfoEXT>(
+          nullptr, 0, severity_mask_, VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT, DefaultLogCallback, this)),
+      log_file_(stderr) {}
 
 Logger::~Logger() { CloseLogFile(); }
 
-bool Logger::OpenLogFile(const std::filesystem::path& filename) {
-    if (log_file_ != nullptr) {
-        CloseLogFile();
+void Logger::LogToStderr() {
+    CloseLogFile();
+
+    std::lock_guard<std::mutex> lock(file_access_mutex_);
+    log_file_ = stderr;
+}
+
+void Logger::LogToStdout() {
+    CloseLogFile();
+
+    std::lock_guard<std::mutex> lock(file_access_mutex_);
+    log_file_ = stdout;
+}
+
+bool Logger::OpenLogFile(const std::filesystem::path& path) {
+    CloseLogFile();
+
+    std::lock_guard<std::mutex> lock(file_access_mutex_);
+    if (path.has_parent_path()) {
+        std::filesystem::create_directories(path.parent_path());
     }
-    log_file_ = fopen(filename.string().c_str(), "wt");
-    if (log_file_ != nullptr) {
-        log_file_name_ = filename.string();
-        return true;
-    } else {
-        perror(filename.string().c_str());
+    log_file_ = fopen(path.string().c_str(), "at");
+    if (log_file_ == nullptr) {
+        perror(path.string().c_str());
+        return false;
     }
-    return false;
+    return true;
 }
 
 void Logger::CloseLogFile() {
-    if (log_file_ != nullptr) {
+    std::lock_guard<std::mutex> lock(file_access_mutex_);
+    if (log_file_ != stdout && log_file_ != stderr && log_file_ != nullptr) {
         fclose(log_file_);
-        log_file_ = nullptr;
     }
-    log_file_name_ = "";
+    log_file_ = nullptr;
+}
+
+void Logger::UpdateSeverityMask() {
+    // rebuild the severity mask from scratch
+    if (log_cbs_.empty()) {
+        severity_mask_ = default_cb_.SeverityMask();
+    } else {
+        severity_mask_ = 0;
+        for (const auto& item : log_cbs_) {
+            if (item.second.TypeMask() & kMessageType) {
+                severity_mask_ |= item.second.SeverityMask();
+            }
+        }
+    }
+}
+
+void Logger::SetSeverity(VkDebugUtilsMessageSeverityFlagsEXT mask) {
+    std::lock_guard<std::mutex> lock(file_access_mutex_);
+    default_cb_.SetSeverityMask(mask);
+    UpdateSeverityMask();
 }
 
 void Logger::Error(const char* format, ...) const {
@@ -241,7 +271,7 @@ void Logger::Log(VkDebugUtilsMessageSeverityFlagBitsEXT severity, const std::str
             }
         }
     } else {
-        default_cb_->Log(severity, kMessageType, &cb_data);
+        default_cb_.Log(severity, kMessageType, &cb_data);
     }
 }
 
@@ -280,12 +310,11 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Logger::DefaultLogCallback(VkDebugUtilsMessageSev
     } else if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
         tag = "CDL_VERBOSE";
     }
+    auto elapsed = std::chrono::system_clock::now() - logger.StartTime();
+    std::string timestamp = DurationToStr(elapsed);
 
     std::lock_guard<std::mutex> lock(logger.file_access_mutex_);
-    if (logger.log_file_ != nullptr) {
-        fprintf(logger.log_file_, "%s: %s\n", tag, cb_data->pMessage);
-    }
-    fprintf(stderr, "%s: %s\n", tag, cb_data->pMessage);
+    fprintf(logger.log_file_, "%s %s: %s\n", timestamp.c_str(), tag, cb_data->pMessage);
     return VK_FALSE;
 }
 #endif  // !ANDROID
