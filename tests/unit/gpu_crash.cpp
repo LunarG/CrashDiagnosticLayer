@@ -18,6 +18,8 @@
 #include "test_fixtures.h"
 #include "shaders.h"
 
+class GpuCrash : public CDLTestBase {};
+
 TEST_F(GpuCrash, NoCrash) {
     InitInstance();
     InitDevice();
@@ -62,7 +64,6 @@ TEST_F(GpuCrash, CopyCrash) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-        device_.waitIdle();
     } catch (vk::DeviceLostError &err) {
         hang_detected = true;
     }
@@ -146,12 +147,11 @@ TEST_F(GpuCrash, ShaderCrash) {
 
     vk::SubmitInfo submit_info({}, {}, *cmd_buff_, {});
 
-   bool hang_detected = false;
+    bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-        device_.waitIdle();
     } catch (vk::DeviceLostError &err) {
         hang_detected = true;
     }
@@ -237,7 +237,6 @@ TEST_F(GpuCrash, InfiniteLoop) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-        device_.waitIdle();
     } catch (vk::DeviceLostError &err) {
         hang_detected = true;
     }
@@ -305,7 +304,6 @@ TEST_F(GpuCrash, HangHostEvent) {
     vk::PipelineLayoutCreateInfo pipeline_layout_ci({}, *ds_layout);
     vk::raii::PipelineLayout pipeline_layout = device_.createPipelineLayout(pipeline_layout_ci);
 
-
     vk::PipelineShaderStageCreateInfo stage_ci({}, vk::ShaderStageFlagBits::eCompute, shader_module, "main");
     vk::ComputePipelineCreateInfo pipeline_ci({}, stage_ci, pipeline_layout);
     vk::raii::Pipeline pipeline = device_.createComputePipeline(nullptr, pipeline_ci);
@@ -329,7 +327,6 @@ TEST_F(GpuCrash, HangHostEvent) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-        device_.waitIdle();
     } catch (vk::DeviceLostError &err) {
         hang_detected = true;
     }
@@ -389,7 +386,6 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-        device_.waitIdle();
     } catch (vk::DeviceLostError &err) {
         hang_detected = true;
     }

@@ -12,6 +12,7 @@
  */
 #include <gtest/gtest.h>
 #include <glslang/Public/ShaderLang.h>
+#include <filesystem>
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -27,6 +28,7 @@
 #include <filesystem>
 
 #include "config.h"
+#include "test_fixtures.h"
 
 std::string GetEnvironment(const char *variable) {
 #if !defined(__ANDROID__) && !defined(_WIN32)
@@ -228,6 +230,8 @@ void TestEnvironment::SetUp() {
     CheckAndSetEnvironmentVariables();
 #endif
     glslang::InitializeProcess();
+
+    std::filesystem::remove_all(kTestOutputBaseDir);
 }
 void TestEnvironment::TearDown() { glslang::FinalizeProcess(); }
 
