@@ -109,6 +109,7 @@ void Device::DumpCommandBuffers(YAML::Emitter& os, const char* section_name, Com
         }
     }
     os << YAML::EndSeq;
+    assert(os.good());
 }
 
 void Device::DumpAllCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const {
@@ -161,10 +162,10 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter&
     auto submitted_fence = p_cmd->GetSubmittedFence();
 
     // If there is a fence associated with this command buffer, we check
-    // that it's status is signaled.
+    // that it's state is signaled.
     if (submitted_fence != VK_NULL_HANDLE) {
-        auto fence_status = Dispatch().WaitForFences(vk_device_, 1, &submitted_fence, VK_TRUE, 0);
-        if (VK_TIMEOUT == fence_status) {
+        auto fence_state = Dispatch().WaitForFences(vk_device_, 1, &submitted_fence, VK_TRUE, 0);
+        if (VK_TIMEOUT == fence_state) {
             Log().Error("Reset before fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
         } else {
             Log().Error("Fence was set: %s", GetObjectName((uint64_t)submitted_fence).c_str());
@@ -412,10 +413,11 @@ void Device::UpdateIdleState() const {
     }
 }
 
-YAML::Emitter& Device::Print(YAML::Emitter& os) const {
+YAML::Emitter& Device::Print(YAML::Emitter& os, CommandBufferDumpOptions options,
+                             const std::string& error_report) const {
     UpdateIdleState();
     os << YAML::Key << "Device" << YAML::Value << YAML::BeginMap;
-    os << YAML::Key << "vkHandle" << YAML::Value << GetObjectInfo((uint64_t)vk_device_);
+    os << YAML::Key << "handle" << YAML::Value << GetObjectInfo((uint64_t)vk_device_);
     os << YAML::Key << "deviceName" << YAML::Value << physical_device_properties_.deviceName;
 
     auto majorVersion = VK_VERSION_MAJOR(physical_device_properties_.apiVersion);
@@ -433,27 +435,35 @@ YAML::Emitter& Device::Print(YAML::Emitter& os) const {
     os << YAML::Key << "vendorID" << YAML::Value << Uint32ToStr(physical_device_properties_.vendorID);
     os << YAML::Key << "deviceID" << YAML::Value << Uint32ToStr(physical_device_properties_.deviceID);
 
-    os << YAML::Key << "deviceExtensions" << YAML::Value << YAML::BeginSeq;
+    os << YAML::Key << "extensions" << YAML::Value << YAML::BeginSeq;
     const auto& create_info = device_create_info_->original;
     for (uint32_t i = 0; i < create_info.enabledExtensionCount; ++i) {
         os << create_info.ppEnabledExtensionNames[i];
     }
     os << YAML::EndSeq;
-    os << YAML::EndMap;  // Device
 
     DumpDeviceFaultInfo(os);
 
     if (context_.TrackingSemaphores()) {
-        os << YAML::BeginMap;
         os << YAML::Key << "Queues" << YAML::BeginSeq;
         auto queues = GetAllQueues();
         for (auto& q : queues) {
             q->Print(os);
         }
-        os << YAML::EndSeq << YAML::EndMap;
+        os << YAML::EndSeq;
 
         semaphore_tracker_->DumpWaitingThreads(os);
     }
+    if (!error_report.empty()) {
+        os << error_report;
+    }
+    if (options & CommandBufferDumpOption::kDumpAllCommands) {
+        DumpAllCommandBuffers(os, options);
+    } else {
+        DumpIncompleteCommandBuffers(os, options);
+    }
+    os << YAML::EndMap;  // Device
+    assert(os.good());
     return os;
 }
 

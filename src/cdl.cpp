@@ -50,8 +50,9 @@
 
 namespace crash_diagnostic_layer {
 
-const char* kCdlVersion = "1.2.0";
-
+const std::string kCdlVersion = std::to_string(VK_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE)) + "." +
+                                std::to_string(VK_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE)) + "." +
+                                std::to_string(VK_VERSION_PATCH(VK_HEADER_VERSION_COMPLETE));
 namespace settings {
 const char* kOutputPath = "output_path";
 const char* kDumpConfigs = "dump_configs";
@@ -227,7 +228,7 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
             }
         }
     }
-    Log().Info("Version %s enabled. Start time tag: %s", kCdlVersion, start_time_str.c_str());
+    Log().Info("Version %s enabled. Start time tag: %s", kCdlVersion.c_str(), start_time_str.c_str());
 
     // trace mode
     GetEnvVal<bool>(layer_setting_set, settings::kTraceOn, trace_all_);
@@ -557,25 +558,16 @@ void Context::DumpDeviceExecutionState(const Device& device, bool dump_prologue,
     DumpDeviceExecutionState(device, {}, dump_prologue, crash_source, os);
 }
 
-void Context::DumpDeviceExecutionState(const Device& device, std::string error_report, bool dump_prologue,
+void Context::DumpDeviceExecutionState(const Device& device, const std::string& error_report, bool dump_prologue,
                                        CrashSource crash_source, YAML::Emitter& os) {
     if (dump_prologue) {
         DumpReportPrologue(os);
     }
 
-    device.Print(os);
-
-    if (!error_report.empty()) {
-        os << error_report;
-    }
     auto options = CommandBufferDumpOption::kDefault;
     if (debug_dump_all_command_buffers_) options |= CommandBufferDumpOption::kDumpAllCommands;
 
-    if (debug_dump_all_command_buffers_) {
-        device.DumpAllCommandBuffers(os, options);
-    } else {
-        device.DumpIncompleteCommandBuffers(os, options);
-    }
+    device.Print(os, options, error_report);
 }
 
 void Context::DumpDeviceExecutionStateValidationFailed(const Device& device, YAML::Emitter& os) {
@@ -598,14 +590,13 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     os << YAML::Comment("----------------------------------------------------------------") << YAML::Newline;
     os << YAML::Comment("-                    CRASH DIAGNOSTIC LAYER                    -") << YAML::Newline;
     os << YAML::Comment("----------------------------------------------------------------") << YAML::Newline;
-
-    os << YAML::Key << "CDLInfo" << YAML::Value << YAML::BeginMap;
+    os << YAML::BeginMap;
     os << YAML::Key << "version" << YAML::Value << kCdlVersion;
     std::stringstream timestr;
     auto in_time_t = std::chrono::system_clock::to_time_t(start_time_);
     timestr << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
-    os << YAML::Key << "start_time" << YAML::Value << timestr.str();
-    os << YAML::Key << "time_since_start" << YAML::Value << DurationToStr(elapsed);
+    os << YAML::Key << "startTime" << YAML::Value << timestr.str();
+    os << YAML::Key << "timeSinceStart" << YAML::Value << DurationToStr(elapsed);
     if (dump_configs_) {
         os << YAML::Key << "settings" << YAML::Value << YAML::BeginMap;
         for (auto& c : configs_) {
@@ -613,7 +604,6 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
         }
         os << YAML::EndMap;
     }
-    os << YAML::EndMap;  // CDLInfo
 
     os << YAML::Key << "SystemInfo" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "osName" << YAML::Value << system_.GetOsName();
@@ -628,9 +618,10 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     os << YAML::EndMap;  // SystemInfo
 
     os << YAML::Key << "Instance" << YAML::Value << YAML::BeginMap;
-    os << YAML::Key << "vkHandle" << YAML::Value << PtrToStr(vk_instance_);
+    // TODO handle debug utils names for VkInstance
+    os << YAML::Key << "handle" << YAML::Value << (PtrToStr(vk_instance_) + " []");
     if (application_info_) {
-        os << YAML::Key << "ApplicationInfo" << YAML::Value << YAML::BeginMap;
+        os << YAML::Key << "applicationInfo" << YAML::Value << YAML::BeginMap;
         os << YAML::Key << "application" << YAML::Value << application_info_->applicationName;
         os << YAML::Key << "applicationVersion" << YAML::Value << application_info_->applicationVersion;
         os << YAML::Key << "engine" << YAML::Value << application_info_->engineName;
@@ -647,12 +638,13 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
         os << YAML::EndMap;  // ApplicationInfo
     }
 
-    os << YAML::Key << "instanceExtensions" << YAML::Value << YAML::BeginSeq;
+    os << YAML::Key << "extensions" << YAML::Value << YAML::BeginSeq;
     for (uint32_t i = 0; i < original_create_info_.enabledExtensionCount; i++) {
         os << original_create_info_.ppEnabledExtensionNames[i];
     }
     os << YAML::EndSeq;
     os << YAML::EndMap;  // Instance
+    assert(os.good());
 }
 
 std::ofstream Context::OpenDumpFile() {

@@ -307,7 +307,9 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Logger::DefaultLogCallback(VkDebugUtilsMessageSev
     std::string timestamp = DurationToStr(elapsed);
 
     std::lock_guard<std::mutex> lock(logger.file_access_mutex_);
-    fprintf(logger.log_file_, "%s %s: %s\n", timestamp.c_str(), tag, cb_data->pMessage);
+    if (logger.log_file_) {
+        fprintf(logger.log_file_, "%s %s: %s\n", timestamp.c_str(), tag, cb_data->pMessage);
+    }
     return VK_FALSE;
 }
 #endif  // !ANDROID
