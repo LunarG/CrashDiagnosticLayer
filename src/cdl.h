@@ -136,7 +136,7 @@ class Context : public Interceptor {
     void DumpDeviceExecutionState(const Device& device);
     void DumpDeviceExecutionState(const Device& device, bool dump_prologue, CrashSource crash_source,
                                   YAML::Emitter& os);
-    void DumpDeviceExecutionState(const Device& device, std::string error_report, bool dump_prologue,
+    void DumpDeviceExecutionState(const Device& device, const std::string& error_report, bool dump_prologue,
                                   CrashSource crash_source, YAML::Emitter& os);
     void DumpDeviceExecutionStateValidationFailed(const Device& device, YAML::Emitter& os);
 

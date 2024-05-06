@@ -151,7 +151,7 @@ class Device {
 
     void DumpDeviceFaultInfo(YAML::Emitter& os) const;
 
-    YAML::Emitter& Print(YAML::Emitter& stream) const;
+    YAML::Emitter& Print(YAML::Emitter& os, CommandBufferDumpOptions options, const std::string& error_report) const;
 
     void MemoryBindEvent(const DeviceAddressRecord& record, bool multi_device);
 

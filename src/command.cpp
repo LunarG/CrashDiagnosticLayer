@@ -448,7 +448,7 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
     }
     auto num_commands = tracker_.GetCommands().size();
     os << YAML::BeginMap << YAML::Comment("CommandBuffer");
-    os << YAML::Key << "status";
+    os << YAML::Key << "state";
     CommandBufferState cb_state;
     if (IsPrimaryCommandBuffer()) {
         cb_state = GetCommandBufferState();
@@ -457,7 +457,7 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
     }
     os << YAML::Value << PrintCommandBufferState(cb_state);
 
-    os << YAML::Key << "vkHandle" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_command_buffer_);
+    os << YAML::Key << "handle" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_command_buffer_);
     os << YAML::Key << "commandPool" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_command_pool_);
     if (buffer_state_ == CommandBufferState::kPending) {
         os << YAML::Key << "queue" << device_.GetObjectInfo((uint64_t)submitted_queue_);

@@ -227,8 +227,8 @@ void Queue::CleanupSubmitInfos() {
                 finished_count++;
                 continue;
             }
-            auto submit_status = submit_info.checkpoint->ReadBottom();
-            if (submit_status == SubmitState::kFinished) {
+            auto submit_state = submit_info.checkpoint->ReadBottom();
+            if (submit_state == SubmitState::kFinished) {
                 finished_count++;
                 // Free extra command buffers used to track the state of the submit and
                 // the values of the semaphores
@@ -312,8 +312,8 @@ void Queue::RecordBindSparseHelperSubmit(QueueBindSparseId qbind_sparse_id, cons
 void Queue::CleanupBindSparseHelperSubmits() {
     std::lock_guard<std::mutex> lock(helper_submit_infos_mutex_);
     for (auto helper_submit_info = helper_submit_infos_.begin(); helper_submit_info != helper_submit_infos_.end();) {
-        auto submit_status = helper_submit_info->checkpoint->ReadBottom();
-        if (submit_status == SubmitState::kFinished) {
+        auto submit_state = helper_submit_info->checkpoint->ReadBottom();
+        if (submit_state == SubmitState::kFinished) {
             // Free the command buffer used to track the state of the submit and
             // the values of the semaphores
             device_.FreeCommandBuffers(helper_command_pool_, 1, &(helper_submit_info->checkpoint_cb));
@@ -374,7 +374,7 @@ std::string Queue::GetSubmitInfoSemaphoresLog(const SubmitInfo& submit_info) con
 
 void Queue::Print(YAML::Emitter& os) const {
     os << YAML::BeginMap << YAML::Comment("Queue");
-    os << YAML::Key << "vkHandle" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_queue_);
+    os << YAML::Key << "handle" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_queue_);
     os << YAML::Key << "queueFamilyIndex" << YAML::Value << queue_family_index_;
     os << YAML::Key << "index" << YAML::Value << queue_index_;
     os << YAML::Key << "flags" << YAML::Value << YAML::BeginSeq;
@@ -413,8 +413,8 @@ void Queue::Print(YAML::Emitter& os) const {
     for (const auto& qit : queue_submits_) {
         uint32_t incomplete_submission_counter = 0;
         os << YAML::BeginMap;
-        os << YAML::Key << "submission" << YAML::Value << qit.first;
-        os << YAML::Key << "batches" << YAML::Value << YAML::BeginSeq;
+        os << YAML::Key << "id" << YAML::Value << qit.first;
+        os << YAML::Key << "SubmitInfos" << YAML::Value << YAML::BeginSeq;
         for (const auto& submit_info : qit.second) {
             // Check submit state
             auto submit_state = submit_info.checkpoint->ReadBottom();
@@ -425,12 +425,12 @@ void Queue::Print(YAML::Emitter& os) const {
             os << YAML::Key << "state";
 
             if (submit_state == SubmitState::kRunning) {
-                os << YAML::Value << "[STARTED,INCOMPLETE]";
+                os << YAML::Value << "STARTED";
             } else if (submit_state == SubmitState::kQueued) {
                 if (QueuedSubmitWaitingOnSemaphores(submit_info)) {
-                    os << YAML::Value << "[QUEUED,WAITING_ON_SEMAPHORES]";
+                    os << YAML::Value << "WAITING_ON_SEMAPHORES";
                 } else {
-                    os << YAML::Value << "[QUEUED,NOT_WAITING_ON_SEMAPHORES]";
+                    os << YAML::Value << "QUEUED";
                 }
             }
             if (submit_info.command_buffers.size() > 0) {
@@ -445,13 +445,13 @@ void Queue::Print(YAML::Emitter& os) const {
                 os << YAML::Key << "WaitSemaphores" << YAML::Value << YAML::BeginSeq;
                 for (const auto& wait : wait_semaphores) {
                     os << YAML::BeginMap;
-                    os << YAML::Key << "vkSemaphore" << YAML::Value << device_.GetObjectInfo((uint64_t)wait.semaphore);
+                    os << YAML::Key << "handle" << YAML::Value << device_.GetObjectInfo((uint64_t)wait.semaphore);
                     os << YAML::Key << "type" << YAML::Value;
                     if (wait.semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                         os << "Binary";
                     } else {
                         os << "Timeline";
-                        os << YAML::Key << "waitValue" << YAML::Value << wait.semaphore_operation_value;
+                        os << YAML::Key << "value" << YAML::Value << wait.semaphore_operation_value;
                         if (wait.current_value_available) {
                             os << YAML::Key << "lastValue" << YAML::Value << wait.current_value;
                         }
@@ -467,14 +467,13 @@ void Queue::Print(YAML::Emitter& os) const {
                 os << YAML::Key << "SignalSemaphores" << YAML::Value << YAML::BeginSeq;
                 for (auto signal : signal_semaphores) {
                     os << YAML::BeginMap;
-                    os << YAML::Key << "vkSemaphore" << YAML::Value
-                       << device_.GetObjectInfo((uint64_t)signal.semaphore);
+                    os << YAML::Key << "handle" << YAML::Value << device_.GetObjectInfo((uint64_t)signal.semaphore);
                     os << YAML::Key << "type" << YAML::Value;
                     if (signal.semaphore_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
                         os << "Binary";
                     } else {
                         os << "Timeline";
-                        os << YAML::Key << "signalValue" << YAML::Value << signal.semaphore_operation_value;
+                        os << YAML::Key << "value" << YAML::Value << signal.semaphore_operation_value;
                     }
                     os << YAML::EndMap;
                 }
