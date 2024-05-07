@@ -17,6 +17,9 @@
  */
 #include "test_fixtures.h"
 #include "shaders.h"
+#include "dump_file.h"
+#include <filesystem>
+#include <yaml-cpp/yaml.h>
 
 class GpuCrash : public CDLTestBase {};
 
@@ -35,6 +38,7 @@ TEST_F(GpuCrash, NoCrash) {
 }
 
 TEST_F(GpuCrash, CopyCrash) {
+    layer_settings_.instrument_all_commands = true;
     InitInstance();
     InitDevice();
 
@@ -69,6 +73,9 @@ TEST_F(GpuCrash, CopyCrash) {
     }
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
+
+    dump::File dump_file;
+    dump::Parse(dump_file, output_path_);
 }
 
 TEST_F(GpuCrash, ShaderCrash) {
@@ -157,6 +164,9 @@ TEST_F(GpuCrash, ShaderCrash) {
     }
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
+
+    dump::File dump_file;
+    dump::Parse(dump_file, output_path_);
 }
 
 TEST_F(GpuCrash, InfiniteLoop) {
@@ -242,6 +252,9 @@ TEST_F(GpuCrash, InfiniteLoop) {
     }
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
+
+    dump::File dump_file;
+    dump::Parse(dump_file, output_path_);
 }
 
 TEST_F(GpuCrash, HangHostEvent) {
@@ -332,6 +345,9 @@ TEST_F(GpuCrash, HangHostEvent) {
     }
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
+
+    dump::File dump_file;
+    dump::Parse(dump_file, output_path_);
 }
 
 TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
@@ -391,4 +407,7 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     }
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
+
+    dump::File dump_file;
+    dump::Parse(dump_file, output_path_);
 }

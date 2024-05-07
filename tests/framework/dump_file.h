@@ -24,35 +24,51 @@
 
 namespace dump {
 
+struct Handle {
+    uint64_t value;
+    std::string name;
+};
+
 struct Instance {
-    std::string handle;
+    Handle handle;
     std::string application;
     uint32_t applicationVersion{0};
     std::string engine;
     uint32_t engineVersion{0};
-    uint32_t apiVersion{0};
+    std::string apiVersion;
 
     std::vector<std::string> extensions;
 };
 
-struct Batch {
-    uint32_t id{0};
-    std::string state;
-    std::vector<std::string> cb_handles;
+struct SemaphoreInfo {
+    Handle handle;
+    std::string type;
+    uint64_t value{0};
+    uint64_t lastValue{0};
 };
 
-struct Submission {
+struct SubmitInfo {
     uint32_t id{0};
-    std::vector<Batch> batches;
+    std::string state;
+    std::vector<std::string> CommandBuffers;
+    std::vector<SemaphoreInfo> SignalSemaphores;
+    std::vector<SemaphoreInfo> WaitSemaphores;
+};
+
+struct Submit {
+    uint32_t id{0};
+    std::vector<SubmitInfo> SubmitInfos;
+    // TODO sparse infos?
+    std::string fence;
 };
 
 struct Queue {
-    std::string handle;
+    Handle handle;
     uint32_t qfi{0};
     uint32_t index{0};
     uint32_t flags{0};
 
-    std::vector<Submission> submits;
+    std::vector<Submit> submits;
 };
 
 struct Command {
@@ -60,16 +76,17 @@ struct Command {
     uint32_t checkpointValue{0};
     std::string name;
     std::string state;
+    std::string message;
     // parameters?
 };
 
 struct CommandBuffer {
-    std::string handle;
-    std::string status;
-    std::string commandPool;
-    std::string queue;
-    std::string fence;
-    uint32_t submit_id{0};
+    Handle handle;
+    std::string state;
+    Handle commandPool;
+    Handle queue;
+    Handle fence;
+    uint32_t submit_info_id{0};
     std::string level;
     bool simultaneousUse{false};
     uint32_t beginValue{0};
@@ -83,19 +100,19 @@ struct CommandBuffer {
 };
 
 struct Device {
-    std::string handle;
+    Handle handle;
     std::string deviceName;
-    uint32_t apiVersion{0};
-    uint32_t driverVersion{0};
+    std::string apiVersion;
+    std::string driverVersion;
     uint32_t vendorID{0};
     uint32_t deviceID{0};
 
     std::vector<std::string> extensions;
 
     std::vector<Queue> queues;
-    std::vector<CommandBuffer> commandBuffers;
+    std::vector<CommandBuffer> incomplete_cbs;
+    std::vector<CommandBuffer> all_cbs;
 };
-
 
 struct File {
     std::string version;
@@ -109,6 +126,6 @@ struct File {
     std::vector<Device> devices;
 };
 
-void Parse(File& file, const std::filesystem::path &path);
+void Parse(File& file, const std::filesystem::path& path);
 
-} // namespace dump
+}  // namespace dump

@@ -60,7 +60,7 @@ TEST_F(Settings, LogFilePath) {
 
 TEST_F(Settings, LogFileLeadingDot) {
     // A leading '.' should create a log file relative to the current working directory
-    // rather than the timestamped dump file directory.
+    // rather than the timestamped dump file directory
     const auto* test_info = testing::UnitTest::GetInstance()->current_test_info();
     std::filesystem::path log_file = ".";
     log_file /= kTestOutputBaseDir;

@@ -21,6 +21,8 @@ else()
 endif()
 target_sources(cdl_tests PRIVATE
     framework/cdl_tests.cpp
+    framework/dump_file.h
+    framework/dump_file.cpp
     framework/error_monitor.h
     framework/error_monitor.cpp
     framework/layer_settings.h
@@ -45,6 +47,7 @@ target_link_libraries(cdl_tests PRIVATE
     GTest::gtest
     glslang::SPIRV
     glslang::glslang-default-resource-limits
+    yaml-cpp::yaml-cpp
 )
 
 # setup framework/config.h using framework/config.h.in as a source
