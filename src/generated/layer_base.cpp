@@ -4209,37 +4209,28 @@ void InterceptDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAlloc
 }
 
 VkResult InterceptQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
-    VkResult result = VK_SUCCESS;
-
     auto layer_data = GetDeviceLayerData(DataKey(queue));
     return layer_data->interceptor->QueueSubmit(queue, submitCount, pSubmits, fence);
 }
 
 VkResult InterceptQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
                                   VkFence fence) {
-    VkResult result = VK_SUCCESS;
-
     auto layer_data = GetDeviceLayerData(DataKey(queue));
     return layer_data->interceptor->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
 }
 
 VkResult InterceptQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    VkResult result = VK_SUCCESS;
-
     auto layer_data = GetDeviceLayerData(DataKey(queue));
     return layer_data->interceptor->QueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
 VkResult InterceptQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    VkResult result = VK_SUCCESS;
-
     auto layer_data = GetDeviceLayerData(DataKey(queue));
     return layer_data->interceptor->QueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
 VkResult InterceptEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties* pProperties) {
     VkResult result = VK_SUCCESS;
-    uint32_t copy_count = *pPropertyCount;
     if (pProperties != nullptr && *pPropertyCount > 0) {
         *pProperties = kLayerProperties;
     }
@@ -4251,7 +4242,6 @@ VkResult InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice
                                                  VkLayerProperties* pProperties) {
     (void)physicalDevice;
     VkResult result = VK_SUCCESS;
-    uint32_t copy_count = *pPropertyCount;
     if (pProperties != nullptr && *pPropertyCount > 0) {
         *pProperties = kLayerProperties;
     }
