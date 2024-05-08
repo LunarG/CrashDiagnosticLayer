@@ -293,15 +293,15 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Logger::DefaultLogCallback(VkDebugUtilsMessageSev
                                                           const VkDebugUtilsMessengerCallbackDataEXT* cb_data,
                                                           void* user_data) {
     const Logger& logger = *reinterpret_cast<Logger*>(user_data);
-    const char* tag = "CDL_INFO";
+    const char* tag = "CDL INFO";
     if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-        tag = "CDL_ERROR";
+        tag = "CDL ERROR";
     } else if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
-        tag = "CDL_WARNING";
+        tag = "CDL WARNING";
     } else if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {
-        tag = "CDL_INFO";
+        tag = "CDL INFO";
     } else if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
-        tag = "CDL_VERBOSE";
+        tag = "CDL VERBOSE";
     }
     auto elapsed = std::chrono::system_clock::now() - logger.StartTime();
     std::string timestamp = DurationToStr(elapsed);
