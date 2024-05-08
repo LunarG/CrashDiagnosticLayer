@@ -91,14 +91,14 @@ void Device::AddCommandBuffer(VkCommandBuffer vk_command_buffer) {
 void Device::DumpCommandBuffers(YAML::Emitter& os, const char* section_name, CommandBufferDumpOptions options,
                                 bool dump_all_command_buffers) const {
     // Sort command buffers by submit info id
-    std::map<uint64_t /* submit_info_id*/, std::vector<CommandBuffer*>> sorted_command_buffers;
+    std::map<uint64_t /* queue seq */, std::vector<CommandBuffer*>> sorted_command_buffers;
     std::lock_guard<std::recursive_mutex> lock(command_buffers_mutex_);
     for (auto cb : command_buffers_) {
         auto p_cmd = GetCommandBuffer(cb);
         if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
             if (dump_all_command_buffers ||
                 (p_cmd->HasCheckpoints() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution())) {
-                sorted_command_buffers[p_cmd->GetSubmitInfoId()].push_back(p_cmd);
+                sorted_command_buffers[p_cmd->GetQueueSeq()].push_back(p_cmd);
             }
         }
     }
@@ -407,14 +407,20 @@ std::string Device::GetObjectName(uint64_t handle, HandleDebugNamePreference han
 
 std::string Device::GetObjectInfo(uint64_t handle) const { return object_info_db_.GetObjectInfo(handle); }
 
-void Device::UpdateIdleState() const {
+bool Device::UpdateIdleState() {
+    bool result = true;
     if (checkpoints_) {
         checkpoints_->Update();
     }
+    auto queues = GetAllQueues();
+    for (auto& q : queues) {
+        bool q_result = q->UpdateIdleState();
+        result &= q_result;
+    }
+    return result;
 }
 
-YAML::Emitter& Device::Print(YAML::Emitter& os, CommandBufferDumpOptions options,
-                             const std::string& error_report) const {
+YAML::Emitter& Device::Print(YAML::Emitter& os, CommandBufferDumpOptions options, const std::string& error_report) {
     UpdateIdleState();
     os << YAML::Key << "Device" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "handle" << YAML::Value << GetObjectInfo((uint64_t)vk_device_);

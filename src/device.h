@@ -55,6 +55,7 @@ struct DeviceExtensionsPresent {
     bool ext_device_fault{false};
     bool ext_device_address_binding_report{false};
     bool nv_device_diagnostic_checkpoints{false};
+    bool khr_timeline_semaphore{false};
 };
 
 struct DeviceAddressRecord {
@@ -151,7 +152,7 @@ class Device {
 
     void DumpDeviceFaultInfo(YAML::Emitter& os) const;
 
-    YAML::Emitter& Print(YAML::Emitter& os, CommandBufferDumpOptions options, const std::string& error_report) const;
+    YAML::Emitter& Print(YAML::Emitter& os, CommandBufferDumpOptions options, const std::string& error_report);
 
     void MemoryBindEvent(const DeviceAddressRecord& record, bool multi_device);
 
@@ -161,7 +162,7 @@ class Device {
 
     VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence);
 
-    void UpdateIdleState() const;
+    bool UpdateIdleState();
 
    private:
     Context& context_;

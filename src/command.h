@@ -91,8 +91,8 @@ class CommandBuffer {
     bool IsPrimaryCommandBuffer() const { return cb_level_ == VK_COMMAND_BUFFER_LEVEL_PRIMARY; }
     bool HasCheckpoints() const { return checkpoint_ != nullptr; }
 
-    void SetSubmitInfoId(uint64_t submit_info_id);
-    uint64_t GetSubmitInfoId() { return submit_info_id_; }
+    void SetQueueSeq(uint64_t queue_seq);
+    uint64_t GetQueueSeq() { return submitted_queue_seq_; }
     void SetInstrumentAllCommands(bool all) { instrument_all_commands_ = all; }
 
     bool WasSubmittedToQueue() const;
@@ -147,8 +147,6 @@ class CommandBuffer {
 
    private:
     Device& device_;
-    uintptr_t vk_submit_info_ = 0;
-    uint64_t submit_info_id_ = 0;
     VkCommandPool vk_command_pool_ = VK_NULL_HANDLE;
     VkCommandBuffer vk_command_buffer_ = VK_NULL_HANDLE;
 
@@ -167,6 +165,7 @@ class CommandBuffer {
 
     CommandBufferState buffer_state_ = CommandBufferState::kInitial;
     VkQueue submitted_queue_ = VK_NULL_HANDLE;
+    uint64_t submitted_queue_seq_ = 0;
     VkFence submitted_fence_ = VK_NULL_HANDLE;
 
     CommandTracker tracker_;

@@ -74,7 +74,7 @@ YAML::Emitter& Pipeline::PrintName(YAML::Emitter& os, const ObjectInfoDB& name_r
 }
 
 YAML::Emitter& Pipeline::Print(YAML::Emitter& os, const ObjectInfoDB& name_resolver) const {
-    // TODO: begin / end map?
+    os << YAML::BeginMap;
     PrintName(os, name_resolver);
 
     const auto num_shaders = shaders_.size();
@@ -104,7 +104,7 @@ YAML::Emitter& Pipeline::Print(YAML::Emitter& os, const ObjectInfoDB& name_resol
         }
         os << YAML::EndSeq;
     }
-
+    os << YAML::EndMap;
     return os;
 }
 

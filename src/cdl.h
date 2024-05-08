@@ -43,7 +43,6 @@
 #include <vector>
 #include <yaml-cpp/emitter.h>
 
-#include "bind_sparse_utils.h"
 #include "command.h"
 #include "command_buffer_tracker.h"
 #include "device.h"
@@ -133,12 +132,11 @@ class Context : public Interceptor {
                          const VkDebugUtilsObjectNameInfoEXT& object);
 
     void DumpAllDevicesExecutionState(CrashSource crash_source);
-    void DumpDeviceExecutionState(const Device& device);
-    void DumpDeviceExecutionState(const Device& device, bool dump_prologue, CrashSource crash_source,
-                                  YAML::Emitter& os);
-    void DumpDeviceExecutionState(const Device& device, const std::string& error_report, bool dump_prologue,
+    void DumpDeviceExecutionState(Device& device);
+    void DumpDeviceExecutionState(Device& device, bool dump_prologue, CrashSource crash_source, YAML::Emitter& os);
+    void DumpDeviceExecutionState(Device& device, const std::string& error_report, bool dump_prologue,
                                   CrashSource crash_source, YAML::Emitter& os);
-    void DumpDeviceExecutionStateValidationFailed(const Device& device, YAML::Emitter& os);
+    void DumpDeviceExecutionStateValidationFailed(Device& device, YAML::Emitter& os);
 
     void DumpReportPrologue(YAML::Emitter& os);
 
@@ -173,7 +171,6 @@ class Context : public Interceptor {
                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice, VkResult result) override;
 
     void PreDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) override;
-    void PostDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) override;
 
     VkResult PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName,
                                                     uint32_t* pPropertyCount, VkExtensionProperties* pProperties,
@@ -261,6 +258,8 @@ class Context : public Interceptor {
     void PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) override;
 
     VkResult QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) override;
+    VkResult QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
+                             VkFence fence) override;
 
     VkResult PreAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore,
                                     VkFence fence, uint32_t* pImageIndex) override;
@@ -270,18 +269,30 @@ class Context : public Interceptor {
     VkResult PreQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo) override;
     VkResult PostQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo, VkResult result) override;
 
+    VkResult PostGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
+                                          VkResult result) override;
     VkResult PostGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
-                                             VkResult result) override;
+                                             VkResult result) override {
+        return PostGetSemaphoreCounterValue(device, semaphore, pValue, result);
+    }
 
-    VkResult PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) override;
+    VkResult PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) override;
+    VkResult PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout,
+                                VkResult result) override;
+    VkResult PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) override {
+        return PreWaitSemaphores(device, pWaitInfo, timeout);
+    }
+
     VkResult PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout,
-                                   VkResult result) override;
+                                   VkResult result) override {
+        return PostWaitSemaphores(device, pWaitInfo, timeout, result);
+    }
 
+    VkResult PostSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo, VkResult result) override;
     VkResult PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo,
-                                    VkResult result) override;
-
-    VkResult QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
-                             VkFence fence) override;
+                                    VkResult result) override {
+        return PostSignalSemaphore(device, pSignalInfo, result);
+    }
 
     VkResult PostCreateDebugReportCallbackEXT(VkInstance instance,
                                               const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
