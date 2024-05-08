@@ -597,6 +597,32 @@ class Interceptor {
 
     virtual void PostCmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo) {}
 
+    virtual VkResult PreGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
+        return VK_SUCCESS;
+    }
+
+    virtual VkResult PostGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
+                                                  VkResult result) {
+        return result;
+    }
+
+    virtual VkResult PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) {
+        return VK_SUCCESS;
+    }
+
+    virtual VkResult PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout,
+                                        VkResult result) {
+        return result;
+    }
+
+    virtual VkResult PreSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
+        return VK_SUCCESS;
+    }
+
+    virtual VkResult PostSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo, VkResult result) {
+        return result;
+    }
+
     virtual void PreCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
                                  const VkDependencyInfo* pDependencyInfo) {}
 

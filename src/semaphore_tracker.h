@@ -33,6 +33,11 @@ namespace crash_diagnostic_layer {
 class Device;
 class Logger;
 
+struct SemInfo {
+    VkSemaphore handle;
+    uint64_t value{0};
+    VkPipelineStageFlags2 stage{0};
+};
 enum SemaphoreOperation { kWaitOperation, kSignalOperation };
 
 enum SemaphoreModifierType : uint32_t {
@@ -79,8 +84,7 @@ class SemaphoreTracker {
     void WriteMarker(VkSemaphore vk_semaphore, VkCommandBuffer vk_command_buffer,
                      VkPipelineStageFlagBits vk_pipeline_stage, uint64_t value, SemaphoreModifierInfo modifier_info);
 
-    std::vector<TrackedSemaphoreInfo> GetTrackedSemaphoreInfos(const std::vector<VkSemaphore>& semaphores,
-                                                               const std::vector<uint64_t>& semaphore_values);
+    std::vector<TrackedSemaphoreInfo> GetTrackedSemaphoreInfos(const std::vector<SemInfo>& semaphores);
 
     std::string PrintTrackedSemaphoreInfos(const std::vector<TrackedSemaphoreInfo>& tracked_semaphores,
                                            const char* tab) const;

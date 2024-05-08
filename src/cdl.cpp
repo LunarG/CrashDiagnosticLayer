@@ -350,9 +350,12 @@ void Context::StartWatchdogTimer() {
 }
 
 void Context::StopWatchdogTimer() {
-    if (watchdog_running_ && watchdog_thread_.joinable()) {
+    if (watchdog_running_) {
         Log().Info("Stopping Watchdog");
         watchdog_running_ = false;  // TODO: condition variable that waits
+    }
+    // make sure the watchdog thread is joined even if it quit on its own.
+    if (watchdog_thread_.joinable()) {
         watchdog_thread_.join();
         Log().Info("Watchdog Stopped");
     }
@@ -374,10 +377,9 @@ void Context::WatchdogTimer() {
 
             DumpAllDevicesExecutionState(CrashSource::kWatchdogTimer);
 
-            // Reset the timer to prevent constantly dumping the log.
-            last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                    std::chrono::high_resolution_clock::now().time_since_epoch())
-                                    .count();
+            // Quit the thread after a hang is detected, it is unlikely that further dumps will
+            // show anything more useful than the first one.
+            watchdog_running_ = false;
         }
     }
 }
@@ -433,6 +435,8 @@ static void DecodeExtensionString(DeviceExtensionsPresent& extensions, const cha
         extensions.ext_device_address_binding_report = true;
     } else if (!strcmp(name, VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME)) {
         extensions.nv_device_diagnostic_checkpoints = true;
+    } else if (!strcmp(name, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)) {
+        extensions.khr_timeline_semaphore = true;
     }
 }
 
@@ -512,6 +516,18 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
         Log().Warning(
             "No VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
     }
+    if (extensions_present.khr_timeline_semaphore) {
+        if (!extensions_enabled.khr_timeline_semaphore) {
+            extensions_enabled.khr_timeline_semaphore = true;
+            auto khr_timeline_semaphore =
+                vku::InitStruct<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(nullptr, VK_TRUE);
+            vku::AddToPnext(device_ci->modified, khr_timeline_semaphore);
+            vku::AddExtension(device_ci->modified, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+        }
+    } else {
+        Log().Warning(
+            "No VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
+    }
 
     extensions_of_interest_enabled_[physicalDevice] = std::move(extensions_enabled);
 
@@ -542,18 +558,18 @@ void Context::DumpAllDevicesExecutionState(CrashSource crash_source) {
     }
 }
 
-void Context::DumpDeviceExecutionState(const Device& device) {
+void Context::DumpDeviceExecutionState(Device& device) {
     auto file = OpenDumpFile();
     YAML::Emitter os(file.is_open() ? file : std::cerr);
     DumpDeviceExecutionState(device, {}, true, kDeviceLostError, os);
 }
 
-void Context::DumpDeviceExecutionState(const Device& device, bool dump_prologue, CrashSource crash_source,
+void Context::DumpDeviceExecutionState(Device& device, bool dump_prologue, CrashSource crash_source,
                                        YAML::Emitter& os) {
     DumpDeviceExecutionState(device, {}, dump_prologue, crash_source, os);
 }
 
-void Context::DumpDeviceExecutionState(const Device& device, const std::string& error_report, bool dump_prologue,
+void Context::DumpDeviceExecutionState(Device& device, const std::string& error_report, bool dump_prologue,
                                        CrashSource crash_source, YAML::Emitter& os) {
     if (dump_prologue) {
         DumpReportPrologue(os);
@@ -565,7 +581,7 @@ void Context::DumpDeviceExecutionState(const Device& device, const std::string& 
     device.Print(os, options, error_report);
 }
 
-void Context::DumpDeviceExecutionStateValidationFailed(const Device& device, YAML::Emitter& os) {
+void Context::DumpDeviceExecutionStateValidationFailed(Device& device, YAML::Emitter& os) {
     if (device.HangDetected()) {
         return;
     }
@@ -593,7 +609,7 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     os << YAML::Key << "startTime" << YAML::Value << timestr.str();
     os << YAML::Key << "timeSinceStart" << YAML::Value << DurationToStr(elapsed);
     if (dump_configs_) {
-        os << YAML::Key << "settings" << YAML::Value << YAML::BeginMap;
+        os << YAML::Key << "Settings" << YAML::Value << YAML::BeginMap;
         for (auto& c : configs_) {
             os << YAML::Key << c.first << YAML::Value << c.second;
         }
@@ -654,7 +670,7 @@ std::ofstream Context::OpenDumpFile() {
     // compatiblity for now.
     std::stringstream ss_name;
     if (total_logs_ > 0) {
-        ss_name << "cdl_dump" << total_logs_ << ".yaml";
+        ss_name << "cdl_dump_" << total_logs_ << ".yaml";
     } else {
         ss_name << "cdl_dump.yaml";
     }
@@ -813,15 +829,17 @@ VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDevi
 }
 
 void Context::PreDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
-    if (track_semaphores_) {
-        auto device_state = GetDevice(device);
-        device_state->Destroy();
+    // Destroy the device state without holding devices_mutex_ to avoid possible recursive locking.
+    DevicePtr device_state;
+    {
+        std::lock_guard<std::mutex> lock(devices_mutex_);
+        auto iter = devices_.find(device);
+        if (iter != devices_.end()) {
+            device_state = std::move(iter->second);
+            devices_.erase(iter);
+        }
     }
-}
-
-void Context::PostDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lock(devices_mutex_);
-    devices_.erase(device);
+    device_state.reset();
 }
 
 void Context::PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) {
@@ -845,18 +863,25 @@ void Context::PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQu
 VkResult Context::PreDeviceWaitIdle(VkDevice device) {
     (void)device;
     PreApiFunction("vkDeviceWaitIdle");
+    auto device_state = GetDevice(device);
+    if (!device_state->UpdateIdleState()) {
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
+        return VK_ERROR_DEVICE_LOST;
+    }
     return VK_SUCCESS;
 }
 VkResult Context::PostDeviceWaitIdle(VkDevice device, VkResult result) {
     PostApiFunction("vkDeviceWaitIdle", result);
 
     auto device_state = GetDevice(device);
+    if (!device_state->UpdateIdleState()) {
+        result = VK_ERROR_DEVICE_LOST;
+    }
     // some drivers return VK_TIMEOUT on a hang
     if (IsVkError(result) || result == VK_TIMEOUT) {
         device_state->SetHangDetected();
         DumpDeviceExecutionState(*device_state);
-    } else {
-        device_state->UpdateIdleState();
     }
 
     return result;
@@ -865,20 +890,27 @@ VkResult Context::PostDeviceWaitIdle(VkDevice device, VkResult result) {
 VkResult Context::PreQueueWaitIdle(VkQueue queue) {
     (void)queue;
     PreApiFunction("vkQueueWaitIdle");
+    auto device_state = GetQueueDevice(queue);
+    if (!device_state->UpdateIdleState()) {
+        device_state->SetHangDetected();
+        DumpDeviceExecutionState(*device_state);
+        return VK_ERROR_DEVICE_LOST;
+    }
     return VK_SUCCESS;
 }
 VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
     PostApiFunction("vkQueueWaitIdle", result);
 
     auto device_state = GetQueueDevice(queue);
+    if (!device_state->UpdateIdleState()) {
+        result = VK_ERROR_DEVICE_LOST;
+    }
     // some drivers return VK_TIMEOUT on a hang
     if (IsVkError(result) || result == VK_TIMEOUT) {
         device_state->SetHangDetected();
         auto file = OpenDumpFile();
         YAML::Emitter os(file.is_open() ? file : std::cerr);
         DumpDeviceExecutionState(*device_state, {}, true, kDeviceLostError, os);
-    } else {
-        device_state->UpdateIdleState();
     }
 
     return result;
@@ -886,13 +918,18 @@ VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
 
 VkResult Context::PreQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo) {
     PreApiFunction("vkQueuePresentKHR");
+    auto device_state = GetQueueDevice(queue);
+    device_state->UpdateIdleState();
     return VK_SUCCESS;
 }
 VkResult Context::PostQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo, VkResult result) {
     PostApiFunction("vkQueuePresentKHR", result);
 
+    auto device_state = GetQueueDevice(queue);
+    if (!device_state->UpdateIdleState()) {
+        result = VK_ERROR_DEVICE_LOST;
+    }
     if (IsVkError(result)) {
-        auto device_state = GetQueueDevice(queue);
         device_state->SetHangDetected();
         auto file = OpenDumpFile();
         YAML::Emitter os(file.is_open() ? file : std::cerr);
@@ -905,6 +942,14 @@ VkResult Context::PostQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPr
 VkResult Context::PreWaitForFences(VkDevice device, uint32_t fenceCount, VkFence const* pFences, VkBool32 waitAll,
                                    uint64_t timeout) {
     PreApiFunction("vkWaitForFences");
+    auto device_state = GetDevice(device);
+    if (!device_state->UpdateIdleState()) {
+        device_state->SetHangDetected();
+        auto file = OpenDumpFile();
+        YAML::Emitter os(file.is_open() ? file : std::cerr);
+        DumpDeviceExecutionState(*device_state, {}, true, kDeviceLostError, os);
+        return VK_ERROR_DEVICE_LOST;
+    }
     return VK_SUCCESS;
 }
 VkResult Context::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkFence const* pFences, VkBool32 waitAll,
@@ -912,11 +957,12 @@ VkResult Context::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkFenc
     PostApiFunction("vkWaitForFences", result);
 
     auto device_state = GetDevice(device);
+    if (!device_state->UpdateIdleState()) {
+        result = VK_ERROR_DEVICE_LOST;
+    }
     if (IsVkError(result)) {
         device_state->SetHangDetected();
         DumpDeviceExecutionState(*device_state);
-    } else {
-        device_state->UpdateIdleState();
     }
 
     return result;
@@ -929,8 +975,11 @@ VkResult Context::PreGetFenceStatus(VkDevice device, VkFence fence) {
 VkResult Context::PostGetFenceStatus(VkDevice device, VkFence fence, VkResult result) {
     PostApiFunction("vkGetFenceStatus", result);
 
+    auto device_state = GetDevice(device);
+    if (!device_state->UpdateIdleState()) {
+        result = VK_ERROR_DEVICE_LOST;
+    }
     if (IsVkError(result)) {
-        auto device_state = GetDevice(device);
         device_state->SetHangDetected();
         DumpDeviceExecutionState(*device_state);
     }
@@ -1143,7 +1192,7 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
             log << "Semaphore created. VkDevice:" << device_state->GetObjectName((uint64_t)device)
                 << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(*pSemaphore));
             if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
-                log << ", Type: Binary" << std::endl;
+                log << ", Type: Binary";
             } else {
                 log << ", Type: Timeline, Initial value: " << s_value;
             }
@@ -1172,7 +1221,7 @@ void Context::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const 
         if (semaphore_tracker->GetSemaphoreValue(semaphore, semaphore_value)) {
             log << "Latest value: " << semaphore_value;
         } else {
-            log << "Latest value: Unknown" << std::endl;
+            log << "Latest value: Unknown";
         }
         Log().Info(log.str());
     }
@@ -1186,8 +1235,7 @@ void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const
     }
 }
 
-VkResult Context::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo,
-                                         VkResult result) {
+VkResult Context::PostSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo, VkResult result) {
     if (track_semaphores_ && result == VK_SUCCESS) {
         auto device_state = GetDevice(device);
         device_state->GetSemaphoreTracker()->SignalSemaphore(pSignalInfo->semaphore, pSignalInfo->value,
@@ -1203,7 +1251,12 @@ VkResult Context::PostSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSigna
     return result;
 }
 
-VkResult Context::PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout) {
+VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout) {
+    VkResult result = VK_SUCCESS;
+    auto device_state = GetDevice(device);
+    if (!device_state->UpdateIdleState()) {
+        result = VK_ERROR_DEVICE_LOST;
+    }
     if (track_semaphores_) {
         int tid = 0;
 #ifdef __linux__
@@ -1233,9 +1286,12 @@ VkResult Context::PreWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInf
     return VK_SUCCESS;
 }
 
-VkResult Context::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout,
-                                        VkResult result) {
+VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout,
+                                     VkResult result) {
     auto device_state = GetDevice(device);
+    if (!device_state->UpdateIdleState()) {
+        result = VK_ERROR_DEVICE_LOST;
+    }
     if (IsVkError(result)) {
         device_state->SetHangDetected();
         DumpDeviceExecutionState(*device_state);
@@ -1283,8 +1339,8 @@ VkResult Context::PostWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitIn
     return result;
 }
 
-VkResult Context::PostGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
-                                                  VkResult result) {
+VkResult Context::PostGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
+                                               VkResult result) {
     if (IsVkError(result)) {
         auto device_state = GetDevice(device);
         device_state->SetHangDetected();

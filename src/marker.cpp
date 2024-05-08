@@ -37,10 +37,12 @@ BufferMarkerMgr::~BufferMarkerMgr() {
     const auto& dt = device_.Dispatch();
 
     for (auto& marker_buffer : marker_buffers_) {
+        device_.Log().Verbose("Destroy Marker buffer %llx", marker_buffer.buffer);
         dt.DestroyBuffer(device, marker_buffer.buffer, nullptr);
     }
     marker_buffers_.clear();
     if (marker_buffers_heap_ != VK_NULL_HANDLE) {
+        device_.Log().Verbose("Destroy Marker memory %llx", marker_buffers_heap_);
         dt.FreeMemory(device, marker_buffers_heap_, nullptr);
         marker_buffers_heap_ = VK_NULL_HANDLE;
     }
@@ -91,6 +93,7 @@ VkResult BufferMarkerMgr::CreateHostBuffer(VkDeviceSize buffer_size, VkBuffer* p
     if (vk_res != VK_SUCCESS) {
         return vk_res;
     }
+    device_.Log().Verbose("Created Marker buffer %s", device_.GetObjectName((uint64_t)*p_buffer).c_str());
 
     VkMemoryRequirements mem_reqs = {};
     dt.GetBufferMemoryRequirements(device, *p_buffer, &mem_reqs);
@@ -128,6 +131,7 @@ VkResult BufferMarkerMgr::CreateHostBuffer(VkDeviceSize buffer_size, VkBuffer* p
             dt.DestroyBuffer(device, *p_buffer, nullptr);
             return VK_ERROR_INITIALIZATION_FAILED;
         }
+        device_.Log().Verbose("Create Marker memory %s", device_.GetObjectName((uint64_t)marker_buffers_heap_).c_str());
     }
 
     vk_res = dt.BindBufferMemory(device, *p_buffer, marker_buffers_heap_, heap_offset);

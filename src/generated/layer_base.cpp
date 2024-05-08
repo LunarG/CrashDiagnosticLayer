@@ -1179,6 +1179,51 @@ void InterceptCmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpassEn
     layer_data->interceptor->PostCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
 
+VkResult InterceptGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    layer_data->interceptor->PreGetSemaphoreCounterValue(device, semaphore, pValue);
+
+    PFN_vkGetSemaphoreCounterValue pfn = layer_data->dispatch_table.GetSemaphoreCounterValue;
+    if (pfn != nullptr) {
+        result = pfn(device, semaphore, pValue);
+    }
+
+    result = layer_data->interceptor->PostGetSemaphoreCounterValue(device, semaphore, pValue, result);
+    return result;
+}
+
+VkResult InterceptWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    layer_data->interceptor->PreWaitSemaphores(device, pWaitInfo, timeout);
+
+    PFN_vkWaitSemaphores pfn = layer_data->dispatch_table.WaitSemaphores;
+    if (pfn != nullptr) {
+        result = pfn(device, pWaitInfo, timeout);
+    }
+
+    result = layer_data->interceptor->PostWaitSemaphores(device, pWaitInfo, timeout, result);
+    return result;
+}
+
+VkResult InterceptSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    layer_data->interceptor->PreSignalSemaphore(device, pSignalInfo);
+
+    PFN_vkSignalSemaphore pfn = layer_data->dispatch_table.SignalSemaphore;
+    if (pfn != nullptr) {
+        result = pfn(device, pSignalInfo);
+    }
+
+    result = layer_data->interceptor->PostSignalSemaphore(device, pSignalInfo, result);
+    return result;
+}
+
 void InterceptCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
@@ -4477,6 +4522,9 @@ PFN_vkVoidFunction GetDeviceFuncs(const char* func) {
     if (0 == strcmp(func, "vkCmdBeginRenderPass2")) return (PFN_vkVoidFunction)InterceptCmdBeginRenderPass2;
     if (0 == strcmp(func, "vkCmdNextSubpass2")) return (PFN_vkVoidFunction)InterceptCmdNextSubpass2;
     if (0 == strcmp(func, "vkCmdEndRenderPass2")) return (PFN_vkVoidFunction)InterceptCmdEndRenderPass2;
+    if (0 == strcmp(func, "vkGetSemaphoreCounterValue")) return (PFN_vkVoidFunction)InterceptGetSemaphoreCounterValue;
+    if (0 == strcmp(func, "vkWaitSemaphores")) return (PFN_vkVoidFunction)InterceptWaitSemaphores;
+    if (0 == strcmp(func, "vkSignalSemaphore")) return (PFN_vkVoidFunction)InterceptSignalSemaphore;
     if (0 == strcmp(func, "vkCmdSetEvent2")) return (PFN_vkVoidFunction)InterceptCmdSetEvent2;
     if (0 == strcmp(func, "vkCmdResetEvent2")) return (PFN_vkVoidFunction)InterceptCmdResetEvent2;
     if (0 == strcmp(func, "vkCmdWaitEvents2")) return (PFN_vkVoidFunction)InterceptCmdWaitEvents2;

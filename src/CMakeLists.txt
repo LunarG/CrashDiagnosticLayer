@@ -46,8 +46,6 @@ target_sources(crash_diagnostic PRIVATE
     generated/dispatch.cpp
     generated/layer_base.h
     generated/layer_base.cpp
-    bind_sparse_utils.h
-    bind_sparse_utils.cpp
     command.h
     command.cpp
     command_buffer_tracker.h

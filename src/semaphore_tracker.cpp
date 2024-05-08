@@ -148,17 +148,16 @@ void SemaphoreTracker::WriteMarker(VkSemaphore vk_semaphore, VkCommandBuffer vk_
     }
 }
 
-std::vector<TrackedSemaphoreInfo> SemaphoreTracker::GetTrackedSemaphoreInfos(
-    const std::vector<VkSemaphore>& semaphores, const std::vector<uint64_t>& semaphore_values) {
+std::vector<TrackedSemaphoreInfo> SemaphoreTracker::GetTrackedSemaphoreInfos(const std::vector<SemInfo>& semaphores) {
     std::vector<TrackedSemaphoreInfo> tracked_semaphores;
     std::lock_guard<std::mutex> lock(semaphores_mutex_);
     for (uint32_t i = 0; i < semaphores.size(); i++) {
-        if (semaphores_.find(semaphores[i]) == semaphores_.end()) continue;
-        auto& semaphore_info = semaphores_[semaphores[i]];
+        if (semaphores_.find(semaphores[i].handle) == semaphores_.end()) continue;
+        auto& semaphore_info = semaphores_[semaphores[i].handle];
         TrackedSemaphoreInfo tracked_semaphore;
-        tracked_semaphore.semaphore = semaphores[i];
+        tracked_semaphore.semaphore = semaphores[i].handle;
         tracked_semaphore.semaphore_type = semaphore_info.semaphore_type;
-        tracked_semaphore.semaphore_operation_value = semaphore_values[i];
+        tracked_semaphore.semaphore_operation_value = semaphores[i].value;
         tracked_semaphore.current_value = semaphore_info.marker->Read();
         tracked_semaphore.current_value_available = true;
         if (track_semaphores_last_setter_) {
@@ -219,17 +218,14 @@ void SemaphoreTracker::DumpWaitingThreads(YAML::Emitter& os) const {
         os << YAML::BeginMap;
         os << YAML::Key << "PID" << YAML::Value << it.pid;
         os << YAML::Key << "TID" << YAML::Value << it.tid;
-        if (it.wait_type == SemaphoreWaitType::kAll) {
-            os << YAML::Key << "waitType" << YAML::Value << "WaitForAll";
-        } else {
-            os << YAML::Key << "waitType" << YAML::Value << "WaitForAny";
-        }
+        os << YAML::Key << "waitType" << YAML::Value
+           << ((it.wait_type == SemaphoreWaitType::kAll) ? "WaitForAll" : "WaitForAny");
         os << YAML::Key << "WaitSemaphores" << YAML::Value << YAML::BeginSeq;
         for (int i = 0; i < it.semaphores.size(); i++) {
             os << YAML::BeginMap;
-            os << YAML::Key << "vkSemaphore" << YAML::Value << device_.GetObjectInfo((uint64_t)it.semaphores[i]);
+            os << YAML::Key << "handle" << YAML::Value << device_.GetObjectInfo((uint64_t)it.semaphores[i]);
             os << YAML::Key << "type" << YAML::Value << "Timeline";
-            os << YAML::Key << "waitValue" << YAML::Value << it.wait_values[i];
+            os << YAML::Key << "value" << YAML::Value << it.wait_values[i];
             if (GetSemaphoreValue(it.semaphores[i], semaphore_value)) {
                 os << YAML::Key << "lastValue" << YAML::Value << semaphore_value;
             }

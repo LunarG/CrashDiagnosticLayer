@@ -56,7 +56,7 @@ CommandBuffer::~CommandBuffer() {
     vk_command_buffer_ = VK_NULL_HANDLE;
 }
 
-void CommandBuffer::SetSubmitInfoId(uint64_t submit_info_id) { submit_info_id_ = submit_info_id; }
+void CommandBuffer::SetQueueSeq(uint64_t queue_seq) { submitted_queue_seq_ = queue_seq; }
 
 void CommandBuffer::WriteBeginCheckpoint() {
     // CDL log lables the commands inside a command buffer as follows:
@@ -322,7 +322,7 @@ bool CommandBuffer::DumpCmdExecuteCommands(const Command& command, CommandState 
         for (uint32_t i = 0; i < args->commandBufferCount; i++) {
             auto secondary_command_buffer = crash_diagnostic_layer::GetCommandBuffer(args->pCommandBuffers[i]);
             if (secondary_command_buffer) {
-                secondary_command_buffer->DumpContents(os, options, submit_info_id_, command_state);
+                secondary_command_buffer->DumpContents(os, options, submitted_queue_seq_, command_state);
             }
         }
     }
@@ -430,7 +430,11 @@ bool CommandBufferInternalState::Print(const Command& cmd, YAML::Emitter& os, co
     if (-1 != bind_point) {
         os << YAML::Key << "internalState" << YAML::Value << YAML::BeginMap;
         os << YAML::Key << "pipeline" << YAML::Value;
-        bound_pipelines_[bind_point]->Print(os, name_resolver);
+        if (bound_pipelines_[bind_point]) {
+            bound_pipelines_[bind_point]->Print(os, name_resolver);
+        } else {
+            os << YAML::BeginMap << YAML::EndMap;
+        }
         os << YAML::Key << "descriptorSets" << YAML::Value;
         bound_descriptors_[bind_point].Print(device_, os);
         os << YAML::EndMap;
@@ -440,8 +444,7 @@ bool CommandBufferInternalState::Print(const Command& cmd, YAML::Emitter& os, co
     return false;
 }
 
-void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions options,
-                                 uint64_t secondary_cb_submit_info_id,
+void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions options, uint64_t secondary_cb_queue_seq,
                                  CommandState vkcmd_execute_commands_command_state) {
     if (vk_command_buffer_ == VK_NULL_HANDLE) {
         return;
@@ -464,11 +467,11 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
         os << YAML::Key << "fence" << device_.GetObjectInfo((uint64_t)submitted_fence_);
     }
 
-    os << YAML::Key << "submitInfoId" << YAML::Value;
+    os << YAML::Key << "queueSeq" << YAML::Value;
     if (IsPrimaryCommandBuffer()) {
-        os << Uint64ToStr(submit_info_id_);
+        os << Uint64ToStr(submitted_queue_seq_);
     } else {
-        os << Uint64ToStr(secondary_cb_submit_info_id);
+        os << Uint64ToStr(secondary_cb_queue_seq);
     }
     os << YAML::Key << "level" << YAML::Value;
     if (IsPrimaryCommandBuffer()) {
