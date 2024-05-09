@@ -16,8 +16,9 @@
  * limitations under the License.
  */
 #include "test_fixtures.h"
-#include "shaders.h"
+#include "compute_pipeline.h"
 #include "dump_file.h"
+#include "shaders.h"
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
 
@@ -45,11 +46,11 @@ TEST_F(GpuCrash, CopyCrash) {
     constexpr size_t kNumElems = 256;
     constexpr VkDeviceSize kBuffSize = kNumElems * sizeof(float);
 
-    BoundBuffer in = AllocateMemory(kBuffSize, "in", vk::BufferUsageFlagBits::eTransferSrc);
-    in.set(1.0f, kNumElems);
+    BoundBuffer in(physical_device_, device_, kBuffSize, "in", vk::BufferUsageFlagBits::eTransferSrc);
+    in.Set(1.0f, kNumElems);
 
-    BoundBuffer out = AllocateMemory(kBuffSize, "out", vk::BufferUsageFlagBits::eTransferDst);
-    out.set(0.0f, kNumElems);
+    BoundBuffer out(physical_device_, device_, kBuffSize, "out", vk::BufferUsageFlagBits::eTransferDst);
+    out.Set(0.0f, kNumElems);
 
     vk::CommandBufferBeginInfo begin_info;
     cmd_buff_.begin(begin_info);
@@ -82,75 +83,23 @@ TEST_F(GpuCrash, ShaderCrash) {
     InitInstance();
     InitDevice();
 
-    vk::raii::ShaderModule shader_module = CreateShaderModuleGLSL(kCrashComputeComp, vk::ShaderStageFlagBits::eCompute);
-
-    constexpr size_t kNumElems = 256;
-    constexpr VkDeviceSize kBuffSize = kNumElems * sizeof(float);
-
-    BoundBuffer in = AllocateMemory(kBuffSize, "in", vk::BufferUsageFlagBits::eTransferSrc);
-    in.set(uint32_t(65535), kNumElems);
-
-    BoundBuffer out = AllocateMemory(kBuffSize, "out", vk::BufferUsageFlagBits::eTransferDst);
-    out.set(0.0f, kNumElems);
-
-    vk::DescriptorPoolSize pool_size(vk::DescriptorType::eStorageBuffer, 2);
-    vk::DescriptorPoolCreateInfo pool_ci(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 2, pool_size);
-
-    vk::raii::DescriptorPool pool = device_.createDescriptorPool(pool_ci);
-
-    std::array<vk::DescriptorSetLayoutBinding, 2> bindings = {
-        vk::DescriptorSetLayoutBinding(0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute,
-                                       nullptr),
-        vk::DescriptorSetLayoutBinding(1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute,
-                                       nullptr),
-    };
-
-    vk::DescriptorSetLayoutCreateInfo ds_layout_ci({}, bindings);
-    vk::raii::DescriptorSetLayout ds_layout = device_.createDescriptorSetLayout(ds_layout_ci);
-
-    vk::DescriptorSetAllocateInfo set_alloc_info(pool, *ds_layout);
-    vk::raii::DescriptorSet descriptor_set = std::move(device_.allocateDescriptorSets(set_alloc_info).front());
-
-    std::array<vk::DescriptorBufferInfo, 2> buffer_infos;
-    buffer_infos[0].buffer = in.buffer;
-    buffer_infos[0].offset = 0;
-    buffer_infos[0].range = vk::WholeSize;
-    buffer_infos[1].buffer = out.buffer;
-    buffer_infos[1].offset = 0;
-    buffer_infos[1].range = vk::WholeSize;
-
-    std::array<vk::WriteDescriptorSet, 2> writes;
-    writes[0].dstSet = descriptor_set;
-    writes[0].dstBinding = 0;
-    writes[0].descriptorCount = 1;
-    writes[0].descriptorType = vk::DescriptorType::eStorageBuffer;
-    writes[0].pBufferInfo = &buffer_infos[0];
-    writes[1].dstSet = descriptor_set;
-    writes[1].dstBinding = 1;
-    writes[1].descriptorCount = 1;
-    writes[1].descriptorType = vk::DescriptorType::eStorageBuffer;
-    writes[1].pBufferInfo = &buffer_infos[1];
-
-    device_.updateDescriptorSets(writes, {});
-    vk::PipelineLayoutCreateInfo pipeline_layout_ci({}, *ds_layout);
-    vk::raii::PipelineLayout pipeline_layout = device_.createPipelineLayout(pipeline_layout_ci);
-
-    vk::PipelineShaderStageCreateInfo stage_ci({}, vk::ShaderStageFlagBits::eCompute, shader_module, "main");
-    vk::ComputePipelineCreateInfo pipeline_ci({}, stage_ci, pipeline_layout);
-    vk::raii::Pipeline pipeline = device_.createComputePipeline(nullptr, pipeline_ci);
+    ComputeIOTest state(physical_device_, device_, kCrashComputeComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
 
     vk::CommandBufferBeginInfo begin_info;
     cmd_buff_.begin(begin_info);
-    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, pipeline);
-    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipeline_layout, 0, *descriptor_set, {});
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
     cmd_buff_.dispatch(1, 1, 1);
     cmd_buff_.end();
 
     // this is invalid and will likely cause a VK_DEVICE_LOST
-    in.buffer.clear();
-    in.memory.clear();
-    out.buffer.clear();
-    out.memory.clear();
+    state.input.buffer.clear();
+    state.input.memory.clear();
+    state.output.buffer.clear();
+    state.output.memory.clear();
 
     vk::SubmitInfo submit_info({}, {}, *cmd_buff_, {});
 
@@ -173,70 +122,15 @@ TEST_F(GpuCrash, InfiniteLoop) {
     InitInstance();
     InitDevice();
 
-    vk::raii::ShaderModule shader_module = CreateShaderModuleGLSL(kInfiniteLoopComp, vk::ShaderStageFlagBits::eCompute);
-
-    constexpr size_t kNumElems = 256;
-    constexpr VkDeviceSize kBuffSize = kNumElems * sizeof(float);
-
-    BoundBuffer in = AllocateMemory(kBuffSize, "in",
-                                    vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc);
-    in.set(uint32_t(65535), kNumElems);
-
-    BoundBuffer out = AllocateMemory(kBuffSize, "out",
-                                     vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst);
-    out.set(0.0f, kNumElems);
-
-    vk::DescriptorPoolSize pool_size(vk::DescriptorType::eStorageBuffer, 2);
-    vk::DescriptorPoolCreateInfo pool_ci(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 2, pool_size);
-
-    vk::raii::DescriptorPool pool = device_.createDescriptorPool(pool_ci);
-
-    std::array<vk::DescriptorSetLayoutBinding, 2> bindings = {
-        vk::DescriptorSetLayoutBinding(0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute,
-                                       nullptr),
-        vk::DescriptorSetLayoutBinding(1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute,
-                                       nullptr),
-    };
-
-    vk::DescriptorSetLayoutCreateInfo ds_layout_ci({}, bindings);
-    vk::raii::DescriptorSetLayout ds_layout = device_.createDescriptorSetLayout(ds_layout_ci);
-
-    vk::DescriptorSetAllocateInfo set_alloc_info(pool, *ds_layout);
-    vk::raii::DescriptorSet descriptor_set = std::move(device_.allocateDescriptorSets(set_alloc_info).front());
-
-    std::array<vk::DescriptorBufferInfo, 2> buffer_infos;
-    buffer_infos[0].buffer = in.buffer;
-    buffer_infos[0].offset = 0;
-    buffer_infos[0].range = vk::WholeSize;
-    buffer_infos[1].buffer = out.buffer;
-    buffer_infos[1].offset = 0;
-    buffer_infos[1].range = vk::WholeSize;
-
-    std::array<vk::WriteDescriptorSet, 2> writes;
-    writes[0].dstSet = descriptor_set;
-    writes[0].dstBinding = 0;
-    writes[0].descriptorCount = 1;
-    writes[0].descriptorType = vk::DescriptorType::eStorageBuffer;
-    writes[0].pBufferInfo = &buffer_infos[0];
-    writes[1].dstSet = descriptor_set;
-    writes[1].dstBinding = 1;
-    writes[1].descriptorCount = 1;
-    writes[1].descriptorType = vk::DescriptorType::eStorageBuffer;
-    writes[1].pBufferInfo = &buffer_infos[1];
-
-    device_.updateDescriptorSets(writes, {});
-
-    vk::PipelineLayoutCreateInfo pipeline_layout_ci({}, *ds_layout);
-    vk::raii::PipelineLayout pipeline_layout = device_.createPipelineLayout(pipeline_layout_ci);
-
-    vk::PipelineShaderStageCreateInfo stage_ci({}, vk::ShaderStageFlagBits::eCompute, shader_module, "main");
-    vk::ComputePipelineCreateInfo pipeline_ci({}, stage_ci, pipeline_layout);
-    vk::raii::Pipeline pipeline = device_.createComputePipeline(nullptr, pipeline_ci);
+    ComputeIOTest state(physical_device_, device_, kInfiniteLoopComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
 
     vk::CommandBufferBeginInfo begin_info;
     cmd_buff_.begin(begin_info);
-    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, pipeline);
-    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipeline_layout, 0, *descriptor_set, {});
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
     cmd_buff_.dispatch(1, 1, 1);
     cmd_buff_.end();
 
@@ -261,73 +155,18 @@ TEST_F(GpuCrash, HangHostEvent) {
     InitInstance();
     InitDevice();
 
-    vk::raii::ShaderModule shader_module = CreateShaderModuleGLSL(kReadWriteComp, vk::ShaderStageFlagBits::eCompute);
-
-    constexpr size_t kNumElems = 256;
-    constexpr VkDeviceSize kBuffSize = kNumElems * sizeof(float);
-
-    BoundBuffer in = AllocateMemory(kBuffSize, "in",
-                                    vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc);
-    in.set(uint32_t(65535), kNumElems);
-
-    BoundBuffer out = AllocateMemory(kBuffSize, "out",
-                                     vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst);
-    out.set(0.0f, kNumElems);
-
-    vk::DescriptorPoolSize pool_size(vk::DescriptorType::eStorageBuffer, 2);
-    vk::DescriptorPoolCreateInfo pool_ci(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 2, pool_size);
-
-    vk::raii::DescriptorPool pool = device_.createDescriptorPool(pool_ci);
-
-    std::array<vk::DescriptorSetLayoutBinding, 2> bindings = {
-        vk::DescriptorSetLayoutBinding(0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute,
-                                       nullptr),
-        vk::DescriptorSetLayoutBinding(1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute,
-                                       nullptr),
-    };
-
-    vk::DescriptorSetLayoutCreateInfo ds_layout_ci({}, bindings);
-    vk::raii::DescriptorSetLayout ds_layout = device_.createDescriptorSetLayout(ds_layout_ci);
-
-    vk::DescriptorSetAllocateInfo set_alloc_info(pool, *ds_layout);
-    vk::raii::DescriptorSet descriptor_set = std::move(device_.allocateDescriptorSets(set_alloc_info).front());
-
-    std::array<vk::DescriptorBufferInfo, 2> buffer_infos;
-    buffer_infos[0].buffer = in.buffer;
-    buffer_infos[0].offset = 0;
-    buffer_infos[0].range = vk::WholeSize;
-    buffer_infos[1].buffer = out.buffer;
-    buffer_infos[1].offset = 0;
-    buffer_infos[1].range = vk::WholeSize;
-
-    std::array<vk::WriteDescriptorSet, 2> writes;
-    writes[0].dstSet = descriptor_set;
-    writes[0].dstBinding = 0;
-    writes[0].descriptorCount = 1;
-    writes[0].descriptorType = vk::DescriptorType::eStorageBuffer;
-    writes[0].pBufferInfo = &buffer_infos[0];
-    writes[1].dstSet = descriptor_set;
-    writes[1].dstBinding = 1;
-    writes[1].descriptorCount = 1;
-    writes[1].descriptorType = vk::DescriptorType::eStorageBuffer;
-    writes[1].pBufferInfo = &buffer_infos[1];
-
-    device_.updateDescriptorSets(writes, {});
-
-    vk::PipelineLayoutCreateInfo pipeline_layout_ci({}, *ds_layout);
-    vk::raii::PipelineLayout pipeline_layout = device_.createPipelineLayout(pipeline_layout_ci);
-
-    vk::PipelineShaderStageCreateInfo stage_ci({}, vk::ShaderStageFlagBits::eCompute, shader_module, "main");
-    vk::ComputePipelineCreateInfo pipeline_ci({}, stage_ci, pipeline_layout);
-    vk::raii::Pipeline pipeline = device_.createComputePipeline(nullptr, pipeline_ci);
+    ComputeIOTest state(physical_device_, device_, kInfiniteLoopComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
 
     vk::raii::Event event = device_.createEvent(vk::EventCreateInfo());
-    SetObjectName(event, "never-signalled-event");
+    SetObjectName(device_, event, "never-signalled-event");
 
     vk::CommandBufferBeginInfo begin_info;
     cmd_buff_.begin(begin_info);
-    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, pipeline);
-    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipeline_layout, 0, *descriptor_set, {});
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
 
     cmd_buff_.waitEvents(*event, vk::PipelineStageFlagBits::eHost, vk::PipelineStageFlagBits::eBottomOfPipe, {}, {},
                          {});
@@ -362,33 +201,27 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
 
     InitDevice({}, &features2);
 
-    vk::raii::ShaderModule shader_module =
-        CreateShaderModuleGLSL(kReadBeforePointerPushConstant, vk::ShaderStageFlagBits::eCompute);
-
     constexpr size_t kNumElems = 256;
     constexpr VkDeviceSize kBuffSize = kNumElems * sizeof(float);
-
-    BoundBuffer bda = AllocateMemory(
-        kBuffSize, "bda", vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eShaderDeviceAddress,
-        vk::MemoryAllocateFlagBits::eDeviceAddress);
-    bda.set(1.0f, kNumElems);
+    BoundBuffer bda(physical_device_, device_, kBuffSize, "bda",
+                    vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eShaderDeviceAddress,
+                    vk::MemoryAllocateFlagBits::eDeviceAddress);
+    bda.Set(1.0f, kNumElems);
 
     vk::DeviceAddress addr = device_.getBufferAddress(vk::BufferDeviceAddressInfo(*bda.buffer));
 
     std::array<const vk::DeviceAddress, 2> push_constants{addr, 2};
 
-    vk::PushConstantRange push_range(vk::ShaderStageFlagBits::eCompute, 0, sizeof(push_constants));
-    vk::PipelineLayoutCreateInfo pipeline_layout_ci({}, {}, push_range);
-    vk::raii::PipelineLayout pipeline_layout = device_.createPipelineLayout(pipeline_layout_ci);
+    std::vector<vk::PushConstantRange> push_ranges;
+    push_ranges.emplace_back(vk::ShaderStageFlagBits::eCompute, 0, uint32_t(sizeof(push_constants)));
 
-    vk::PipelineShaderStageCreateInfo stage_ci({}, vk::ShaderStageFlagBits::eCompute, shader_module, "main");
-    vk::ComputePipelineCreateInfo pipeline_ci({}, stage_ci, pipeline_layout);
-    vk::raii::Pipeline pipeline = device_.createComputePipeline(nullptr, pipeline_ci);
+    ComputePipelineHelper pipeline(device_, kReadBeforePointerPushConstant, {}, push_ranges);
 
     vk::CommandBufferBeginInfo begin_info;
     cmd_buff_.begin(begin_info);
-    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, pipeline);
-    cmd_buff_.pushConstants<vk::DeviceAddress>(pipeline_layout, vk::ShaderStageFlagBits::eCompute, 0u, push_constants);
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, pipeline.Pipeline());
+    cmd_buff_.pushConstants<vk::DeviceAddress>(pipeline.PipelineLayout(), vk::ShaderStageFlagBits::eCompute, 0u,
+                                               push_constants);
     cmd_buff_.dispatch(1, 1, 1);
     cmd_buff_.end();
 

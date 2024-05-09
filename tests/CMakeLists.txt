@@ -21,6 +21,12 @@ else()
 endif()
 target_sources(cdl_tests PRIVATE
     framework/cdl_tests.cpp
+    framework/bound_buffer.h
+    framework/bound_buffer.cpp
+    framework/compute_pipeline.h
+    framework/compute_pipeline.cpp
+    framework/descriptorset_helper.h
+    framework/descriptorset_helper.cpp
     framework/dump_file.h
     framework/dump_file.cpp
     framework/error_monitor.h
