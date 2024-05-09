@@ -151,6 +151,40 @@ TEST_F(GpuCrash, InfiniteLoop) {
     dump::Parse(dump_file, output_path_);
 }
 
+TEST_F(GpuCrash, InfiniteLoopSubmit2) {
+    InitInstance();
+    InitDevice();
+
+    ComputeIOTest state(physical_device_, device_, kInfiniteLoopComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
+
+    vk::CommandBufferBeginInfo begin_info;
+    cmd_buff_.begin(begin_info);
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
+    cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.end();
+
+    vk::CommandBufferSubmitInfo cb_info(*cmd_buff_);
+    vk::SubmitInfo2 submit_info({}, {}, cb_info, {});
+
+    bool hang_detected = false;
+    monitor_.SetDesiredError("Device error encountered and log being recorded");
+    try {
+        compute_queue_.submit2(submit_info);
+        compute_queue_.waitIdle();
+    } catch (vk::DeviceLostError &err) {
+        hang_detected = true;
+    }
+    monitor_.VerifyFound();
+    ASSERT_TRUE(hang_detected);
+
+    dump::File dump_file;
+    dump::Parse(dump_file, output_path_);
+}
+
 TEST_F(GpuCrash, HangHostEvent) {
     InitInstance();
     InitDevice();
