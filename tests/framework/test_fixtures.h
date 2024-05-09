@@ -24,20 +24,6 @@
 #include "error_monitor.h"
 #include "layer_settings.h"
 
-struct BoundBuffer {
-    vk::raii::Buffer buffer;
-    vk::raii::DeviceMemory memory;
-
-    template <typename T>
-    void set(const T& value, size_t num_elements) {
-        T* mem = reinterpret_cast<T*>(memory.mapMemory(0, vk::WholeSize));
-        for (size_t i = 0; i < num_elements; i++) {
-            mem[i] = value;
-        }
-        memory.unmapMemory();
-    }
-};
-
 static const char* kTestOutputBaseDir = "cdl_test_output";
 
 class CDLTestBase : public ::testing::Test {
@@ -46,25 +32,6 @@ class CDLTestBase : public ::testing::Test {
     ~CDLTestBase() {}
     void InitInstance();
     void InitDevice(std::vector<const char*> extensions = {}, const vk::PhysicalDeviceFeatures2* features2 = nullptr);
-
-    template <typename T>
-    void SetObjectName(T& object, const std::string& name) {
-        vk::DebugUtilsObjectNameInfoEXT info(T::objectType, reinterpret_cast<uint64_t>(typename T::CType(*object)),
-                                             name.c_str());
-        device_.setDebugUtilsObjectNameEXT(info);
-    }
-    static constexpr vk::MemoryPropertyFlags kMemoryFlags =
-        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent;
-    static constexpr vk::MemoryPropertyFlags kMemoryForbid = vk::MemoryPropertyFlagBits::eProtected;
-
-    uint32_t FindMemoryType(const vk::MemoryRequirements& reqs, vk::MemoryPropertyFlags flags,
-                            vk::MemoryPropertyFlags forbid);
-
-    BoundBuffer AllocateMemory(vk::DeviceSize size, const std::string& name, vk::BufferUsageFlags usage,
-                               vk::MemoryAllocateFlags alloc_flags = {}, vk::MemoryPropertyFlags flags = kMemoryFlags,
-                               vk::MemoryPropertyFlags forbid = kMemoryForbid);
-
-    vk::raii::ShaderModule CreateShaderModuleGLSL(const char* src, vk::ShaderStageFlagBits stage);
 
     vk::raii::Context context_;
     ErrorMonitor monitor_;
@@ -82,3 +49,12 @@ class CDLTestBase : public ::testing::Test {
     vk::raii::CommandPool cmd_pool_;
     vk::raii::CommandBuffer cmd_buff_;
 };
+
+template <typename T>
+void SetObjectName(vk::raii::Device& device, T& object, const std::string& name) {
+    vk::DebugUtilsObjectNameInfoEXT info(T::objectType, reinterpret_cast<uint64_t>(typename T::CType(*object)),
+                                         name.c_str());
+    device.setDebugUtilsObjectNameEXT(info);
+}
+
+vk::raii::ShaderModule CreateShaderModuleGLSL(vk::raii::Device& device, const char* src, vk::ShaderStageFlagBits stage);

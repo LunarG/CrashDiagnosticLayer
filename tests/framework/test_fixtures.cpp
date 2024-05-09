@@ -86,45 +86,6 @@ void CDLTestBase::InitDevice(std::vector<const char*> extensions, const vk::Phys
     cmd_buff_ = std::move(vk::raii::CommandBuffers(device_, cmd_alloc_info).front());
 }
 
-uint32_t CDLTestBase::FindMemoryType(const vk::MemoryRequirements& reqs, vk::MemoryPropertyFlags flags,
-                                     vk::MemoryPropertyFlags forbid) {
-    auto props = physical_device_.getMemoryProperties();
-    uint32_t type_mask = reqs.memoryTypeBits;
-    for (uint32_t i = 0; i < props.memoryTypeCount; i++) {
-        if (type_mask & 1) {
-            const auto& type = props.memoryTypes[i];
-            if (((type.propertyFlags & flags) == flags) &&
-                ((type.propertyFlags & forbid) == vk::MemoryPropertyFlags()) &&
-                (props.memoryHeaps[type.heapIndex].size >= reqs.size)) {
-                return i;
-            }
-        }
-    }
-    assert(false);
-    return ~0;
-}
-
-BoundBuffer CDLTestBase::AllocateMemory(vk::DeviceSize size, const std::string& name, vk::BufferUsageFlags usage,
-                                        vk::MemoryAllocateFlags alloc_flags, vk::MemoryPropertyFlags flags,
-                                        vk::MemoryPropertyFlags forbid) {
-    vk::BufferCreateInfo ci({}, size, usage, vk::SharingMode::eExclusive);
-    vk::raii::Buffer buff = device_.createBuffer(ci);
-    SetObjectName(buff, name + "_buffer");
-
-    auto mem_props = physical_device_.getMemoryProperties();
-    auto reqs = buff.getMemoryRequirements();
-
-    vk::MemoryAllocateFlagsInfo flags_info(alloc_flags);
-    vk::MemoryAllocateInfo alloc_info(reqs.size, FindMemoryType(reqs, flags, forbid), &flags_info);
-
-    vk::raii::DeviceMemory mem = device_.allocateMemory(alloc_info);
-    SetObjectName(mem, name + "_memory");
-
-    buff.bindMemory(mem, 0);
-
-    return BoundBuffer{std::move(buff), std::move(mem)};
-}
-
 static EShLanguage FindLanguage(vk::ShaderStageFlagBits shader_type) {
     switch (shader_type) {
         case vk::ShaderStageFlagBits::eVertex:
@@ -199,11 +160,12 @@ static bool GLSLtoSPV(const char* source, vk::ShaderStageFlagBits shader_type, s
     return true;
 }
 
-vk::raii::ShaderModule CDLTestBase::CreateShaderModuleGLSL(const char* src, vk::ShaderStageFlagBits stage) {
+vk::raii::ShaderModule CreateShaderModuleGLSL(vk::raii::Device& device, const char* src,
+                                              vk::ShaderStageFlagBits stage) {
     std::vector<uint32_t> spirv;
     if (!GLSLtoSPV(src, stage, spirv)) {
         return vk::raii::ShaderModule(VK_NULL_HANDLE);
     }
     vk::ShaderModuleCreateInfo ci({}, spirv);
-    return device_.createShaderModule(ci);
+    return device.createShaderModule(ci);
 }
