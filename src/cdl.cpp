@@ -346,14 +346,14 @@ Context::ConstDevicePtr Context::GetQueueDevice(VkQueue queue) const {
 void Context::StartWatchdogTimer() {
     // Start up the watchdog timer thread.
     watchdog_running_ = true;
-    watchdog_thread_ = std::make_unique<std::thread>([&]() { this->WatchdogTimer(); });
+    watchdog_thread_ = std::thread([&]() { this->WatchdogTimer(); });
 }
 
 void Context::StopWatchdogTimer() {
-    if (watchdog_running_ && watchdog_thread_->joinable()) {
+    if (watchdog_running_ && watchdog_thread_.joinable()) {
         Log().Info("Stopping Watchdog");
         watchdog_running_ = false;  // TODO: condition variable that waits
-        watchdog_thread_->join();
+        watchdog_thread_.join();
         Log().Info("Watchdog Stopped");
     }
 }

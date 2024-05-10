@@ -365,7 +365,7 @@ class Context : public Interceptor {
     std::vector<std::pair<std::string, std::string>> configs_;
 
     // Watchdog
-    std::unique_ptr<std::thread> watchdog_thread_;
+    std::thread watchdog_thread_;
     std::atomic<bool> watchdog_running_;
     std::atomic<long long> last_submit_time_;
     uint64_t watchdog_timer_ms_ = 0;
