@@ -26456,6 +26456,40 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExtendedSpars
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "legacyVertexAttributes";
+    // legacyVertexAttributes -> Field -> VkBool32
+    os << YAML::Value << t.legacyVertexAttributes;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "nativeUnalignedPerformance";
+    // nativeUnalignedPerformance -> Field -> VkBool32
+    os << YAML::Value << t.nativeUnalignedPerformance;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "pLayerName";
@@ -30894,6 +30928,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_SPARSE_ADDRESS_SPACE_PROPERTIES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceExtendedSparseAddressSpacePropertiesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkLayerSettingsCreateInfoEXT *>(pStruct);
