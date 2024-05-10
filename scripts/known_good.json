@@ -7,7 +7,7 @@
             "sub_dir": "Vulkan-Headers",
             "build_dir": "Vulkan-Headers/build",
             "install_dir": "Vulkan-Headers/build/install",
-            "commit": "v1.3.283"
+            "commit": "v1.3.284"
         },
         {
             "name": "Vulkan-Utility-Libraries",
@@ -15,7 +15,7 @@
             "sub_dir": "Vulkan-Utility-Libraries",
             "build_dir": "Vulkan-Utility-Libraries/build",
             "install_dir": "Vulkan-Utility-Libraries/build/install",
-            "commit": "v1.3.283",
+            "commit": "v1.3.284",
             "deps": [
                 {
                     "var_name": "VULKAN_HEADERS_INSTALL_DIR",
@@ -29,7 +29,7 @@
             "sub_dir": "SPIRV-Headers",
             "build_dir": "SPIRV-Headers/build",
             "install_dir": "SPIRV-Headers/build/install",
-            "commit": "5e3ad389ee56fca27c9705d093ae5387ce404df4"
+            "commit": "49a1fceb9b1d087f3c25ad5ec077bb0e46231297"
         },
         {
             "name": "yaml-cpp",
@@ -61,7 +61,7 @@
             "sub_dir": "glslang",
             "build_dir": "glslang/build",
             "install_dir": "glslang/build/install",
-            "commit": "68df2230566b02c6495ffd8c200db523392fa797",
+            "commit": "effcbf7893a177b756bc80bf74009a950c3073a1",
             "cmake_options": [
                 "-DENABLE_OPT=OFF"
             ],

@@ -3282,6 +3282,14 @@ VkPhysicalDeviceExtendedSparseAddressSpacePropertiesNV*
 CommandRecorder::CopyArray<VkPhysicalDeviceExtendedSparseAddressSpacePropertiesNV>(
     const VkPhysicalDeviceExtendedSparseAddressSpacePropertiesNV* src, uint64_t start_index, uint64_t count);
 template <>
+VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT*
+CommandRecorder::CopyArray<VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT>(
+    const VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT* src, uint64_t start_index, uint64_t count);
+template <>
+VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT*
+CommandRecorder::CopyArray<VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT>(
+    const VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT* src, uint64_t start_index, uint64_t count);
+template <>
 VkLayerSettingEXT* CommandRecorder::CopyArray<VkLayerSettingEXT>(const VkLayerSettingEXT* src, uint64_t start_index,
                                                                  uint64_t count);
 template <>
@@ -19406,6 +19414,34 @@ CommandRecorder::CopyArray<VkPhysicalDeviceExtendedSparseAddressSpacePropertiesN
         ptr[i].extendedSparseAddressSpaceSize = src[start_index + i].extendedSparseAddressSpaceSize;
         ptr[i].extendedSparseImageUsageFlags = src[start_index + i].extendedSparseImageUsageFlags;
         ptr[i].extendedSparseBufferUsageFlags = src[start_index + i].extendedSparseBufferUsageFlags;
+    }
+    return ptr;
+}
+
+template <>
+VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT*
+CommandRecorder::CopyArray<VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT>(
+    const VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT* src, uint64_t start_index, uint64_t count) {
+    auto ptr = reinterpret_cast<VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT*>(
+        m_allocator.Alloc(sizeof(VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].legacyVertexAttributes = src[start_index + i].legacyVertexAttributes;
+    }
+    return ptr;
+}
+
+template <>
+VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT*
+CommandRecorder::CopyArray<VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT>(
+    const VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT* src, uint64_t start_index, uint64_t count) {
+    auto ptr = reinterpret_cast<VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT*>(
+        m_allocator.Alloc(sizeof(VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].nativeUnalignedPerformance = src[start_index + i].nativeUnalignedPerformance;
     }
     return ptr;
 }

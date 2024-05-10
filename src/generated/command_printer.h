@@ -1315,6 +1315,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInv
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExtendedSparseAddressSpacePropertiesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingsCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderCoreBuiltinsFeaturesARM &t);
