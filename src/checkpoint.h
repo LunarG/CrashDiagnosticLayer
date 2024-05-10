@@ -44,6 +44,7 @@ class Checkpoint {
 
 class CheckpointMgr {
    public:
+    virtual ~CheckpointMgr() {}
     virtual std::unique_ptr<Checkpoint> Allocate(uint32_t initial_value) = 0;
     virtual void Free(Checkpoint &) = 0;
     virtual void WriteTop(Checkpoint &, VkCommandBuffer cmd, uint32_t value) = 0;
