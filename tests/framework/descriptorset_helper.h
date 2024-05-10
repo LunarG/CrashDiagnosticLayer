@@ -22,7 +22,7 @@ class DescriptorSetHelper {
     typedef std::vector<vk::DescriptorSetLayoutBinding> Bindings;
     DescriptorSetHelper(vk::raii::Device &device, const Bindings &bindings,
                         vk::DescriptorSetLayoutCreateFlags layout_flags = {}, void *layout_pnext = nullptr,
-                        vk::DescriptorPoolCreateFlags poolFlags = {}, void *allocate_pnext = nullptr,
+                        vk::DescriptorPoolCreateFlags poolFlags = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, void *allocate_pnext = nullptr,
                         void *create_pool_pnext = nullptr);
 
     vk::DescriptorSet Set() { return *set_; }

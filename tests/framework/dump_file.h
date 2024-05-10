@@ -19,6 +19,7 @@
 
 #include <filesystem>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -49,6 +50,7 @@ struct SemaphoreInfo {
 
 struct SubmitInfo {
     uint32_t id{0};
+    uint64_t seq{0};
     std::string state;
     std::vector<std::string> CommandBuffers;
     std::vector<SemaphoreInfo> SignalSemaphores;
@@ -57,9 +59,11 @@ struct SubmitInfo {
 
 struct Submit {
     uint32_t id{0};
-    std::vector<SubmitInfo> SubmitInfos;
-    // TODO sparse infos?
+    std::string type;
     std::string fence;
+    uint64_t startSeq{0};
+    uint64_t endSeq{0};
+    std::vector<SubmitInfo> SubmitInfos;
 };
 
 struct Queue {
@@ -67,6 +71,8 @@ struct Queue {
     uint32_t qfi{0};
     uint32_t index{0};
     uint32_t flags{0};
+    uint64_t completedSeq{0};
+    uint64_t submittedSeq{0};
 
     std::vector<Submit> submits;
 };
@@ -86,7 +92,7 @@ struct CommandBuffer {
     Handle commandPool;
     Handle queue;
     Handle fence;
-    uint32_t submit_info_id{0};
+    uint64_t queueSeq{0};
     std::string level;
     bool simultaneousUse{false};
     uint32_t beginValue{0};
@@ -97,6 +103,35 @@ struct CommandBuffer {
     uint32_t lastCompletedCommand{0};
 
     std::vector<Command> commands;
+};
+
+struct WaitingThread {
+    uint64_t pid{0};
+    uint64_t tid{0};
+    std::string waitType;
+
+    std::vector<SemaphoreInfo> wait_semaphores;
+};
+
+struct AddressRecord {
+    uint64_t begin;
+    uint64_t end;
+    std::string type;
+    Handle handle;
+    bool currentlyBound;
+};
+
+struct FaultAddressRange {
+    std::string type;
+    uint64_t begin;
+    uint64_t end;
+    std::optional<AddressRecord> prior;
+    std::optional<AddressRecord> next;
+};
+
+struct DeviceFaultInfo {
+    std::string description;
+    std::vector<FaultAddressRange> fault_address_ranges;
 };
 
 struct Device {
@@ -112,6 +147,9 @@ struct Device {
     std::vector<Queue> queues;
     std::vector<CommandBuffer> incomplete_cbs;
     std::vector<CommandBuffer> all_cbs;
+    std::vector<WaitingThread> waiting_threads;
+
+    std::optional<DeviceFaultInfo> fault_info;
 };
 
 struct File {

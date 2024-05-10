@@ -42,6 +42,8 @@ CDLTestBase::CDLTestBase()
 
     // Turn off the default logger
     layer_settings_.SetLogFile("none");
+    layer_settings_.SetDumpShaders("off");
+    layer_settings_.SetMessageSeverity("error, warn");
 }
 
 void CDLTestBase::InitInstance() {
@@ -55,7 +57,7 @@ void CDLTestBase::InitInstance() {
 
     instance_ = vk::raii::Instance(context_, ci);
 
-    physical_device_ = vk::raii::PhysicalDevices(instance_).back();
+    physical_device_ = vk::raii::PhysicalDevices(instance_).front();
 }
 
 void CDLTestBase::InitDevice(std::vector<const char*> extensions, const vk::PhysicalDeviceFeatures2* features2) {

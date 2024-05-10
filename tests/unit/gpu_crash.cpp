@@ -69,7 +69,7 @@ TEST_F(GpuCrash, CopyCrash) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-    } catch (vk::DeviceLostError &err) {
+    } catch (vk::SystemError &err) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -108,7 +108,7 @@ TEST_F(GpuCrash, ShaderCrash) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-    } catch (vk::DeviceLostError &err) {
+    } catch (vk::SystemError &err) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -119,6 +119,8 @@ TEST_F(GpuCrash, ShaderCrash) {
 }
 
 TEST_F(GpuCrash, InfiniteLoop) {
+    layer_settings_.SetLogFile("stderr");
+    layer_settings_.SetMessageSeverity("error, warn, info, verbose");
     InitInstance();
     InitDevice();
 
@@ -141,7 +143,7 @@ TEST_F(GpuCrash, InfiniteLoop) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-    } catch (vk::DeviceLostError &err) {
+    } catch (vk::SystemError &err) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -175,7 +177,7 @@ TEST_F(GpuCrash, InfiniteLoopSubmit2) {
     try {
         compute_queue_.submit2(submit_info);
         compute_queue_.waitIdle();
-    } catch (vk::DeviceLostError &err) {
+    } catch (vk::SystemError &err) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -213,7 +215,7 @@ TEST_F(GpuCrash, HangHostEvent) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-    } catch (vk::DeviceLostError &err) {
+    } catch (vk::SystemError &err) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -269,7 +271,7 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     try {
         compute_queue_.submit(submit_info);
         compute_queue_.waitIdle();
-    } catch (vk::DeviceLostError &err) {
+    } catch (vk::SystemError &err) {
         hang_detected = true;
     }
     monitor_.VerifyFound();

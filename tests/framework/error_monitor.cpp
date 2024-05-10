@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 #include "error_monitor.h"
-#include <gtest/gtest.h>
+#include "test_fixtures.h"
 
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 // Note. VK_EXT_debug_report is deprecated by the VK_EXT_debug_utils extension.
