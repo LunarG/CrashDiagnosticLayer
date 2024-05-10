@@ -17,10 +17,17 @@
  */
 #pragma once
 
-#include <gtest/gtest.h>
 #include <vulkan/vulkan_raii.hpp>
 #include <filesystem>
 
+// Prevent conflicts between X.h and gtest
+#ifdef None
+#undef None
+#endif
+#ifdef Bool
+#undef Bool
+#endif
+#include <gtest/gtest.h>
 #include "error_monitor.h"
 #include "layer_settings.h"
 

@@ -49,7 +49,7 @@ class LayerSettings {
     vk::Bool32 trace_all_semaphores{false};
 
     // hang detection section
-    uint32_t watchdog_timeout_ms{20000};
+    uint64_t watchdog_timeout_ms{20000};
 
    private:
     // these member names must match the setting name exactly.

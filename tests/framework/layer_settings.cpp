@@ -25,8 +25,8 @@
 #define MakeBoolSetting(_name) \
     vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eBool32, 1, &_name)
 
-#define MakeUint32Setting(_name) \
-    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eUint32, 1, &_name)
+#define MakeUint64Setting(_name) \
+    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eUint64, 1, &_name)
 
 LayerSettings::LayerSettings(const void* pnext)
     : settings_{
@@ -44,7 +44,7 @@ LayerSettings::LayerSettings(const void* pnext)
 
         MakeStringSetting(dump_shaders),
 
-        MakeUint32Setting(watchdog_timeout_ms),
+        MakeUint64Setting(watchdog_timeout_ms),
     },
     create_info_(settings_, pnext) {
     SetOutputPath("");

@@ -22,8 +22,8 @@
 
 namespace dump {
 
-static void ParseSettings(std::map<std::string, std::string>& settings, const YAML::Node& settings_node) {
-    for (const auto& node : settings_node) {
+static void ParseSettings(std::map<std::string, std::string>& settings, const YAML::Node& in_node) {
+    for (const auto& node : in_node) {
         std::string k = node.first.as<std::string>();
         std::string v = node.second.as<std::string>();
         // there shouldn't be duplicate settings keys
@@ -32,8 +32,8 @@ static void ParseSettings(std::map<std::string, std::string>& settings, const YA
     }
 }
 
-static void ParseAppInfo(Instance& instance, const YAML::Node& app_info_node) {
-    for (const auto& node : app_info_node) {
+static void ParseAppInfo(Instance& instance, const YAML::Node& in_node) {
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "application") {
             instance.application = node.second.as<std::string>();
@@ -64,10 +64,10 @@ static void ParseHandle(Handle& handle, const YAML::Node& node) {
     }
 }
 
-static void ParseInstance(Instance& instance, const YAML::Node& instance_node) {
-    ASSERT_TRUE(instance_node);
-    ASSERT_TRUE(instance_node.IsMap());
-    for (const auto& node : instance_node) {
+static void ParseInstance(Instance& instance, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "handle") {
             ParseHandle(instance.handle, node.second);
@@ -85,10 +85,10 @@ static void ParseInstance(Instance& instance, const YAML::Node& instance_node) {
     }
 }
 
-static void ParseSemaphoreInfo(SemaphoreInfo& info, const YAML::Node& sem_node) {
-    ASSERT_TRUE(sem_node);
-    ASSERT_TRUE(sem_node.IsMap());
-    for (const auto& node : sem_node) {
+static void ParseSemaphoreInfo(SemaphoreInfo& info, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "handle") {
             ParseHandle(info.handle, node.second);
@@ -104,15 +104,17 @@ static void ParseSemaphoreInfo(SemaphoreInfo& info, const YAML::Node& sem_node) 
     }
 }
 
-static void ParseSubmitInfo(SubmitInfo& info, const YAML::Node& info_node) {
-    ASSERT_TRUE(info_node);
-    ASSERT_TRUE(info_node.IsMap());
-    for (const auto& node : info_node) {
+static void ParseSubmitInfo(SubmitInfo& info, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "id") {
             info.id = node.second.as<uint64_t>();
         } else if (key == "state") {
             info.state = node.second.as<std::string>();
+        } else if (key == "seq") {
+            info.seq = node.second.as<uint64_t>();
         } else if (key == "CommandBuffers") {
             ASSERT_TRUE(node.second.IsSequence());
             for (const auto& elem : node.second) {
@@ -122,14 +124,14 @@ static void ParseSubmitInfo(SubmitInfo& info, const YAML::Node& info_node) {
             ASSERT_TRUE(node.second.IsSequence());
             for (const auto& elem : node.second) {
                 SemaphoreInfo sem_info;
-                ParseSemaphoreInfo(sem_info, node.second);
+                ParseSemaphoreInfo(sem_info, elem);
                 info.SignalSemaphores.emplace_back(std::move(sem_info));
             }
         } else if (key == "WaitSemaphores") {
             ASSERT_TRUE(node.second.IsSequence());
             for (const auto& elem : node.second) {
                 SemaphoreInfo sem_info;
-                ParseSemaphoreInfo(sem_info, node.second);
+                ParseSemaphoreInfo(sem_info, elem);
                 info.WaitSemaphores.emplace_back(std::move(sem_info));
             }
         } else {
@@ -138,13 +140,19 @@ static void ParseSubmitInfo(SubmitInfo& info, const YAML::Node& info_node) {
     }
 }
 
-static void ParseSubmit(Submit& submit, const YAML::Node& submit_node) {
-    ASSERT_TRUE(submit_node);
-    ASSERT_TRUE(submit_node.IsMap());
-    for (const auto& node : submit_node) {
+static void ParseSubmit(Submit& submit, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "id") {
             submit.id = node.second.as<uint32_t>();
+        } else if (key == "startSeq") {
+            submit.startSeq = node.second.as<uint64_t>();
+        } else if (key == "endSeq") {
+            submit.endSeq = node.second.as<uint64_t>();
+        } else if (key == "type") {
+            submit.type = node.second.as<std::string>();
         } else if (key == "SubmitInfos") {
             ASSERT_TRUE(node.second.IsSequence());
             for (const auto& elem : node.second) {
@@ -158,10 +166,10 @@ static void ParseSubmit(Submit& submit, const YAML::Node& submit_node) {
     }
 }
 
-static void ParseQueue(Queue& queue, const YAML::Node& queue_node) {
-    ASSERT_TRUE(queue_node);
-    ASSERT_TRUE(queue_node.IsMap());
-    for (const auto& node : queue_node) {
+static void ParseQueue(Queue& queue, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "handle") {
             ParseHandle(queue.handle, node.second);
@@ -171,6 +179,10 @@ static void ParseQueue(Queue& queue, const YAML::Node& queue_node) {
             queue.index = node.second.as<uint32_t>();
         } else if (key == "flags") {
             // TODO
+        } else if (key == "completedSeq") {
+            queue.completedSeq = node.second.as<uint64_t>();
+        } else if (key == "submittedSeq") {
+            queue.submittedSeq = node.second.as<uint64_t>();
         } else if (key == "IncompleteSubmits") {
             ASSERT_TRUE(node.second.IsSequence());
             for (const auto& elem : node.second) {
@@ -185,10 +197,10 @@ static void ParseQueue(Queue& queue, const YAML::Node& queue_node) {
     }
 }
 
-static void ParseCommand(Command& cmd, const YAML::Node& cmd_node) {
-    ASSERT_TRUE(cmd_node);
-    ASSERT_TRUE(cmd_node.IsMap());
-    for (const auto& node : cmd_node) {
+static void ParseCommand(Command& cmd, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "id") {
             cmd.id = node.second.as<uint32_t>();
@@ -210,10 +222,10 @@ static void ParseCommand(Command& cmd, const YAML::Node& cmd_node) {
     }
 }
 
-static void ParseCommandBuffer(CommandBuffer& cb, const YAML::Node& cb_node) {
-    ASSERT_TRUE(cb_node);
-    ASSERT_TRUE(cb_node.IsMap());
-    for (const auto& node : cb_node) {
+static void ParseCommandBuffer(CommandBuffer& cb, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "state") {
             cb.state = node.second.as<std::string>();
@@ -225,8 +237,8 @@ static void ParseCommandBuffer(CommandBuffer& cb, const YAML::Node& cb_node) {
             ParseHandle(cb.queue, node.second);
         } else if (key == "fence") {
             ParseHandle(cb.fence, node.second);
-        } else if (key == "submitInfoId") {
-            cb.submit_info_id = node.second.as<uint64_t>();
+        } else if (key == "queueSeq") {
+            cb.queueSeq = node.second.as<uint64_t>();
         } else if (key == "level") {
             cb.level = node.second.as<std::string>();
         } else if (key == "simultaneousUse") {
@@ -256,10 +268,102 @@ static void ParseCommandBuffer(CommandBuffer& cb, const YAML::Node& cb_node) {
     }
 }
 
-static void ParseDevice(Device& device, const YAML::Node& device_node) {
-    ASSERT_TRUE(device_node);
-    ASSERT_TRUE(device_node.IsMap());
-    for (const auto& node : device_node) {
+static void ParseWaitingThread(WaitingThread& wt, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
+        std::string key = node.first.as<std::string>();
+        if (key == "PID") {
+            wt.pid = node.second.as<uint64_t>();
+        } else if (key == "TID") {
+            wt.tid = node.second.as<uint64_t>();
+        } else if (key == "waitType") {
+            wt.waitType = node.second.as<std::string>();
+        } else if (key == "WaitSemaphores") {
+            ASSERT_TRUE(node.second.IsSequence());
+            for (const auto& elem : node.second) {
+                SemaphoreInfo sem_info;
+                ParseSemaphoreInfo(sem_info, elem);
+                wt.wait_semaphores.emplace_back(std::move(sem_info));
+            }
+        } else {
+            FAIL() << "Unkown WaitingThread key: " << key;
+        }
+    }
+}
+
+static void ParseAddressRecord(AddressRecord& record, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
+        std::string key = node.first.as<std::string>();
+        if (key == "type") {
+            record.type = node.second.as<std::string>();
+        } else if (key == "handle") {
+            ParseHandle(record.handle, node.second);
+        } else if (key == "begin") {
+            record.begin = node.second.as<uint64_t>();
+        } else if (key == "end") {
+            record.end = node.second.as<uint64_t>();
+        } else if (key == "currentlyBound") {
+            record.currentlyBound = node.second.as<bool>();
+        } else {
+            FAIL() << "Unkown AddressRecord key: " << key;
+        }
+    }
+}
+
+static void ParseFaultAddressRange(FaultAddressRange& range, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
+        std::string key = node.first.as<std::string>();
+        if (key == "type") {
+            range.type = node.second.as<std::string>();
+        } else if (key == "begin") {
+            range.begin = node.second.as<uint64_t>();
+        } else if (key == "end") {
+            range.end = node.second.as<uint64_t>();
+        } else if (key == "priorAddressRecord") {
+            ASSERT_FALSE(range.prior.has_value());
+            AddressRecord rec;
+            ParseAddressRecord(rec, node.second);
+            range.prior = rec;
+        } else if (key == "nextAddressRecord") {
+            ASSERT_FALSE(range.next.has_value());
+            AddressRecord rec;
+            ParseAddressRecord(rec, node.second);
+            range.next = rec;
+        } else {
+            FAIL() << "Unkown FaultAddressRange key: " << key;
+        }
+    }
+}
+
+static void ParseDeviceFaultInfo(DeviceFaultInfo& fault, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
+        std::string key = node.first.as<std::string>();
+        if (key == "description") {
+            fault.description = node.second.as<std::string>();
+        } else if (key == "faultAddressRanges") {
+            ASSERT_TRUE(node.second.IsSequence());
+            for (const auto& elem : node.second) {
+                FaultAddressRange range;
+                ParseFaultAddressRange(range, elem);
+                fault.fault_address_ranges.emplace_back(std::move(range));
+            }
+        } else {
+            FAIL() << "Unkown DeviceFaultInfo key: " << key;
+        }
+    }
+}
+
+static void ParseDevice(Device& device, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "handle") {
             ParseHandle(device.handle, node.second);
@@ -294,11 +398,23 @@ static void ParseDevice(Device& device, const YAML::Node& device_node) {
                 ParseCommandBuffer(cb, elem);
                 device.all_cbs.emplace_back(std::move(cb));
             }
+        } else if (key == "WaitingThreads") {
+            ASSERT_TRUE(node.second.IsSequence());
+            for (const auto& elem : node.second) {
+                WaitingThread wt;
+                ParseWaitingThread(wt, elem);
+                device.waiting_threads.emplace_back(std::move(wt));
+            }
         } else if (key == "extensions") {
             ASSERT_TRUE(node.second.IsSequence());
             for (const auto& elem : node.second) {
                 device.extensions.push_back(elem.as<std::string>());
             }
+        } else if (key == "DeviceFaultInfo") {
+            ASSERT_FALSE(device.fault_info.has_value());
+            DeviceFaultInfo fault;
+            ParseDeviceFaultInfo(fault, node.second);
+            device.fault_info = fault;
         } else {
             FAIL() << "Unkown Device key: " << key;
         }
@@ -330,7 +446,7 @@ void Parse(File& dump_file, const std::filesystem::path& search_path) {
             dump_file.startTime = node.second.as<std::string>();
         } else if (key == "timeSinceStart") {
             dump_file.timeSinceStart = node.second.as<std::string>();
-        } else if (key == "settings") {
+        } else if (key == "Settings") {
             ParseSettings(dump_file.settings, node.second);
         } else if (key == "SystemInfo") {
             // TODO ParseSystemInfo(dump_file.systemInfo, node.second);
