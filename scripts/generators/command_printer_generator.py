@@ -135,14 +135,14 @@ class CommandPrinter {
 
             lengths = []
             lengths_names = []
-            if len(member.staticArray) > 1 or member.length.count(',') > 0:
+            if len(member.fixedSizeArray) > 1 or member.length.count(',') > 0:
                 lengths = member.length.split(',')
                 if len(lengths) > 1 and lengths[len(lengths) - 1] == '1':
                     lengths.pop()
             else:
                 lengths.append(member.length)
             # for truly static arrays these are equal
-            static_array = (lengths == member.staticArray)
+            static_array = (lengths == member.fixedSizeArray)
 
             array_type = ''
             if member.const:
