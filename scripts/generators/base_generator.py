@@ -1,8 +1,8 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023 Valve Corporation
-# Copyright (c) 2023 LunarG, Inc.
-# Copyright (c) 2023 RasterGrid Kft.
+# Copyright (c) 2023-2024 Valve Corporation
+# Copyright (c) 2023-2024 LunarG, Inc.
+# Copyright (c) 2023-2024 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pickle
 import os
-import sys
-import json
-
+import tempfile
 from generators.vulkan_object import (VulkanObject,
     Extension, Version, Handle, Param, Queues, CommandScope, Command,
     EnumField, Enum, Flag, Bitmask, Member, Struct,
@@ -34,16 +33,6 @@ from vkconventions import VulkanConventions
 
 # An API style convention object
 vulkanConventions = VulkanConventions()
-
-outputDirectory = '.'
-def SetOutputDirectory(directory):
-    global outputDirectory
-    outputDirectory = directory
-
-def SetTargetApiName(apiname):
-    global targetApiName
-    targetApiName = apiname
-
 
 # Helpers to keep things cleaner
 def splitIfGet(elem, name):
@@ -72,43 +61,66 @@ def getQueues(elem) -> Queues:
         queues |= Queues.ENCODE if 'encode' in queues_list else 0
     return queues
 
-#
-# Walk the JSON-derived dict and find all "vuid" key values
-def ExtractVUIDs(vuid_dict):
-    if hasattr(vuid_dict, 'items'):
-        for key, value in vuid_dict.items():
-            if key == "vuid":
-                yield value
-            elif isinstance(value, dict):
-                for vuid in ExtractVUIDs(value):
-                    yield vuid
-            elif isinstance (value, list):
-                for listValue in value:
-                    for vuid in ExtractVUIDs(listValue):
-                        yield vuid
-
 # Shared object used by Sync elements that don't have ones
 maxSyncSupport = SyncSupport(None, None, True)
 maxSyncEquivalent = SyncEquivalent(None, None, True)
 
-# This Generator Option is used across all Validation Layer generators
-# After years of use, it has shown that all the options are unified across each generator (file)
+# Helpers to set GeneratorOptions options globally
+def SetOutputFileName(fileName: str) -> None:
+    global globalFileName
+    globalFileName = fileName
+
+def SetOutputDirectory(directory: str) -> None:
+    global globalDirectory
+    globalDirectory = directory
+
+def SetTargetApiName(apiname: str) -> None:
+    global globalApiName
+    globalApiName = apiname
+
+def SetMergedApiNames(names: str) -> None:
+    global mergedApiNames
+    mergedApiNames = names
+
+cachingEnabled = False
+def EnableCaching() -> None:
+    global cachingEnabled
+    cachingEnabled = True
+
+# This class is a container for any source code, data, or other behavior that is necessary to
+# customize the generator script for a specific target API variant (e.g. Vulkan SC). As such,
+# all of these API-specific interfaces and their use in the generator script are part of the
+# contract between this repository and its downstream users. Changing or removing any of these
+# interfaces or their use in the generator script will have downstream effects and thus
+# should be avoided unless absolutely necessary.
+class APISpecific:
+    # Version object factory method
+    @staticmethod
+    def createApiVersion(targetApiName: str, name: str, number: str) -> Version:
+        match targetApiName:
+
+            # Vulkan specific API version creation
+            case 'vulkan':
+                nameApi = name.replace('VK_', 'VK_API_')
+                nameString = f'"{name}"'
+                return Version(name, nameString, nameApi, number)
+
+
+# This Generator Option is used across all generators.
+# After years of use, it has shown that most the options are unified across each generator (file)
 # as it is easier to modifiy things per-file that need the difference
 class BaseGeneratorOptions(GeneratorOptions):
     def __init__(self,
-                 filename: str = None,
-                 helper_file_type: str = None,
-                 valid_usage_path: str = None,
-                 lvt_file_type: str = None,
-                 mergeApiNames: str = None,
-                 grammar: str = None):
+                 customFileName = None,
+                 customDirectory = None,
+                 customApiName = None):
         GeneratorOptions.__init__(self,
                 conventions = vulkanConventions,
-                filename = filename,
-                directory = outputDirectory,
-                apiname = targetApiName,
-                mergeApiNames = mergeApiNames,
-                defaultExtensions = targetApiName,
+                filename = customFileName if customFileName else globalFileName,
+                directory = customDirectory if customDirectory else globalDirectory,
+                apiname = customApiName if customApiName else globalApiName,
+                mergeApiNames = mergedApiNames,
+                defaultExtensions = customApiName if customApiName else globalApiName,
                 emitExtensions = '.*',
                 emitSpirv = '.*',
                 emitFormats = '.*')
@@ -116,15 +128,7 @@ class BaseGeneratorOptions(GeneratorOptions):
         self.apicall         = 'VKAPI_ATTR '
         self.apientry        = 'VKAPI_CALL '
         self.apientryp       = 'VKAPI_PTR *'
-        self.alignFuncParam   = 48
-
-        # These are custom fields for VVL
-        # This allows passing data from run_generator.py into each Generator (file)
-        self.filename = filename
-        self.helper_file_type = helper_file_type
-        self.valid_usage_path = valid_usage_path
-        self.lvt_file_type = lvt_file_type
-        self.grammar = grammar
+        self.alignFuncParam  = 48
 
 #
 # This object handles all the parsing from reg.py generator scripts in the Vulkan-Headers
@@ -133,6 +137,7 @@ class BaseGenerator(OutputGenerator):
     def __init__(self):
         OutputGenerator.__init__(self, None, None, None)
         self.vk = VulkanObject()
+        self.targetApiName = globalApiName
 
         # reg.py has a `self.featureName` but this is nicer because
         # it will be either the Version or Extension object
@@ -146,6 +151,7 @@ class BaseGenerator(OutputGenerator):
         self.enumFieldAliasMap = dict()
         self.bitmaskAliasMap = dict()
         self.flagAliasMap = dict()
+        self.structAliasMap = dict()
 
     def write(self, data):
         # Prevents having to check before writting
@@ -155,19 +161,15 @@ class BaseGenerator(OutputGenerator):
 
     def beginFile(self, genOpts):
         OutputGenerator.beginFile(self, genOpts)
-
         self.filename = genOpts.filename
-        self.helper_file_type = genOpts.helper_file_type
-        self.valid_usage_path = genOpts.valid_usage_path
-        self.lvt_file_type = genOpts.lvt_file_type
-        self.grammar = genOpts.grammar
 
         # No gen*() command to get these, so do it manually
         for platform in self.registry.tree.findall('platforms/platform'):
             self.vk.platforms[platform.get('name')] = platform.get('protect')
 
-        for tag in self.registry.tree.findall('tags'):
-            self.vk.vendorTags.append(tag.get('name'))
+        for tags in self.registry.tree.findall('tags'):
+            for tag in tags.findall('tag'):
+                self.vk.vendorTags.append(tag.get('name'))
 
         # No way known to get this from the XML
         self.vk.queueBits[Queues.TRANSFER]       = 'VK_QUEUE_TRANSFER_BIT'
@@ -203,6 +205,15 @@ class BaseGenerator(OutputGenerator):
             #  one or more extension and/or core version names
             for required in dict:
                 for commandName in dict[required]:
+                    # Skip commands removed in the target API
+                    # This check is needed because parts of the base generator code bypass the
+                    # dependency resolution logic in the registry tooling and thus the generator
+                    # may attempt to generate code for commands which are not supported in the
+                    # target API variant, thus this check needs to happen even if any specific
+                    # target API variant may not specifically need it
+                    if not commandName in self.vk.commands:
+                        continue
+
                     command = self.vk.commands[commandName]
                     # Make sure list is unique
                     command.extensions.extend([extension] if extension not in command.extensions else [])
@@ -225,7 +236,6 @@ class BaseGenerator(OutputGenerator):
                             enum.fieldExtensions.extend([extension] if extension not in enum.fieldExtensions else [])
                             enumField.extensions.extend([extension] if extension not in enumField.extensions else [])
                             extension.enumFields[group].extend([enumField] if enumField not in extension.enumFields[group] else [])
-
                     if group in self.vk.bitmasks:
                         if group not in extension.flags:
                             extension.flags[group] = [] # Dict needs init
@@ -235,10 +245,9 @@ class BaseGenerator(OutputGenerator):
 
                         for flags in [x for x in bitmask.flags if x.name in flagList]:
                             # Make sure list is unique
-                            bitmask.extensions.extend([extension] if extension not in bitmask.extensions else [])
+                            bitmask.flagExtensions.extend([extension] if extension not in bitmask.flagExtensions else [])
                             flags.extensions.extend([extension] if extension not in flags.extensions else [])
                             extension.flags[group].extend([flags] if flags not in extension.flags[group] else [])
-
 
         # Need to do 'enum'/'bitmask' after 'enumconstant' has applied everything so we can add implicit extensions
         #
@@ -273,21 +282,34 @@ class BaseGenerator(OutputGenerator):
             for required in dict:
                 for group in dict[required]:
                     for bitmaskName in dict[required][group]:
-                        isAlias = bitmaskName in self.enumAliasMap
+                        bitmaskName = bitmaskName.replace('Flags', 'FlagBits') # Works since Flags isn't repeated in name
+                        isAlias = bitmaskName in self.bitmaskAliasMap
                         bitmaskName = self.bitmaskAliasMap[bitmaskName] if isAlias else bitmaskName
                         if bitmaskName in self.vk.bitmasks:
                             bitmask = self.vk.bitmasks[bitmaskName]
                             bitmask.extensions.extend([extension] if extension not in bitmask.extensions else [])
-                            extension.bitmask.extend([bitmask] if bitmask not in extension.bitmasks else [])
+                            extension.bitmasks.extend([bitmask] if bitmask not in extension.bitmasks else [])
                             # Update flags with implicit base extension
                             if isAlias:
                                 continue
-                            bitmask.flagExtensions.extend([extension] if extension not in enum.flagExtensions else [])
-                            for flag in [x for x in enum.flags if (not x.extensions or (x.extensions and all(e in enum.extensions for e in x.extensions)))]:
+                            bitmask.flagExtensions.extend([extension] if extension not in bitmask.flagExtensions else [])
+                            for flag in [x for x in bitmask.flags if (not x.extensions or (x.extensions and all(e in bitmask.extensions for e in x.extensions)))]:
                                 flag.extensions.extend([extension] if extension not in flag.extensions else [])
                                 if bitmaskName not in extension.flags:
                                     extension.flags[bitmaskName] = [] # Dict needs init
                                 extension.flags[bitmaskName].extend([flag] if flag not in extension.flags[bitmaskName] else [])
+
+        # Some structs (ex VkAttachmentSampleCountInfoAMD) can have multiple alias pointing to same extension
+        for extension in self.vk.extensions.values():
+            dict = self.featureDictionary[extension.name]['struct']
+            for required in dict:
+                for group in dict[required]:
+                    for structName in dict[required][group]:
+                        isAlias = structName in self.structAliasMap
+                        structName = self.structAliasMap[structName] if isAlias else structName
+                        if structName in self.vk.structs:
+                            struct = self.vk.structs[structName]
+                            struct.extensions.extend([extension] if extension not in struct.extensions else [])
 
     def endFile(self):
         # This is the point were reg.py has ran, everything is collected
@@ -298,19 +320,28 @@ class BaseGenerator(OutputGenerator):
         for struct in [x for x in self.vk.structs.values() if not x.returnedOnly]:
             for enum in [self.vk.enums[x.type] for x in struct.members if x.type in self.vk.enums]:
                 enum.returnedOnly = False
+            for bitmask in [self.vk.bitmasks[x.type] for x in struct.members if x.type in self.vk.bitmasks]:
+                bitmask.returnedOnly = False
+            for bitmask in [self.vk.bitmasks[x.type.replace('Flags', 'FlagBits')] for x in struct.members if x.type.replace('Flags', 'FlagBits') in self.vk.bitmasks]:
+                bitmask.returnedOnly = False
         for command in self.vk.commands.values():
             for enum in [self.vk.enums[x.type] for x in command.params if x.type in self.vk.enums]:
                 enum.returnedOnly = False
+            for bitmask in [self.vk.bitmasks[x.type] for x in command.params if x.type in self.vk.bitmasks]:
+                bitmask.returnedOnly = False
+            for bitmask in [self.vk.bitmasks[x.type.replace('Flags', 'FlagBits')] for x in command.params if x.type.replace('Flags', 'FlagBits') in self.vk.bitmasks]:
+                bitmask.returnedOnly = False
 
         # Turn handle parents into pointers to classess
         for handle in [x for x in self.vk.handles.values() if x.parent is not None]:
             handle.parent = self.vk.handles[handle.parent]
-
-        # Update structs extending each other
-        for struct in [x for x in self.vk.structs.values() if x.extends is not None]:
-            struct.extends = list(map(lambda x: self.vk.structs[x], struct.extends))
-        for struct in [x for x in self.vk.structs.values() if x.extendedBy is not None]:
-            struct.extendedBy = list(map(lambda x: self.vk.structs[x], struct.extendedBy))
+        # search up parent chain to see if instance or device
+        for handle in [x for x in self.vk.handles.values()]:
+            next_parent = handle.parent
+            while (not handle.instance and not handle.device):
+                handle.instance = next_parent.name == 'VkInstance'
+                handle.device = next_parent.name == 'VkDevice'
+                next_parent = next_parent.parent
 
         maxSyncSupport.queues = Queues.ALL
         maxSyncSupport.stages = self.vk.bitmasks['VkPipelineStageFlagBits2'].flags
@@ -320,7 +351,24 @@ class BaseGenerator(OutputGenerator):
         # All inherited generators should run from here
         self.generate()
 
+        if cachingEnabled:
+            cachePath = os.path.join(tempfile.gettempdir(), f'vkobject_{os.getpid()}')
+            if not os.path.isfile(cachePath):
+                cacheFile = open(cachePath, 'wb')
+                pickle.dump(self.vk, cacheFile)
+                cacheFile.close()
+
         # This should not have to do anything but call into OutputGenerator
+        OutputGenerator.endFile(self)
+
+    #
+    # Bypass the entire processing and load in the VkObject data
+    # Still need to handle the beingFile/endFile for reg.py
+    def generateFromCache(self, cacheVkObjectData, genOpts):
+        OutputGenerator.beginFile(self, genOpts)
+        self.filename = genOpts.filename
+        self.vk = cacheVkObjectData
+        self.generate()
         OutputGenerator.endFile(self)
 
     #
@@ -330,7 +378,6 @@ class BaseGenerator(OutputGenerator):
         platform = interface.get('platform')
         self.featureExtraProtec = self.vk.platforms[platform] if platform in self.vk.platforms else None
         protect = self.vk.platforms[platform] if platform in self.vk.platforms else None
-
         name = interface.get('name')
 
         if interface.tag == 'extension':
@@ -345,18 +392,17 @@ class BaseGenerator(OutputGenerator):
             obsoletedby = interface.get('obsoletedby')
             specialuse = splitIfGet(interface, 'specialuse')
             # Not sure if better way to get this info
+            specVersion = self.featureDictionary[name]['enumconstant'][None][None][0]
             nameString = self.featureDictionary[name]['enumconstant'][None][None][1]
 
-            self.currentExtension = Extension(name, nameString, instance, device, depends, vendorTag,
+            self.currentExtension = Extension(name, nameString, specVersion, instance, device, depends, vendorTag,
                                             platform, protect, provisional, promotedto, deprecatedby,
                                             obsoletedby, specialuse)
             self.vk.extensions[name] = self.currentExtension
         else: # version
             number = interface.get('number')
             if number != '1.0':
-                nameApi = name.replace('VK_', 'VK_API_')
-                nameString = f'"{name}"'
-                self.currentVersion = Version(name, nameString, nameApi, number)
+                self.currentVersion = APISpecific.createApiVersion(self.targetApiName, name, number)
                 self.vk.versions[name] = self.currentVersion
 
     def endFeature(self):
@@ -378,7 +424,7 @@ class BaseGenerator(OutputGenerator):
             cdecl = self.makeCParamDecl(param, 0)
             pointer = '*' in cdecl or paramType.startswith('PFN_')
             paramConst = 'const' in cdecl
-            staticArray = [x[:-1] for x in cdecl.split('[') if x.endswith(']')]
+            fixedSizeArray = [x[:-1] for x in cdecl.split('[') if x.endswith(']')]
 
             paramNoautovalidity = boolGet(param, 'noautovalidity')
 
@@ -391,8 +437,8 @@ class BaseGenerator(OutputGenerator):
                 length = length.replace(',null-terminated', '') if 'null-terminated' in length else length
                 length = None if length == 'null-terminated' else length
 
-            if staticArray and not length:
-                length = ','.join(staticArray)
+            if fixedSizeArray and not length:
+                length = ','.join(fixedSizeArray)
 
             # See Member::optional code for details of this
             optionalValues = splitIfGet(param, 'optional')
@@ -407,9 +453,9 @@ class BaseGenerator(OutputGenerator):
                 externSync = True
 
             params.append(Param(paramName, paramAlias, paramType, paramNoautovalidity,
-                                       paramConst, length, nullTerminated, pointer, staticArray,
-                                       optional, optionalPointer,
-                                       externSync, externSyncPointer, cdecl))
+                                paramConst, length, nullTerminated, pointer, fixedSizeArray,
+                                optional, optionalPointer,
+                                externSync, externSyncPointer, cdecl))
 
         attrib = cmdinfo.elem.attrib
         alias = attrib.get('alias')
@@ -444,7 +490,7 @@ class BaseGenerator(OutputGenerator):
         implicitElem = cmdinfo.elem.find('implicitexternsyncparams')
         implicitExternSyncParams = [x.text for x in implicitElem.findall('param')] if implicitElem else []
 
-        self.vk.commands[name] = Command(name, alias, [], self.currentVersion, protect,
+        self.vk.commands[name] = Command(name, alias, protect, [], self.currentVersion,
                                          returnType, params, instance, device,
                                          tasks, queues, successcodes, errorcodes,
                                          primary, secondary, renderpass, videocoding,
@@ -458,7 +504,7 @@ class BaseGenerator(OutputGenerator):
         # fields also have their own protect
         groupProtect = self.currentExtension.protect if hasattr(self.currentExtension, 'protect') and self.currentExtension.protect is not None else None
         enumElem = groupinfo.elem
-        bitwidth = 32 if enumElem.get('bitwidth') is None else enumElem.get('bitwidth')
+        bitwidth = 32 if enumElem.get('bitwidth') is None else int(enumElem.get('bitwidth'))
         fields = []
         if enumElem.get('type') == "enum":
             if alias is not None:
@@ -480,7 +526,7 @@ class BaseGenerator(OutputGenerator):
                 if next((x for x in fields if x.name == fieldName), None) is None:
                     fields.append(EnumField(fieldName, negative, protect, []))
 
-            self.vk.enums[groupName] = Enum(groupName, bitwidth, groupProtect, True, fields, [], [])
+            self.vk.enums[groupName] = Enum(groupName, groupProtect, bitwidth, True, fields, [], [])
 
         else: # "bitmask"
             if alias is not None:
@@ -506,10 +552,10 @@ class BaseGenerator(OutputGenerator):
                 # Some values have multiple extensions (ex VK_TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT)
                 # genGroup() lists them twice
                 if next((x for x in fields if x.name == flagName), None) is None:
-                    fields.append(Flag(flagName, flagValue, flagMultiBit, flagZero, protect, []))
+                    fields.append(Flag(flagName, protect, flagValue, flagMultiBit, flagZero, []))
 
             flagName = groupName.replace('FlagBits', 'Flags')
-            self.vk.bitmasks[groupName] = Bitmask(groupName, flagName, bitwidth, groupProtect, fields, [], [])
+            self.vk.bitmasks[groupName] = Bitmask(groupName, flagName, groupProtect, bitwidth, True, fields, [], [])
 
     def genType(self, typeInfo, typeName, alias):
         OutputGenerator.genType(self, typeInfo, typeName, alias)
@@ -519,10 +565,7 @@ class BaseGenerator(OutputGenerator):
         if (category == 'struct' or category == 'union'):
             extension = [self.currentExtension] if self.currentExtension is not None else []
             if alias is not None:
-                struct = self.vk.structs[alias]
-                # Some structs (ex VkAttachmentSampleCountInfoAMD) can have multiple alias pointing to same extension
-                struct.extensions += extension if extension and extension[0] not in struct.extensions else []
-                struct.version = self.currentVersion if struct.version is None else struct.version
+                self.structAliasMap[typeName] = alias
                 return
 
             union = category == 'union'
@@ -530,7 +573,6 @@ class BaseGenerator(OutputGenerator):
             returnedOnly = boolGet(typeElem, 'returnedonly')
             allowDuplicate = boolGet(typeElem, 'allowduplicate')
 
-            # Build a string list now, populate as Struct objects once all structs are known
             extends = splitIfGet(typeElem, 'structextends')
             extendedBy = self.registry.validextensionstructs[typeName] if len(self.registry.validextensionstructs[typeName]) > 0 else None
 
@@ -562,10 +604,10 @@ class BaseGenerator(OutputGenerator):
                 pointer = '*' in cdecl or type.startswith('PFN_')
                 const = 'const' in cdecl
                 # Some structs like VkTransformMatrixKHR have a 2D array
-                staticArray = [x[:-1] for x in cdecl.split('[') if x.endswith(']')]
+                fixedSizeArray = [x[:-1] for x in cdecl.split('[') if x.endswith(']')]
 
-                if staticArray and not length:
-                    length = ','.join(staticArray)
+                if fixedSizeArray and not length:
+                    length = ','.join(fixedSizeArray)
 
                 # if a pointer, this can be a something like:
                 #     optional="true,false" for ppGeometries
@@ -577,24 +619,26 @@ class BaseGenerator(OutputGenerator):
                 optionalPointer = optionalValues is not None and len(optionalValues) > 1 and optionalValues[1].lower() == "true"
 
                 members.append(Member(name, type, noautovalidity, limittype,
-                                      const, length, nullTerminated, pointer, staticArray,
+                                      const, length, nullTerminated, pointer, fixedSizeArray,
                                       optional, optionalPointer,
                                       externSync, cdecl))
 
             self.vk.structs[typeName] = Struct(typeName, extension, self.currentVersion, protect, members,
-                                               union, returnedOnly,
-                                               sType, extends, extendedBy, allowDuplicate)
+                                               union, returnedOnly, sType, allowDuplicate, extends, extendedBy)
 
         elif category == 'handle':
             if alias is not None:
                 return
             type = typeElem.get('objtypeenum')
-            parent = typeElem.get('parent') # will resolve later
-            instance = parent == 'VkInstance'
-            device = not instance
+
+            # will resolve these later, the VulkanObjectType doesn't list things in dependent order
+            parent = typeElem.get('parent')
+            instance = typeName == 'VkInstance'
+            device = typeName == 'VkDevice'
+
             dispatchable = typeElem.find('type').text == 'VK_DEFINE_HANDLE'
 
-            self.vk.handles[typeName] = Handle(typeName, type, parent, protect, instance, device, dispatchable)
+            self.vk.handles[typeName] = Handle(typeName, type, protect, parent, instance, device, dispatchable)
 
         elif category == 'define':
             if typeName == 'VK_HEADER_VERSION':
@@ -687,8 +731,10 @@ class BaseGenerator(OutputGenerator):
             equivalent = SyncEquivalent(stages, accesses, False)
 
         flagName = syncElem.get('name')
-        flag = [x for x in self.vk.bitmasks['VkPipelineStageFlagBits2'].flags if x.name == flagName][0]
-        self.vk.syncStage.append(SyncStage(flag, support, equivalent))
+        flag = [x for x in self.vk.bitmasks['VkPipelineStageFlagBits2'].flags if x.name == flagName]
+        # This check is needed because not all API variants have VK_KHR_synchronization2
+        if flag:
+            self.vk.syncStage.append(SyncStage(flag[0], support, equivalent))
 
     def genSyncAccess(self, sync):
         OutputGenerator.genSyncAccess(self, sync)
@@ -712,8 +758,10 @@ class BaseGenerator(OutputGenerator):
             equivalent = SyncEquivalent(stages, accesses, False)
 
         flagName = syncElem.get('name')
-        flag = [x for x in self.vk.bitmasks['VkAccessFlagBits2'].flags if x.name == flagName][0]
-        self.vk.syncAccess.append(SyncAccess(flag, support, equivalent))
+        flag = [x for x in self.vk.bitmasks['VkAccessFlagBits2'].flags if x.name == flagName]
+        # This check is needed because not all API variants have VK_KHR_synchronization2
+        if flag:
+            self.vk.syncAccess.append(SyncAccess(flag[0], support, equivalent))
 
     def genSyncPipeline(self, sync):
         OutputGenerator.genSyncPipeline(self, sync)

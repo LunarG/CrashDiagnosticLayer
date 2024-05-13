@@ -109,14 +109,14 @@ class CommandRecorder
             out.append('  for (uint64_t i = 0; i < count; ++i) {\n')
             for vkmember in vkstruct.members:
                 pointer_count = vkmember.cDeclaration.count('*')
-                is_array = (vkmember.length is not None and len(vkmember.length) > 0) or (vkmember.staticArray is not None and len(vkmember.staticArray) > 0)
+                is_array = (vkmember.length is not None and len(vkmember.length) > 0) or (vkmember.fixedSizeArray is not None and len(vkmember.fixedSizeArray) > 0)
                 if 'char' in vkmember.type and pointer_count == 1:
                     out.append(f'      ptr[i].{vkmember.name} = nullptr;\n')
                     out.append(f'      if (src[start_index + i].{vkmember.name}) {{\n')
                     out.append(f'        ptr[i].{vkmember.name} = CopyArray<>(src[start_index + i].{vkmember.name}, 0, strlen(src[start_index + 1].{vkmember.name}));\n')
                     out.append('      }\n')
                 elif is_array and not (vkmember.type == 'void' or 'PFN_' in vkmember.type):
-                    if (vkmember.staticArray is not None and len(vkmember.staticArray) > 0):
+                    if (vkmember.fixedSizeArray is not None and len(vkmember.fixedSizeArray) > 0):
                         out.append(f'      std::memcpy(ptr[i].{vkmember.name}, src[start_index + i].{vkmember.name}, sizeof(src[start_index + 1].{vkmember.name}));\n')
                     else:
                         out.append(f'      ptr[i].{vkmember.name} = nullptr;\n')
@@ -137,7 +137,7 @@ class CommandRecorder
             out.append(f'{func_decl}\n')
             out.append(f'  auto *args = Alloc<{vkcommand.name[2:]}Args>();\n')
             for vkparam in vkcommand.params:
-                if vkparam.staticArray is not None and len(vkparam.staticArray) > 0:
+                if vkparam.fixedSizeArray is not None and len(vkparam.fixedSizeArray) > 0:
                     out.append(f'  for (uint32_t i = 0; i < {vkparam.length}; ++i) {{\n')
                     out.append(f'    args->{vkparam.name}[i] = {vkparam.name}[i];\n')
                     out.append('  }\n')
