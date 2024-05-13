@@ -80,3 +80,4 @@ install(TARGETS cdl_tests)
 include(GoogleTest)
 gtest_discover_tests(cdl_tests DISCOVERY_TIMEOUT 100)
 
+add_subdirectory(icd)

@@ -52,6 +52,7 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
     from generators.dispatch_generator import DispatchOutputGenerator
     from generators.intercepts_and_prepost_generator import InterceptCommandsOutputGenerator
     from generators.layer_base_generator import LayerBaseOutputGenerator
+    from generators.test_icd_generator import TestIcdGenerator
 
     # These set fields that are needed by both OutputGenerator and BaseGenerator,
     # but are uniform and don't need to be set at a per-generated file level
@@ -139,6 +140,10 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
             'generator': LayerBaseOutputGenerator,
             'genCombined': True,
         },
+        'test_icd_helper.h' : {
+            'generator': TestIcdGenerator,
+            'genCombined': True,
+        },
     }
 
     unknownTargets = [x for x in (targetFilter if targetFilter else []) if x not in generators.keys()]
@@ -216,6 +221,9 @@ def repo_relative(path):
 
 def main(argv):
     # files to exclude from --verify check
+    verify_exclude = [
+        '.clang-format',
+    ]
 
     parser = argparse.ArgumentParser(description='Generate source code for this repository')
     parser.add_argument('--api',
