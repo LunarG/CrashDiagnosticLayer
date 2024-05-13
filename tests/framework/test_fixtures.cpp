@@ -20,6 +20,35 @@
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <glslang/Public/ResourceLimits.h>
 #include <filesystem>
+#include <iostream>
+#include <map>
+
+void CDLTestBase::InitArgs(int argc, char* argv[]) {
+    for (int i = 1; i < argc; ++i) {
+        const std::string_view current_argument = argv[i];
+        if (current_argument == "--print-all") {
+            print_all_ = true;
+        } else if (current_argument == "--device-index" && ((i + 1) < argc)) {
+            phys_device_index_ = std::atoi(argv[++i]);
+        } else if (current_argument == "--print-devices") {
+            print_phys_devices_ = true;
+        } else if ((current_argument == "--help") || (current_argument == "-h")) {
+            std::cout << std::endl << "Other options:" << std::endl;
+            std::cout << "\t--print-all" << std::endl
+                      << "\t\tPrints all log messages - help see what messages will look like to a user." << std::endl;
+            std::cout << "\t--device-index <physical device index>" << std::endl
+                      << "\t\tIndex into VkPhysicalDevice array returned from vkEnumeratePhysicalDevices." << std::endl
+                      << "\t\tThe default behavior is to automatically choose \"the most reasonable device.\""
+                      << std::endl
+                      << "\t\tAn invalid index (i.e., outside the range [0, *pPhysicalDeviceCount)) will result in the "
+                         "default behavior"
+                      << std::endl;
+            std::cout << "\t--print-devices" << std::endl
+                      << "\t\tPrint all physical devices during intialization." << std::endl;
+            exit(0);
+        }
+    }
+}
 
 CDLTestBase::CDLTestBase()
     : monitor_("CDL", false),
@@ -40,10 +69,14 @@ CDLTestBase::CDLTestBase()
 
     layer_settings_.SetOutputPath(output_path_.string().c_str());
 
-    // Turn off the default logger
-    layer_settings_.SetLogFile("none");
     layer_settings_.SetDumpShaders("off");
-    layer_settings_.SetMessageSeverity("error, warn");
+
+    if (print_all_) {
+        layer_settings_.SetLogFile("stderr");
+        layer_settings_.SetMessageSeverity("error, warn, info, verbose");
+    } else {
+        layer_settings_.SetLogFile("none");
+    }
 }
 
 void CDLTestBase::InitInstance() {
@@ -57,7 +90,53 @@ void CDLTestBase::InitInstance() {
 
     instance_ = vk::raii::Instance(context_, ci);
 
-    physical_device_ = vk::raii::PhysicalDevices(instance_).front();
+    static std::map<vk::PhysicalDeviceType, const char*> type_names{
+        {vk::PhysicalDeviceType::eDiscreteGpu, "discrete"}, {vk::PhysicalDeviceType::eIntegratedGpu, "integrated"},
+        {vk::PhysicalDeviceType::eVirtualGpu, "virtual"},   {vk::PhysicalDeviceType::eCpu, "cpu"},
+        {vk::PhysicalDeviceType::eOther, "other"},
+    };
+    auto phys_devices = vk::raii::PhysicalDevices(instance_);
+    if (print_phys_devices_) {
+        std::cout << "Physical Devices:" << std::endl;
+        for (size_t i = 0; i < phys_devices.size(); i++) {
+            auto prop = phys_devices[i].getProperties();
+            std::string name = prop.deviceName;
+            std::cout << i << ": " << name << ", type: " << type_names[prop.deviceType] << std::endl;
+        }
+    }
+
+    if ((phys_device_index_ >= 0) && (phys_device_index_ < int(phys_devices.size()))) {
+        physical_device_ = phys_devices[phys_device_index_];
+    } else {
+        // Specify a "physical device priority" with larger values meaning higher priority.
+        std::map<vk::PhysicalDeviceType, int> device_type_rank{
+            {vk::PhysicalDeviceType::eDiscreteGpu, 4}, {vk::PhysicalDeviceType::eIntegratedGpu, 3},
+            {vk::PhysicalDeviceType::eVirtualGpu, 2},  {vk::PhysicalDeviceType::eCpu, 1},
+            {vk::PhysicalDeviceType::eOther, 0},
+        };
+
+        // Initialize physical device and properties with first device found
+        physical_device_ = phys_devices[0];
+        phys_device_index_ = 0;
+        auto current_props = physical_device_.getProperties();
+        // See if there are any higher priority devices found
+        for (size_t i = 1; i < phys_devices.size(); i++) {
+            auto tmp_props = phys_devices[i].getProperties();
+            if (device_type_rank[tmp_props.deviceType] > device_type_rank[current_props.deviceType]) {
+                physical_device_ = phys_devices[i];
+                current_props = tmp_props;
+                phys_device_index_ = i;
+            }
+        }
+    }
+    if (print_phys_devices_) {
+        auto props = physical_device_.getProperties();
+        std::string name = props.deviceName;
+        std::cout << "Selected device: " << phys_device_index_ << ": " << name
+                  << ", type: " << type_names[props.deviceType] << std::endl;
+    }
+    // only print the first time
+    print_phys_devices_ = false;
 }
 
 void CDLTestBase::InitDevice(std::vector<const char*> extensions, const vk::PhysicalDeviceFeatures2* features2) {
