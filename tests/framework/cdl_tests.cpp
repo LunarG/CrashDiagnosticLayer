@@ -421,6 +421,7 @@ void android_main(struct android_app *app) {
             freopen("/sdcard/Android/data/com.example.CrashDiagnosticLayerTests/files/err.txt", "w", stderr);
 
             ::testing::InitGoogleTest(&argc, argv);
+            CDLTestBase::InitArgs(argc, argv);
 
             ::testing::TestEventListeners &listeners = ::testing::UnitTest::GetInstance()->listeners();
             listeners.Append(new LogcatPrinter);
@@ -488,6 +489,7 @@ int main(int argc, char **argv) {
 #endif
 
     ::testing::InitGoogleTest(&argc, argv);
+    CDLTestBase::InitArgs(argc, argv);
 
     ::testing::AddGlobalTestEnvironment(new TestEnvironment);
     ::testing::UnitTest::GetInstance()->listeners().Append(new ThrowListener);

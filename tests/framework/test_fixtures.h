@@ -40,6 +40,12 @@ class CDLTestBase : public ::testing::Test {
     void InitInstance();
     void InitDevice(std::vector<const char*> extensions = {}, const vk::PhysicalDeviceFeatures2* features2 = nullptr);
 
+    static void InitArgs(int argc, char* argv[]);
+
+    static inline bool print_all_{false};
+    static inline uint32_t phys_device_index_{~0u};
+    static inline bool print_phys_devices_{false};
+
     vk::raii::Context context_;
     ErrorMonitor monitor_;
     // LayerSettings settings_;
