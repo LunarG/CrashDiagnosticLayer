@@ -90,7 +90,7 @@ YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext);
 class CommandPrinter {
  public:
   void SetNameResolver(const ObjectInfoDB *name_resolver);
-
+  void PrintCommandParameters(YAML::Emitter &os, const Command &cmd);
 ''')
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
@@ -443,4 +443,27 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSet &t) {
             out.append('}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
+        out.append('''
+void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cmd)
+{
+  switch (cmd.type)
+  {
+    default:
+    case Command::Type::kUnknown:
+      // output an empty map for consistency with other command printers
+      os << YAML::BeginMap << YAML::EndMap;
+      break;
+''')
+        for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
+            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
+            out.append(f'    case Command::Type::k{vkcommand.name[2:]}:\n')
+            out.append('      if (cmd.parameters) {\n')
+            out.append(f'        auto args = reinterpret_cast<{vkcommand.name[2:]}Args *>(cmd.parameters);\n')
+            out.append(f'        Print{vkcommand.name[2:]}Args(os, *args);\n')
+            out.append('      }\n')
+            out.append('      break;\n')
+            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+            out.append('\n')
+        out.append('    } // switch (cmd.type)\n\n')
+        out.append('} // CommandPrinter::PrintCommandParameters\n\n')
         self.write("".join(out))

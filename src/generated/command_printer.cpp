@@ -4132,4 +4132,1815 @@ void CommandPrinter::PrintCmdDrawMeshTasksIndirectCountEXTArgs(YAML::Emitter &os
     os << YAML::Value << args.stride;
 }
 
+void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cmd) {
+    switch (cmd.type) {
+        default:
+        case Command::Type::kUnknown:
+            // output an empty map for consistency with other command printers
+            os << YAML::BeginMap << YAML::EndMap;
+            break;
+        case Command::Type::kBeginCommandBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<BeginCommandBufferArgs *>(cmd.parameters);
+                PrintBeginCommandBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kEndCommandBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<EndCommandBufferArgs *>(cmd.parameters);
+                PrintEndCommandBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kResetCommandBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<ResetCommandBufferArgs *>(cmd.parameters);
+                PrintResetCommandBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindPipeline:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindPipelineArgs *>(cmd.parameters);
+                PrintCmdBindPipelineArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetViewport:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetViewportArgs *>(cmd.parameters);
+                PrintCmdSetViewportArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetScissor:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetScissorArgs *>(cmd.parameters);
+                PrintCmdSetScissorArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLineWidth:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLineWidthArgs *>(cmd.parameters);
+                PrintCmdSetLineWidthArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthBias:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthBiasArgs *>(cmd.parameters);
+                PrintCmdSetDepthBiasArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetBlendConstants:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetBlendConstantsArgs *>(cmd.parameters);
+                PrintCmdSetBlendConstantsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthBounds:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthBoundsArgs *>(cmd.parameters);
+                PrintCmdSetDepthBoundsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetStencilCompareMask:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetStencilCompareMaskArgs *>(cmd.parameters);
+                PrintCmdSetStencilCompareMaskArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetStencilWriteMask:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetStencilWriteMaskArgs *>(cmd.parameters);
+                PrintCmdSetStencilWriteMaskArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetStencilReference:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetStencilReferenceArgs *>(cmd.parameters);
+                PrintCmdSetStencilReferenceArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindDescriptorSets:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindDescriptorSetsArgs *>(cmd.parameters);
+                PrintCmdBindDescriptorSetsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindIndexBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindIndexBufferArgs *>(cmd.parameters);
+                PrintCmdBindIndexBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindVertexBuffers:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindVertexBuffersArgs *>(cmd.parameters);
+                PrintCmdBindVertexBuffersArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDraw:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawArgs *>(cmd.parameters);
+                PrintCmdDrawArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndexed:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndexedArgs *>(cmd.parameters);
+                PrintCmdDrawIndexedArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndirect:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndirectArgs *>(cmd.parameters);
+                PrintCmdDrawIndirectArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndexedIndirect:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndexedIndirectArgs *>(cmd.parameters);
+                PrintCmdDrawIndexedIndirectArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDispatch:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchArgs *>(cmd.parameters);
+                PrintCmdDispatchArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDispatchIndirect:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchIndirectArgs *>(cmd.parameters);
+                PrintCmdDispatchIndirectArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyBufferArgs *>(cmd.parameters);
+                PrintCmdCopyBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImageArgs *>(cmd.parameters);
+                PrintCmdCopyImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBlitImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBlitImageArgs *>(cmd.parameters);
+                PrintCmdBlitImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyBufferToImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyBufferToImageArgs *>(cmd.parameters);
+                PrintCmdCopyBufferToImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImageToBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImageToBufferArgs *>(cmd.parameters);
+                PrintCmdCopyImageToBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdUpdateBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdUpdateBufferArgs *>(cmd.parameters);
+                PrintCmdUpdateBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdFillBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdFillBufferArgs *>(cmd.parameters);
+                PrintCmdFillBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdClearColorImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdClearColorImageArgs *>(cmd.parameters);
+                PrintCmdClearColorImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdClearDepthStencilImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdClearDepthStencilImageArgs *>(cmd.parameters);
+                PrintCmdClearDepthStencilImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdClearAttachments:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdClearAttachmentsArgs *>(cmd.parameters);
+                PrintCmdClearAttachmentsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResolveImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResolveImageArgs *>(cmd.parameters);
+                PrintCmdResolveImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetEvent:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetEventArgs *>(cmd.parameters);
+                PrintCmdSetEventArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResetEvent:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResetEventArgs *>(cmd.parameters);
+                PrintCmdResetEventArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWaitEvents:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWaitEventsArgs *>(cmd.parameters);
+                PrintCmdWaitEventsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPipelineBarrier:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPipelineBarrierArgs *>(cmd.parameters);
+                PrintCmdPipelineBarrierArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginQuery:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginQueryArgs *>(cmd.parameters);
+                PrintCmdBeginQueryArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndQuery:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndQueryArgs *>(cmd.parameters);
+                PrintCmdEndQueryArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResetQueryPool:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResetQueryPoolArgs *>(cmd.parameters);
+                PrintCmdResetQueryPoolArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteTimestamp:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteTimestampArgs *>(cmd.parameters);
+                PrintCmdWriteTimestampArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyQueryPoolResults:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyQueryPoolResultsArgs *>(cmd.parameters);
+                PrintCmdCopyQueryPoolResultsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushConstants:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushConstantsArgs *>(cmd.parameters);
+                PrintCmdPushConstantsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginRenderPass:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginRenderPassArgs *>(cmd.parameters);
+                PrintCmdBeginRenderPassArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdNextSubpass:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdNextSubpassArgs *>(cmd.parameters);
+                PrintCmdNextSubpassArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndRenderPass:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndRenderPassArgs *>(cmd.parameters);
+                PrintCmdEndRenderPassArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdExecuteCommands:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdExecuteCommandsArgs *>(cmd.parameters);
+                PrintCmdExecuteCommandsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDeviceMask:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDeviceMaskArgs *>(cmd.parameters);
+                PrintCmdSetDeviceMaskArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDispatchBase:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchBaseArgs *>(cmd.parameters);
+                PrintCmdDispatchBaseArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndirectCount:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndirectCountArgs *>(cmd.parameters);
+                PrintCmdDrawIndirectCountArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndexedIndirectCount:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndexedIndirectCountArgs *>(cmd.parameters);
+                PrintCmdDrawIndexedIndirectCountArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginRenderPass2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginRenderPass2Args *>(cmd.parameters);
+                PrintCmdBeginRenderPass2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdNextSubpass2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdNextSubpass2Args *>(cmd.parameters);
+                PrintCmdNextSubpass2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndRenderPass2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndRenderPass2Args *>(cmd.parameters);
+                PrintCmdEndRenderPass2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetEvent2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetEvent2Args *>(cmd.parameters);
+                PrintCmdSetEvent2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResetEvent2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResetEvent2Args *>(cmd.parameters);
+                PrintCmdResetEvent2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWaitEvents2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWaitEvents2Args *>(cmd.parameters);
+                PrintCmdWaitEvents2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPipelineBarrier2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPipelineBarrier2Args *>(cmd.parameters);
+                PrintCmdPipelineBarrier2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteTimestamp2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteTimestamp2Args *>(cmd.parameters);
+                PrintCmdWriteTimestamp2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyBuffer2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyBuffer2Args *>(cmd.parameters);
+                PrintCmdCopyBuffer2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImage2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImage2Args *>(cmd.parameters);
+                PrintCmdCopyImage2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyBufferToImage2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyBufferToImage2Args *>(cmd.parameters);
+                PrintCmdCopyBufferToImage2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImageToBuffer2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImageToBuffer2Args *>(cmd.parameters);
+                PrintCmdCopyImageToBuffer2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBlitImage2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBlitImage2Args *>(cmd.parameters);
+                PrintCmdBlitImage2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResolveImage2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResolveImage2Args *>(cmd.parameters);
+                PrintCmdResolveImage2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginRendering:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginRenderingArgs *>(cmd.parameters);
+                PrintCmdBeginRenderingArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndRendering:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndRenderingArgs *>(cmd.parameters);
+                PrintCmdEndRenderingArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCullMode:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCullModeArgs *>(cmd.parameters);
+                PrintCmdSetCullModeArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetFrontFace:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetFrontFaceArgs *>(cmd.parameters);
+                PrintCmdSetFrontFaceArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPrimitiveTopology:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPrimitiveTopologyArgs *>(cmd.parameters);
+                PrintCmdSetPrimitiveTopologyArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetViewportWithCount:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetViewportWithCountArgs *>(cmd.parameters);
+                PrintCmdSetViewportWithCountArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetScissorWithCount:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetScissorWithCountArgs *>(cmd.parameters);
+                PrintCmdSetScissorWithCountArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindVertexBuffers2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindVertexBuffers2Args *>(cmd.parameters);
+                PrintCmdBindVertexBuffers2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthTestEnable:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthTestEnableArgs *>(cmd.parameters);
+                PrintCmdSetDepthTestEnableArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthWriteEnable:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthWriteEnableArgs *>(cmd.parameters);
+                PrintCmdSetDepthWriteEnableArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthCompareOp:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthCompareOpArgs *>(cmd.parameters);
+                PrintCmdSetDepthCompareOpArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthBoundsTestEnable:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthBoundsTestEnableArgs *>(cmd.parameters);
+                PrintCmdSetDepthBoundsTestEnableArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetStencilTestEnable:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetStencilTestEnableArgs *>(cmd.parameters);
+                PrintCmdSetStencilTestEnableArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetStencilOp:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetStencilOpArgs *>(cmd.parameters);
+                PrintCmdSetStencilOpArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRasterizerDiscardEnable:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRasterizerDiscardEnableArgs *>(cmd.parameters);
+                PrintCmdSetRasterizerDiscardEnableArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthBiasEnable:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthBiasEnableArgs *>(cmd.parameters);
+                PrintCmdSetDepthBiasEnableArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPrimitiveRestartEnable:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPrimitiveRestartEnableArgs *>(cmd.parameters);
+                PrintCmdSetPrimitiveRestartEnableArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginVideoCodingKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginVideoCodingKHRArgs *>(cmd.parameters);
+                PrintCmdBeginVideoCodingKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndVideoCodingKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndVideoCodingKHRArgs *>(cmd.parameters);
+                PrintCmdEndVideoCodingKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdControlVideoCodingKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdControlVideoCodingKHRArgs *>(cmd.parameters);
+                PrintCmdControlVideoCodingKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDecodeVideoKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDecodeVideoKHRArgs *>(cmd.parameters);
+                PrintCmdDecodeVideoKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginRenderingKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginRenderingKHRArgs *>(cmd.parameters);
+                PrintCmdBeginRenderingKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndRenderingKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndRenderingKHRArgs *>(cmd.parameters);
+                PrintCmdEndRenderingKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDeviceMaskKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDeviceMaskKHRArgs *>(cmd.parameters);
+                PrintCmdSetDeviceMaskKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDispatchBaseKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchBaseKHRArgs *>(cmd.parameters);
+                PrintCmdDispatchBaseKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDescriptorSetKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDescriptorSetKHRArgs *>(cmd.parameters);
+                PrintCmdPushDescriptorSetKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDescriptorSetWithTemplateKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDescriptorSetWithTemplateKHRArgs *>(cmd.parameters);
+                PrintCmdPushDescriptorSetWithTemplateKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginRenderPass2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginRenderPass2KHRArgs *>(cmd.parameters);
+                PrintCmdBeginRenderPass2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdNextSubpass2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdNextSubpass2KHRArgs *>(cmd.parameters);
+                PrintCmdNextSubpass2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndRenderPass2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndRenderPass2KHRArgs *>(cmd.parameters);
+                PrintCmdEndRenderPass2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndirectCountKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndirectCountKHRArgs *>(cmd.parameters);
+                PrintCmdDrawIndirectCountKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndexedIndirectCountKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndexedIndirectCountKHRArgs *>(cmd.parameters);
+                PrintCmdDrawIndexedIndirectCountKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetFragmentShadingRateKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetFragmentShadingRateKHRArgs *>(cmd.parameters);
+                PrintCmdSetFragmentShadingRateKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRenderingAttachmentLocationsKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRenderingAttachmentLocationsKHRArgs *>(cmd.parameters);
+                PrintCmdSetRenderingAttachmentLocationsKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRenderingInputAttachmentIndicesKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRenderingInputAttachmentIndicesKHRArgs *>(cmd.parameters);
+                PrintCmdSetRenderingInputAttachmentIndicesKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEncodeVideoKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEncodeVideoKHRArgs *>(cmd.parameters);
+                PrintCmdEncodeVideoKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetEvent2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetEvent2KHRArgs *>(cmd.parameters);
+                PrintCmdSetEvent2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResetEvent2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResetEvent2KHRArgs *>(cmd.parameters);
+                PrintCmdResetEvent2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWaitEvents2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWaitEvents2KHRArgs *>(cmd.parameters);
+                PrintCmdWaitEvents2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPipelineBarrier2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPipelineBarrier2KHRArgs *>(cmd.parameters);
+                PrintCmdPipelineBarrier2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteTimestamp2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteTimestamp2KHRArgs *>(cmd.parameters);
+                PrintCmdWriteTimestamp2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteBufferMarker2AMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteBufferMarker2AMDArgs *>(cmd.parameters);
+                PrintCmdWriteBufferMarker2AMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyBuffer2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyBuffer2KHRArgs *>(cmd.parameters);
+                PrintCmdCopyBuffer2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImage2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImage2KHRArgs *>(cmd.parameters);
+                PrintCmdCopyImage2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyBufferToImage2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyBufferToImage2KHRArgs *>(cmd.parameters);
+                PrintCmdCopyBufferToImage2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImageToBuffer2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImageToBuffer2KHRArgs *>(cmd.parameters);
+                PrintCmdCopyImageToBuffer2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBlitImage2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBlitImage2KHRArgs *>(cmd.parameters);
+                PrintCmdBlitImage2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResolveImage2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResolveImage2KHRArgs *>(cmd.parameters);
+                PrintCmdResolveImage2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdTraceRaysIndirect2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdTraceRaysIndirect2KHRArgs *>(cmd.parameters);
+                PrintCmdTraceRaysIndirect2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindIndexBuffer2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindIndexBuffer2KHRArgs *>(cmd.parameters);
+                PrintCmdBindIndexBuffer2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLineStippleKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLineStippleKHRArgs *>(cmd.parameters);
+                PrintCmdSetLineStippleKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindDescriptorSets2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindDescriptorSets2KHRArgs *>(cmd.parameters);
+                PrintCmdBindDescriptorSets2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushConstants2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushConstants2KHRArgs *>(cmd.parameters);
+                PrintCmdPushConstants2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDescriptorSet2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDescriptorSet2KHRArgs *>(cmd.parameters);
+                PrintCmdPushDescriptorSet2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDescriptorSetWithTemplate2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDescriptorSetWithTemplate2KHRArgs *>(cmd.parameters);
+                PrintCmdPushDescriptorSetWithTemplate2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDescriptorBufferOffsets2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDescriptorBufferOffsets2EXTArgs *>(cmd.parameters);
+                PrintCmdSetDescriptorBufferOffsets2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindDescriptorBufferEmbeddedSamplers2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs *>(cmd.parameters);
+                PrintCmdBindDescriptorBufferEmbeddedSamplers2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDebugMarkerBeginEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDebugMarkerBeginEXTArgs *>(cmd.parameters);
+                PrintCmdDebugMarkerBeginEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDebugMarkerEndEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDebugMarkerEndEXTArgs *>(cmd.parameters);
+                PrintCmdDebugMarkerEndEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDebugMarkerInsertEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDebugMarkerInsertEXTArgs *>(cmd.parameters);
+                PrintCmdDebugMarkerInsertEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindTransformFeedbackBuffersEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindTransformFeedbackBuffersEXTArgs *>(cmd.parameters);
+                PrintCmdBindTransformFeedbackBuffersEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginTransformFeedbackEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginTransformFeedbackEXTArgs *>(cmd.parameters);
+                PrintCmdBeginTransformFeedbackEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndTransformFeedbackEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndTransformFeedbackEXTArgs *>(cmd.parameters);
+                PrintCmdEndTransformFeedbackEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginQueryIndexedEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginQueryIndexedEXTArgs *>(cmd.parameters);
+                PrintCmdBeginQueryIndexedEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndQueryIndexedEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndQueryIndexedEXTArgs *>(cmd.parameters);
+                PrintCmdEndQueryIndexedEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndirectByteCountEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndirectByteCountEXTArgs *>(cmd.parameters);
+                PrintCmdDrawIndirectByteCountEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCuLaunchKernelNVX:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCuLaunchKernelNVXArgs *>(cmd.parameters);
+                PrintCmdCuLaunchKernelNVXArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndirectCountAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndirectCountAMDArgs *>(cmd.parameters);
+                PrintCmdDrawIndirectCountAMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndexedIndirectCountAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndexedIndirectCountAMDArgs *>(cmd.parameters);
+                PrintCmdDrawIndexedIndirectCountAMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginConditionalRenderingEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginConditionalRenderingEXTArgs *>(cmd.parameters);
+                PrintCmdBeginConditionalRenderingEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndConditionalRenderingEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndConditionalRenderingEXTArgs *>(cmd.parameters);
+                PrintCmdEndConditionalRenderingEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetViewportWScalingNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetViewportWScalingNVArgs *>(cmd.parameters);
+                PrintCmdSetViewportWScalingNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDiscardRectangleEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDiscardRectangleEXTArgs *>(cmd.parameters);
+                PrintCmdSetDiscardRectangleEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDiscardRectangleEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDiscardRectangleEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetDiscardRectangleEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDiscardRectangleModeEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDiscardRectangleModeEXTArgs *>(cmd.parameters);
+                PrintCmdSetDiscardRectangleModeEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginDebugUtilsLabelEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginDebugUtilsLabelEXTArgs *>(cmd.parameters);
+                PrintCmdBeginDebugUtilsLabelEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndDebugUtilsLabelEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndDebugUtilsLabelEXTArgs *>(cmd.parameters);
+                PrintCmdEndDebugUtilsLabelEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdInsertDebugUtilsLabelEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdInsertDebugUtilsLabelEXTArgs *>(cmd.parameters);
+                PrintCmdInsertDebugUtilsLabelEXTArgs(os, *args);
+            }
+            break;
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case Command::Type::kCmdInitializeGraphScratchMemoryAMDX:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdInitializeGraphScratchMemoryAMDXArgs *>(cmd.parameters);
+                PrintCmdInitializeGraphScratchMemoryAMDXArgs(os, *args);
+            }
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case Command::Type::kCmdDispatchGraphAMDX:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchGraphAMDXArgs *>(cmd.parameters);
+                PrintCmdDispatchGraphAMDXArgs(os, *args);
+            }
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case Command::Type::kCmdDispatchGraphIndirectAMDX:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchGraphIndirectAMDXArgs *>(cmd.parameters);
+                PrintCmdDispatchGraphIndirectAMDXArgs(os, *args);
+            }
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case Command::Type::kCmdDispatchGraphIndirectCountAMDX:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchGraphIndirectCountAMDXArgs *>(cmd.parameters);
+                PrintCmdDispatchGraphIndirectCountAMDXArgs(os, *args);
+            }
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
+        case Command::Type::kCmdSetSampleLocationsEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetSampleLocationsEXTArgs *>(cmd.parameters);
+                PrintCmdSetSampleLocationsEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindShadingRateImageNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindShadingRateImageNVArgs *>(cmd.parameters);
+                PrintCmdBindShadingRateImageNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetViewportShadingRatePaletteNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetViewportShadingRatePaletteNVArgs *>(cmd.parameters);
+                PrintCmdSetViewportShadingRatePaletteNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCoarseSampleOrderNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCoarseSampleOrderNVArgs *>(cmd.parameters);
+                PrintCmdSetCoarseSampleOrderNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBuildAccelerationStructureNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBuildAccelerationStructureNVArgs *>(cmd.parameters);
+                PrintCmdBuildAccelerationStructureNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyAccelerationStructureNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyAccelerationStructureNVArgs *>(cmd.parameters);
+                PrintCmdCopyAccelerationStructureNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdTraceRaysNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdTraceRaysNVArgs *>(cmd.parameters);
+                PrintCmdTraceRaysNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteAccelerationStructuresPropertiesNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteAccelerationStructuresPropertiesNVArgs *>(cmd.parameters);
+                PrintCmdWriteAccelerationStructuresPropertiesNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteBufferMarkerAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteBufferMarkerAMDArgs *>(cmd.parameters);
+                PrintCmdWriteBufferMarkerAMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMeshTasksNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMeshTasksNVArgs *>(cmd.parameters);
+                PrintCmdDrawMeshTasksNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMeshTasksIndirectNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMeshTasksIndirectNVArgs *>(cmd.parameters);
+                PrintCmdDrawMeshTasksIndirectNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMeshTasksIndirectCountNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMeshTasksIndirectCountNVArgs *>(cmd.parameters);
+                PrintCmdDrawMeshTasksIndirectCountNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetExclusiveScissorEnableNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetExclusiveScissorEnableNVArgs *>(cmd.parameters);
+                PrintCmdSetExclusiveScissorEnableNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetExclusiveScissorNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetExclusiveScissorNVArgs *>(cmd.parameters);
+                PrintCmdSetExclusiveScissorNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCheckpointNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCheckpointNVArgs *>(cmd.parameters);
+                PrintCmdSetCheckpointNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPerformanceMarkerINTEL:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPerformanceMarkerINTELArgs *>(cmd.parameters);
+                PrintCmdSetPerformanceMarkerINTELArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPerformanceStreamMarkerINTEL:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPerformanceStreamMarkerINTELArgs *>(cmd.parameters);
+                PrintCmdSetPerformanceStreamMarkerINTELArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPerformanceOverrideINTEL:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPerformanceOverrideINTELArgs *>(cmd.parameters);
+                PrintCmdSetPerformanceOverrideINTELArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLineStippleEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLineStippleEXTArgs *>(cmd.parameters);
+                PrintCmdSetLineStippleEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCullModeEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCullModeEXTArgs *>(cmd.parameters);
+                PrintCmdSetCullModeEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetFrontFaceEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetFrontFaceEXTArgs *>(cmd.parameters);
+                PrintCmdSetFrontFaceEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPrimitiveTopologyEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPrimitiveTopologyEXTArgs *>(cmd.parameters);
+                PrintCmdSetPrimitiveTopologyEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetViewportWithCountEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetViewportWithCountEXTArgs *>(cmd.parameters);
+                PrintCmdSetViewportWithCountEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetScissorWithCountEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetScissorWithCountEXTArgs *>(cmd.parameters);
+                PrintCmdSetScissorWithCountEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindVertexBuffers2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindVertexBuffers2EXTArgs *>(cmd.parameters);
+                PrintCmdBindVertexBuffers2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthTestEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthTestEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthTestEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthWriteEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthWriteEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthWriteEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthCompareOpEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthCompareOpEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthCompareOpEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthBoundsTestEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthBoundsTestEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthBoundsTestEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetStencilTestEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetStencilTestEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetStencilTestEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetStencilOpEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetStencilOpEXTArgs *>(cmd.parameters);
+                PrintCmdSetStencilOpEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPreprocessGeneratedCommandsNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPreprocessGeneratedCommandsNVArgs *>(cmd.parameters);
+                PrintCmdPreprocessGeneratedCommandsNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdExecuteGeneratedCommandsNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdExecuteGeneratedCommandsNVArgs *>(cmd.parameters);
+                PrintCmdExecuteGeneratedCommandsNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindPipelineShaderGroupNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindPipelineShaderGroupNVArgs *>(cmd.parameters);
+                PrintCmdBindPipelineShaderGroupNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthBias2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthBias2EXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthBias2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCudaLaunchKernelNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCudaLaunchKernelNVArgs *>(cmd.parameters);
+                PrintCmdCudaLaunchKernelNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindDescriptorBuffersEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindDescriptorBuffersEXTArgs *>(cmd.parameters);
+                PrintCmdBindDescriptorBuffersEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDescriptorBufferOffsetsEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDescriptorBufferOffsetsEXTArgs *>(cmd.parameters);
+                PrintCmdSetDescriptorBufferOffsetsEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindDescriptorBufferEmbeddedSamplersEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindDescriptorBufferEmbeddedSamplersEXTArgs *>(cmd.parameters);
+                PrintCmdBindDescriptorBufferEmbeddedSamplersEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetFragmentShadingRateEnumNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetFragmentShadingRateEnumNVArgs *>(cmd.parameters);
+                PrintCmdSetFragmentShadingRateEnumNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetVertexInputEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetVertexInputEXTArgs *>(cmd.parameters);
+                PrintCmdSetVertexInputEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSubpassShadingHUAWEI:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSubpassShadingHUAWEIArgs *>(cmd.parameters);
+                PrintCmdSubpassShadingHUAWEIArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindInvocationMaskHUAWEI:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindInvocationMaskHUAWEIArgs *>(cmd.parameters);
+                PrintCmdBindInvocationMaskHUAWEIArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPatchControlPointsEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPatchControlPointsEXTArgs *>(cmd.parameters);
+                PrintCmdSetPatchControlPointsEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRasterizerDiscardEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRasterizerDiscardEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetRasterizerDiscardEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthBiasEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthBiasEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthBiasEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLogicOpEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLogicOpEXTArgs *>(cmd.parameters);
+                PrintCmdSetLogicOpEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPrimitiveRestartEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPrimitiveRestartEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetPrimitiveRestartEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetColorWriteEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetColorWriteEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetColorWriteEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMultiEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMultiEXTArgs *>(cmd.parameters);
+                PrintCmdDrawMultiEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMultiIndexedEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMultiIndexedEXTArgs *>(cmd.parameters);
+                PrintCmdDrawMultiIndexedEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBuildMicromapsEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBuildMicromapsEXTArgs *>(cmd.parameters);
+                PrintCmdBuildMicromapsEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMicromapEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMicromapEXTArgs *>(cmd.parameters);
+                PrintCmdCopyMicromapEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMicromapToMemoryEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMicromapToMemoryEXTArgs *>(cmd.parameters);
+                PrintCmdCopyMicromapToMemoryEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMemoryToMicromapEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMemoryToMicromapEXTArgs *>(cmd.parameters);
+                PrintCmdCopyMemoryToMicromapEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteMicromapsPropertiesEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteMicromapsPropertiesEXTArgs *>(cmd.parameters);
+                PrintCmdWriteMicromapsPropertiesEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawClusterHUAWEI:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawClusterHUAWEIArgs *>(cmd.parameters);
+                PrintCmdDrawClusterHUAWEIArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawClusterIndirectHUAWEI:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawClusterIndirectHUAWEIArgs *>(cmd.parameters);
+                PrintCmdDrawClusterIndirectHUAWEIArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMemoryIndirectNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMemoryIndirectNVArgs *>(cmd.parameters);
+                PrintCmdCopyMemoryIndirectNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMemoryToImageIndirectNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMemoryToImageIndirectNVArgs *>(cmd.parameters);
+                PrintCmdCopyMemoryToImageIndirectNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDecompressMemoryNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDecompressMemoryNVArgs *>(cmd.parameters);
+                PrintCmdDecompressMemoryNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDecompressMemoryIndirectCountNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDecompressMemoryIndirectCountNVArgs *>(cmd.parameters);
+                PrintCmdDecompressMemoryIndirectCountNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdUpdatePipelineIndirectBufferNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdUpdatePipelineIndirectBufferNVArgs *>(cmd.parameters);
+                PrintCmdUpdatePipelineIndirectBufferNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthClampEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthClampEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthClampEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPolygonModeEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPolygonModeEXTArgs *>(cmd.parameters);
+                PrintCmdSetPolygonModeEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRasterizationSamplesEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRasterizationSamplesEXTArgs *>(cmd.parameters);
+                PrintCmdSetRasterizationSamplesEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetSampleMaskEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetSampleMaskEXTArgs *>(cmd.parameters);
+                PrintCmdSetSampleMaskEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetAlphaToCoverageEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetAlphaToCoverageEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetAlphaToCoverageEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetAlphaToOneEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetAlphaToOneEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetAlphaToOneEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLogicOpEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLogicOpEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetLogicOpEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetColorBlendEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetColorBlendEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetColorBlendEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetColorBlendEquationEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetColorBlendEquationEXTArgs *>(cmd.parameters);
+                PrintCmdSetColorBlendEquationEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetColorWriteMaskEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetColorWriteMaskEXTArgs *>(cmd.parameters);
+                PrintCmdSetColorWriteMaskEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetTessellationDomainOriginEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetTessellationDomainOriginEXTArgs *>(cmd.parameters);
+                PrintCmdSetTessellationDomainOriginEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRasterizationStreamEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRasterizationStreamEXTArgs *>(cmd.parameters);
+                PrintCmdSetRasterizationStreamEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetConservativeRasterizationModeEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetConservativeRasterizationModeEXTArgs *>(cmd.parameters);
+                PrintCmdSetConservativeRasterizationModeEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetExtraPrimitiveOverestimationSizeEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetExtraPrimitiveOverestimationSizeEXTArgs *>(cmd.parameters);
+                PrintCmdSetExtraPrimitiveOverestimationSizeEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthClipEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthClipEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthClipEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetSampleLocationsEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetSampleLocationsEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetSampleLocationsEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetColorBlendAdvancedEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetColorBlendAdvancedEXTArgs *>(cmd.parameters);
+                PrintCmdSetColorBlendAdvancedEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetProvokingVertexModeEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetProvokingVertexModeEXTArgs *>(cmd.parameters);
+                PrintCmdSetProvokingVertexModeEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLineRasterizationModeEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLineRasterizationModeEXTArgs *>(cmd.parameters);
+                PrintCmdSetLineRasterizationModeEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLineStippleEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLineStippleEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetLineStippleEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetDepthClipNegativeOneToOneEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthClipNegativeOneToOneEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthClipNegativeOneToOneEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetViewportWScalingEnableNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetViewportWScalingEnableNVArgs *>(cmd.parameters);
+                PrintCmdSetViewportWScalingEnableNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetViewportSwizzleNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetViewportSwizzleNVArgs *>(cmd.parameters);
+                PrintCmdSetViewportSwizzleNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCoverageToColorEnableNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCoverageToColorEnableNVArgs *>(cmd.parameters);
+                PrintCmdSetCoverageToColorEnableNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCoverageToColorLocationNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCoverageToColorLocationNVArgs *>(cmd.parameters);
+                PrintCmdSetCoverageToColorLocationNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCoverageModulationModeNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCoverageModulationModeNVArgs *>(cmd.parameters);
+                PrintCmdSetCoverageModulationModeNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCoverageModulationTableEnableNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCoverageModulationTableEnableNVArgs *>(cmd.parameters);
+                PrintCmdSetCoverageModulationTableEnableNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCoverageModulationTableNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCoverageModulationTableNVArgs *>(cmd.parameters);
+                PrintCmdSetCoverageModulationTableNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetShadingRateImageEnableNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetShadingRateImageEnableNVArgs *>(cmd.parameters);
+                PrintCmdSetShadingRateImageEnableNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRepresentativeFragmentTestEnableNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRepresentativeFragmentTestEnableNVArgs *>(cmd.parameters);
+                PrintCmdSetRepresentativeFragmentTestEnableNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetCoverageReductionModeNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetCoverageReductionModeNVArgs *>(cmd.parameters);
+                PrintCmdSetCoverageReductionModeNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdOpticalFlowExecuteNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdOpticalFlowExecuteNVArgs *>(cmd.parameters);
+                PrintCmdOpticalFlowExecuteNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindShadersEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindShadersEXTArgs *>(cmd.parameters);
+                PrintCmdBindShadersEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetAttachmentFeedbackLoopEnableEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetAttachmentFeedbackLoopEnableEXTArgs *>(cmd.parameters);
+                PrintCmdSetAttachmentFeedbackLoopEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBuildAccelerationStructuresKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBuildAccelerationStructuresKHRArgs *>(cmd.parameters);
+                PrintCmdBuildAccelerationStructuresKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBuildAccelerationStructuresIndirectKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBuildAccelerationStructuresIndirectKHRArgs *>(cmd.parameters);
+                PrintCmdBuildAccelerationStructuresIndirectKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyAccelerationStructureKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyAccelerationStructureKHRArgs *>(cmd.parameters);
+                PrintCmdCopyAccelerationStructureKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyAccelerationStructureToMemoryKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyAccelerationStructureToMemoryKHRArgs *>(cmd.parameters);
+                PrintCmdCopyAccelerationStructureToMemoryKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMemoryToAccelerationStructureKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMemoryToAccelerationStructureKHRArgs *>(cmd.parameters);
+                PrintCmdCopyMemoryToAccelerationStructureKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteAccelerationStructuresPropertiesKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteAccelerationStructuresPropertiesKHRArgs *>(cmd.parameters);
+                PrintCmdWriteAccelerationStructuresPropertiesKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdTraceRaysKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdTraceRaysKHRArgs *>(cmd.parameters);
+                PrintCmdTraceRaysKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdTraceRaysIndirectKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdTraceRaysIndirectKHRArgs *>(cmd.parameters);
+                PrintCmdTraceRaysIndirectKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRayTracingPipelineStackSizeKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRayTracingPipelineStackSizeKHRArgs *>(cmd.parameters);
+                PrintCmdSetRayTracingPipelineStackSizeKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMeshTasksEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMeshTasksEXTArgs *>(cmd.parameters);
+                PrintCmdDrawMeshTasksEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMeshTasksIndirectEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMeshTasksIndirectEXTArgs *>(cmd.parameters);
+                PrintCmdDrawMeshTasksIndirectEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMeshTasksIndirectCountEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMeshTasksIndirectCountEXTArgs *>(cmd.parameters);
+                PrintCmdDrawMeshTasksIndirectCountEXTArgs(os, *args);
+            }
+            break;
+
+    }  // switch (cmd.type)
+
+}  // CommandPrinter::PrintCommandParameters
+
 // NOLINTEND

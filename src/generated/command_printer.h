@@ -1399,7 +1399,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrawMeshTasksIndirectComman
 class CommandPrinter {
    public:
     void SetNameResolver(const ObjectInfoDB *name_resolver);
-
+    void PrintCommandParameters(YAML::Emitter &os, const Command &cmd);
     void PrintBeginCommandBufferArgs(YAML::Emitter &os, const BeginCommandBufferArgs &args);
     void PrintEndCommandBufferArgs(YAML::Emitter &os, const EndCommandBufferArgs &args);
     void PrintResetCommandBufferArgs(YAML::Emitter &os, const ResetCommandBufferArgs &args);
