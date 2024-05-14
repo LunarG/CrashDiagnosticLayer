@@ -22,12 +22,16 @@ class TestIcdGenerator(BaseGenerator):
     def __init__(self):
         BaseGenerator.__init__(self)
 
-        self.manual_functions = [
+        self.manual_functions = (
             'vkCreateInstance',
             'vkDestroyInstance',
             'vkAllocateCommandBuffers',
+            'vkBeginCommandBuffer',
+            'vkEndCommandBuffer',
+            'vkResetCommandBuffer',
             'vkFreeCommandBuffers',
             'vkCreateCommandPool',
+            'vkResetCommandPool',
             'vkDestroyCommandPool',
             'vkEnumeratePhysicalDevices',
             'vkCreateDevice',
@@ -76,6 +80,8 @@ class TestIcdGenerator(BaseGenerator):
             'vkMapMemory2KHR',
             'vkUnmapMemory',
             'vkUnmapMemory2KHR',
+            'vkBindBufferMemory',
+            'vkBindBufferMemory2',
             'vkGetImageSubresourceLayout',
             'vkCreateSwapchainKHR',
             'vkDestroySwapchainKHR',
@@ -113,10 +119,31 @@ class TestIcdGenerator(BaseGenerator):
             'vkGetAndroidHardwareBufferPropertiesANDROID',
             'vkGetPhysicalDeviceDisplayPropertiesKHR',
             'vkRegisterDisplayEventEXT',
-            'vkQueueSubmit',
             'vkGetMemoryWin32HandlePropertiesKHR',
             'vkRegisterDisplayEventEXT',
-        ]
+            'vkDeviceWaitIdle',
+            'vkGetDeviceQueue',
+            'vkQueueSubmit',
+            'vkQueueSubmit2',
+            'vkQueueBindSparse',
+            'vkQueueWaitIdle',
+            'vkCreateSemaphore',
+            'vkDestroySemaphore',
+            'vkGetSemaphoreCounterValue',
+            'vkSignalSemaphore',
+            'vkWaitSemaphores',
+            'vkCreateFence',
+            'vkDestroyFence',
+            'vkResetFences',
+            'vkWaitForFences',
+            'vkGetFenceStatus',
+            'vkGetDeviceFaultInfoEXT',
+            'vkGetQueueCheckpointDataNV',
+            'vkGetQueueCheckpointData2NV',
+            'vkCmdBeginDebugUtilsLabelEXT',
+            'vkCmdEndDebugUtilsLabelEXT',
+            'vkCmdInsertDebugUtilsLabelEXT',
+        )
 
     def generate(self):
         self.write(f'''// *** THIS FILE IS GENERATED - DO NOT EDIT ***
@@ -159,8 +186,9 @@ class TestIcdGenerator(BaseGenerator):
             #include <unordered_map>
             #include <vulkan/vulkan.h>
 
-            namespace icd {
+            #include "test_icd_command.h"
 
+            namespace icd {
             ''')
         guard_helper = PlatformGuardHelper()
 
@@ -217,7 +245,7 @@ class TestIcdGenerator(BaseGenerator):
                 params = ', '.join(paramList)
                 returnName = '' if voidReturn else 'return '
                 out.append(f'{returnName}{command.alias[2:]}({params});')
-            elif 'vkCreate' in command.name or 'vkAllocate' in command.name:
+            elif command.name.startswith('vkCreate') or command.name.startswith('vkAllocate'):
                 last_param = command.params[-1]
                 out.append('unique_lock_t lock(global_lock);\n')
                 if (last_param.length):
@@ -227,6 +255,15 @@ class TestIcdGenerator(BaseGenerator):
                 else:
                     out.append(f'*{last_param.name} = ({last_param.type})global_unique_handle++;\n')
                 out.append('return VK_SUCCESS;\n')
+            elif command.name.startswith('vkCmd'):
+                paramList = [param.name for param in command.params]
+                params = ', '.join(paramList)
+                out.append('auto *cb = reinterpret_cast<CommandBuffer*>(commandBuffer);')
+                name = command.name.replace('vk', '')
+
+                out.append(f'cb->Tracker().{name}({params});')
+                if not voidReturn:
+                    out.append('return VK_SUCCESS;')
             elif not voidReturn:
                 out.append('return VK_SUCCESS;')
 

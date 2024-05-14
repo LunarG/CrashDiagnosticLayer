@@ -48,14 +48,29 @@ add_library(CDL_Test_ICD MODULE)
 
 target_sources(CDL_Test_ICD PRIVATE
     test_icd.h
-    test_icd.cpp)
+    test_icd.cpp
+    test_icd_command.h
+    test_icd_command.cpp
+    test_icd_device.h
+    test_icd_fence.h
+    test_icd_fence.cpp
+    test_icd_memory.h
+    test_icd_queue.h
+    test_icd_queue.cpp
+    test_icd_semaphore.h
+    test_icd_semaphore.cpp
+    ${GENERATED}/command_tracker.cpp
+    ${GENERATED}/command_recorder.cpp
+)
 
 target_link_libraries(CDL_Test_ICD PRIVATE
     Vulkan::Headers
     Vulkan::UtilityHeaders
+    Vulkan::SafeStruct
 )
 
 target_include_directories(CDL_Test_ICD PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
     ${GENERATED}
     .
 )

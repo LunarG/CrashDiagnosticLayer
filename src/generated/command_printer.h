@@ -1365,6 +1365,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorPoo
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRawAccessChainsFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingValidationFeaturesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageAlignmentControlFeaturesMESA &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageAlignmentControlPropertiesMESA &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageAlignmentControlCreateInfoMESA &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
