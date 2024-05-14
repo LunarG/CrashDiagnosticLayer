@@ -86,7 +86,6 @@ class CommandRecorder
 
 #include "command_common.h"
 #include "command_recorder.h"
-#include "object_name_db.h"
 
 // Declare CopyArray template functions. We need this declaration since the
 // templates call each other and we don't have control over the order of the

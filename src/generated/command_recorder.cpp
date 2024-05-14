@@ -30,7 +30,6 @@
 
 #include "command_common.h"
 #include "command_recorder.h"
-#include "object_name_db.h"
 
 // Declare CopyArray template functions. We need this declaration since the
 // templates call each other and we don't have control over the order of the
@@ -3427,6 +3426,17 @@ template <>
 VkPhysicalDeviceRayTracingValidationFeaturesNV*
 CommandRecorder::CopyArray<VkPhysicalDeviceRayTracingValidationFeaturesNV>(
     const VkPhysicalDeviceRayTracingValidationFeaturesNV* src, uint64_t start_index, uint64_t count);
+template <>
+VkPhysicalDeviceImageAlignmentControlFeaturesMESA*
+CommandRecorder::CopyArray<VkPhysicalDeviceImageAlignmentControlFeaturesMESA>(
+    const VkPhysicalDeviceImageAlignmentControlFeaturesMESA* src, uint64_t start_index, uint64_t count);
+template <>
+VkPhysicalDeviceImageAlignmentControlPropertiesMESA*
+CommandRecorder::CopyArray<VkPhysicalDeviceImageAlignmentControlPropertiesMESA>(
+    const VkPhysicalDeviceImageAlignmentControlPropertiesMESA* src, uint64_t start_index, uint64_t count);
+template <>
+VkImageAlignmentControlCreateInfoMESA* CommandRecorder::CopyArray<VkImageAlignmentControlCreateInfoMESA>(
+    const VkImageAlignmentControlCreateInfoMESA* src, uint64_t start_index, uint64_t count);
 template <>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(
     const VkAccelerationStructureBuildRangeInfoKHR* src, uint64_t start_index, uint64_t count);
@@ -20011,6 +20021,47 @@ CommandRecorder::CopyArray<VkPhysicalDeviceRayTracingValidationFeaturesNV>(
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].rayTracingValidation = src[start_index + i].rayTracingValidation;
+    }
+    return ptr;
+}
+
+template <>
+VkPhysicalDeviceImageAlignmentControlFeaturesMESA*
+CommandRecorder::CopyArray<VkPhysicalDeviceImageAlignmentControlFeaturesMESA>(
+    const VkPhysicalDeviceImageAlignmentControlFeaturesMESA* src, uint64_t start_index, uint64_t count) {
+    auto ptr = reinterpret_cast<VkPhysicalDeviceImageAlignmentControlFeaturesMESA*>(
+        m_allocator.Alloc(sizeof(VkPhysicalDeviceImageAlignmentControlFeaturesMESA) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].imageAlignmentControl = src[start_index + i].imageAlignmentControl;
+    }
+    return ptr;
+}
+
+template <>
+VkPhysicalDeviceImageAlignmentControlPropertiesMESA*
+CommandRecorder::CopyArray<VkPhysicalDeviceImageAlignmentControlPropertiesMESA>(
+    const VkPhysicalDeviceImageAlignmentControlPropertiesMESA* src, uint64_t start_index, uint64_t count) {
+    auto ptr = reinterpret_cast<VkPhysicalDeviceImageAlignmentControlPropertiesMESA*>(
+        m_allocator.Alloc(sizeof(VkPhysicalDeviceImageAlignmentControlPropertiesMESA) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].supportedImageAlignmentMask = src[start_index + i].supportedImageAlignmentMask;
+    }
+    return ptr;
+}
+
+template <>
+VkImageAlignmentControlCreateInfoMESA* CommandRecorder::CopyArray<VkImageAlignmentControlCreateInfoMESA>(
+    const VkImageAlignmentControlCreateInfoMESA* src, uint64_t start_index, uint64_t count) {
+    auto ptr = reinterpret_cast<VkImageAlignmentControlCreateInfoMESA*>(
+        m_allocator.Alloc(sizeof(VkImageAlignmentControlCreateInfoMESA) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].maximumRequestedAlignment = src[start_index + i].maximumRequestedAlignment;
     }
     return ptr;
 }

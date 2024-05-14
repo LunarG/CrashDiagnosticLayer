@@ -28,6 +28,8 @@
 #include <unordered_map>
 #include <vulkan/vulkan.h>
 
+#include "test_icd_command.h"
+
 namespace icd {
 
 // Map of instance extension name to version
@@ -472,6 +474,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {VK_NV_RAW_ACCESS_CHAINS_EXTENSION_NAME, VK_NV_RAW_ACCESS_CHAINS_SPEC_VERSION},
     {VK_NV_SHADER_ATOMIC_FLOAT16_VECTOR_EXTENSION_NAME, VK_NV_SHADER_ATOMIC_FLOAT16_VECTOR_SPEC_VERSION},
     {VK_NV_RAY_TRACING_VALIDATION_EXTENSION_NAME, VK_NV_RAY_TRACING_VALIDATION_SPEC_VERSION},
+    {VK_MESA_IMAGE_ALIGNMENT_CONTROL_EXTENSION_NAME, VK_MESA_IMAGE_ALIGNMENT_CONTROL_SPEC_VERSION},
     {VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME, VK_KHR_ACCELERATION_STRUCTURE_SPEC_VERSION},
     {VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME, VK_KHR_RAY_TRACING_PIPELINE_SPEC_VERSION},
     {VK_KHR_RAY_QUERY_EXTENSION_NAME, VK_KHR_RAY_QUERY_SPEC_VERSION},
@@ -2925,10 +2928,6 @@ static const std::unordered_map<std::string, void*> name_to_func_ptr_map = {
     {"vkCmdDrawMeshTasksIndirectEXT", (void*)CmdDrawMeshTasksIndirectEXT},
     {"vkCmdDrawMeshTasksIndirectCountEXT", (void*)CmdDrawMeshTasksIndirectCountEXT},
 };
-static VKAPI_ATTR VkResult VKAPI_CALL QueueWaitIdle(VkQueue queue) { return VK_SUCCESS; }
-
-static VKAPI_ATTR VkResult VKAPI_CALL DeviceWaitIdle(VkDevice device) { return VK_SUCCESS; }
-
 static VKAPI_ATTR VkResult VKAPI_CALL FlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount,
                                                               const VkMappedMemoryRange* pMemoryRanges) {
     return VK_SUCCESS;
@@ -2942,52 +2941,10 @@ static VKAPI_ATTR VkResult VKAPI_CALL InvalidateMappedMemoryRanges(VkDevice devi
 static VKAPI_ATTR void VKAPI_CALL GetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory,
                                                             VkDeviceSize* pCommittedMemoryInBytes) {}
 
-static VKAPI_ATTR VkResult VKAPI_CALL BindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory,
-                                                       VkDeviceSize memoryOffset) {
-    return VK_SUCCESS;
-}
-
 static VKAPI_ATTR VkResult VKAPI_CALL BindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory,
                                                       VkDeviceSize memoryOffset) {
     return VK_SUCCESS;
 }
-
-static VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(VkQueue queue, uint32_t bindInfoCount,
-                                                      const VkBindSparseInfo* pBindInfo, VkFence fence) {
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL CreateFence(VkDevice device, const VkFenceCreateInfo* pCreateInfo,
-                                                  const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
-    unique_lock_t lock(global_lock);
-    *pFence = (VkFence)global_unique_handle++;
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR void VKAPI_CALL DestroyFence(VkDevice device, VkFence fence,
-                                               const VkAllocationCallbacks* pAllocator) {}
-
-static VKAPI_ATTR VkResult VKAPI_CALL ResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences) {
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL GetFenceStatus(VkDevice device, VkFence fence) { return VK_SUCCESS; }
-
-static VKAPI_ATTR VkResult VKAPI_CALL WaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences,
-                                                    VkBool32 waitAll, uint64_t timeout) {
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL CreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo,
-                                                      const VkAllocationCallbacks* pAllocator,
-                                                      VkSemaphore* pSemaphore) {
-    unique_lock_t lock(global_lock);
-    *pSemaphore = (VkSemaphore)global_unique_handle++;
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR void VKAPI_CALL DestroySemaphore(VkDevice device, VkSemaphore semaphore,
-                                                   const VkAllocationCallbacks* pAllocator) {}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateEvent(VkDevice device, const VkEventCreateInfo* pCreateInfo,
                                                   const VkAllocationCallbacks* pAllocator, VkEvent* pEvent) {
@@ -3195,182 +3152,301 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateRenderPass(VkDevice device, const Vk
 static VKAPI_ATTR void VKAPI_CALL DestroyRenderPass(VkDevice device, VkRenderPass renderPass,
                                                     const VkAllocationCallbacks* pAllocator) {}
 
-static VKAPI_ATTR VkResult VKAPI_CALL ResetCommandPool(VkDevice device, VkCommandPool commandPool,
-                                                       VkCommandPoolResetFlags flags) {
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL BeginCommandBuffer(VkCommandBuffer commandBuffer,
-                                                         const VkCommandBufferBeginInfo* pBeginInfo) {
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL EndCommandBuffer(VkCommandBuffer commandBuffer) { return VK_SUCCESS; }
-
-static VKAPI_ATTR VkResult VKAPI_CALL ResetCommandBuffer(VkCommandBuffer commandBuffer,
-                                                         VkCommandBufferResetFlags flags) {
-    return VK_SUCCESS;
-}
-
 static VKAPI_ATTR void VKAPI_CALL CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                                  VkPipeline pipeline) {}
+                                                  VkPipeline pipeline) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport,
-                                                 uint32_t viewportCount, const VkViewport* pViewports) {}
+                                                 uint32_t viewportCount, const VkViewport* pViewports) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor,
-                                                uint32_t scissorCount, const VkRect2D* pScissors) {}
+                                                uint32_t scissorCount, const VkRect2D* pScissors) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetLineWidth(commandBuffer, lineWidth);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor,
-                                                  float depthBiasClamp, float depthBiasSlopeFactor) {}
+                                                  float depthBiasClamp, float depthBiasSlopeFactor) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4]) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4]) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetBlendConstants(commandBuffer, blendConstants);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds,
-                                                    float maxDepthBounds) {}
+                                                    float maxDepthBounds) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                                           uint32_t compareMask) {}
+                                                           uint32_t compareMask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                                         uint32_t writeMask) {}
+                                                         uint32_t writeMask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                                         uint32_t reference) {}
+                                                         uint32_t reference) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetStencilReference(commandBuffer, faceMask, reference);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorSets(VkCommandBuffer commandBuffer,
                                                         VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout,
                                                         uint32_t firstSet, uint32_t descriptorSetCount,
                                                         const VkDescriptorSet* pDescriptorSets,
-                                                        uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets) {}
+                                                        uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
+                                        pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                     VkDeviceSize offset, VkIndexType indexType) {}
+                                                     VkDeviceSize offset, VkIndexType indexType) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding,
                                                        uint32_t bindingCount, const VkBuffer* pBuffers,
-                                                       const VkDeviceSize* pOffsets) {}
+                                                       const VkDeviceSize* pOffsets) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount,
-                                          uint32_t firstVertex, uint32_t firstInstance) {}
+                                          uint32_t firstVertex, uint32_t firstInstance) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount,
                                                  uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset,
-                                                 uint32_t firstInstance) {}
+                                                 uint32_t firstInstance) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                                  uint32_t drawCount, uint32_t stride) {}
+                                                  uint32_t drawCount, uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                         VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {}
+                                                         VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                                              uint32_t groupCountZ) {}
+                                              uint32_t groupCountZ) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                      VkDeviceSize offset) {}
+                                                      VkDeviceSize offset) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDispatchIndirect(commandBuffer, buffer, offset);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                                                uint32_t regionCount, const VkBufferCopy* pRegions) {}
+                                                uint32_t regionCount, const VkBufferCopy* pRegions) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage,
                                                VkImageLayout srcImageLayout, VkImage dstImage,
                                                VkImageLayout dstImageLayout, uint32_t regionCount,
-                                               const VkImageCopy* pRegions) {}
+                                               const VkImageCopy* pRegions) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount,
+                               pRegions);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage,
                                                VkImageLayout srcImageLayout, VkImage dstImage,
                                                VkImageLayout dstImageLayout, uint32_t regionCount,
-                                               const VkImageBlit* pRegions, VkFilter filter) {}
+                                               const VkImageBlit* pRegions, VkFilter filter) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions,
+                               filter);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
                                                        VkImage dstImage, VkImageLayout dstImageLayout,
-                                                       uint32_t regionCount, const VkBufferImageCopy* pRegions) {}
+                                                       uint32_t regionCount, const VkBufferImageCopy* pRegions) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
                                                        VkImageLayout srcImageLayout, VkBuffer dstBuffer,
-                                                       uint32_t regionCount, const VkBufferImageCopy* pRegions) {}
+                                                       uint32_t regionCount, const VkBufferImageCopy* pRegions) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
-                                                  VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData) {}
+                                                  VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
-                                                VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) {}
+                                                VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image,
                                                      VkImageLayout imageLayout, const VkClearColorValue* pColor,
-                                                     uint32_t rangeCount, const VkImageSubresourceRange* pRanges) {}
+                                                     uint32_t rangeCount, const VkImageSubresourceRange* pRanges) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image,
                                                             VkImageLayout imageLayout,
                                                             const VkClearDepthStencilValue* pDepthStencil,
                                                             uint32_t rangeCount,
-                                                            const VkImageSubresourceRange* pRanges) {}
+                                                            const VkImageSubresourceRange* pRanges) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
                                                       const VkClearAttachment* pAttachments, uint32_t rectCount,
-                                                      const VkClearRect* pRects) {}
+                                                      const VkClearRect* pRects) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage,
                                                   VkImageLayout srcImageLayout, VkImage dstImage,
                                                   VkImageLayout dstImageLayout, uint32_t regionCount,
-                                                  const VkImageResolve* pRegions) {}
+                                                  const VkImageResolve* pRegions) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount,
+                                  pRegions);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event,
-                                              VkPipelineStageFlags stageMask) {}
+                                              VkPipelineStageFlags stageMask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetEvent(commandBuffer, event, stageMask);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event,
-                                                VkPipelineStageFlags stageMask) {}
+                                                VkPipelineStageFlags stageMask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdResetEvent(commandBuffer, event, stageMask);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdWaitEvents(
     VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask,
     VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
     uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-    uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {}
+    uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
+                                pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
+                                imageMemoryBarrierCount, pImageMemoryBarriers);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdPipelineBarrier(
     VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
     VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
     uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-    uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {}
+    uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
+                                     pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
+                                     imageMemoryBarrierCount, pImageMemoryBarriers);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                                                VkQueryControlFlags flags) {}
+                                                VkQueryControlFlags flags) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBeginQuery(commandBuffer, queryPool, query, flags);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {}
+static VKAPI_ATTR void VKAPI_CALL CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndQuery(commandBuffer, queryPool, query);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                    uint32_t firstQuery, uint32_t queryCount) {}
+                                                    uint32_t firstQuery, uint32_t queryCount) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdWriteTimestamp(VkCommandBuffer commandBuffer,
                                                     VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool,
-                                                    uint32_t query) {}
+                                                    uint32_t query) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
                                                           uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer,
                                                           VkDeviceSize dstOffset, VkDeviceSize stride,
-                                                          VkQueryResultFlags flags) {}
+                                                          VkQueryResultFlags flags) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset,
+                                          stride, flags);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
                                                    VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
-                                                   const void* pValues) {}
+                                                   const void* pValues) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginRenderPass(VkCommandBuffer commandBuffer,
                                                      const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                     VkSubpassContents contents) {}
+                                                     VkSubpassContents contents) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) {}
+static VKAPI_ATTR void VKAPI_CALL CmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdNextSubpass(commandBuffer, contents);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdEndRenderPass(VkCommandBuffer commandBuffer) {}
+static VKAPI_ATTR void VKAPI_CALL CmdEndRenderPass(VkCommandBuffer commandBuffer) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndRenderPass(commandBuffer);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                                                     const VkCommandBuffer* pCommandBuffers) {}
-
-static VKAPI_ATTR VkResult VKAPI_CALL BindBufferMemory2(VkDevice device, uint32_t bindInfoCount,
-                                                        const VkBindBufferMemoryInfo* pBindInfos) {
-    return VK_SUCCESS;
+                                                     const VkCommandBuffer* pCommandBuffers) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL BindImageMemory2(VkDevice device, uint32_t bindInfoCount,
@@ -3383,11 +3459,18 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceGroupPeerMemoryFeatures(VkDevice devi
                                                                    uint32_t remoteDeviceIndex,
                                                                    VkPeerMemoryFeatureFlags* pPeerMemoryFeatures) {}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDeviceMask(commandBuffer, deviceMask);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX,
                                                   uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX,
-                                                  uint32_t groupCountY, uint32_t groupCountZ) {}
+                                                  uint32_t groupCountY, uint32_t groupCountZ) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY,
+                                  groupCountZ);
+}
 
 static VKAPI_ATTR void VKAPI_CALL TrimCommandPool(VkDevice device, VkCommandPool commandPool,
                                                   VkCommandPoolTrimFlags flags) {}
@@ -3423,12 +3506,20 @@ static VKAPI_ATTR void VKAPI_CALL UpdateDescriptorSetWithTemplate(VkDevice devic
 static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                        VkDeviceSize offset, VkBuffer countBuffer,
                                                        VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                                       uint32_t stride) {}
+                                                       uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount,
+                                       stride);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                               VkDeviceSize offset, VkBuffer countBuffer,
                                                               VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                                              uint32_t stride) {}
+                                                              uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset,
+                                              maxDrawCount, stride);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateRenderPass2(VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo,
                                                         const VkAllocationCallbacks* pAllocator,
@@ -3440,31 +3531,26 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateRenderPass2(VkDevice device, const V
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginRenderPass2(VkCommandBuffer commandBuffer,
                                                       const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                      const VkSubpassBeginInfo* pSubpassBeginInfo) {}
+                                                      const VkSubpassBeginInfo* pSubpassBeginInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdNextSubpass2(VkCommandBuffer commandBuffer,
                                                   const VkSubpassBeginInfo* pSubpassBeginInfo,
-                                                  const VkSubpassEndInfo* pSubpassEndInfo) {}
+                                                  const VkSubpassEndInfo* pSubpassEndInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdEndRenderPass2(VkCommandBuffer commandBuffer,
-                                                    const VkSubpassEndInfo* pSubpassEndInfo) {}
+                                                    const VkSubpassEndInfo* pSubpassEndInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL ResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
                                                  uint32_t queryCount) {}
-
-static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore,
-                                                               uint64_t* pValue) {
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL WaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo,
-                                                     uint64_t timeout) {
-    return VK_SUCCESS;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
-    return VK_SUCCESS;
-}
 
 static VKAPI_ATTR uint64_t VKAPI_CALL GetBufferOpaqueCaptureAddress(VkDevice device,
                                                                     const VkBufferDeviceAddressInfo* pInfo) {
@@ -3503,88 +3589,166 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateData(VkDevice device, VkObjectType o
                                                  VkPrivateDataSlot privateDataSlot, uint64_t* pData) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                               const VkDependencyInfo* pDependencyInfo) {}
+                                               const VkDependencyInfo* pDependencyInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetEvent2(commandBuffer, event, pDependencyInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                                 VkPipelineStageFlags2 stageMask) {}
+                                                 VkPipelineStageFlags2 stageMask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdResetEvent2(commandBuffer, event, stageMask);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount,
-                                                 const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos) {}
+                                                 const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdPipelineBarrier2(VkCommandBuffer commandBuffer,
-                                                      const VkDependencyInfo* pDependencyInfo) {}
+                                                      const VkDependencyInfo* pDependencyInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPipelineBarrier2(commandBuffer, pDependencyInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                                     VkQueryPool queryPool, uint32_t query) {}
-
-static VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
-                                                   VkFence fence) {
-    return VK_SUCCESS;
+                                                     VkQueryPool queryPool, uint32_t query) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyBuffer2(VkCommandBuffer commandBuffer,
-                                                 const VkCopyBufferInfo2* pCopyBufferInfo) {}
+                                                 const VkCopyBufferInfo2* pCopyBufferInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyImage2(VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyImage2(commandBuffer, pCopyImageInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyBufferToImage2(VkCommandBuffer commandBuffer,
-                                                        const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {}
+                                                        const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
-                                                        const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {}
+                                                        const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBlitImage2(commandBuffer, pBlitImageInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdResolveImage2(VkCommandBuffer commandBuffer,
-                                                   const VkResolveImageInfo2* pResolveImageInfo) {}
+                                                   const VkResolveImageInfo2* pResolveImageInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdResolveImage2(commandBuffer, pResolveImageInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginRendering(VkCommandBuffer commandBuffer,
-                                                    const VkRenderingInfo* pRenderingInfo) {}
+                                                    const VkRenderingInfo* pRenderingInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBeginRendering(commandBuffer, pRenderingInfo);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdEndRendering(VkCommandBuffer commandBuffer) {}
+static VKAPI_ATTR void VKAPI_CALL CmdEndRendering(VkCommandBuffer commandBuffer) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndRendering(commandBuffer);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCullMode(commandBuffer, cullMode);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetFrontFace(commandBuffer, frontFace);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetPrimitiveTopology(VkCommandBuffer commandBuffer,
-                                                          VkPrimitiveTopology primitiveTopology) {}
+                                                          VkPrimitiveTopology primitiveTopology) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_t viewportCount,
-                                                          const VkViewport* pViewports) {}
+                                                          const VkViewport* pViewports) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCount,
-                                                         const VkRect2D* pScissors) {}
+                                                         const VkRect2D* pScissors) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32_t firstBinding,
                                                         uint32_t bindingCount, const VkBuffer* pBuffers,
                                                         const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes,
-                                                        const VkDeviceSize* pStrides) {}
+                                                        const VkDeviceSize* pStrides) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes,
+                                        pStrides);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetDepthTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetDepthTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthTestEnable(commandBuffer, depthTestEnable);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetDepthWriteEnable(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetDepthWriteEnable(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthCompareOp(commandBuffer, depthCompareOp);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer,
-                                                              VkBool32 depthBoundsTestEnable) {}
+                                                              VkBool32 depthBoundsTestEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
                                                   VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp,
-                                                  VkCompareOp compareOp) {}
+                                                  VkCompareOp compareOp) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer,
-                                                                VkBool32 rasterizerDiscardEnable) {}
+                                                                VkBool32 rasterizerDiscardEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer,
-                                                               VkBool32 primitiveRestartEnable) {}
+                                                               VkBool32 primitiveRestartEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSparseMemoryRequirements(
     VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount,
@@ -3781,16 +3945,28 @@ static VKAPI_ATTR void VKAPI_CALL DestroyVideoSessionParametersKHR(VkDevice devi
                                                                    const VkAllocationCallbacks* pAllocator) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
-                                                         const VkVideoBeginCodingInfoKHR* pBeginInfo) {}
+                                                         const VkVideoBeginCodingInfoKHR* pBeginInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdEndVideoCodingKHR(VkCommandBuffer commandBuffer,
-                                                       const VkVideoEndCodingInfoKHR* pEndCodingInfo) {}
+                                                       const VkVideoEndCodingInfoKHR* pEndCodingInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdControlVideoCodingKHR(VkCommandBuffer commandBuffer,
-                                                           const VkVideoCodingControlInfoKHR* pCodingControlInfo) {}
+                                                           const VkVideoCodingControlInfoKHR* pCodingControlInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDecodeVideoKHR(VkCommandBuffer commandBuffer,
-                                                    const VkVideoDecodeInfoKHR* pDecodeInfo) {}
+                                                    const VkVideoDecodeInfoKHR* pDecodeInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginRenderingKHR(VkCommandBuffer commandBuffer,
                                                        const VkRenderingInfo* pRenderingInfo) {
@@ -3918,11 +4094,18 @@ static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSetKHR(VkCommandBuffer comman
                                                           VkPipelineBindPoint pipelineBindPoint,
                                                           VkPipelineLayout layout, uint32_t set,
                                                           uint32_t descriptorWriteCount,
-                                                          const VkWriteDescriptorSet* pDescriptorWrites) {}
+                                                          const VkWriteDescriptorSet* pDescriptorWrites) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount,
+                                          pDescriptorWrites);
+}
 
 static VKAPI_ATTR void VKAPI_CALL
 CmdPushDescriptorSetWithTemplateKHR(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate,
-                                    VkPipelineLayout layout, uint32_t set, const void* pData) {}
+                                    VkPipelineLayout layout, uint32_t set, const void* pData) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDescriptorUpdateTemplateKHR(
     VkDevice device, const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
@@ -4092,13 +4275,22 @@ static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphoreKHR(VkDevice device, const 
 
 static VKAPI_ATTR void VKAPI_CALL
 CmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExtent2D* pFragmentSize,
-                             const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {}
+                             const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRenderingAttachmentLocationsKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {}
+    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {}
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL WaitForPresentKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId,
                                                         uint64_t timeout) {
@@ -4175,7 +4367,10 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetEncodedVideoSessionParametersKHR(
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdEncodeVideoKHR(VkCommandBuffer commandBuffer,
-                                                    const VkVideoEncodeInfoKHR* pEncodeInfo) {}
+                                                    const VkVideoEncodeInfoKHR* pEncodeInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event,
                                                   const VkDependencyInfo* pDependencyInfo) {
@@ -4209,10 +4404,10 @@ static VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit2KHR(VkQueue queue, uint32_t su
 
 static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
                                                            VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                                           uint32_t marker) {}
-
-static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointData2NV(VkQueue queue, uint32_t* pCheckpointDataCount,
-                                                            VkCheckpointData2NV* pCheckpointData) {}
+                                                           uint32_t marker) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyBuffer2KHR(VkCommandBuffer commandBuffer,
                                                     const VkCopyBufferInfo2* pCopyBufferInfo) {
@@ -4245,7 +4440,10 @@ static VKAPI_ATTR void VKAPI_CALL CmdResolveImage2KHR(VkCommandBuffer commandBuf
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdTraceRaysIndirect2KHR(VkCommandBuffer commandBuffer,
-                                                           VkDeviceAddress indirectDeviceAddress) {}
+                                                           VkDeviceAddress indirectDeviceAddress) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
+}
 
 static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirementsKHR(VkDevice device,
                                                                        const VkDeviceBufferMemoryRequirements* pInfo,
@@ -4267,7 +4465,10 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSparseMemoryRequirementsKHR(
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                          VkDeviceSize offset, VkDeviceSize size,
-                                                         VkIndexType indexType) {}
+                                                         VkIndexType indexType) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
+}
 
 static VKAPI_ATTR void VKAPI_CALL GetRenderingAreaGranularityKHR(VkDevice device,
                                                                  const VkRenderingAreaInfoKHR* pRenderingAreaInfo,
@@ -4282,7 +4483,10 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2KHR(VkDevice device,
                                                                 VkSubresourceLayout2KHR* pLayout) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                                       uint16_t lineStipplePattern) {}
+                                                       uint16_t lineStipplePattern) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsKHR(VkDevice device, uint32_t timestampCount,
                                                                  const VkCalibratedTimestampInfoKHR* pTimestampInfos,
@@ -4291,23 +4495,41 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsKHR(VkDevice device
 }
 
 static VKAPI_ATTR void VKAPI_CALL
-CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) {}
+CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdPushConstants2KHR(VkCommandBuffer commandBuffer,
-                                                       const VkPushConstantsInfoKHR* pPushConstantsInfo) {}
+                                                       const VkPushConstantsInfoKHR* pPushConstantsInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                                           const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {}
+                                                           const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSetWithTemplate2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {}
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsets2EXT(
-    VkCommandBuffer commandBuffer, const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo) {}
+    VkCommandBuffer commandBuffer, const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer commandBuffer,
-    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {}
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL
 CreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
@@ -4336,39 +4558,70 @@ static VKAPI_ATTR VkResult VKAPI_CALL DebugMarkerSetObjectNameEXT(VkDevice devic
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
-                                                         const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {}
+                                                         const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {}
+static VKAPI_ATTR void VKAPI_CALL CmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDebugMarkerEndEXT(commandBuffer);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer,
-                                                          const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {}
+                                                          const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandBuffer,
                                                                      uint32_t firstBinding, uint32_t bindingCount,
                                                                      const VkBuffer* pBuffers,
                                                                      const VkDeviceSize* pOffsets,
-                                                                     const VkDeviceSize* pSizes) {}
+                                                                     const VkDeviceSize* pSizes) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets,
+                                                     pSizes);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer,
                                                                uint32_t firstCounterBuffer, uint32_t counterBufferCount,
                                                                const VkBuffer* pCounterBuffers,
-                                                               const VkDeviceSize* pCounterBufferOffsets) {}
+                                                               const VkDeviceSize* pCounterBufferOffsets) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers,
+                                               pCounterBufferOffsets);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer,
                                                              uint32_t counterBufferCount,
                                                              const VkBuffer* pCounterBuffers,
-                                                             const VkDeviceSize* pCounterBufferOffsets) {}
+                                                             const VkDeviceSize* pCounterBufferOffsets) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers,
+                                             pCounterBufferOffsets);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                          uint32_t query, VkQueryControlFlags flags, uint32_t index) {}
+                                                          uint32_t query, VkQueryControlFlags flags, uint32_t index) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                        uint32_t query, uint32_t index) {}
+                                                        uint32_t query, uint32_t index) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer, uint32_t instanceCount,
                                                               uint32_t firstInstance, VkBuffer counterBuffer,
                                                               VkDeviceSize counterBufferOffset, uint32_t counterOffset,
-                                                              uint32_t vertexStride) {}
+                                                              uint32_t vertexStride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer,
+                                              counterBufferOffset, counterOffset, vertexStride);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX* pCreateInfo,
                                                         const VkAllocationCallbacks* pAllocator,
@@ -4393,7 +4646,10 @@ static VKAPI_ATTR void VKAPI_CALL DestroyCuFunctionNVX(VkDevice device, VkCuFunc
                                                        const VkAllocationCallbacks* pAllocator) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer,
-                                                       const VkCuLaunchInfoNVX* pLaunchInfo) {}
+                                                       const VkCuLaunchInfoNVX* pLaunchInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
+}
 
 static VKAPI_ATTR uint32_t VKAPI_CALL GetImageViewHandleNVX(VkDevice device, const VkImageViewHandleInfoNVX* pInfo) {
     return VK_SUCCESS;
@@ -4460,13 +4716,22 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateViSurfaceNN(VkInstance instance, con
 
 #endif  // VK_USE_PLATFORM_VI_NN
 static VKAPI_ATTR void VKAPI_CALL CmdBeginConditionalRenderingEXT(
-    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin) {}
+    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) {}
+static VKAPI_ATTR void VKAPI_CALL CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndConditionalRenderingEXT(commandBuffer);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetViewportWScalingNV(VkCommandBuffer commandBuffer, uint32_t firstViewport,
                                                            uint32_t viewportCount,
-                                                           const VkViewportWScalingNV* pViewportWScalings) {}
+                                                           const VkViewportWScalingNV* pViewportWScalings) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL ReleaseDisplayEXT(VkPhysicalDevice physicalDevice, VkDisplayKHR display) {
     return VK_SUCCESS;
@@ -4520,13 +4785,23 @@ GetPastPresentationTimingGOOGLE(VkDevice device, VkSwapchainKHR swapchain, uint3
 static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer,
                                                             uint32_t firstDiscardRectangle,
                                                             uint32_t discardRectangleCount,
-                                                            const VkRect2D* pDiscardRectangles) {}
+                                                            const VkRect2D* pDiscardRectangles) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount,
+                                            pDiscardRectangles);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleEnableEXT(VkCommandBuffer commandBuffer,
-                                                                  VkBool32 discardRectangleEnable) {}
+                                                                  VkBool32 discardRectangleEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer,
-                                                                VkDiscardRectangleModeEXT discardRectangleMode) {}
+                                                                VkDiscardRectangleModeEXT discardRectangleMode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
+}
 
 static VKAPI_ATTR void VKAPI_CALL SetHdrMetadataEXT(VkDevice device, uint32_t swapchainCount,
                                                     const VkSwapchainKHR* pSwapchains,
@@ -4570,14 +4845,6 @@ static VKAPI_ATTR void VKAPI_CALL QueueEndDebugUtilsLabelEXT(VkQueue queue) {}
 
 static VKAPI_ATTR void VKAPI_CALL QueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
 }
-
-static VKAPI_ATTR void VKAPI_CALL CmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
-                                                             const VkDebugUtilsLabelEXT* pLabelInfo) {}
-
-static VKAPI_ATTR void VKAPI_CALL CmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {}
-
-static VKAPI_ATTR void VKAPI_CALL CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
-                                                              const VkDebugUtilsLabelEXT* pLabelInfo) {}
 
 static VKAPI_ATTR VkResult VKAPI_CALL
 CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
@@ -4625,21 +4892,36 @@ GetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline executionGrap
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
-                                                                      VkDeviceAddress scratch) {}
+                                                                      VkDeviceAddress scratch) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                       const VkDispatchGraphCountInfoAMDX* pCountInfo) {}
+                                                       const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                               const VkDispatchGraphCountInfoAMDX* pCountInfo) {}
+                                                               const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer,
                                                                     VkDeviceAddress scratch,
-                                                                    VkDeviceAddress countInfo) {}
+                                                                    VkDeviceAddress countInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+}
 
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR void VKAPI_CALL CmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
-                                                           const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {}
+                                                           const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetImageDrmFormatModifierPropertiesEXT(
     VkDevice device, VkImage image, VkImageDrmFormatModifierPropertiesEXT* pProperties) {
@@ -4670,16 +4952,26 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetValidationCacheDataEXT(VkDevice device,
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindShadingRateImageNV(VkCommandBuffer commandBuffer, VkImageView imageView,
-                                                            VkImageLayout imageLayout) {}
+                                                            VkImageLayout imageLayout) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
+}
 
 static VKAPI_ATTR void VKAPI_CALL
 CmdSetViewportShadingRatePaletteNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
-                                   const VkShadingRatePaletteNV* pShadingRatePalettes) {}
+                                   const VkShadingRatePaletteNV* pShadingRatePalettes) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetCoarseSampleOrderNV(VkCommandBuffer commandBuffer,
                                                             VkCoarseSampleOrderTypeNV sampleOrderType,
                                                             uint32_t customSampleOrderCount,
-                                                            const VkCoarseSampleOrderCustomNV* pCustomSampleOrders) {}
+                                                            const VkCoarseSampleOrderCustomNV* pCustomSampleOrders) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount,
+                                            pCustomSampleOrders);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureNV(
     VkDevice device, const VkAccelerationStructureCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator,
@@ -4703,19 +4995,33 @@ static VKAPI_ATTR void VKAPI_CALL CmdBuildAccelerationStructureNV(VkCommandBuffe
                                                                   VkBuffer instanceData, VkDeviceSize instanceOffset,
                                                                   VkBool32 update, VkAccelerationStructureNV dst,
                                                                   VkAccelerationStructureNV src, VkBuffer scratch,
-                                                                  VkDeviceSize scratchOffset) {}
+                                                                  VkDeviceSize scratchOffset) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src,
+                                                  scratch, scratchOffset);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffer,
                                                                  VkAccelerationStructureNV dst,
                                                                  VkAccelerationStructureNV src,
-                                                                 VkCopyAccelerationStructureModeKHR mode) {}
+                                                                 VkCopyAccelerationStructureModeKHR mode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdTraceRaysNV(
     VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer, VkDeviceSize raygenShaderBindingOffset,
     VkBuffer missShaderBindingTableBuffer, VkDeviceSize missShaderBindingOffset, VkDeviceSize missShaderBindingStride,
     VkBuffer hitShaderBindingTableBuffer, VkDeviceSize hitShaderBindingOffset, VkDeviceSize hitShaderBindingStride,
     VkBuffer callableShaderBindingTableBuffer, VkDeviceSize callableShaderBindingOffset,
-    VkDeviceSize callableShaderBindingStride, uint32_t width, uint32_t height, uint32_t depth) {}
+    VkDeviceSize callableShaderBindingStride, uint32_t width, uint32_t height, uint32_t depth) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset,
+                                 missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride,
+                                 hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride,
+                                 callableShaderBindingTableBuffer, callableShaderBindingOffset,
+                                 callableShaderBindingStride, width, height, depth);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateRayTracingPipelinesNV(VkDevice device, VkPipelineCache pipelineCache,
                                                                   uint32_t createInfoCount,
@@ -4750,7 +5056,11 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetAccelerationStructureHandleNV(VkDevice 
 static VKAPI_ATTR void VKAPI_CALL
 CmdWriteAccelerationStructuresPropertiesNV(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount,
                                            const VkAccelerationStructureNV* pAccelerationStructures,
-                                           VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {}
+                                           VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount,
+                                                             pAccelerationStructures, queryType, queryPool, firstQuery);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CompileDeferredNV(VkDevice device, VkPipeline pipeline, uint32_t shader) {
     return VK_SUCCESS;
@@ -4758,7 +5068,10 @@ static VKAPI_ATTR VkResult VKAPI_CALL CompileDeferredNV(VkDevice device, VkPipel
 
 static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer,
                                                           VkPipelineStageFlagBits pipelineStage, VkBuffer dstBuffer,
-                                                          VkDeviceSize dstOffset, uint32_t marker) {}
+                                                          VkDeviceSize dstOffset, uint32_t marker) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCalibrateableTimeDomainsEXT(VkPhysicalDevice physicalDevice,
                                                                                    uint32_t* pTimeDomainCount,
@@ -4773,31 +5086,48 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsEXT(VkDevice device
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount,
-                                                     uint32_t firstTask) {}
+                                                     uint32_t firstTask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                              VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                                   VkDeviceSize offset, VkBuffer countBuffer,
                                                                   VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                                                  uint32_t stride) {}
+                                                                  uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset,
+                                                  maxDrawCount, stride);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffer,
                                                                  uint32_t firstExclusiveScissor,
                                                                  uint32_t exclusiveScissorCount,
-                                                                 const VkBool32* pExclusiveScissorEnables) {}
+                                                                 const VkBool32* pExclusiveScissorEnables) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount,
+                                                 pExclusiveScissorEnables);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer,
                                                            uint32_t firstExclusiveScissor,
                                                            uint32_t exclusiveScissorCount,
-                                                           const VkRect2D* pExclusiveScissors) {}
+                                                           const VkRect2D* pExclusiveScissors) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount,
+                                           pExclusiveScissors);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void* pCheckpointMarker) {}
-
-static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointDataNV(VkQueue queue, uint32_t* pCheckpointDataCount,
-                                                           VkCheckpointDataNV* pCheckpointData) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void* pCheckpointMarker) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL
 InitializePerformanceApiINTEL(VkDevice device, const VkInitializePerformanceApiInfoINTEL* pInitializeInfo) {
@@ -4808,16 +5138,22 @@ static VKAPI_ATTR void VKAPI_CALL UninitializePerformanceApiINTEL(VkDevice devic
 
 static VKAPI_ATTR VkResult VKAPI_CALL CmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer,
                                                                    const VkPerformanceMarkerInfoINTEL* pMarkerInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo);
     return VK_SUCCESS;
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL CmdSetPerformanceStreamMarkerINTEL(
     VkCommandBuffer commandBuffer, const VkPerformanceStreamMarkerInfoINTEL* pMarkerInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo);
     return VK_SUCCESS;
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL
 CmdSetPerformanceOverrideINTEL(VkCommandBuffer commandBuffer, const VkPerformanceOverrideInfoINTEL* pOverrideInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo);
     return VK_SUCCESS;
 }
 
@@ -5022,14 +5358,23 @@ GetGeneratedCommandsMemoryRequirementsNV(VkDevice device, const VkGeneratedComma
                                          VkMemoryRequirements2* pMemoryRequirements) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdPreprocessGeneratedCommandsNV(
-    VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {}
+    VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdExecuteGeneratedCommandsNV(
-    VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {}
+    VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer,
                                                                VkPipelineBindPoint pipelineBindPoint,
-                                                               VkPipeline pipeline, uint32_t groupIndex) {}
+                                                               VkPipeline pipeline, uint32_t groupIndex) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateIndirectCommandsLayoutNV(
     VkDevice device, const VkIndirectCommandsLayoutCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator,
@@ -5044,7 +5389,10 @@ static VKAPI_ATTR void VKAPI_CALL DestroyIndirectCommandsLayoutNV(VkDevice devic
                                                                   const VkAllocationCallbacks* pAllocator) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer,
-                                                      const VkDepthBiasInfoEXT* pDepthBiasInfo) {}
+                                                      const VkDepthBiasInfoEXT* pDepthBiasInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL AcquireDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd,
                                                            VkDisplayKHR display) {
@@ -5107,7 +5455,10 @@ static VKAPI_ATTR void VKAPI_CALL DestroyCudaFunctionNV(VkDevice device, VkCudaF
                                                         const VkAllocationCallbacks* pAllocator) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer,
-                                                        const VkCudaLaunchInfoNV* pLaunchInfo) {}
+                                                        const VkCudaLaunchInfoNV* pLaunchInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
+}
 
 #ifdef VK_USE_PLATFORM_METAL_EXT
 static VKAPI_ATTR void VKAPI_CALL ExportMetalObjectsEXT(VkDevice device,
@@ -5121,17 +5472,27 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorEXT(VkDevice device, const VkDesc
                                                    size_t dataSize, void* pDescriptor) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
-                                                              const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {}
+                                                              const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsetsEXT(VkCommandBuffer commandBuffer,
                                                                    VkPipelineBindPoint pipelineBindPoint,
                                                                    VkPipelineLayout layout, uint32_t firstSet,
                                                                    uint32_t setCount, const uint32_t* pBufferIndices,
-                                                                   const VkDeviceSize* pOffsets) {}
+                                                                   const VkDeviceSize* pOffsets) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount,
+                                                   pBufferIndices, pOffsets);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplersEXT(VkCommandBuffer commandBuffer,
                                                                              VkPipelineBindPoint pipelineBindPoint,
-                                                                             VkPipelineLayout layout, uint32_t set) {}
+                                                                             VkPipelineLayout layout, uint32_t set) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetBufferOpaqueCaptureDescriptorDataEXT(
     VkDevice device, const VkBufferCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
@@ -5160,11 +5521,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetAccelerationStructureOpaqueCaptureDescr
 
 static VKAPI_ATTR void VKAPI_CALL
 CmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuffer, VkFragmentShadingRateNV shadingRate,
-                                const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {}
-
-static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceFaultInfoEXT(VkDevice device, VkDeviceFaultCountsEXT* pFaultCounts,
-                                                            VkDeviceFaultInfoEXT* pFaultInfo) {
-    return VK_SUCCESS;
+                                const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
 }
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -5198,7 +5557,11 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceDirectFBPresentationSuppo
 static VKAPI_ATTR void VKAPI_CALL CmdSetVertexInputEXT(
     VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount,
     const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions, uint32_t vertexAttributeDescriptionCount,
-    const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) {}
+    const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions,
+                                       vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
+}
 
 #ifdef VK_USE_PLATFORM_FUCHSIA
 static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryZirconHandleFUCHSIA(
@@ -5256,10 +5619,16 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceSubpassShadingMaxWorkgroupSizeHUA
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL CmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSubpassShadingHUAWEI(commandBuffer);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer, VkImageView imageView,
-                                                              VkImageLayout imageLayout) {}
+                                                              VkImageLayout imageLayout) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryRemoteAddressNV(
     VkDevice device, const VkMemoryGetRemoteAddressInfoNV* pMemoryGetRemoteAddressInfo, VkRemoteAddressNV* pAddress) {
@@ -5272,7 +5641,10 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPipelinePropertiesEXT(VkDevice device, 
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetPatchControlPointsEXT(VkCommandBuffer commandBuffer,
-                                                              uint32_t patchControlPoints) {}
+                                                              uint32_t patchControlPoints) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuffer,
                                                                    VkBool32 rasterizerDiscardEnable) {
@@ -5283,7 +5655,10 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDepthBiasEnableEXT(VkCommandBuffer comma
     CmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 }
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp logicOp) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp logicOp) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetLogicOpEXT(commandBuffer, logicOp);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetPrimitiveRestartEnableEXT(VkCommandBuffer commandBuffer,
                                                                   VkBool32 primitiveRestartEnable) {
@@ -5308,16 +5683,26 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceScreenPresentationSupport
 
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
 static VKAPI_ATTR void VKAPI_CALL CmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
-                                                            const VkBool32* pColorWriteEnables) {}
+                                                            const VkBool32* pColorWriteEnables) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCount,
                                                   const VkMultiDrawInfoEXT* pVertexInfo, uint32_t instanceCount,
-                                                  uint32_t firstInstance, uint32_t stride) {}
+                                                  uint32_t firstInstance, uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t drawCount,
                                                          const VkMultiDrawIndexedInfoEXT* pIndexInfo,
                                                          uint32_t instanceCount, uint32_t firstInstance,
-                                                         uint32_t stride, const int32_t* pVertexOffset) {}
+                                                         uint32_t stride, const int32_t* pVertexOffset) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride,
+                                         pVertexOffset);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateMicromapEXT(VkDevice device, const VkMicromapCreateInfoEXT* pCreateInfo,
                                                         const VkAllocationCallbacks* pAllocator,
@@ -5331,7 +5716,10 @@ static VKAPI_ATTR void VKAPI_CALL DestroyMicromapEXT(VkDevice device, VkMicromap
                                                      const VkAllocationCallbacks* pAllocator) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_t infoCount,
-                                                       const VkMicromapBuildInfoEXT* pInfos) {}
+                                                       const VkMicromapBuildInfoEXT* pInfos) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL BuildMicromapsEXT(VkDevice device, VkDeferredOperationKHR deferredOperation,
                                                         uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos) {
@@ -5361,17 +5749,30 @@ static VKAPI_ATTR VkResult VKAPI_CALL WriteMicromapsPropertiesEXT(VkDevice devic
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMicromapEXT(VkCommandBuffer commandBuffer,
-                                                     const VkCopyMicromapInfoEXT* pInfo) {}
+                                                     const VkCopyMicromapInfoEXT* pInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyMicromapEXT(commandBuffer, pInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer,
-                                                             const VkCopyMicromapToMemoryInfoEXT* pInfo) {}
+                                                             const VkCopyMicromapToMemoryInfoEXT* pInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer,
-                                                             const VkCopyMemoryToMicromapInfoEXT* pInfo) {}
+                                                             const VkCopyMemoryToMicromapInfoEXT* pInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffer, uint32_t micromapCount,
                                                                  const VkMicromapEXT* pMicromaps, VkQueryType queryType,
-                                                                 VkQueryPool queryPool, uint32_t firstQuery) {}
+                                                                 VkQueryPool queryPool, uint32_t firstQuery) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool,
+                                                 firstQuery);
+}
 
 static VKAPI_ATTR void VKAPI_CALL
 GetDeviceMicromapCompatibilityEXT(VkDevice device, const VkMicromapVersionInfoEXT* pVersionInfo,
@@ -5383,10 +5784,16 @@ static VKAPI_ATTR void VKAPI_CALL GetMicromapBuildSizesEXT(VkDevice device,
                                                            VkMicromapBuildSizesInfoEXT* pSizeInfo) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t groupCountX,
-                                                       uint32_t groupCountY, uint32_t groupCountZ) {}
+                                                       uint32_t groupCountY, uint32_t groupCountZ) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                               VkDeviceSize offset) {}
+                                                               VkDeviceSize offset) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
+}
 
 static VKAPI_ATTR void VKAPI_CALL SetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory memory, float priority) {}
 
@@ -5399,127 +5806,238 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetHostMappingVALVE(VkDevice devi
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer,
                                                           VkDeviceAddress copyBufferAddress, uint32_t copyCount,
-                                                          uint32_t stride) {}
+                                                          uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer,
                                                                  VkDeviceAddress copyBufferAddress, uint32_t copyCount,
                                                                  uint32_t stride, VkImage dstImage,
                                                                  VkImageLayout dstImageLayout,
-                                                                 const VkImageSubresourceLayers* pImageSubresources) {}
+                                                                 const VkImageSubresourceLayers* pImageSubresources) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage,
+                                                 dstImageLayout, pImageSubresources);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32_t decompressRegionCount,
-                                                        const VkDecompressMemoryRegionNV* pDecompressMemoryRegions) {}
+                                                        const VkDecompressMemoryRegionNV* pDecompressMemoryRegions) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandBuffer,
                                                                      VkDeviceAddress indirectCommandsAddress,
                                                                      VkDeviceAddress indirectCommandsCountAddress,
-                                                                     uint32_t stride) {}
+                                                                     uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress,
+                                                     indirectCommandsCountAddress, stride);
+}
 
 static VKAPI_ATTR void VKAPI_CALL GetPipelineIndirectMemoryRequirementsNV(
     VkDevice device, const VkComputePipelineCreateInfo* pCreateInfo, VkMemoryRequirements2* pMemoryRequirements) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffer,
                                                                     VkPipelineBindPoint pipelineBindPoint,
-                                                                    VkPipeline pipeline) {}
+                                                                    VkPipeline pipeline) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
+}
 
 static VKAPI_ATTR VkDeviceAddress VKAPI_CALL
 GetPipelineIndirectDeviceAddressNV(VkDevice device, const VkPipelineIndirectDeviceAddressInfoNV* pInfo) {
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClampEnable) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClampEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetPolygonModeEXT(VkCommandBuffer commandBuffer, VkPolygonMode polygonMode) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetPolygonModeEXT(VkCommandBuffer commandBuffer, VkPolygonMode polygonMode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetPolygonModeEXT(commandBuffer, polygonMode);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer,
-                                                                VkSampleCountFlagBits rasterizationSamples) {}
+                                                                VkSampleCountFlagBits rasterizationSamples) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetSampleMaskEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples,
-                                                      const VkSampleMask* pSampleMask) {}
+                                                      const VkSampleMask* pSampleMask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetAlphaToCoverageEnableEXT(VkCommandBuffer commandBuffer,
-                                                                 VkBool32 alphaToCoverageEnable) {}
+                                                                 VkBool32 alphaToCoverageEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer, VkBool32 alphaToOneEnable) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer, VkBool32 alphaToOneEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer, VkBool32 logicOpEnable) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer, VkBool32 logicOpEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment,
                                                             uint32_t attachmentCount,
-                                                            const VkBool32* pColorBlendEnables) {}
+                                                            const VkBool32* pColorBlendEnables) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment,
                                                               uint32_t attachmentCount,
-                                                              const VkColorBlendEquationEXT* pColorBlendEquations) {}
+                                                              const VkColorBlendEquationEXT* pColorBlendEquations) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment,
                                                           uint32_t attachmentCount,
-                                                          const VkColorComponentFlags* pColorWriteMasks) {}
+                                                          const VkColorComponentFlags* pColorWriteMasks) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBuffer,
-                                                                    VkTessellationDomainOrigin domainOrigin) {}
+                                                                    VkTessellationDomainOrigin domainOrigin) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRasterizationStreamEXT(VkCommandBuffer commandBuffer,
-                                                               uint32_t rasterizationStream) {}
+                                                               uint32_t rasterizationStream) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetConservativeRasterizationModeEXT(
-    VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode) {}
+    VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetExtraPrimitiveOverestimationSizeEXT(VkCommandBuffer commandBuffer,
-                                                                            float extraPrimitiveOverestimationSize) {}
+                                                                            float extraPrimitiveOverestimationSize) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
+}
 
-static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClipEnable) {}
+static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClipEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetSampleLocationsEnableEXT(VkCommandBuffer commandBuffer,
-                                                                 VkBool32 sampleLocationsEnable) {}
+                                                                 VkBool32 sampleLocationsEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment,
                                                               uint32_t attachmentCount,
-                                                              const VkColorBlendAdvancedEXT* pColorBlendAdvanced) {}
+                                                              const VkColorBlendAdvancedEXT* pColorBlendAdvanced) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer,
-                                                               VkProvokingVertexModeEXT provokingVertexMode) {}
+                                                               VkProvokingVertexModeEXT provokingVertexMode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetLineRasterizationModeEXT(VkCommandBuffer commandBuffer,
-                                                                 VkLineRasterizationModeEXT lineRasterizationMode) {}
+                                                                 VkLineRasterizationModeEXT lineRasterizationMode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetLineStippleEnableEXT(VkCommandBuffer commandBuffer,
-                                                             VkBool32 stippledLineEnable) {}
+                                                             VkBool32 stippledLineEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClipNegativeOneToOneEXT(VkCommandBuffer commandBuffer,
-                                                                     VkBool32 negativeOneToOne) {}
+                                                                     VkBool32 negativeOneToOne) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffer,
-                                                                 VkBool32 viewportWScalingEnable) {}
+                                                                 VkBool32 viewportWScalingEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint32_t firstViewport,
                                                           uint32_t viewportCount,
-                                                          const VkViewportSwizzleNV* pViewportSwizzles) {}
+                                                          const VkViewportSwizzleNV* pViewportSwizzles) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetCoverageToColorEnableNV(VkCommandBuffer commandBuffer,
-                                                                VkBool32 coverageToColorEnable) {}
+                                                                VkBool32 coverageToColorEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuffer,
-                                                                  uint32_t coverageToColorLocation) {}
+                                                                  uint32_t coverageToColorLocation) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetCoverageModulationModeNV(VkCommandBuffer commandBuffer,
-                                                                 VkCoverageModulationModeNV coverageModulationMode) {}
+                                                                 VkCoverageModulationModeNV coverageModulationMode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetCoverageModulationTableEnableNV(VkCommandBuffer commandBuffer,
-                                                                        VkBool32 coverageModulationTableEnable) {}
+                                                                        VkBool32 coverageModulationTableEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetCoverageModulationTableNV(VkCommandBuffer commandBuffer,
                                                                   uint32_t coverageModulationTableCount,
-                                                                  const float* pCoverageModulationTable) {}
+                                                                  const float* pCoverageModulationTable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount,
+                                                  pCoverageModulationTable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffer,
-                                                                 VkBool32 shadingRateImageEnable) {}
+                                                                 VkBool32 shadingRateImageEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer commandBuffer,
-                                                                           VkBool32 representativeFragmentTestEnable) {}
+                                                                           VkBool32 representativeFragmentTestEnable) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
-                                                                VkCoverageReductionModeNV coverageReductionMode) {}
+                                                                VkCoverageReductionModeNV coverageReductionMode) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
+}
 
 static VKAPI_ATTR void VKAPI_CALL GetShaderModuleCreateInfoIdentifierEXT(VkDevice device,
                                                                          const VkShaderModuleCreateInfo* pCreateInfo,
@@ -5550,7 +6068,10 @@ static VKAPI_ATTR VkResult VKAPI_CALL BindOpticalFlowSessionImageNV(VkDevice dev
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
-                                                          const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {}
+                                                          const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateShadersEXT(VkDevice device, uint32_t createInfoCount,
                                                        const VkShaderCreateInfoEXT* pCreateInfos,
@@ -5572,6 +6093,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetShaderBinaryDataEXT(VkDevice device, Vk
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount,
                                                     const VkShaderStageFlagBits* pStages, const VkShaderEXT* pShaders) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer framebuffer,
@@ -5606,7 +6129,10 @@ static VKAPI_ATTR void VKAPI_CALL QueueNotifyOutOfBandNV(VkQueue queue,
                                                          const VkOutOfBandQueueTypeInfoNV* pQueueTypeInfo) {}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
-                                                                        VkImageAspectFlags aspectMask) {}
+                                                                        VkImageAspectFlags aspectMask) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
+}
 
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
 static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffer* buffer,
@@ -5629,12 +6155,19 @@ static VKAPI_ATTR void VKAPI_CALL DestroyAccelerationStructureKHR(VkDevice devic
 
 static VKAPI_ATTR void VKAPI_CALL CmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
-    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {}
+    const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdBuildAccelerationStructuresIndirectKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkDeviceAddress* pIndirectDeviceAddresses, const uint32_t* pIndirectStrides,
-    const uint32_t* const* ppMaxPrimitiveCounts) {}
+    const uint32_t* const* ppMaxPrimitiveCounts) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses,
+                                                            pIndirectStrides, ppMaxPrimitiveCounts);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL
 BuildAccelerationStructuresKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount,
@@ -5668,18 +6201,31 @@ static VKAPI_ATTR VkResult VKAPI_CALL WriteAccelerationStructuresPropertiesKHR(
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyAccelerationStructureKHR(VkCommandBuffer commandBuffer,
-                                                                  const VkCopyAccelerationStructureInfoKHR* pInfo) {}
+                                                                  const VkCopyAccelerationStructureInfoKHR* pInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyAccelerationStructureToMemoryKHR(
-    VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {}
+    VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToAccelerationStructureKHR(
-    VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {}
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
+}
 
 static VKAPI_ATTR void VKAPI_CALL
 CmdWriteAccelerationStructuresPropertiesKHR(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount,
                                             const VkAccelerationStructureKHR* pAccelerationStructures,
-                                            VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {}
+                                            VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdWriteAccelerationStructuresPropertiesKHR(
+        commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
+}
 
 static VKAPI_ATTR void VKAPI_CALL GetDeviceAccelerationStructureCompatibilityKHR(
     VkDevice device, const VkAccelerationStructureVersionInfoKHR* pVersionInfo,
@@ -5690,7 +6236,11 @@ static VKAPI_ATTR void VKAPI_CALL CmdTraceRaysKHR(VkCommandBuffer commandBuffer,
                                                   const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
                                                   const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
                                                   const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
-                                                  uint32_t width, uint32_t height, uint32_t depth) {}
+                                                  uint32_t width, uint32_t height, uint32_t depth) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable,
+                                  pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
+}
 
 static VKAPI_ATTR VkResult VKAPI_CALL
 CreateRayTracingPipelinesKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache,
@@ -5712,7 +6262,11 @@ static VKAPI_ATTR void VKAPI_CALL CmdTraceRaysIndirectKHR(
     VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
-    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, VkDeviceAddress indirectDeviceAddress) {}
+    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, VkDeviceAddress indirectDeviceAddress) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable,
+                                          pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
+}
 
 static VKAPI_ATTR VkDeviceSize VKAPI_CALL GetRayTracingShaderGroupStackSizeKHR(VkDevice device, VkPipeline pipeline,
                                                                                uint32_t group,
@@ -5721,19 +6275,32 @@ static VKAPI_ATTR VkDeviceSize VKAPI_CALL GetRayTracingShaderGroupStackSizeKHR(V
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer commandBuffer,
-                                                                       uint32_t pipelineStackSize) {}
+                                                                       uint32_t pipelineStackSize) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t groupCountX,
-                                                      uint32_t groupCountY, uint32_t groupCountZ) {}
+                                                      uint32_t groupCountY, uint32_t groupCountZ) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                               VkDeviceSize offset, uint32_t drawCount,
-                                                              uint32_t stride) {}
+                                                              uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                                    VkDeviceSize offset, VkBuffer countBuffer,
                                                                    VkDeviceSize countBufferOffset,
-                                                                   uint32_t maxDrawCount, uint32_t stride) {}
+                                                                   uint32_t maxDrawCount, uint32_t stride) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset,
+                                                   maxDrawCount, stride);
+}
 
 }  // namespace icd
 // NOLINTEND

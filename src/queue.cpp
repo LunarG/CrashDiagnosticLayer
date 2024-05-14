@@ -232,18 +232,18 @@ bool Queue::SubmitInfoHasSemaphores(const SubmitInfo& submit_info) const {
 std::string Queue::GetSubmitInfoSemaphoresLog(const SubmitInfo& submit_info) const {
     std::stringstream log;
     switch (submit_info.type) {
-	case kQueueSubmit:
-	    log << "VkSubmitInfo";
-	    break;
-	case kQueueBindSparse:
-	    log << "VkBindSparseInfo";
-	    break;
-	case kQueueSubmit2:
-	    log << "VkSubmitInfo2";
-	    break;
-	default:
-	    log << "UNKNOWN";
-	    break;
+        case kQueueSubmit:
+            log << "VkSubmitInfo";
+            break;
+        case kQueueBindSparse:
+            log << "VkBindSparseInfo";
+            break;
+        case kQueueSubmit2:
+            log << "VkSubmitInfo2";
+            break;
+        default:
+            log << "UNKNOWN";
+            break;
     };
     log << " with semaphores submitted to queue." << std::endl
         << "\tVkDevice: " << device_.GetObjectName((uint64_t)device_.GetVkDevice())

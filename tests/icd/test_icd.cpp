@@ -16,6 +16,13 @@
 
 #include "test_icd.h"
 #include "test_icd_helper.h"
+
+#include "test_icd_command.h"
+#include "test_icd_device.h"
+#include "test_icd_fence.h"
+#include "test_icd_memory.h"
+#include "test_icd_semaphore.h"
+
 #include <vulkan/utility/vk_format_utils.h>
 #include <vulkan/utility/vk_struct_helper.hpp>
 
@@ -517,32 +524,40 @@ static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetDeviceProcAddr(VkDevice devic
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(VkPhysicalDevice physicalDevice,
                                                    const VkDeviceCreateInfo* pCreateInfo,
                                                    const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
-    *pDevice = (VkDevice)CreateDispObjHandle();
+    auto* dev = new Device(physicalDevice, *pCreateInfo);
+    *pDevice = reinterpret_cast<VkDevice>(dev);
     return VK_SUCCESS;
 }
 
 static VKAPI_ATTR void VKAPI_CALL DestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
-    unique_lock_t lock(global_lock);
-    // First destroy sub-device objects
-    // Destroy Queues
-    for (auto queue_family_map_pair : queue_map[device]) {
-        for (auto index_queue_pair : queue_map[device][queue_family_map_pair.first]) {
-            DestroyDispObjHandle((void*)index_queue_pair.second);
-        }
+    {
+        unique_lock_t lock(global_lock);
+        image_memory_size_map.erase(device);
     }
+    auto* dev = reinterpret_cast<Device*>(device);
+    delete dev;
+}
 
-    for (auto& cp : command_pool_map[device]) {
-        for (auto& cb : command_pool_buffer_map[cp]) {
-            DestroyDispObjHandle((void*)cb);
-        }
-        command_pool_buffer_map.erase(cp);
-    }
-    command_pool_map[device].clear();
+static VKAPI_ATTR VkResult VKAPI_CALL DeviceWaitIdle(VkDevice device) {
+    auto* dev = reinterpret_cast<Device*>(device);
+    return dev->WaitIdle();
+}
 
-    queue_map.erase(device);
-    buffer_map.erase(device);
-    image_memory_size_map.erase(device);
-    DestroyDispObjHandle((void*)device);
+static VKAPI_ATTR void VKAPI_CALL GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex,
+                                                 VkQueue* pQueue) {
+    auto* dev = reinterpret_cast<Device*>(device);
+    dev->GetQueue(queueFamilyIndex, queueIndex, pQueue);
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo,
+                                                  VkQueue* pQueue) {
+    GetDeviceQueue(device, pQueueInfo->queueFamilyIndex, pQueueInfo->queueIndex, pQueue);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceFaultInfoEXT(VkDevice device, VkDeviceFaultCountsEXT* pFaultCounts,
+                                                            VkDeviceFaultInfoEXT* pFaultInfo) {
+    auto* dev = reinterpret_cast<Device*>(device);
+    return dev->GetFaultInfo(pFaultCounts, pFaultInfo);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceExtensionProperties(const char* pLayerName,
@@ -611,84 +626,70 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumerateDeviceLayerProperties(VkPhysicalD
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex,
-                                                 VkQueue* pQueue) {
-    unique_lock_t lock(global_lock);
-    auto queue = queue_map[device][queueFamilyIndex][queueIndex];
-    if (queue) {
-        *pQueue = queue;
-    } else {
-        *pQueue = queue_map[device][queueFamilyIndex][queueIndex] = (VkQueue)CreateDispObjHandle();
-    }
-    return;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits,
-                                                  VkFence fence) {
-    // Special way to cause DEVICE_LOST
-    // Picked VkExportFenceCreateInfo because needed some struct that wouldn't get cleared by validation Safe Struct
-    // ... TODO - It would be MUCH nicer to have a layer or other setting control when this occured
-    // For now this is used to allow Validation Layers test reacting to device losts
-    if (submitCount > 0 && pSubmits) {
-        auto pNext = reinterpret_cast<const VkBaseInStructure*>(pSubmits[0].pNext);
-        if (pNext && pNext->sType == VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO && pNext->pNext == nullptr) {
-            return VK_ERROR_DEVICE_LOST;
-        }
-    }
-    return VK_SUCCESS;
-}
-
 static VKAPI_ATTR VkResult VKAPI_CALL AllocateMemory(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo,
                                                      const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory) {
-    unique_lock_t lock(global_lock);
-    allocated_memory_size_map[(VkDeviceMemory)global_unique_handle] = pAllocateInfo->allocationSize;
-    *pMemory = (VkDeviceMemory)global_unique_handle++;
+    auto* mem = new DeviceMemory(*pAllocateInfo);
+    if (mem == nullptr) {
+        return VK_ERROR_OUT_OF_HOST_MEMORY;
+    }
+    if (mem->memory == nullptr) {
+        delete mem;
+        return VK_ERROR_OUT_OF_DEVICE_MEMORY;
+    }
+    *pMemory = reinterpret_cast<VkDeviceMemory>(mem);
     return VK_SUCCESS;
 }
 
 static VKAPI_ATTR void VKAPI_CALL FreeMemory(VkDevice device, VkDeviceMemory memory,
                                              const VkAllocationCallbacks* pAllocator) {
-    UnmapMemory(device, memory);
-    unique_lock_t lock(global_lock);
-    allocated_memory_size_map.erase(memory);
+    auto* mem = reinterpret_cast<DeviceMemory*>(memory);
+    delete mem;
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL MapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset,
                                                 VkDeviceSize size, VkMemoryMapFlags flags, void** ppData) {
-    unique_lock_t lock(global_lock);
-    if (VK_WHOLE_SIZE == size) {
-        if (allocated_memory_size_map.count(memory) != 0)
-            size = allocated_memory_size_map[memory] - offset;
-        else
-            size = 0x10000;
-    }
-    void* map_addr = malloc((size_t)size);
-    mapped_memory_map[memory].push_back(map_addr);
-    *ppData = map_addr;
-    return VK_SUCCESS;
+    auto* mem = reinterpret_cast<DeviceMemory*>(memory);
+    return mem->Map(offset, size, flags, ppData);
 }
 
 static VKAPI_ATTR void VKAPI_CALL UnmapMemory(VkDevice device, VkDeviceMemory memory) {
-    unique_lock_t lock(global_lock);
-    for (auto map_addr : mapped_memory_map[memory]) {
-        free(map_addr);
+    // no-op for us
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL BindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory,
+                                                       VkDeviceSize memoryOffset) {
+    auto* buf = reinterpret_cast<Buffer*>(buffer);
+    auto* mem = reinterpret_cast<DeviceMemory*>(memory);
+
+    return buf->Bind(mem, memoryOffset);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL BindBufferMemory2(VkDevice device, uint32_t bindInfoCount,
+                                                        const VkBindBufferMemoryInfo* pBindInfos) {
+    VkResult result = VK_SUCCESS;
+
+    for (uint32_t i = 0; i < bindInfoCount; i++) {
+        auto* buf = reinterpret_cast<Buffer*>(pBindInfos[i].buffer);
+        auto* mem = reinterpret_cast<DeviceMemory*>(pBindInfos[i].memory);
+
+        result = buf->Bind(mem, pBindInfos[i].memoryOffset);
+        if (result != VK_SUCCESS) {
+            break;
+        }
     }
-    mapped_memory_map.erase(memory);
+    return result;
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetBufferMemoryRequirements(VkDevice device, VkBuffer buffer,
                                                               VkMemoryRequirements* pMemoryRequirements) {
+    auto* buf = reinterpret_cast<Buffer*>(buffer);
+
     pMemoryRequirements->size = 4096;
     pMemoryRequirements->alignment = 1;
     pMemoryRequirements->memoryTypeBits = 0xFFFF;
     // Return a better size based on the buffer size from the create info.
-    unique_lock_t lock(global_lock);
-    auto d_iter = buffer_map.find(device);
-    if (d_iter != buffer_map.end()) {
-        auto iter = d_iter->second.find(buffer);
-        if (iter != d_iter->second.end()) {
-            pMemoryRequirements->size = ((iter->second.size + 4095) / 4096) * 4096;
-        }
+    if (buf) {
+        pMemoryRequirements->size = ((buf->size + 4095) / 4096) * 4096;
     }
 }
 
@@ -762,22 +763,27 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties(
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateBuffer(VkDevice device, const VkBufferCreateInfo* pCreateInfo,
                                                    const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer) {
-    unique_lock_t lock(global_lock);
-    *pBuffer = (VkBuffer)global_unique_handle++;
-    buffer_map[device][*pBuffer] = {pCreateInfo->size, current_available_address};
-    current_available_address += pCreateInfo->size;
-    // Always align to next 64-bit pointer
-    const uint64_t alignment = current_available_address % 64;
-    if (alignment != 0) {
-        current_available_address += (64 - alignment);
+    auto* buf = new Buffer(*pCreateInfo);
+    if (buf == nullptr) {
+        return VK_ERROR_OUT_OF_HOST_MEMORY;
     }
+    *pBuffer = reinterpret_cast<VkBuffer>(buf);
     return VK_SUCCESS;
 }
 
 static VKAPI_ATTR void VKAPI_CALL DestroyBuffer(VkDevice device, VkBuffer buffer,
                                                 const VkAllocationCallbacks* pAllocator) {
-    unique_lock_t lock(global_lock);
-    buffer_map[device].erase(buffer);
+    auto* buf = reinterpret_cast<Buffer*>(buffer);
+    delete buf;
+}
+
+static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddress(VkDevice device,
+                                                                    const VkBufferDeviceAddressInfo* pInfo) {
+    auto* buf = reinterpret_cast<Buffer*>(pInfo->buffer);
+    if (!buf || !buf->bound_memory || !buf->bound_memory->memory) {
+        return 0;
+    }
+    return uintptr_t(buf->bound_memory->memory) + buf->offset;
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateImage(VkDevice device, const VkImageCreateInfo* pCreateInfo,
@@ -810,56 +816,58 @@ static VKAPI_ATTR void VKAPI_CALL GetRenderAreaGranularity(VkDevice device, VkRe
 static VKAPI_ATTR VkResult VKAPI_CALL CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
                                                         const VkAllocationCallbacks* pAllocator,
                                                         VkCommandPool* pCommandPool) {
-    unique_lock_t lock(global_lock);
-    *pCommandPool = (VkCommandPool)global_unique_handle++;
-    command_pool_map[device].insert(*pCommandPool);
+    auto* pool = new CommandPool(*pCreateInfo);
+    if (!pool) {
+        return VK_ERROR_OUT_OF_HOST_MEMORY;
+    }
+    *pCommandPool = reinterpret_cast<VkCommandPool>(pool);
     return VK_SUCCESS;
 }
 
 static VKAPI_ATTR void VKAPI_CALL DestroyCommandPool(VkDevice device, VkCommandPool commandPool,
                                                      const VkAllocationCallbacks* pAllocator) {
-    // destroy command buffers for this pool
-    unique_lock_t lock(global_lock);
-    auto it = command_pool_buffer_map.find(commandPool);
-    if (it != command_pool_buffer_map.end()) {
-        for (auto& cb : it->second) {
-            DestroyDispObjHandle((void*)cb);
-        }
-        command_pool_buffer_map.erase(it);
-    }
-    command_pool_map[device].erase(commandPool);
+    auto* pool = reinterpret_cast<CommandPool*>(commandPool);
+    delete pool;
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL AllocateCommandBuffers(VkDevice device,
                                                              const VkCommandBufferAllocateInfo* pAllocateInfo,
                                                              VkCommandBuffer* pCommandBuffers) {
-    unique_lock_t lock(global_lock);
-    for (uint32_t i = 0; i < pAllocateInfo->commandBufferCount; ++i) {
-        pCommandBuffers[i] = (VkCommandBuffer)CreateDispObjHandle();
-        command_pool_buffer_map[pAllocateInfo->commandPool].push_back(pCommandBuffers[i]);
-    }
+    auto* pool = reinterpret_cast<CommandPool*>(pAllocateInfo->commandPool);
+    return pool->Allocate(*pAllocateInfo, pCommandBuffers);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL ResetCommandPool(VkDevice device, VkCommandPool commandPool,
+                                                       VkCommandPoolResetFlags flags) {
+    auto* pool = reinterpret_cast<CommandPool*>(commandPool);
+    return pool->Reset(flags);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL BeginCommandBuffer(VkCommandBuffer commandBuffer,
+                                                         const VkCommandBufferBeginInfo* pBeginInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().BeginCommandBuffer(commandBuffer, pBeginInfo);
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL EndCommandBuffer(VkCommandBuffer commandBuffer) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().EndCommandBuffer(commandBuffer);
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL ResetCommandBuffer(VkCommandBuffer commandBuffer,
+                                                         VkCommandBufferResetFlags flags) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().ResetCommandBuffer(commandBuffer, flags);
     return VK_SUCCESS;
 }
 
 static VKAPI_ATTR void VKAPI_CALL FreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
                                                      uint32_t commandBufferCount,
                                                      const VkCommandBuffer* pCommandBuffers) {
-    unique_lock_t lock(global_lock);
-    for (auto i = 0u; i < commandBufferCount; ++i) {
-        if (!pCommandBuffers[i]) {
-            continue;
-        }
-
-        for (auto& pair : command_pool_buffer_map) {
-            auto& cbs = pair.second;
-            auto it = std::find(cbs.begin(), cbs.end(), pCommandBuffers[i]);
-            if (it != cbs.end()) {
-                cbs.erase(it);
-            }
-        }
-
-        DestroyDispObjHandle((void*)pCommandBuffers[i]);
-    }
+    auto* pool = reinterpret_cast<CommandPool*>(commandPool);
+    pool->Free(commandBufferCount, pCommandBuffers);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceVersion(uint32_t* pApiVersion) {
@@ -888,11 +896,6 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements2(
     } else {
         GetImageSparseMemoryRequirements(device, pInfo->image, pSparseMemoryRequirementCount, nullptr);
     }
-}
-
-static VKAPI_ATTR void VKAPI_CALL GetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo,
-                                                  VkQueue* pQueue) {
-    GetDeviceQueue(device, pQueueInfo->queueFamilyIndex, pQueueInfo->queueIndex, pQueue);
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceExternalBufferProperties(
@@ -944,19 +947,6 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetLayoutSupport(VkDevice device,
     if (pSupport) {
         pSupport->supported = VK_TRUE;
     }
-}
-
-static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddress(VkDevice device,
-                                                                    const VkBufferDeviceAddressInfo* pInfo) {
-    VkDeviceAddress address = 0;
-    auto d_iter = buffer_map.find(device);
-    if (d_iter != buffer_map.end()) {
-        auto iter = d_iter->second.find(pInfo->buffer);
-        if (iter != d_iter->second.end()) {
-            address = iter->second.address;
-        }
-    }
-    return address;
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirements(VkDevice device,
@@ -2213,6 +2203,135 @@ static VKAPI_ATTR VkResult VKAPI_CALL RegisterDisplayEventEXT(VkDevice device, V
     unique_lock_t lock(global_lock);
     *pFence = (VkFence)global_unique_handle++;
     return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits,
+                                                  VkFence fence) {
+    auto* q = reinterpret_cast<Queue*>(queue);
+    return q->Submit(submitCount, pSubmits, fence);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL QueueWaitIdle(VkQueue queue) {
+    auto* q = reinterpret_cast<Queue*>(queue);
+    return q->WaitIdle();
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(VkQueue queue, uint32_t bindInfoCount,
+                                                      const VkBindSparseInfo* pBindInfo, VkFence fence) {
+    auto* q = reinterpret_cast<Queue*>(queue);
+    return q->BindSparse(bindInfoCount, pBindInfo, fence);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits,
+                                                   VkFence fence) {
+    auto* q = reinterpret_cast<Queue*>(queue);
+    return q->Submit2(submitCount, pSubmits, fence);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateFence(VkDevice device, const VkFenceCreateInfo* pCreateInfo,
+                                                  const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
+    auto* f = new Fence(*pCreateInfo);
+    if (f == nullptr) {
+        return VK_ERROR_OUT_OF_HOST_MEMORY;
+    }
+    *pFence = reinterpret_cast<VkFence>(f);
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL DestroyFence(VkDevice device, VkFence fence,
+                                               const VkAllocationCallbacks* pAllocator) {
+    auto* f = reinterpret_cast<Fence*>(fence);
+    delete f;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL ResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences) {
+    for (uint32_t i = 0; i < fenceCount; i++) {
+        auto* f = reinterpret_cast<Fence*>(pFences[i]);
+        f->Reset();
+    }
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetFenceStatus(VkDevice device, VkFence fence) {
+    auto* f = reinterpret_cast<Fence*>(fence);
+    return f->Status();
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL WaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences,
+                                                    VkBool32 waitAll, uint64_t timeout) {
+    assert(fenceCount == 1);  // TODO implement multi-fence waits
+    auto* f = reinterpret_cast<Fence*>(pFences[0]);
+    return f->WaitFor(timeout);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo,
+                                                      const VkAllocationCallbacks* pAllocator,
+                                                      VkSemaphore* pSemaphore) {
+    Semaphore* sem = nullptr;
+    const auto* type_info = vku::FindStructInPNextChain<VkSemaphoreTypeCreateInfo>(pCreateInfo->pNext);
+    if (!type_info || type_info->semaphoreType == VK_SEMAPHORE_TYPE_BINARY) {
+        sem = new BinarySemaphore();
+    } else {
+        sem = new TimelineSemaphore(type_info->initialValue);
+    }
+    if (sem == nullptr) {
+        return VK_ERROR_OUT_OF_HOST_MEMORY;
+    }
+    *pSemaphore = reinterpret_cast<VkSemaphore>(sem);
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL DestroySemaphore(VkDevice device, VkSemaphore semaphore,
+                                                   const VkAllocationCallbacks* pAllocator) {
+    auto* sem = reinterpret_cast<Semaphore*>(semaphore);
+    delete sem;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore,
+                                                               uint64_t* pValue) {
+    auto* sem = reinterpret_cast<Semaphore*>(semaphore);
+    return sem->GetCounterValue(pValue);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL WaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo,
+                                                     uint64_t timeout) {
+    assert(pWaitInfo->semaphoreCount == 1);  // TODO implement multi semaphore waits
+    auto* sem = reinterpret_cast<Semaphore*>(pWaitInfo->pSemaphores[0]);
+    return sem->Wait(timeout, pWaitInfo->pValues[0]);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
+    auto* sem = reinterpret_cast<Semaphore*>(pSignalInfo->semaphore);
+    return sem->Signal(pSignalInfo->value);
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointDataNV(VkQueue queue, uint32_t* pCheckpointDataCount,
+                                                           VkCheckpointDataNV* pCheckpointData) {
+    auto* q = reinterpret_cast<Queue*>(queue);
+    return q->GetCheckpointData(pCheckpointDataCount, pCheckpointData);
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointData2NV(VkQueue queue, uint32_t* pCheckpointDataCount,
+                                                            VkCheckpointData2NV* pCheckpointData) {
+    auto* q = reinterpret_cast<Queue*>(queue);
+    return q->GetCheckpointData2(pCheckpointDataCount, pCheckpointData);
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
+                                                             const VkDebugUtilsLabelEXT* pLabelInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->CmdBeginDebugUtilsLabel(pLabelInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->CmdEndDebugUtilsLabel();
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
+                                                              const VkDebugUtilsLabelEXT* pLabelInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->CmdInsertDebugUtilsLabel(pLabelInfo);
 }
 
 }  // namespace icd
