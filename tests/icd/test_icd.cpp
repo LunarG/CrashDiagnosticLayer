@@ -186,7 +186,8 @@ EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetInstanceProcAddr(VkInst
     return icd::GetInstanceProcAddr(instance, pName);
 }
 
-EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetPhysicalDeviceProcAddr(VkInstance instance, const char* pName) {
+EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetPhysicalDeviceProcAddr(VkInstance instance,
+                                                                                const char* pName) {
     return icd::GetPhysicalDeviceProcAddr(instance, pName);
 }
 
@@ -205,25 +206,26 @@ EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(VkInstance instance, VkSur
 }
 
 EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice,
-                                                                           uint32_t queueFamilyIndex, VkSurfaceKHR surface,
-                                                                           VkBool32* pSupported) {
+                                                                           uint32_t queueFamilyIndex,
+                                                                           VkSurfaceKHR surface, VkBool32* pSupported) {
     return icd::GetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
 }
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice physicalDevice,
-                                                                                VkSurfaceKHR surface,
-                                                                                VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) {
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+    VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) {
     return icd::GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
 }
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice,
+                                                                           VkSurfaceKHR surface,
                                                                            uint32_t* pSurfaceFormatCount,
                                                                            VkSurfaceFormatKHR* pSurfaceFormats) {
     return icd::GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
 }
 
 EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice,
-                                                                                VkSurfaceKHR surface, uint32_t* pPresentModeCount,
+                                                                                VkSurfaceKHR surface,
+                                                                                uint32_t* pPresentModeCount,
                                                                                 VkPresentModeKHR* pPresentModes) {
     return icd::GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes);
 }
@@ -237,16 +239,20 @@ EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDisplayPlaneSurfaceKHR(VkInstance 
 
 #ifdef VK_USE_PLATFORM_XLIB_KHR
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXlibSurfaceKHR(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo,
-                                                             const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXlibSurfaceKHR(VkInstance instance,
+                                                             const VkXlibSurfaceCreateInfoKHR* pCreateInfo,
+                                                             const VkAllocationCallbacks* pAllocator,
+                                                             VkSurfaceKHR* pSurface) {
     return icd::CreateXlibSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
 #endif /* VK_USE_PLATFORM_XLIB_KHR */
 
 #ifdef VK_USE_PLATFORM_XCB_KHR
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXcbSurfaceKHR(VkInstance instance, const VkXcbSurfaceCreateInfoKHR* pCreateInfo,
-                                                            const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXcbSurfaceKHR(VkInstance instance,
+                                                            const VkXcbSurfaceCreateInfoKHR* pCreateInfo,
+                                                            const VkAllocationCallbacks* pAllocator,
+                                                            VkSurfaceKHR* pSurface) {
     return icd::CreateXcbSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
 #endif /* VK_USE_PLATFORM_XCB_KHR */
@@ -255,7 +261,8 @@ EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXcbSurfaceKHR(VkInstance instance,
 
 EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWaylandSurfaceKHR(VkInstance instance,
                                                                 const VkWaylandSurfaceCreateInfoKHR* pCreateInfo,
-                                                                const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+                                                                const VkAllocationCallbacks* pAllocator,
+                                                                VkSurfaceKHR* pSurface) {
     return icd::CreateWaylandSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
 #endif /* VK_USE_PLATFORM_WAYLAND_KHR */
@@ -264,15 +271,18 @@ EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWaylandSurfaceKHR(VkInstance insta
 
 EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateAndroidSurfaceKHR(VkInstance instance,
                                                                 const VkAndroidSurfaceCreateInfoKHR* pCreateInfo,
-                                                                const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+                                                                const VkAllocationCallbacks* pAllocator,
+                                                                VkSurfaceKHR* pSurface) {
     return icd::CreateAndroidSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
 #endif /* VK_USE_PLATFORM_ANDROID_KHR */
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo,
-                                                              const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(VkInstance instance,
+                                                              const VkWin32SurfaceCreateInfoKHR* pCreateInfo,
+                                                              const VkAllocationCallbacks* pAllocator,
+                                                              VkSurfaceKHR* pSurface) {
     return icd::CreateWin32SurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
 }
 #endif /* VK_USE_PLATFORM_WIN32_KHR */
@@ -282,37 +292,43 @@ EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupSurfacePresentModesKHR(VkD
     return icd::GetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
 }
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDevicePresentRectanglesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDevicePresentRectanglesKHR(VkPhysicalDevice physicalDevice,
+                                                                              VkSurfaceKHR surface,
                                                                               uint32_t* pRectCount, VkRect2D* pRects) {
     return icd::GetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, pRectCount, pRects);
 }
 
 #ifdef VK_USE_PLATFORM_VI_NN
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateViSurfaceNN(VkInstance instance, const VkViSurfaceCreateInfoNN* pCreateInfo,
-                                                          const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateViSurfaceNN(VkInstance instance,
+                                                          const VkViSurfaceCreateInfoNN* pCreateInfo,
+                                                          const VkAllocationCallbacks* pAllocator,
+                                                          VkSurfaceKHR* pSurface) {
     return icd::CreateViSurfaceNN(instance, pCreateInfo, pAllocator, pSurface);
 }
 #endif /* VK_USE_PLATFORM_VI_NN */
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice,
-                                                                                 VkSurfaceKHR surface,
-                                                                                 VkSurfaceCapabilities2EXT* pSurfaceCapabilities) {
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilities2EXT(
+    VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilities2EXT* pSurfaceCapabilities) {
     return icd::GetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, pSurfaceCapabilities);
 }
 
 #ifdef VK_USE_PLATFORM_IOS_MVK
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateIOSSurfaceMVK(VkInstance instance, const VkIOSSurfaceCreateInfoMVK* pCreateInfo,
-                                                            const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateIOSSurfaceMVK(VkInstance instance,
+                                                            const VkIOSSurfaceCreateInfoMVK* pCreateInfo,
+                                                            const VkAllocationCallbacks* pAllocator,
+                                                            VkSurfaceKHR* pSurface) {
     return icd::CreateIOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
 }
 #endif /* VK_USE_PLATFORM_IOS_MVK */
 
 #ifdef VK_USE_PLATFORM_MACOS_MVK
 
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateMacOSSurfaceMVK(VkInstance instance, const VkMacOSSurfaceCreateInfoMVK* pCreateInfo,
-                                                              const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateMacOSSurfaceMVK(VkInstance instance,
+                                                              const VkMacOSSurfaceCreateInfoMVK* pCreateInfo,
+                                                              const VkAllocationCallbacks* pAllocator,
+                                                              VkSurfaceKHR* pSurface) {
     return icd::CreateMacOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
 }
 #endif /* VK_USE_PLATFORM_MACOS_MVK */
@@ -330,7 +346,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateInstance(const VkInstanceCreateInfo*
         return VK_ERROR_INCOMPATIBLE_DRIVER;
     }
     *pInstance = (VkInstance)CreateDispObjHandle();
-    for (auto& physical_device : physical_device_map[*pInstance]) physical_device = (VkPhysicalDevice)CreateDispObjHandle();
+    for (auto& physical_device : physical_device_map[*pInstance])
+        physical_device = (VkPhysicalDevice)CreateDispObjHandle();
     return VK_SUCCESS;
 }
 
@@ -359,7 +376,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDevices(VkInstance instan
     return result_code;
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures) {
+static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice,
+                                                            VkPhysicalDeviceFeatures* pFeatures) {
     uint32_t num_bools = sizeof(VkPhysicalDeviceFeatures) / sizeof(VkBool32);
     VkBool32* bool_array = &pFeatures->robustBufferAccess;
     SetBoolArrayTrue(bool_array, num_bools);
@@ -397,10 +415,9 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFormatProperties(VkPhysicalDe
     }
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
-                                                                             VkImageType type, VkImageTiling tiling,
-                                                                             VkImageUsageFlags usage, VkImageCreateFlags flags,
-                                                                             VkImageFormatProperties* pImageFormatProperties) {
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceImageFormatProperties(
+    VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage,
+    VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties) {
     // A hardcoded unsupported format
     if (format == VK_FORMAT_E5B9G9R9_UFLOAT_PACK32) {
         return VK_ERROR_FORMAT_NOT_SUPPORTED;
@@ -431,9 +448,9 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties(VkPhysicalDevice p
     pProperties->sparseProperties = {VK_TRUE, VK_TRUE, VK_TRUE, VK_TRUE, VK_TRUE};
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice,
-                                                                         uint32_t* pQueueFamilyPropertyCount,
-                                                                         VkQueueFamilyProperties* pQueueFamilyProperties) {
+static VKAPI_ATTR void VKAPI_CALL
+GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount,
+                                       VkQueueFamilyProperties* pQueueFamilyProperties) {
     if (pQueueFamilyProperties) {
         std::vector<VkQueueFamilyProperties2KHR> props2(*pQueueFamilyPropertyCount,
                                                         {VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR, nullptr, {}});
@@ -446,24 +463,29 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyProperties(VkPhysi
     }
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice,
-                                                                    VkPhysicalDeviceMemoryProperties* pMemoryProperties) {
+static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceMemoryProperties(
+    VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties) {
     pMemoryProperties->memoryTypeCount = 6;
     // Host visible Coherent
-    pMemoryProperties->memoryTypes[0].propertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    pMemoryProperties->memoryTypes[0].propertyFlags =
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
     pMemoryProperties->memoryTypes[0].heapIndex = 0;
     // Host visible Cached
-    pMemoryProperties->memoryTypes[1].propertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+    pMemoryProperties->memoryTypes[1].propertyFlags =
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
     pMemoryProperties->memoryTypes[1].heapIndex = 0;
     // Device local and Host visible
-    pMemoryProperties->memoryTypes[2].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                                                      VK_MEMORY_PROPERTY_HOST_CACHED_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    pMemoryProperties->memoryTypes[2].propertyFlags =
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT |
+        VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
     pMemoryProperties->memoryTypes[2].heapIndex = 1;
     // Device local lazily
-    pMemoryProperties->memoryTypes[3].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
+    pMemoryProperties->memoryTypes[3].propertyFlags =
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
     pMemoryProperties->memoryTypes[3].heapIndex = 1;
     // Device local protected
-    pMemoryProperties->memoryTypes[4].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_PROTECTED_BIT;
+    pMemoryProperties->memoryTypes[4].propertyFlags =
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_PROTECTED_BIT;
     pMemoryProperties->memoryTypes[4].heapIndex = 1;
     // Device local only
     pMemoryProperties->memoryTypes[5].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
@@ -492,7 +514,8 @@ static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetDeviceProcAddr(VkDevice devic
     return GetInstanceProcAddr(nullptr, pName);
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
+static VKAPI_ATTR VkResult VKAPI_CALL CreateDevice(VkPhysicalDevice physicalDevice,
+                                                   const VkDeviceCreateInfo* pCreateInfo,
                                                    const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
     *pDevice = (VkDevice)CreateDispObjHandle();
     return VK_SUCCESS;
@@ -522,7 +545,8 @@ static VKAPI_ATTR void VKAPI_CALL DestroyDevice(VkDevice device, const VkAllocat
     DestroyDispObjHandle((void*)device);
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount,
+static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceExtensionProperties(const char* pLayerName,
+                                                                           uint32_t* pPropertyCount,
                                                                            VkExtensionProperties* pProperties) {
     // If requesting number of extensions, return that
     if (!pLayerName) {
@@ -534,7 +558,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceExtensionProperties(const
                 if (i == *pPropertyCount) {
                     break;
                 }
-                std::strncpy(pProperties[i].extensionName, name_ver_pair.first.c_str(), sizeof(pProperties[i].extensionName));
+                std::strncpy(pProperties[i].extensionName, name_ver_pair.first.c_str(),
+                             sizeof(pProperties[i].extensionName));
                 pProperties[i].extensionName[sizeof(pProperties[i].extensionName) - 1] = 0;
                 pProperties[i].specVersion = name_ver_pair.second;
                 ++i;
@@ -547,7 +572,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceExtensionProperties(const
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL EnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName,
+static VKAPI_ATTR VkResult VKAPI_CALL EnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
+                                                                         const char* pLayerName,
                                                                          uint32_t* pPropertyCount,
                                                                          VkExtensionProperties* pProperties) {
     // If requesting number of extensions, return that
@@ -560,7 +586,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumerateDeviceExtensionProperties(VkPhysi
                 if (i == *pPropertyCount) {
                     break;
                 }
-                std::strncpy(pProperties[i].extensionName, name_ver_pair.first.c_str(), sizeof(pProperties[i].extensionName));
+                std::strncpy(pProperties[i].extensionName, name_ver_pair.first.c_str(),
+                             sizeof(pProperties[i].extensionName));
                 pProperties[i].extensionName[sizeof(pProperties[i].extensionName) - 1] = 0;
                 pProperties[i].specVersion = name_ver_pair.second;
                 ++i;
@@ -573,16 +600,19 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumerateDeviceExtensionProperties(VkPhysi
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties* pProperties) {
+static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceLayerProperties(uint32_t* pPropertyCount,
+                                                                       VkLayerProperties* pProperties) {
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL EnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount,
+static VKAPI_ATTR VkResult VKAPI_CALL EnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
+                                                                     uint32_t* pPropertyCount,
                                                                      VkLayerProperties* pProperties) {
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) {
+static VKAPI_ATTR void VKAPI_CALL GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex,
+                                                 VkQueue* pQueue) {
     unique_lock_t lock(global_lock);
     auto queue = queue_map[device][queueFamilyIndex][queueIndex];
     if (queue) {
@@ -616,14 +646,15 @@ static VKAPI_ATTR VkResult VKAPI_CALL AllocateMemory(VkDevice device, const VkMe
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL FreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL FreeMemory(VkDevice device, VkDeviceMemory memory,
+                                             const VkAllocationCallbacks* pAllocator) {
     UnmapMemory(device, memory);
     unique_lock_t lock(global_lock);
     allocated_memory_size_map.erase(memory);
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL MapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size,
-                                                VkMemoryMapFlags flags, void** ppData) {
+static VKAPI_ATTR VkResult VKAPI_CALL MapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset,
+                                                VkDeviceSize size, VkMemoryMapFlags flags, void** ppData) {
     unique_lock_t lock(global_lock);
     if (VK_WHOLE_SIZE == size) {
         if (allocated_memory_size_map.count(memory) != 0)
@@ -678,9 +709,9 @@ static VKAPI_ATTR void VKAPI_CALL GetImageMemoryRequirements(VkDevice device, Vk
     pMemoryRequirements->memoryTypeBits = 0xFFFF & ~(0x1 << 3);
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements(VkDevice device, VkImage image,
-                                                                   uint32_t* pSparseMemoryRequirementCount,
-                                                                   VkSparseImageMemoryRequirements* pSparseMemoryRequirements) {
+static VKAPI_ATTR void VKAPI_CALL
+GetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount,
+                                 VkSparseImageMemoryRequirements* pSparseMemoryRequirements) {
     if (!pSparseMemoryRequirements) {
         *pSparseMemoryRequirementCount = 1;
     } else {
@@ -692,16 +723,16 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements(VkDevice devi
         pSparseMemoryRequirements->formatProperties.imageGranularity = {4, 4, 4};
         pSparseMemoryRequirements->formatProperties.flags = VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT;
         // Would need to track the VkImage to know format for better value here
-        pSparseMemoryRequirements->formatProperties.aspectMask =
-            VK_IMAGE_ASPECT_COLOR_BIT | VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT | VK_IMAGE_ASPECT_METADATA_BIT;
+        pSparseMemoryRequirements->formatProperties.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT | VK_IMAGE_ASPECT_DEPTH_BIT |
+                                                                 VK_IMAGE_ASPECT_STENCIL_BIT |
+                                                                 VK_IMAGE_ASPECT_METADATA_BIT;
     }
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format,
-                                                                               VkImageType type, VkSampleCountFlagBits samples,
-                                                                               VkImageUsageFlags usage, VkImageTiling tiling,
-                                                                               uint32_t* pPropertyCount,
-                                                                               VkSparseImageFormatProperties* pProperties) {
+static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties(
+    VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples,
+    VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount,
+    VkSparseImageFormatProperties* pProperties) {
     if (!pProperties) {
         *pPropertyCount = 1;
     } else {
@@ -743,7 +774,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateBuffer(VkDevice device, const VkBuff
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL DestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL DestroyBuffer(VkDevice device, VkBuffer buffer,
+                                                const VkAllocationCallbacks* pAllocator) {
     unique_lock_t lock(global_lock);
     buffer_map[device].erase(buffer);
 }
@@ -756,24 +788,28 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateImage(VkDevice device, const VkImage
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL DestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL DestroyImage(VkDevice device, VkImage image,
+                                               const VkAllocationCallbacks* pAllocator) {
     unique_lock_t lock(global_lock);
     image_memory_size_map[device].erase(image);
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource,
+static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout(VkDevice device, VkImage image,
+                                                            const VkImageSubresource* pSubresource,
                                                             VkSubresourceLayout* pLayout) {
     // Need safe values. Callers are computing memory offsets from pLayout, with no return code to flag failure.
     *pLayout = VkSubresourceLayout();  // Default constructor zero values.
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity) {
+static VKAPI_ATTR void VKAPI_CALL GetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass,
+                                                           VkExtent2D* pGranularity) {
     pGranularity->width = 1;
     pGranularity->height = 1;
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
-                                                        const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) {
+                                                        const VkAllocationCallbacks* pAllocator,
+                                                        VkCommandPool* pCommandPool) {
     unique_lock_t lock(global_lock);
     *pCommandPool = (VkCommandPool)global_unique_handle++;
     command_pool_map[device].insert(*pCommandPool);
@@ -794,7 +830,8 @@ static VKAPI_ATTR void VKAPI_CALL DestroyCommandPool(VkDevice device, VkCommandP
     command_pool_map[device].erase(commandPool);
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL AllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo,
+static VKAPI_ATTR VkResult VKAPI_CALL AllocateCommandBuffers(VkDevice device,
+                                                             const VkCommandBufferAllocateInfo* pAllocateInfo,
                                                              VkCommandBuffer* pCommandBuffers) {
     unique_lock_t lock(global_lock);
     for (uint32_t i = 0; i < pAllocateInfo->commandBufferCount; ++i) {
@@ -804,7 +841,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL AllocateCommandBuffers(VkDevice device, co
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL FreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
+static VKAPI_ATTR void VKAPI_CALL FreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
+                                                     uint32_t commandBufferCount,
                                                      const VkCommandBuffer* pCommandBuffers) {
     unique_lock_t lock(global_lock);
     for (auto i = 0u; i < commandBufferCount; ++i) {
@@ -829,20 +867,21 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceVersion(uint32_t* pApiVer
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo,
+static VKAPI_ATTR void VKAPI_CALL GetImageMemoryRequirements2(VkDevice device,
+                                                              const VkImageMemoryRequirementsInfo2* pInfo,
                                                               VkMemoryRequirements2* pMemoryRequirements) {
     GetImageMemoryRequirements(device, pInfo->image, &pMemoryRequirements->memoryRequirements);
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo,
+static VKAPI_ATTR void VKAPI_CALL GetBufferMemoryRequirements2(VkDevice device,
+                                                               const VkBufferMemoryRequirementsInfo2* pInfo,
                                                                VkMemoryRequirements2* pMemoryRequirements) {
     GetBufferMemoryRequirements(device, pInfo->buffer, &pMemoryRequirements->memoryRequirements);
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements2(VkDevice device,
-                                                                    const VkImageSparseMemoryRequirementsInfo2* pInfo,
-                                                                    uint32_t* pSparseMemoryRequirementCount,
-                                                                    VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
+static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements2(
+    VkDevice device, const VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
     if (pSparseMemoryRequirementCount && pSparseMemoryRequirements) {
         GetImageSparseMemoryRequirements(device, pInfo->image, pSparseMemoryRequirementCount,
                                          &pSparseMemoryRequirements->memoryRequirements);
@@ -851,7 +890,8 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements2(VkDevice dev
     }
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {
+static VKAPI_ATTR void VKAPI_CALL GetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo,
+                                                  VkQueue* pQueue) {
     GetDeviceQueue(device, pQueueInfo->queueFamilyIndex, pQueueInfo->queueIndex, pQueue);
 }
 
@@ -863,7 +903,8 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceExternalBufferProperties(
         // Can't have dedicated memory with AHB
         pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures =
             VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT | VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT;
-        pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = pExternalBufferInfo->handleType;
+        pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes =
+            pExternalBufferInfo->handleType;
         pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = pExternalBufferInfo->handleType;
     } else if (pExternalBufferInfo->handleType & supported_flags) {
         pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0x7;
@@ -897,14 +938,16 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceExternalSemaphoreProperties(
     pExternalSemaphoreProperties->externalSemaphoreFeatures = 0x3;
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetLayoutSupport(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
+static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetLayoutSupport(VkDevice device,
+                                                                const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
                                                                 VkDescriptorSetLayoutSupport* pSupport) {
     if (pSupport) {
         pSupport->supported = VK_TRUE;
     }
 }
 
-static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
+static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddress(VkDevice device,
+                                                                    const VkBufferDeviceAddressInfo* pInfo) {
     VkDeviceAddress address = 0;
     auto d_iter = buffer_map.find(device);
     if (d_iter != buffer_map.end()) {
@@ -916,7 +959,8 @@ static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddress(VkDevice dev
     return address;
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirements(VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo,
+static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirements(VkDevice device,
+                                                                    const VkDeviceBufferMemoryRequirements* pInfo,
                                                                     VkMemoryRequirements2* pMemoryRequirements) {
     pMemoryRequirements->memoryRequirements.alignment = 1;
     pMemoryRequirements->memoryRequirements.memoryTypeBits = 0xFFFF;
@@ -925,7 +969,8 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirements(VkDevice dev
     pMemoryRequirements->memoryRequirements.size = ((pInfo->pCreateInfo->size + 4095) / 4096) * 4096;
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetDeviceImageMemoryRequirements(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo,
+static VKAPI_ATTR void VKAPI_CALL GetDeviceImageMemoryRequirements(VkDevice device,
+                                                                   const VkDeviceImageMemoryRequirements* pInfo,
                                                                    VkMemoryRequirements2* pMemoryRequirements) {
     pMemoryRequirements->memoryRequirements.size = GetImageSizeFromCreateInfo(pInfo->pCreateInfo);
     pMemoryRequirements->memoryRequirements.alignment = 1;
@@ -933,15 +978,16 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceImageMemoryRequirements(VkDevice devi
     pMemoryRequirements->memoryRequirements.memoryTypeBits = 0xFFFF & ~(0x1 << 3);
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex,
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice,
+                                                                         uint32_t queueFamilyIndex,
                                                                          VkSurfaceKHR surface, VkBool32* pSupported) {
     // Currently say that all surface/queue combos are supported
     *pSupported = VK_TRUE;
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
-                                                                              VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) {
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceCapabilitiesKHR(
+    VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) {
     // In general just say max supported is available for requested surface
     pSurfaceCapabilities->minImageCount = 1;
     pSurfaceCapabilities->maxImageCount = 0;
@@ -953,21 +999,24 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceCapabilitiesKHR(Vk
     pSurfaceCapabilities->maxImageExtent.height = 0xFFFF;
     pSurfaceCapabilities->maxImageArrayLayers = 128;
     pSurfaceCapabilities->supportedTransforms =
-        VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR | VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR | VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR |
-        VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR | VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR |
-        VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR | VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR |
+        VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR | VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR |
+        VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR | VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR |
+        VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR | VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR |
+        VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR |
         VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR | VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR;
     pSurfaceCapabilities->currentTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-    pSurfaceCapabilities->supportedCompositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR | VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR |
-                                                    VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR | VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
-    pSurfaceCapabilities->supportedUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                                VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
-                                                VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT |
-                                                VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+    pSurfaceCapabilities->supportedCompositeAlpha =
+        VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR | VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR |
+        VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR | VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+    pSurfaceCapabilities->supportedUsageFlags =
+        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+        VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT |
+        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice,
+                                                                         VkSurfaceKHR surface,
                                                                          uint32_t* pSurfaceFormatCount,
                                                                          VkSurfaceFormatKHR* pSurfaceFormats) {
     // Currently always say that RGBA8 & BGRA8 are supported
@@ -986,7 +1035,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceFormatsKHR(VkPhysi
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice,
+                                                                              VkSurfaceKHR surface,
                                                                               uint32_t* pPresentModeCount,
                                                                               VkPresentModeKHR* pPresentModes) {
     // Currently always say that all present modes are supported
@@ -1004,7 +1054,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfacePresentModesKHR(Vk
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo,
-                                                         const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) {
+                                                         const VkAllocationCallbacks* pAllocator,
+                                                         VkSwapchainKHR* pSwapchain) {
     unique_lock_t lock(global_lock);
     *pSwapchain = (VkSwapchainKHR)global_unique_handle++;
     for (uint32_t i = 0; i < icd_swapchain_image_count; ++i) {
@@ -1043,7 +1094,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL AcquireNextImageKHR(VkDevice device, VkSwa
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL AcquireNextImage2KHR(VkDevice device, const VkAcquireNextImageInfoKHR* pAcquireInfo,
+static VKAPI_ATTR VkResult VKAPI_CALL AcquireNextImage2KHR(VkDevice device,
+                                                           const VkAcquireNextImageInfoKHR* pAcquireInfo,
                                                            uint32_t* pImageIndex) {
     *pImageIndex = 0;
     return VK_SUCCESS;
@@ -1106,7 +1158,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(VkPh
                     break;
                 case VK_VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR:
                     if (profile->pictureLayout != VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR &&
-                        profile->pictureLayout != VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR) {
+                        profile->pictureLayout !=
+                            VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR) {
                         return VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR;
                     }
                     caps_decode->flags = VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_DISTINCT_BIT_KHR;
@@ -1115,7 +1168,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(VkPh
                     break;
                 case VK_VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR:
                     if (profile->pictureLayout != VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR &&
-                        profile->pictureLayout != VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR) {
+                        profile->pictureLayout !=
+                            VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR) {
                         return VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR;
                     }
                     caps_decode->flags = VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR |
@@ -1233,15 +1287,17 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(VkPh
                     caps_encode->maxBitrate = 800000000;
                     caps_encode->maxQualityLevels = 4;
                     caps_encode->encodeInputPictureGranularity = {16, 16};
-                    caps_encode->supportedEncodeFeedbackFlags = VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
-                                                                VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR |
-                                                                VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_HAS_OVERRIDES_BIT_KHR;
-                    caps_encode_h264->flags = VK_VIDEO_ENCODE_H264_CAPABILITY_HRD_COMPLIANCE_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H264_CAPABILITY_PREDICTION_WEIGHT_TABLE_GENERATED_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H264_CAPABILITY_ROW_UNALIGNED_SLICE_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H264_CAPABILITY_B_FRAME_IN_L0_LIST_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H264_CAPABILITY_PER_PICTURE_TYPE_MIN_MAX_QP_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H264_CAPABILITY_GENERATE_PREFIX_NALU_BIT_KHR;
+                    caps_encode->supportedEncodeFeedbackFlags =
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR |
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_HAS_OVERRIDES_BIT_KHR;
+                    caps_encode_h264->flags =
+                        VK_VIDEO_ENCODE_H264_CAPABILITY_HRD_COMPLIANCE_BIT_KHR |
+                        VK_VIDEO_ENCODE_H264_CAPABILITY_PREDICTION_WEIGHT_TABLE_GENERATED_BIT_KHR |
+                        VK_VIDEO_ENCODE_H264_CAPABILITY_ROW_UNALIGNED_SLICE_BIT_KHR |
+                        VK_VIDEO_ENCODE_H264_CAPABILITY_B_FRAME_IN_L0_LIST_BIT_KHR |
+                        VK_VIDEO_ENCODE_H264_CAPABILITY_PER_PICTURE_TYPE_MIN_MAX_QP_BIT_KHR |
+                        VK_VIDEO_ENCODE_H264_CAPABILITY_GENERATE_PREFIX_NALU_BIT_KHR;
                     caps_encode_h264->maxLevelIdc = STD_VIDEO_H264_LEVEL_IDC_6_2;
                     caps_encode_h264->maxSliceCount = 8;
                     caps_encode_h264->maxPPictureL0ReferenceCount = 4;
@@ -1256,14 +1312,15 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(VkPh
                     break;
                 case VK_VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR:
                     caps_encode->flags = VK_VIDEO_ENCODE_CAPABILITY_PRECEDING_EXTERNALLY_ENCODED_BYTES_BIT_KHR;
-                    caps_encode->rateControlModes =
-                        VK_VIDEO_ENCODE_RATE_CONTROL_MODE_DISABLED_BIT_KHR | VK_VIDEO_ENCODE_RATE_CONTROL_MODE_VBR_BIT_KHR;
+                    caps_encode->rateControlModes = VK_VIDEO_ENCODE_RATE_CONTROL_MODE_DISABLED_BIT_KHR |
+                                                    VK_VIDEO_ENCODE_RATE_CONTROL_MODE_VBR_BIT_KHR;
                     caps_encode->maxRateControlLayers = 1;
                     caps_encode->maxBitrate = 480000000;
                     caps_encode->maxQualityLevels = 3;
                     caps_encode->encodeInputPictureGranularity = {32, 32};
-                    caps_encode->supportedEncodeFeedbackFlags = VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
-                                                                VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR;
+                    caps_encode->supportedEncodeFeedbackFlags =
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR;
                     caps_encode_h264->flags = VK_VIDEO_ENCODE_H264_CAPABILITY_DIFFERENT_SLICE_TYPE_BIT_KHR |
                                               VK_VIDEO_ENCODE_H264_CAPABILITY_PER_SLICE_CONSTANT_QP_BIT_KHR |
                                               VK_VIDEO_ENCODE_H264_CAPABILITY_GENERATE_PREFIX_NALU_BIT_KHR;
@@ -1286,8 +1343,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(VkPh
                     caps_encode->maxBitrate = 240000000;
                     caps_encode->maxQualityLevels = 1;
                     caps_encode->encodeInputPictureGranularity = {1, 1};
-                    caps_encode->supportedEncodeFeedbackFlags = VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
-                                                                VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR;
+                    caps_encode->supportedEncodeFeedbackFlags =
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR;
                     caps_encode_h264->flags = VK_VIDEO_ENCODE_H264_CAPABILITY_ROW_UNALIGNED_SLICE_BIT_KHR |
                                               VK_VIDEO_ENCODE_H264_CAPABILITY_B_FRAME_IN_L1_LIST_BIT_KHR |
                                               VK_VIDEO_ENCODE_H264_CAPABILITY_PER_PICTURE_TYPE_MIN_MAX_QP_BIT_KHR;
@@ -1334,14 +1392,16 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(VkPh
                     caps_encode->maxBitrate = 800000000;
                     caps_encode->maxQualityLevels = 1;
                     caps_encode->encodeInputPictureGranularity = {64, 64};
-                    caps_encode->supportedEncodeFeedbackFlags = VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
-                                                                VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR;
-                    caps_encode_h265->flags = VK_VIDEO_ENCODE_H265_CAPABILITY_HRD_COMPLIANCE_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H265_CAPABILITY_PREDICTION_WEIGHT_TABLE_GENERATED_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H265_CAPABILITY_ROW_UNALIGNED_SLICE_SEGMENT_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H265_CAPABILITY_B_FRAME_IN_L0_LIST_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H265_CAPABILITY_PER_SLICE_SEGMENT_CONSTANT_QP_BIT_KHR |
-                                              VK_VIDEO_ENCODE_H265_CAPABILITY_MULTIPLE_SLICE_SEGMENTS_PER_TILE_BIT_KHR;
+                    caps_encode->supportedEncodeFeedbackFlags =
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR;
+                    caps_encode_h265->flags =
+                        VK_VIDEO_ENCODE_H265_CAPABILITY_HRD_COMPLIANCE_BIT_KHR |
+                        VK_VIDEO_ENCODE_H265_CAPABILITY_PREDICTION_WEIGHT_TABLE_GENERATED_BIT_KHR |
+                        VK_VIDEO_ENCODE_H265_CAPABILITY_ROW_UNALIGNED_SLICE_SEGMENT_BIT_KHR |
+                        VK_VIDEO_ENCODE_H265_CAPABILITY_B_FRAME_IN_L0_LIST_BIT_KHR |
+                        VK_VIDEO_ENCODE_H265_CAPABILITY_PER_SLICE_SEGMENT_CONSTANT_QP_BIT_KHR |
+                        VK_VIDEO_ENCODE_H265_CAPABILITY_MULTIPLE_SLICE_SEGMENTS_PER_TILE_BIT_KHR;
                     caps_encode_h265->maxLevelIdc = STD_VIDEO_H265_LEVEL_IDC_6_2;
                     caps_encode_h265->maxSliceSegmentCount = 8;
                     caps_encode_h265->maxTiles = {1, 1};
@@ -1367,8 +1427,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(VkPh
                     caps_encode->maxBitrate = 480000000;
                     caps_encode->maxQualityLevels = 2;
                     caps_encode->encodeInputPictureGranularity = {32, 32};
-                    caps_encode->supportedEncodeFeedbackFlags = VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
-                                                                VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR;
+                    caps_encode->supportedEncodeFeedbackFlags =
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR;
                     caps_encode_h265->flags = VK_VIDEO_ENCODE_H265_CAPABILITY_DIFFERENT_SLICE_SEGMENT_TYPE_BIT_KHR;
                     caps_encode_h265->maxLevelIdc = STD_VIDEO_H265_LEVEL_IDC_6_1;
                     caps_encode_h265->maxSliceSegmentCount = 4;
@@ -1397,9 +1458,10 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(VkPh
                     caps_encode->maxBitrate = 240000000;
                     caps_encode->maxQualityLevels = 3;
                     caps_encode->encodeInputPictureGranularity = {16, 16};
-                    caps_encode->supportedEncodeFeedbackFlags = VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
-                                                                VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR |
-                                                                VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_HAS_OVERRIDES_BIT_KHR;
+                    caps_encode->supportedEncodeFeedbackFlags =
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR |
+                        VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_HAS_OVERRIDES_BIT_KHR;
                     caps_encode_h265->flags = VK_VIDEO_ENCODE_H265_CAPABILITY_B_FRAME_IN_L1_LIST_BIT_KHR |
                                               VK_VIDEO_ENCODE_H265_CAPABILITY_PER_PICTURE_TYPE_MIN_MAX_QP_BIT_KHR |
                                               VK_VIDEO_ENCODE_H265_CAPABILITY_MULTIPLE_TILES_PER_SLICE_SEGMENT_BIT_KHR;
@@ -1443,8 +1505,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoFormatPropertiesKHR(
 
     VkVideoFormatPropertiesKHR props = {};
     props.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_PROPERTIES_KHR;
-    props.imageCreateFlags = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT | VK_IMAGE_CREATE_ALIAS_BIT | VK_IMAGE_CREATE_EXTENDED_USAGE_BIT |
-                             VK_IMAGE_CREATE_PROTECTED_BIT | VK_IMAGE_CREATE_DISJOINT_BIT;
+    props.imageCreateFlags = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT | VK_IMAGE_CREATE_ALIAS_BIT |
+                             VK_IMAGE_CREATE_EXTENDED_USAGE_BIT | VK_IMAGE_CREATE_PROTECTED_BIT |
+                             VK_IMAGE_CREATE_DISJOINT_BIT;
     props.imageType = VK_IMAGE_TYPE_2D;
     props.imageTiling = VK_IMAGE_TILING_OPTIMAL;
 
@@ -1455,13 +1518,13 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoFormatPropertiesKHR(
             switch (profile_list->pProfiles[0].chromaSubsampling) {
                 case VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR:
                     props.format = VK_FORMAT_G8_B8R8_2PLANE_420_UNORM;
-                    props.imageUsageFlags =
-                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR;
-                    format_props.push_back(props);
                     props.imageUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                            VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
-                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR |
-                                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
+                                            VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR;
+                    format_props.push_back(props);
+                    props.imageUsageFlags =
+                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+                        VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR |
+                        VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR | VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
                     format_props.push_back(props);
                     props.format = VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM;
                     format_props.push_back(props);
@@ -1472,20 +1535,21 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoFormatPropertiesKHR(
                     format_props.push_back(props);
                     props.imageUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
                                             VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
-                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
+                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR |
+                                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
                     format_props.push_back(props);
                     props.format = VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16;
                     format_props.push_back(props);
                     break;
                 case VK_VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR:
                     props.format = VK_FORMAT_G8_B8R8_2PLANE_444_UNORM;
-                    props.imageUsageFlags =
-                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR;
-                    format_props.push_back(props);
                     props.imageUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                            VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
-                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR |
-                                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
+                                            VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR;
+                    format_props.push_back(props);
+                    props.imageUsageFlags =
+                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+                        VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR |
+                        VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR | VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
                     format_props.push_back(props);
                     break;
                 default:
@@ -1497,12 +1561,13 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoFormatPropertiesKHR(
             switch (profile_list->pProfiles[0].chromaSubsampling) {
                 case VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR:
                     props.format = VK_FORMAT_G8_B8R8_2PLANE_420_UNORM;
-                    props.imageUsageFlags =
-                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR;
+                    props.imageUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                            VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR;
                     format_props.push_back(props);
                     props.imageUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
                                             VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
-                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
+                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR |
+                                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
                     format_props.push_back(props);
                     props.format = VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM;
                     format_props.push_back(props);
@@ -1513,19 +1578,21 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoFormatPropertiesKHR(
                     format_props.push_back(props);
                     props.imageUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
                                             VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
-                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
+                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR |
+                                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
                     format_props.push_back(props);
                     props.format = VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16;
                     format_props.push_back(props);
                     break;
                 case VK_VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR:
                     props.format = VK_FORMAT_G8_B8R8_2PLANE_444_UNORM;
-                    props.imageUsageFlags =
-                        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR;
+                    props.imageUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                            VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR;
                     format_props.push_back(props);
                     props.imageUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
                                             VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
-                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
+                                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR |
+                                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR;
                     format_props.push_back(props);
                     break;
                 default:
@@ -1553,9 +1620,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoFormatPropertiesKHR(
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL
-GetVideoSessionMemoryRequirementsKHR(VkDevice device, VkVideoSessionKHR videoSession, uint32_t* pMemoryRequirementsCount,
-                                     VkVideoSessionMemoryRequirementsKHR* pMemoryRequirements) {
+static VKAPI_ATTR VkResult VKAPI_CALL GetVideoSessionMemoryRequirementsKHR(
+    VkDevice device, VkVideoSessionKHR videoSession, uint32_t* pMemoryRequirementsCount,
+    VkVideoSessionMemoryRequirementsKHR* pMemoryRequirements) {
     if (!pMemoryRequirements) {
         *pMemoryRequirementsCount = 1;
     } else {
@@ -1589,27 +1656,33 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2(VkPhysicalDevice ph
     if (sync2_features) {
         sync2_features->synchronization2 = VK_TRUE;
     }
-    auto video_maintenance1_features = vku::FindStructInPNextChain<VkPhysicalDeviceVideoMaintenance1FeaturesKHR>(pFeatures->pNext);
+    auto video_maintenance1_features =
+        vku::FindStructInPNextChain<VkPhysicalDeviceVideoMaintenance1FeaturesKHR>(pFeatures->pNext);
     if (video_maintenance1_features) {
         video_maintenance1_features->videoMaintenance1 = VK_TRUE;
     }
-    const auto* desc_idx_features = vku::FindStructInPNextChain<VkPhysicalDeviceDescriptorIndexingFeaturesEXT>(pFeatures->pNext);
+    const auto* desc_idx_features =
+        vku::FindStructInPNextChain<VkPhysicalDeviceDescriptorIndexingFeaturesEXT>(pFeatures->pNext);
     if (desc_idx_features) {
-        const auto bool_size = sizeof(VkPhysicalDeviceDescriptorIndexingFeaturesEXT) -
-                               offsetof(VkPhysicalDeviceDescriptorIndexingFeaturesEXT, shaderInputAttachmentArrayDynamicIndexing);
+        const auto bool_size =
+            sizeof(VkPhysicalDeviceDescriptorIndexingFeaturesEXT) -
+            offsetof(VkPhysicalDeviceDescriptorIndexingFeaturesEXT, shaderInputAttachmentArrayDynamicIndexing);
         num_bools = bool_size / sizeof(VkBool32);
         feat_bools = (VkBool32*)&desc_idx_features->shaderInputAttachmentArrayDynamicIndexing;
         SetBoolArrayTrue(feat_bools, num_bools);
     }
-    const auto* blendop_features = vku::FindStructInPNextChain<VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT>(pFeatures->pNext);
+    const auto* blendop_features =
+        vku::FindStructInPNextChain<VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT>(pFeatures->pNext);
     if (blendop_features) {
-        const auto bool_size = sizeof(VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT) -
-                               offsetof(VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT, advancedBlendCoherentOperations);
+        const auto bool_size =
+            sizeof(VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT) -
+            offsetof(VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT, advancedBlendCoherentOperations);
         num_bools = bool_size / sizeof(VkBool32);
         feat_bools = (VkBool32*)&blendop_features->advancedBlendCoherentOperations;
         SetBoolArrayTrue(feat_bools, num_bools);
     }
-    const auto* host_image_copy_features = vku::FindStructInPNextChain<VkPhysicalDeviceHostImageCopyFeaturesEXT>(pFeatures->pNext);
+    const auto* host_image_copy_features =
+        vku::FindStructInPNextChain<VkPhysicalDeviceHostImageCopyFeaturesEXT>(pFeatures->pNext);
     if (host_image_copy_features) {
         feat_bools = (VkBool32*)&host_image_copy_features->hostImageCopy;
         SetBoolArrayTrue(feat_bools, 1);
@@ -1642,12 +1715,14 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2(VkPhysicalDevice 
         props_13->uniformTexelBufferOffsetAlignmentBytes = 16;
     }
 
-    auto* protected_memory_props = vku::FindStructInPNextChain<VkPhysicalDeviceProtectedMemoryProperties>(pProperties->pNext);
+    auto* protected_memory_props =
+        vku::FindStructInPNextChain<VkPhysicalDeviceProtectedMemoryProperties>(pProperties->pNext);
     if (protected_memory_props) {
         protected_memory_props->protectedNoFault = VK_FALSE;
     }
 
-    auto* float_controls_props = vku::FindStructInPNextChain<VkPhysicalDeviceFloatControlsProperties>(pProperties->pNext);
+    auto* float_controls_props =
+        vku::FindStructInPNextChain<VkPhysicalDeviceFloatControlsProperties>(pProperties->pNext);
     if (float_controls_props) {
         float_controls_props->denormBehaviorIndependence = VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL;
         float_controls_props->roundingModeIndependence = VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL;
@@ -1662,20 +1737,23 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2(VkPhysicalDevice 
         conservative_raster_props->degenerateLinesRasterized = VK_TRUE;
     }
 
-    auto* rt_pipeline_props = vku::FindStructInPNextChain<VkPhysicalDeviceRayTracingPipelinePropertiesKHR>(pProperties->pNext);
+    auto* rt_pipeline_props =
+        vku::FindStructInPNextChain<VkPhysicalDeviceRayTracingPipelinePropertiesKHR>(pProperties->pNext);
     if (rt_pipeline_props) {
         rt_pipeline_props->shaderGroupHandleSize = 32;
         rt_pipeline_props->shaderGroupBaseAlignment = 64;
         rt_pipeline_props->shaderGroupHandleCaptureReplaySize = 32;
     }
 
-    auto* rt_pipeline_nv_props = vku::FindStructInPNextChain<VkPhysicalDeviceRayTracingPropertiesNV>(pProperties->pNext);
+    auto* rt_pipeline_nv_props =
+        vku::FindStructInPNextChain<VkPhysicalDeviceRayTracingPropertiesNV>(pProperties->pNext);
     if (rt_pipeline_nv_props) {
         rt_pipeline_nv_props->shaderGroupHandleSize = 32;
         rt_pipeline_nv_props->shaderGroupBaseAlignment = 64;
     }
 
-    auto* texel_buffer_props = vku::FindStructInPNextChain<VkPhysicalDeviceTexelBufferAlignmentProperties>(pProperties->pNext);
+    auto* texel_buffer_props =
+        vku::FindStructInPNextChain<VkPhysicalDeviceTexelBufferAlignmentProperties>(pProperties->pNext);
     if (texel_buffer_props) {
         texel_buffer_props->storageTexelBufferOffsetSingleTexelAlignment = VK_TRUE;
         texel_buffer_props->uniformTexelBufferOffsetSingleTexelAlignment = VK_TRUE;
@@ -1683,7 +1761,8 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2(VkPhysicalDevice 
         texel_buffer_props->uniformTexelBufferOffsetAlignmentBytes = 16;
     }
 
-    auto* descriptor_buffer_props = vku::FindStructInPNextChain<VkPhysicalDeviceDescriptorBufferPropertiesEXT>(pProperties->pNext);
+    auto* descriptor_buffer_props =
+        vku::FindStructInPNextChain<VkPhysicalDeviceDescriptorBufferPropertiesEXT>(pProperties->pNext);
     if (descriptor_buffer_props) {
         descriptor_buffer_props->combinedImageSamplerDescriptorSingleArray = VK_TRUE;
         descriptor_buffer_props->bufferlessPushDescriptors = VK_TRUE;
@@ -1717,7 +1796,8 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2(VkPhysicalDevice 
         VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
     };
 
-    auto* host_image_copy_props = vku::FindStructInPNextChain<VkPhysicalDeviceHostImageCopyPropertiesEXT>(pProperties->pNext);
+    auto* host_image_copy_props =
+        vku::FindStructInPNextChain<VkPhysicalDeviceHostImageCopyPropertiesEXT>(pProperties->pNext);
     if (host_image_copy_props) {
         if (host_image_copy_props->pCopyDstLayouts == nullptr)
             host_image_copy_props->copyDstLayoutCount = num_copy_layouts;
@@ -1741,9 +1821,11 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2(VkPhysicalDevice 
     if (driver_properties) {
         std::strncpy(driver_properties->driverName, "Vulkan Mock Device", VK_MAX_DRIVER_NAME_SIZE);
 #if defined(GIT_BRANCH_NAME) && defined(GIT_TAG_INFO)
-        std::strncpy(driver_properties->driverInfo, "Branch: " GIT_BRANCH_NAME " Tag Info: " GIT_TAG_INFO, VK_MAX_DRIVER_INFO_SIZE);
+        std::strncpy(driver_properties->driverInfo, "Branch: " GIT_BRANCH_NAME " Tag Info: " GIT_TAG_INFO,
+                     VK_MAX_DRIVER_INFO_SIZE);
 #else
-        std::strncpy(driver_properties->driverInfo, "Branch: --unknown-- Tag Info: --unknown--", VK_MAX_DRIVER_INFO_SIZE);
+        std::strncpy(driver_properties->driverInfo, "Branch: --unknown-- Tag Info: --unknown--",
+                     VK_MAX_DRIVER_INFO_SIZE);
 #endif
     }
 }
@@ -1760,11 +1842,13 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFormatProperties2(VkPhysicalD
     }
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL
-GetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
-                                        VkImageFormatProperties2* pImageFormatProperties) {
-    auto* external_image_prop = vku::FindStructInPNextChain<VkExternalImageFormatProperties>(pImageFormatProperties->pNext);
-    auto* external_image_format = vku::FindStructInPNextChain<VkPhysicalDeviceExternalImageFormatInfo>(pImageFormatInfo->pNext);
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceImageFormatProperties2(
+    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+    VkImageFormatProperties2* pImageFormatProperties) {
+    auto* external_image_prop =
+        vku::FindStructInPNextChain<VkExternalImageFormatProperties>(pImageFormatProperties->pNext);
+    auto* external_image_format =
+        vku::FindStructInPNextChain<VkPhysicalDeviceExternalImageFormatInfo>(pImageFormatInfo->pNext);
     if (external_image_prop && external_image_format) {
         external_image_prop->externalMemoryProperties.externalMemoryFeatures =
             VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT | VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT;
@@ -1777,14 +1861,14 @@ GetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const V
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice,
-                                                                          uint32_t* pQueueFamilyPropertyCount,
-                                                                          VkQueueFamilyProperties2* pQueueFamilyProperties) {
+static VKAPI_ATTR void VKAPI_CALL
+GetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount,
+                                        VkQueueFamilyProperties2* pQueueFamilyProperties) {
     if (pQueueFamilyProperties) {
         if (*pQueueFamilyPropertyCount >= 1) {
             auto props = &pQueueFamilyProperties[0].queueFamilyProperties;
-            props->queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT | VK_QUEUE_SPARSE_BINDING_BIT |
-                                VK_QUEUE_PROTECTED_BIT;
+            props->queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT |
+                                VK_QUEUE_SPARSE_BINDING_BIT | VK_QUEUE_PROTECTED_BIT;
             props->queueCount = 1;
             props->timestampValidBits = 16;
             props->minImageTransferGranularity = {1, 1, 1};
@@ -1796,12 +1880,13 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyProperties2(VkPhys
             props->timestampValidBits = 16;
             props->minImageTransferGranularity = {1, 1, 1};
 
-            auto status_query_props =
-                vku::FindStructInPNextChain<VkQueueFamilyQueryResultStatusPropertiesKHR>(pQueueFamilyProperties[1].pNext);
+            auto status_query_props = vku::FindStructInPNextChain<VkQueueFamilyQueryResultStatusPropertiesKHR>(
+                pQueueFamilyProperties[1].pNext);
             if (status_query_props) {
                 status_query_props->queryResultStatusSupport = VK_TRUE;
             }
-            auto video_props = vku::FindStructInPNextChain<VkQueueFamilyVideoPropertiesKHR>(pQueueFamilyProperties[1].pNext);
+            auto video_props =
+                vku::FindStructInPNextChain<VkQueueFamilyVideoPropertiesKHR>(pQueueFamilyProperties[1].pNext);
             if (video_props) {
                 video_props->videoCodecOperations = VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR |
                                                     VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR |
@@ -1815,12 +1900,13 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyProperties2(VkPhys
             props->timestampValidBits = 16;
             props->minImageTransferGranularity = {1, 1, 1};
 
-            auto status_query_props =
-                vku::FindStructInPNextChain<VkQueueFamilyQueryResultStatusPropertiesKHR>(pQueueFamilyProperties[2].pNext);
+            auto status_query_props = vku::FindStructInPNextChain<VkQueueFamilyQueryResultStatusPropertiesKHR>(
+                pQueueFamilyProperties[2].pNext);
             if (status_query_props) {
                 status_query_props->queryResultStatusSupport = VK_TRUE;
             }
-            auto video_props = vku::FindStructInPNextChain<VkQueueFamilyVideoPropertiesKHR>(pQueueFamilyProperties[2].pNext);
+            auto video_props =
+                vku::FindStructInPNextChain<VkQueueFamilyVideoPropertiesKHR>(pQueueFamilyProperties[2].pNext);
             if (video_props) {
                 video_props->videoCodecOperations =
                     VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR | VK_VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_KHR;
@@ -1834,26 +1920,28 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyProperties2(VkPhys
     }
 }
 
-static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice,
-                                                                     VkPhysicalDeviceMemoryProperties2* pMemoryProperties) {
+static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceMemoryProperties2(
+    VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) {
     GetPhysicalDeviceMemoryProperties(physicalDevice, &pMemoryProperties->memoryProperties);
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties2(
-    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount,
-    VkSparseImageFormatProperties2* pProperties) {
+    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
+    uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) {
     if (pPropertyCount && pProperties) {
-        GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples,
-                                                     pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount,
-                                                     &pProperties->properties);
+        GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type,
+                                                     pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling,
+                                                     pPropertyCount, &pProperties->properties);
     } else {
-        GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples,
-                                                     pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, nullptr);
+        GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type,
+                                                     pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling,
+                                                     pPropertyCount, nullptr);
     }
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceGroups(
-    VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
+static VKAPI_ATTR VkResult VKAPI_CALL
+EnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount,
+                              VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
     if (!pPhysicalDeviceGroupProperties) {
         *pPhysicalDeviceGroupCount = 1;
     } else {
@@ -1875,7 +1963,8 @@ GetMemoryWin32HandlePropertiesKHR(VkDevice device, VkExternalMemoryHandleTypeFla
 }
 #endif /* VK_USE_PLATFORM_WIN32_KHR */
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryFdKHR(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd) {
+static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryFdKHR(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo,
+                                                     int* pFd) {
     *pFd = 1;
     return VK_SUCCESS;
 }
@@ -1896,8 +1985,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetFenceFdKHR(VkDevice device, const VkFen
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
-    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterKHR* pCounters,
-    VkPerformanceCounterDescriptionKHR* pCounterDescriptions) {
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount,
+    VkPerformanceCounterKHR* pCounters, VkPerformanceCounterDescriptionKHR* pCounterDescriptions) {
     if (!pCounters) {
         *pCounterCount = 3;
     } else {
@@ -1929,17 +2018,19 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceQueueFamilyPerforma
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(
-    VkPhysicalDevice physicalDevice, const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo, uint32_t* pNumPasses) {
+    VkPhysicalDevice physicalDevice, const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo,
+    uint32_t* pNumPasses) {
     if (pNumPasses) {
         // arbitrary
         *pNumPasses = 1;
     }
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice,
-                                                                               const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
-                                                                               VkSurfaceCapabilities2KHR* pSurfaceCapabilities) {
-    GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, pSurfaceInfo->surface, &pSurfaceCapabilities->surfaceCapabilities);
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceCapabilities2KHR(
+    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
+    VkSurfaceCapabilities2KHR* pSurfaceCapabilities) {
+    GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, pSurfaceInfo->surface,
+                                            &pSurfaceCapabilities->surfaceCapabilities);
 
     auto* present_mode_compatibility =
         vku::FindStructInPNextChain<VkSurfacePresentModeCompatibilityEXT>(pSurfaceCapabilities->pNext);
@@ -1956,10 +2047,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceCapabilities2KHR(V
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice,
-                                                                          const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
-                                                                          uint32_t* pSurfaceFormatCount,
-                                                                          VkSurfaceFormat2KHR* pSurfaceFormats) {
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceFormats2KHR(
+    VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount,
+    VkSurfaceFormat2KHR* pSurfaceFormats) {
     // Currently always say that RGBA8 & BGRA8 are supported
     if (!pSurfaceFormats) {
         *pSurfaceFormatCount = 2;
@@ -1991,8 +2081,10 @@ GetPhysicalDeviceFragmentShadingRatesKHR(VkPhysicalDevice physicalDevice, uint32
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL MapMemory2KHR(VkDevice device, const VkMemoryMapInfoKHR* pMemoryMapInfo, void** ppData) {
-    return MapMemory(device, pMemoryMapInfo->memory, pMemoryMapInfo->offset, pMemoryMapInfo->size, pMemoryMapInfo->flags, ppData);
+static VKAPI_ATTR VkResult VKAPI_CALL MapMemory2KHR(VkDevice device, const VkMemoryMapInfoKHR* pMemoryMapInfo,
+                                                    void** ppData) {
+    return MapMemory(device, pMemoryMapInfo->memory, pMemoryMapInfo->offset, pMemoryMapInfo->size,
+                     pMemoryMapInfo->flags, ppData);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL UnmapMemory2KHR(VkDevice device, const VkMemoryUnmapInfoKHR* pMemoryUnmapInfo) {
@@ -2058,9 +2150,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetAndroidHardwareBufferPropertiesANDROID(
 
 #endif /* VK_USE_PLATFORM_ANDROID_KHR */
 
-static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceMultisamplePropertiesEXT(VkPhysicalDevice physicalDevice,
-                                                                            VkSampleCountFlagBits samples,
-                                                                            VkMultisamplePropertiesEXT* pMultisampleProperties) {
+static VKAPI_ATTR void VKAPI_CALL
+GetPhysicalDeviceMultisamplePropertiesEXT(VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples,
+                                          VkMultisamplePropertiesEXT* pMultisampleProperties) {
     if (pMultisampleProperties) {
         // arbitrary
         pMultisampleProperties->maxSampleLocationGridSize = {32, 32};
@@ -2068,16 +2160,17 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceMultisamplePropertiesEXT(VkPh
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetAccelerationStructureMemoryRequirementsNV(
-    VkDevice device, const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) {
+    VkDevice device, const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo,
+    VkMemoryRequirements2KHR* pMemoryRequirements) {
     // arbitrary
     pMemoryRequirements->memoryRequirements.size = 4096;
     pMemoryRequirements->memoryRequirements.alignment = 1;
     pMemoryRequirements->memoryRequirements.memoryTypeBits = 0xFFFF;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL
-GetMemoryHostPointerPropertiesEXT(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHostPointer,
-                                  VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties) {
+static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryHostPointerPropertiesEXT(
+    VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHostPointer,
+    VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties) {
     pMemoryHostPointerProperties->memoryTypeBits = 1 << 5;  // DEVICE_LOCAL only type
     return VK_SUCCESS;
 }
@@ -2104,8 +2197,9 @@ GetAccelerationStructureDeviceAddressKHR(VkDevice device, const VkAccelerationSt
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetAccelerationStructureBuildSizesKHR(
-    VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo,
-    const uint32_t* pMaxPrimitiveCounts, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {
+    VkDevice device, VkAccelerationStructureBuildTypeKHR buildType,
+    const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo, const uint32_t* pMaxPrimitiveCounts,
+    VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {
     // arbitrary
     pSizeInfo->accelerationStructureSize = 4;
     pSizeInfo->updateScratchSize = 4;
@@ -2114,7 +2208,8 @@ static VKAPI_ATTR void VKAPI_CALL GetAccelerationStructureBuildSizesKHR(
 
 static VKAPI_ATTR VkResult VKAPI_CALL RegisterDisplayEventEXT(VkDevice device, VkDisplayKHR display,
                                                               const VkDisplayEventInfoEXT* pDisplayEventInfo,
-                                                              const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
+                                                              const VkAllocationCallbacks* pAllocator,
+                                                              VkFence* pFence) {
     unique_lock_t lock(global_lock);
     *pFence = (VkFence)global_unique_handle++;
     return VK_SUCCESS;
