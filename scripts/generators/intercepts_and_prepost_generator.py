@@ -169,7 +169,7 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' CommandBuffer::Post', 1)
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)
-            func_call = f'  tracker_.TrackPre{vkcommand.name[2:]}('
+            func_call = f'  tracker_.{vkcommand.name[2:]}('
             count = 0
             for vkparam in vkcommand.params:
                 if count != 0:
@@ -195,7 +195,6 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
 
             if self.CommandHasReturn(vkcommand):
                 post_func_decl = post_func_decl.replace(')', f',\n    {vkcommand.returnType}                                    result)')
-            func_call = func_call.replace('TrackPre', 'TrackPost', 1)
             tracker_call = '  WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);'
 
             out.append(f'{post_func_decl}\n')
@@ -220,15 +219,12 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
 #include <vulkan/vulkan.h>
 
 #include "command_common.h"
-#include "command_printer.h"
 #include "command_recorder.h"
 
 class CommandTracker
 {
  public:
   void Reset();
-  void SetNameResolver(const ObjectInfoDB *name_resolver);
-  void PrintCommandParameters(YAML::Emitter &os, const Command &cmd);
 
   const std::vector<Command> &GetCommands() const { return commands_; }
   std::vector<Command> &GetCommands() { return commands_; }
@@ -236,13 +232,12 @@ class CommandTracker
 ''')
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            pre_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(f'{vkcommand.returnType} ', 'void ', 1).replace('vk', 'TrackPre', 1)
+            pre_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(f'{vkcommand.returnType} ', 'void ', 1).replace('vk', '', 1)
             out.append(f'  {pre_func_decl}\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
         out.append(''' private:
   std::vector<Command> commands_;
-  CommandPrinter printer_;
   CommandRecorder recorder_;
 };
 ''')
@@ -255,7 +250,6 @@ class CommandTracker
 #include <cassert>
 
 #include "command_common.h"
-#include "command_printer.h"
 #include "command_tracker.h"
 
 void CommandTracker::Reset()
@@ -263,39 +257,12 @@ void CommandTracker::Reset()
   commands_.clear();
   recorder_.Reset();
 }
-
-void CommandTracker::SetNameResolver(const ObjectInfoDB *name_resolver)
-{
-  printer_.SetNameResolver(name_resolver);
-}
-
-void CommandTracker::PrintCommandParameters(YAML::Emitter &os, const Command &cmd)
-{
-  switch (cmd.type)
-  {
-    default:
-    case Command::Type::kUnknown:
-      // output an empty map for consistency with other command printers
-      os << YAML::BeginMap << YAML::EndMap;
-      break;
 ''')
-        for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
-            out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append(f'    case Command::Type::k{vkcommand.name[2:]}:\n')
-            out.append('      if (cmd.parameters) {\n')
-            out.append(f'        auto args = reinterpret_cast<{vkcommand.name[2:]}Args *>(cmd.parameters);\n')
-            out.append(f'        printer_.Print{vkcommand.name[2:]}Args(os, *args);\n')
-            out.append('      }\n')
-            out.append('      break;\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
-            out.append('\n')
 
-        out.append('  }; // switch (cmd.type)\n')
-        out.append('} // CommandTracker::PrintCommandParameters\n\n')
 
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(f'{vkcommand.returnType} ', 'void ', 1).replace('vk', 'CommandTracker::TrackPre', 1)
+            func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(f'{vkcommand.returnType} ', 'void ', 1).replace('vk', 'CommandTracker::', 1)
             out.append(f'{func_decl}\n')
             out.append('  Command cmd {};\n')
             out.append(f'  cmd.type = Command::Type::k{vkcommand.name[2:]};\n')

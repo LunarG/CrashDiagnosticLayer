@@ -133,7 +133,7 @@ VkResult CommandBuffer::PreBeginCommandBuffer(VkCommandBuffer commandBuffer,
                                               const VkCommandBufferBeginInfo* pBeginInfo) {
     // Reset state on Begin.
     Reset();
-    tracker_.TrackPreBeginCommandBuffer(commandBuffer, pBeginInfo);
+    tracker_.BeginCommandBuffer(commandBuffer, pBeginInfo);
     return VK_SUCCESS;
 }
 
@@ -161,7 +161,7 @@ VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
 }
 
 VkResult CommandBuffer::PreEndCommandBuffer(VkCommandBuffer commandBuffer) {
-    tracker_.TrackPreEndCommandBuffer(commandBuffer);
+    tracker_.EndCommandBuffer(commandBuffer);
 
     WriteEndCheckpoint();
     return VK_SUCCESS;
@@ -306,8 +306,8 @@ std::string CommandBuffer::PrintCommandState(CommandState cm_state) const {
 }
 
 bool CommandBuffer::DumpCommand(const Command& command, YAML::Emitter& os) {
-    tracker_.SetNameResolver(&device_.GetObjectInfoDB());
-    tracker_.PrintCommandParameters(os, command);
+    printer_.SetNameResolver(&device_.GetObjectInfoDB());
+    printer_.PrintCommandParameters(os, command);
     // TODO: does this matter?
     return true;
 }

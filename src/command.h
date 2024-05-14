@@ -25,6 +25,7 @@
 
 #include "command_common.h"
 #include "command_tracker.h"
+#include "command_printer.h"
 #include "descriptor_set.h"
 #include "checkpoint.h"
 
@@ -169,6 +170,7 @@ class CommandBuffer {
     VkFence submitted_fence_ = VK_NULL_HANDLE;
 
     CommandTracker tracker_;
+    CommandPrinter printer_;
 
     void WriteBeginCheckpoint();
     void WriteEndCheckpoint();
