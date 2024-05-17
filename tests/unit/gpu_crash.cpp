@@ -54,8 +54,15 @@ TEST_F(GpuCrash, CopyCrash) {
 
     vk::CommandBufferBeginInfo begin_info;
     cmd_buff_.begin(begin_info);
+
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
+
     vk::BufferCopy regions(0, 0, sizeof(float));
     cmd_buff_.copyBuffer(in.buffer, out.buffer, regions);
+    cmd_buff_.endDebugUtilsLabelEXT();
+
     cmd_buff_.end();
 
     // this is invalid and will likely cause a VK_DEVICE_LOST
@@ -89,10 +96,17 @@ TEST_F(GpuCrash, ShaderCrash) {
 
     vk::CommandBufferBeginInfo begin_info;
     cmd_buff_.begin(begin_info);
+
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
                                  state.pipeline.DescriptorSet().Set(), {});
+
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
     cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.endDebugUtilsLabelEXT();
+
     cmd_buff_.end();
 
     // this is invalid and will likely cause a VK_DEVICE_LOST
@@ -133,7 +147,15 @@ TEST_F(GpuCrash, InfiniteLoop) {
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
                                  state.pipeline.DescriptorSet().Set(), {});
+
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
+
     cmd_buff_.dispatch(1, 1, 1);
+
+    cmd_buff_.endDebugUtilsLabelEXT();
+
     cmd_buff_.end();
 
     vk::SubmitInfo submit_info({}, {}, *cmd_buff_, {});
@@ -166,7 +188,15 @@ TEST_F(GpuCrash, InfiniteLoopSubmit2) {
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
                                  state.pipeline.DescriptorSet().Set(), {});
+
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
+
     cmd_buff_.dispatch(1, 1, 1);
+
+    cmd_buff_.endDebugUtilsLabelEXT();
+
     cmd_buff_.end();
 
     vk::CommandBufferSubmitInfo cb_info(*cmd_buff_);
@@ -204,8 +234,15 @@ TEST_F(GpuCrash, HangHostEvent) {
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
                                  state.pipeline.DescriptorSet().Set(), {});
 
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
+
     cmd_buff_.waitEvents(*event, vk::PipelineStageFlagBits::eHost, vk::PipelineStageFlagBits::eBottomOfPipe, {}, {},
                          {});
+
+    cmd_buff_.endDebugUtilsLabelEXT();
+
     cmd_buff_.dispatch(1, 1, 1);
     cmd_buff_.end();
 
@@ -258,7 +295,18 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, pipeline.Pipeline());
     cmd_buff_.pushConstants<vk::DeviceAddress>(pipeline.PipelineLayout(), vk::ShaderStageFlagBits::eCompute, 0u,
                                                push_constants);
+
+    vk::DeviceFaultAddressInfoEXT address_info(vk::DeviceFaultAddressTypeEXT::eWriteInvalid, addr, 0x1000);
+    vk::DeviceFaultInfoEXT fault_info({}, &address_info);
+    strncpy(fault_info.description.data(), "fault-description", fault_info.description.size());
+    vk::DeviceFaultCountsEXT counts(1, 0, 0, &fault_info);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
+
     cmd_buff_.dispatch(1, 1, 1);
+
+    cmd_buff_.endDebugUtilsLabelEXT();
+
     cmd_buff_.end();
 
     bda.buffer.clear();

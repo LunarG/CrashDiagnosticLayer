@@ -4846,6 +4846,17 @@ static VKAPI_ATTR void VKAPI_CALL QueueEndDebugUtilsLabelEXT(VkQueue queue) {}
 static VKAPI_ATTR void VKAPI_CALL QueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
 }
 
+static VKAPI_ATTR void VKAPI_CALL CmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdEndDebugUtilsLabelEXT(commandBuffer);
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
+                                                              const VkDebugUtilsLabelEXT* pLabelInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
+}
+
 static VKAPI_ATTR VkResult VKAPI_CALL
 CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
                              const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) {

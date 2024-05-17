@@ -2323,15 +2323,4 @@ static VKAPI_ATTR void VKAPI_CALL CmdBeginDebugUtilsLabelEXT(VkCommandBuffer com
     cb->CmdBeginDebugUtilsLabel(pLabelInfo);
 }
 
-static VKAPI_ATTR void VKAPI_CALL CmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
-    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
-    cb->CmdEndDebugUtilsLabel();
-}
-
-static VKAPI_ATTR void VKAPI_CALL CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
-                                                              const VkDebugUtilsLabelEXT* pLabelInfo) {
-    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
-    cb->CmdInsertDebugUtilsLabel(pLabelInfo);
-}
-
 }  // namespace icd

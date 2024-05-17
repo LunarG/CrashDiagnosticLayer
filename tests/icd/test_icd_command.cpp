@@ -26,17 +26,9 @@ namespace icd {
 
 VkResult CommandBuffer::Execute(Queue &queue) {
     VkResult result = VK_SUCCESS;
-
+    bool hang_next_cmd = false;
     auto &cmds = tracker_.GetCommands();
     for (auto &cmd : cmds) {
-        if (InHangRegion(cmd.id)) {
-            // Start hanging. We might need to still do something with checkpoints for a bit.
-            result = VK_ERROR_DEVICE_LOST;
-        } else if (result != VK_SUCCESS) {
-            // End of hang region. stop processing.
-            // TODO copy fault info to queue? device?
-            break;
-        }
         switch (cmd.type) {
             case Command::Type::kCmdWriteBufferMarkerAMD: {
                 auto args = reinterpret_cast<CmdWriteBufferMarkerAMDArgs *>(cmd.parameters);
@@ -53,16 +45,33 @@ VkResult CommandBuffer::Execute(Queue &queue) {
                 SetCheckpoint(cmd.id, queue, *args);
                 break;
             }
+            case Command::Type::kCmdBeginDebugUtilsLabelEXT: {
+                auto args = reinterpret_cast<CmdBeginDebugUtilsLabelEXTArgs *>(cmd.parameters);
+                if (fault_label_.has_value() && strcmp(fault_label_->pLabelName, args->pLabelInfo->pLabelName) == 0) {
+                    in_hang_region_ = true;
+                }
+                break;
+            }
+            case Command::Type::kCmdEndDebugUtilsLabelEXT: {
+                if (in_hang_region_) {
+                    in_hang_region_ = false;
+                    result = VK_ERROR_DEVICE_LOST;
+                    //queue.SetFaultInfo(std::move(fault_info_);
+                }
+                break;
+            }
             case Command::Type::kCmdExecuteCommands: {
-                // only execute secondary buffers if we aren't already hanging.
-                if (result == VK_SUCCESS) {
+                if (!in_hang_region_) {
                     auto args = reinterpret_cast<CmdExecuteCommandsArgs *>(cmd.parameters);
                     result = ExecuteCommands(queue, *args);
-                }
+		}
                 break;
             }
             default:
                 break;
+        }
+        if (result != VK_SUCCESS) {
+            break;
         }
     }
     return result;
@@ -71,7 +80,7 @@ VkResult CommandBuffer::Execute(Queue &queue) {
 VkResult CommandBuffer::WriteBufferMarker(uint32_t id, VkPipelineStageFlagBits2 stage, VkBuffer buffer,
                                           VkDeviceSize offset, uint32_t marker) {
     assert(stage == VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT || stage == VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
-    if (!InHangRegion(id) || stage == VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT) {
+    if (!in_hang_region_ || stage == VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT) {
         auto *buf = reinterpret_cast<Buffer *>(buffer);
         assert(buf);
         buf->Write(offset, marker);
@@ -80,7 +89,7 @@ VkResult CommandBuffer::WriteBufferMarker(uint32_t id, VkPipelineStageFlagBits2 
 }
 
 VkResult CommandBuffer::SetCheckpoint(uint32_t id, Queue &queue, const CmdSetCheckpointNVArgs &args) {
-    auto stage = InHangRegion(id) ? VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT : VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    auto stage = in_hang_region_ ? VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT : VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     queue.TrackCheckpoint(uintptr_t(args.pCheckpointMarker), stage);
     return VK_SUCCESS;
 }
@@ -109,31 +118,9 @@ void CommandBuffer::CmdBeginDebugUtilsLabel(const VkDebugUtilsLabelEXT *pLabelIn
     tracker_.CmdBeginDebugUtilsLabelEXT(reinterpret_cast<VkCommandBuffer>(this), pLabelInfo);
     auto *fault_counts = vku::FindStructInPNextChain<VkDeviceFaultCountsEXT>(pLabelInfo->pNext);
     if (fault_counts) {
-        assert(hang_region_start_ == 0);
         assert(!fault_label_.has_value());
         fault_label_.emplace(pLabelInfo);
-        hang_region_start_ = tracker_.GetCommands().back().id + 1;
     }
-}
-
-void CommandBuffer::CmdInsertDebugUtilsLabel(const VkDebugUtilsLabelEXT *pLabelInfo) {
-    tracker_.CmdInsertDebugUtilsLabelEXT(reinterpret_cast<VkCommandBuffer>(this), pLabelInfo);
-    auto *fault_counts = vku::FindStructInPNextChain<VkDeviceFaultCountsEXT>(pLabelInfo->pNext);
-    if (fault_counts) {
-        assert(hang_region_start_ == 0);
-        assert(!fault_label_.has_value());
-        fault_label_.emplace(pLabelInfo);
-        hang_region_start_ = tracker_.GetCommands().back().id + 1;
-        hang_region_end_ = tracker_.GetCommands().back().id + 2;
-    }
-}
-
-void CommandBuffer::CmdEndDebugUtilsLabel() {
-    if (hang_region_start_ != 0) {
-        assert(hang_region_end_ == 0);
-        hang_region_end_ = tracker_.GetCommands().back().id;
-    }
-    tracker_.CmdEndDebugUtilsLabelEXT(reinterpret_cast<VkCommandBuffer>(this));
 }
 
 CommandPool::CommandPool(const VkCommandPoolCreateInfo &create_info)

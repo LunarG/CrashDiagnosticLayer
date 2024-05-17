@@ -30,7 +30,9 @@
 namespace icd {
 
 class CommandBuffer;
+class Device;
 class Fence;
+class FaultInfo;
 class Semaphore;
 
 class Queue {
@@ -51,7 +53,7 @@ class Queue {
         Fence* fence{nullptr};
     };
 
-    Queue();
+    Queue(Device &device);
     ~Queue();
 
     VkResult Submit(uint32_t count, const VkSubmitInfo* submits, VkFence fence);
@@ -64,6 +66,7 @@ class Queue {
     void GetCheckpointData2(uint32_t* count, VkCheckpointData2NV* checkpoints);
     void TrackCheckpoint(uintptr_t checkpoint, VkPipelineStageFlagBits stage);
 
+    void SetFaultInfo(FaultInfo &&);
    private:
     std::unique_lock<std::mutex> Lock() const { return std::unique_lock<std::mutex>(lock_); }
     void ThreadFunc();
@@ -72,7 +75,7 @@ class Queue {
     void StartThread();
 
     VK_LOADER_DATA loader_data;  // MUST be first data member
-
+    Device &device_;
     std::thread thread_;
     mutable std::mutex lock_;
     std::condition_variable cond_;

@@ -106,9 +106,8 @@ VkResult BufferMarkerMgr::CreateHostBuffer(VkDeviceSize buffer_size, VkBuffer* p
         bool found_memory = FindMemoryType(&memory_properties_, mem_reqs.memoryTypeBits, mem_flags, &memory_type_index);
 
         if (!found_memory) {
-            std::cerr << "CDL Warning: No device coherent memory found, results "
-                         "might not be accurate."
-                      << std::endl;
+            device_.Log().Warning("No device coherent memory found, results might not be accurate.");
+
             mem_flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
             found_memory = FindMemoryType(&memory_properties_, mem_reqs.memoryTypeBits, mem_flags, &memory_type_index);

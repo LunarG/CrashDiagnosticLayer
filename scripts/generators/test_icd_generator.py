@@ -141,8 +141,6 @@ class TestIcdGenerator(BaseGenerator):
             'vkGetQueueCheckpointDataNV',
             'vkGetQueueCheckpointData2NV',
             'vkCmdBeginDebugUtilsLabelEXT',
-            'vkCmdEndDebugUtilsLabelEXT',
-            'vkCmdInsertDebugUtilsLabelEXT',
         )
 
     def generate(self):
