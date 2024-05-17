@@ -3720,7 +3720,7 @@ VkPipelineCacheHeaderVersionOne* CommandRecorder::CopyArray<VkPipelineCacheHeade
         ptr[i].vendorID = src[start_index + i].vendorID;
         ptr[i].deviceID = src[start_index + i].deviceID;
         std::memcpy(ptr[i].pipelineCacheUUID, src[start_index + i].pipelineCacheUUID,
-                    sizeof(src[start_index + 1].pipelineCacheUUID));
+                    sizeof(src[start_index + i].pipelineCacheUUID));
     }
     return ptr;
 }
@@ -3749,14 +3749,14 @@ VkApplicationInfo* CommandRecorder::CopyArray<VkApplicationInfo>(const VkApplica
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].pApplicationName = nullptr;
         if (src[start_index + i].pApplicationName) {
-            ptr[i].pApplicationName =
-                CopyArray<>(src[start_index + i].pApplicationName, 0, strlen(src[start_index + 1].pApplicationName));
+            ptr[i].pApplicationName = CopyArray<>(src[start_index + i].pApplicationName, 0,
+                                                  strlen(src[start_index + i].pApplicationName) + 1);
         }
         ptr[i].applicationVersion = src[start_index + i].applicationVersion;
         ptr[i].pEngineName = nullptr;
         if (src[start_index + i].pEngineName) {
             ptr[i].pEngineName =
-                CopyArray<>(src[start_index + i].pEngineName, 0, strlen(src[start_index + 1].pEngineName));
+                CopyArray<>(src[start_index + i].pEngineName, 0, strlen(src[start_index + i].pEngineName) + 1);
         }
         ptr[i].engineVersion = src[start_index + i].engineVersion;
         ptr[i].apiVersion = src[start_index + i].apiVersion;
@@ -3960,10 +3960,10 @@ VkPhysicalDeviceLimits* CommandRecorder::CopyArray<VkPhysicalDeviceLimits>(const
         ptr[i].maxFragmentCombinedOutputResources = src[start_index + i].maxFragmentCombinedOutputResources;
         ptr[i].maxComputeSharedMemorySize = src[start_index + i].maxComputeSharedMemorySize;
         std::memcpy(ptr[i].maxComputeWorkGroupCount, src[start_index + i].maxComputeWorkGroupCount,
-                    sizeof(src[start_index + 1].maxComputeWorkGroupCount));
+                    sizeof(src[start_index + i].maxComputeWorkGroupCount));
         ptr[i].maxComputeWorkGroupInvocations = src[start_index + i].maxComputeWorkGroupInvocations;
         std::memcpy(ptr[i].maxComputeWorkGroupSize, src[start_index + i].maxComputeWorkGroupSize,
-                    sizeof(src[start_index + 1].maxComputeWorkGroupSize));
+                    sizeof(src[start_index + i].maxComputeWorkGroupSize));
         ptr[i].subPixelPrecisionBits = src[start_index + i].subPixelPrecisionBits;
         ptr[i].subTexelPrecisionBits = src[start_index + i].subTexelPrecisionBits;
         ptr[i].mipmapPrecisionBits = src[start_index + i].mipmapPrecisionBits;
@@ -3973,9 +3973,9 @@ VkPhysicalDeviceLimits* CommandRecorder::CopyArray<VkPhysicalDeviceLimits>(const
         ptr[i].maxSamplerAnisotropy = src[start_index + i].maxSamplerAnisotropy;
         ptr[i].maxViewports = src[start_index + i].maxViewports;
         std::memcpy(ptr[i].maxViewportDimensions, src[start_index + i].maxViewportDimensions,
-                    sizeof(src[start_index + 1].maxViewportDimensions));
+                    sizeof(src[start_index + i].maxViewportDimensions));
         std::memcpy(ptr[i].viewportBoundsRange, src[start_index + i].viewportBoundsRange,
-                    sizeof(src[start_index + 1].viewportBoundsRange));
+                    sizeof(src[start_index + i].viewportBoundsRange));
         ptr[i].viewportSubPixelBits = src[start_index + i].viewportSubPixelBits;
         ptr[i].minMemoryMapAlignment = src[start_index + i].minMemoryMapAlignment;
         ptr[i].minTexelBufferOffsetAlignment = src[start_index + i].minTexelBufferOffsetAlignment;
@@ -4009,9 +4009,9 @@ VkPhysicalDeviceLimits* CommandRecorder::CopyArray<VkPhysicalDeviceLimits>(const
         ptr[i].maxCombinedClipAndCullDistances = src[start_index + i].maxCombinedClipAndCullDistances;
         ptr[i].discreteQueuePriorities = src[start_index + i].discreteQueuePriorities;
         std::memcpy(ptr[i].pointSizeRange, src[start_index + i].pointSizeRange,
-                    sizeof(src[start_index + 1].pointSizeRange));
+                    sizeof(src[start_index + i].pointSizeRange));
         std::memcpy(ptr[i].lineWidthRange, src[start_index + i].lineWidthRange,
-                    sizeof(src[start_index + 1].lineWidthRange));
+                    sizeof(src[start_index + i].lineWidthRange));
         ptr[i].pointSizeGranularity = src[start_index + i].pointSizeGranularity;
         ptr[i].lineWidthGranularity = src[start_index + i].lineWidthGranularity;
         ptr[i].strictLines = src[start_index + i].strictLines;
@@ -4030,9 +4030,9 @@ VkPhysicalDeviceMemoryProperties* CommandRecorder::CopyArray<VkPhysicalDeviceMem
         m_allocator.Alloc(sizeof(VkPhysicalDeviceMemoryProperties) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].memoryTypeCount = src[start_index + i].memoryTypeCount;
-        std::memcpy(ptr[i].memoryTypes, src[start_index + i].memoryTypes, sizeof(src[start_index + 1].memoryTypes));
+        std::memcpy(ptr[i].memoryTypes, src[start_index + i].memoryTypes, sizeof(src[start_index + i].memoryTypes));
         ptr[i].memoryHeapCount = src[start_index + i].memoryHeapCount;
-        std::memcpy(ptr[i].memoryHeaps, src[start_index + i].memoryHeaps, sizeof(src[start_index + 1].memoryHeaps));
+        std::memcpy(ptr[i].memoryHeaps, src[start_index + i].memoryHeaps, sizeof(src[start_index + i].memoryHeaps));
     }
     return ptr;
 }
@@ -4063,9 +4063,9 @@ VkPhysicalDeviceProperties* CommandRecorder::CopyArray<VkPhysicalDevicePropertie
         ptr[i].vendorID = src[start_index + i].vendorID;
         ptr[i].deviceID = src[start_index + i].deviceID;
         ptr[i].deviceType = src[start_index + i].deviceType;
-        std::memcpy(ptr[i].deviceName, src[start_index + i].deviceName, sizeof(src[start_index + 1].deviceName));
+        std::memcpy(ptr[i].deviceName, src[start_index + i].deviceName, sizeof(src[start_index + i].deviceName));
         std::memcpy(ptr[i].pipelineCacheUUID, src[start_index + i].pipelineCacheUUID,
-                    sizeof(src[start_index + 1].pipelineCacheUUID));
+                    sizeof(src[start_index + i].pipelineCacheUUID));
         ptr[i].limits = src[start_index + i].limits;
         ptr[i].sparseProperties = src[start_index + i].sparseProperties;
     }
@@ -4137,7 +4137,7 @@ VkExtensionProperties* CommandRecorder::CopyArray<VkExtensionProperties>(const V
     auto ptr = reinterpret_cast<VkExtensionProperties*>(m_allocator.Alloc(sizeof(VkExtensionProperties) * count));
     for (uint64_t i = 0; i < count; ++i) {
         std::memcpy(ptr[i].extensionName, src[start_index + i].extensionName,
-                    sizeof(src[start_index + 1].extensionName));
+                    sizeof(src[start_index + i].extensionName));
         ptr[i].specVersion = src[start_index + i].specVersion;
     }
     return ptr;
@@ -4148,10 +4148,10 @@ VkLayerProperties* CommandRecorder::CopyArray<VkLayerProperties>(const VkLayerPr
                                                                  uint64_t count) {
     auto ptr = reinterpret_cast<VkLayerProperties*>(m_allocator.Alloc(sizeof(VkLayerProperties) * count));
     for (uint64_t i = 0; i < count; ++i) {
-        std::memcpy(ptr[i].layerName, src[start_index + i].layerName, sizeof(src[start_index + 1].layerName));
+        std::memcpy(ptr[i].layerName, src[start_index + i].layerName, sizeof(src[start_index + i].layerName));
         ptr[i].specVersion = src[start_index + i].specVersion;
         ptr[i].implementationVersion = src[start_index + i].implementationVersion;
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
     }
     return ptr;
 }
@@ -4608,7 +4608,7 @@ VkPipelineShaderStageCreateInfo* CommandRecorder::CopyArray<VkPipelineShaderStag
         ptr[i].module = src[start_index + i].module;
         ptr[i].pName = nullptr;
         if (src[start_index + i].pName) {
-            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + 1].pName));
+            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + i].pName) + 1);
         }
         ptr[i].pSpecializationInfo = src[start_index + i].pSpecializationInfo;
     }
@@ -4866,7 +4866,7 @@ VkPipelineColorBlendStateCreateInfo* CommandRecorder::CopyArray<VkPipelineColorB
             ptr[i].pAttachments = CopyArray<>(src[start_index + i].pAttachments, 0, 1);
         }
         std::memcpy(ptr[i].blendConstants, src[start_index + i].blendConstants,
-                    sizeof(src[start_index + 1].blendConstants));
+                    sizeof(src[start_index + i].blendConstants));
     }
     return ptr;
 }
@@ -5364,9 +5364,9 @@ VkClearColorValue* CommandRecorder::CopyArray<VkClearColorValue>(const VkClearCo
                                                                  uint64_t count) {
     auto ptr = reinterpret_cast<VkClearColorValue*>(m_allocator.Alloc(sizeof(VkClearColorValue) * count));
     for (uint64_t i = 0; i < count; ++i) {
-        std::memcpy(ptr[i].float32, src[start_index + i].float32, sizeof(src[start_index + 1].float32));
-        std::memcpy(ptr[i].int32, src[start_index + i].int32, sizeof(src[start_index + 1].int32));
-        std::memcpy(ptr[i].uint32, src[start_index + i].uint32, sizeof(src[start_index + 1].uint32));
+        std::memcpy(ptr[i].float32, src[start_index + i].float32, sizeof(src[start_index + i].float32));
+        std::memcpy(ptr[i].int32, src[start_index + i].int32, sizeof(src[start_index + i].int32));
+        std::memcpy(ptr[i].uint32, src[start_index + i].uint32, sizeof(src[start_index + i].uint32));
     }
     return ptr;
 }
@@ -5420,9 +5420,9 @@ VkImageBlit* CommandRecorder::CopyArray<VkImageBlit>(const VkImageBlit* src, uin
     auto ptr = reinterpret_cast<VkImageBlit*>(m_allocator.Alloc(sizeof(VkImageBlit) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].srcSubresource = src[start_index + i].srcSubresource;
-        std::memcpy(ptr[i].srcOffsets, src[start_index + i].srcOffsets, sizeof(src[start_index + 1].srcOffsets));
+        std::memcpy(ptr[i].srcOffsets, src[start_index + i].srcOffsets, sizeof(src[start_index + i].srcOffsets));
         ptr[i].dstSubresource = src[start_index + i].dstSubresource;
-        std::memcpy(ptr[i].dstOffsets, src[start_index + i].dstOffsets, sizeof(src[start_index + 1].dstOffsets));
+        std::memcpy(ptr[i].dstOffsets, src[start_index + i].dstOffsets, sizeof(src[start_index + i].dstOffsets));
     }
     return ptr;
 }
@@ -5696,7 +5696,7 @@ VkPhysicalDeviceGroupProperties* CommandRecorder::CopyArray<VkPhysicalDeviceGrou
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].physicalDeviceCount = src[start_index + i].physicalDeviceCount;
         std::memcpy(ptr[i].physicalDevices, src[start_index + i].physicalDevices,
-                    sizeof(src[start_index + 1].physicalDevices));
+                    sizeof(src[start_index + i].physicalDevices));
         ptr[i].subsetAllocation = src[start_index + i].subsetAllocation;
     }
     return ptr;
@@ -6298,9 +6298,9 @@ VkPhysicalDeviceIDProperties* CommandRecorder::CopyArray<VkPhysicalDeviceIDPrope
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
-        std::memcpy(ptr[i].deviceUUID, src[start_index + i].deviceUUID, sizeof(src[start_index + 1].deviceUUID));
-        std::memcpy(ptr[i].driverUUID, src[start_index + i].driverUUID, sizeof(src[start_index + 1].driverUUID));
-        std::memcpy(ptr[i].deviceLUID, src[start_index + i].deviceLUID, sizeof(src[start_index + 1].deviceLUID));
+        std::memcpy(ptr[i].deviceUUID, src[start_index + i].deviceUUID, sizeof(src[start_index + i].deviceUUID));
+        std::memcpy(ptr[i].driverUUID, src[start_index + i].driverUUID, sizeof(src[start_index + i].driverUUID));
+        std::memcpy(ptr[i].deviceLUID, src[start_index + i].deviceLUID, sizeof(src[start_index + i].deviceLUID));
         ptr[i].deviceNodeMask = src[start_index + i].deviceNodeMask;
         ptr[i].deviceLUIDValid = src[start_index + i].deviceLUIDValid;
     }
@@ -6499,9 +6499,9 @@ VkPhysicalDeviceVulkan11Properties* CommandRecorder::CopyArray<VkPhysicalDeviceV
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
-        std::memcpy(ptr[i].deviceUUID, src[start_index + i].deviceUUID, sizeof(src[start_index + 1].deviceUUID));
-        std::memcpy(ptr[i].driverUUID, src[start_index + i].driverUUID, sizeof(src[start_index + 1].driverUUID));
-        std::memcpy(ptr[i].deviceLUID, src[start_index + i].deviceLUID, sizeof(src[start_index + 1].deviceLUID));
+        std::memcpy(ptr[i].deviceUUID, src[start_index + i].deviceUUID, sizeof(src[start_index + i].deviceUUID));
+        std::memcpy(ptr[i].driverUUID, src[start_index + i].driverUUID, sizeof(src[start_index + i].driverUUID));
+        std::memcpy(ptr[i].deviceLUID, src[start_index + i].deviceLUID, sizeof(src[start_index + i].deviceLUID));
         ptr[i].deviceNodeMask = src[start_index + i].deviceNodeMask;
         ptr[i].deviceLUIDValid = src[start_index + i].deviceLUIDValid;
         ptr[i].subgroupSize = src[start_index + i].subgroupSize;
@@ -6617,8 +6617,8 @@ VkPhysicalDeviceVulkan12Properties* CommandRecorder::CopyArray<VkPhysicalDeviceV
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].driverID = src[start_index + i].driverID;
-        std::memcpy(ptr[i].driverName, src[start_index + i].driverName, sizeof(src[start_index + 1].driverName));
-        std::memcpy(ptr[i].driverInfo, src[start_index + i].driverInfo, sizeof(src[start_index + 1].driverInfo));
+        std::memcpy(ptr[i].driverName, src[start_index + i].driverName, sizeof(src[start_index + i].driverName));
+        std::memcpy(ptr[i].driverInfo, src[start_index + i].driverInfo, sizeof(src[start_index + i].driverInfo));
         ptr[i].conformanceVersion = src[start_index + i].conformanceVersion;
         ptr[i].denormBehaviorIndependence = src[start_index + i].denormBehaviorIndependence;
         ptr[i].roundingModeIndependence = src[start_index + i].roundingModeIndependence;
@@ -6873,8 +6873,8 @@ VkPhysicalDeviceDriverProperties* CommandRecorder::CopyArray<VkPhysicalDeviceDri
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].driverID = src[start_index + i].driverID;
-        std::memcpy(ptr[i].driverName, src[start_index + i].driverName, sizeof(src[start_index + 1].driverName));
-        std::memcpy(ptr[i].driverInfo, src[start_index + i].driverInfo, sizeof(src[start_index + 1].driverInfo));
+        std::memcpy(ptr[i].driverName, src[start_index + i].driverName, sizeof(src[start_index + i].driverName));
+        std::memcpy(ptr[i].driverInfo, src[start_index + i].driverInfo, sizeof(src[start_index + i].driverInfo));
         ptr[i].conformanceVersion = src[start_index + i].conformanceVersion;
     }
     return ptr;
@@ -7671,11 +7671,11 @@ VkPhysicalDeviceToolProperties* CommandRecorder::CopyArray<VkPhysicalDeviceToolP
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
-        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + 1].name));
-        std::memcpy(ptr[i].version, src[start_index + i].version, sizeof(src[start_index + 1].version));
+        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + i].name));
+        std::memcpy(ptr[i].version, src[start_index + i].version, sizeof(src[start_index + i].version));
         ptr[i].purposes = src[start_index + i].purposes;
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
-        std::memcpy(ptr[i].layer, src[start_index + i].layer, sizeof(src[start_index + 1].layer));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
+        std::memcpy(ptr[i].layer, src[start_index + i].layer, sizeof(src[start_index + i].layer));
     }
     return ptr;
 }
@@ -8055,9 +8055,9 @@ VkImageBlit2* CommandRecorder::CopyArray<VkImageBlit2>(const VkImageBlit2* src, 
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].srcSubresource = src[start_index + i].srcSubresource;
-        std::memcpy(ptr[i].srcOffsets, src[start_index + i].srcOffsets, sizeof(src[start_index + 1].srcOffsets));
+        std::memcpy(ptr[i].srcOffsets, src[start_index + i].srcOffsets, sizeof(src[start_index + i].srcOffsets));
         ptr[i].dstSubresource = src[start_index + i].dstSubresource;
-        std::memcpy(ptr[i].dstOffsets, src[start_index + i].dstOffsets, sizeof(src[start_index + 1].dstOffsets));
+        std::memcpy(ptr[i].dstOffsets, src[start_index + i].dstOffsets, sizeof(src[start_index + i].dstOffsets));
     }
     return ptr;
 }
@@ -8645,7 +8645,7 @@ VkDeviceGroupPresentCapabilitiesKHR* CommandRecorder::CopyArray<VkDeviceGroupPre
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
-        std::memcpy(ptr[i].presentMask, src[start_index + i].presentMask, sizeof(src[start_index + 1].presentMask));
+        std::memcpy(ptr[i].presentMask, src[start_index + i].presentMask, sizeof(src[start_index + i].presentMask));
         ptr[i].modes = src[start_index + i].modes;
     }
     return ptr;
@@ -8760,7 +8760,7 @@ VkDisplayPropertiesKHR* CommandRecorder::CopyArray<VkDisplayPropertiesKHR>(const
         ptr[i].displayName = nullptr;
         if (src[start_index + i].displayName) {
             ptr[i].displayName =
-                CopyArray<>(src[start_index + i].displayName, 0, strlen(src[start_index + 1].displayName));
+                CopyArray<>(src[start_index + i].displayName, 0, strlen(src[start_index + i].displayName) + 1);
         }
         ptr[i].physicalDimensions = src[start_index + i].physicalDimensions;
         ptr[i].physicalResolution = src[start_index + i].physicalResolution;
@@ -10328,7 +10328,7 @@ VkPerformanceCounterKHR* CommandRecorder::CopyArray<VkPerformanceCounterKHR>(con
         ptr[i].unit = src[start_index + i].unit;
         ptr[i].scope = src[start_index + i].scope;
         ptr[i].storage = src[start_index + i].storage;
-        std::memcpy(ptr[i].uuid, src[start_index + i].uuid, sizeof(src[start_index + 1].uuid));
+        std::memcpy(ptr[i].uuid, src[start_index + i].uuid, sizeof(src[start_index + i].uuid));
     }
     return ptr;
 }
@@ -10342,9 +10342,9 @@ VkPerformanceCounterDescriptionKHR* CommandRecorder::CopyArray<VkPerformanceCoun
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].flags = src[start_index + i].flags;
-        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + 1].name));
-        std::memcpy(ptr[i].category, src[start_index + i].category, sizeof(src[start_index + 1].category));
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
+        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + i].name));
+        std::memcpy(ptr[i].category, src[start_index + i].category, sizeof(src[start_index + i].category));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
     }
     return ptr;
 }
@@ -10708,7 +10708,7 @@ VkQueueFamilyGlobalPriorityPropertiesKHR* CommandRecorder::CopyArray<VkQueueFami
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].priorityCount = src[start_index + i].priorityCount;
-        std::memcpy(ptr[i].priorities, src[start_index + i].priorities, sizeof(src[start_index + 1].priorities));
+        std::memcpy(ptr[i].priorities, src[start_index + i].priorities, sizeof(src[start_index + i].priorities));
     }
     return ptr;
 }
@@ -10737,7 +10737,7 @@ CommandRecorder::CopyArray<VkPipelineFragmentShadingRateStateCreateInfoKHR>(
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].fragmentSize = src[start_index + i].fragmentSize;
-        std::memcpy(ptr[i].combinerOps, src[start_index + i].combinerOps, sizeof(src[start_index + 1].combinerOps));
+        std::memcpy(ptr[i].combinerOps, src[start_index + i].combinerOps, sizeof(src[start_index + i].combinerOps));
     }
     return ptr;
 }
@@ -10936,8 +10936,8 @@ VkPipelineExecutablePropertiesKHR* CommandRecorder::CopyArray<VkPipelineExecutab
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].stages = src[start_index + i].stages;
-        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + 1].name));
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
+        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + i].name));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
         ptr[i].subgroupSize = src[start_index + i].subgroupSize;
     }
     return ptr;
@@ -10979,8 +10979,8 @@ VkPipelineExecutableStatisticKHR* CommandRecorder::CopyArray<VkPipelineExecutabl
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
-        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + 1].name));
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
+        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + i].name));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
         ptr[i].format = src[start_index + i].format;
         ptr[i].value = src[start_index + i].value;
     }
@@ -10996,8 +10996,8 @@ CommandRecorder::CopyArray<VkPipelineExecutableInternalRepresentationKHR>(
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
-        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + 1].name));
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
+        std::memcpy(ptr[i].name, src[start_index + i].name, sizeof(src[start_index + i].name));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
         ptr[i].isText = src[start_index + i].isText;
         ptr[i].dataSize = src[start_index + i].dataSize;
         ptr[i].pData = src[start_index + i].pData;
@@ -11641,7 +11641,7 @@ VkVideoDecodeAV1PictureInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeAV1Pictu
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].pStdPictureInfo = src[start_index + i].pStdPictureInfo;
         std::memcpy(ptr[i].referenceNameSlotIndices, src[start_index + i].referenceNameSlotIndices,
-                    sizeof(src[start_index + 1].referenceNameSlotIndices));
+                    sizeof(src[start_index + i].referenceNameSlotIndices));
         ptr[i].frameHeaderOffset = src[start_index + i].frameHeaderOffset;
         ptr[i].tileCount = src[start_index + i].tileCount;
         ptr[i].pTileOffsets = nullptr;
@@ -12059,7 +12059,7 @@ VkDebugMarkerObjectNameInfoEXT* CommandRecorder::CopyArray<VkDebugMarkerObjectNa
         ptr[i].pObjectName = nullptr;
         if (src[start_index + i].pObjectName) {
             ptr[i].pObjectName =
-                CopyArray<>(src[start_index + i].pObjectName, 0, strlen(src[start_index + 1].pObjectName));
+                CopyArray<>(src[start_index + i].pObjectName, 0, strlen(src[start_index + i].pObjectName) + 1);
         }
     }
     return ptr;
@@ -12093,9 +12093,9 @@ VkDebugMarkerMarkerInfoEXT* CommandRecorder::CopyArray<VkDebugMarkerMarkerInfoEX
         ptr[i].pMarkerName = nullptr;
         if (src[start_index + i].pMarkerName) {
             ptr[i].pMarkerName =
-                CopyArray<>(src[start_index + i].pMarkerName, 0, strlen(src[start_index + 1].pMarkerName));
+                CopyArray<>(src[start_index + i].pMarkerName, 0, strlen(src[start_index + i].pMarkerName) + 1);
         }
-        std::memcpy(ptr[i].color, src[start_index + i].color, sizeof(src[start_index + 1].color));
+        std::memcpy(ptr[i].color, src[start_index + i].color, sizeof(src[start_index + i].color));
     }
     return ptr;
 }
@@ -12217,7 +12217,7 @@ VkCuFunctionCreateInfoNVX* CommandRecorder::CopyArray<VkCuFunctionCreateInfoNVX>
         ptr[i].module = src[start_index + i].module;
         ptr[i].pName = nullptr;
         if (src[start_index + i].pName) {
-            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + 1].pName));
+            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + i].pName) + 1);
         }
     }
     return ptr;
@@ -12314,7 +12314,7 @@ VkShaderStatisticsInfoAMD* CommandRecorder::CopyArray<VkShaderStatisticsInfoAMD>
         ptr[i].numAvailableVgprs = src[start_index + i].numAvailableVgprs;
         ptr[i].numAvailableSgprs = src[start_index + i].numAvailableSgprs;
         std::memcpy(ptr[i].computeWorkGroupSize, src[start_index + i].computeWorkGroupSize,
-                    sizeof(src[start_index + 1].computeWorkGroupSize));
+                    sizeof(src[start_index + i].computeWorkGroupSize));
     }
     return ptr;
 }
@@ -12989,9 +12989,9 @@ VkDebugUtilsLabelEXT* CommandRecorder::CopyArray<VkDebugUtilsLabelEXT>(const VkD
         ptr[i].pLabelName = nullptr;
         if (src[start_index + i].pLabelName) {
             ptr[i].pLabelName =
-                CopyArray<>(src[start_index + i].pLabelName, 0, strlen(src[start_index + 1].pLabelName));
+                CopyArray<>(src[start_index + i].pLabelName, 0, strlen(src[start_index + i].pLabelName) + 1);
         }
-        std::memcpy(ptr[i].color, src[start_index + i].color, sizeof(src[start_index + 1].color));
+        std::memcpy(ptr[i].color, src[start_index + i].color, sizeof(src[start_index + i].color));
     }
     return ptr;
 }
@@ -13009,7 +13009,7 @@ VkDebugUtilsObjectNameInfoEXT* CommandRecorder::CopyArray<VkDebugUtilsObjectName
         ptr[i].pObjectName = nullptr;
         if (src[start_index + i].pObjectName) {
             ptr[i].pObjectName =
-                CopyArray<>(src[start_index + i].pObjectName, 0, strlen(src[start_index + 1].pObjectName));
+                CopyArray<>(src[start_index + i].pObjectName, 0, strlen(src[start_index + i].pObjectName) + 1);
         }
     }
     return ptr;
@@ -13027,12 +13027,12 @@ VkDebugUtilsMessengerCallbackDataEXT* CommandRecorder::CopyArray<VkDebugUtilsMes
         ptr[i].pMessageIdName = nullptr;
         if (src[start_index + i].pMessageIdName) {
             ptr[i].pMessageIdName =
-                CopyArray<>(src[start_index + i].pMessageIdName, 0, strlen(src[start_index + 1].pMessageIdName));
+                CopyArray<>(src[start_index + i].pMessageIdName, 0, strlen(src[start_index + i].pMessageIdName) + 1);
         }
         ptr[i].messageIdNumber = src[start_index + i].messageIdNumber;
         ptr[i].pMessage = nullptr;
         if (src[start_index + i].pMessage) {
-            ptr[i].pMessage = CopyArray<>(src[start_index + i].pMessage, 0, strlen(src[start_index + 1].pMessage));
+            ptr[i].pMessage = CopyArray<>(src[start_index + i].pMessage, 0, strlen(src[start_index + i].pMessage) + 1);
         }
         ptr[i].queueLabelCount = src[start_index + i].queueLabelCount;
         ptr[i].pQueueLabels = nullptr;
@@ -13336,7 +13336,7 @@ VkPipelineShaderStageNodeCreateInfoAMDX* CommandRecorder::CopyArray<VkPipelineSh
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].pName = nullptr;
         if (src[start_index + i].pName) {
-            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + 1].pName));
+            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + i].pName) + 1);
         }
         ptr[i].index = src[start_index + i].index;
     }
@@ -13445,7 +13445,7 @@ VkPhysicalDeviceSampleLocationsPropertiesEXT* CommandRecorder::CopyArray<VkPhysi
         ptr[i].sampleLocationSampleCounts = src[start_index + i].sampleLocationSampleCounts;
         ptr[i].maxSampleLocationGridSize = src[start_index + i].maxSampleLocationGridSize;
         std::memcpy(ptr[i].sampleLocationCoordinateRange, src[start_index + i].sampleLocationCoordinateRange,
-                    sizeof(src[start_index + 1].sampleLocationCoordinateRange));
+                    sizeof(src[start_index + i].sampleLocationCoordinateRange));
         ptr[i].sampleLocationSubPixelBits = src[start_index + i].sampleLocationSubPixelBits;
         ptr[i].variableSampleLocations = src[start_index + i].variableSampleLocations;
     }
@@ -14060,7 +14060,7 @@ VkTransformMatrixKHR* CommandRecorder::CopyArray<VkTransformMatrixKHR>(const VkT
                                                                        uint64_t start_index, uint64_t count) {
     auto ptr = reinterpret_cast<VkTransformMatrixKHR*>(m_allocator.Alloc(sizeof(VkTransformMatrixKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
-        std::memcpy(ptr[i].matrix, src[start_index + i].matrix, sizeof(src[start_index + 1].matrix));
+        std::memcpy(ptr[i].matrix, src[start_index + i].matrix, sizeof(src[start_index + i].matrix));
     }
     return ptr;
 }
@@ -14313,12 +14313,12 @@ VkPhysicalDeviceMeshShaderPropertiesNV* CommandRecorder::CopyArray<VkPhysicalDev
         ptr[i].maxDrawMeshTasksCount = src[start_index + i].maxDrawMeshTasksCount;
         ptr[i].maxTaskWorkGroupInvocations = src[start_index + i].maxTaskWorkGroupInvocations;
         std::memcpy(ptr[i].maxTaskWorkGroupSize, src[start_index + i].maxTaskWorkGroupSize,
-                    sizeof(src[start_index + 1].maxTaskWorkGroupSize));
+                    sizeof(src[start_index + i].maxTaskWorkGroupSize));
         ptr[i].maxTaskTotalMemorySize = src[start_index + i].maxTaskTotalMemorySize;
         ptr[i].maxTaskOutputCount = src[start_index + i].maxTaskOutputCount;
         ptr[i].maxMeshWorkGroupInvocations = src[start_index + i].maxMeshWorkGroupInvocations;
         std::memcpy(ptr[i].maxMeshWorkGroupSize, src[start_index + i].maxMeshWorkGroupSize,
-                    sizeof(src[start_index + 1].maxMeshWorkGroupSize));
+                    sizeof(src[start_index + i].maxMeshWorkGroupSize));
         ptr[i].maxMeshTotalMemorySize = src[start_index + i].maxMeshTotalMemorySize;
         ptr[i].maxMeshOutputVertices = src[start_index + i].maxMeshOutputVertices;
         ptr[i].maxMeshOutputPrimitives = src[start_index + i].maxMeshOutputPrimitives;
@@ -14439,7 +14439,7 @@ VkPerformanceValueDataINTEL* CommandRecorder::CopyArray<VkPerformanceValueDataIN
         ptr[i].valueString = nullptr;
         if (src[start_index + i].valueString) {
             ptr[i].valueString =
-                CopyArray<>(src[start_index + i].valueString, 0, strlen(src[start_index + 1].valueString));
+                CopyArray<>(src[start_index + i].valueString, 0, strlen(src[start_index + i].valueString) + 1);
         }
     }
     return ptr;
@@ -14705,8 +14705,8 @@ VkPhysicalDeviceMemoryBudgetPropertiesEXT* CommandRecorder::CopyArray<VkPhysical
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
-        std::memcpy(ptr[i].heapBudget, src[start_index + i].heapBudget, sizeof(src[start_index + 1].heapBudget));
-        std::memcpy(ptr[i].heapUsage, src[start_index + i].heapUsage, sizeof(src[start_index + 1].heapUsage));
+        std::memcpy(ptr[i].heapBudget, src[start_index + i].heapBudget, sizeof(src[start_index + i].heapBudget));
+        std::memcpy(ptr[i].heapUsage, src[start_index + i].heapUsage, sizeof(src[start_index + i].heapUsage));
     }
     return ptr;
 }
@@ -15094,7 +15094,7 @@ VkPhysicalDeviceHostImageCopyPropertiesEXT* CommandRecorder::CopyArray<VkPhysica
             ptr[i].pCopyDstLayouts = CopyArray<>(src[start_index + i].pCopyDstLayouts, 0, 1);
         }
         std::memcpy(ptr[i].optimalTilingLayoutUUID, src[start_index + i].optimalTilingLayoutUUID,
-                    sizeof(src[start_index + 1].optimalTilingLayoutUUID));
+                    sizeof(src[start_index + i].optimalTilingLayoutUUID));
         ptr[i].identicalMemoryTypeRequirements = src[start_index + i].identicalMemoryTypeRequirements;
     }
     return ptr;
@@ -16009,7 +16009,7 @@ VkCudaFunctionCreateInfoNV* CommandRecorder::CopyArray<VkCudaFunctionCreateInfoN
         ptr[i].module = src[start_index + i].module;
         ptr[i].pName = nullptr;
         if (src[start_index + i].pName) {
-            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + 1].pName));
+            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + i].pName) + 1);
         }
     }
     return ptr;
@@ -16599,7 +16599,7 @@ CommandRecorder::CopyArray<VkPipelineFragmentShadingRateEnumStateCreateInfoNV>(
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].shadingRateType = src[start_index + i].shadingRateType;
         ptr[i].shadingRate = src[start_index + i].shadingRate;
-        std::memcpy(ptr[i].combinerOps, src[start_index + i].combinerOps, sizeof(src[start_index + 1].combinerOps));
+        std::memcpy(ptr[i].combinerOps, src[start_index + i].combinerOps, sizeof(src[start_index + i].combinerOps));
     }
     return ptr;
 }
@@ -16925,7 +16925,7 @@ VkDeviceFaultVendorInfoEXT* CommandRecorder::CopyArray<VkDeviceFaultVendorInfoEX
     auto ptr =
         reinterpret_cast<VkDeviceFaultVendorInfoEXT*>(m_allocator.Alloc(sizeof(VkDeviceFaultVendorInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
         ptr[i].vendorFaultCode = src[start_index + i].vendorFaultCode;
         ptr[i].vendorFaultData = src[start_index + i].vendorFaultData;
     }
@@ -16939,7 +16939,7 @@ VkDeviceFaultInfoEXT* CommandRecorder::CopyArray<VkDeviceFaultInfoEXT>(const VkD
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
         ptr[i].pAddressInfos = src[start_index + i].pAddressInfos;
         ptr[i].pVendorInfos = src[start_index + i].pVendorInfos;
         ptr[i].pVendorBinaryData = src[start_index + i].pVendorBinaryData;
@@ -16959,7 +16959,7 @@ VkDeviceFaultVendorBinaryHeaderVersionOneEXT* CommandRecorder::CopyArray<VkDevic
         ptr[i].deviceID = src[start_index + i].deviceID;
         ptr[i].driverVersion = src[start_index + i].driverVersion;
         std::memcpy(ptr[i].pipelineCacheUUID, src[start_index + i].pipelineCacheUUID,
-                    sizeof(src[start_index + 1].pipelineCacheUUID));
+                    sizeof(src[start_index + i].pipelineCacheUUID));
         ptr[i].applicationNameOffset = src[start_index + i].applicationNameOffset;
         ptr[i].applicationVersion = src[start_index + i].applicationVersion;
         ptr[i].engineNameOffset = src[start_index + i].engineNameOffset;
@@ -17553,7 +17553,7 @@ VkPipelinePropertiesIdentifierEXT* CommandRecorder::CopyArray<VkPipelineProperti
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         std::memcpy(ptr[i].pipelineIdentifier, src[start_index + i].pipelineIdentifier,
-                    sizeof(src[start_index + 1].pipelineIdentifier));
+                    sizeof(src[start_index + i].pipelineIdentifier));
     }
     return ptr;
 }
@@ -18158,9 +18158,9 @@ CommandRecorder::CopyArray<VkPhysicalDeviceClusterCullingShaderPropertiesHUAWEI>
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         std::memcpy(ptr[i].maxWorkGroupCount, src[start_index + i].maxWorkGroupCount,
-                    sizeof(src[start_index + 1].maxWorkGroupCount));
+                    sizeof(src[start_index + i].maxWorkGroupCount));
         std::memcpy(ptr[i].maxWorkGroupSize, src[start_index + i].maxWorkGroupSize,
-                    sizeof(src[start_index + 1].maxWorkGroupSize));
+                    sizeof(src[start_index + i].maxWorkGroupSize));
         ptr[i].maxOutputClusterCount = src[start_index + i].maxOutputClusterCount;
         ptr[i].indirectBufferOffsetAlignment = src[start_index + i].indirectBufferOffsetAlignment;
     }
@@ -18934,7 +18934,7 @@ VkRenderPassSubpassFeedbackInfoEXT* CommandRecorder::CopyArray<VkRenderPassSubpa
         m_allocator.Alloc(sizeof(VkRenderPassSubpassFeedbackInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].subpassMergeStatus = src[start_index + i].subpassMergeStatus;
-        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + 1].description));
+        std::memcpy(ptr[i].description, src[start_index + i].description, sizeof(src[start_index + i].description));
         ptr[i].postMergeIndex = src[start_index + i].postMergeIndex;
     }
     return ptr;
@@ -19010,7 +19010,7 @@ CommandRecorder::CopyArray<VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT>(
         ptr[i].pNext = src[start_index + i].pNext;
         std::memcpy(ptr[i].shaderModuleIdentifierAlgorithmUUID,
                     src[start_index + i].shaderModuleIdentifierAlgorithmUUID,
-                    sizeof(src[start_index + 1].shaderModuleIdentifierAlgorithmUUID));
+                    sizeof(src[start_index + i].shaderModuleIdentifierAlgorithmUUID));
     }
     return ptr;
 }
@@ -19042,7 +19042,7 @@ VkShaderModuleIdentifierEXT* CommandRecorder::CopyArray<VkShaderModuleIdentifier
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].identifierSize = src[start_index + i].identifierSize;
-        std::memcpy(ptr[i].identifier, src[start_index + i].identifier, sizeof(src[start_index + 1].identifier));
+        std::memcpy(ptr[i].identifier, src[start_index + i].identifier, sizeof(src[start_index + i].identifier));
     }
     return ptr;
 }
@@ -19263,7 +19263,7 @@ VkPhysicalDeviceShaderObjectPropertiesEXT* CommandRecorder::CopyArray<VkPhysical
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = src[start_index + i].pNext;
         std::memcpy(ptr[i].shaderBinaryUUID, src[start_index + i].shaderBinaryUUID,
-                    sizeof(src[start_index + 1].shaderBinaryUUID));
+                    sizeof(src[start_index + i].shaderBinaryUUID));
         ptr[i].shaderBinaryVersion = src[start_index + i].shaderBinaryVersion;
     }
     return ptr;
@@ -19284,7 +19284,7 @@ VkShaderCreateInfoEXT* CommandRecorder::CopyArray<VkShaderCreateInfoEXT>(const V
         ptr[i].pCode = src[start_index + i].pCode;
         ptr[i].pName = nullptr;
         if (src[start_index + i].pName) {
-            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + 1].pName));
+            ptr[i].pName = CopyArray<>(src[start_index + i].pName, 0, strlen(src[start_index + i].pName) + 1);
         }
         ptr[i].setLayoutCount = src[start_index + i].setLayoutCount;
         ptr[i].pSetLayouts = nullptr;
@@ -19464,12 +19464,12 @@ VkLayerSettingEXT* CommandRecorder::CopyArray<VkLayerSettingEXT>(const VkLayerSe
         ptr[i].pLayerName = nullptr;
         if (src[start_index + i].pLayerName) {
             ptr[i].pLayerName =
-                CopyArray<>(src[start_index + i].pLayerName, 0, strlen(src[start_index + 1].pLayerName));
+                CopyArray<>(src[start_index + i].pLayerName, 0, strlen(src[start_index + i].pLayerName) + 1);
         }
         ptr[i].pSettingName = nullptr;
         if (src[start_index + i].pSettingName) {
             ptr[i].pSettingName =
-                CopyArray<>(src[start_index + i].pSettingName, 0, strlen(src[start_index + 1].pSettingName));
+                CopyArray<>(src[start_index + i].pSettingName, 0, strlen(src[start_index + i].pSettingName) + 1);
         }
         ptr[i].type = src[start_index + i].type;
         ptr[i].valueCount = src[start_index + i].valueCount;
@@ -20521,19 +20521,19 @@ VkPhysicalDeviceMeshShaderPropertiesEXT* CommandRecorder::CopyArray<VkPhysicalDe
         ptr[i].pNext = src[start_index + i].pNext;
         ptr[i].maxTaskWorkGroupTotalCount = src[start_index + i].maxTaskWorkGroupTotalCount;
         std::memcpy(ptr[i].maxTaskWorkGroupCount, src[start_index + i].maxTaskWorkGroupCount,
-                    sizeof(src[start_index + 1].maxTaskWorkGroupCount));
+                    sizeof(src[start_index + i].maxTaskWorkGroupCount));
         ptr[i].maxTaskWorkGroupInvocations = src[start_index + i].maxTaskWorkGroupInvocations;
         std::memcpy(ptr[i].maxTaskWorkGroupSize, src[start_index + i].maxTaskWorkGroupSize,
-                    sizeof(src[start_index + 1].maxTaskWorkGroupSize));
+                    sizeof(src[start_index + i].maxTaskWorkGroupSize));
         ptr[i].maxTaskPayloadSize = src[start_index + i].maxTaskPayloadSize;
         ptr[i].maxTaskSharedMemorySize = src[start_index + i].maxTaskSharedMemorySize;
         ptr[i].maxTaskPayloadAndSharedMemorySize = src[start_index + i].maxTaskPayloadAndSharedMemorySize;
         ptr[i].maxMeshWorkGroupTotalCount = src[start_index + i].maxMeshWorkGroupTotalCount;
         std::memcpy(ptr[i].maxMeshWorkGroupCount, src[start_index + i].maxMeshWorkGroupCount,
-                    sizeof(src[start_index + 1].maxMeshWorkGroupCount));
+                    sizeof(src[start_index + i].maxMeshWorkGroupCount));
         ptr[i].maxMeshWorkGroupInvocations = src[start_index + i].maxMeshWorkGroupInvocations;
         std::memcpy(ptr[i].maxMeshWorkGroupSize, src[start_index + i].maxMeshWorkGroupSize,
-                    sizeof(src[start_index + 1].maxMeshWorkGroupSize));
+                    sizeof(src[start_index + i].maxMeshWorkGroupSize));
         ptr[i].maxMeshSharedMemorySize = src[start_index + i].maxMeshSharedMemorySize;
         ptr[i].maxMeshPayloadAndSharedMemorySize = src[start_index + i].maxMeshPayloadAndSharedMemorySize;
         ptr[i].maxMeshOutputMemorySize = src[start_index + i].maxMeshOutputMemorySize;

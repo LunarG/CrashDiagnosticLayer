@@ -52,6 +52,7 @@ target_sources(CDL_Test_ICD PRIVATE
     test_icd_command.h
     test_icd_command.cpp
     test_icd_device.h
+    test_icd_device.cpp
     test_icd_fence.h
     test_icd_fence.cpp
     test_icd_memory.h
@@ -59,6 +60,7 @@ target_sources(CDL_Test_ICD PRIVATE
     test_icd_queue.cpp
     test_icd_semaphore.h
     test_icd_semaphore.cpp
+    ${GENERATED}/command_common.cpp
     ${GENERATED}/command_tracker.cpp
     ${GENERATED}/command_recorder.cpp
 )

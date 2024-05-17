@@ -36,8 +36,6 @@ class CommandBuffer {
 
     CommandTracker& Tracker() { return tracker_; }
     void CmdBeginDebugUtilsLabel(const VkDebugUtilsLabelEXT* pLabelInfo);
-    void CmdEndDebugUtilsLabel();
-    void CmdInsertDebugUtilsLabel(const VkDebugUtilsLabelEXT* pLabelInfo);
 
    private:
     // Common function for vkCmdWriteBufferMarker() and vkCmdWriteBufferMarker2()
@@ -46,13 +44,11 @@ class CommandBuffer {
 
     VkResult SetCheckpoint(uint32_t id, Queue& queue, const CmdSetCheckpointNVArgs& args);
     VkResult ExecuteCommands(Queue& queue, const CmdExecuteCommandsArgs& args);
-    bool InHangRegion(uint32_t id) { return hang_region_start_ <= id && id < hang_region_end_; }
 
     VK_LOADER_DATA loader_data_;  // MUST be first data member
     VkCommandBufferLevel level_;
     CommandTracker tracker_;
-    size_t hang_region_start_{0};
-    size_t hang_region_end_{0};
+    bool in_hang_region_{false};
     std::optional<vku::safe_VkDebugUtilsLabelEXT> fault_label_;
 };
 

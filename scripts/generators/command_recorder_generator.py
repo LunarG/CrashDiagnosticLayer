@@ -110,11 +110,11 @@ class CommandRecorder
                 if 'char' in vkmember.type and pointer_count == 1:
                     out.append(f'      ptr[i].{vkmember.name} = nullptr;\n')
                     out.append(f'      if (src[start_index + i].{vkmember.name}) {{\n')
-                    out.append(f'        ptr[i].{vkmember.name} = CopyArray<>(src[start_index + i].{vkmember.name}, 0, strlen(src[start_index + 1].{vkmember.name}));\n')
+                    out.append(f'        ptr[i].{vkmember.name} = CopyArray<>(src[start_index + i].{vkmember.name}, 0, strlen(src[start_index + i].{vkmember.name}) + 1);\n')
                     out.append('      }\n')
                 elif is_array and not (vkmember.type == 'void' or 'PFN_' in vkmember.type):
                     if (vkmember.fixedSizeArray is not None and len(vkmember.fixedSizeArray) > 0):
-                        out.append(f'      std::memcpy(ptr[i].{vkmember.name}, src[start_index + i].{vkmember.name}, sizeof(src[start_index + 1].{vkmember.name}));\n')
+                        out.append(f'      std::memcpy(ptr[i].{vkmember.name}, src[start_index + i].{vkmember.name}, sizeof(src[start_index + i].{vkmember.name}));\n')
                     else:
                         out.append(f'      ptr[i].{vkmember.name} = nullptr;\n')
                         out.append(f'      if (src[start_index + i].{vkmember.name}) {{\n')

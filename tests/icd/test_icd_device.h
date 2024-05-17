@@ -21,6 +21,7 @@
 #include <vulkan/vk_icd.h>
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "test_icd_queue.h"
@@ -31,30 +32,27 @@ struct QueueFamily {
     std::vector<std::unique_ptr<Queue>> queues;
 };
 
-struct Device {
-    Device(VkPhysicalDevice phys, const VkDeviceCreateInfo& create_info) : physical_device(phys) {
-        set_loader_magic_value(&loader_data);
+struct FaultInfo {
+    std::string description;
+    std::vector<VkDeviceFaultAddressInfoEXT> address_infos;
+    std::vector<VkDeviceFaultVendorInfoEXT> vendor_infos;
+    std::vector<uint8_t> vendory_binary;
+};
 
-        for (uint32_t i = 0; i < create_info.queueCreateInfoCount; i++) {
-            const auto& qci = create_info.pQueueCreateInfos[i];
-            queue_families[qci.queueFamilyIndex].queues.resize(qci.queueCount);
-            for (auto& q : queue_families[qci.queueFamilyIndex].queues) {
-                q = std::make_unique<Queue>();
-            }
-        }
-    }
+class Device {
+   public:
+    Device(VkPhysicalDevice phys, const VkDeviceCreateInfo& create_info);
 
-    VkResult GetQueue(uint32_t qfi, uint32_t index, VkQueue* pQueue) {
-        *pQueue = reinterpret_cast<VkQueue>(queue_families[qfi].queues[index].get());
-        return VK_SUCCESS;
-    }
+    VkResult GetQueue(uint32_t qfi, uint32_t index, VkQueue* pQueue);
+    VkResult WaitIdle();
+    VkResult GetFaultInfo(VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaultInfoEXT* pFaultInfo);
 
-    VkResult WaitIdle() { return VK_SUCCESS; }
-    VkResult GetFaultInfo(VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaultInfoEXT* pFaultInfo) { return VK_SUCCESS; }
-
-    VK_LOADER_DATA loader_data;  // MUST be first data member
-    VkPhysicalDevice physical_device;
-    std::map<uint32_t, QueueFamily> queue_families;
+    void SetFaultInfo(FaultInfo &&info);
+   private:
+    VK_LOADER_DATA loader_data_;  // MUST be first data member
+    VkPhysicalDevice physical_device_;
+    std::map<uint32_t, QueueFamily> queue_families_;
+    std::optional<FaultInfo> fault_info_;
 };
 
 }  // namespace icd

@@ -18,6 +18,7 @@
 #include "test_icd_queue.h"
 
 #include "test_icd_command.h"
+#include "test_icd_device.h"
 #include "test_icd_fence.h"
 #include "test_icd_semaphore.h"
 
@@ -25,7 +26,8 @@
 
 namespace icd {
 
-Queue::Queue() { set_loader_magic_value(&loader_data); }
+Queue::Queue(Device &device) : device_(device) { set_loader_magic_value(&loader_data); }
+
 Queue::~Queue() {
     if (thread_.joinable()) {
         exit_thread_ = true;
@@ -224,6 +226,7 @@ void Queue::ThreadFunc() {
             submissions_.pop_front();
         }
     }
+    idle_cond_.notify_all();
 }
 
 void Queue::TrackCheckpoint(uintptr_t checkpoint, VkPipelineStageFlagBits stage) {
@@ -257,6 +260,10 @@ void Queue::GetCheckpointData2(uint32_t *count, VkCheckpointData2NV *checkpoints
             vku::InitStruct<VkCheckpointData2NV>(nullptr, checkpoints_[i].stage, checkpoints_[i].pCheckpointMarker);
         checkpoints[i] = checkpoint;
     }
+}
+
+void Queue::SetFaultInfo(FaultInfo &&fault_info) {
+//    device_.SetFaultInfo(std::move(fault_info));
 }
 
 }  // namespace icd
