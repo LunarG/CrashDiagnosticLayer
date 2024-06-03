@@ -15,8 +15,6 @@
 # limitations under the License.
 
 import os
-import sys
-from generators.vulkan_object import (Queues, CommandScope)
 from generators.cdl_base_generator import CdlBaseOutputGenerator
 #
 # CommandCommonOutputGenerator - Generate command output and storage
@@ -96,9 +94,6 @@ struct Command
     def generateSource(self):
         self.write('#include "command_common.h"')
 
-        #
-        # For each CMD_TYPE give a string name add a *-recording VUID
-        # Each vkCmd* will have one
         out = []
         out.append('''
 // Returns the name of given command. This only cares for commands that have one

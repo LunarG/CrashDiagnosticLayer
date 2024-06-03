@@ -15,8 +15,6 @@
 # limitations under the License.
 
 import os
-import sys
-from generators.vulkan_object import (Queues, CommandScope)
 from generators.cdl_base_generator import CdlBaseOutputGenerator
 
 #NOTE: This generator only handle command buffer related overrides.

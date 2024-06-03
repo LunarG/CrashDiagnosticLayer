@@ -25,10 +25,8 @@
 // ErrorMonitor Usage:
 //
 // Call SetDesiredFailureMsg with a string to be compared against all
-// encountered log messages, or a validation error enum identifying
-// desired error message. Passing NULL or VALIDATION_ERROR_MAX_ENUM
-// will match all log messages. logMsg will return true for skipCall
-// only if msg is matched or NULL.
+// encountered log messages. Passing NULL will match all log messages.
+// logMsg will return true for skipCall only if msg is matched or NULL.
 //
 // Call VerifyFound to determine if all desired failure messages
 // were encountered. Call VerifyNotFound to determine if any unexpected

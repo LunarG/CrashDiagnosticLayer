@@ -16,14 +16,13 @@ set(LAYER_NAME "VkLayer_crash_diagnostic")
 
 # NOTE: Our custom code generation target isn't desirable for system package managers or add_subdirectory users.
 # So this target needs to be off by default to avoid obtuse build errors or patches.
-option(CDL_CODEGEN "Enable graphics flight recorder code generation")
+option(CDL_CODEGEN "Enable Crash Diagnostic Layer code generation")
 if (CDL_CODEGEN)
     find_package(Python3 REQUIRED)
     add_custom_target(cdl_codegen
         COMMAND Python3::Interpreter
           "${CMAKE_SOURCE_DIR}/scripts/generate_source.py"
           "${VULKAN_HEADERS_INSTALL_DIR}/share/vulkan/registry"
-          "${SPIRV_HEADERS_INSTALL_DIR}/include/spirv/unified1"
           --incremental --generated-version ${VulkanHeaders_VERSION} --api vulkan
         WORKING_DIRECTORY ${GENERATED_DIR}
     )
@@ -111,11 +110,11 @@ elseif(MINGW)
     target_compile_options(crash_diagnostic PRIVATE -Wa,-mbig-obj)
     target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_WINDOWS)
 elseif(APPLE)
-    message(STATUS "Functions are exported via VVL_EXPORT")
+    message(STATUS "Functions are exported via CDL_EXPORT")
     set_target_properties(crash_diagnostic PROPERTIES SUFFIX ".dylib")
     target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_APPLE)
 elseif(ANDROID)
-    message(STATUS "Functions are exported via VVL_EXPORT")
+    message(STATUS "Functions are exported via CDL_EXPORT")
     target_compile_definitions(crash_diagnostic PRIVATE -DSYSTEM_TARGET_ANDROID)
 else()
     target_link_options(crash_diagnostic PRIVATE LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.map,-Bsymbolic,--exclude-libs,ALL)
