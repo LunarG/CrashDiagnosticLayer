@@ -241,7 +241,7 @@ void print_android(const char *c) {
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
 }
 
-#if defined(VK_USE_PLATFORM_ANDROID_KHR) && !defined(VVL_MOCK_ANDROID)
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
 const char *appTag = "CrashDiagnosticLayerTests";
 static bool initialized = false;
 static bool active = false;
@@ -471,7 +471,7 @@ int main(int argc, char **argv) {
 
 #if defined(_WIN32)
     // --gtest_break_on_failure disables gtest suppression of debug message boxes.
-    // If this flag is set, then limit the VVL test framework in how it configures CRT
+    // If this flag is set, then limit the test framework in how it configures CRT
     // in order not to change expected gtest behavior (with regard to --gtest_break_on_failure).
     bool break_on_failure = false;
     for (int i = 1; i < argc; i++) {

@@ -14,8 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
 from generators.base_generator import BaseGenerator
 
 implemented_instance_extensions = [
@@ -137,7 +135,7 @@ layer_description = 'Crash Diagnostic Layer is a crash/hang debugging tool ' \
                     'that helps determines GPU progress in a Vulkan application.'
 
 #
-# CdlBaseOutputGenerator - Base Generator for the whole Graphics Flight Recorder
+# CdlBaseOutputGenerator - Base Generator for the whole Crash Diagnostic Layer
 class CdlBaseOutputGenerator(BaseGenerator):
     def __init__(self):
         BaseGenerator.__init__(self)
@@ -192,14 +190,14 @@ class CdlBaseOutputGenerator(BaseGenerator):
         namespace_text = f'{namespace}::{item}'
         return namespace_text
 
-    def CommandBufferCall(self, vkcommand):
-        intercept = (vkcommand.name.startswith('vkCmd') or
-                     vkcommand.params[0].type == 'VkCommandBuffer')
+    def CommandBufferCall(self, command):
+        intercept = (command.name.startswith('vkCmd') or
+                     command.params[0].type == 'VkCommandBuffer')
         return intercept
 
-    def NeedsIntercept(self, vkcommand):
-        intercept = (self.CommandBufferCall(vkcommand) or
-                        vkcommand.name in custom_intercept_commands)
+    def NeedsIntercept(self, command):
+        intercept = (self.CommandBufferCall(command) or
+                        command.name in custom_intercept_commands)
         return intercept
 
     def InterceptPreCommand(self, command):
@@ -225,11 +223,11 @@ class CdlBaseOutputGenerator(BaseGenerator):
     def InterceptCommand(self, command):
         return self.InterceptPreCommand(command) or self.InterceptPostCommand(command) or self.InterceptOverrideCommand(command)
 
-    def InstanceCommand(self, vkcommand):
-        return vkcommand.instance or vkcommand.params[0].type == 'VkPhysicalDevice'
+    def InstanceCommand(self, command):
+        return command.instance or command.params[0].type == 'VkPhysicalDevice'
 
-    def CommandHasReturn(self, vkcommand):
-        return vkcommand.returnType is not None and vkcommand.returnType != 'void'
+    def CommandHasReturn(self, command):
+        return command.returnType is not None and command.returnType != 'void'
 
     def GetLayerName(self):
         return layer_name

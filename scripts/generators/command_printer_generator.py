@@ -15,8 +15,6 @@
 # limitations under the License.
 
 import os
-import sys
-from generators.vulkan_object import (Queues, CommandScope)
 from generators.cdl_base_generator import CdlBaseOutputGenerator
 #
 # CommandPrinterOutputGenerator - Generate command print utilities
@@ -321,7 +319,7 @@ YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext) {
   PrintVkStruct(os, pStruct);
   return PrintNextPtr(os, pStruct->pNext);
 }
-''');
+''')
         self.write("".join(out))
         self.write("\n// Define all stream operators.\n")
         out = []
@@ -429,7 +427,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSet &t) {
 #include "command_printer.h"
 #include "util.h"
 
-''');
+''')
         self.write("".join(out))
         self.write("\n// Define print functions.\n")
         out = []

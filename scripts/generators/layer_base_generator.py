@@ -15,8 +15,6 @@
 # limitations under the License.
 
 import os
-import sys
-from generators.vulkan_object import (Queues, CommandScope)
 from generators.cdl_base_generator import CdlBaseOutputGenerator
 
 #
@@ -111,7 +109,7 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj);
         self.write("\nclass Interceptor {\n")
         self.write("public:\n")
         self.write("    virtual ~Interceptor() {}\n")
-        self.write("    virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo *) = 0;\n");
+        self.write("    virtual const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo *) = 0;\n")
         self.write("    virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice , const VkDeviceCreateInfo *) = 0;\n")
 
         out = []
@@ -121,9 +119,9 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj);
                 func_call = '    virtual ' + vkcommand.cPrototype.replace('\n','\n    ').replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '')
                 func_call = func_call.replace(' vk', ' Pre')
                 if vkcommand.returnType is not None and vkcommand.returnType != 'void':
-                    func_call = func_call.replace(';', ' { return VK_SUCCESS; }');
+                    func_call = func_call.replace(';', ' { return VK_SUCCESS; }')
                 else:
-                    func_call = func_call.replace(';', ' {}');
+                    func_call = func_call.replace(';', ' {}')
                 out.append(f'{func_call}\n')
                 out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
                 out.append('\n')
@@ -135,9 +133,9 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj);
                 if vkcommand.returnType is not None and vkcommand.returnType != 'void':
                     func_call = func_call.replace(');', f',\n        {vkcommand.returnType}                                    result);')
                 if vkcommand.returnType is not None and vkcommand.returnType != 'void':
-                    func_call = func_call.replace(';', ' { return result; }');
+                    func_call = func_call.replace(';', ' { return result; }')
                 else:
-                    func_call = func_call.replace(';', ' {}');
+                    func_call = func_call.replace(';', ' {}')
                 out.append(f'{func_call}\n')
                 out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
                 out.append('\n')
@@ -146,7 +144,7 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj);
                 func_call = '    virtual ' + vkcommand.cPrototype.replace('\n', '\n    ').replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '')
                 func_call = func_call.replace(' vk', ' ')
                 if vkcommand.returnType is not None and vkcommand.returnType != 'void':
-                    func_call = func_call.replace(';', ' = 0;');
+                    func_call = func_call.replace(';', ' = 0;')
                 out.append(f'{func_call}\n')
                 out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
                 out.append('\n')
@@ -322,14 +320,14 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj)
         out = []
         out.append(f'static constexpr std::array<VkExtensionProperties, {len(self.implemented_instance_extensions)}> instance_extensions{{{{\n')
         for vkext in self.vk.extensions.values():
-            if vkext.device or not (vkext.name in self.implemented_instance_extensions):
+            if vkext.device or (vkext.name not in self.implemented_instance_extensions):
                 continue
             version_string = vkext.nameString.replace('EXTENSION_NAME', 'SPEC_VERSION')
             out.append(f'    {{{vkext.nameString}, {version_string}}},\n')
         out.append("}};\n")
         out.append(f'static constexpr std::array<VkExtensionProperties, {len(self.implemented_device_extensions)}> device_extensions{{{{\n')
         for vkext in self.vk.extensions.values():
-            if vkext.instance or not (vkext.name in self.implemented_device_extensions):
+            if vkext.instance or (vkext.name not in self.implemented_device_extensions):
                 continue
             version_string = vkext.nameString.replace('EXTENSION_NAME', 'SPEC_VERSION')
             out.append(f'    {{{vkext.nameString}, {version_string}}},\n')
@@ -339,7 +337,7 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj)
         self.write("\n// Implement layer version of Vulkan API functions.\n")
         out = []
         #for vkcommand in filter(lambda x: x.name not in self.custom_intercept_commands, self.vk.commands.values()):
-        for vkcommand in filter(lambda x: self.InterceptCommand(x) and (not x.name in self.custom_intercept_commands), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: self.InterceptCommand(x) and (x.name not in self.custom_intercept_commands), self.vk.commands.values()):
             lower_function_call = vkcommand.name + '('
             count = 0
             for vkparam in vkcommand.params:
@@ -590,7 +588,7 @@ VkResult InterceptEnumerateInstanceExtensionProperties(const char *pLayerName,
                                                        VkExtensionProperties *pProperties) {
   bool layer_requested = (nullptr == pLayerName ||''')
         layer_name = self.GetLayerName()
-        out.append(f'        !strcmp(pLayerName, kLayerProperties.layerName));\n')
+        out.append('        !strcmp(pLayerName, kLayerProperties.layerName));\n')
         out.append('''  if (!layer_requested) {
     return VK_ERROR_LAYER_NOT_PRESENT;
   }
@@ -631,7 +629,7 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
   // add our extensions if we have any and requested
   bool layer_requested =''')
         layer_name = self.GetLayerName()
-        out.append(f'      (nullptr == pLayerName || !strcmp(pLayerName, kLayerProperties.layerName));\n')
+        out.append('      (nullptr == pLayerName || !strcmp(pLayerName, kLayerProperties.layerName));\n')
         out.append('''
   if (result == VK_SUCCESS && layer_requested) {
     // not just our layer, we expose all our extensions

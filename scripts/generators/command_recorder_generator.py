@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023 LunarG, Inc.
+# Copyright (c) 2023-2024 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
 # limitations under the License.
 
 import os
-import sys
-from generators.vulkan_object import (Queues, CommandScope)
 from generators.cdl_base_generator import CdlBaseOutputGenerator
 
 #
@@ -65,7 +63,7 @@ class CommandRecorder
         out.append('''
 
   private:
- 
+
     template <typename T> T *Alloc() { return new(m_allocator.Alloc(sizeof(T))) T; }
     template <typename T> T *CopyArray(const T *src, uint64_t start_index, uint64_t count) {
       auto ptr = reinterpret_cast<T *>(m_allocator.Alloc(sizeof(T) * count));
