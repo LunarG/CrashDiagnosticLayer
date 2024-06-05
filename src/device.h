@@ -82,7 +82,7 @@ class Device {
     ~Device();
 
     bool HangDetected() const { return hang_detected_; }
-    void SetHangDetected() { hang_detected_ = true; }
+    void SetHangDetected();
 
     const Logger& Log() const;
     const DeviceDispatchTable& Dispatch() const { return device_dispatch_table_; }

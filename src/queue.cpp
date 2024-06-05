@@ -36,25 +36,22 @@ Queue::Queue(Device& device, VkQueue queue, uint32_t family_index, uint32_t inde
       queue_family_index_(family_index),
       queue_index_(index),
       queue_family_properties_(props),
-      tracking_semaphores_(device_.GetContext().TrackingSemaphores()),
       trace_all_semaphores_(device_.GetContext().TracingAllSemaphores()) {
-    if (tracking_semaphores_) {
-        auto type_ci = vku::InitStruct<VkSemaphoreTypeCreateInfo>();
-        type_ci.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE;
-        type_ci.initialValue = submit_seq_;
-        auto sem_ci = vku::InitStruct<VkSemaphoreCreateInfo>(&type_ci);
+    auto type_ci = vku::InitStruct<VkSemaphoreTypeCreateInfo>();
+    type_ci.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE;
+    type_ci.initialValue = submit_seq_;
+    auto sem_ci = vku::InitStruct<VkSemaphoreCreateInfo>(&type_ci);
 
-        VkResult result = device_.Dispatch().CreateSemaphore(device_.GetVkDevice(), &sem_ci, nullptr, &submit_sem_);
-        if (result != VK_SUCCESS) {
-            Log().Warning(
-                "failed to create semaphore for state tracking. Result: %d, VkQueue: %s, queueFamilyIndex: %d", result,
-                device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), queue_family_index_);
-        }
+    VkResult result = device_.Dispatch().CreateSemaphore(device_.GetVkDevice(), &sem_ci, nullptr, &submit_sem_);
+    if (result != VK_SUCCESS) {
+        Log().Warning("failed to create semaphore for state tracking. Result: %d, VkQueue: %s, queueFamilyIndex: %d",
+                      result, device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), queue_family_index_);
     }
 }
 
 void Queue::Destroy() {
     if (submit_sem_ != VK_NULL_HANDLE) {
+        device_.Dispatch().QueueWaitIdle(GetVkQueue());
         device_.Dispatch().DestroySemaphore(device_.GetVkDevice(), submit_sem_, nullptr);
         submit_sem_ = VK_NULL_HANDLE;
     }
@@ -65,7 +62,7 @@ Queue::~Queue() { Destroy(); }
 const Logger& Queue::Log() const { return device_.Log(); }
 
 Queue::SubmitInfo::SubmitInfo(Device& device, const VkSubmitInfo& submit_info, uint64_t seq_)
-    : type(kQueueSubmit), seq(seq_) {
+    : type(kQueueSubmit), start_seq(seq_) {
     for (uint32_t i = 0; i < submit_info.waitSemaphoreCount; i++) {
         wait_semaphores.push_back({submit_info.pWaitSemaphores[i], 1, submit_info.pWaitDstStageMask[i]});
     }
@@ -95,7 +92,7 @@ Queue::SubmitInfo::SubmitInfo(Device& device, const VkSubmitInfo& submit_info, u
 }
 
 Queue::SubmitInfo::SubmitInfo(Device& device, const VkSubmitInfo2& submit_info, uint64_t seq_)
-    : type(kQueueSubmit2), seq(seq_) {
+    : type(kQueueSubmit2), start_seq(seq_) {
     auto semaphore_tracker = device.GetSemaphoreTracker();
 
     for (uint32_t i = 0; i < submit_info.waitSemaphoreInfoCount; i++) {
@@ -114,7 +111,7 @@ Queue::SubmitInfo::SubmitInfo(Device& device, const VkSubmitInfo2& submit_info, 
 }
 
 Queue::SubmitInfo::SubmitInfo(Device& device, const VkBindSparseInfo& sparse_info, uint64_t seq_)
-    : type(kQueueBindSparse), seq(seq_) {
+    : type(kQueueBindSparse), start_seq(seq_) {
     for (uint32_t i = 0; i < sparse_info.waitSemaphoreCount; i++) {
         wait_semaphores.push_back({sparse_info.pWaitSemaphores[i], 1, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT});
     }
@@ -162,14 +159,14 @@ bool Queue::UpdateSeq() {
             device_.GetObjectInfo((uint64_t)submit_sem_).c_str());
         return false;
     }
+    assert(value >= complete_seq_);
     complete_seq_ = value;
     return true;
 }
 
 bool Queue::UpdateIdleState() {
-    if (!UpdateSeq()) {
-        return false;
-    }
+    bool result = UpdateSeq();
+
     uint64_t completed_seq = CompletedSeq();
 
     Log().Verbose("completed: %lld submitted: %lld VkQueue: %s", completed_seq, submit_seq_.load(),
@@ -181,16 +178,35 @@ bool Queue::UpdateIdleState() {
             break;
         }
         for (auto& submit_info : submission.submit_infos) {
-            // Previous submit info finished so this one is
-            // either running or blocked on a semaphore.
-            if ((completed_seq + 1) == submit_info.seq) {
+            if (completed_seq >= submit_info.end_seq) {
+                Log().Verbose("info start: %lld end: %lld FINISH", submit_info.start_seq, submit_info.end_seq);
+                submit_info.state = kFinished;
+                for (auto& cb : submit_info.command_buffers) {
+                    auto cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
+                    if (cmd) {
+                        cmd->SetCompleted();
+                    }
+                }
+            } else if ((completed_seq + 1) >= submit_info.start_seq) {
+                Log().Verbose("info start: %lld end: %lld RUNNING", submit_info.start_seq, submit_info.end_seq);
                 submit_info.state = kRunning;
+                bool found_running_cb = false;
+                for (auto pos = submit_info.command_buffers.rbegin(); pos != submit_info.command_buffers.rend();
+                     ++pos) {
+                    auto cmd = crash_diagnostic_layer::GetCommandBuffer(*pos);
+                    if (cmd) {
+                        if (found_running_cb) {
+                            cmd->SetCompleted();
+                        } else if (cmd->GetCommandBufferState() == CommandBufferState::kSubmittedExecutionIncomplete) {
+                            found_running_cb = true;
+                        }
+                    }
+                }
+                break;
+            } else {
+                Log().Verbose("info start: %lld end: %lld queued", submit_info.start_seq, submit_info.end_seq);
                 break;
             }
-            if (completed_seq < submit_info.seq) {
-                break;
-            }
-            submit_info.state = kFinished;
         }
 
         if (completed_seq >= submission.end_seq) {
@@ -200,7 +216,7 @@ bool Queue::UpdateIdleState() {
             break;
         }
     }
-    return true;
+    return result;
 }
 
 bool Queue::QueuedSubmitWaitingOnSemaphores(const SubmitInfo& submit_info) const {
@@ -247,7 +263,8 @@ std::string Queue::GetSubmitInfoSemaphoresLog(const SubmitInfo& submit_info) con
     };
     log << " with semaphores submitted to queue." << std::endl
         << "\tVkDevice: " << device_.GetObjectName((uint64_t)device_.GetVkDevice())
-        << ", VkQueue: " << device_.GetObjectName((uint64_t)vk_queue_) << ", SeqNum: " << submit_info.seq << std::endl;
+        << ", VkQueue: " << device_.GetObjectName((uint64_t)vk_queue_) << ", SeqNum: " << submit_info.start_seq << " - "
+        << submit_info.end_seq << std::endl;
     const char* tab = "\t";
     auto wait_semaphores = GetTrackedSemaphoreInfos(submit_info, kWaitOperation);
     if (wait_semaphores.size() > 0) {
@@ -327,21 +344,28 @@ void Queue::Print(YAML::Emitter& os) {
             if (submit_state == SubmitState::kFinished) continue;
 
             os << YAML::BeginMap;
-            os << YAML::Key << "seq" << YAML::Value << submit_info.seq;
+            os << YAML::Key << "start_seq" << YAML::Value << submit_info.start_seq;
+            os << YAML::Key << "end_seq" << YAML::Value << submit_info.end_seq;
             os << YAML::Key << "state";
 
             if (QueuedSubmitWaitingOnSemaphores(submit_info)) {
                 os << YAML::Value << "WAITING_ON_SEMAPHORES";
             } else if (submit_state == SubmitState::kQueued) {
-                os << YAML::Value << "QUEUED";
+                os << YAML::Value << "NOT_STARTED";
             } else if (submit_state == SubmitState::kRunning) {
-                os << YAML::Value << "STARTED";
+                os << YAML::Value << "INCOMPLETE";
             }
 
             if (submit_info.command_buffers.size() > 0) {
                 os << YAML::Key << "CommandBuffers" << YAML::Value << YAML::BeginSeq;
                 for (const auto& cb : submit_info.command_buffers) {
-                    os << device_.GetObjectInfo((uint64_t)cb);
+                    std::stringstream value;
+                    value << device_.GetObjectInfo((uint64_t)cb);
+                    auto cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
+                    if (cmd) {
+                        value << " " << cmd->PrintCommandBufferState();
+                    }
+                    os << value.str();
                 }
                 os << YAML::EndSeq;
             }
@@ -402,215 +426,223 @@ void Queue::PostSubmit(VkResult result) {
     }
 }
 
-VkResult Queue::SubmitWithoutTrackingSemaphores(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
-    VkResult result = device_.Dispatch().QueueSubmit(vk_queue_, submitCount, pSubmits, fence);
-    PostSubmit(result);
-    return result;
-}
-
-VkResult Queue::Submit2WithoutTrackingSemaphores(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    VkResult result;
-    if (device_.Dispatch().QueueSubmit2) {
-        result = device_.Dispatch().QueueSubmit2(vk_queue_, submitCount, pSubmits, fence);
-    } else {
-        result = device_.Dispatch().QueueSubmit2KHR(vk_queue_, submitCount, pSubmits, fence);
-    }
-    PostSubmit(result);
-    return result;
-}
-
 VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
-    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
-        const auto& submit = pSubmits[submit_index];
-        for (uint32_t command_buffer_index = 0; command_buffer_index < submit.commandBufferCount;
-             ++command_buffer_index) {
-            auto cmd = crash_diagnostic_layer::GetCommandBuffer(submit.pCommandBuffers[command_buffer_index]);
-            if (cmd != nullptr) {
-                cmd->QueueSubmit(vk_queue_, fence);
-            }
-        }
-    }
+    UpdateSeq();
     VkResult result;
-
-    if (!tracking_semaphores_) {
-        return SubmitWithoutTrackingSemaphores(submitCount, pSubmits, fence);
-    }
-    std::vector<uint64_t> timeline_values(submitCount + 1);
-    std::vector<VkTimelineSemaphoreSubmitInfo> timeline_infos(submitCount + 1,
-                                                              vku::InitStruct<VkTimelineSemaphoreSubmitInfo>());
-    std::vector<VkSubmitInfo> submits(2 * submitCount + 1, vku::InitStruct<VkSubmitInfo>());
 
     Submission submission(kQueueSubmit, ++submit_seq_);
 
-    // copy over the original submissions, leaving room for signal submissions in between them
     for (uint32_t i = 0; i < submitCount; i++) {
-        SubmitInfo submit_info(device_, pSubmits[i], ++submit_seq_);
+        SubmitInfo submit_info(device_, pSubmits[i], submit_seq_++);
+        {
+            auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
+            timeline_values.signalSemaphoreValueCount = 1;
+            timeline_values.pSignalSemaphoreValues = &submit_info.start_seq;
+            auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
+            submit.signalSemaphoreCount = 1;
+            submit.pSignalSemaphores = &submit_sem_;
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
+        if (pSubmits[i].waitSemaphoreCount > 0) {
+            auto submit = vku::InitStruct<VkSubmitInfo>();
+            submit.pNext = pSubmits[i].pNext;
+            submit.waitSemaphoreCount = pSubmits[i].waitSemaphoreCount;
+            submit.pWaitSemaphores = pSubmits[i].pWaitSemaphores;
+            submit.pWaitDstStageMask = pSubmits[i].pWaitDstStageMask;
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
         for (auto& cb : submit_info.command_buffers) {
+            uint64_t cb_seq = ++submit_seq_;
             auto command_buffer = GetCommandBuffer(cb);
             if (command_buffer) {
-                command_buffer->SetQueueSeq(submit_info.seq);
+                command_buffer->QueueSubmit(vk_queue_, cb_seq, fence);
             }
+            auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
+            timeline_values.signalSemaphoreValueCount = 1;
+            timeline_values.pSignalSemaphoreValues = &cb_seq;
+            auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
+            submit.commandBufferCount = 1;
+            submit.pCommandBuffers = &cb;
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
+        if (pSubmits[i].signalSemaphoreCount > 0) {
+            auto submit = vku::InitStruct<VkSubmitInfo>();
+            submit.pNext = pSubmits[i].pNext;
+            submit.signalSemaphoreCount = pSubmits[i].signalSemaphoreCount;
+            submit.pSignalSemaphores = pSubmits[i].pSignalSemaphores;
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
+
+        submit_info.end_seq = ++submit_seq_;
+        {
+            auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
+            timeline_values.signalSemaphoreValueCount = 1;
+            timeline_values.pSignalSemaphoreValues = &submit_info.end_seq;
+            auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
+            submit.signalSemaphoreCount = 1;
+            submit.pSignalSemaphores = &submit_sem_;
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
         }
         if (trace_all_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
-        // copy over the original submit
-        submits[1 + (2 * i)] = pSubmits[i];
         submission.submit_infos.emplace_back(std::move(submit_info));
     }
-    submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().seq;
-
-    // Fill in the signal submissions
-    uint64_t signal_value = submission.start_seq;
-    for (uint32_t i = 0; (i < submitCount + 1); i++, signal_value++) {
-        auto& timeline_value = timeline_values[i];
-        auto& timeline_info = timeline_infos[i];
-        auto& signal_submit = submits[2 * i];
-
-        timeline_value = signal_value;
-        timeline_info.signalSemaphoreValueCount = 1;
-        timeline_info.pSignalSemaphoreValues = &timeline_value;
-        signal_submit.pNext = &timeline_info;
-        signal_submit.signalSemaphoreCount = 1;
-        signal_submit.pSignalSemaphores = &submit_sem_;
-    }
-
+    submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().end_seq;
     {
         std::lock_guard<std::mutex> lock(queue_submits_mutex_);
         queue_submits_.emplace_back(std::move(submission));
     }
-
-    result = device_.Dispatch().QueueSubmit(vk_queue_, uint32_t(submits.size()), submits.data(), fence);
+    if (fence) {
+        result = device_.Dispatch().QueueSubmit(vk_queue_, 0, nullptr, fence);
+    }
     PostSubmit(result);
     return result;
 }
 
 VkResult Queue::Submit2(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    for (uint32_t submit_index = 0; submit_index < submitCount; ++submit_index) {
-        const auto& submit = pSubmits[submit_index];
-        for (uint32_t command_buffer_index = 0; command_buffer_index < submit.commandBufferInfoCount;
-             ++command_buffer_index) {
-            auto cmd = crash_diagnostic_layer::GetCommandBuffer(
-                submit.pCommandBufferInfos[command_buffer_index].commandBuffer);
-            if (cmd != nullptr) {
-                cmd->QueueSubmit(vk_queue_, fence);
-            }
-        }
-    }
+    auto QueueSubmit2 =
+        device_.Dispatch().QueueSubmit2 ? device_.Dispatch().QueueSubmit2 : device_.Dispatch().QueueSubmit2KHR;
+    UpdateSeq();
     VkResult result;
 
-    if (!tracking_semaphores_) {
-        return Submit2WithoutTrackingSemaphores(submitCount, pSubmits, fence);
-    }
+    Submission submission(kQueueSubmit2, ++submit_seq_);
 
-    Submission submission(kQueueSubmit2, submit_seq_++);
-    std::vector<VkSemaphoreSubmitInfo> sem_infos(submitCount + 1);
-    std::vector<VkSubmitInfo2> submits(2 * submitCount + 1, vku::InitStruct<VkSubmitInfo2>());
-
-    // copy over the original submissions, leaving room for signal submissions in between them
     for (uint32_t i = 0; i < submitCount; i++) {
-        SubmitInfo submit_info(device_, pSubmits[i], ++submit_seq_);
+        SubmitInfo submit_info(device_, pSubmits[i], submit_seq_++);
+        {
+            auto signal_info = vku::InitStruct<VkSemaphoreSubmitInfo>();
+            signal_info.semaphore = submit_sem_;
+            signal_info.value = submit_info.start_seq;
+            signal_info.stageMask = VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT;
+
+            auto submit = vku::InitStruct<VkSubmitInfo2>();
+            submit.signalSemaphoreInfoCount = 1;
+            submit.pSignalSemaphoreInfos = &signal_info;
+            result = QueueSubmit2(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
+        if (pSubmits[i].waitSemaphoreInfoCount > 0) {
+            auto submit = vku::InitStruct<VkSubmitInfo2>();
+            submit.waitSemaphoreInfoCount = pSubmits[i].waitSemaphoreInfoCount;
+            submit.pWaitSemaphoreInfos = pSubmits[i].pWaitSemaphoreInfos;
+            result = QueueSubmit2(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
         for (auto& cb : submit_info.command_buffers) {
+            uint64_t cb_seq = ++submit_seq_;
             auto command_buffer = GetCommandBuffer(cb);
             if (command_buffer) {
-                command_buffer->SetQueueSeq(submit_info.seq);
+                command_buffer->QueueSubmit(vk_queue_, cb_seq, fence);
             }
+            auto signal_info = vku::InitStruct<VkSemaphoreSubmitInfo>();
+            signal_info.semaphore = submit_sem_;
+            signal_info.value = cb_seq;
+            signal_info.stageMask = VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT;
+
+            auto cb_info = vku::InitStruct<VkCommandBufferSubmitInfo>();
+            cb_info.commandBuffer = cb;
+
+            auto submit = vku::InitStruct<VkSubmitInfo2>();
+            submit.commandBufferInfoCount = 1;
+            submit.pCommandBufferInfos = &cb_info;
+            submit.signalSemaphoreInfoCount = 1;
+            submit.pSignalSemaphoreInfos = &signal_info;
+            result = QueueSubmit2(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
+        if (pSubmits[i].signalSemaphoreInfoCount > 0) {
+            auto submit = vku::InitStruct<VkSubmitInfo2>();
+            submit.signalSemaphoreInfoCount = pSubmits[i].signalSemaphoreInfoCount;
+            submit.pSignalSemaphoreInfos = pSubmits[i].pSignalSemaphoreInfos;
+            result = QueueSubmit2(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
+
+        submit_info.end_seq = ++submit_seq_;
+        {
+            auto signal_info = vku::InitStruct<VkSemaphoreSubmitInfo>();
+            signal_info.semaphore = submit_sem_;
+            signal_info.value = submit_info.end_seq;
+            signal_info.stageMask = VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT;
+
+            auto submit = vku::InitStruct<VkSubmitInfo2>();
+            submit.signalSemaphoreInfoCount = 1;
+            submit.pSignalSemaphoreInfos = &signal_info;
+            result = QueueSubmit2(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
         }
         if (trace_all_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
-        // copy over the original submit
-        submits[1 + (2 * i)] = pSubmits[i];
         submission.submit_infos.emplace_back(std::move(submit_info));
     }
-    submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().seq;
-
-    // Fill in the signal submissions
-    uint64_t signal_value = submission.start_seq;
-    for (uint32_t i = 0; (i < submitCount + 1); i++, signal_value++) {
-        auto& sem_info = sem_infos[i];
-        auto& signal_submit = submits[i * 2];
-        sem_info.semaphore = submit_sem_;
-        sem_info.value = submission.start_seq;
-        sem_info.stageMask = VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT;
-        signal_submit.signalSemaphoreInfoCount = 1;
-        signal_submit.pSignalSemaphoreInfos = &sem_info;
-    }
-
+    submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().end_seq;
     {
         std::lock_guard<std::mutex> lock(queue_submits_mutex_);
         queue_submits_.emplace_back(std::move(submission));
     }
-
-    if (device_.Dispatch().QueueSubmit2) {
-        result = device_.Dispatch().QueueSubmit2(vk_queue_, uint32_t(submits.size()), submits.data(), fence);
-    } else {
-        result = device_.Dispatch().QueueSubmit2KHR(vk_queue_, uint32_t(submits.size()), submits.data(), fence);
+    if (fence) {
+        result = QueueSubmit2(vk_queue_, 0, nullptr, fence);
     }
-
     PostSubmit(result);
     return result;
 }
 
 VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfos, VkFence fence) {
+    UpdateSeq();
     VkResult result;
-    // If semaphore tracking is not requested, pass the call to the dispatch table
-    // as is.
-    if (!tracking_semaphores_) {
-        result = device_.Dispatch().QueueBindSparse(vk_queue_, bindInfoCount, pBindInfos, fence);
-        PostSubmit(result);
-        return result;
-    }
-    std::vector<uint64_t> timeline_values(bindInfoCount + 1);
-    std::vector<VkTimelineSemaphoreSubmitInfo> timeline_infos(bindInfoCount + 1,
-                                                              vku::InitStruct<VkTimelineSemaphoreSubmitInfo>());
-    std::vector<VkBindSparseInfo> binds(2 * bindInfoCount + 1, vku::InitStruct<VkBindSparseInfo>());
 
-    Submission submission(kQueueBindSparse, ++submit_seq_);
+    Submission submission(kQueueSubmit, ++submit_seq_);
 
-    // copy over the original submissions, leaving room for signal submissions in between them
     for (uint32_t i = 0; i < bindInfoCount; i++) {
-        SubmitInfo submit_info(device_, pBindInfos[i], ++submit_seq_);
-        for (auto& cb : submit_info.command_buffers) {
-            auto command_buffer = GetCommandBuffer(cb);
-            if (command_buffer) {
-                command_buffer->SetQueueSeq(submit_info.seq);
-            }
+        SubmitInfo submit_info(device_, pBindInfos[i], submit_seq_++);
+        {
+            auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
+            timeline_values.signalSemaphoreValueCount = 1;
+            timeline_values.pSignalSemaphoreValues = &submit_info.start_seq;
+            auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
+            submit.signalSemaphoreCount = 1;
+            submit.pSignalSemaphores = &submit_sem_;
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
+        }
+        result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &pBindInfos[i], VK_NULL_HANDLE);
+        assert(result == VK_SUCCESS);
+        submit_info.end_seq = ++submit_seq_;
+        {
+            auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
+            timeline_values.signalSemaphoreValueCount = 1;
+            timeline_values.pSignalSemaphoreValues = &submit_info.end_seq;
+            auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
+            submit.signalSemaphoreCount = 1;
+            submit.pSignalSemaphores = &submit_sem_;
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            assert(result == VK_SUCCESS);
         }
         if (trace_all_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
-        // copy over the original submit
-        binds[1 + (2 * i)] = pBindInfos[i];
         submission.submit_infos.emplace_back(std::move(submit_info));
     }
-    // don't increment so that this is the same as submit_infos.back().seq;
-    submission.end_seq = submit_seq_;
-
-    // Fill in the signal submissions
-    uint64_t signal_value = submission.start_seq;
-    for (uint32_t i = 0; (i < bindInfoCount + 1); i++, signal_value++) {
-        auto& timeline_value = timeline_values[i];
-        auto& timeline_info = timeline_infos[i];
-        auto& signal_bind = binds[2 * i];
-
-        timeline_value = submission.start_seq;
-        timeline_info.signalSemaphoreValueCount = 1;
-        timeline_info.pSignalSemaphoreValues = &timeline_value;
-        signal_bind.pNext = &timeline_info;
-        signal_bind.signalSemaphoreCount = 1;
-        signal_bind.pSignalSemaphores = &submit_sem_;
-    }
-
+    submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().end_seq;
     {
         std::lock_guard<std::mutex> lock(queue_submits_mutex_);
         queue_submits_.emplace_back(std::move(submission));
     }
-    return device_.Dispatch().QueueBindSparse(vk_queue_, uint32_t(binds.size()), binds.data(), fence);
+    if (fence) {
+        result = device_.Dispatch().QueueBindSparse(vk_queue_, 0, nullptr, fence);
+    }
+    PostSubmit(result);
+    return result;
 }
 
 void Queue::LogSubmitInfoSemaphores(const SubmitInfo& submit_info) {
-    assert(tracking_semaphores_ == true);
     assert(trace_all_semaphores_ == true);
     if (SubmitInfoHasSemaphores(submit_info)) {
         std::string semaphore_log = GetSubmitInfoSemaphoresLog(submit_info);

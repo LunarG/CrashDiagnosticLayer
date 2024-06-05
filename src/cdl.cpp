@@ -512,10 +512,16 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
     if (extensions_present.khr_timeline_semaphore) {
         if (!extensions_enabled.khr_timeline_semaphore) {
             extensions_enabled.khr_timeline_semaphore = true;
-            auto khr_timeline_semaphore =
-                vku::InitStruct<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(nullptr, VK_TRUE);
-            vku::AddToPnext(device_ci->modified, khr_timeline_semaphore);
-            vku::AddExtension(device_ci->modified, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+            auto* vulkan12_features =
+                vku::FindStructInPNextChain<VkPhysicalDeviceVulkan12Features>(&device_ci->modified);
+            if (vulkan12_features) {
+                vulkan12_features->timelineSemaphore = VK_TRUE;
+            } else {
+                auto khr_timeline_semaphore =
+                    vku::InitStruct<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(nullptr, VK_TRUE);
+                vku::AddToPnext(device_ci->modified, khr_timeline_semaphore);
+                vku::AddExtension(device_ci->modified, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+            }
         }
     } else {
         Log().Warning(
@@ -603,9 +609,9 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     os << YAML::Key << "timeSinceStart" << YAML::Value << DurationToStr(elapsed);
 
     os << YAML::Key << "Settings" << YAML::Value << YAML::BeginMap;
-        for (auto& c : configs_) {
-            os << YAML::Key << c.first << YAML::Value << c.second;
-        }
+    for (auto& c : configs_) {
+        os << YAML::Key << c.first << YAML::Value << c.second;
+    }
     os << YAML::EndMap;
 
     os << YAML::Key << "SystemInfo" << YAML::Value << YAML::BeginMap;

@@ -89,10 +89,13 @@ class CommandBuffer {
     VkCommandPool GetVkCommandPool() { return vk_command_pool_; }
     VkCommandBuffer GetVkCommandBuffer() { return vk_command_buffer_; }
 
+    CommandBufferState GetCommandBufferState() const;
+    std::string PrintCommandBufferState() const { return PrintCommandBufferState(GetCommandBufferState()); }
+
+    void SetCompleted() { buffer_state_ = CommandBufferState::kSubmittedExecutionCompleted; }
     bool IsPrimaryCommandBuffer() const { return cb_level_ == VK_COMMAND_BUFFER_LEVEL_PRIMARY; }
     bool HasCheckpoints() const { return checkpoint_ != nullptr; }
 
-    void SetQueueSeq(uint64_t queue_seq);
     uint64_t GetQueueSeq() { return submitted_queue_seq_; }
     void SetInstrumentAllCommands(bool all) { instrument_all_commands_ = all; }
 
@@ -101,7 +104,7 @@ class CommandBuffer {
     bool CompletedExecution() const;
 
     void Reset();
-    void QueueSubmit(VkQueue queue, VkFence fence);
+    void QueueSubmit(VkQueue queue, uint64_t queue_seq, VkFence fence);
 
     void DumpContents(YAML::Emitter& os, CommandBufferDumpOptions options, uint64_t secondary_cb_submit_info_id = 0,
                       CommandState vkcmd_execute_commands_command_state = CommandState::kInvalidState);
@@ -131,9 +134,8 @@ class CommandBuffer {
    private:
     const char* GetCommandName(const Command& command);
 
-    CommandBufferState GetCommandBufferState() const;
-    CommandBufferState GetSecondaryCommandBufferState(CommandState vkcmd_execute_commands_command_state) const;
     std::string PrintCommandBufferState(CommandBufferState cb_state) const;
+    CommandBufferState GetSecondaryCommandBufferState(CommandState vkcmd_execute_commands_command_state) const;
     CommandState GetCommandState(CommandBufferState cb_state, const Command& command) const;
     std::string PrintCommandState(CommandState cm_state) const;
 

@@ -156,8 +156,7 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_pool, const VkCommandBuffer
 
 // Write out information about an invalid command buffer reset.
 void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter& os) const {
-    Log().Error("Invalid Command Buffer Usage");
-    Log().Error("Reset of VkCommandBuffer in use by GPU: %s",
+    Log().Error("Invalid Command Buffer Usage: Reset of VkCommandBuffer in use by GPU: %s",
                 GetObjectName((uint64_t)p_cmd->GetVkCommandBuffer()).c_str());
     auto submitted_fence = p_cmd->GetSubmittedFence();
 
@@ -409,15 +408,18 @@ std::string Device::GetObjectInfo(uint64_t handle) const { return object_info_db
 
 bool Device::UpdateIdleState() {
     bool result = true;
-    if (checkpoints_) {
-        checkpoints_->Update();
-    }
     auto queues = GetAllQueues();
     for (auto& q : queues) {
         bool q_result = q->UpdateIdleState();
         result &= q_result;
     }
     return result;
+}
+void Device::SetHangDetected() {
+    if (checkpoints_) {
+        checkpoints_->Update();
+    }
+    hang_detected_ = true;
 }
 
 YAML::Emitter& Device::Print(YAML::Emitter& os, CommandBufferDumpOptions options, const std::string& error_report) {
@@ -450,14 +452,14 @@ YAML::Emitter& Device::Print(YAML::Emitter& os, CommandBufferDumpOptions options
 
     DumpDeviceFaultInfo(os);
 
-    if (context_.TrackingSemaphores()) {
-        os << YAML::Key << "Queues" << YAML::BeginSeq;
-        auto queues = GetAllQueues();
-        for (auto& q : queues) {
-            q->Print(os);
-        }
-        os << YAML::EndSeq;
+    os << YAML::Key << "Queues" << YAML::BeginSeq;
+    auto queues = GetAllQueues();
+    for (auto& q : queues) {
+        q->Print(os);
+    }
+    os << YAML::EndSeq;
 
+    if (context_.TrackingSemaphores()) {
         semaphore_tracker_->DumpWaitingThreads(os);
     }
     if (!error_report.empty()) {

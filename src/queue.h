@@ -83,8 +83,8 @@ class Queue {
 
         QueueOperationType type;
         SubmitState state{kQueued};
-        // per-queue sequence number
-        uint64_t seq{0};
+        uint64_t start_seq{0};
+        uint64_t end_seq{0};
         std::vector<SemInfo> wait_semaphores;
         std::vector<VkCommandBuffer> command_buffers;
         // TODO: sparse info
@@ -109,8 +109,6 @@ class Queue {
 
     bool QueuedSubmitWaitingOnSemaphores(const SubmitInfo& submit_info) const;
 
-    VkResult SubmitWithoutTrackingSemaphores(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence);
-    VkResult Submit2WithoutTrackingSemaphores(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence);
     void PostSubmit(VkResult result);
 
     void LogSubmitInfoSemaphores(const SubmitInfo& submit_info);
@@ -126,7 +124,6 @@ class Queue {
     const uint32_t queue_family_index_;
     const uint32_t queue_index_;
     const VkQueueFamilyProperties queue_family_properties_;
-    bool tracking_semaphores_{false};
     bool trace_all_semaphores_{false};
 
     mutable std::mutex queue_submits_mutex_;
