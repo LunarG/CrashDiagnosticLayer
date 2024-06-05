@@ -36,8 +36,8 @@ CommandBuffer::CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCo
       vk_command_buffer_(vk_command_buffer),
       cb_level_(allocate_info->level) {
     if (has_checkpoints) {
-        begin_value_ = 0x10000;
-        end_value_ = begin_value_ | 0x0000FFFF;
+        begin_value_ = 1;
+        end_value_ = 0x0000FFFF;
 
         checkpoint_ = device_.AllocateCheckpoint(begin_value_);
 
@@ -55,8 +55,6 @@ CommandBuffer::~CommandBuffer() {
     vk_command_pool_ = VK_NULL_HANDLE;
     vk_command_buffer_ = VK_NULL_HANDLE;
 }
-
-void CommandBuffer::SetQueueSeq(uint64_t queue_seq) { submitted_queue_seq_ = queue_seq; }
 
 void CommandBuffer::WriteBeginCheckpoint() {
     // CDL log lables the commands inside a command buffer as follows:
@@ -92,7 +90,7 @@ bool CommandBuffer::StartedExecution() const {
     if (!checkpoint_) {
         return false;
     }
-    return (checkpoint_->ReadTop() >= begin_value_);
+    return (checkpoint_->ReadTop() > begin_value_);
 }
 
 bool CommandBuffer::CompletedExecution() const {
@@ -107,7 +105,7 @@ void CommandBuffer::Reset() {
 
     // Reset marker state.
     if (checkpoint_) {
-        // TODO checkpoint_->Reset();
+        checkpoint_->Reset();
     }
 
     // Clear inheritance info
@@ -122,9 +120,10 @@ void CommandBuffer::Reset() {
     submitted_fence_ = VK_NULL_HANDLE;
 }
 
-void CommandBuffer::QueueSubmit(VkQueue queue, VkFence fence) {
+void CommandBuffer::QueueSubmit(VkQueue queue, uint64_t queue_seq, VkFence fence) {
     buffer_state_ = CommandBufferState::kPending;
     submitted_queue_ = queue;
+    submitted_queue_seq_ = queue_seq;
     submitted_fence_ = fence;
 }
 
@@ -240,17 +239,17 @@ std::string CommandBuffer::PrintCommandBufferState(CommandBufferState cb_state) 
         case CommandBufferState::kExecutable:
             return "END_CALLED";
         case CommandBufferState::kPending:
-            return "SUBMITTED_NO_MORE_INFO";
+            return "SUBMITTED";
         case CommandBufferState::kInvalid:
             return "INVALID";
         case CommandBufferState::kInitialReset:
             return "RESET";
         case CommandBufferState::kSubmittedExecutionNotStarted:
-            return "SUBMITTED_EXECUTION_NOT_STARTED";
+            return "NOT_STARTED";
         case CommandBufferState::kSubmittedExecutionIncomplete:
-            return "SUBMITTED_EXECUTION_INCOMPLETE";
+            return "INCOMPLETE";
         case CommandBufferState::kSubmittedExecutionCompleted:
-            return "SUBMITTED_EXECUTION_COMPLETE";
+            return "COMPLETED";
         case CommandBufferState::kNotSubmitted:
             return "NOT_SUBMITTED";
         default:
@@ -292,13 +291,13 @@ std::string CommandBuffer::PrintCommandState(CommandState cm_state) const {
         case CommandState::kCommandNotSubmitted:
             return "NOT_SUBMITTED";
         case CommandState::kCommandPending:
-            return "SUBMITTED_NO_MORE_INFO";
+            return "SUBMITTED";
         case CommandState::kCommandNotStarted:
-            return "SUBMITTED_EXECUTION_NOT_STARTED";
+            return "NOT_STARTED";
         case CommandState::kCommandIncomplete:
-            return "SUBMITTED_EXECUTION_INCOMPLETE";
+            return "INCOMPLETE";
         case CommandState::kCommandCompleted:
-            return "SUBMITTED_EXECUTION_COMPLETE";
+            return "COMPLETED";
         default:
             assert(true);
             return "UNKNOWN";
@@ -469,9 +468,9 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
 
     os << YAML::Key << "queueSeq" << YAML::Value;
     if (IsPrimaryCommandBuffer()) {
-        os << Uint64ToStr(submitted_queue_seq_);
+        os << submitted_queue_seq_;
     } else {
-        os << Uint64ToStr(secondary_cb_queue_seq);
+        os << secondary_cb_queue_seq;
     }
     os << YAML::Key << "level" << YAML::Value;
     if (IsPrimaryCommandBuffer()) {

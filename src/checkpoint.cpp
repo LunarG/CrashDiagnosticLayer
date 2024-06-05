@@ -16,6 +16,7 @@
 
 #include "checkpoint.h"
 #include "device.h"
+#include "logger.h"
 
 #include <cassert>
 #include <vulkan/utility/vk_struct_helper.hpp>
@@ -37,6 +38,8 @@ void Checkpoint::WriteBottom(VkCommandBuffer cmd, uint32_t value) { mgr_->WriteB
 
 uint32_t Checkpoint::ReadTop() const { return mgr_->ReadTop(*this); }
 uint32_t Checkpoint::ReadBottom() const { return mgr_->ReadBottom(*this); }
+
+void Checkpoint::Reset() { mgr_->Reset(*this); }
 
 BufferMarkerCheckpointMgr::BufferMarkerCheckpointMgr(Device &device) : device_(device), markers_(device) {}
 
@@ -78,6 +81,13 @@ uint32_t BufferMarkerCheckpointMgr::ReadBottom(const Checkpoint &c) const {
     return iter->second.bottom_marker->Read();
 }
 
+void BufferMarkerCheckpointMgr::Reset(Checkpoint &c) {
+    auto iter = checkpoint_data_.find(c.Id());
+    assert(iter != checkpoint_data_.end());
+    iter->second.top_marker->Write(0);
+    iter->second.bottom_marker->Write(0);
+}
+
 DiagnosticCheckpointMgr::DiagnosticCheckpointMgr(Device &device) : device_(device) {}
 
 std::unique_ptr<Checkpoint> DiagnosticCheckpointMgr::Allocate(uint32_t initial_value) {
@@ -111,9 +121,17 @@ uint32_t DiagnosticCheckpointMgr::ReadBottom(const Checkpoint &c) const {
     return iter->second.bottom_value;
 }
 
+void DiagnosticCheckpointMgr::Reset(Checkpoint &c) {
+    auto iter = checkpoint_data_.find(c.Id());
+    assert(iter != checkpoint_data_.end());
+    iter->second.top_value = 0;
+    iter->second.bottom_value = 0;
+}
+
 void DiagnosticCheckpointMgr::Update() {
     auto queues = device_.GetAllQueues();
     for (auto &q : queues) {
+        device_.Log().Verbose("DiagnosticCheckpointMgr::Update queue %x begin", q->GetVkQueue());
         std::vector<VkCheckpointDataNV> checkpoints;
         uint32_t num = 0;
 
@@ -128,9 +146,13 @@ void DiagnosticCheckpointMgr::Update() {
             uint32_t id = checkpoint >> kIdShift;
             uint32_t value = uint32_t(checkpoint & kValueMask);
 
+            device_.Log().Verbose("checkpoint 0x%16x id=0x%x value=%d stage=%s", checkpoint, id, value,
+                                  (cp.stage == VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT ? "bottom" : "top"));
             // TODO lock?
             auto iter = checkpoint_data_.find(id);
-            assert(iter != checkpoint_data_.end());
+            if (iter == checkpoint_data_.end()) {
+                continue;
+            }
 
             if (cp.stage == VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT) {
                 iter->second.top_value = value;
@@ -140,6 +162,7 @@ void DiagnosticCheckpointMgr::Update() {
                 assert(false);
             }
         }
+        device_.Log().Verbose("DiagnosticCheckpointMgr::Update queue %x end", q->GetVkQueue());
     }
 }
 

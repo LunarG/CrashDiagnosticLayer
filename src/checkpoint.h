@@ -35,6 +35,8 @@ class Checkpoint {
     uint32_t ReadTop() const;
     uint32_t ReadBottom() const;
 
+    void Reset();
+
     CheckpointId Id() const { return id_; }
 
    private:
@@ -52,6 +54,7 @@ class CheckpointMgr {
     virtual uint32_t ReadTop(const Checkpoint &) const = 0;
     virtual uint32_t ReadBottom(const Checkpoint &) const = 0;
     virtual void Update() {}
+    virtual void Reset(Checkpoint&) = 0;
 };
 
 class BufferMarkerCheckpointMgr : public CheckpointMgr {
@@ -67,6 +70,7 @@ class BufferMarkerCheckpointMgr : public CheckpointMgr {
     uint32_t ReadTop(const Checkpoint &) const override;
     uint32_t ReadBottom(const Checkpoint &) const override;
 
+    void Reset(Checkpoint&) override;
    private:
     struct Data {
         std::unique_ptr<Marker> top_marker, bottom_marker;
@@ -93,9 +97,10 @@ class DiagnosticCheckpointMgr : public CheckpointMgr {
     uint32_t ReadBottom(const Checkpoint &) const override;
     void Update() override;
 
+    void Reset(Checkpoint&) override;
    private:
-    static constexpr uintptr_t kIdShift = (sizeof(uintptr_t) * 8 / 2);
-    static constexpr uintptr_t kValueMask = ((uintptr_t(1) << kIdShift) - 1);
+    static constexpr uintptr_t kIdShift = 16;
+    static constexpr uintptr_t kValueMask = 0xffff;
 
     struct Data {
         uint32_t top_value, bottom_value;

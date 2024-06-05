@@ -113,8 +113,10 @@ static void ParseSubmitInfo(SubmitInfo& info, const YAML::Node& in_node) {
             info.id = node.second.as<uint64_t>();
         } else if (key == "state") {
             info.state = node.second.as<std::string>();
-        } else if (key == "seq") {
-            info.seq = node.second.as<uint64_t>();
+        } else if (key == "start_seq") {
+            info.start_seq = node.second.as<uint64_t>();
+        } else if (key == "end_seq") {
+            info.end_seq = node.second.as<uint64_t>();
         } else if (key == "CommandBuffers") {
             ASSERT_TRUE(node.second.IsSequence());
             for (const auto& elem : node.second) {

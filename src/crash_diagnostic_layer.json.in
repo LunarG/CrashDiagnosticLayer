@@ -45,6 +45,15 @@
                 ]
             },
             {
+                "name": "VK_EXT_debug_report",
+                "spec_version": "10",
+                "entrypoints": [
+                    "vkCreateDebugReportCallbackEXT",
+                    "vkDebugReportMessageEXT",
+                    "vkDestroyDebugReportCallbackEXT"
+                ]
+            },
+            {
                 "name": "VK_EXT_tooling_info",
                 "spec_version": "1",
                 "entrypoints": [
