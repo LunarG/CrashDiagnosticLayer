@@ -372,7 +372,6 @@ class Context : public Interceptor {
     std::filesystem::path output_path_;
     int total_logs_ = 0;
 
-    bool dump_configs_ = false;
     std::vector<std::pair<std::string, std::string>> configs_;
 
     // Watchdog

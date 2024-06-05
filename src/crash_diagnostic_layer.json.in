@@ -76,20 +76,6 @@
                             ]
                         },
                         {
-                            "key": "dump_configs",
-                            "env": "CDL_DUMP_CONFIGS",
-                            "label": "Dump configs",
-                            "description": "Include the active configuration settings in dump files.",
-                            "type": "BOOL",
-                            "default": false,
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ]
-                        },
-                        {
                             "key": "trace_on",
                             "env": "CDL_TRACE_ON",
                             "label": "Enable Tracing",
