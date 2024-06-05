@@ -55,7 +55,6 @@ const std::string kCdlVersion = std::to_string(VK_VERSION_MAJOR(VK_HEADER_VERSIO
                                 std::to_string(VK_VERSION_PATCH(VK_HEADER_VERSION_COMPLETE));
 namespace settings {
 const char* kOutputPath = "output_path";
-const char* kDumpConfigs = "dump_configs";
 const char* kTraceOn = "trace_on";
 const char* kLogFile = "log_file";
 enum LogOutputs {
@@ -96,10 +95,8 @@ template <>
 void Context::GetEnvVal<bool>(VkuLayerSettingSet settings, const char* name, bool& value) {
     if (vkuHasLayerSetting(settings, name)) {
         vkuGetLayerSettingValue(settings, name, value);
-        if (dump_configs_) {
-            std::stringstream ss;
-            configs_.push_back(std::make_pair(name, value ? "true" : "false"));
-        }
+        std::stringstream ss;
+        configs_.push_back(std::make_pair(name, value ? "true" : "false"));
     }
 }
 
@@ -107,11 +104,9 @@ template <class T>
 void Context::GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value) {
     if (vkuHasLayerSetting(settings, name)) {
         vkuGetLayerSettingValue(settings, name, value);
-        if (dump_configs_) {
-            std::stringstream ss;
-            ss << value;
-            configs_.push_back(std::make_pair(name, ss.str()));
-        }
+        std::stringstream ss;
+        ss << value;
+        configs_.push_back(std::make_pair(name, ss.str()));
     }
 }
 
@@ -148,8 +143,6 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
         Log().Error("vkuCreateLayerSettingSet failed with error %d", result);
         return;
     }
-    // report cdl configs
-    GetEnvVal<bool>(layer_setting_set, settings::kDumpConfigs, dump_configs_);
 
     // output path
     {
@@ -608,13 +601,12 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     timestr << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
     os << YAML::Key << "startTime" << YAML::Value << timestr.str();
     os << YAML::Key << "timeSinceStart" << YAML::Value << DurationToStr(elapsed);
-    if (dump_configs_) {
-        os << YAML::Key << "Settings" << YAML::Value << YAML::BeginMap;
+
+    os << YAML::Key << "Settings" << YAML::Value << YAML::BeginMap;
         for (auto& c : configs_) {
             os << YAML::Key << c.first << YAML::Value << c.second;
         }
-        os << YAML::EndMap;
-    }
+    os << YAML::EndMap;
 
     os << YAML::Key << "SystemInfo" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "osName" << YAML::Value << system_.GetOsName();
