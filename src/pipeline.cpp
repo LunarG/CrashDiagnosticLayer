@@ -58,9 +58,9 @@ const PipelineBoundShader& Pipeline::FindShaderStage(VkShaderStageFlagBits shade
     return PipelineBoundShader::NULL_SHADER;
 }
 
-YAML::Emitter& Pipeline::PrintName(YAML::Emitter& os, const ObjectInfoDB& name_resolver) const {
-    // TODO: begin / end map?
-    os << name_resolver.GetObjectInfo((uint64_t)vk_pipeline_);
+YAML::Emitter& Pipeline::Print(YAML::Emitter& os, const ObjectInfoDB& name_resolver) const {
+    os << YAML::BeginMap;
+    os << YAML::Key << "handle" << YAML::Value << name_resolver.GetObjectInfo((uint64_t)vk_pipeline_);
     auto bind_point = GetVkPipelineBindPoint();
     os << YAML::Key << "bindPoint" << YAML::Value;
     if (bind_point == VK_PIPELINE_BIND_POINT_GRAPHICS) {
@@ -70,20 +70,14 @@ YAML::Emitter& Pipeline::PrintName(YAML::Emitter& os, const ObjectInfoDB& name_r
     } else {
         os << "unknown";
     }
-    return os;
-}
-
-YAML::Emitter& Pipeline::Print(YAML::Emitter& os, const ObjectInfoDB& name_resolver) const {
-    os << YAML::BeginMap;
-    PrintName(os, name_resolver);
 
     const auto num_shaders = shaders_.size();
     if (num_shaders) {
         os << YAML::Key << "shaderInfos" << YAML::Value << YAML::BeginSeq;
         for (auto shader_index = 0u; shader_index < num_shaders; ++shader_index) {
             auto const& shader = shaders_[shader_index];
-            os << YAML::BeginMap;
             // TODO: stream << indent2 << "- # shaderInfo:";
+            os << YAML::BeginMap;
             os << YAML::Key << "stage" << YAML::Value;
             if (shader.stage == VK_SHADER_STAGE_VERTEX_BIT) {
                 os << "vs";

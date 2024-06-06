@@ -212,6 +212,7 @@ class InterceptCommandsOutputGenerator(CdlBaseOutputGenerator):
         out = []
         out.append('''
 
+#include <string>
 #include <vector>
 #include <iostream>
 #include <vulkan/vulkan.h>
@@ -237,6 +238,7 @@ class CommandTracker
         out.append(''' private:
   std::vector<Command> commands_;
   CommandRecorder recorder_;
+  std::vector<std::string> labels_;
 };
 ''')
         self.write("".join(out))
@@ -266,6 +268,15 @@ void CommandTracker::Reset()
             out.append(f'  cmd.type = Command::Type::k{vkcommand.name[2:]};\n')
             out.append('  cmd.id = static_cast<uint32_t>(commands_.size()) + 1;\n')
             func_call = f'cmd.parameters = recorder_.Record{vkcommand.name[2:]}('
+
+            if vkcommand.name == 'vkCmdDebugMarkerBeginEXT':
+                out.append('  labels_.push_back(pMarkerInfo->pMarkerName);\n')
+            elif vkcommand.name == 'vkCmdBeginDebugUtilsLabelEXT':
+                out.append('  labels_.push_back(pLabelInfo->pLabelName);\n')
+            out.append('  cmd.labels = labels_;\n')
+            if vkcommand.name in ('vkCmdEndDebugUtilsLabelEXT', 'vkCmdDebugMarkerEndEXT'):
+                out.append('  labels_.pop_back();\n')
+
             count = 0
             for vkparam in vkcommand.params:
                 if count != 0:

@@ -21,6 +21,8 @@
 
 #include <memory>
 #include <mutex>
+#include <stack>
+#include <string>
 #include <vector>
 
 #include "command_common.h"

@@ -25,6 +25,7 @@
 
 // NOLINTBEGIN
 
+#include <string>
 #include <vector>
 #include <iostream>
 #include <vulkan/vulkan.h>
@@ -751,6 +752,7 @@ class CommandTracker {
    private:
     std::vector<Command> commands_;
     CommandRecorder recorder_;
+    std::vector<std::string> labels_;
 };
 
 // NOLINTEND
