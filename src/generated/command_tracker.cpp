@@ -39,6 +39,7 @@ void CommandTracker::BeginCommandBuffer(VkCommandBuffer commandBuffer, const VkC
     Command cmd{};
     cmd.type = Command::Type::kBeginCommandBuffer;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordBeginCommandBuffer(commandBuffer, pBeginInfo);
     commands_.push_back(cmd);
 }
@@ -47,6 +48,7 @@ void CommandTracker::EndCommandBuffer(VkCommandBuffer commandBuffer) {
     Command cmd{};
     cmd.type = Command::Type::kEndCommandBuffer;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordEndCommandBuffer(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -55,6 +57,7 @@ void CommandTracker::ResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
     Command cmd{};
     cmd.type = Command::Type::kResetCommandBuffer;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordResetCommandBuffer(commandBuffer, flags);
     commands_.push_back(cmd);
 }
@@ -64,6 +67,7 @@ void CommandTracker::CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBi
     Command cmd{};
     cmd.type = Command::Type::kCmdBindPipeline;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
     commands_.push_back(cmd);
 }
@@ -73,6 +77,7 @@ void CommandTracker::CmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firs
     Command cmd{};
     cmd.type = Command::Type::kCmdSetViewport;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
     commands_.push_back(cmd);
 }
@@ -82,6 +87,7 @@ void CommandTracker::CmdSetScissor(VkCommandBuffer commandBuffer, uint32_t first
     Command cmd{};
     cmd.type = Command::Type::kCmdSetScissor;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
     commands_.push_back(cmd);
 }
@@ -90,6 +96,7 @@ void CommandTracker::CmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWi
     Command cmd{};
     cmd.type = Command::Type::kCmdSetLineWidth;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetLineWidth(commandBuffer, lineWidth);
     commands_.push_back(cmd);
 }
@@ -99,6 +106,7 @@ void CommandTracker::CmdSetDepthBias(VkCommandBuffer commandBuffer, float depthB
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthBias;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
     commands_.push_back(cmd);
@@ -108,6 +116,7 @@ void CommandTracker::CmdSetBlendConstants(VkCommandBuffer commandBuffer, const f
     Command cmd{};
     cmd.type = Command::Type::kCmdSetBlendConstants;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetBlendConstants(commandBuffer, blendConstants);
     commands_.push_back(cmd);
 }
@@ -116,6 +125,7 @@ void CommandTracker::CmdSetDepthBounds(VkCommandBuffer commandBuffer, float minD
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthBounds;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
     commands_.push_back(cmd);
 }
@@ -125,6 +135,7 @@ void CommandTracker::CmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkS
     Command cmd{};
     cmd.type = Command::Type::kCmdSetStencilCompareMask;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
     commands_.push_back(cmd);
 }
@@ -134,6 +145,7 @@ void CommandTracker::CmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkSte
     Command cmd{};
     cmd.type = Command::Type::kCmdSetStencilWriteMask;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
     commands_.push_back(cmd);
 }
@@ -143,6 +155,7 @@ void CommandTracker::CmdSetStencilReference(VkCommandBuffer commandBuffer, VkSte
     Command cmd{};
     cmd.type = Command::Type::kCmdSetStencilReference;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetStencilReference(commandBuffer, faceMask, reference);
     commands_.push_back(cmd);
 }
@@ -154,6 +167,7 @@ void CommandTracker::CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipe
     Command cmd{};
     cmd.type = Command::Type::kCmdBindDescriptorSets;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
                                               pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
@@ -165,6 +179,7 @@ void CommandTracker::CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer 
     Command cmd{};
     cmd.type = Command::Type::kCmdBindIndexBuffer;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
     commands_.push_back(cmd);
 }
@@ -174,6 +189,7 @@ void CommandTracker::CmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_
     Command cmd{};
     cmd.type = Command::Type::kCmdBindVertexBuffers;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
     commands_.push_back(cmd);
@@ -184,6 +200,7 @@ void CommandTracker::CmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount
     Command cmd{};
     cmd.type = Command::Type::kCmdDraw;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
     commands_.push_back(cmd);
 }
@@ -193,6 +210,7 @@ void CommandTracker::CmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t inde
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndexed;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset,
                                                     firstInstance);
     commands_.push_back(cmd);
@@ -203,6 +221,7 @@ void CommandTracker::CmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buf
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndirect;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
     commands_.push_back(cmd);
 }
@@ -212,6 +231,7 @@ void CommandTracker::CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuf
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndexedIndirect;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
     commands_.push_back(cmd);
 }
@@ -221,6 +241,7 @@ void CommandTracker::CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCo
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatch;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
     commands_.push_back(cmd);
 }
@@ -229,6 +250,7 @@ void CommandTracker::CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchIndirect;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDispatchIndirect(commandBuffer, buffer, offset);
     commands_.push_back(cmd);
 }
@@ -238,6 +260,7 @@ void CommandTracker::CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBu
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyBuffer;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
     commands_.push_back(cmd);
 }
@@ -248,6 +271,7 @@ void CommandTracker::CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImag
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyImage;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
                                                   regionCount, pRegions);
     commands_.push_back(cmd);
@@ -259,6 +283,7 @@ void CommandTracker::CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImag
     Command cmd{};
     cmd.type = Command::Type::kCmdBlitImage;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
                                                   regionCount, pRegions, filter);
     commands_.push_back(cmd);
@@ -270,6 +295,7 @@ void CommandTracker::CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyBufferToImage;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
     commands_.push_back(cmd);
@@ -280,6 +306,7 @@ void CommandTracker::CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyImageToBuffer;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
     commands_.push_back(cmd);
@@ -290,6 +317,7 @@ void CommandTracker::CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dst
     Command cmd{};
     cmd.type = Command::Type::kCmdUpdateBuffer;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
     commands_.push_back(cmd);
 }
@@ -299,6 +327,7 @@ void CommandTracker::CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBu
     Command cmd{};
     cmd.type = Command::Type::kCmdFillBuffer;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
     commands_.push_back(cmd);
 }
@@ -309,6 +338,7 @@ void CommandTracker::CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage i
     Command cmd{};
     cmd.type = Command::Type::kCmdClearColorImage;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
     commands_.push_back(cmd);
 }
@@ -319,6 +349,7 @@ void CommandTracker::CmdClearDepthStencilImage(VkCommandBuffer commandBuffer, Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdClearDepthStencilImage;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil,
                                                                rangeCount, pRanges);
     commands_.push_back(cmd);
@@ -330,6 +361,7 @@ void CommandTracker::CmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t
     Command cmd{};
     cmd.type = Command::Type::kCmdClearAttachments;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
     commands_.push_back(cmd);
@@ -341,6 +373,7 @@ void CommandTracker::CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcI
     Command cmd{};
     cmd.type = Command::Type::kCmdResolveImage;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
                                                      regionCount, pRegions);
     commands_.push_back(cmd);
@@ -350,6 +383,7 @@ void CommandTracker::CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, V
     Command cmd{};
     cmd.type = Command::Type::kCmdSetEvent;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetEvent(commandBuffer, event, stageMask);
     commands_.push_back(cmd);
 }
@@ -358,6 +392,7 @@ void CommandTracker::CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event,
     Command cmd{};
     cmd.type = Command::Type::kCmdResetEvent;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdResetEvent(commandBuffer, event, stageMask);
     commands_.push_back(cmd);
 }
@@ -371,6 +406,7 @@ void CommandTracker::CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t event
     Command cmd{};
     cmd.type = Command::Type::kCmdWaitEvents;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWaitEvents(
         commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers,
         bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
@@ -387,6 +423,7 @@ void CommandTracker::CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelin
     Command cmd{};
     cmd.type = Command::Type::kCmdPipelineBarrier;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPipelineBarrier(
         commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
         bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
@@ -398,6 +435,7 @@ void CommandTracker::CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool qu
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginQuery;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginQuery(commandBuffer, queryPool, query, flags);
     commands_.push_back(cmd);
 }
@@ -406,6 +444,7 @@ void CommandTracker::CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool quer
     Command cmd{};
     cmd.type = Command::Type::kCmdEndQuery;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndQuery(commandBuffer, queryPool, query);
     commands_.push_back(cmd);
 }
@@ -415,6 +454,7 @@ void CommandTracker::CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPoo
     Command cmd{};
     cmd.type = Command::Type::kCmdResetQueryPool;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
     commands_.push_back(cmd);
 }
@@ -424,6 +464,7 @@ void CommandTracker::CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipeline
     Command cmd{};
     cmd.type = Command::Type::kCmdWriteTimestamp;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
     commands_.push_back(cmd);
 }
@@ -434,6 +475,7 @@ void CommandTracker::CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQu
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyQueryPoolResults;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount,
                                                              dstBuffer, dstOffset, stride, flags);
     commands_.push_back(cmd);
@@ -445,6 +487,7 @@ void CommandTracker::CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineL
     Command cmd{};
     cmd.type = Command::Type::kCmdPushConstants;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
     commands_.push_back(cmd);
 }
@@ -454,6 +497,7 @@ void CommandTracker::CmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkR
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginRenderPass;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
     commands_.push_back(cmd);
 }
@@ -462,6 +506,7 @@ void CommandTracker::CmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassCont
     Command cmd{};
     cmd.type = Command::Type::kCmdNextSubpass;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdNextSubpass(commandBuffer, contents);
     commands_.push_back(cmd);
 }
@@ -470,6 +515,7 @@ void CommandTracker::CmdEndRenderPass(VkCommandBuffer commandBuffer) {
     Command cmd{};
     cmd.type = Command::Type::kCmdEndRenderPass;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndRenderPass(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -479,6 +525,7 @@ void CommandTracker::CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t 
     Command cmd{};
     cmd.type = Command::Type::kCmdExecuteCommands;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
     commands_.push_back(cmd);
 }
@@ -487,6 +534,7 @@ void CommandTracker::CmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t de
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDeviceMask;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDeviceMask(commandBuffer, deviceMask);
     commands_.push_back(cmd);
 }
@@ -497,6 +545,7 @@ void CommandTracker::CmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t bas
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchBase;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX,
                                                      groupCountY, groupCountZ);
     commands_.push_back(cmd);
@@ -508,6 +557,7 @@ void CommandTracker::CmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndirectCount;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset,
                                                           maxDrawCount, stride);
     commands_.push_back(cmd);
@@ -519,6 +569,7 @@ void CommandTracker::CmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndexedIndirectCount;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer,
                                                                  countBufferOffset, maxDrawCount, stride);
     commands_.push_back(cmd);
@@ -529,6 +580,7 @@ void CommandTracker::CmdBeginRenderPass2(VkCommandBuffer commandBuffer, const Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginRenderPass2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
     commands_.push_back(cmd);
 }
@@ -538,6 +590,7 @@ void CommandTracker::CmdNextSubpass2(VkCommandBuffer commandBuffer, const VkSubp
     Command cmd{};
     cmd.type = Command::Type::kCmdNextSubpass2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
     commands_.push_back(cmd);
 }
@@ -546,6 +599,7 @@ void CommandTracker::CmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSu
     Command cmd{};
     cmd.type = Command::Type::kCmdEndRenderPass2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
     commands_.push_back(cmd);
 }
@@ -555,6 +609,7 @@ void CommandTracker::CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
     Command cmd{};
     cmd.type = Command::Type::kCmdSetEvent2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetEvent2(commandBuffer, event, pDependencyInfo);
     commands_.push_back(cmd);
 }
@@ -563,6 +618,7 @@ void CommandTracker::CmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event
     Command cmd{};
     cmd.type = Command::Type::kCmdResetEvent2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdResetEvent2(commandBuffer, event, stageMask);
     commands_.push_back(cmd);
 }
@@ -572,6 +628,7 @@ void CommandTracker::CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t even
     Command cmd{};
     cmd.type = Command::Type::kCmdWaitEvents2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
     commands_.push_back(cmd);
 }
@@ -580,6 +637,7 @@ void CommandTracker::CmdPipelineBarrier2(VkCommandBuffer commandBuffer, const Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdPipelineBarrier2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
     commands_.push_back(cmd);
 }
@@ -589,6 +647,7 @@ void CommandTracker::CmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelin
     Command cmd{};
     cmd.type = Command::Type::kCmdWriteTimestamp2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
     commands_.push_back(cmd);
 }
@@ -597,6 +656,7 @@ void CommandTracker::CmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyB
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyBuffer2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
     commands_.push_back(cmd);
 }
@@ -605,6 +665,7 @@ void CommandTracker::CmdCopyImage2(VkCommandBuffer commandBuffer, const VkCopyIm
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyImage2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyImage2(commandBuffer, pCopyImageInfo);
     commands_.push_back(cmd);
 }
@@ -614,6 +675,7 @@ void CommandTracker::CmdCopyBufferToImage2(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyBufferToImage2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
     commands_.push_back(cmd);
 }
@@ -623,6 +685,7 @@ void CommandTracker::CmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyImageToBuffer2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
     commands_.push_back(cmd);
 }
@@ -631,6 +694,7 @@ void CommandTracker::CmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitIm
     Command cmd{};
     cmd.type = Command::Type::kCmdBlitImage2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBlitImage2(commandBuffer, pBlitImageInfo);
     commands_.push_back(cmd);
 }
@@ -639,6 +703,7 @@ void CommandTracker::CmdResolveImage2(VkCommandBuffer commandBuffer, const VkRes
     Command cmd{};
     cmd.type = Command::Type::kCmdResolveImage2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdResolveImage2(commandBuffer, pResolveImageInfo);
     commands_.push_back(cmd);
 }
@@ -647,6 +712,7 @@ void CommandTracker::CmdBeginRendering(VkCommandBuffer commandBuffer, const VkRe
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginRendering;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginRendering(commandBuffer, pRenderingInfo);
     commands_.push_back(cmd);
 }
@@ -655,6 +721,7 @@ void CommandTracker::CmdEndRendering(VkCommandBuffer commandBuffer) {
     Command cmd{};
     cmd.type = Command::Type::kCmdEndRendering;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndRendering(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -663,6 +730,7 @@ void CommandTracker::CmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFla
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCullMode;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCullMode(commandBuffer, cullMode);
     commands_.push_back(cmd);
 }
@@ -671,6 +739,7 @@ void CommandTracker::CmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace 
     Command cmd{};
     cmd.type = Command::Type::kCmdSetFrontFace;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetFrontFace(commandBuffer, frontFace);
     commands_.push_back(cmd);
 }
@@ -679,6 +748,7 @@ void CommandTracker::CmdSetPrimitiveTopology(VkCommandBuffer commandBuffer, VkPr
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPrimitiveTopology;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
     commands_.push_back(cmd);
 }
@@ -688,6 +758,7 @@ void CommandTracker::CmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint
     Command cmd{};
     cmd.type = Command::Type::kCmdSetViewportWithCount;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
     commands_.push_back(cmd);
 }
@@ -697,6 +768,7 @@ void CommandTracker::CmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint3
     Command cmd{};
     cmd.type = Command::Type::kCmdSetScissorWithCount;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
     commands_.push_back(cmd);
 }
@@ -707,6 +779,7 @@ void CommandTracker::CmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32
     Command cmd{};
     cmd.type = Command::Type::kCmdBindVertexBuffers2;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers,
                                                            pOffsets, pSizes, pStrides);
     commands_.push_back(cmd);
@@ -716,6 +789,7 @@ void CommandTracker::CmdSetDepthTestEnable(VkCommandBuffer commandBuffer, VkBool
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthTestEnable;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
     commands_.push_back(cmd);
 }
@@ -724,6 +798,7 @@ void CommandTracker::CmdSetDepthWriteEnable(VkCommandBuffer commandBuffer, VkBoo
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthWriteEnable;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
     commands_.push_back(cmd);
 }
@@ -732,6 +807,7 @@ void CommandTracker::CmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompa
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthCompareOp;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
     commands_.push_back(cmd);
 }
@@ -740,6 +816,7 @@ void CommandTracker::CmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthBoundsTestEnable;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
     commands_.push_back(cmd);
 }
@@ -748,6 +825,7 @@ void CommandTracker::CmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBo
     Command cmd{};
     cmd.type = Command::Type::kCmdSetStencilTestEnable;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
     commands_.push_back(cmd);
 }
@@ -757,6 +835,7 @@ void CommandTracker::CmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFac
     Command cmd{};
     cmd.type = Command::Type::kCmdSetStencilOp;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
     commands_.push_back(cmd);
 }
@@ -765,6 +844,7 @@ void CommandTracker::CmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRasterizerDiscardEnable;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
     commands_.push_back(cmd);
 }
@@ -773,6 +853,7 @@ void CommandTracker::CmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthBiasEnable;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
     commands_.push_back(cmd);
 }
@@ -781,6 +862,7 @@ void CommandTracker::CmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPrimitiveRestartEnable;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
     commands_.push_back(cmd);
 }
@@ -790,6 +872,7 @@ void CommandTracker::CmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginVideoCodingKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
     commands_.push_back(cmd);
 }
@@ -799,6 +882,7 @@ void CommandTracker::CmdEndVideoCodingKHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdEndVideoCodingKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
     commands_.push_back(cmd);
 }
@@ -808,6 +892,7 @@ void CommandTracker::CmdControlVideoCodingKHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdControlVideoCodingKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
     commands_.push_back(cmd);
 }
@@ -816,6 +901,7 @@ void CommandTracker::CmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const VkVi
     Command cmd{};
     cmd.type = Command::Type::kCmdDecodeVideoKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
     commands_.push_back(cmd);
 }
@@ -824,6 +910,7 @@ void CommandTracker::CmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const V
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginRenderingKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
     commands_.push_back(cmd);
 }
@@ -832,6 +919,7 @@ void CommandTracker::CmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
     Command cmd{};
     cmd.type = Command::Type::kCmdEndRenderingKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndRenderingKHR(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -840,6 +928,7 @@ void CommandTracker::CmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDeviceMaskKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
     commands_.push_back(cmd);
 }
@@ -850,6 +939,7 @@ void CommandTracker::CmdDispatchBaseKHR(VkCommandBuffer commandBuffer, uint32_t 
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchBaseKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX,
                                                         groupCountY, groupCountZ);
     commands_.push_back(cmd);
@@ -861,6 +951,7 @@ void CommandTracker::CmdPushDescriptorSetKHR(VkCommandBuffer commandBuffer, VkPi
     Command cmd{};
     cmd.type = Command::Type::kCmdPushDescriptorSetKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set,
                                                              descriptorWriteCount, pDescriptorWrites);
     commands_.push_back(cmd);
@@ -872,6 +963,7 @@ void CommandTracker::CmdPushDescriptorSetWithTemplateKHR(VkCommandBuffer command
     Command cmd{};
     cmd.type = Command::Type::kCmdPushDescriptorSetWithTemplateKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate,
                                                                          layout, set, pData);
     commands_.push_back(cmd);
@@ -883,6 +975,7 @@ void CommandTracker::CmdBeginRenderPass2KHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginRenderPass2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
     commands_.push_back(cmd);
 }
@@ -892,6 +985,7 @@ void CommandTracker::CmdNextSubpass2KHR(VkCommandBuffer commandBuffer, const VkS
     Command cmd{};
     cmd.type = Command::Type::kCmdNextSubpass2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
     commands_.push_back(cmd);
 }
@@ -900,6 +994,7 @@ void CommandTracker::CmdEndRenderPass2KHR(VkCommandBuffer commandBuffer, const V
     Command cmd{};
     cmd.type = Command::Type::kCmdEndRenderPass2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
     commands_.push_back(cmd);
 }
@@ -910,6 +1005,7 @@ void CommandTracker::CmdDrawIndirectCountKHR(VkCommandBuffer commandBuffer, VkBu
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndirectCountKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer,
                                                              countBufferOffset, maxDrawCount, stride);
     commands_.push_back(cmd);
@@ -921,6 +1017,7 @@ void CommandTracker::CmdDrawIndexedIndirectCountKHR(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndexedIndirectCountKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer,
                                                                     countBufferOffset, maxDrawCount, stride);
     commands_.push_back(cmd);
@@ -931,6 +1028,7 @@ void CommandTracker::CmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdSetFragmentShadingRateKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
     commands_.push_back(cmd);
 }
@@ -940,6 +1038,7 @@ void CommandTracker::CmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer comma
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRenderingAttachmentLocationsKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
     commands_.push_back(cmd);
 }
@@ -949,6 +1048,7 @@ void CommandTracker::CmdSetRenderingInputAttachmentIndicesKHR(
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRenderingInputAttachmentIndicesKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
     commands_.push_back(cmd);
 }
@@ -957,6 +1057,7 @@ void CommandTracker::CmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVi
     Command cmd{};
     cmd.type = Command::Type::kCmdEncodeVideoKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
     commands_.push_back(cmd);
 }
@@ -966,6 +1067,7 @@ void CommandTracker::CmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent even
     Command cmd{};
     cmd.type = Command::Type::kCmdSetEvent2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
     commands_.push_back(cmd);
 }
@@ -974,6 +1076,7 @@ void CommandTracker::CmdResetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent ev
     Command cmd{};
     cmd.type = Command::Type::kCmdResetEvent2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdResetEvent2KHR(commandBuffer, event, stageMask);
     commands_.push_back(cmd);
 }
@@ -983,6 +1086,7 @@ void CommandTracker::CmdWaitEvents2KHR(VkCommandBuffer commandBuffer, uint32_t e
     Command cmd{};
     cmd.type = Command::Type::kCmdWaitEvents2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
     commands_.push_back(cmd);
 }
@@ -991,6 +1095,7 @@ void CommandTracker::CmdPipelineBarrier2KHR(VkCommandBuffer commandBuffer, const
     Command cmd{};
     cmd.type = Command::Type::kCmdPipelineBarrier2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
     commands_.push_back(cmd);
 }
@@ -1000,6 +1105,7 @@ void CommandTracker::CmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipe
     Command cmd{};
     cmd.type = Command::Type::kCmdWriteTimestamp2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
     commands_.push_back(cmd);
 }
@@ -1009,6 +1115,7 @@ void CommandTracker::CmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkP
     Command cmd{};
     cmd.type = Command::Type::kCmdWriteBufferMarker2AMD;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
     commands_.push_back(cmd);
 }
@@ -1017,6 +1124,7 @@ void CommandTracker::CmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCo
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyBuffer2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
     commands_.push_back(cmd);
 }
@@ -1025,6 +1133,7 @@ void CommandTracker::CmdCopyImage2KHR(VkCommandBuffer commandBuffer, const VkCop
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyImage2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
     commands_.push_back(cmd);
 }
@@ -1034,6 +1143,7 @@ void CommandTracker::CmdCopyBufferToImage2KHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyBufferToImage2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
     commands_.push_back(cmd);
 }
@@ -1043,6 +1153,7 @@ void CommandTracker::CmdCopyImageToBuffer2KHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyImageToBuffer2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
     commands_.push_back(cmd);
 }
@@ -1051,6 +1162,7 @@ void CommandTracker::CmdBlitImage2KHR(VkCommandBuffer commandBuffer, const VkBli
     Command cmd{};
     cmd.type = Command::Type::kCmdBlitImage2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
     commands_.push_back(cmd);
 }
@@ -1059,6 +1171,7 @@ void CommandTracker::CmdResolveImage2KHR(VkCommandBuffer commandBuffer, const Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdResolveImage2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
     commands_.push_back(cmd);
 }
@@ -1067,6 +1180,7 @@ void CommandTracker::CmdTraceRaysIndirect2KHR(VkCommandBuffer commandBuffer, VkD
     Command cmd{};
     cmd.type = Command::Type::kCmdTraceRaysIndirect2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
     commands_.push_back(cmd);
 }
@@ -1076,6 +1190,7 @@ void CommandTracker::CmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuf
     Command cmd{};
     cmd.type = Command::Type::kCmdBindIndexBuffer2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
     commands_.push_back(cmd);
 }
@@ -1085,6 +1200,7 @@ void CommandTracker::CmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_
     Command cmd{};
     cmd.type = Command::Type::kCmdSetLineStippleKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
     commands_.push_back(cmd);
 }
@@ -1094,6 +1210,7 @@ void CommandTracker::CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdBindDescriptorSets2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
     commands_.push_back(cmd);
 }
@@ -1103,6 +1220,7 @@ void CommandTracker::CmdPushConstants2KHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdPushConstants2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
     commands_.push_back(cmd);
 }
@@ -1112,6 +1230,7 @@ void CommandTracker::CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdPushDescriptorSet2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
     commands_.push_back(cmd);
 }
@@ -1121,6 +1240,7 @@ void CommandTracker::CmdPushDescriptorSetWithTemplate2KHR(
     Command cmd{};
     cmd.type = Command::Type::kCmdPushDescriptorSetWithTemplate2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
     commands_.push_back(cmd);
@@ -1131,6 +1251,7 @@ void CommandTracker::CmdSetDescriptorBufferOffsets2EXT(
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDescriptorBufferOffsets2EXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
     commands_.push_back(cmd);
 }
@@ -1141,6 +1262,7 @@ void CommandTracker::CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     Command cmd{};
     cmd.type = Command::Type::kCmdBindDescriptorBufferEmbeddedSamplers2EXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindDescriptorBufferEmbeddedSamplers2EXT(
         commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
     commands_.push_back(cmd);
@@ -1151,6 +1273,8 @@ void CommandTracker::CmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdDebugMarkerBeginEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    labels_.push_back(pMarkerInfo->pMarkerName);
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
     commands_.push_back(cmd);
 }
@@ -1159,6 +1283,8 @@ void CommandTracker::CmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
     Command cmd{};
     cmd.type = Command::Type::kCmdDebugMarkerEndEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    labels_.pop_back();
     cmd.parameters = recorder_.RecordCmdDebugMarkerEndEXT(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -1168,6 +1294,7 @@ void CommandTracker::CmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdDebugMarkerInsertEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
     commands_.push_back(cmd);
 }
@@ -1178,6 +1305,7 @@ void CommandTracker::CmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandB
     Command cmd{};
     cmd.type = Command::Type::kCmdBindTransformFeedbackBuffersEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount,
                                                                         pBuffers, pOffsets, pSizes);
     commands_.push_back(cmd);
@@ -1189,6 +1317,7 @@ void CommandTracker::CmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginTransformFeedbackEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount,
                                                                   pCounterBuffers, pCounterBufferOffsets);
     commands_.push_back(cmd);
@@ -1200,6 +1329,7 @@ void CommandTracker::CmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer, u
     Command cmd{};
     cmd.type = Command::Type::kCmdEndTransformFeedbackEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount,
                                                                 pCounterBuffers, pCounterBufferOffsets);
     commands_.push_back(cmd);
@@ -1210,6 +1340,7 @@ void CommandTracker::CmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQu
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginQueryIndexedEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
     commands_.push_back(cmd);
 }
@@ -1219,6 +1350,7 @@ void CommandTracker::CmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQuer
     Command cmd{};
     cmd.type = Command::Type::kCmdEndQueryIndexedEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
     commands_.push_back(cmd);
 }
@@ -1230,6 +1362,7 @@ void CommandTracker::CmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndirectByteCountEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndirectByteCountEXT(
         commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
     commands_.push_back(cmd);
@@ -1239,6 +1372,7 @@ void CommandTracker::CmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer, const V
     Command cmd{};
     cmd.type = Command::Type::kCmdCuLaunchKernelNVX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
     commands_.push_back(cmd);
 }
@@ -1249,6 +1383,7 @@ void CommandTracker::CmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBu
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndirectCountAMD;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer,
                                                              countBufferOffset, maxDrawCount, stride);
     commands_.push_back(cmd);
@@ -1260,6 +1395,7 @@ void CommandTracker::CmdDrawIndexedIndirectCountAMD(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawIndexedIndirectCountAMD;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer,
                                                                     countBufferOffset, maxDrawCount, stride);
     commands_.push_back(cmd);
@@ -1270,6 +1406,7 @@ void CommandTracker::CmdBeginConditionalRenderingEXT(
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginConditionalRenderingEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
     commands_.push_back(cmd);
 }
@@ -1278,6 +1415,7 @@ void CommandTracker::CmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer
     Command cmd{};
     cmd.type = Command::Type::kCmdEndConditionalRenderingEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndConditionalRenderingEXT(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -1287,6 +1425,7 @@ void CommandTracker::CmdSetViewportWScalingNV(VkCommandBuffer commandBuffer, uin
     Command cmd{};
     cmd.type = Command::Type::kCmdSetViewportWScalingNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
     commands_.push_back(cmd);
@@ -1297,6 +1436,7 @@ void CommandTracker::CmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer, ui
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDiscardRectangleEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle,
                                                                discardRectangleCount, pDiscardRectangles);
     commands_.push_back(cmd);
@@ -1306,6 +1446,7 @@ void CommandTracker::CmdSetDiscardRectangleEnableEXT(VkCommandBuffer commandBuff
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDiscardRectangleEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
     commands_.push_back(cmd);
 }
@@ -1315,6 +1456,7 @@ void CommandTracker::CmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDiscardRectangleModeEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
     commands_.push_back(cmd);
 }
@@ -1323,6 +1465,8 @@ void CommandTracker::CmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, c
     Command cmd{};
     cmd.type = Command::Type::kCmdBeginDebugUtilsLabelEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    labels_.push_back(pLabelInfo->pLabelName);
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
     commands_.push_back(cmd);
 }
@@ -1331,6 +1475,8 @@ void CommandTracker::CmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
     Command cmd{};
     cmd.type = Command::Type::kCmdEndDebugUtilsLabelEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    labels_.pop_back();
     cmd.parameters = recorder_.RecordCmdEndDebugUtilsLabelEXT(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -1340,6 +1486,7 @@ void CommandTracker::CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdInsertDebugUtilsLabelEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
     commands_.push_back(cmd);
 }
@@ -1349,6 +1496,7 @@ void CommandTracker::CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer command
     Command cmd{};
     cmd.type = Command::Type::kCmdInitializeGraphScratchMemoryAMDX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
     commands_.push_back(cmd);
 }
@@ -1360,6 +1508,7 @@ void CommandTracker::CmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDevic
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchGraphAMDX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
     commands_.push_back(cmd);
 }
@@ -1371,6 +1520,7 @@ void CommandTracker::CmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchGraphIndirectAMDX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
     commands_.push_back(cmd);
 }
@@ -1382,6 +1532,7 @@ void CommandTracker::CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBu
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchGraphIndirectCountAMDX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
     commands_.push_back(cmd);
 }
@@ -1392,6 +1543,7 @@ void CommandTracker::CmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdSetSampleLocationsEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
     commands_.push_back(cmd);
 }
@@ -1401,6 +1553,7 @@ void CommandTracker::CmdBindShadingRateImageNV(VkCommandBuffer commandBuffer, Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdBindShadingRateImageNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
     commands_.push_back(cmd);
 }
@@ -1411,6 +1564,7 @@ void CommandTracker::CmdSetViewportShadingRatePaletteNV(VkCommandBuffer commandB
     Command cmd{};
     cmd.type = Command::Type::kCmdSetViewportShadingRatePaletteNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount,
                                                                         pShadingRatePalettes);
     commands_.push_back(cmd);
@@ -1422,6 +1576,7 @@ void CommandTracker::CmdSetCoarseSampleOrderNV(VkCommandBuffer commandBuffer, Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCoarseSampleOrderNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount,
                                                                pCustomSampleOrders);
     commands_.push_back(cmd);
@@ -1435,6 +1590,7 @@ void CommandTracker::CmdBuildAccelerationStructureNV(VkCommandBuffer commandBuff
     Command cmd{};
     cmd.type = Command::Type::kCmdBuildAccelerationStructureNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset,
                                                                      update, dst, src, scratch, scratchOffset);
     commands_.push_back(cmd);
@@ -1446,6 +1602,7 @@ void CommandTracker::CmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyAccelerationStructureNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
     commands_.push_back(cmd);
 }
@@ -1460,6 +1617,7 @@ void CommandTracker::CmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer rayg
     Command cmd{};
     cmd.type = Command::Type::kCmdTraceRaysNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdTraceRaysNV(
         commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer,
         missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset,
@@ -1475,6 +1633,7 @@ void CommandTracker::CmdWriteAccelerationStructuresPropertiesNV(
     Command cmd{};
     cmd.type = Command::Type::kCmdWriteAccelerationStructuresPropertiesNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWriteAccelerationStructuresPropertiesNV(
         commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
     commands_.push_back(cmd);
@@ -1485,6 +1644,7 @@ void CommandTracker::CmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPi
     Command cmd{};
     cmd.type = Command::Type::kCmdWriteBufferMarkerAMD;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
     commands_.push_back(cmd);
@@ -1494,6 +1654,7 @@ void CommandTracker::CmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t 
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawMeshTasksNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
     commands_.push_back(cmd);
 }
@@ -1503,6 +1664,7 @@ void CommandTracker::CmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, V
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawMeshTasksIndirectNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
     commands_.push_back(cmd);
 }
@@ -1514,6 +1676,7 @@ void CommandTracker::CmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuff
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawMeshTasksIndirectCountNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer,
                                                                      countBufferOffset, maxDrawCount, stride);
     commands_.push_back(cmd);
@@ -1525,6 +1688,7 @@ void CommandTracker::CmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetExclusiveScissorEnableNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor,
                                                                     exclusiveScissorCount, pExclusiveScissorEnables);
     commands_.push_back(cmd);
@@ -1535,6 +1699,7 @@ void CommandTracker::CmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer, uin
     Command cmd{};
     cmd.type = Command::Type::kCmdSetExclusiveScissorNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor,
                                                               exclusiveScissorCount, pExclusiveScissors);
     commands_.push_back(cmd);
@@ -1544,6 +1709,7 @@ void CommandTracker::CmdSetCheckpointNV(VkCommandBuffer commandBuffer, const voi
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCheckpointNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
     commands_.push_back(cmd);
 }
@@ -1553,6 +1719,7 @@ void CommandTracker::CmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPerformanceMarkerINTEL;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo);
     commands_.push_back(cmd);
 }
@@ -1562,6 +1729,7 @@ void CommandTracker::CmdSetPerformanceStreamMarkerINTEL(VkCommandBuffer commandB
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPerformanceStreamMarkerINTEL;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo);
     commands_.push_back(cmd);
 }
@@ -1571,6 +1739,7 @@ void CommandTracker::CmdSetPerformanceOverrideINTEL(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPerformanceOverrideINTEL;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo);
     commands_.push_back(cmd);
 }
@@ -1580,6 +1749,7 @@ void CommandTracker::CmdSetLineStippleEXT(VkCommandBuffer commandBuffer, uint32_
     Command cmd{};
     cmd.type = Command::Type::kCmdSetLineStippleEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
     commands_.push_back(cmd);
 }
@@ -1588,6 +1758,7 @@ void CommandTracker::CmdSetCullModeEXT(VkCommandBuffer commandBuffer, VkCullMode
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCullModeEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCullModeEXT(commandBuffer, cullMode);
     commands_.push_back(cmd);
 }
@@ -1596,6 +1767,7 @@ void CommandTracker::CmdSetFrontFaceEXT(VkCommandBuffer commandBuffer, VkFrontFa
     Command cmd{};
     cmd.type = Command::Type::kCmdSetFrontFaceEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetFrontFaceEXT(commandBuffer, frontFace);
     commands_.push_back(cmd);
 }
@@ -1604,6 +1776,7 @@ void CommandTracker::CmdSetPrimitiveTopologyEXT(VkCommandBuffer commandBuffer, V
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPrimitiveTopologyEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
     commands_.push_back(cmd);
 }
@@ -1613,6 +1786,7 @@ void CommandTracker::CmdSetViewportWithCountEXT(VkCommandBuffer commandBuffer, u
     Command cmd{};
     cmd.type = Command::Type::kCmdSetViewportWithCountEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
     commands_.push_back(cmd);
 }
@@ -1622,6 +1796,7 @@ void CommandTracker::CmdSetScissorWithCountEXT(VkCommandBuffer commandBuffer, ui
     Command cmd{};
     cmd.type = Command::Type::kCmdSetScissorWithCountEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
     commands_.push_back(cmd);
 }
@@ -1633,6 +1808,7 @@ void CommandTracker::CmdBindVertexBuffers2EXT(VkCommandBuffer commandBuffer, uin
     Command cmd{};
     cmd.type = Command::Type::kCmdBindVertexBuffers2EXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers,
                                                               pOffsets, pSizes, pStrides);
     commands_.push_back(cmd);
@@ -1642,6 +1818,7 @@ void CommandTracker::CmdSetDepthTestEnableEXT(VkCommandBuffer commandBuffer, VkB
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthTestEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
     commands_.push_back(cmd);
 }
@@ -1650,6 +1827,7 @@ void CommandTracker::CmdSetDepthWriteEnableEXT(VkCommandBuffer commandBuffer, Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthWriteEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
     commands_.push_back(cmd);
 }
@@ -1658,6 +1836,7 @@ void CommandTracker::CmdSetDepthCompareOpEXT(VkCommandBuffer commandBuffer, VkCo
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthCompareOpEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
     commands_.push_back(cmd);
 }
@@ -1666,6 +1845,7 @@ void CommandTracker::CmdSetDepthBoundsTestEnableEXT(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthBoundsTestEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
     commands_.push_back(cmd);
 }
@@ -1674,6 +1854,7 @@ void CommandTracker::CmdSetStencilTestEnableEXT(VkCommandBuffer commandBuffer, V
     Command cmd{};
     cmd.type = Command::Type::kCmdSetStencilTestEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
     commands_.push_back(cmd);
 }
@@ -1683,6 +1864,7 @@ void CommandTracker::CmdSetStencilOpEXT(VkCommandBuffer commandBuffer, VkStencil
     Command cmd{};
     cmd.type = Command::Type::kCmdSetStencilOpEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
     commands_.push_back(cmd);
@@ -1693,6 +1875,7 @@ void CommandTracker::CmdPreprocessGeneratedCommandsNV(VkCommandBuffer commandBuf
     Command cmd{};
     cmd.type = Command::Type::kCmdPreprocessGeneratedCommandsNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
     commands_.push_back(cmd);
 }
@@ -1702,6 +1885,7 @@ void CommandTracker::CmdExecuteGeneratedCommandsNV(VkCommandBuffer commandBuffer
     Command cmd{};
     cmd.type = Command::Type::kCmdExecuteGeneratedCommandsNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
     commands_.push_back(cmd);
@@ -1712,6 +1896,7 @@ void CommandTracker::CmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdBindPipelineShaderGroupNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
     commands_.push_back(cmd);
@@ -1721,6 +1906,7 @@ void CommandTracker::CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthBias2EXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
     commands_.push_back(cmd);
 }
@@ -1729,6 +1915,7 @@ void CommandTracker::CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const 
     Command cmd{};
     cmd.type = Command::Type::kCmdCudaLaunchKernelNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
     commands_.push_back(cmd);
 }
@@ -1738,6 +1925,7 @@ void CommandTracker::CmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdBindDescriptorBuffersEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
     commands_.push_back(cmd);
 }
@@ -1749,6 +1937,7 @@ void CommandTracker::CmdSetDescriptorBufferOffsetsEXT(VkCommandBuffer commandBuf
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDescriptorBufferOffsetsEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout,
                                                                       firstSet, setCount, pBufferIndices, pOffsets);
     commands_.push_back(cmd);
@@ -1760,6 +1949,7 @@ void CommandTracker::CmdBindDescriptorBufferEmbeddedSamplersEXT(VkCommandBuffer 
     Command cmd{};
     cmd.type = Command::Type::kCmdBindDescriptorBufferEmbeddedSamplersEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
     commands_.push_back(cmd);
@@ -1770,6 +1960,7 @@ void CommandTracker::CmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuff
     Command cmd{};
     cmd.type = Command::Type::kCmdSetFragmentShadingRateEnumNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
     commands_.push_back(cmd);
 }
@@ -1781,6 +1972,7 @@ void CommandTracker::CmdSetVertexInputEXT(VkCommandBuffer commandBuffer, uint32_
     Command cmd{};
     cmd.type = Command::Type::kCmdSetVertexInputEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions,
                                              vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
@@ -1791,6 +1983,7 @@ void CommandTracker::CmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) {
     Command cmd{};
     cmd.type = Command::Type::kCmdSubpassShadingHUAWEI;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSubpassShadingHUAWEI(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -1800,6 +1993,7 @@ void CommandTracker::CmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdBindInvocationMaskHUAWEI;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
     commands_.push_back(cmd);
 }
@@ -1808,6 +2002,7 @@ void CommandTracker::CmdSetPatchControlPointsEXT(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPatchControlPointsEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
     commands_.push_back(cmd);
 }
@@ -1816,6 +2011,7 @@ void CommandTracker::CmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuf
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRasterizerDiscardEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
     commands_.push_back(cmd);
 }
@@ -1824,6 +2020,7 @@ void CommandTracker::CmdSetDepthBiasEnableEXT(VkCommandBuffer commandBuffer, VkB
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthBiasEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
     commands_.push_back(cmd);
 }
@@ -1832,6 +2029,7 @@ void CommandTracker::CmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp l
     Command cmd{};
     cmd.type = Command::Type::kCmdSetLogicOpEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetLogicOpEXT(commandBuffer, logicOp);
     commands_.push_back(cmd);
 }
@@ -1840,6 +2038,7 @@ void CommandTracker::CmdSetPrimitiveRestartEnableEXT(VkCommandBuffer commandBuff
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPrimitiveRestartEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
     commands_.push_back(cmd);
 }
@@ -1849,6 +2048,7 @@ void CommandTracker::CmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer, ui
     Command cmd{};
     cmd.type = Command::Type::kCmdSetColorWriteEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
     commands_.push_back(cmd);
 }
@@ -1859,6 +2059,7 @@ void CommandTracker::CmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t dra
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawMultiEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
     commands_.push_back(cmd);
@@ -1870,6 +2071,7 @@ void CommandTracker::CmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint3
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawMultiIndexedEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount,
                                                             firstInstance, stride, pVertexOffset);
     commands_.push_back(cmd);
@@ -1880,6 +2082,7 @@ void CommandTracker::CmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_
     Command cmd{};
     cmd.type = Command::Type::kCmdBuildMicromapsEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
     commands_.push_back(cmd);
 }
@@ -1888,6 +2091,7 @@ void CommandTracker::CmdCopyMicromapEXT(VkCommandBuffer commandBuffer, const VkC
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyMicromapEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyMicromapEXT(commandBuffer, pInfo);
     commands_.push_back(cmd);
 }
@@ -1897,6 +2101,7 @@ void CommandTracker::CmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyMicromapToMemoryEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
     commands_.push_back(cmd);
 }
@@ -1906,6 +2111,7 @@ void CommandTracker::CmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyMemoryToMicromapEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
     commands_.push_back(cmd);
 }
@@ -1916,6 +2122,7 @@ void CommandTracker::CmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdWriteMicromapsPropertiesEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType,
                                                                     queryPool, firstQuery);
     commands_.push_back(cmd);
@@ -1926,6 +2133,7 @@ void CommandTracker::CmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawClusterHUAWEI;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
     commands_.push_back(cmd);
 }
@@ -1934,6 +2142,7 @@ void CommandTracker::CmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawClusterIndirectHUAWEI;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
     commands_.push_back(cmd);
 }
@@ -1943,6 +2152,7 @@ void CommandTracker::CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDe
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyMemoryIndirectNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
     commands_.push_back(cmd);
 }
@@ -1954,6 +2164,7 @@ void CommandTracker::CmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyMemoryToImageIndirectNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride,
                                                                     dstImage, dstImageLayout, pImageSubresources);
     commands_.push_back(cmd);
@@ -1964,6 +2175,7 @@ void CommandTracker::CmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32
     Command cmd{};
     cmd.type = Command::Type::kCmdDecompressMemoryNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
     commands_.push_back(cmd);
@@ -1975,6 +2187,7 @@ void CommandTracker::CmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandB
     Command cmd{};
     cmd.type = Command::Type::kCmdDecompressMemoryIndirectCountNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress,
                                                                         indirectCommandsCountAddress, stride);
     commands_.push_back(cmd);
@@ -1985,6 +2198,7 @@ void CommandTracker::CmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBu
     Command cmd{};
     cmd.type = Command::Type::kCmdUpdatePipelineIndirectBufferNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
     commands_.push_back(cmd);
 }
@@ -1993,6 +2207,7 @@ void CommandTracker::CmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer, Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthClampEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
     commands_.push_back(cmd);
 }
@@ -2001,6 +2216,7 @@ void CommandTracker::CmdSetPolygonModeEXT(VkCommandBuffer commandBuffer, VkPolyg
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPolygonModeEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetPolygonModeEXT(commandBuffer, polygonMode);
     commands_.push_back(cmd);
 }
@@ -2010,6 +2226,7 @@ void CommandTracker::CmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRasterizationSamplesEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
     commands_.push_back(cmd);
 }
@@ -2019,6 +2236,7 @@ void CommandTracker::CmdSetSampleMaskEXT(VkCommandBuffer commandBuffer, VkSample
     Command cmd{};
     cmd.type = Command::Type::kCmdSetSampleMaskEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
     commands_.push_back(cmd);
 }
@@ -2027,6 +2245,7 @@ void CommandTracker::CmdSetAlphaToCoverageEnableEXT(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetAlphaToCoverageEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
     commands_.push_back(cmd);
 }
@@ -2035,6 +2254,7 @@ void CommandTracker::CmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer, Vk
     Command cmd{};
     cmd.type = Command::Type::kCmdSetAlphaToOneEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
     commands_.push_back(cmd);
 }
@@ -2043,6 +2263,7 @@ void CommandTracker::CmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer, VkBoo
     Command cmd{};
     cmd.type = Command::Type::kCmdSetLogicOpEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
     commands_.push_back(cmd);
 }
@@ -2052,6 +2273,7 @@ void CommandTracker::CmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer, ui
     Command cmd{};
     cmd.type = Command::Type::kCmdSetColorBlendEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
     commands_.push_back(cmd);
@@ -2063,6 +2285,7 @@ void CommandTracker::CmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdSetColorBlendEquationEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount,
                                                                  pColorBlendEquations);
     commands_.push_back(cmd);
@@ -2073,6 +2296,7 @@ void CommandTracker::CmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer, uint
     Command cmd{};
     cmd.type = Command::Type::kCmdSetColorWriteMaskEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
     commands_.push_back(cmd);
@@ -2083,6 +2307,7 @@ void CommandTracker::CmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBu
     Command cmd{};
     cmd.type = Command::Type::kCmdSetTessellationDomainOriginEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
     commands_.push_back(cmd);
 }
@@ -2091,6 +2316,7 @@ void CommandTracker::CmdSetRasterizationStreamEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRasterizationStreamEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
     commands_.push_back(cmd);
 }
@@ -2100,6 +2326,7 @@ void CommandTracker::CmdSetConservativeRasterizationModeEXT(
     Command cmd{};
     cmd.type = Command::Type::kCmdSetConservativeRasterizationModeEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
     commands_.push_back(cmd);
@@ -2110,6 +2337,7 @@ void CommandTracker::CmdSetExtraPrimitiveOverestimationSizeEXT(VkCommandBuffer c
     Command cmd{};
     cmd.type = Command::Type::kCmdSetExtraPrimitiveOverestimationSizeEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
     commands_.push_back(cmd);
@@ -2119,6 +2347,7 @@ void CommandTracker::CmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer, VkB
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthClipEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
     commands_.push_back(cmd);
 }
@@ -2127,6 +2356,7 @@ void CommandTracker::CmdSetSampleLocationsEnableEXT(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetSampleLocationsEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
     commands_.push_back(cmd);
 }
@@ -2137,6 +2367,7 @@ void CommandTracker::CmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdSetColorBlendAdvancedEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount,
                                                                  pColorBlendAdvanced);
     commands_.push_back(cmd);
@@ -2147,6 +2378,7 @@ void CommandTracker::CmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdSetProvokingVertexModeEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
     commands_.push_back(cmd);
 }
@@ -2156,6 +2388,7 @@ void CommandTracker::CmdSetLineRasterizationModeEXT(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetLineRasterizationModeEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
     commands_.push_back(cmd);
 }
@@ -2164,6 +2397,7 @@ void CommandTracker::CmdSetLineStippleEnableEXT(VkCommandBuffer commandBuffer, V
     Command cmd{};
     cmd.type = Command::Type::kCmdSetLineStippleEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
     commands_.push_back(cmd);
 }
@@ -2172,6 +2406,7 @@ void CommandTracker::CmdSetDepthClipNegativeOneToOneEXT(VkCommandBuffer commandB
     Command cmd{};
     cmd.type = Command::Type::kCmdSetDepthClipNegativeOneToOneEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
     commands_.push_back(cmd);
 }
@@ -2180,6 +2415,7 @@ void CommandTracker::CmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetViewportWScalingEnableNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
     commands_.push_back(cmd);
 }
@@ -2189,6 +2425,7 @@ void CommandTracker::CmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint
     Command cmd{};
     cmd.type = Command::Type::kCmdSetViewportSwizzleNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
     commands_.push_back(cmd);
@@ -2198,6 +2435,7 @@ void CommandTracker::CmdSetCoverageToColorEnableNV(VkCommandBuffer commandBuffer
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCoverageToColorEnableNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
     commands_.push_back(cmd);
 }
@@ -2206,6 +2444,7 @@ void CommandTracker::CmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuff
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCoverageToColorLocationNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
     commands_.push_back(cmd);
 }
@@ -2215,6 +2454,7 @@ void CommandTracker::CmdSetCoverageModulationModeNV(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCoverageModulationModeNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
     commands_.push_back(cmd);
 }
@@ -2224,6 +2464,7 @@ void CommandTracker::CmdSetCoverageModulationTableEnableNV(VkCommandBuffer comma
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCoverageModulationTableEnableNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
     commands_.push_back(cmd);
@@ -2235,6 +2476,7 @@ void CommandTracker::CmdSetCoverageModulationTableNV(VkCommandBuffer commandBuff
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCoverageModulationTableNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount,
                                                                      pCoverageModulationTable);
     commands_.push_back(cmd);
@@ -2244,6 +2486,7 @@ void CommandTracker::CmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffe
     Command cmd{};
     cmd.type = Command::Type::kCmdSetShadingRateImageEnableNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
     commands_.push_back(cmd);
 }
@@ -2253,6 +2496,7 @@ void CommandTracker::CmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer co
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRepresentativeFragmentTestEnableNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
     commands_.push_back(cmd);
@@ -2263,6 +2507,7 @@ void CommandTracker::CmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer
     Command cmd{};
     cmd.type = Command::Type::kCmdSetCoverageReductionModeNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
     commands_.push_back(cmd);
 }
@@ -2272,6 +2517,7 @@ void CommandTracker::CmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOp
     Command cmd{};
     cmd.type = Command::Type::kCmdOpticalFlowExecuteNV;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
     commands_.push_back(cmd);
 }
@@ -2281,6 +2527,7 @@ void CommandTracker::CmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t s
     Command cmd{};
     cmd.type = Command::Type::kCmdBindShadersEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
     commands_.push_back(cmd);
 }
@@ -2290,6 +2537,7 @@ void CommandTracker::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer comma
     Command cmd{};
     cmd.type = Command::Type::kCmdSetAttachmentFeedbackLoopEnableEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
     commands_.push_back(cmd);
 }
@@ -2300,6 +2548,7 @@ void CommandTracker::CmdBuildAccelerationStructuresKHR(
     Command cmd{};
     cmd.type = Command::Type::kCmdBuildAccelerationStructuresKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
     commands_.push_back(cmd);
@@ -2312,6 +2561,7 @@ void CommandTracker::CmdBuildAccelerationStructuresIndirectKHR(
     Command cmd{};
     cmd.type = Command::Type::kCmdBuildAccelerationStructuresIndirectKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBuildAccelerationStructuresIndirectKHR(
         commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
     commands_.push_back(cmd);
@@ -2322,6 +2572,7 @@ void CommandTracker::CmdCopyAccelerationStructureKHR(VkCommandBuffer commandBuff
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyAccelerationStructureKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
     commands_.push_back(cmd);
 }
@@ -2331,6 +2582,7 @@ void CommandTracker::CmdCopyAccelerationStructureToMemoryKHR(VkCommandBuffer com
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyAccelerationStructureToMemoryKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
     commands_.push_back(cmd);
 }
@@ -2340,6 +2592,7 @@ void CommandTracker::CmdCopyMemoryToAccelerationStructureKHR(VkCommandBuffer com
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyMemoryToAccelerationStructureKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
     commands_.push_back(cmd);
 }
@@ -2351,6 +2604,7 @@ void CommandTracker::CmdWriteAccelerationStructuresPropertiesKHR(
     Command cmd{};
     cmd.type = Command::Type::kCmdWriteAccelerationStructuresPropertiesKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdWriteAccelerationStructuresPropertiesKHR(
         commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
     commands_.push_back(cmd);
@@ -2365,6 +2619,7 @@ void CommandTracker::CmdTraceRaysKHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdTraceRaysKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable,
                                         pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
@@ -2380,6 +2635,7 @@ void CommandTracker::CmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer,
     Command cmd{};
     cmd.type = Command::Type::kCmdTraceRaysIndirectKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable,
                                                              pMissShaderBindingTable, pHitShaderBindingTable,
                                                              pCallableShaderBindingTable, indirectDeviceAddress);
@@ -2390,6 +2646,7 @@ void CommandTracker::CmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer comman
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRayTracingPipelineStackSizeKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
     commands_.push_back(cmd);
 }
@@ -2399,6 +2656,7 @@ void CommandTracker::CmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawMeshTasksEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
     commands_.push_back(cmd);
 }
@@ -2408,6 +2666,7 @@ void CommandTracker::CmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, 
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawMeshTasksIndirectEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
     commands_.push_back(cmd);
 }
@@ -2419,6 +2678,7 @@ void CommandTracker::CmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuf
     Command cmd{};
     cmd.type = Command::Type::kCmdDrawMeshTasksIndirectCountEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer,
                                                                       countBufferOffset, maxDrawCount, stride);
     commands_.push_back(cmd);

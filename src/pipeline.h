@@ -52,7 +52,6 @@ class Pipeline {
 
     const PipelineBoundShader& FindShaderStage(VkShaderStageFlagBits shader_stage) const;
 
-    YAML::Emitter& PrintName(YAML::Emitter& stream, const ObjectInfoDB& name_resolver) const;
     YAML::Emitter& Print(YAML::Emitter& stream, const ObjectInfoDB& name_resolver) const;
 
     const std::vector<PipelineBoundShader>& GetBoundShaders() const { return shaders_; }

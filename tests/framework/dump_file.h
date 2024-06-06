@@ -26,7 +26,7 @@
 namespace dump {
 
 struct Handle {
-    uint64_t value;
+    uint64_t value{0};
     std::string name;
 };
 
@@ -115,17 +115,17 @@ struct WaitingThread {
 };
 
 struct AddressRecord {
-    uint64_t begin;
-    uint64_t end;
+    uint64_t begin{0};
+    uint64_t end{0};
     std::string type;
     Handle handle;
-    bool currentlyBound;
+    bool currentlyBound{false};
 };
 
 struct FaultAddressRange {
     std::string type;
-    uint64_t begin;
-    uint64_t end;
+    uint64_t begin{0};
+    uint64_t end{0};
     std::optional<AddressRecord> prior;
     std::optional<AddressRecord> next;
 };

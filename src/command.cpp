@@ -428,12 +428,14 @@ bool CommandBufferInternalState::Print(const Command& cmd, YAML::Emitter& os, co
 
     if (-1 != bind_point) {
         os << YAML::Key << "internalState" << YAML::Value << YAML::BeginMap;
+
         os << YAML::Key << "pipeline" << YAML::Value;
         if (bound_pipelines_[bind_point]) {
             bound_pipelines_[bind_point]->Print(os, name_resolver);
         } else {
             os << YAML::BeginMap << YAML::EndMap;
         }
+
         os << YAML::Key << "descriptorSets" << YAML::Value;
         bound_descriptors_[bind_point].Print(device_, os);
         os << YAML::EndMap;
@@ -512,6 +514,13 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, CommandBufferDumpOptions opt
                << crash_diagnostic_layer::Uint32ToStr(begin_value_ + command.id);
             os << YAML::Key << "name" << YAML::Value << command_name;
             os << YAML::Key << "state" << YAML::Value << PrintCommandState(command_state);
+            if (!command.labels.empty()) {
+                os << YAML::Key << "labels" << YAML::BeginSeq;
+                for (const auto& label : command.labels) {
+                    os << label;
+                }
+                os << YAML::EndSeq;
+            }
 
             state.Mutate(command);
             // For vkCmdExecuteCommands, CDL prints all the information about the

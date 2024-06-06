@@ -29,6 +29,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -309,6 +310,7 @@ struct Command {
     Type type;
     uint32_t id;
     void* parameters;
+    std::vector<std::string> labels;
 };  // struct Command
 
 // Define structs for command parameters

@@ -41,6 +41,7 @@ class CommandCommonOutputGenerator(CdlBaseOutputGenerator):
         self.write('\n#pragma once\n')
         self.write('#include <cstring>')
         self.write('#include <iostream>')
+        self.write('#include <string>')
         self.write('#include <vector>')
         self.write('#include <vulkan/vulkan.h>')
 
@@ -65,6 +66,7 @@ struct Command
   Type type;
   uint32_t id;
   void *parameters;
+  std::vector<std::string> labels;
 }; // struct Command
 
 // Define structs for command parameters
