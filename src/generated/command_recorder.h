@@ -362,7 +362,7 @@ class CommandRecorder {
         VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
 
     CmdSetRenderingInputAttachmentIndicesKHRArgs* RecordCmdSetRenderingInputAttachmentIndicesKHR(
-        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo);
+        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo);
 
     CmdEncodeVideoKHRArgs* RecordCmdEncodeVideoKHR(VkCommandBuffer commandBuffer,
                                                    const VkVideoEncodeInfoKHR* pEncodeInfo);

@@ -1102,15 +1102,15 @@ void Context::PostCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandB
     p_cmd->PostCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
 }
 
-void Context::PreCmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer,
-                                                          const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+void Context::PreCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+    p_cmd->PreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 }
 void Context::PostCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+    p_cmd->PostCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 }
 
 void Context::PreCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) {

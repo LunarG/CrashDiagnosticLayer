@@ -1715,10 +1715,10 @@ void CommandPrinter::PrintCmdSetRenderingAttachmentLocationsKHRArgs(
 
 void CommandPrinter::PrintCmdSetRenderingInputAttachmentIndicesKHRArgs(
     YAML::Emitter &os, const CmdSetRenderingInputAttachmentIndicesKHRArgs &args) {
-    os << YAML::Key << "pLocationInfo";
+    os << YAML::Key << "pInputAttachmentIndexInfo";
     // pointer
-    if (args.pLocationInfo != nullptr) {
-        os << YAML::Value << *args.pLocationInfo;
+    if (args.pInputAttachmentIndexInfo != nullptr) {
+        os << YAML::Value << *args.pInputAttachmentIndexInfo;
     } else {
         os << YAML::Value << "nullptr";
     }

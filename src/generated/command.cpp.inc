@@ -1000,12 +1000,12 @@ void CommandBuffer::PostCmdSetRenderingAttachmentLocationsKHR(
 }
 
 void CommandBuffer::PreCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
-    tracker_.CmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
+    tracker_.CmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
