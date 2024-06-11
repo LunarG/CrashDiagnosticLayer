@@ -906,10 +906,10 @@ class Interceptor {
                                                            const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {}
 
     virtual void PreCmdSetRenderingInputAttachmentIndicesKHR(
-        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {}
+        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {}
 
     virtual void PostCmdSetRenderingInputAttachmentIndicesKHR(
-        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {}
+        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {}
 
     virtual void PreCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) {}
 

@@ -1044,12 +1044,12 @@ void CommandTracker::CmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer comma
 }
 
 void CommandTracker::CmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRenderingInputAttachmentIndicesKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+    cmd.parameters = recorder_.RecordCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
     commands_.push_back(cmd);
 }
 

@@ -987,7 +987,7 @@ struct CmdSetRenderingAttachmentLocationsKHRArgs {
 
 struct CmdSetRenderingInputAttachmentIndicesKHRArgs {
     VkCommandBuffer commandBuffer;
-    const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo;
+    const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo;
 };
 
 struct CmdEncodeVideoKHRArgs {

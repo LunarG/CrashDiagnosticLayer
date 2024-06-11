@@ -481,10 +481,10 @@ void PreCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
 void PostCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
                                                const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) override;
 
-void PreCmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer,
-                                                 const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) override;
-void PostCmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer,
-                                                  const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) override;
+void PreCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) override;
+void PostCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) override;
 
 void PreCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) override;
 void PostCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) override;

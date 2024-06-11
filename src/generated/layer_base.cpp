@@ -1876,18 +1876,18 @@ void InterceptCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
 }
 
-void InterceptCmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer,
-                                                       const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+void InterceptCmdSetRenderingInputAttachmentIndicesKHR(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+    layer_data->interceptor->PreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 
     PFN_vkCmdSetRenderingInputAttachmentIndicesKHR pfn =
         layer_data->dispatch_table.CmdSetRenderingInputAttachmentIndicesKHR;
     if (pfn != nullptr) {
-        pfn(commandBuffer, pLocationInfo);
+        pfn(commandBuffer, pInputAttachmentIndexInfo);
     }
 
-    layer_data->interceptor->PostCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pLocationInfo);
+    layer_data->interceptor->PostCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 }
 
 void InterceptCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) {

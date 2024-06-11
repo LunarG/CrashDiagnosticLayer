@@ -302,8 +302,8 @@ class CommandTracker {
     void CmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
                                                const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
 
-    void CmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer,
-                                                  const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo);
+    void CmdSetRenderingInputAttachmentIndicesKHR(
+        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo);
 
     void CmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo);
 

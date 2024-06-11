@@ -3423,6 +3423,10 @@ VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV*
 CommandRecorder::CopyArray<VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV>(
     const VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV* src, uint64_t start_index, uint64_t count);
 template <>
+VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT*
+CommandRecorder::CopyArray<VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT>(
+    const VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT* src, uint64_t start_index, uint64_t count);
+template <>
 VkPhysicalDeviceRayTracingValidationFeaturesNV*
 CommandRecorder::CopyArray<VkPhysicalDeviceRayTracingValidationFeaturesNV>(
     const VkPhysicalDeviceRayTracingValidationFeaturesNV* src, uint64_t start_index, uint64_t count);
@@ -20012,6 +20016,20 @@ CommandRecorder::CopyArray<VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV>(
 }
 
 template <>
+VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT*
+CommandRecorder::CopyArray<VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT>(
+    const VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT* src, uint64_t start_index, uint64_t count) {
+    auto ptr = reinterpret_cast<VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT*>(
+        m_allocator.Alloc(sizeof(VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].shaderReplicatedComposites = src[start_index + i].shaderReplicatedComposites;
+    }
+    return ptr;
+}
+
+template <>
 VkPhysicalDeviceRayTracingValidationFeaturesNV*
 CommandRecorder::CopyArray<VkPhysicalDeviceRayTracingValidationFeaturesNV>(
     const VkPhysicalDeviceRayTracingValidationFeaturesNV* src, uint64_t start_index, uint64_t count) {
@@ -21735,11 +21753,12 @@ CmdSetRenderingAttachmentLocationsKHRArgs* CommandRecorder::RecordCmdSetRenderin
 }
 
 CmdSetRenderingInputAttachmentIndicesKHRArgs* CommandRecorder::RecordCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pLocationInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
     auto* args = Alloc<CmdSetRenderingInputAttachmentIndicesKHRArgs>();
     args->commandBuffer = commandBuffer;
-    if (pLocationInfo) {
-        args->pLocationInfo = CopyArray(pLocationInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+    if (pInputAttachmentIndexInfo) {
+        args->pInputAttachmentIndexInfo =
+            CopyArray(pInputAttachmentIndexInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
     }
     return args;
 }
