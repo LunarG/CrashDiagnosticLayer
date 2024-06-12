@@ -21,6 +21,8 @@
 
 namespace icd {
 
+std::chrono::seconds kCondWaitTimeout{10};
+
 void BinarySemaphore::QueueSignal(uint64_t value) {
     auto guard = Lock();
     // Don't clear device lost.
@@ -32,7 +34,9 @@ void BinarySemaphore::QueueSignal(uint64_t value) {
 
 VkResult BinarySemaphore::QueueWait([[maybe_unused]] uint64_t value) {
     auto guard = Lock();
-    cond_.wait(guard, [this] { return state_ != kWaiting; });
+    if (!cond_.wait_for(guard, kCondWaitTimeout, [this] { return state_ != kWaiting; })) {
+        return VK_TIMEOUT;
+    }
     if (state_ == kDeviceLost) {
         return VK_ERROR_DEVICE_LOST;
     }
@@ -59,7 +63,8 @@ VkResult TimelineSemaphore::Signal(uint64_t value) {
 
 VkResult TimelineSemaphore::Wait(uint64_t timeout, uint64_t value) {
     auto guard = std::unique_lock<std::mutex>(lock_);
-    if (!cond_.wait_for(guard, std::chrono::milliseconds{timeout}, [this, value] { return current_value_ >= value; })) {
+
+    if (!cond_.wait_for(guard, std::chrono::nanoseconds{timeout}, [this, value] { return current_value_ >= value; })) {
         return VK_TIMEOUT;
     }
     return (current_value_ != kDeviceLostValue) ? VK_SUCCESS : VK_ERROR_DEVICE_LOST;
@@ -80,7 +85,9 @@ void TimelineSemaphore::QueueSignal(uint64_t value) {
 
 VkResult TimelineSemaphore::QueueWait(uint64_t value) {
     auto guard = Lock();
-    cond_.wait(guard, [this, value] { return current_value_ >= value; });
+    if (!cond_.wait_for(guard, kCondWaitTimeout, [this, value] { return current_value_ >= value; })) {
+        return VK_TIMEOUT;
+    }
     return (current_value_ != kDeviceLostValue) ? VK_SUCCESS : VK_ERROR_DEVICE_LOST;
 }
 

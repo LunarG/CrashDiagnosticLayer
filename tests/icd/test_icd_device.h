@@ -47,7 +47,8 @@ class Device {
     VkResult WaitIdle();
     VkResult GetFaultInfo(VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaultInfoEXT* pFaultInfo);
 
-    void SetFaultInfo(FaultInfo &&info);
+    void SetFaultInfo(FaultInfo&& info);
+
    private:
     VK_LOADER_DATA loader_data_;  // MUST be first data member
     VkPhysicalDevice physical_device_;

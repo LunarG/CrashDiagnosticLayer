@@ -25,11 +25,10 @@
 class Sync : public CDLTestBase {};
 
 static constexpr uint64_t kWaitTimeout{10000000000};  // 10 seconds in ns
+static constexpr uint64_t kWatchdogTimeout{7000};
 
 TEST_F(Sync, HostWaitWrongSem) {
-    layer_settings_.SetLogFile("stderr");
-    layer_settings_.trace_all_semaphores = true;
-    layer_settings_.watchdog_timeout_ms = 7000;
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -80,9 +79,7 @@ TEST_F(Sync, HostWaitWrongSem) {
 }
 
 TEST_F(Sync, GpuWaitWrongSem) {
-    layer_settings_.SetLogFile("stderr");
-    layer_settings_.trace_all_semaphores = true;
-    layer_settings_.watchdog_timeout_ms = 7000;
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -132,9 +129,7 @@ TEST_F(Sync, GpuWaitWrongSem) {
 }
 
 TEST_F(Sync, HostWaitHang) {
-    layer_settings_.SetLogFile("stderr");
-    layer_settings_.trace_all_semaphores = true;
-    layer_settings_.watchdog_timeout_ms = 7000;
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -147,7 +142,13 @@ TEST_F(Sync, HostWaitHang) {
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
                                  state.pipeline.DescriptorSet().Set(), {});
+
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
     cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.endDebugUtilsLabelEXT();
+
     cmd_buff_.end();
 
     vk::SemaphoreTypeCreateInfo sem_type_ci(vk::SemaphoreType::eTimeline, 100);
@@ -185,9 +186,7 @@ TEST_F(Sync, HostWaitHang) {
 }
 
 TEST_F(Sync, HostWaitHangSubmit2) {
-    layer_settings_.SetLogFile("stderr");
-    layer_settings_.trace_all_semaphores = true;
-    layer_settings_.watchdog_timeout_ms = 7000;
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -200,7 +199,13 @@ TEST_F(Sync, HostWaitHangSubmit2) {
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
                                  state.pipeline.DescriptorSet().Set(), {});
+
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
     cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.endDebugUtilsLabelEXT();
+
     cmd_buff_.end();
 
     vk::SemaphoreTypeCreateInfo sem_type_ci(vk::SemaphoreType::eTimeline, 100);
@@ -240,9 +245,7 @@ TEST_F(Sync, HostWaitHangSubmit2) {
 }
 
 TEST_F(Sync, FenceWaitHang) {
-    layer_settings_.SetLogFile("stderr");
-    layer_settings_.trace_all_semaphores = true;
-    layer_settings_.watchdog_timeout_ms = 7000;
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -255,7 +258,12 @@ TEST_F(Sync, FenceWaitHang) {
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
                                  state.pipeline.DescriptorSet().Set(), {});
+
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
     cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.endDebugUtilsLabelEXT();
     cmd_buff_.end();
 
     vk::raii::Fence fence(device_, vk::FenceCreateInfo());

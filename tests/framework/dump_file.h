@@ -84,7 +84,7 @@ struct Command {
     std::string name;
     std::string state;
     std::string message;
-    // parameters?
+    std::vector<std::string> labels;
 };
 
 struct CommandBuffer {

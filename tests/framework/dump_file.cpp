@@ -218,6 +218,11 @@ static void ParseCommand(Command& cmd, const YAML::Node& in_node) {
             // TODO
         } else if (key == "internalState") {
             // TODO
+        } else if (key == "labels") {
+            ASSERT_TRUE(node.second.IsSequence());
+            for (const auto& elem : node.second) {
+                cmd.labels.push_back(elem.as<std::string>());
+            }
         } else {
             FAIL() << "Unkown Command key: " << key;
         }

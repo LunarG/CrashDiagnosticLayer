@@ -57,8 +57,8 @@ VkResult Queue::Submit(uint32_t count, const VkSubmitInfo *submits, VkFence fenc
         for (uint32_t wi = 0; wi < submit.waitSemaphoreCount; wi++) {
             SemInfo sem_info;
             sem_info.semaphore = reinterpret_cast<Semaphore *>(submit.pWaitSemaphores[wi]);
-            sem_info.value = timeline_info ? timeline_info->pSignalSemaphoreValues[wi] : 0;
-            info.signal_semaphores.push_back(sem_info);
+            sem_info.value = timeline_info ? timeline_info->pWaitSemaphoreValues[wi] : 0;
+            info.wait_semaphores.push_back(sem_info);
         }
         for (uint32_t ci = 0; ci < submit.commandBufferCount; ci++) {
             info.cmd_buffers.push_back(reinterpret_cast<CommandBuffer *>(submit.pCommandBuffers[ci]));
@@ -94,7 +94,7 @@ VkResult Queue::Submit2(uint32_t count, const VkSubmitInfo2 *submits, VkFence fe
             const auto &wait = submit.pWaitSemaphoreInfos[wi];
             sem_info.semaphore = reinterpret_cast<Semaphore *>(wait.semaphore);
             sem_info.value = wait.value;
-            info.signal_semaphores.push_back(sem_info);
+            info.wait_semaphores.push_back(sem_info);
         }
         for (uint32_t ci = 0; ci < submit.commandBufferInfoCount; ci++) {
             info.cmd_buffers.push_back(reinterpret_cast<CommandBuffer *>(submit.pCommandBufferInfos[ci].commandBuffer));
@@ -131,7 +131,7 @@ VkResult Queue::BindSparse(uint32_t count, const VkBindSparseInfo *binds, VkFenc
             SemInfo sem_info;
             sem_info.semaphore = reinterpret_cast<Semaphore *>(bind.pWaitSemaphores[wi]);
             sem_info.value = timeline_info ? timeline_info->pSignalSemaphoreValues[wi] : 0;
-            info.signal_semaphores.push_back(sem_info);
+            info.wait_semaphores.push_back(sem_info);
         }
         for (uint32_t si = 0; si < bind.signalSemaphoreCount; si++) {
             SemInfo sem_info;
@@ -152,9 +152,9 @@ VkResult Queue::BindSparse(uint32_t count, const VkBindSparseInfo *binds, VkFenc
 VkResult Queue::WaitIdle() {
     if (thread_.joinable()) {
         auto guard = Lock();
-        idle_cond_.wait(guard, [this] { return submissions_.empty() || exit_thread_; });
+        idle_cond_.wait(guard, [this] { return submissions_.empty() || exit_thread_ || device_lost_; });
     }
-    return VK_SUCCESS;
+    return device_lost_ ? VK_ERROR_DEVICE_LOST : VK_SUCCESS;
 }
 
 Queue::Submission *Queue::NextSubmission() {
@@ -162,65 +162,61 @@ Queue::Submission *Queue::NextSubmission() {
     // Find if the next submission is ready so that the thread function doesn't need to worry
     // about locking.
     auto guard = Lock();
-    while (!exit_thread_ && submissions_.empty()) {
-        idle_cond_.notify_all();
-        // The queue thread must wait forever if nothing is happening, until we tell it to exit
-        cond_.wait(guard);
+    if (!device_lost_) {
+        while (!exit_thread_ && submissions_.empty()) {
+            idle_cond_.notify_all();
+            // The queue thread must wait forever if nothing is happening, until we tell it to exit
+            cond_.wait(guard);
+        }
     }
-    if (!exit_thread_) {
-        result = &submissions_.front();
+    if (exit_thread_) {
+        return nullptr;
+    } else if (!submissions_.empty()) {
         // NOTE: the submission must remain on the dequeue until we're done processing it so that
         // anyone waiting for it can find the correct waiter
+        result = &submissions_.front();
     }
     return result;
 }
 
-VkResult Queue::Execute(Queue::Submission &submission) {
-    VkResult result = VK_SUCCESS;
+void Queue::Execute(Queue::Submission &submission) {
     for (auto &submit_info : submission.submit_infos) {
         for (auto &wait : submit_info.wait_semaphores) {
-            if (result == VK_SUCCESS) {
-                result = wait.semaphore->QueueWait(wait.value);
-            } else {
-                wait.semaphore->DeviceLost();
+            auto result = wait.semaphore->QueueWait(wait.value);
+            if (result != VK_SUCCESS) {
+                device_lost_ = true;
             }
         }
-        if (result == VK_SUCCESS) {
+        if (!device_lost_) {
             for (auto &cb : submit_info.cmd_buffers) {
-                result = cb->Execute(*this);
+                auto result = cb->Execute(*this);
                 if (result != VK_SUCCESS) {
+                    device_lost_ = true;
                     break;
                 }
             }
         }
         for (auto &signal : submit_info.signal_semaphores) {
-            if (result == VK_SUCCESS) {
-                signal.semaphore->QueueSignal(signal.value);
-            } else {
+            if (device_lost_) {
                 signal.semaphore->DeviceLost();
+            } else {
+                signal.semaphore->QueueSignal(signal.value);
             }
         }
     }
     if (submission.fence) {
-        if (result == VK_SUCCESS) {
-            submission.fence->Signal();
-        } else {
+        if (device_lost_) {
             submission.fence->DeviceLost();
+        } else {
+            submission.fence->Signal();
         }
     }
-    return result;
 }
 
 void Queue::ThreadFunc() {
-    Submission *submission = nullptr;
-    VkResult result = VK_SUCCESS;
     // Roll this queue forward, one submission at a time.
-    while (result == VK_SUCCESS) {
-        submission = NextSubmission();
-        if (submission == nullptr) {
-            break;
-        }
-        result = Execute(*submission);
+    while (auto submission = NextSubmission()) {
+        Execute(*submission);
         {
             auto guard = Lock();
             submissions_.pop_front();
@@ -263,7 +259,7 @@ void Queue::GetCheckpointData2(uint32_t *count, VkCheckpointData2NV *checkpoints
 }
 
 void Queue::SetFaultInfo(FaultInfo &&fault_info) {
-//    device_.SetFaultInfo(std::move(fault_info));
+    //    device_.SetFaultInfo(std::move(fault_info));
 }
 
 }  // namespace icd
