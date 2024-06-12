@@ -146,8 +146,7 @@ struct Device {
     std::vector<std::string> extensions;
 
     std::vector<Queue> queues;
-    std::vector<CommandBuffer> incomplete_cbs;
-    std::vector<CommandBuffer> all_cbs;
+    std::vector<CommandBuffer> command_buffers;
     std::vector<WaitingThread> waiting_threads;
 
     std::optional<DeviceFaultInfo> fault_info;

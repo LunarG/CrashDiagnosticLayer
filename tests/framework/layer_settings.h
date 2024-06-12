@@ -35,13 +35,14 @@ class LayerSettings {
     void SetLogFile(const char*);
     void SetMessageSeverity(const char*);
     void SetDumpShaders(const char*);
+    void SetDumpQueueSubmits(const char*);
+    void SetDumpCommandBuffers(const char*);
+    void SetDumpCommands(const char*);
 
     // logging section
     vk::Bool32 trace_on{false};
-    vk::Bool32 dump_configs{true};
 
     // commands section
-    vk::Bool32 dump_all_command_buffers{false};
     vk::Bool32 instrument_all_commands{false};
 
     // semaphores section
@@ -57,6 +58,9 @@ class LayerSettings {
     char* log_file{nullptr};
     char* message_severity{nullptr};
     char* dump_shaders{nullptr};
+    char* dump_queue_submits{nullptr};
+    char* dump_command_buffers{nullptr};
+    char* dump_commands{nullptr};
 
     std::vector<vk::LayerSettingEXT> settings_;
     vk::LayerSettingsCreateInfoEXT create_info_;

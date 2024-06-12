@@ -53,7 +53,9 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
         checkpoints_ = std::make_unique<BufferMarkerCheckpointMgr>(*this);
     }
     // Create a semaphore tracker
-    semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this, context_.TracingAllSemaphores());
+    if (context_.GetSettings().track_semaphores) {
+        semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this, context_.GetSettings().trace_all_semaphores);
+    }
 }
 
 void Device::Destroy() {
@@ -88,36 +90,40 @@ void Device::AddCommandBuffer(VkCommandBuffer vk_command_buffer) {
     command_buffers_.push_back(vk_command_buffer);
 }
 
-void Device::DumpCommandBuffers(YAML::Emitter& os, const char* section_name, CommandBufferDumpOptions options,
-                                bool dump_all_command_buffers) const {
+void Device::DumpCommandBuffers(YAML::Emitter& os) const {
+    auto dump_cbs = context_.GetSettings().dump_command_buffers;
     // Sort command buffers by submit info id
     std::map<uint64_t /* queue seq */, std::vector<CommandBuffer*>> sorted_command_buffers;
     std::lock_guard<std::recursive_mutex> lock(command_buffers_mutex_);
     for (auto cb : command_buffers_) {
         auto p_cmd = GetCommandBuffer(cb);
         if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
-            if (dump_all_command_buffers ||
-                (p_cmd->HasCheckpoints() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution())) {
+            bool dump_this_cb = false;
+            switch (dump_cbs) {
+                case DumpCommands::kAll:
+                    dump_this_cb = true;
+                    break;
+                case DumpCommands::kRunning:
+                    dump_this_cb = p_cmd->GetCommandBufferState() == CommandBufferState::kSubmittedExecutionIncomplete;
+                    break;
+                case DumpCommands::kPending:
+                    dump_this_cb = p_cmd->WasSubmittedToQueue() &&
+                                   p_cmd->GetCommandBufferState() != CommandBufferState::kSubmittedExecutionNotStarted;
+                    break;
+            }
+            if (dump_this_cb) {
                 sorted_command_buffers[p_cmd->GetQueueSeq()].push_back(p_cmd);
             }
         }
     }
-    os << YAML::Key << section_name << YAML::Value << YAML::BeginSeq;
+    os << YAML::Key << "CommandBuffers" << YAML::Value << YAML::BeginSeq;
     for (auto& it : sorted_command_buffers) {
         for (auto p_cmd : it.second) {
-            p_cmd->DumpContents(os, options);
+            p_cmd->DumpContents(os, context_.GetSettings());
         }
     }
     os << YAML::EndSeq;
     assert(os.good());
-}
-
-void Device::DumpAllCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const {
-    DumpCommandBuffers(os, "AllCommandBuffers", options, true /* dump_all_command_buffers */);
-}
-
-void Device::DumpIncompleteCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const {
-    DumpCommandBuffers(os, "IncompleteCommandBuffers", options, false /* dump_all_command_buffers */);
 }
 
 void Device::SetCommandPool(VkCommandPool vk_command_pool, CommandPoolPtr command_pool) {
@@ -147,7 +153,7 @@ void Device::AllocateCommandBuffers(VkCommandPool vk_pool, const VkCommandBuffer
         VkCommandBuffer vk_cmd = command_buffers[i];
 
         auto cmd = std::make_unique<CommandBuffer>(*this, vk_pool, vk_cmd, allocate_info, HasCheckpoints());
-        cmd->SetInstrumentAllCommands(context_.InstrumentAllCommands());
+        cmd->SetInstrumentAllCommands(context_.GetSettings().instrument_all_commands);
 
         SetCommandBuffer(vk_cmd, std::move(cmd));
         AddCommandBuffer(vk_cmd);
@@ -177,7 +183,7 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter&
     // if we write a single command buffer it's less likely the GPU has completed.
     YAML::Emitter error_report;
     error_report << YAML::BeginMap << YAML::Key << "InvalidCommandBuffer" << YAML::Value;
-    p_cmd->DumpContents(error_report, CommandBufferDumpOption::kDumpAllCommands);
+    p_cmd->DumpContents(error_report, context_.GetSettings());
     error_report << YAML::EndMap;
     Log().Error(error_report.c_str());
     os << error_report.c_str();
@@ -422,7 +428,7 @@ void Device::SetHangDetected() {
     hang_detected_ = true;
 }
 
-YAML::Emitter& Device::Print(YAML::Emitter& os, CommandBufferDumpOptions options, const std::string& error_report) {
+YAML::Emitter& Device::Print(YAML::Emitter& os, const std::string& error_report) {
     UpdateIdleState();
     os << YAML::Key << "Device" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "handle" << YAML::Value << GetObjectInfo((uint64_t)vk_device_);
@@ -459,17 +465,13 @@ YAML::Emitter& Device::Print(YAML::Emitter& os, CommandBufferDumpOptions options
     }
     os << YAML::EndSeq;
 
-    if (context_.TrackingSemaphores()) {
+    if (semaphore_tracker_) {
         semaphore_tracker_->DumpWaitingThreads(os);
     }
     if (!error_report.empty()) {
         os << error_report;
     }
-    if (options & CommandBufferDumpOption::kDumpAllCommands) {
-        DumpAllCommandBuffers(os, options);
-    } else {
-        DumpIncompleteCommandBuffers(os, options);
-    }
+    DumpCommandBuffers(os);
     os << YAML::EndMap;  // Device
     assert(os.good());
     return os;

@@ -391,19 +391,12 @@ static void ParseDevice(Device& device, const YAML::Node& in_node) {
                 ParseQueue(q, elem);
                 device.queues.emplace_back(std::move(q));
             }
-        } else if (key == "IncompleteCommandBuffers") {
+        } else if (key == "CommandBuffers") {
             ASSERT_TRUE(node.second.IsSequence());
             for (const auto& elem : node.second) {
                 CommandBuffer cb;
                 ParseCommandBuffer(cb, elem);
-                device.incomplete_cbs.emplace_back(std::move(cb));
-            }
-        } else if (key == "AllCommandBuffers") {
-            ASSERT_TRUE(node.second.IsSequence());
-            for (const auto& elem : node.second) {
-                CommandBuffer cb;
-                ParseCommandBuffer(cb, elem);
-                device.all_cbs.emplace_back(std::move(cb));
+                device.command_buffers.emplace_back(std::move(cb));
             }
         } else if (key == "WaitingThreads") {
             ASSERT_TRUE(node.second.IsSequence());
@@ -426,7 +419,6 @@ static void ParseDevice(Device& device, const YAML::Node& in_node) {
             FAIL() << "Unkown Device key: " << key;
         }
     }
-    ASSERT_TRUE(device.all_cbs.empty() || device.incomplete_cbs.empty());
 }
 
 void Parse(File& dump_file, const std::filesystem::path& search_path) {

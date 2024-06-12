@@ -67,7 +67,14 @@ enum CrashSource {
     kWatchdogTimer,
 };
 
-enum DumpShaders {
+// Used for command buffers, commands and queue submisions
+enum class DumpCommands {
+    kRunning = 0,
+    kPending,
+    kAll,
+};
+
+enum class DumpShaders {
     kOff = 0,
     kOnCrash,
     kOnBind,
@@ -91,6 +98,24 @@ T* NewArray(size_t size) {
     std::set_new_handler(NewHandler);
     return new T[size];
 }
+
+struct Settings {
+    Settings();
+    Settings(VkuLayerSettingSet settings, Logger& log);
+    ~Settings() {}
+    void Print(YAML::Emitter& os) const;
+
+    DumpCommands dump_queue_submits{DumpCommands::kRunning};
+    DumpCommands dump_command_buffers{DumpCommands::kRunning};
+    DumpCommands dump_commands{DumpCommands::kRunning};
+    DumpShaders dump_shaders{DumpShaders::kOff};
+    std::string output_path;
+    bool instrument_all_commands{false};
+    bool track_semaphores{false};
+    bool trace_all_semaphores{false};
+    bool trace_all{false};
+    uint64_t watchdog_timer_ms{0};
+};
 
 class Context : public Interceptor {
    public:
@@ -121,12 +146,7 @@ class Context : public Interceptor {
     DevicePtr GetQueueDevice(VkQueue);
     ConstDevicePtr GetQueueDevice(VkQueue) const;
 
-    bool DumpShadersOnCrash() const;
-    bool DumpShadersOnBind() const;
-
-    bool TrackingSemaphores() const { return track_semaphores_; };
-    bool TracingAllSemaphores() const { return trace_all_semaphores_; };
-    bool InstrumentAllCommands() const { return instrument_all_commands_; };
+    const Settings& GetSettings() const { return settings_.value(); }
 
     void MemoryBindEvent(const VkDeviceAddressBindingCallbackDataEXT& mem_info,
                          const VkDebugUtilsObjectNameInfoEXT& object);
@@ -313,8 +333,7 @@ class Context : public Interceptor {
                                           const VkAllocationCallbacks* pAllocator) override;
 
    private:
-    template <class T>
-    void GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value);
+    std::optional<Settings> settings_;
 
     TimePoint start_time_;
     Logger logger_;
@@ -356,29 +375,16 @@ class Context : public Interceptor {
     mutable std::mutex queue_device_tracker_mutex_;
     std::unordered_map<VkQueue, VkDevice> queue_device_tracker_;
 
-    // Debug flags
-    bool debug_dump_all_command_buffers_ = false;
-    DumpShaders dump_shaders_{DumpShaders::kOff};
-
     int shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
-
-    bool instrument_all_commands_ = false;
-    bool track_semaphores_ = false;
-    bool trace_all_semaphores_ = false;
-
-    bool trace_all_ = false;
 
     std::filesystem::path base_output_path_;
     std::filesystem::path output_path_;
     int total_logs_ = 0;
 
-    std::vector<std::pair<std::string, std::string>> configs_;
-
     // Watchdog
     std::thread watchdog_thread_;
     std::atomic<bool> watchdog_running_;
     std::atomic<long long> last_submit_time_;
-    uint64_t watchdog_timer_ms_ = 0;
 };
 
 }  // namespace crash_diagnostic_layer

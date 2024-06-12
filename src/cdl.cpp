@@ -74,6 +74,15 @@ static const std::unordered_map<std::string, VkDebugUtilsMessageSeverityFlagBits
     {"info", VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
     {"verbose", VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
 };
+const char* kDumpCommands = "dump_commands";
+const char* kDumpCommandBuffers = "dump_command_buffers";
+const char* kDumpQueueSubmits = "dump_queue_submits";
+static const std::unordered_map<std::string, DumpCommands> kDumpCommandsValues{
+    {"running", DumpCommands::kRunning},
+    {"pending", DumpCommands::kPending},
+    {"all", DumpCommands::kAll},
+};
+
 const char* kDumpShaders = "dump_shaders";
 static const std::unordered_map<std::string, DumpShaders> kDumpShadersValues{
     {"off", DumpShaders::kOff},
@@ -91,24 +100,45 @@ const char* kInstrumentAllCommands = "instrument_all_commands";
 
 const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
 
-template <>
-void Context::GetEnvVal<bool>(VkuLayerSettingSet settings, const char* name, bool& value) {
+template <class T>
+void GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value) {
     if (vkuHasLayerSetting(settings, name)) {
         vkuGetLayerSettingValue(settings, name, value);
-        std::stringstream ss;
-        configs_.push_back(std::make_pair(name, value ? "true" : "false"));
     }
 }
 
 template <class T>
-void Context::GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value) {
-    if (vkuHasLayerSetting(settings, name)) {
-        vkuGetLayerSettingValue(settings, name, value);
-        std::stringstream ss;
-        ss << value;
-        configs_.push_back(std::make_pair(name, ss.str()));
+void GetEnumVal(Logger& log, VkuLayerSettingSet settings, const char* name, T& value,
+                const std::unordered_map<std::string, T>& value_map) {
+    std::string value_string;
+    GetEnvVal<std::string>(settings, name, value_string);
+    if (!value_string.empty()) {
+        auto iter = value_map.find(value_string);
+        if (iter != value_map.end()) {
+            value = iter->second;
+        } else {
+            log.Error("Bad value for %s setting: \"%s\"", name, value_string.c_str());
+        }
     }
 }
+
+Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
+    GetEnvVal<std::string>(layer_settings, settings::kOutputPath, output_path);
+    GetEnvVal<bool>(layer_settings, settings::kTraceOn, trace_all);
+    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpQueueSubmits, dump_queue_submits,
+                             settings::kDumpCommandsValues);
+    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommandBuffers, dump_command_buffers,
+                             settings::kDumpCommandsValues);
+    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommands, dump_commands,
+                             settings::kDumpCommandsValues);
+    GetEnumVal<DumpShaders>(log, layer_settings, settings::kDumpShaders, dump_shaders, settings::kDumpShadersValues);
+    GetEnvVal<uint64_t>(layer_settings, settings::kWatchdogTimeout, watchdog_timer_ms);
+    GetEnvVal<bool>(layer_settings, settings::kTrackSemaphores, track_semaphores);
+    GetEnvVal<bool>(layer_settings, settings::kTraceAllSemaphores, trace_all_semaphores);
+    GetEnvVal<bool>(layer_settings, settings::kInstrumentAllCommands, instrument_all_commands);
+}
+
+void Settings::Print(YAML::Emitter& os) const {}
 
 // =============================================================================
 // Context
@@ -143,13 +173,12 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
         Log().Error("vkuCreateLayerSettingSet failed with error %d", result);
         return;
     }
+    settings_.emplace(layer_setting_set, logger_);
 
     // output path
     {
-        std::string path_string;
-        GetEnvVal<std::string>(layer_setting_set, settings::kOutputPath, path_string);
-        if (!path_string.empty()) {
-            output_path_ = path_string;
+        if (!settings_->output_path.empty()) {
+            output_path_ = settings_->output_path;
         } else {
 #if defined(WIN32)
             output_path_ = getenv("USERPROFILE");
@@ -219,21 +248,10 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
     Log().Info("Version %s enabled. Start time tag: %s", kCdlVersion.c_str(), start_time_str.c_str());
 
     // trace mode
-    GetEnvVal<bool>(layer_setting_set, settings::kTraceOn, trace_all_);
     {
         // setup shader loading modes
         shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
-        std::string ds_string;
-        GetEnvVal<std::string>(layer_setting_set, settings::kDumpShaders, ds_string);
-        if (!ds_string.empty()) {
-            auto iter = settings::kDumpShadersValues.find(ds_string);
-            if (iter != settings::kDumpShadersValues.end()) {
-                dump_shaders_ = iter->second;
-            } else {
-                Log().Error("Bad value for dump_shaders setting: \"%s\"", ds_string.c_str());
-            }
-        }
-        switch (dump_shaders_) {
+        switch (settings_->dump_shaders) {
             case DumpShaders::kAll:
                 shader_module_load_options_ |= ShaderModule::LoadOptions::kDumpOnCreate;
                 break;
@@ -248,23 +266,15 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
 
     // manage the watchdog thread
     {
-        GetEnvVal<uint64_t>(layer_setting_set, settings::kWatchdogTimeout, watchdog_timer_ms_);
-
         last_submit_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(
                                 std::chrono::high_resolution_clock::now().time_since_epoch())
                                 .count();
 
-        if (watchdog_timer_ms_ > 0) {
+        if (settings_->watchdog_timer_ms > 0) {
             StartWatchdogTimer();
-            Log().Info("Begin Watchdog: %" PRId64 "ms", watchdog_timer_ms_);
+            Log().Info("Begin Watchdog: %" PRId64 "ms", settings_->watchdog_timer_ms);
         }
     }
-
-    // Setup debug flags
-    GetEnvVal<bool>(layer_setting_set, settings::kDumpAllCommandBuffers, debug_dump_all_command_buffers_);
-    GetEnvVal<bool>(layer_setting_set, settings::kTrackSemaphores, track_semaphores_);
-    GetEnvVal<bool>(layer_setting_set, settings::kTraceAllSemaphores, trace_all_semaphores_);
-    GetEnvVal<bool>(layer_setting_set, settings::kInstrumentAllCommands, instrument_all_commands_);
 
     vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
 }
@@ -355,7 +365,7 @@ void Context::StopWatchdogTimer() {
 }
 
 void Context::WatchdogTimer() {
-    uint64_t test_interval_us = std::min((uint64_t)(1000 * 1000), watchdog_timer_ms_ * 500);
+    uint64_t test_interval_us = std::min((uint64_t)(1000 * 1000), settings_->watchdog_timer_ms * 500);
     while (watchdog_running_) {
         // TODO: condition variable that waits
         std::this_thread::sleep_for(std::chrono::microseconds(test_interval_us));
@@ -365,7 +375,7 @@ void Context::WatchdogTimer() {
                        .count();
         auto ms = (int64_t)(now - last_submit_time_);
 
-        if (ms > (int64_t)watchdog_timer_ms_) {
+        if (ms > (int64_t)settings_->watchdog_timer_ms) {
             Log().Info("CDL: Watchdog check failed, no submit in %" PRId64 "ms", ms);
 
             DumpAllDevicesExecutionState(CrashSource::kWatchdogTimer);
@@ -378,19 +388,19 @@ void Context::WatchdogTimer() {
 }
 
 void Context::PreApiFunction(const char* api_name) {
-    if (trace_all_) {
+    if (settings_->trace_all) {
         Log().Info("{ %s", api_name);
     }
 }
 
 void Context::PostApiFunction(const char* api_name) {
-    if (trace_all_) {
+    if (settings_->trace_all) {
         Log().Info("} %s", api_name);
     }
 }
 
 void Context::PostApiFunction(const char* api_name, VkResult result) {
-    if (trace_all_) {
+    if (settings_->trace_all) {
         Log().Info("} %s (%s)", api_name, string_VkResult(result));
     }
 }
@@ -540,10 +550,6 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
     return ci_ptr;
 }
 
-bool Context::DumpShadersOnCrash() const { return dump_shaders_ == DumpShaders::kOnCrash; }
-
-bool Context::DumpShadersOnBind() const { return dump_shaders_ == DumpShaders::kOnBind; }
-
 void Context::DumpAllDevicesExecutionState(CrashSource crash_source) {
     auto devs = GetAllDevices();
     bool dump_prologue = true;
@@ -574,16 +580,14 @@ void Context::DumpDeviceExecutionState(Device& device, const std::string& error_
         DumpReportPrologue(os);
     }
 
-    auto options = CommandBufferDumpOption::kDefault;
-    if (debug_dump_all_command_buffers_) options |= CommandBufferDumpOption::kDumpAllCommands;
-
-    device.Print(os, options, error_report);
+    device.Print(os, error_report);
 }
 
 void Context::DumpDeviceExecutionStateValidationFailed(Device& device, YAML::Emitter& os) {
     if (device.HangDetected()) {
         return;
     }
+#if 0
     // We force all command buffers to dump here because validation can be
     // from a race condition and the GPU can complete work by the time we've
     // started writing the log. (Seen in practice, not theoretical!)
@@ -593,6 +597,7 @@ void Context::DumpDeviceExecutionStateValidationFailed(Device& device, YAML::Emi
     error_report << os.c_str();  // TODO does this do what we want?
     DumpDeviceExecutionState(device, error_report.str(), true /* dump_prologue */, CrashSource::kDeviceLostError, os);
     debug_dump_all_command_buffers_ = dump_all;
+#endif
 }
 
 void Context::DumpReportPrologue(YAML::Emitter& os) {
@@ -608,11 +613,8 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     os << YAML::Key << "startTime" << YAML::Value << timestr.str();
     os << YAML::Key << "timeSinceStart" << YAML::Value << DurationToStr(elapsed);
 
-    os << YAML::Key << "Settings" << YAML::Value << YAML::BeginMap;
-    for (auto& c : configs_) {
-        os << YAML::Key << c.first << YAML::Value << c.second;
-    }
-    os << YAML::EndMap;
+    //    os << YAML::Key << "Settings" << YAML::Value;
+    //    settings_->Print(os);
 
     os << YAML::Key << "SystemInfo" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "osName" << YAML::Value << system_.GetOsName();
@@ -1175,7 +1177,7 @@ void Context::PostFreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
 VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore,
                                       VkResult result) {
-    if (track_semaphores_ && result == VK_SUCCESS) {
+    if (settings_->track_semaphores && result == VK_SUCCESS) {
         uint64_t s_value = 0;
         VkSemaphoreTypeKHR s_type = VK_SEMAPHORE_TYPE_BINARY_KHR;
 
@@ -1189,7 +1191,7 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
 
         device_state->GetSemaphoreTracker()->RegisterSemaphore(*pSemaphore, s_type, s_value);
 
-        if (trace_all_semaphores_) {
+        if (settings_->trace_all_semaphores) {
             std::stringstream log;
             log << "Semaphore created. VkDevice:" << device_state->GetObjectName((uint64_t)device)
                 << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(*pSemaphore));
@@ -1205,7 +1207,7 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
 }
 
 void Context::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
-    if (track_semaphores_ && trace_all_semaphores_) {
+    if (settings_->track_semaphores && settings_->trace_all_semaphores) {
         auto device_state = GetDevice(device);
         assert(device_state);
 
@@ -1230,7 +1232,7 @@ void Context::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const 
 }
 
 void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
-    if (track_semaphores_) {
+    if (settings_->track_semaphores) {
         auto device_state = GetDevice(device);
         auto semaphore_tracker = device_state->GetSemaphoreTracker();
         semaphore_tracker->EraseSemaphore(semaphore);
@@ -1238,11 +1240,11 @@ void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const
 }
 
 VkResult Context::PostSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo, VkResult result) {
-    if (track_semaphores_ && result == VK_SUCCESS) {
+    if (settings_->track_semaphores && result == VK_SUCCESS) {
         auto device_state = GetDevice(device);
         device_state->GetSemaphoreTracker()->SignalSemaphore(pSignalInfo->semaphore, pSignalInfo->value,
                                                              {SemaphoreModifierType::kModifierHost});
-        if (trace_all_semaphores_) {
+        if (settings_->trace_all_semaphores) {
             std::string timeline_message = "Timeline semaphore signaled from host. VkDevice: ";
             timeline_message += device_state->GetObjectName((uint64_t)device) +
                                 ", VkSemaphore: " + device_state->GetObjectName((uint64_t)(pSignalInfo->semaphore)) +
@@ -1259,7 +1261,7 @@ VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKH
     if (!device_state->UpdateIdleState()) {
         result = VK_ERROR_DEVICE_LOST;
     }
-    if (track_semaphores_) {
+    if (settings_->track_semaphores) {
         int tid = 0;
 #ifdef __linux__
         tid = syscall(SYS_gettid);
@@ -1274,7 +1276,7 @@ VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKH
         auto device_state = GetDevice(device);
         device_state->GetSemaphoreTracker()->BeginWaitOnSemaphores(pid, tid, pWaitInfo);
 
-        if (trace_all_semaphores_) {
+        if (settings_->trace_all_semaphores) {
             std::stringstream log;
             log << "Waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
                 << ", VkDevice: " << device_state->GetObjectName((uint64_t)device) << std::endl;
@@ -1301,7 +1303,7 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
         }
         return result;
     }
-    if (track_semaphores_ && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
+    if (settings_->track_semaphores && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
         int tid = 0;
 #ifdef __linux__
         tid = syscall(SYS_gettid);
@@ -1329,7 +1331,7 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
             semaphore_tracker->EndWaitOnSemaphores(pid, tid, pWaitInfo);
         }
 
-        if (trace_all_semaphores_) {
+        if (settings_->trace_all_semaphores) {
             std::stringstream log;
             log << "Finished waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
                 << ", VkDevice: " << device_state->GetObjectName((uint64_t)device) << std::endl;
@@ -1379,7 +1381,7 @@ VkResult Context::PreSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUt
 void Context::PreCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                  VkPipeline pipeline) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    if (DumpShadersOnBind()) {
+    if (settings_->dump_shaders == DumpShaders::kOnBind) {
         p_cmd->GetDevice().DumpShaderFromPipeline(pipeline);
     }
 

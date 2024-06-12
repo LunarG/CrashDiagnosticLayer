@@ -31,17 +31,18 @@
 LayerSettings::LayerSettings(const void* pnext)
     : settings_{
         MakeStringSetting(output_path),
-        MakeBoolSetting(dump_configs),
         MakeBoolSetting(trace_on),
         MakeStringSetting(message_severity),
         MakeStringSetting(log_file),
 
-        MakeBoolSetting(dump_all_command_buffers),
         MakeBoolSetting(instrument_all_commands),
 
         MakeBoolSetting(track_semaphores),
         MakeBoolSetting(trace_all_semaphores),
 
+        MakeStringSetting(dump_queue_submits),
+        MakeStringSetting(dump_command_buffers),
+        MakeStringSetting(dump_commands),
         MakeStringSetting(dump_shaders),
 
         MakeUint64Setting(watchdog_timeout_ms),
@@ -50,6 +51,9 @@ LayerSettings::LayerSettings(const void* pnext)
     SetOutputPath("");
     SetMessageSeverity("");
     SetLogFile("");
+    SetDumpQueueSubmits("");
+    SetDumpCommandBuffers("");
+    SetDumpCommands("");
     SetDumpShaders("");
 }
 
@@ -73,6 +77,21 @@ void LayerSettings::SetMessageSeverity(const char* s) {
 void LayerSettings::SetLogFile(const char* s) {
     free(log_file);
     log_file = strdup(s);
+}
+
+void LayerSettings::SetDumpQueueSubmits(const char* s) {
+    free(dump_shaders);
+    dump_queue_submits = strdup(s);
+}
+
+void LayerSettings::SetDumpCommandBuffers(const char* s) {
+    free(dump_shaders);
+    dump_command_buffers = strdup(s);
+}
+
+void LayerSettings::SetDumpCommands(const char* s) {
+    free(dump_shaders);
+    dump_commands = strdup(s);
 }
 
 void LayerSettings::SetDumpShaders(const char* s) {
