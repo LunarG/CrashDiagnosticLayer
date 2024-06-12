@@ -39,7 +39,6 @@ TEST_F(GpuCrash, NoCrash) {
 }
 
 TEST_F(GpuCrash, CopyCrash) {
-    layer_settings_.instrument_all_commands = true;
     InitInstance();
     InitDevice();
 
@@ -133,8 +132,6 @@ TEST_F(GpuCrash, ShaderCrash) {
 }
 
 TEST_F(GpuCrash, InfiniteLoop) {
-    layer_settings_.SetLogFile("stderr");
-    layer_settings_.SetMessageSeverity("error, warn, info, verbose");
     InitInstance();
     InitDevice();
 
@@ -327,4 +324,6 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
 
     dump::File dump_file;
     dump::Parse(dump_file, output_path_);
+
+    fault_info.pAddressInfos = nullptr;
 }

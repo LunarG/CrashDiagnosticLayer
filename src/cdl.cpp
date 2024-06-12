@@ -863,8 +863,10 @@ VkResult Context::PreDeviceWaitIdle(VkDevice device) {
     PreApiFunction("vkDeviceWaitIdle");
     auto device_state = GetDevice(device);
     if (!device_state->UpdateIdleState()) {
-        device_state->SetHangDetected();
-        DumpDeviceExecutionState(*device_state);
+        if (!device_state->HangDetected()) {
+            device_state->SetHangDetected();
+            DumpDeviceExecutionState(*device_state);
+        }
         return VK_ERROR_DEVICE_LOST;
     }
     return VK_SUCCESS;
@@ -905,10 +907,12 @@ VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
     }
     // some drivers return VK_TIMEOUT on a hang
     if (IsVkError(result) || result == VK_TIMEOUT) {
-        device_state->SetHangDetected();
-        auto file = OpenDumpFile();
-        YAML::Emitter os(file.is_open() ? file : std::cerr);
-        DumpDeviceExecutionState(*device_state, {}, true, kDeviceLostError, os);
+        if (!device_state->HangDetected()) {
+            device_state->SetHangDetected();
+            auto file = OpenDumpFile();
+            YAML::Emitter os(file.is_open() ? file : std::cerr);
+            DumpDeviceExecutionState(*device_state, {}, true, kDeviceLostError, os);
+        }
     }
 
     return result;
@@ -1291,8 +1295,10 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
         result = VK_ERROR_DEVICE_LOST;
     }
     if (IsVkError(result)) {
-        device_state->SetHangDetected();
-        DumpDeviceExecutionState(*device_state);
+        if (!device_state->HangDetected()) {
+            device_state->SetHangDetected();
+            DumpDeviceExecutionState(*device_state);
+        }
         return result;
     }
     if (track_semaphores_ && (result == VK_SUCCESS || result == VK_TIMEOUT)) {

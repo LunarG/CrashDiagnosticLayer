@@ -56,7 +56,7 @@ VkResult CommandBuffer::Execute(Queue &queue) {
                 if (in_hang_region_) {
                     in_hang_region_ = false;
                     result = VK_ERROR_DEVICE_LOST;
-                    //queue.SetFaultInfo(std::move(fault_info_);
+                    // queue.SetFaultInfo(std::move(fault_info_);
                 }
                 break;
             }
@@ -64,7 +64,7 @@ VkResult CommandBuffer::Execute(Queue &queue) {
                 if (!in_hang_region_) {
                     auto args = reinterpret_cast<CmdExecuteCommandsArgs *>(cmd.parameters);
                     result = ExecuteCommands(queue, *args);
-		}
+                }
                 break;
             }
             default:

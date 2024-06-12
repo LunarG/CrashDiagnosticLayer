@@ -53,7 +53,7 @@ class Queue {
         Fence* fence{nullptr};
     };
 
-    Queue(Device &device);
+    Queue(Device& device);
     ~Queue();
 
     VkResult Submit(uint32_t count, const VkSubmitInfo* submits, VkFence fence);
@@ -66,23 +66,25 @@ class Queue {
     void GetCheckpointData2(uint32_t* count, VkCheckpointData2NV* checkpoints);
     void TrackCheckpoint(uintptr_t checkpoint, VkPipelineStageFlagBits stage);
 
-    void SetFaultInfo(FaultInfo &&);
+    void SetFaultInfo(FaultInfo&&);
+
    private:
     std::unique_lock<std::mutex> Lock() const { return std::unique_lock<std::mutex>(lock_); }
     void ThreadFunc();
     Submission* NextSubmission();
-    VkResult Execute(Submission& submission);
+    void Execute(Submission& submission);
     void StartThread();
 
     VK_LOADER_DATA loader_data;  // MUST be first data member
-    Device &device_;
+    Device& device_;
     std::thread thread_;
     mutable std::mutex lock_;
     std::condition_variable cond_;
     std::condition_variable idle_cond_;
     std::list<Submission> submissions_;
     std::atomic<uint64_t> seq_;
-    bool exit_thread_{false};
+    std::atomic<bool> exit_thread_{false};
+    std::atomic<bool> device_lost_{false};
 
     std::vector<VkCheckpointDataNV> checkpoints_;
 };
