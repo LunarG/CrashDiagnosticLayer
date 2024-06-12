@@ -114,10 +114,7 @@ class Device {
     bool ValidateCommandBufferNotInUse(VkCommandBuffer vk_command_buffer, YAML::Emitter& os);
     void DeleteCommandBuffers(VkCommandPool vk_pool, const VkCommandBuffer* vk_cmds, uint32_t cb_count);
 
-    void DumpCommandBuffers(YAML::Emitter& os, const char* section_name, CommandBufferDumpOptions options,
-                            bool dump_all_command_buffers) const;
-    void DumpAllCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const;
-    void DumpIncompleteCommandBuffers(YAML::Emitter& os, CommandBufferDumpOptions options) const;
+    void DumpCommandBuffers(YAML::Emitter& os) const;
     void DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter& os) const;
 
     void SetCommandPool(VkCommandPool vk_command_pool, CommandPoolPtr command_pool);
@@ -152,7 +149,7 @@ class Device {
 
     void DumpDeviceFaultInfo(YAML::Emitter& os) const;
 
-    YAML::Emitter& Print(YAML::Emitter& os, CommandBufferDumpOptions options, const std::string& error_report);
+    YAML::Emitter& Print(YAML::Emitter& os, const std::string& error_report);
 
     void MemoryBindEvent(const DeviceAddressRecord& record, bool multi_device);
 

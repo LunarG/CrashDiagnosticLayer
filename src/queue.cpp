@@ -36,7 +36,7 @@ Queue::Queue(Device& device, VkQueue queue, uint32_t family_index, uint32_t inde
       queue_family_index_(family_index),
       queue_index_(index),
       queue_family_properties_(props),
-      trace_all_semaphores_(device_.GetContext().TracingAllSemaphores()) {
+      trace_all_semaphores_(device_.GetContext().GetSettings().trace_all_semaphores) {
     auto type_ci = vku::InitStruct<VkSemaphoreTypeCreateInfo>();
     type_ci.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE;
     type_ci.initialValue = submit_seq_;
@@ -233,8 +233,10 @@ bool Queue::QueuedSubmitWaitingOnSemaphores(const SubmitInfo& submit_info) const
 
 std::vector<TrackedSemaphoreInfo> Queue::GetTrackedSemaphoreInfos(const SubmitInfo& submit_info,
                                                                   SemaphoreOperation operation) const {
-    std::vector<TrackedSemaphoreInfo> tracked_semaphores;
     auto semaphore_tracker = device_.GetSemaphoreTracker();
+    if (!semaphore_tracker) {
+        return std::vector<TrackedSemaphoreInfo>();
+    }
     if (operation == SemaphoreOperation::kWaitOperation) {
         return semaphore_tracker->GetTrackedSemaphoreInfos(submit_info.wait_semaphores);
     }
@@ -318,6 +320,7 @@ void Queue::Print(YAML::Emitter& os) {
         os << YAML::EndMap;
         return;
     }
+    auto dump_submits = device_.GetContext().GetSettings().dump_queue_submits;
     os << YAML::Key << "IncompleteSubmits" << YAML::Value << YAML::BeginSeq;
     for (const auto& submission : queue_submits_) {
         uint32_t incomplete_submission_counter = 0;
@@ -341,7 +344,16 @@ void Queue::Print(YAML::Emitter& os) {
         for (const auto& submit_info : submission.submit_infos) {
             // Check submit state
             SubmitState submit_state = submit_info.state;
-            if (submit_state == SubmitState::kFinished) continue;
+
+            if (dump_submits == DumpCommands::kRunning) {
+                if (submit_state != SubmitState::kRunning) {
+                    continue;
+                }
+            } else if (dump_submits == DumpCommands::kPending) {
+                if (submit_state == SubmitState::kFinished) {
+                    continue;
+                }
+            }
 
             os << YAML::BeginMap;
             os << YAML::Key << "start_seq" << YAML::Value << submit_info.start_seq;

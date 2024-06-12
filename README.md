@@ -65,13 +65,17 @@ The name of the dump file is `cdl_dump.yaml`, since the file is in the [YAML for
 ## Configuration
 
 This layer implements the `VK_EXT_layer_settings` extension, so it can be configured with `vkconfig`, programmatically, or with environment variables.  See the [manifest for this layer](src/crash_diagnostic_layer.json.in) and the [layer manifest schema](https://github.com/LunarG/VulkanTools/blob/main/vkconfig_core/layers/layers_schema.json) for full details. The discussion below uses the `key` field to identify each setting, the `env` field defines the corresponding environment variable, and the `label` field defines the text you will see when using `vkconfig`.
+
+- `watchdog_timeout_ms`can be set to enable a watchdog thread that monitors the time between queue submissions. If this timeout value (specified in milliseconds) is hit without a queue submission, the gpu is assumed to be crashed and a dump file is created.
+
 - `output_path` can be set to override the directory where log files and shader binaries are written. This can be a full path (starting with `/` or a drive letter) or a path relative to the application current working directory.
-- `trace_on` can be enabled to cause important commands, such as `vkQueueSubmit` to be logged as they occur.
+- `dump_queue_submissions`  controls which queue submissions are dumped. `running` causes only the submission currently executing to be dumped. `pending` will also dump any submissions that have not started execution.
+- `dump_command_buffers`  controls which command buffers are dumped. `running` causes only the command buffer currently executing to be dumped. `pending` will also dump any command buffers that have not started execution. `all` will dump all known command buffers.
+- `dump_commands`  controls which commands are dumped. `running` causes only the commands currently executing to be dumped. `pending` will also dump any commands that have not started execution. `all` will dump all commands in the command buffer.
+- `dump_shaders` controls if shaders are included in the dump directory. Possible values for this setting are: `off` - no output, `on_crash` - only dump the shaders that are bound at the time of a gpu crash, `on_bind` - dump shaders only when they are bound, and `all` - dump all shaders as soon as they are created.
 - `message_severity` can be set to a comma-separated list of the types of messages CDL should output to the default logger. Application defined loggers should control which messages they want to recieve with the options available in the `VK_EXT_debug_utils` or `VK_EXT_debug_report` extensions.
 - `log_file` can be set to control where log messages are sent by the default logger. There are several special values. `stderr` and `stdout` send messages to the application console. `none` disables the default logger. Any other value is assumed to be an absolute or relative path to the log file.
-- `dump_all_command_buffers`  can be enabled to include all command buffers will be output when a dump is created, even if they are determined to be complete.
+- `trace_on` can be enabled to cause important commands, such as `vkQueueSubmit` to be logged as they occur.
+- `trace_all_semaphores` enables logging messages about every vulkan command that uses semaphores.
 - `instrument_all_commands` can be enabled to include completion markers around every vulkan command. This may allow more accuratute fault locations at the expense of larger command buffers and reduced performance. 
 - `track_semaphores` enables detailed semaphore state reporting in runtime logging and dump files. `VK_AMD_buffer_marker` is required for this feature.
-- `trace_all_semaphores` enables logging messages about every vulkan command that uses semaphores.
-- `dump_shaders` controls if shaders are included in the dump directory. Possible values for this setting are: `off` - no output, `on_crash` - only dump the shaders that are bound at the time of a gpu crash, `on_bind` - dump shaders only when they are bound, and `all` - dump all shaders as soon as they are created.
-- `watchdog_timeout_ms`can be set to enable a watchdog thread that monitors the time between queue submissions. If this timeout value (specified in milliseconds) is hit without a queue submission, the gpu is assumed to be crashed and a dump file is created.
