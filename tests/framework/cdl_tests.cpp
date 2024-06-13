@@ -117,6 +117,12 @@ static std::vector<std::string> GetVkEnvironmentVariable(const char *env_var) {
 }
 
 static void CheckAndSetEnvironmentVariables() {
+    if (!CDLTestBase::no_mock_icd_) {
+        std::filesystem::path icd_path {kMockICDBuildPath};
+        icd_path /= "CDL_Test_ICD.json";
+        std::string path_str = icd_path.string();
+        SetEnvironment("VK_ICD_FILENAMES", path_str.c_str());
+    }
     for (const char *env_var : {"VK_DRIVER_FILES", "VK_ICD_FILENAMES"}) {
         const std::vector<std::string> driver_files = GetVkEnvironmentVariable(env_var);
         for (const std::string &driver_file : driver_files) {

@@ -43,6 +43,7 @@ class CDLTestBase : public ::testing::Test {
     static void InitArgs(int argc, char* argv[]);
 
     static inline bool print_all_{false};
+    static inline bool no_mock_icd_{false};
     static inline uint32_t phys_device_index_{~0u};
     static inline bool print_phys_devices_{false};
 
