@@ -164,6 +164,7 @@ class Context : public Interceptor {
     void StartWatchdogTimer();
     void StopWatchdogTimer();
     void WatchdogTimer();
+    void UpdateWatchdog();
 
     void ValidateCommandBufferNotInUse(CommandBuffer* commandBuffer);
 
