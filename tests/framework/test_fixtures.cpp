@@ -28,6 +28,8 @@ void CDLTestBase::InitArgs(int argc, char* argv[]) {
         const std::string_view current_argument = argv[i];
         if (current_argument == "--print-all") {
             print_all_ = true;
+        } else if (current_argument == "--no-mock") {
+            no_mock_icd_ = true;
         } else if (current_argument == "--device-index" && ((i + 1) < argc)) {
             phys_device_index_ = std::atoi(argv[++i]);
         } else if (current_argument == "--print-devices") {

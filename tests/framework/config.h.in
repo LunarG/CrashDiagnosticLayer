@@ -27,3 +27,4 @@ static const char* kLayerSettingsName = "lunarg_crash_diagnostic";
 static const char* kMessagePrefix = "CDL";
 
 
+static const char *kMockICDBuildPath = "$<TARGET_FILE_DIR:CDL_Test_ICD>";
