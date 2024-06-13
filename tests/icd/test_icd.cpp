@@ -446,10 +446,9 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties(VkPhysicalDevice p
     pProperties->apiVersion = VK_HEADER_VERSION_COMPLETE;
     pProperties->driverVersion = 1;
     pProperties->vendorID = 0xba5eba11;
-    pProperties->deviceID = 0xf005ba11;
+    pProperties->deviceID = 0x0badc0de;
     pProperties->deviceType = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU;
-    // Keep to match with other MockICD
-    strcpy(pProperties->deviceName, "Vulkan Mock Device");
+    strcpy(pProperties->deviceName, "CDL Mock Device");
     pProperties->pipelineCacheUUID[0] = 18;
     pProperties->limits = SetLimits(&pProperties->limits);
     pProperties->sparseProperties = {VK_TRUE, VK_TRUE, VK_TRUE, VK_TRUE, VK_TRUE};
