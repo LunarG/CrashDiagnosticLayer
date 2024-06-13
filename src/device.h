@@ -82,7 +82,8 @@ class Device {
     ~Device();
 
     bool HangDetected() const { return hang_detected_; }
-    void SetHangDetected();
+    void DeviceFault();
+    void WatchdogTimeout(bool dump_prologue, YAML::Emitter& os);
 
     const Logger& Log() const;
     const DeviceDispatchTable& Dispatch() const { return device_dispatch_table_; }

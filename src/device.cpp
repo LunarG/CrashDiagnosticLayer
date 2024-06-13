@@ -191,9 +191,11 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter&
 
 bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, YAML::Emitter& os) {
     assert(p_cmd);
-    if (p_cmd->HasCheckpoints() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution()) {
-        DumpCommandBufferStateOnScreen(p_cmd, os);
-        return false;
+    if (!HangDetected()) {
+        if (p_cmd->HasCheckpoints() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution()) {
+            DumpCommandBufferStateOnScreen(p_cmd, os);
+            return false;
+        }
     }
     return true;
 }
@@ -421,11 +423,27 @@ bool Device::UpdateIdleState() {
     }
     return result;
 }
-void Device::SetHangDetected() {
+
+void Device::DeviceFault() {
+    if (hang_detected_.exchange(true)) {
+        // already hung.
+        return;
+    }
     if (checkpoints_) {
         checkpoints_->Update();
     }
-    hang_detected_ = true;
+    context_.DumpDeviceExecutionState(*this);
+}
+
+void Device::WatchdogTimeout(bool dump_prologue, YAML::Emitter& os) {
+    if (hang_detected_.exchange(true)) {
+        // already hung.
+        return;
+    }
+    if (checkpoints_) {
+        checkpoints_->Update();
+    }
+    context_.DumpDeviceExecutionState(*this, dump_prologue, CrashSource::kWatchdogTimer, os);
 }
 
 YAML::Emitter& Device::Print(YAML::Emitter& os, const std::string& error_report) {
