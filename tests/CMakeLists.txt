@@ -39,6 +39,7 @@ target_sources(cdl_tests PRIVATE
     unit/gpu_crash.cpp
     unit/sync.cpp
     unit/settings.cpp
+    unit/watchdog.cpp
 )
 
 get_target_property(TEST_SOURCES cdl_tests SOURCES)

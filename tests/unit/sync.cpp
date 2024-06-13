@@ -285,3 +285,43 @@ TEST_F(Sync, FenceWaitHang) {
     dump::File dump_file;
     dump::Parse(dump_file, output_path_);
 }
+
+TEST_F(Sync, DeviceWaitHang) {
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    InitInstance();
+    InitDevice();
+
+    ComputeIOTest state(physical_device_, device_, kInfiniteLoopComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
+
+    vk::CommandBufferBeginInfo begin_info;
+    cmd_buff_.begin(begin_info);
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
+
+    vk::DeviceFaultCountsEXT counts(0, 0, 0);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
+    cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.endDebugUtilsLabelEXT();
+    cmd_buff_.end();
+
+    vk::SubmitInfo submit_info({}, {}, *cmd_buff_);
+
+    compute_queue_.submit(submit_info);
+
+    bool hang_detected = false;
+    monitor_.SetDesiredError("Device error encountered and log being recorded");
+    try {
+        // could be success or timeout
+        (void)device_.waitIdle();
+    } catch (vk::SystemError &err) {
+        hang_detected = true;
+    }
+    monitor_.VerifyFound();
+
+    dump::File dump_file;
+    dump::Parse(dump_file, output_path_);
+}
