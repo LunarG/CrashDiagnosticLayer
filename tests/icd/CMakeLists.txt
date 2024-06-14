@@ -127,25 +127,3 @@ add_custom_command(TARGET CDL_Test_ICD POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${INTERMEDIATE_FILE} $<TARGET_FILE_DIR:CDL_Test_ICD>/${OUTPUT_FILE_FINAL_NAME}
 )
 
-# Installing the Test ICD to system directories is probably not desired since this ICD is not a very complete implementation.
-# Require the user to ask that it be installed if they really want it.
-option(INSTALL_CDL_TEST_ICD "Install Test icd")
-if (INSTALL_CDL_TEST_ICD)
-    message(NOTICE "INSTALL_ICD enabled!")
-else()
-    return()
-endif()
-
-# For UNIX-based systems, `library_path` should not contain a relative path (indicated by "./") before installing to system directories
-# This json isn't used for regular local development, it's used for installation
-if (UNIX)
-    set(UNIX_INTERMEDIATE_FILE "${CMAKE_CURRENT_BINARY_DIR}/json/unix_install_test_icd.json")
-    set(JSON_LIBRARY_PATH "lib${ICD_NAME}.so")
-
-    configure_file(${INPUT_FILE} ${UNIX_INTERMEDIATE_FILE} @ONLY)
-    install(FILES ${UNIX_INTERMEDIATE_FILE} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d RENAME ${OUTPUT_FILE_FINAL_NAME})
-elseif (WIN32)
-    install(FILES ${INTERMEDIATE_FILE} DESTINATION ${LAYER_INSTALL_DIR} RENAME ${OUTPUT_FILE_FINAL_NAME})
-endif()
-
-install(TARGETS CDL_Test_ICD DESTINATION ${LAYER_INSTALL_DIR})
