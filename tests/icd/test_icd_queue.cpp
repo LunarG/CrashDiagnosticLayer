@@ -258,8 +258,6 @@ void Queue::GetCheckpointData2(uint32_t *count, VkCheckpointData2NV *checkpoints
     }
 }
 
-void Queue::SetFaultInfo(FaultInfo &&fault_info) {
-    //    device_.SetFaultInfo(std::move(fault_info));
-}
+void Queue::SetFaultInfo(FaultInfo &&fault_info) { device_.SetFaultInfo(std::move(fault_info)); }
 
 }  // namespace icd

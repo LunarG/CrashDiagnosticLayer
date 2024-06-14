@@ -24,19 +24,14 @@
 #include <optional>
 #include <vector>
 
+#include "test_icd_fault_info.h"
 #include "test_icd_queue.h"
 
 namespace icd {
 struct Queue;
+
 struct QueueFamily {
     std::vector<std::unique_ptr<Queue>> queues;
-};
-
-struct FaultInfo {
-    std::string description;
-    std::vector<VkDeviceFaultAddressInfoEXT> address_infos;
-    std::vector<VkDeviceFaultVendorInfoEXT> vendor_infos;
-    std::vector<uint8_t> vendory_binary;
 };
 
 class Device {

@@ -16,7 +16,10 @@
  * limitations under the License.
  */
 #include "test_icd_device.h"
+#include "test_icd_command.h"
 #include "test_icd_queue.h"
+#include <vulkan/utility/vk_struct_helper.hpp>
+#include <vulkan/utility/vk_safe_struct.hpp>
 
 namespace icd {
 
@@ -51,6 +54,8 @@ VkResult Device::WaitIdle() {
     return VK_SUCCESS;
 }
 
+void Device::SetFaultInfo(FaultInfo&& fault_info) { fault_info_.emplace(std::move(fault_info)); }
+
 VkResult Device::GetFaultInfo(VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaultInfoEXT* pFaultInfo) {
     if (!fault_info_.has_value()) {
         pFaultCounts->addressInfoCount = 0;
@@ -59,7 +64,12 @@ VkResult Device::GetFaultInfo(VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaul
         return VK_SUCCESS;
     }
 
-    if (pFaultInfo != nullptr) {
+    if (pFaultInfo == nullptr) {
+        pFaultCounts->addressInfoCount = fault_info_->address_infos.size();
+        pFaultCounts->vendorInfoCount = fault_info_->vendor_infos.size();
+        pFaultCounts->vendorBinarySize = fault_info_->vendor_binary.size();
+    } else {
+        strncpy(pFaultInfo->description, fault_info_->description.data(), sizeof(pFaultInfo->description));
         if (pFaultCounts->addressInfoCount > uint32_t(fault_info_->address_infos.size())) {
             pFaultCounts->addressInfoCount = uint32_t(fault_info_->address_infos.size());
         }
@@ -72,10 +82,10 @@ VkResult Device::GetFaultInfo(VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaul
         for (uint32_t i = 0; i < pFaultCounts->vendorInfoCount; i++) {
             pFaultInfo->pVendorInfos[i] = fault_info_->vendor_infos[i];
         }
-        if (pFaultCounts->vendorBinarySize > uint32_t(fault_info_->vendory_binary.size())) {
-            pFaultCounts->vendorBinarySize = uint32_t(fault_info_->vendory_binary.size());
+        if (pFaultCounts->vendorBinarySize > uint32_t(fault_info_->vendor_binary.size())) {
+            pFaultCounts->vendorBinarySize = uint32_t(fault_info_->vendor_binary.size());
         }
-        memcpy(pFaultInfo->pVendorBinaryData, fault_info_->vendory_binary.data(), pFaultCounts->vendorBinarySize);
+        memcpy(pFaultInfo->pVendorBinaryData, fault_info_->vendor_binary.data(), pFaultCounts->vendorBinarySize);
     }
     return VK_SUCCESS;
 }

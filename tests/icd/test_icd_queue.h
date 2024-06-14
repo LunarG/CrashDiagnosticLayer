@@ -27,6 +27,8 @@
 #include <thread>
 #include <vector>
 
+#include "test_icd_fault_info.h"
+
 namespace icd {
 
 class CommandBuffer;
