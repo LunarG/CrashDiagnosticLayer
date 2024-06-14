@@ -52,6 +52,8 @@ find_package(glslang CONFIG)
 
 target_link_libraries(cdl_tests PRIVATE
     Vulkan::Headers
+    Vulkan::UtilityHeaders
+    Vulkan::SafeStruct
     GTest::gtest
     glslang::SPIRV
     glslang::glslang-default-resource-limits

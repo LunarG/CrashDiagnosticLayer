@@ -21,7 +21,6 @@
 
 #include <vulkan/utility/vk_struct_helper.hpp>
 
-#include <cstdint>
 namespace icd {
 
 VkResult CommandBuffer::Execute(Queue &queue) {
@@ -47,7 +46,7 @@ VkResult CommandBuffer::Execute(Queue &queue) {
             }
             case Command::Type::kCmdBeginDebugUtilsLabelEXT: {
                 auto args = reinterpret_cast<CmdBeginDebugUtilsLabelEXTArgs *>(cmd.parameters);
-                if (fault_label_.has_value() && strcmp(fault_label_->pLabelName, args->pLabelInfo->pLabelName) == 0) {
+                if (fault_info_.has_value() && fault_label_ == args->pLabelInfo->pLabelName) {
                     in_hang_region_ = true;
                 }
                 break;
@@ -56,7 +55,7 @@ VkResult CommandBuffer::Execute(Queue &queue) {
                 if (in_hang_region_) {
                     in_hang_region_ = false;
                     result = VK_ERROR_DEVICE_LOST;
-                    // queue.SetFaultInfo(std::move(fault_info_);
+                    queue.SetFaultInfo(std::move(*fault_info_));
                 }
                 break;
             }
@@ -118,8 +117,9 @@ void CommandBuffer::CmdBeginDebugUtilsLabel(const VkDebugUtilsLabelEXT *pLabelIn
     tracker_.CmdBeginDebugUtilsLabelEXT(reinterpret_cast<VkCommandBuffer>(this), pLabelInfo);
     auto *fault_counts = vku::FindStructInPNextChain<VkDeviceFaultCountsEXT>(pLabelInfo->pNext);
     if (fault_counts) {
-        assert(!fault_label_.has_value());
-        fault_label_.emplace(pLabelInfo);
+        assert(!fault_info_.has_value());
+        fault_label_ = pLabelInfo->pLabelName;
+        fault_info_.emplace(*pLabelInfo);
     }
 }
 

@@ -20,14 +20,17 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_icd.h>
 #include <vulkan/utility/vk_safe_struct.hpp>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <vector>
 
 #include "command_tracker.h"
+#include "test_icd_fault_info.h"
 
 namespace icd {
 class Queue;
+
 class CommandBuffer {
    public:
     CommandBuffer(VkCommandBufferLevel lvl) : level_(lvl) { set_loader_magic_value(&loader_data_); }
@@ -49,7 +52,8 @@ class CommandBuffer {
     VkCommandBufferLevel level_;
     CommandTracker tracker_;
     bool in_hang_region_{false};
-    std::optional<vku::safe_VkDebugUtilsLabelEXT> fault_label_;
+    std::string fault_label_;
+    std::optional<FaultInfo> fault_info_;
 };
 
 class CommandPool {

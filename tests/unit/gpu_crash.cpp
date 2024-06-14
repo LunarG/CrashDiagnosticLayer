@@ -21,6 +21,7 @@
 #include "shaders.h"
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
+#include <vulkan/utility/vk_struct_helper.hpp>
 
 class GpuCrash : public CDLTestBase {};
 
@@ -271,6 +272,15 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
 
     InitDevice({}, &features2);
 
+    bool fault_ext_supported = false;
+    auto extensions = physical_device_.enumerateDeviceExtensionProperties();
+    for (const auto &ext : extensions) {
+        if (std::string_view(ext.extensionName) == VK_EXT_DEVICE_FAULT_EXTENSION_NAME) {
+            fault_ext_supported = true;
+            break;
+        }
+    }
+
     constexpr size_t kNumElems = 256;
     constexpr VkDeviceSize kBuffSize = kNumElems * sizeof(float);
     BoundBuffer bda(physical_device_, device_, kBuffSize, "bda",
@@ -279,6 +289,7 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     bda.Set(1.0f, kNumElems);
 
     vk::DeviceAddress addr = device_.getBufferAddress(vk::BufferDeviceAddressInfo(*bda.buffer));
+    ASSERT_NE(addr, 0);
 
     std::array<const vk::DeviceAddress, 2> push_constants{addr, 2};
 
@@ -293,10 +304,13 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     cmd_buff_.pushConstants<vk::DeviceAddress>(pipeline.PipelineLayout(), vk::ShaderStageFlagBits::eCompute, 0u,
                                                push_constants);
 
-    vk::DeviceFaultAddressInfoEXT address_info(vk::DeviceFaultAddressTypeEXT::eWriteInvalid, addr, 0x1000);
-    vk::DeviceFaultInfoEXT fault_info({}, &address_info);
-    strncpy(fault_info.description.data(), "fault-description", fault_info.description.size());
-    vk::DeviceFaultCountsEXT counts(1, 0, 0, &fault_info);
+    // using non-hpp types because those try to do memory management on pointers in the fault info struct.
+    VkDeviceFaultAddressInfoEXT address_info{VK_DEVICE_FAULT_ADDRESS_TYPE_WRITE_INVALID_EXT, addr, 0x1000};
+    auto fault_info = vku::InitStruct<VkDeviceFaultInfoEXT>();
+    strncpy(fault_info.description, "fault-description", sizeof(fault_info.description));
+    fault_info.pAddressInfos = &address_info;
+
+    auto counts = vku::InitStruct<VkDeviceFaultCountsEXT>(&fault_info, 1, 0, 0);
     vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
     cmd_buff_.beginDebugUtilsLabelEXT(label);
 
@@ -325,5 +339,15 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     dump::File dump_file;
     dump::Parse(dump_file, output_path_);
 
-    fault_info.pAddressInfos = nullptr;
+    ASSERT_EQ(dump_file.devices.size(), 1);
+    if (fault_ext_supported) {
+        ASSERT_TRUE(dump_file.devices[0].fault_info.has_value());
+        auto &dump_info = *dump_file.devices[0].fault_info;
+        ASSERT_TRUE(dump_info.description == fault_info.description);
+        ASSERT_EQ(dump_info.fault_address_ranges.size(), 1);
+        auto &fault_range = dump_info.fault_address_ranges[0];
+        // TODO ASSERT_EQ(fault_range.type, )
+        ASSERT_GE(addr, fault_range.begin);
+        ASSERT_LT(addr, fault_range.end);
+    }
 }
