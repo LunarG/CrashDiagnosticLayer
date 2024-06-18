@@ -50,7 +50,9 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
     from generators.command_printer_generator import CommandPrinterOutputGenerator
     from generators.command_recorder_generator import CommandRecorderOutputGenerator
     from generators.dispatch_generator import DispatchOutputGenerator
-    from generators.intercepts_and_prepost_generator import InterceptCommandsOutputGenerator
+    from generators.command_prepost_generator import CommandPrePostGenerator
+    from generators.command_tracker_generator import CommandTrackerGenerator
+    from generators.context_generator import InterceptContextGenerator
     from generators.layer_base_generator import LayerBaseOutputGenerator
     from generators.test_icd_generator import TestIcdGenerator
 
@@ -63,15 +65,6 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
     # Build up a list of all generators
     # Note: Options variable names MUST match order of constructor variable in generator
     generators = {
-        'command.h.inc' : {
-            'generator': InterceptCommandsOutputGenerator,
-            'genCombined': True,
-        },
-        'command.cpp.inc' : {
-            'generator': InterceptCommandsOutputGenerator,
-            'genCombined': True,
-        },
-
         'command_common.h' : {
             'generator': CommandCommonOutputGenerator,
             'genCombined': True,
@@ -104,16 +97,20 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
             'generator': CommandRecorderOutputGenerator,
             'genCombined': True,
         },
-        'command_tracker.h' : {
-            'generator': InterceptCommandsOutputGenerator,
-            'genCombined': True,
-        },
-        'command_tracker.cpp' : {
-            'generator': InterceptCommandsOutputGenerator,
+        'command.h.inc' : {
+            'generator': CommandPrePostGenerator,
             'genCombined': True,
         },
         'command.cpp.inc' : {
-            'generator': InterceptCommandsOutputGenerator,
+            'generator': CommandPrePostGenerator,
+            'genCombined': True,
+        },
+        'command_tracker.h' : {
+            'generator': CommandTrackerGenerator,
+            'genCombined': True,
+        },
+        'command_tracker.cpp' : {
+            'generator': CommandTrackerGenerator,
             'genCombined': True,
         },
         'dispatch.h' : {
@@ -125,11 +122,11 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
             'genCombined': True,
         },
         'cdl_commands.h.inc' : {
-            'generator': InterceptCommandsOutputGenerator,
+            'generator': InterceptContextGenerator,
             'genCombined': True,
         },
         'cdl_commands.cpp.inc' : {
-            'generator': InterceptCommandsOutputGenerator,
+            'generator': InterceptContextGenerator,
             'genCombined': True,
         },
         'layer_base.h' : {

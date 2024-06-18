@@ -18,7 +18,7 @@
  *
  * *** ---- WARNING! ----
  * ***   THIS FILE IS GENERATED - DO NOT EDIT
- * ***   Update source file intercepts_and_prepost_generator.py for modifications
+ * ***   Update source file command_tracker_generator.py for modifications
  * *** ---- WARNING! ----
  *
  ****************************************************************************/
