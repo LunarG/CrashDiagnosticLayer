@@ -23,6 +23,8 @@ target_sources(cdl_tests PRIVATE
     framework/cdl_tests.cpp
     framework/bound_buffer.h
     framework/bound_buffer.cpp
+    framework/bound_image.h
+    framework/bound_image.cpp
     framework/compute_pipeline.h
     framework/compute_pipeline.cpp
     framework/descriptorset_helper.h
@@ -31,6 +33,8 @@ target_sources(cdl_tests PRIVATE
     framework/dump_file.cpp
     framework/error_monitor.h
     framework/error_monitor.cpp
+    framework/graphics_pipeline.h
+    framework/graphics_pipeline.cpp
     framework/layer_settings.h
     framework/layer_settings.cpp
     framework/test_fixtures.h

@@ -57,7 +57,7 @@ TEST_F(Sync, HostWaitWrongSem) {
     vk::TimelineSemaphoreSubmitInfo timeline_info(1, &gpu_wait_value);
     vk::SubmitInfo submit_info(*host_signalled, wait_mask, *cmd_buff_, {}, &timeline_info);
 
-    compute_queue_.submit(submit_info);
+    queue_.submit(submit_info);
 
     vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
     device_.signalSemaphore(signal_info);
@@ -108,17 +108,17 @@ TEST_F(Sync, GpuWaitWrongSem) {
     vk::TimelineSemaphoreSubmitInfo signal_timeline_info(0, nullptr, 1, &gpu_wait_value);
     vk::SubmitInfo signal_submit({}, {}, {}, *gpu_signalled, &signal_timeline_info);
 
-    compute_queue_.submit(signal_submit);
+    queue_.submit(signal_submit);
 
     vk::TimelineSemaphoreSubmitInfo wait_timeline_info(1, &gpu_wait_value);
     vk::SubmitInfo wait_submit(*never_signalled, wait_mask, {}, {}, &wait_timeline_info);
 
-    compute_queue_.submit(wait_submit);
+    queue_.submit(wait_submit);
 
     bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
-        compute_queue_.waitIdle();
+        queue_.waitIdle();
     } catch (vk::SystemError &err) {
         hang_detected = true;
     }
@@ -165,7 +165,7 @@ TEST_F(Sync, HostWaitHang) {
     vk::TimelineSemaphoreSubmitInfo timeline_info(1, &gpu_wait_value, 1, &gpu_signal_value);
     vk::SubmitInfo submit_info(*host_signalled, wait_mask, *cmd_buff_, *gpu_signalled, &timeline_info);
 
-    compute_queue_.submit(submit_info);
+    queue_.submit(submit_info);
 
     vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
     device_.signalSemaphore(signal_info);
@@ -223,7 +223,7 @@ TEST_F(Sync, HostWaitHangSubmit2) {
     vk::CommandBufferSubmitInfo cb_info(*cmd_buff_);
     vk::SubmitInfo2 submit_info({}, wait_sem, cb_info, signal_sem);
 
-    compute_queue_.submit2(submit_info);
+    queue_.submit2(submit_info);
 
     vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
     device_.signalSemaphore(signal_info);
@@ -270,7 +270,7 @@ TEST_F(Sync, FenceWaitHang) {
 
     vk::SubmitInfo submit_info({}, {}, *cmd_buff_);
 
-    compute_queue_.submit(submit_info, *fence);
+    queue_.submit(submit_info, *fence);
 
     bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
@@ -310,7 +310,7 @@ TEST_F(Sync, DeviceWaitHang) {
 
     vk::SubmitInfo submit_info({}, {}, *cmd_buff_);
 
-    compute_queue_.submit(submit_info);
+    queue_.submit(submit_info);
 
     bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");

@@ -58,7 +58,7 @@ CDLTestBase::CDLTestBase()
       physical_device_(VK_NULL_HANDLE),
       device_(VK_NULL_HANDLE),
       layer_settings_(monitor_.GetDebugCreateInfo()),
-      compute_queue_(VK_NULL_HANDLE),
+      queue_(VK_NULL_HANDLE),
       cmd_pool_(VK_NULL_HANDLE),
       cmd_buff_(VK_NULL_HANDLE) {
     const auto* test_info = testing::UnitTest::GetInstance()->current_test_info();
@@ -148,21 +148,21 @@ void CDLTestBase::InitDevice(std::vector<const char*> extensions, const vk::Phys
 
     auto queue_properties = physical_device_.getQueueFamilyProperties();
     for (uint32_t i = 0; i < uint32_t(queue_properties.size()); i++) {
-        if (queue_properties[i].queueFlags & vk::QueueFlagBits::eCompute) {
-            compute_qfi_ = i;
+        if (queue_properties[i].queueFlags & (vk::QueueFlagBits::eCompute | vk::QueueFlagBits::eGraphics)) {
+            qfi_ = i;
             break;
         }
     }
 
     float priority = 0.0f;
-    vk::DeviceQueueCreateInfo queue_ci({}, compute_qfi_, 1, &priority);
+    vk::DeviceQueueCreateInfo queue_ci({}, qfi_, 1, &priority);
     vk::DeviceCreateInfo device_ci({}, queue_ci, {}, extensions, nullptr, features2);
 
     device_ = physical_device_.createDevice(device_ci);
 
-    compute_queue_ = device_.getQueue(compute_qfi_, 0);
+    queue_ = device_.getQueue(qfi_, 0);
 
-    vk::CommandPoolCreateInfo cmd_pool_ci({}, compute_qfi_);
+    vk::CommandPoolCreateInfo cmd_pool_ci({}, qfi_);
     cmd_pool_ = device_.createCommandPool(cmd_pool_ci);
 
     vk::CommandBufferAllocateInfo cmd_alloc_info(cmd_pool_, vk::CommandBufferLevel::ePrimary, 1);

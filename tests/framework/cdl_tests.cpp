@@ -118,7 +118,7 @@ static std::vector<std::string> GetVkEnvironmentVariable(const char *env_var) {
 
 static void CheckAndSetEnvironmentVariables() {
     if (!CDLTestBase::no_mock_icd_) {
-        std::filesystem::path icd_path {kMockICDBuildPath};
+        std::filesystem::path icd_path{kMockICDBuildPath};
         icd_path /= "CDL_Test_ICD.json";
         std::string path_str = icd_path.string();
         SetEnvironment("VK_ICD_FILENAMES", path_str.c_str());
