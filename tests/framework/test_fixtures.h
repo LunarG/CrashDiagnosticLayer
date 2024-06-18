@@ -57,8 +57,8 @@ class CDLTestBase : public ::testing::Test {
     std::filesystem::path output_path_;
     LayerSettings layer_settings_;
 
-    uint32_t compute_qfi_{~0u};
-    vk::raii::Queue compute_queue_;
+    uint32_t qfi_{~0u};
+    vk::raii::Queue queue_;
 
     vk::raii::CommandPool cmd_pool_;
     vk::raii::CommandBuffer cmd_buff_;

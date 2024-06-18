@@ -37,8 +37,8 @@ TEST_F(Watchdog, NoTimeout) {
 
         vk::SubmitInfo submit_info({}, {}, *cmd_buff_, {});
 
-        compute_queue_.submit(submit_info);
-        compute_queue_.waitIdle();
+        queue_.submit(submit_info);
+        queue_.waitIdle();
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 }
@@ -55,9 +55,9 @@ TEST_F(Watchdog, Timeout) {
     vk::SubmitInfo submit_info({}, {}, *cmd_buff_, {});
 
     monitor_.SetDesiredError("Device error encountered and log being recorded");
-    compute_queue_.submit(submit_info);
+    queue_.submit(submit_info);
     std::this_thread::sleep_for(std::chrono::milliseconds(kWatchdogTimeout * 2));
     monitor_.VerifyFound();
 
-    compute_queue_.waitIdle();
+    queue_.waitIdle();
 }
