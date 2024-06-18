@@ -96,6 +96,7 @@ const char* kDumpAllCommandBuffers = "dump_all_command_buffers";
 const char* kTrackSemaphores = "track_semaphores";
 const char* kTraceAllSemaphores = "trace_all_semaphores";
 const char* kInstrumentAllCommands = "instrument_all_commands";
+const char* kSyncAfterCommands = "sync_after_commands";
 }  // namespace settings
 
 const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
@@ -136,6 +137,7 @@ Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
     GetEnvVal<bool>(layer_settings, settings::kTrackSemaphores, track_semaphores);
     GetEnvVal<bool>(layer_settings, settings::kTraceAllSemaphores, trace_all_semaphores);
     GetEnvVal<bool>(layer_settings, settings::kInstrumentAllCommands, instrument_all_commands);
+    GetEnvVal<bool>(layer_settings, settings::kSyncAfterCommands, sync_after_commands);
 }
 
 void Settings::Print(YAML::Emitter& os) const {}

@@ -673,22 +673,6 @@ void CommandBuffer::PostCmdResolveImage2(VkCommandBuffer commandBuffer, const Vk
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    tracker_.CmdBeginRendering(commandBuffer, pRenderingInfo);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdEndRendering(VkCommandBuffer commandBuffer) {
-    tracker_.CmdEndRendering(commandBuffer);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdEndRendering(VkCommandBuffer commandBuffer) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
     tracker_.CmdSetCullMode(commandBuffer, cullMode);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);

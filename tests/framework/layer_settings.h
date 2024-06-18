@@ -44,6 +44,7 @@ class LayerSettings {
 
     // commands section
     vk::Bool32 instrument_all_commands{false};
+    vk::Bool32 sync_after_commands{false};
 
     // semaphores section
     vk::Bool32 track_semaphores{true};

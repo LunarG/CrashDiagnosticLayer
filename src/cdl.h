@@ -114,6 +114,7 @@ struct Settings {
     bool track_semaphores{false};
     bool trace_all_semaphores{false};
     bool trace_all{false};
+    bool sync_after_commands{false};
     uint64_t watchdog_timer_ms{0};
 };
 

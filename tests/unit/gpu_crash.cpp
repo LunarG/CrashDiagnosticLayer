@@ -362,9 +362,12 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     }
 }
 
-
 TEST_F(GpuCrash, VendorInfo) {
     InitInstance();
+    auto props = physical_device_.getProperties();
+    if (props.deviceType != vk::PhysicalDeviceType::eVirtualGpu) {
+        GTEST_SKIP() << " This test only works on the test ICD";
+    }
     bool fault_ext_supported = false;
     auto extensions = physical_device_.enumerateDeviceExtensionProperties();
     for (const auto &ext : extensions) {

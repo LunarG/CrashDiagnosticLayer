@@ -306,12 +306,6 @@ void PostCmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pB
 void PreCmdResolveImage2(VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo);
 void PostCmdResolveImage2(VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo);
 
-void PreCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo);
-void PostCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo);
-
-void PreCmdEndRendering(VkCommandBuffer commandBuffer);
-void PostCmdEndRendering(VkCommandBuffer commandBuffer);
-
 void PreCmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode);
 void PostCmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode);
 

@@ -34,7 +34,8 @@ CommandBuffer::CommandBuffer(Device& device, VkCommandPool vk_command_pool, VkCo
     : device_(device),
       vk_command_pool_(vk_command_pool),
       vk_command_buffer_(vk_command_buffer),
-      cb_level_(allocate_info->level) {
+      cb_level_(allocate_info->level),
+      sync_after_commands_(device.GetContext().GetSettings().sync_after_commands) {
     if (has_checkpoints) {
         begin_value_ = 1;
         end_value_ = 0x0000FFFF;
@@ -81,6 +82,26 @@ void CommandBuffer::WriteCommandBeginCheckpoint(uint32_t command_id) {
 void CommandBuffer::WriteCommandEndCheckpoint(uint32_t command_id) {
     if (checkpoint_) {
         checkpoint_->WriteBottom(vk_command_buffer_, begin_value_ + command_id);
+    }
+    if (sync_after_commands_) {
+        bool stopped_rendering = false;
+        if (rendering_active_) {
+            device_.Dispatch().CmdEndRendering(vk_command_buffer_);
+            rendering_active_ = false;
+            stopped_rendering = true;
+        }
+
+        auto memory_barrier = vku::InitStruct<VkMemoryBarrier>();
+        memory_barrier.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
+        memory_barrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+
+        device_.Dispatch().CmdPipelineBarrier(vk_command_buffer_, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                              VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 1, &memory_barrier, 0, nullptr, 0,
+                                              nullptr);
+        if (stopped_rendering) {
+            device_.Dispatch().CmdBeginRendering(vk_command_buffer_, current_rendering_info_->ptr());
+            rendering_active_ = true;
+        }
     }
 }
 
@@ -579,6 +600,33 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
     os << YAML::EndSeq;
     assert(os.good());
     os << YAML::EndMap;  // CommandBuffer
+}
+
+void CommandBuffer::PreCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
+    tracker_.CmdBeginRendering(commandBuffer, pRenderingInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PostCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+
+    if (sync_after_commands_) {
+        current_rendering_info_.emplace(pRenderingInfo);
+        rendering_active_ = true;
+    }
+}
+
+void CommandBuffer::PreCmdEndRendering(VkCommandBuffer commandBuffer) {
+    if (sync_after_commands_) {
+        current_rendering_info_.reset();
+        rendering_active_ = false;
+    }
+    tracker_.CmdEndRendering(commandBuffer);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PostCmdEndRendering(VkCommandBuffer commandBuffer) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 // =============================================================================
