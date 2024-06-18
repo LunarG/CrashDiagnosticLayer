@@ -320,6 +320,20 @@
 		    "expanded": false,
 		    "settings": [
 			{
+			    "key": "sync_after_commands",
+			    "env": "CDL_SYNC_AFTER_COMMANDS",
+			    "label": "Synchronize commands",
+			    "description": "Add pipeline barriers after instrumented commands.",
+			    "type": "BOOL",
+			    "default": false,
+			    "platforms": [
+				"WINDOWS",
+				"LINUX",
+				"MACOS",
+				"ANDROID"
+			    ]
+			},
+			{
 			    "key": "instrument_all_commands",
 			    "env": "CDL_INSTRUMENT_ALL_COMMANDS",
 			    "label": "Instrument all commands",

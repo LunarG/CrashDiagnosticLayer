@@ -21,9 +21,12 @@
 
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <stack>
 #include <string>
 #include <vector>
+
+#include <vulkan/utility/vk_safe_struct.hpp>
 
 #include "command_common.h"
 #include "command_tracker.h"
@@ -118,6 +121,14 @@ class CommandBuffer {
 
     VkResult PostResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags, VkResult result);
 
+    void PreCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo);
+
+    void PostCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo);
+
+    void PreCmdEndRendering(VkCommandBuffer commandBuffer);
+
+    void PostCmdEndRendering(VkCommandBuffer commandBuffer);
+
     CommandBuffer& operator=(const CommandBuffer&) = delete;
     CommandBuffer(const CommandBuffer&) = delete;
 
@@ -168,6 +179,10 @@ class CommandBuffer {
 
     CommandTracker tracker_;
     CommandPrinter printer_;
+
+    std::optional<vku::safe_VkRenderingInfo> current_rendering_info_;
+    bool rendering_active_{false};
+    bool sync_after_commands_{false};
 
     void WriteBeginCheckpoint();
     void WriteEndCheckpoint();

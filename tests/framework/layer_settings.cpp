@@ -36,6 +36,7 @@ LayerSettings::LayerSettings(const void* pnext)
         MakeStringSetting(log_file),
 
         MakeBoolSetting(instrument_all_commands),
+        MakeBoolSetting(sync_after_commands),
 
         MakeBoolSetting(track_semaphores),
         MakeBoolSetting(trace_all_semaphores),

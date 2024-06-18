@@ -17,17 +17,10 @@
 import os
 from generators.cdl_base_generator import CdlBaseOutputGenerator
 
-#NOTE: This generator only handle command buffer related overrides.
-# Everything else should be done manually in cdl.h/cpp.
-custom_functions = ()
-
-custom_pre_intercept_functions = (
-   'vkBeginCommandBuffer',
-   'vkResetCommandBuffer',
-   'vkCmdBindPipeline'
+custom_functions = (
+    'vkCmdBeginRendering',
+    'vkCmdEndRendering',
 )
-
-custom_post_intercept_functions = ()
 
 default_instrumented_functions = (
     'vkCmdDispatch',
@@ -77,7 +70,7 @@ class CommandPrePostGenerator(CdlBaseOutputGenerator):
 
     def generateCommandsHeader(self):
         out = []
-        for vkcommand in filter(lambda x: x.name.startswith('vkCmd'), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: x.name.startswith('vkCmd') and x.name not in custom_functions, self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Post', 1)
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)
@@ -91,7 +84,7 @@ class CommandPrePostGenerator(CdlBaseOutputGenerator):
 
     def generateCommandsSource(self):
         out = []
-        for vkcommand in filter(lambda x: x.name.startswith('vkCmd'), self.vk.commands.values()):
+        for vkcommand in filter(lambda x: x.name.startswith('vkCmd') and x.name not in custom_functions, self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             post_func_decl = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(';', ' {').replace(' vk', ' CommandBuffer::Post', 1)
             pre_func_decl = post_func_decl.replace('Post', 'Pre', 1)
