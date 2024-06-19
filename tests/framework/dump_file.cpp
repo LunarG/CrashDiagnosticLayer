@@ -57,7 +57,7 @@ static void ParseHandle(Handle& handle, const YAML::Node& node) {
     std::smatch base_match;
 
     if (std::regex_match(value, base_match, re)) {
-        handle.value = std::stoll(base_match[1], nullptr, 16);
+        handle.value = std::stoull(base_match[1], nullptr, 16);
         handle.name = base_match[2];
     } else {
         FAIL() << "Bad handle value:" << value;
