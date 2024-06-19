@@ -19,6 +19,7 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <condition_variable>
 #include <mutex>
 
 namespace icd {
@@ -29,7 +30,7 @@ class Fence {
     void Signal();
     void DeviceLost();
 
-    VkResult Status() const;
+    VkResult GetStatus() const;
     VkResult WaitFor(uint64_t ms);
 
    private:

@@ -2253,7 +2253,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL ResetFences(VkDevice device, uint32_t fenc
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetFenceStatus(VkDevice device, VkFence fence) {
     auto* f = reinterpret_cast<Fence*>(fence);
-    return f->Status();
+    return f->GetStatus();
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL WaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences,
