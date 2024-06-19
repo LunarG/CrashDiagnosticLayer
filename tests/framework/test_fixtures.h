@@ -66,8 +66,7 @@ class CDLTestBase : public ::testing::Test {
 
 template <typename T>
 void SetObjectName(vk::raii::Device& device, T& object, const std::string& name) {
-    vk::DebugUtilsObjectNameInfoEXT info(T::objectType, reinterpret_cast<uint64_t>(typename T::CType(*object)),
-                                         name.c_str());
+    vk::DebugUtilsObjectNameInfoEXT info(T::objectType, uint64_t(typename T::CType(*object)), name.c_str());
     device.setDebugUtilsObjectNameEXT(info);
 }
 
