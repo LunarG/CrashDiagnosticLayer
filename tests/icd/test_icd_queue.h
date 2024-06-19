@@ -20,6 +20,8 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_icd.h>
 
+#include <atomic>
+#include <condition_variable>
 #include <list>
 #include <map>
 #include <memory>

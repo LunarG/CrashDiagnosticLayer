@@ -42,7 +42,7 @@ void Fence::DeviceLost() {
     cond_.notify_all();
 }
 
-VkResult Fence::Status() const {
+VkResult Fence::GetStatus() const {
     auto guard = Lock();
     switch (state_) {
         case kWaiting:

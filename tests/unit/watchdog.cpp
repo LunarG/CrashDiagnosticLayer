@@ -19,8 +19,9 @@
 #include "compute_pipeline.h"
 #include "dump_file.h"
 #include "shaders.h"
+
 #include <filesystem>
-#include <yaml-cpp/yaml.h>
+#include <thread>
 
 class Watchdog : public CDLTestBase {};
 
