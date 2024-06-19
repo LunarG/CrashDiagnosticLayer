@@ -347,6 +347,23 @@ static void ParseFaultAddressRange(FaultAddressRange& range, const YAML::Node& i
     }
 }
 
+static void ParseVendorInfo(VendorInfo& info, const YAML::Node& in_node) {
+    ASSERT_TRUE(in_node);
+    ASSERT_TRUE(in_node.IsMap());
+    for (const auto& node : in_node) {
+        std::string key = node.first.as<std::string>();
+        if (key == "description") {
+            info.description = node.second.as<std::string>();
+        } else if (key == "faultCode") {
+            info.code = node.second.as<uint64_t>();
+        } else if (key == "faultData") {
+            info.data = node.second.as<uint64_t>();
+        } else {
+            FAIL() << "Unkown DeviceFaultInfo key: " << key;
+        }
+    }
+}
+
 static void ParseDeviceFaultInfo(DeviceFaultInfo& fault, const YAML::Node& in_node) {
     ASSERT_TRUE(in_node);
     ASSERT_TRUE(in_node.IsMap());
@@ -361,6 +378,15 @@ static void ParseDeviceFaultInfo(DeviceFaultInfo& fault, const YAML::Node& in_no
                 ParseFaultAddressRange(range, elem);
                 fault.fault_address_ranges.emplace_back(std::move(range));
             }
+        } else if (key == "VendorInfos") {
+            ASSERT_TRUE(node.second.IsSequence());
+            for (const auto& elem : node.second) {
+                VendorInfo info;
+                ParseVendorInfo(info, elem);
+                fault.vendor_infos.emplace_back(std::move(info));
+            }
+        } else if (key == "vendorBinaryFile") {
+            fault.vendor_binary_file = node.second.as<std::string>();
         } else {
             FAIL() << "Unkown DeviceFaultInfo key: " << key;
         }
@@ -430,6 +456,7 @@ void Parse(File& dump_file, const std::filesystem::path& search_path) {
         if (iter->path().filename() == "cdl_dump.yaml") {
             ASSERT_TRUE(file.empty());
             file = iter->path();
+            dump_file.full_path = iter->path();
         }
     }
     ASSERT_FALSE(file.empty());

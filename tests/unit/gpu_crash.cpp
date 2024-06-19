@@ -22,7 +22,7 @@
 #include "dump_file.h"
 #include "shaders.h"
 #include <filesystem>
-#include <yaml-cpp/yaml.h>
+#include <fstream>
 #include <vulkan/utility/vk_struct_helper.hpp>
 
 class GpuCrash : public CDLTestBase {};
@@ -177,7 +177,15 @@ TEST_F(GpuCrash, InfiniteLoop) {
 
 TEST_F(GpuCrash, InfiniteLoopSubmit2) {
     InitInstance();
-    InitDevice();
+
+    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceSynchronization2Features> chain;
+
+    auto &sync2_features = chain.get<vk::PhysicalDeviceSynchronization2Features>();
+    sync2_features.synchronization2 = VK_TRUE;
+
+    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+
+    InitDevice({}, &features2);
 
     ComputeIOTest state(physical_device_, device_, kInfiniteLoopComp);
     state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
@@ -265,10 +273,10 @@ TEST_F(GpuCrash, HangHostEvent) {
 TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     InitInstance();
 
-    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceVulkan12Features> chain;
+    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceBufferDeviceAddressFeatures> chain;
 
-    auto &vk12_features = chain.get<vk::PhysicalDeviceVulkan12Features>();
-    vk12_features.bufferDeviceAddress = VK_TRUE;
+    auto &bda_features = chain.get<vk::PhysicalDeviceBufferDeviceAddressFeatures>();
+    bda_features.bufferDeviceAddress = VK_TRUE;
 
     const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
 
@@ -465,4 +473,90 @@ TEST_F(GpuCrash, GraphicsInfiniteLoop) {
 
     dump::File dump_file;
     dump::Parse(dump_file, output_path_);
+}
+
+TEST_F(GpuCrash, VendorInfo) {
+    InitInstance();
+    bool fault_ext_supported = false;
+    auto extensions = physical_device_.enumerateDeviceExtensionProperties();
+    for (const auto &ext : extensions) {
+        if (std::string_view(ext.extensionName) == VK_EXT_DEVICE_FAULT_EXTENSION_NAME) {
+            fault_ext_supported = true;
+            break;
+        }
+    }
+    if (!fault_ext_supported) {
+        GTEST_SKIP() << VK_EXT_DEVICE_FAULT_EXTENSION_NAME << " is required.";
+    }
+    auto features = physical_device_.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceFaultFeaturesEXT>();
+    auto &fault_features = features.get<vk::PhysicalDeviceFaultFeaturesEXT>();
+    bool vendor_binary_supported = fault_features.deviceFaultVendorBinary;
+    InitDevice();
+
+    ComputeIOTest state(physical_device_, device_, kInfiniteLoopComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
+
+    vk::CommandBufferBeginInfo begin_info;
+    cmd_buff_.begin(begin_info);
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
+
+    std::array<VkDeviceFaultVendorInfoEXT, 3> vendor_infos;
+    vendor_infos[0] = vk::DeviceFaultVendorInfoEXT("out of tacos", 1, 42);
+    vendor_infos[1] = vk::DeviceFaultVendorInfoEXT("too tired", 2, 8675309);
+    vendor_infos[2] = vk::DeviceFaultVendorInfoEXT("my hovercraft is full of eels", 66536, 0);
+
+    const char *vendor_binary = "Do not taunt happy fun ball.";
+
+    auto fault_info = vku::InitStruct<VkDeviceFaultInfoEXT>();
+    fault_info.pVendorInfos = vendor_infos.data();
+    fault_info.pVendorBinaryData = (void *)vendor_binary;
+    vk::DeviceFaultCountsEXT counts(0, vendor_infos.size(), strlen(vendor_binary), &fault_info);
+    vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
+    cmd_buff_.beginDebugUtilsLabelEXT(label);
+
+    cmd_buff_.dispatch(1, 1, 1);
+
+    cmd_buff_.endDebugUtilsLabelEXT();
+
+    cmd_buff_.end();
+
+    vk::SubmitInfo submit_info({}, {}, *cmd_buff_, {});
+
+    bool hang_detected = false;
+    monitor_.SetDesiredError("Device error encountered and log being recorded");
+    try {
+        queue_.submit(submit_info);
+        queue_.waitIdle();
+    } catch (vk::SystemError &err) {
+        hang_detected = true;
+    }
+    monitor_.VerifyFound();
+    ASSERT_TRUE(hang_detected);
+
+    dump::File dump_file;
+    dump::Parse(dump_file, output_path_);
+
+    ASSERT_EQ(dump_file.devices[0].fault_info->vendor_infos.size(), 3);
+    for (uint32_t i = 0; i < vendor_infos.size(); i++) {
+        const auto &dump_info = dump_file.devices[0].fault_info->vendor_infos[i];
+        ASSERT_EQ(dump_info.description, vendor_infos[i].description);
+        ASSERT_EQ(dump_info.code, vendor_infos[i].vendorFaultCode);
+        ASSERT_EQ(dump_info.data, vendor_infos[i].vendorFaultData);
+    }
+    if (vendor_binary_supported) {
+        ASSERT_FALSE(dump_file.devices[0].fault_info->vendor_binary_file.empty());
+        std::filesystem::path binary_path =
+            dump_file.full_path.parent_path() / dump_file.devices[0].fault_info->vendor_binary_file;
+        auto file_size = std::filesystem::file_size(binary_path);
+        ASSERT_EQ(file_size, strlen(vendor_binary));
+
+        std::vector<char> data(file_size);
+        std::ifstream binary_file(binary_path, std::ios_base::in | std::ios_base::binary);
+
+        binary_file.read(data.data(), data.size());
+        ASSERT_EQ(memcmp(data.data(), vendor_binary, file_size), 0);
+    }
 }

@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <cinttypes>
+#include <fstream>
 #include <iomanip>
 
 #include "cdl.h"
@@ -590,23 +591,24 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
         os << YAML::EndSeq;
     }
     if (fault_counts.vendorInfoCount > 0) {
-        os << YAML::Key << "Vendor Infos" << YAML::Value << YAML::BeginSeq;
+        os << YAML::Key << "VendorInfos" << YAML::Value << YAML::BeginSeq;
         for (uint32_t vendor = 0; vendor < fault_counts.vendorInfoCount; ++vendor) {
             os << YAML::BeginMap;
-            os << YAML::Key << "Description" << YAML::Value << vendor_infos[vendor].description;
-            os << YAML::Key << "Fault Code" << YAML::Value << Uint64ToStr(vendor_infos[vendor].vendorFaultCode);
-            os << YAML::Key << "Fault Data" << YAML::Value << Uint64ToStr(vendor_infos[vendor].vendorFaultData);
+            os << YAML::Key << "description" << YAML::Value << vendor_infos[vendor].description;
+            os << YAML::Key << "faultCode" << YAML::Value << Uint64ToStr(vendor_infos[vendor].vendorFaultCode);
+            os << YAML::Key << "faultData" << YAML::Value << Uint64ToStr(vendor_infos[vendor].vendorFaultData);
             os << YAML::EndMap;  // Vendor Info
         }
         os << YAML::EndSeq;
     }
     if (fault_counts.vendorBinarySize > 0) {
-        os << YAML::Key << "Vendor Binary Data" << YAML::Value << YAML::BeginSeq << YAML::Hex;
-        // TODO This is going to be huge
-        for (uint32_t byte = 0; byte < fault_counts.vendorBinarySize; ++byte) {
-            os << binary_data[byte];
-        }
-        os << YAML::Dec << YAML::EndSeq;
+        const char* kVendorFile = "vendor_binary.dat";
+        std::filesystem::path out_path = context_.GetOutputPath() / kVendorFile;
+        std::ofstream outfile(out_path, std::ios_base::out | std::ios_base::binary);
+        outfile.write((char*)fault_info.pVendorBinaryData, fault_counts.vendorBinarySize);
+        outfile.close();
+
+        os << YAML::Key << "vendorBinaryFile" << YAML::Value << kVendorFile;
     }
     os << YAML::EndMap;  // DeviceFaultInfo
     assert(os.good());
