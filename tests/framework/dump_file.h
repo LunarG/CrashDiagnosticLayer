@@ -130,9 +130,17 @@ struct FaultAddressRange {
     std::optional<AddressRecord> next;
 };
 
+struct VendorInfo {
+    std::string description;
+    uint64_t code;
+    uint64_t data;
+};
+
 struct DeviceFaultInfo {
     std::string description;
     std::vector<FaultAddressRange> fault_address_ranges;
+    std::vector<VendorInfo> vendor_infos;
+    std::string vendor_binary_file;
 };
 
 struct Device {
@@ -153,6 +161,7 @@ struct Device {
 };
 
 struct File {
+    std::filesystem::path full_path;
     std::string version;
     std::string startTime;
     std::string timeSinceStart;
