@@ -323,7 +323,19 @@ void Queue::Print(YAML::Emitter& os) {
     auto dump_submits = device_.GetContext().GetSettings().dump_queue_submits;
     os << YAML::Key << "IncompleteSubmits" << YAML::Value << YAML::BeginSeq;
     for (const auto& submission : queue_submits_) {
-        uint32_t incomplete_submission_counter = 0;
+        // Check submssion state
+        SubmitState submit_state = submission.state;
+
+        if (dump_submits == DumpCommands::kRunning) {
+            if (submit_state != SubmitState::kRunning) {
+                continue;
+            }
+        } else if (dump_submits == DumpCommands::kPending) {
+            if (submit_state == SubmitState::kFinished) {
+                continue;
+            }
+        }
+
         os << YAML::BeginMap;
         os << YAML::Key << "type";
         switch (submission.type) {
