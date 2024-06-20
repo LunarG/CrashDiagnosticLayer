@@ -90,6 +90,8 @@ class CommandRecorder
 // definitions.
 
 ''')
+        out.append('template<>\n')
+        out.append('uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, uint64_t start_index, uint64_t count);\n')
         for vkstruct in self.vk.structs.values():
             out.extend([f'#ifdef {vkstruct.protect}\n'] if vkstruct.protect else [])
             out.append('template<>\n')
@@ -98,6 +100,12 @@ class CommandRecorder
 
         out.append('\n\n// Define CopyArray template functions.\n\n')
 
+        out.append('template<>\n')
+        out.append('uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, uint64_t start_index, uint64_t count) {\n')
+        out.append('    auto ptr = reinterpret_cast<uint8_t*>(m_allocator.Alloc(sizeof(uint8_t) * count));\n')
+        out.append('    memcpy(ptr, src, sizeof(uint8_t) * count);\n')
+        out.append('    return ptr;\n')
+        out.append('}\n')
         for vkstruct in self.vk.structs.values():
             out.extend([f'#ifdef {vkstruct.protect}\n'] if vkstruct.protect else [])
             out.append('template<>\n')
@@ -145,6 +153,8 @@ class CommandRecorder
                     else:
                         out.append(f'    args->{vkparam.name} = CopyArray({vkparam.name}, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));\n')
                     out.append('  }\n')
+                elif vkparam.length is not None and len(vkparam.length) > 0:
+                    out.append(f'    args->{vkparam.name} = CopyArray(reinterpret_cast<const uint8_t*>({vkparam.name}), static_cast<uint64_t>(0U), static_cast<uint64_t>({vkparam.length}));\n')
                 else:
                     out.append(f'  args->{vkparam.name} = {vkparam.name};\n')
             out.append('  return args;\n')

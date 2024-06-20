@@ -36,6 +36,8 @@
 // definitions.
 
 template <>
+uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, uint64_t start_index, uint64_t count);
+template <>
 VkExtent2D* CommandRecorder::CopyArray<VkExtent2D>(const VkExtent2D* src, uint64_t start_index, uint64_t count);
 template <>
 VkExtent3D* CommandRecorder::CopyArray<VkExtent3D>(const VkExtent3D* src, uint64_t start_index, uint64_t count);
@@ -3534,6 +3536,12 @@ VkDrawMeshTasksIndirectCommandEXT* CommandRecorder::CopyArray<VkDrawMeshTasksInd
 
 // Define CopyArray template functions.
 
+template <>
+uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, uint64_t start_index, uint64_t count) {
+    auto ptr = reinterpret_cast<uint8_t*>(m_allocator.Alloc(sizeof(uint8_t) * count));
+    memcpy(ptr, src, sizeof(uint8_t) * count);
+    return ptr;
+}
 template <>
 VkExtent2D* CommandRecorder::CopyArray<VkExtent2D>(const VkExtent2D* src, uint64_t start_index, uint64_t count) {
     auto ptr = reinterpret_cast<VkExtent2D*>(m_allocator.Alloc(sizeof(VkExtent2D) * count));
@@ -20915,7 +20923,8 @@ CmdUpdateBufferArgs* CommandRecorder::RecordCmdUpdateBuffer(VkCommandBuffer comm
     args->dstBuffer = dstBuffer;
     args->dstOffset = dstOffset;
     args->dataSize = dataSize;
-    args->pData = pData;
+    args->pData =
+        CopyArray(reinterpret_cast<const uint8_t*>(pData), static_cast<uint64_t>(0U), static_cast<uint64_t>(dataSize));
     return args;
 }
 
@@ -21142,7 +21151,8 @@ CmdPushConstantsArgs* CommandRecorder::RecordCmdPushConstants(VkCommandBuffer co
     args->stageFlags = stageFlags;
     args->offset = offset;
     args->size = size;
-    args->pValues = pValues;
+    args->pValues =
+        CopyArray(reinterpret_cast<const uint8_t*>(pValues), static_cast<uint64_t>(0U), static_cast<uint64_t>(size));
     return args;
 }
 
