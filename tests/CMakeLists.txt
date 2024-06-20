@@ -41,6 +41,7 @@ target_sources(cdl_tests PRIVATE
     framework/test_fixtures.cpp
     unit/create_instance.cpp
     unit/gpu_crash.cpp
+    unit/graphics.cpp
     unit/sync.cpp
     unit/settings.cpp
     unit/watchdog.cpp
