@@ -44,6 +44,197 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct);
 // Declare pNext chain printer.
 YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext);
 
+// Declare Handle stream operators
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuffer &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkImage &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkInstance &a);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevice &a);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDevice &a);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueue &a);
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSemaphore &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkCommandBuffer &a);
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkFence &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDeviceMemory &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkEvent &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkQueryPool &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkBufferView &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkImageView &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkShaderModule &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipelineCache &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipelineLayout &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipeline &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkRenderPass &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDescriptorSetLayout &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkSampler &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDescriptorSet &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDescriptorPool &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkFramebuffer &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkCommandPool &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkSamplerYcbcrConversion &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDescriptorUpdateTemplate &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkPrivateDataSlot &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkSurfaceKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkSwapchainKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDisplayKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDisplayModeKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkVideoSessionKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkVideoSessionParametersKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDeferredOperationKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDebugReportCallbackEXT &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkCuModuleNVX &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkCuFunctionNVX &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkDebugUtilsMessengerEXT &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkValidationCacheEXT &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkAccelerationStructureNV &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkPerformanceConfigurationINTEL &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkIndirectCommandsLayoutNV &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkCudaModuleNV &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkCudaFunctionNV &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkAccelerationStructureKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#ifdef VK_USE_PLATFORM_FUCHSIA
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkBufferCollectionFUCHSIA &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+#endif  // VK_USE_PLATFORM_FUCHSIA
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkMicromapEXT &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkOpticalFlowSessionNV &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkShaderEXT &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+
+
 // Declare stream operators for enums.
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkResult &t);

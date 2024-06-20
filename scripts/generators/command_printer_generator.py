@@ -65,6 +65,18 @@ YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext);
 ''')
         self.write("".join(out))
 
+        self.write("// Declare Handle stream operators\n")
+        out = []
+        for vkhandle in self.vk.handles.values():
+            out.extend([f'#ifdef {vkhandle.protect}\n'] if vkhandle.protect else [])
+            if not vkhandle.dispatchable:
+                out.append('#if VK_USE_64_BIT_PTR_DEFINES\n')
+            out.append(f'YAML::Emitter &operator<<(YAML::Emitter& os, const {vkhandle.name} &a);')
+            if not vkhandle.dispatchable:
+                out.append('#endif //VK_USE_64_BIT_PTR_DEFINES\n')
+            out.extend([f'#endif //{vkhandle.protect}\n'] if vkhandle.protect else [])
+            out.append('\n')
+        self.write("".join(out))
         self.write("\n// Declare stream operators for enums.\n")
         out = []
         for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
@@ -84,7 +96,7 @@ YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext);
         out = []
         out.append('''
 // Declare print functions.
-
+class ObjectInfoDB;
 class CommandPrinter {
  public:
   void SetNameResolver(const ObjectInfoDB *name_resolver);
@@ -276,7 +288,8 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
                 out.append('#if VK_USE_64_BIT_PTR_DEFINES\n')
             out.append(f'''
 YAML::Emitter &operator<<(YAML::Emitter& os, const {vkhandle.name} &a) {{
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }}
 ''')
             if not vkhandle.dispatchable:
