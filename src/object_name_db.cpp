@@ -75,13 +75,3 @@ std::string ObjectInfoDB::GetObjectInfo(uint64_t handle) const {
     return info_ss.str();
 }
 
-YAML::Emitter& ObjectInfoDB::PrintDebugInfo(YAML::Emitter& os, uint64_t handle) const {
-    auto info = FindObjectInfo(handle);
-    os << YAML::BeginMap;
-    os << YAML::Key << "VkHandle" << YAML::Value << YAML::Hex << handle << YAML::Dec;
-    if (!info.name.empty()) {
-        os << YAML::Key << "name" << YAML::Value << info.name;
-    }
-    os << YAML::EndMap;
-    return os;
-}

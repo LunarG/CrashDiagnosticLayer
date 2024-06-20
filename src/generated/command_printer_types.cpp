@@ -40,307 +40,353 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) { global
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuffer &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImage &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkInstance &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevice &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDevice &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueue &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSemaphore &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCommandBuffer &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFence &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceMemory &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkEvent &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueryPool &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferView &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageView &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderModule &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCache &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineLayout &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipeline &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPass &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetLayout &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSampler &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSet &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorPool &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFramebuffer &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCommandPool &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerYcbcrConversion &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorUpdateTemplate &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPrivateDataSlot &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceKHR &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainKHR &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayKHR &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayModeKHR &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoSessionKHR &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoSessionParametersKHR &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeferredOperationKHR &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackEXT &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuModuleNVX &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuFunctionNVX &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugUtilsMessengerEXT &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkValidationCacheEXT &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureNV &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceConfigurationINTEL &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutNV &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaModuleNV &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaFunctionNV &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureKHR &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
@@ -348,7 +394,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureKHR &a
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferCollectionFUCHSIA &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 #endif  // VK_USE_PLATFORM_FUCHSIA
@@ -356,21 +403,24 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferCollectionFUCHSIA &a)
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapEXT &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowSessionNV &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderEXT &a) {
-    return global_name_resolver->PrintDebugInfo(os, reinterpret_cast<uint64_t>(a));
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 

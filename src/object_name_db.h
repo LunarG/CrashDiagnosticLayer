@@ -67,8 +67,6 @@ class ObjectInfoDB {
                               HandleDebugNamePreference handle_debug_name_preference = kReportBoth) const;
     std::string GetObjectInfo(uint64_t handle) const;
 
-    YAML::Emitter& PrintDebugInfo(YAML::Emitter& os, uint64_t handle) const;
-
    private:
     mutable std::mutex lock_;
 
