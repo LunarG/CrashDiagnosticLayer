@@ -348,7 +348,7 @@ VkResult SetDeviceLoaderData(VkDevice device, void *obj)
             lower_function_call += ');\n'
 
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
-            func_call = vkcommand.cPrototype.replace('VKAPI_ATTR ', '').replace('VKAPI_CALL ', '').replace(' vk', ' Intercept').replace(';', ' {')
+            func_call = vkcommand.cPrototype.replace(' vk', ' Intercept').replace(';', ' {')
             out.append(f'{func_call}\n')
 
             if self.CommandHasReturn(vkcommand):
@@ -413,7 +413,7 @@ VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL PassDeviceProcDownTheChain(
 /*                         Custom Intercept Functions                        */
 /*****************************************************************************/
 
-VkResult InterceptCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) {
+VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance) {
   // Find the create info
   VkLayerInstanceCreateInfo *layer_create_info = GetLoaderInstanceInfo(pCreateInfo, VK_LAYER_LINK_INFO);
   if (layer_create_info == NULL)
@@ -461,7 +461,7 @@ VkResult InterceptCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const 
   return result;
 }
 
-void InterceptDestroyInstance(
+VKAPI_ATTR void VKAPI_CALL InterceptDestroyInstance(
     VkInstance instance, const VkAllocationCallbacks *pAllocator) {
 
   auto instance_key = DataKey(instance);
@@ -475,7 +475,7 @@ void InterceptDestroyInstance(
   FreeInstanceLayerData(instance_key);
 }
 
-VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
+VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateDevice(VkPhysicalDevice gpu,
                                const VkDeviceCreateInfo *pCreateInfo,
                                const VkAllocationCallbacks *pAllocator,
                                VkDevice *pDevice) {
@@ -524,7 +524,7 @@ VkResult InterceptCreateDevice(VkPhysicalDevice gpu,
   return result;
 }
 
-void InterceptDestroyDevice(
+VKAPI_ATTR void VKAPI_CALL InterceptDestroyDevice(
     VkDevice device, const VkAllocationCallbacks *pAllocator) {
 
   auto device_key = DataKey(device);
@@ -537,28 +537,28 @@ void InterceptDestroyDevice(
   FreeDeviceLayerData(device_key);
 }
 
-VkResult InterceptQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
+VKAPI_ATTR VkResult VKAPI_CALL InterceptQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
     auto layer_data = GetDeviceLayerData(DataKey(queue));
     return layer_data->interceptor->QueueSubmit(queue, submitCount, pSubmits, fence);
 }
 
-VkResult InterceptQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
+VKAPI_ATTR VkResult VKAPI_CALL InterceptQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo,
                                   VkFence fence) {
     auto layer_data = GetDeviceLayerData(DataKey(queue));
     return layer_data->interceptor->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
 }
 
-VkResult InterceptQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
+VKAPI_ATTR VkResult VKAPI_CALL InterceptQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     auto layer_data = GetDeviceLayerData(DataKey(queue));
     return layer_data->interceptor->QueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
-VkResult InterceptQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
+VKAPI_ATTR VkResult VKAPI_CALL InterceptQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     auto layer_data = GetDeviceLayerData(DataKey(queue));
     return layer_data->interceptor->QueueSubmit2(queue, submitCount, pSubmits, fence);
 }
 
-VkResult
+VKAPI_ATTR VkResult VKAPI_CALL
 InterceptEnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
                                           VkLayerProperties *pProperties) {
 
@@ -570,7 +570,7 @@ InterceptEnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
   return result;
 }
 
-VkResult
+VKAPI_ATTR VkResult VKAPI_CALL 
 InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
                                         uint32_t *pPropertyCount,
                                         VkLayerProperties *pProperties) {
@@ -583,7 +583,7 @@ InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
   return result;
 }
 
-VkResult InterceptEnumerateInstanceExtensionProperties(const char *pLayerName,
+VKAPI_ATTR VkResult VKAPI_CALL InterceptEnumerateInstanceExtensionProperties(const char *pLayerName,
                                                        uint32_t *pPropertyCount,
                                                        VkExtensionProperties *pProperties) {
   bool layer_requested = (nullptr == pLayerName ||''')
@@ -605,7 +605,7 @@ VkResult InterceptEnumerateInstanceExtensionProperties(const char *pLayerName,
   return result;
 }
 
-VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
+VKAPI_ATTR VkResult VKAPI_CALL InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
                                                      const char *pLayerName,
                                                      uint32_t *pPropertyCount,
                                                      VkExtensionProperties *pProperties) {
@@ -691,7 +691,7 @@ VkResult InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDe
   return result;
 }
 
-VkResult InterceptGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, uint32_t* pToolCount,
+VKAPI_ATTR VkResult VKAPI_CALL InterceptGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, uint32_t* pToolCount,
                                                   VkPhysicalDeviceToolProperties* pToolProperties) {
     InstanceData *instance_data = GetInstanceLayerData(DataKey(physicalDevice));
     VkResult result = VK_SUCCESS;
@@ -710,7 +710,7 @@ VkResult InterceptGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevic
 }
 
 
-VkResult InterceptGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice physicalDevice, uint32_t* pToolCount,
+VKAPI_ATTR VkResult VKAPI_CALL InterceptGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice physicalDevice, uint32_t* pToolCount,
                                                      VkPhysicalDeviceToolProperties* pToolProperties) {
     InstanceData *instance_data = GetInstanceLayerData(DataKey(physicalDevice));
     VkResult result = VK_SUCCESS;
@@ -728,7 +728,7 @@ VkResult InterceptGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice physicalDe
     return result;
 }
 
-PFN_vkVoidFunction GetInstanceFuncs(const char* func)
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetInstanceFuncs(const char* func)
 {''')
         self.write("".join(out))
 
@@ -743,7 +743,7 @@ PFN_vkVoidFunction GetInstanceFuncs(const char* func)
   return nullptr;
 }
 
-PFN_vkVoidFunction GetDeviceFuncs(const char* func)
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetDeviceFuncs(const char* func)
 {''')
         self.write("".join(out))
 
