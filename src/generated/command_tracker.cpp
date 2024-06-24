@@ -1284,7 +1284,10 @@ void CommandTracker::CmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
     cmd.type = Command::Type::kCmdDebugMarkerEndEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
-    labels_.pop_back();
+    // do not crash even if the application ends without a marker present
+    if (!labels_.empty()) {
+        labels_.pop_back();
+    }
     cmd.parameters = recorder_.RecordCmdDebugMarkerEndEXT(commandBuffer);
     commands_.push_back(cmd);
 }
@@ -1476,7 +1479,10 @@ void CommandTracker::CmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
     cmd.type = Command::Type::kCmdEndDebugUtilsLabelEXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
-    labels_.pop_back();
+    // do not crash even if the application ends without a marker present
+    if (!labels_.empty()) {
+        labels_.pop_back();
+    }
     cmd.parameters = recorder_.RecordCmdEndDebugUtilsLabelEXT(commandBuffer);
     commands_.push_back(cmd);
 }

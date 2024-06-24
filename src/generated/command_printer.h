@@ -1590,7 +1590,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderPro
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrawMeshTasksIndirectCommandEXT &t);
 
 // Declare print functions.
-
+class ObjectInfoDB;
 class CommandPrinter {
    public:
     void SetNameResolver(const ObjectInfoDB *name_resolver);

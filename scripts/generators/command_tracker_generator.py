@@ -103,7 +103,10 @@ void CommandTracker::Reset()
                 out.append('  labels_.push_back(pLabelInfo->pLabelName);\n')
             out.append('  cmd.labels = labels_;\n')
             if vkcommand.name in ('vkCmdEndDebugUtilsLabelEXT', 'vkCmdDebugMarkerEndEXT'):
-                out.append('  labels_.pop_back();\n')
+                out.append('  // do not crash even if the application ends without a marker present\n')
+                out.append('  if (!labels_.empty()) {\n')
+                out.append('      labels_.pop_back();\n')
+                out.append('  }\n')
 
             count = 0
             for vkparam in vkcommand.params:
