@@ -362,10 +362,15 @@ void Device::DeleteShaderModule(VkShaderModule shaderModule) {
 }
 
 void Device::RegisterQueue(VkQueue vk_queue, uint32_t queueFamilyIndex, uint32_t queueIndex) {
+    std::lock_guard<std::mutex> lock(queues_mutex_);
+
+    if (queues_.find(vk_queue) != queues_.end()) {
+        return;
+    }
+
     auto queue = std::make_shared<Queue>(*this, vk_queue, queueFamilyIndex, queueIndex,
                                          queue_family_properties_[queueFamilyIndex]);
 
-    std::lock_guard<std::mutex> lock(queues_mutex_);
     queues_[vk_queue] = std::move(queue);
 }
 
