@@ -1401,27 +1401,39 @@ VkResult Context::PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
 VkResult Context::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit");
     UpdateWatchdog();
-    auto queue_state = GetQueueDevice(queue)->GetQueue(queue);
+    auto device_state = GetQueueDevice(queue);
+    auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit", result);
+    if (IsVkError(result)) {
+        device_state->DeviceFault();
+    }
     return result;
 }
 
 VkResult Context::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit2");
     UpdateWatchdog();
-    auto queue_state = GetQueueDevice(queue)->GetQueue(queue);
+    auto device_state = GetQueueDevice(queue);
+    auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit2(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit2", result);
+    if (IsVkError(result)) {
+        device_state->DeviceFault();
+    }
     return result;
 }
 
 VkResult Context::QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit2KHR");
     UpdateWatchdog();
-    auto queue_state = GetQueueDevice(queue)->GetQueue(queue);
+    auto device_state = GetQueueDevice(queue);
+    auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit2(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit2KHR", result);
+    if (IsVkError(result)) {
+        device_state->DeviceFault();
+    }
     return result;
 }
 
@@ -1429,9 +1441,13 @@ VkResult Context::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindS
                                   VkFence fence) {
     PreApiFunction("vkQueueBindSparse");
     UpdateWatchdog();
-    auto queue_state = GetQueueDevice(queue)->GetQueue(queue);
+    auto device_state = GetQueueDevice(queue);
+    auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->BindSparse(bindInfoCount, pBindInfo, fence);
     PostApiFunction("vkQueueBindSparse", result);
+    if (IsVkError(result)) {
+        device_state->DeviceFault();
+    }
     return result;
 }
 
