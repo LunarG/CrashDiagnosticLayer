@@ -491,6 +491,8 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
             auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
             submit.commandBufferCount = 1;
             submit.pCommandBuffers = &cb;
+            submit.signalSemaphoreCount = 1;
+            submit.pSignalSemaphores = &submit_sem_;
             if (result == VK_SUCCESS) {
                 result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             }
