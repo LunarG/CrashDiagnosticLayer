@@ -331,6 +331,11 @@ static void ParseFaultAddressRange(FaultAddressRange& range, const YAML::Node& i
             range.begin = node.second.as<uint64_t>();
         } else if (key == "end") {
             range.end = node.second.as<uint64_t>();
+        } else if (key == "matchingAddressRecords") {
+            ASSERT_FALSE(range.match.has_value());
+            AddressRecord rec;
+            ParseAddressRecord(rec, node.second);
+            range.match = rec;
         } else if (key == "priorAddressRecord") {
             ASSERT_FALSE(range.prior.has_value());
             AddressRecord rec;
