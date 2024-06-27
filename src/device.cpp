@@ -439,6 +439,8 @@ void Device::DeviceFault() {
         checkpoints_->Update();
     }
     context_.DumpDeviceExecutionState(*this);
+    // prevent the watchdog from firing when we've already detected a fault
+    context_.StopWatchdogTimer();
 }
 
 void Device::WatchdogTimeout(bool dump_prologue, YAML::Emitter& os) {

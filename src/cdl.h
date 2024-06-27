@@ -161,9 +161,10 @@ class Context : public Interceptor {
 
     void DumpReportPrologue(YAML::Emitter& os);
 
+    void StopWatchdogTimer();
+
    private:
     void StartWatchdogTimer();
-    void StopWatchdogTimer();
     void WatchdogTimer();
     void UpdateWatchdog();
 
