@@ -75,8 +75,8 @@ Queue::SubmitInfo::SubmitInfo(Device& device, const VkSubmitInfo& submit_info, u
 
     // Store type and initial value of the timeline semaphores.
     const auto* timeline_semaphore_info = vku::FindStructInPNextChain<VkTimelineSemaphoreSubmitInfoKHR>(&submit_info);
-    if (timeline_semaphore_info) {
-        auto semaphore_tracker = device.GetSemaphoreTracker();
+    auto semaphore_tracker = device.GetSemaphoreTracker();
+    if (timeline_semaphore_info && semaphore_tracker) {
         for (uint32_t i = 0; i < timeline_semaphore_info->waitSemaphoreValueCount; i++) {
             if (semaphore_tracker->GetSemaphoreType(submit_info.pWaitSemaphores[i]) == VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
                 wait_semaphores[i].value = timeline_semaphore_info->pWaitSemaphoreValues[i];
@@ -97,7 +97,8 @@ Queue::SubmitInfo::SubmitInfo(Device& device, const VkSubmitInfo2& submit_info, 
 
     for (uint32_t i = 0; i < submit_info.waitSemaphoreInfoCount; i++) {
         const auto& sem_info = submit_info.pWaitSemaphoreInfos[i];
-        bool is_timeline = semaphore_tracker->GetSemaphoreType(sem_info.semaphore) == VK_SEMAPHORE_TYPE_TIMELINE_KHR;
+        bool is_timeline = (semaphore_tracker && semaphore_tracker->GetSemaphoreType(sem_info.semaphore)) ==
+                           VK_SEMAPHORE_TYPE_TIMELINE_KHR;
         wait_semaphores.push_back({sem_info.semaphore, is_timeline ? sem_info.value : 1, sem_info.stageMask});
     }
     for (uint32_t i = 0; i < submit_info.commandBufferInfoCount; i++) {
@@ -105,7 +106,8 @@ Queue::SubmitInfo::SubmitInfo(Device& device, const VkSubmitInfo2& submit_info, 
     }
     for (uint32_t i = 0; i < submit_info.signalSemaphoreInfoCount; i++) {
         const auto& sem_info = submit_info.pSignalSemaphoreInfos[i];
-        bool is_timeline = semaphore_tracker->GetSemaphoreType(sem_info.semaphore) == VK_SEMAPHORE_TYPE_TIMELINE_KHR;
+        bool is_timeline = (semaphore_tracker && semaphore_tracker->GetSemaphoreType(sem_info.semaphore)) ==
+                           VK_SEMAPHORE_TYPE_TIMELINE_KHR;
         signal_semaphores.push_back({sem_info.semaphore, is_timeline ? sem_info.value : 1, sem_info.stageMask});
     }
 }
@@ -122,16 +124,17 @@ Queue::SubmitInfo::SubmitInfo(Device& device, const VkBindSparseInfo& sparse_inf
 
     // Store type and initial value of the timeline semaphores.
     const auto* timeline_semaphore_info = vku::FindStructInPNextChain<VkTimelineSemaphoreSubmitInfoKHR>(&sparse_info);
-    if (timeline_semaphore_info) {
-        auto semaphore_tracker = device.GetSemaphoreTracker();
+    auto semaphore_tracker = device.GetSemaphoreTracker();
+    if (timeline_semaphore_info && semaphore_tracker) {
         for (uint32_t i = 0; i < timeline_semaphore_info->waitSemaphoreValueCount; i++) {
-            if (semaphore_tracker->GetSemaphoreType(sparse_info.pWaitSemaphores[i]) == VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
+            if (semaphore_tracker &&
+                semaphore_tracker->GetSemaphoreType(sparse_info.pWaitSemaphores[i]) == VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
                 wait_semaphores[i].value = timeline_semaphore_info->pWaitSemaphoreValues[i];
             }
         }
         for (uint32_t i = 0; i < timeline_semaphore_info->signalSemaphoreValueCount; i++) {
-            if (semaphore_tracker->GetSemaphoreType(sparse_info.pSignalSemaphores[i]) ==
-                VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
+            if (semaphore_tracker && semaphore_tracker->GetSemaphoreType(sparse_info.pSignalSemaphores[i]) ==
+                                         VK_SEMAPHORE_TYPE_TIMELINE_KHR) {
                 signal_semaphores[i].value = timeline_semaphore_info->pSignalSemaphoreValues[i];
             }
         }
@@ -153,10 +156,9 @@ bool Queue::UpdateSeq() {
         return false;
     }
     if (value > submit_seq_) {
-        Log().Warning(
-            "Completed sequence number has impossible value: %lld submitted: %lld VkQueue: %s, VkSemaphore: %s", value,
-            submit_seq_.load(), device_.GetObjectInfo((uint64_t)vk_queue_).c_str(),
-            device_.GetObjectInfo((uint64_t)submit_sem_).c_str());
+        Log().Info("Completed sequence number has impossible value: %lld submitted: %lld VkQueue: %s, VkSemaphore: %s",
+                   value, submit_seq_.load(), device_.GetObjectInfo((uint64_t)vk_queue_).c_str(),
+                   device_.GetObjectInfo((uint64_t)submit_sem_).c_str());
         return false;
     }
     assert(value >= complete_seq_);
@@ -223,6 +225,9 @@ bool Queue::QueuedSubmitWaitingOnSemaphores(const SubmitInfo& submit_info) const
     uint64_t semaphore_value = 0;
     bool current_value_available = false;
     auto semaphore_tracker = device_.GetSemaphoreTracker();
+    if (!semaphore_tracker) {
+        return false;
+    }
     for (uint32_t i = 0; i < submit_info.wait_semaphores.size(); i++) {
         current_value_available =
             semaphore_tracker->GetSemaphoreValue(submit_info.wait_semaphores[i].handle, semaphore_value);
