@@ -372,6 +372,9 @@ void Context::WatchdogTimer() {
     while (watchdog_running_) {
         // TODO: condition variable that waits
         std::this_thread::sleep_for(std::chrono::microseconds(test_interval_us));
+        if (!watchdog_running_) {
+            break;
+        }
 
         auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
                        std::chrono::high_resolution_clock::now().time_since_epoch())
