@@ -140,7 +140,43 @@ Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
     GetEnvVal<bool>(layer_settings, settings::kSyncAfterCommands, sync_after_commands);
 }
 
-void Settings::Print(YAML::Emitter& os) const {}
+YAML::Emitter& operator<<(YAML::Emitter& os, DumpCommands value) {
+    for (auto& entry : settings::kDumpCommandsValues) {
+        if (value == entry.second) {
+            os << entry.first;
+            return os;
+        }
+    }
+    os << "unknown";
+    return os;
+}
+
+YAML::Emitter& operator<<(YAML::Emitter& os, DumpShaders value) {
+    for (auto& entry : settings::kDumpShadersValues) {
+        if (value == entry.second) {
+            os << entry.first;
+            return os;
+        }
+    }
+    os << "unknown";
+    return os;
+}
+
+void Settings::Print(YAML::Emitter& os) const {
+    os << YAML::BeginMap;
+    os << YAML::Key << settings::kOutputPath << YAML::Value << output_path;
+    os << YAML::Key << settings::kTraceOn << YAML::Value << trace_all;
+    os << YAML::Key << settings::kDumpQueueSubmits << YAML::Value << dump_queue_submits;
+    os << YAML::Key << settings::kDumpCommandBuffers << YAML::Value << dump_command_buffers;
+    os << YAML::Key << settings::kDumpCommands << YAML::Value << dump_commands;
+    os << YAML::Key << settings::kDumpShaders << YAML::Value << dump_shaders;
+    os << YAML::Key << settings::kWatchdogTimeout << YAML::Value << watchdog_timer_ms;
+    os << YAML::Key << settings::kTrackSemaphores << YAML::Value << track_semaphores;
+    os << YAML::Key << settings::kTraceAllSemaphores << YAML::Value << trace_all_semaphores;
+    os << YAML::Key << settings::kInstrumentAllCommands << YAML::Value << instrument_all_commands;
+    os << YAML::Key << settings::kSyncAfterCommands << YAML::Value << sync_after_commands;
+    os << YAML::EndMap;
+}
 
 // =============================================================================
 // Context
@@ -617,8 +653,8 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     os << YAML::Key << "startTime" << YAML::Value << timestr.str();
     os << YAML::Key << "timeSinceStart" << YAML::Value << DurationToStr(elapsed);
 
-    //    os << YAML::Key << "Settings" << YAML::Value;
-    //    settings_->Print(os);
+    os << YAML::Key << "Settings" << YAML::Value;
+    settings_->Print(os);
 
     os << YAML::Key << "SystemInfo" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "osName" << YAML::Value << system_.GetOsName();
