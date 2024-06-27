@@ -64,7 +64,7 @@ struct TrackedSemaphoreInfo {
 
 class SemaphoreTracker {
    public:
-    SemaphoreTracker(Device& device, bool track_semaphores_last_setter);
+    SemaphoreTracker(Device& device);
     SemaphoreTracker(SemaphoreTracker&) = delete;
     SemaphoreTracker& operator=(SemaphoreTracker&) = delete;
 

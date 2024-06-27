@@ -55,7 +55,7 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
     }
     // Create a semaphore tracker
     if (context_.GetSettings().track_semaphores) {
-        semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this, context_.GetSettings().trace_all_semaphores);
+        semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this);
     }
 }
 
