@@ -38,8 +38,9 @@ void SemaphoreTracker::SemaphoreInfo::UpdateLastModifier(Device& device, Semapho
     last_id->Write(modifier_info.id);
 }
 
-SemaphoreTracker::SemaphoreTracker(Device& device, bool track_semaphores_last_setter)
-    : device_(device), markers_(device), track_semaphores_last_setter_(track_semaphores_last_setter) {}
+// TODO https://github.com/LunarG/CrashDiagnosticLayer/issues/70 track_semaphores_last_setter_ is broken
+SemaphoreTracker::SemaphoreTracker(Device& device)
+    : device_(device), markers_(device), track_semaphores_last_setter_(false) {}
 
 const Logger& SemaphoreTracker::Log() const { return device_.Log(); }
 
