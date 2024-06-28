@@ -74,4 +74,3 @@ std::string ObjectInfoDB::GetObjectInfo(uint64_t handle) const {
     info_ss << crash_diagnostic_layer::Uint64ToStr(handle) << "[" << info.name << "]";
     return info_ss.str();
 }
-
