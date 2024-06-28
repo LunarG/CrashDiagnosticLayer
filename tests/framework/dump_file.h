@@ -50,8 +50,8 @@ struct SemaphoreInfo {
 
 struct SubmitInfo {
     uint32_t id{0};
-    uint64_t start_seq{0};
-    uint64_t end_seq{0};
+    uint64_t startSeq{0};
+    uint64_t endSeq{0};
     std::string state;
     std::vector<std::string> CommandBuffers;
     std::vector<SemaphoreInfo> SignalSemaphores;
