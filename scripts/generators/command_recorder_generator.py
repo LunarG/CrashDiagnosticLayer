@@ -90,14 +90,31 @@ class CommandRecorder
 // definitions.
 
 ''')
+        # Find all the types that are used by command buffer related calls. These are the only
+        # ones we need to record and skipping the rest of the spec avoids many tricky corner cases
+        # and 20k lines of unused code.
+        #
+        cmd_types = set()
+
+        for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
+            for vkparam in vkcommand.params:
+                cmd_types.add(vkparam.type)
+
+        for vkstruct in self.vk.structs.values():
+            if vkstruct.name not in cmd_types:
+                continue
+            for vkmember in vkstruct.members:
+                cmd_types.add(vkmember.type)
+
         out.append('template<>\n')
         out.append('uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, uint64_t start_index, uint64_t count);\n')
         for vkstruct in self.vk.structs.values():
+            if vkstruct.name not in cmd_types:
+                continue
             out.extend([f'#ifdef {vkstruct.protect}\n'] if vkstruct.protect else [])
             out.append('template<>\n')
             out.append(f'{vkstruct.name}* CommandRecorder::CopyArray<{vkstruct.name}>(const {vkstruct.name}* src, uint64_t start_index, uint64_t count);\n')
             out.extend([f'#endif //{vkstruct.protect}\n'] if vkstruct.protect else [])
-
         out.append('\n\n// Define CopyArray template functions.\n\n')
 
         out.append('template<>\n')
@@ -107,29 +124,34 @@ class CommandRecorder
         out.append('    return ptr;\n')
         out.append('}\n')
         for vkstruct in self.vk.structs.values():
+            if vkstruct.name not in cmd_types:
+                continue
             out.extend([f'#ifdef {vkstruct.protect}\n'] if vkstruct.protect else [])
             out.append('template<>\n')
             out.append(f'{vkstruct.name}* CommandRecorder::CopyArray<{vkstruct.name}>(const {vkstruct.name}* src, uint64_t start_index, uint64_t count) {{\n')
             out.append(f'  auto ptr = reinterpret_cast<{vkstruct.name}*>(m_allocator.Alloc(sizeof({vkstruct.name}) * count));\n')
             out.append('  for (uint64_t i = 0; i < count; ++i) {\n')
+            src_struct = 'src[start_index + i]'
             for vkmember in vkstruct.members:
-                pointer_count = vkmember.cDeclaration.count('*')
-                is_array = (vkmember.length is not None and len(vkmember.length) > 0) or (vkmember.fixedSizeArray is not None and len(vkmember.fixedSizeArray) > 0)
-                if 'char' in vkmember.type and pointer_count == 1:
-                    out.append(f'      ptr[i].{vkmember.name} = nullptr;\n')
-                    out.append(f'      if (src[start_index + i].{vkmember.name}) {{\n')
-                    out.append(f'        ptr[i].{vkmember.name} = CopyArray<>(src[start_index + i].{vkmember.name}, 0, strlen(src[start_index + i].{vkmember.name}) + 1);\n')
-                    out.append('      }\n')
-                elif is_array and not (vkmember.type == 'void' or 'PFN_' in vkmember.type):
-                    if (vkmember.fixedSizeArray is not None and len(vkmember.fixedSizeArray) > 0):
-                        out.append(f'      std::memcpy(ptr[i].{vkmember.name}, src[start_index + i].{vkmember.name}, sizeof(src[start_index + i].{vkmember.name}));\n')
+                if vkmember.fixedSizeArray is not None and len(vkmember.fixedSizeArray) > 0 and 'PFN_' not in vkmember.type:
+                    out.append(f'  for (uint32_t j = 0; j < {vkmember.fixedSizeArray[0]}; ++j) {{\n')
+                    out.append(f'    ptr[i].{vkmember.name}[j] = {src_struct}.{vkmember.name}[j];\n')
+                    out.append('  }\n')
+                elif vkmember.pointer and 'void' != vkmember.type and vkmember.name != 'pNext':
+                    out.append(f'    ptr[i].{vkmember.name} = nullptr;\n')
+                    out.append(f'  if ({src_struct}.{vkmember.name}) {{\n')
+                    if vkmember.length is not None and len(vkmember.length) > 0:
+                        out.append(f'    ptr[i].{vkmember.name} = CopyArray({src_struct}.{vkmember.name}, static_cast<uint64_t>(0U), static_cast<uint64_t>({src_struct}.{vkmember.length}));\n')
+                    elif vkmember.type == 'char':
+                        out.append(f'    ptr[i].{vkmember.name} = CopyArray<>({src_struct}.{vkmember.name}, 0, strlen({src_struct}.{vkmember.name}) + 1);\n')
                     else:
-                        out.append(f'      ptr[i].{vkmember.name} = nullptr;\n')
-                        out.append(f'      if (src[start_index + i].{vkmember.name}) {{\n')
-                        out.append(f'        ptr[i].{vkmember.name} = CopyArray<>(src[start_index + i].{vkmember.name}, 0, 1);\n')
-                        out.append('      }\n')
+                        out.append(f'    ptr[i].{vkmember.name} = CopyArray({src_struct}.{vkmember.name}, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));\n')
+                    out.append('  }\n')
+                elif vkmember.length is not None and len(vkmember.length) > 0:
+                    out_type = vkmember.cDeclaration.replace(vkmember.name, '').strip()
+                    out.append(f'    ptr[i].{vkmember.name} = reinterpret_cast<{out_type}>(CopyArray(reinterpret_cast<const uint8_t*>({src_struct}.{vkmember.name}), static_cast<uint64_t>(0U), static_cast<uint64_t>({src_struct}.{vkmember.length})));\n')
                 else:
-                    out.append(f'      ptr[i].{vkmember.name} = src[start_index + i].{vkmember.name};\n')
+                    out.append(f'  ptr[i].{vkmember.name} = {src_struct}.{vkmember.name};\n')
             out.append('  }\n')
             out.append('  return ptr;\n')
             out.append('}\n')
