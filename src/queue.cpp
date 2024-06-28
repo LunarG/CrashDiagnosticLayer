@@ -373,8 +373,8 @@ void Queue::Print(YAML::Emitter& os) {
             }
 
             os << YAML::BeginMap;
-            os << YAML::Key << "start_seq" << YAML::Value << submit_info.start_seq;
-            os << YAML::Key << "end_seq" << YAML::Value << submit_info.end_seq;
+            os << YAML::Key << "startSeq" << YAML::Value << submit_info.start_seq;
+            os << YAML::Key << "endSeq" << YAML::Value << submit_info.end_seq;
             os << YAML::Key << "state";
 
             if (QueuedSubmitWaitingOnSemaphores(submit_info)) {
@@ -392,7 +392,7 @@ void Queue::Print(YAML::Emitter& os) {
                     value << device_.GetObjectInfo((uint64_t)cb);
                     auto cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
                     if (cmd) {
-                        value << " " << cmd->PrintCommandBufferState();
+                        value << " " << cmd->PrintCommandBufferState() << " " << cmd->GetQueueSeq();
                     }
                     os << value.str();
                 }
