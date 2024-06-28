@@ -54,7 +54,7 @@ namespace crash_diagnostic_layer {
 
 // Return true if this is a VkResult that CDL considers an error.
 constexpr bool IsVkError(VkResult result) {
-    return result == VK_ERROR_DEVICE_LOST || result == VK_ERROR_INITIALIZATION_FAILED;
+    return result == VK_ERROR_DEVICE_LOST || result == VK_ERROR_INITIALIZATION_FAILED || result == VK_ERROR_UNKNOWN;
 }
 
 struct DeviceCreateInfo {
