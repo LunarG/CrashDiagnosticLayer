@@ -14773,6 +14773,153 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindDescriptorBufferEmbedde
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderRelaxedExtendedInstruction";
+    // shaderRelaxedExtendedInstruction -> Field -> VkBool32
+    os << YAML::Value << t.shaderRelaxedExtendedInstruction;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance7FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maintenance7";
+    // maintenance7 -> Field -> VkBool32
+    os << YAML::Value << t.maintenance7;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance7PropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "robustFragmentShadingRateAttachmentAccess";
+    // robustFragmentShadingRateAttachmentAccess -> Field -> VkBool32
+    os << YAML::Value << t.robustFragmentShadingRateAttachmentAccess;
+    os << YAML::Key << "separateDepthStencilAttachmentAccess";
+    // separateDepthStencilAttachmentAccess -> Field -> VkBool32
+    os << YAML::Value << t.separateDepthStencilAttachmentAccess;
+    os << YAML::Key << "maxDescriptorSetTotalUniformBuffersDynamic";
+    // maxDescriptorSetTotalUniformBuffersDynamic -> Field -> uint32_t
+    os << YAML::Value << t.maxDescriptorSetTotalUniformBuffersDynamic;
+    os << YAML::Key << "maxDescriptorSetTotalStorageBuffersDynamic";
+    // maxDescriptorSetTotalStorageBuffersDynamic -> Field -> uint32_t
+    os << YAML::Value << t.maxDescriptorSetTotalStorageBuffersDynamic;
+    os << YAML::Key << "maxDescriptorSetTotalBuffersDynamic";
+    // maxDescriptorSetTotalBuffersDynamic -> Field -> uint32_t
+    os << YAML::Value << t.maxDescriptorSetTotalBuffersDynamic;
+    os << YAML::Key << "maxDescriptorSetUpdateAfterBindTotalUniformBuffersDynamic";
+    // maxDescriptorSetUpdateAfterBindTotalUniformBuffersDynamic -> Field -> uint32_t
+    os << YAML::Value << t.maxDescriptorSetUpdateAfterBindTotalUniformBuffersDynamic;
+    os << YAML::Key << "maxDescriptorSetUpdateAfterBindTotalStorageBuffersDynamic";
+    // maxDescriptorSetUpdateAfterBindTotalStorageBuffersDynamic -> Field -> uint32_t
+    os << YAML::Value << t.maxDescriptorSetUpdateAfterBindTotalStorageBuffersDynamic;
+    os << YAML::Key << "maxDescriptorSetUpdateAfterBindTotalBuffersDynamic";
+    // maxDescriptorSetUpdateAfterBindTotalBuffersDynamic -> Field -> uint32_t
+    os << YAML::Value << t.maxDescriptorSetUpdateAfterBindTotalBuffersDynamic;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "vendorID";
+    // vendorID -> Field -> uint32_t
+    os << YAML::Value << t.vendorID;
+    os << YAML::Key << "deviceID";
+    // deviceID -> Field -> uint32_t
+    os << YAML::Value << t.deviceID;
+    os << YAML::Key << "layeredAPI";
+    // layeredAPI -> Field -> VkPhysicalDeviceLayeredApiKHR
+    os << YAML::Value << t.layeredAPI;
+    os << YAML::Key << "deviceName";
+    // deviceName -> Field -> FixedArray(char)
+    os << YAML::Value << t.deviceName;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPropertiesListKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "layeredApiCount";
+    // layeredApiCount -> Field -> uint32_t
+    os << YAML::Value << t.layeredApiCount;
+    os << YAML::Key << "pLayeredApis";
+    // pLayeredApis -> Field -> DynamicArray(VkPhysicalDeviceLayeredApiPropertiesKHR)
+    if (t.layeredApiCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPhysicalDeviceLayeredApiPropertiesKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < t.layeredApiCount; ++i) {
+                os << t.pLayeredApis[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiVulkanPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "properties";
+    // properties -> Field -> VkPhysicalDeviceProperties2
+    os << YAML::Value << t.properties;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackCreateInfoEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -29631,6 +29778,24 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_BUFFER_EMBEDDED_SAMPLERS_INFO_EXT:
             os << *reinterpret_cast<const VkBindDescriptorBufferEmbeddedSamplersInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_RELAXED_EXTENDED_INSTRUCTION_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceMaintenance7FeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceMaintenance7PropertiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceLayeredApiPropertiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceLayeredApiPropertiesListKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceLayeredApiVulkanPropertiesKHR *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkDebugReportCallbackCreateInfoEXT *>(pStruct);

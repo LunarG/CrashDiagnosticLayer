@@ -731,6 +731,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTimeDomainKHR &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiKHR &t) {
+    os << string_VkPhysicalDeviceLayeredApiKHR(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportObjectTypeEXT &t) {
     os << string_VkDebugReportObjectTypeEXT(t);
     return os;
