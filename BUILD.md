@@ -6,9 +6,7 @@
 4. [Dependencies](#dependencies)
 5. [Linux Build](#building-on-linux)
 6. [Windows Build](#building-on-windows)
-7. [MacOS build](#building-on-macos)
-8. [Android Build](#building-for-android)
-9. [Installed Files](#installed-files)
+7. [Installed Files](#cmake-installed-files)
 
 ## Requirements
 
@@ -190,121 +188,6 @@ for further information on Visual Studio generators.
 **NOTE:** Windows developers don't have to develop in Visual Studio.
 Visual Studio just helps streamlining the needed C++ toolchain requirements
 (compilers, linker, etc).
-
-
-## Building on MacOS
-
-### MacOS Development Environment Requirements
-
-- Xcode
-
-**NOTE:** MacOS developers don't have to develop in Xcode.
-Xcode just helps streamlining the needed C++ toolchain requirements (compilers,
-linker, etc).
-Similar to Visual Studio on Windows.
-
-### Xcode Generator
-
-To create and open an Xcode project:
-
-```bash
-# Create the Xcode project
-cmake -S . -B build -G Xcode --preset dev
-
-# Open the Xcode project
-cmake --open build
-```
-
-See the
-[CMake documentation](https://cmake.org/cmake/help/latest/generator/Xcode.html)
-for further information on the Xcode generator.
-
-
-## Building For Android
-
-- CMake 3.21+
-- NDK r25+
-- Ninja 1.10+
-- Android SDK Build-Tools 34.0.0+
-
-### Android Build Requirements
-
-- Download [Android Studio](https://developer.android.com/studio)
-- Install (https://developer.android.com/studio/install)
-- From the `Welcome to Android Studio` splash screen, add the following
-  components using the SDK Manager:
-  - SDK Platforms > Android 8.0 and newer (API Level 26 or higher)
-  - SDK Tools > Android SDK Build-Tools
-  - SDK Tools > Android SDK Platform-Tools
-  - SDK Tools > Android SDK Tools
-  - SDK Tools > NDK
-  - SDK Tools > CMake
-
-#### Add Android specifics to environment
-
-**NOTE:** The following commands are streamlined for Linux but easily
-transferable to other platforms.
-The main intent is setting 2 environment variables and ensuring the NDK and
-build tools are in the `PATH`.
-
-```sh
-# Set environment variables
-# https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md#environment-variables-2
-export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/X.Y.Z
-
-# Modify path
-export PATH=$ANDROID_NDK_HOME:$PATH
-export PATH=$ANDROID_SDK_ROOT/build-tools/X.Y.Z:$PATH
-
-# (Optional if you have new enough version of CMake + Ninja)
-export PATH=$ANDROID_SDK_ROOT/cmake/3.22.1/bin:$PATH
-
-# Verify SDK build-tools is set correctly
-which aapt
-
-# Verify NDK path is set correctly
-which ndk-build
-
-# Verify CMake/Ninja are in the path
-which cmake
-which ninja
-
-# Check apksigner
-apksigner --help
-```
-
-**Note:** If `apksigner` gives a `java: not found` error you do not have Java
-in your path.
-
-```bash
-# A common way to install on the system
-sudo apt install default-jre
-```
-
-### Android Build
-
-Invoking CMake directly to build the binary is relatively simple.
-
-See https://developer.android.com/ndk/guides/cmake#command-line for CMake NDK
-documentation.
-
-```sh
-# Build release binary for arm64-v8a
-cmake -S . -B build \
-  -D CMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
-  -D ANDROID_PLATFORM=26 \
-  -D CMAKE_ANDROID_ARCH_ABI=arm64-v8a \
-  -D CMAKE_ANDROID_STL_TYPE=c++_static \
-  -D ANDROID_USE_LEGACY_TOOLCHAIN_FILE=NO \
-  -D CMAKE_BUILD_TYPE=Release \
-  -D UPDATE_DEPS=ON \
-  -G Ninja
-
-cmake --build build
-
-cmake --install build --prefix build/install
-```
 
 ## CMake Installed Files
 
