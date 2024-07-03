@@ -24,6 +24,7 @@
 
 #include "cdl.h"
 #include "checkpoint.h"
+#include "object_name.h"
 #include "semaphore_tracker.h"
 #include "util.h"
 
@@ -518,7 +519,7 @@ static void DumpAddressRecord(YAML::Emitter& os, const vku::sparse::range<VkDevi
     os << YAML::BeginMap;
     os << YAML::Key << "begin" << YAML::Value << Uint64ToStr(range.begin);
     os << YAML::Key << "end" << YAML::Value << Uint64ToStr(range.end);
-    os << YAML::Key << "type" << YAML::Value << rec.object_type;
+    os << YAML::Key << "type" << YAML::Value << string_ObjectName(rec.object_type);
     std::stringstream handle;
     handle << Uint64ToStr(rec.object_handle) << "[" << rec.object_name << "]";
     os << YAML::Key << "handle" << YAML::Value << handle.str();
