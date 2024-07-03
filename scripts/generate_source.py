@@ -55,6 +55,7 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
     from generators.context_generator import InterceptContextGenerator
     from generators.layer_base_generator import LayerBaseOutputGenerator
     from generators.test_icd_generator import TestIcdGenerator
+    from generators.object_name_generator import ObjectNameGenerator
 
     # These set fields that are needed by both OutputGenerator and BaseGenerator,
     # but are uniform and don't need to be set at a per-generated file level
@@ -139,6 +140,10 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
         },
         'test_icd_helper.h' : {
             'generator': TestIcdGenerator,
+            'genCombined': True,
+        },
+        'object_name.h' : {
+            'generator': ObjectNameGenerator,
             'genCombined': True,
         },
     }
