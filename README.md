@@ -1,6 +1,6 @@
 # Crash Diagnostic Layer
 
-The Crash Diagnostic Layer (CDL)  is a Vulkan layer to help track down and identify the cause of GPU hangs and crashes. It works by instrumenting command buffers with completion tags. When an error is detected a log file containing incomplete command buffers is written. Often the last complete or incomplete commands are responsible for the crash.
+The Crash Diagnostic Layer (CDL)  is a Vulkan layer to help track down and identify the cause of GPU hangs and crashes. It works by instrumenting command buffers with completion checkpoints. When an error is detected a dump file containing incomplete command buffers is written. Often the last complete or incomplete commands are responsible for the crash.
 
 ## Building
 
@@ -39,7 +39,7 @@ In order to be discovered by the Vulkan loader at runtime, implicit layers must 
 
 ## Basic Usage
 
-Once the layer is enabled, if `vkQueueSubmit()` or other Vulkan functions returns a fatal error code (usually `VK_ERROR_DEVICE_LOST`), a log of the command buffers that failed to execute are written to disk.
+Once the layer is enabled, if `vkQueueSubmit()` or other Vulkan functions returns a fatal error code (usually `VK_ERROR_DEVICE_LOST`), a dump file of the command buffers (and other state) that failed to execute are written to disk.
 
 ### Logging
 
