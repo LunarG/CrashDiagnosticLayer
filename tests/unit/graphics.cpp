@@ -130,7 +130,7 @@ TEST_F(Graphics, InfiniteLoop) {
     try {
         queue_.submit(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -360,7 +360,7 @@ TEST_F(Graphics, MultiDrawInfiniteLoop) {
     try {
         queue_.submit(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();

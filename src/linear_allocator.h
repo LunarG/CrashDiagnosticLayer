@@ -96,8 +96,6 @@ class LinearAllocator {
         ~Block() { delete[] data_; }
 
         void* Alloc(const size_t size) {
-            auto room = blocksize_ - (head_ - data_);
-
             uintptr_t h = (uintptr_t)head_;
 
             // Round up to alignment and check if we fit.
@@ -124,6 +122,6 @@ class LinearAllocator {
     };
 
    private:
-    int active_block_;
+    unsigned int active_block_;
     std::vector<std::unique_ptr<Block>> blocks_;
 };

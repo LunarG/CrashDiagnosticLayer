@@ -32,7 +32,7 @@ void BinarySemaphore::QueueSignal(uint64_t value) {
     cond_.notify_one();
 }
 
-VkResult BinarySemaphore::QueueWait([[maybe_unused]] uint64_t value) {
+VkResult BinarySemaphore::QueueWait(uint64_t value) {
     auto guard = Lock();
     if (!cond_.wait_for(guard, kCondWaitTimeout, [this] { return state_ != kWaiting; })) {
         return VK_TIMEOUT;

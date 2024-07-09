@@ -24,10 +24,10 @@
 namespace icd {
 struct DeviceMemory {
     DeviceMemory(const VkMemoryAllocateInfo& alloc_info)
-        : memory(new uint8_t[alloc_info.allocationSize]), size(alloc_info.allocationSize) {}
+        : memory(new uint8_t[static_cast<size_t>(alloc_info.allocationSize)]), size(static_cast<size_t>(alloc_info.allocationSize)) {}
     ~DeviceMemory() { delete[] memory; }
 
-    VkResult Map(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ptr) {
+    VkResult Map(VkDeviceSize offset, VkDeviceSize size_arg, VkMemoryMapFlags flags, void** ptr) {
         *ptr = memory + offset;
         return VK_SUCCESS;
     }

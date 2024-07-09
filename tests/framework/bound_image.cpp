@@ -34,7 +34,7 @@ uint32_t BoundImage::FindMemoryType(vk::raii::PhysicalDevice& phys_dev, const vk
         type_mask >>= 1;
     }
     assert(false);
-    return ~0;
+    return ~0u;
 }
 
 BoundImage::BoundImage(vk::raii::PhysicalDevice& phys_dev, vk::raii::Device& device, const vk::ImageCreateInfo& ci,
@@ -43,7 +43,6 @@ BoundImage::BoundImage(vk::raii::PhysicalDevice& phys_dev, vk::raii::Device& dev
     : image(device, ci), memory(VK_NULL_HANDLE) {
     SetObjectName(device, image, name + "_image");
 
-    auto mem_props = phys_dev.getMemoryProperties();
     auto reqs = image.getMemoryRequirements();
 
     vk::MemoryAllocateFlagsInfo flags_info(alloc_flags);

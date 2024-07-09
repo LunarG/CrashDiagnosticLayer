@@ -38,9 +38,6 @@ namespace crash_diagnostic_layer {
 
 class Device;
 
-// Unique id counter for submit infos
-static uint32_t submit_info_counter = 0;
-
 enum QueueOperationType : uint32_t {
     kQueueSubmit,
     kQueueBindSparse,

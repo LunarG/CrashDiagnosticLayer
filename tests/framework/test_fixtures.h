@@ -31,7 +31,7 @@
 #include "error_monitor.h"
 #include "layer_settings.h"
 
-static const char* kTestOutputBaseDir = "cdl_test_output";
+[[maybe_unused]] static const char* kTestOutputBaseDir = "cdl_test_output";
 
 class CDLTestBase : public ::testing::Test {
    public:

@@ -41,7 +41,7 @@ class Emitter;
 namespace crash_diagnostic_layer {
 
 class Device;
-class Settings;
+struct Settings;
 
 enum class CommandState {
     kCommandNotSubmitted,  // not submitted

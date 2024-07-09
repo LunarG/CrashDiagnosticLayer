@@ -110,7 +110,7 @@ static void ParseSubmitInfo(SubmitInfo& info, const YAML::Node& in_node) {
     for (const auto& node : in_node) {
         std::string key = node.first.as<std::string>();
         if (key == "id") {
-            info.id = node.second.as<uint64_t>();
+            info.id = node.second.as<uint32_t>();
         } else if (key == "state") {
             info.state = node.second.as<std::string>();
         } else if (key == "startSeq") {

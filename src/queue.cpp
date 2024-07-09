@@ -328,15 +328,12 @@ void Queue::Print(YAML::Emitter& os) {
     auto dump_submits = device_.GetContext().GetSettings().dump_queue_submits;
     os << YAML::Key << "IncompleteSubmits" << YAML::Value << YAML::BeginSeq;
     for (const auto& submission : queue_submits_) {
-        // Check submssion state
-        SubmitState submit_state = submission.state;
-
         if (dump_submits == DumpCommands::kRunning) {
-            if (submit_state != SubmitState::kRunning) {
+            if (submission.state != SubmitState::kRunning) {
                 continue;
             }
         } else if (dump_submits == DumpCommands::kPending) {
-            if (submit_state == SubmitState::kFinished) {
+            if (submission.state == SubmitState::kFinished) {
                 continue;
             }
         }
@@ -360,14 +357,12 @@ void Queue::Print(YAML::Emitter& os) {
         os << YAML::Key << "SubmitInfos" << YAML::Value << YAML::BeginSeq;
         for (const auto& submit_info : submission.submit_infos) {
             // Check submit state
-            SubmitState submit_state = submit_info.state;
-
             if (dump_submits == DumpCommands::kRunning) {
-                if (submit_state != SubmitState::kRunning) {
+                if (submit_info.state != SubmitState::kRunning) {
                     continue;
                 }
             } else if (dump_submits == DumpCommands::kPending) {
-                if (submit_state == SubmitState::kFinished) {
+                if (submit_info.state == SubmitState::kFinished) {
                     continue;
                 }
             }
@@ -379,9 +374,9 @@ void Queue::Print(YAML::Emitter& os) {
 
             if (QueuedSubmitWaitingOnSemaphores(submit_info)) {
                 os << YAML::Value << "WAITING_ON_SEMAPHORES";
-            } else if (submit_state == SubmitState::kQueued) {
+            } else if (submit_info.state == SubmitState::kQueued) {
                 os << YAML::Value << "NOT_STARTED";
-            } else if (submit_state == SubmitState::kRunning) {
+            } else if (submit_info.state == SubmitState::kRunning) {
                 os << YAML::Value << "INCOMPLETE";
             }
 

@@ -73,7 +73,7 @@ std::string ShaderModule::DumpShaderCode(const std::string& prefix, size_t code_
 
     std::ofstream os(shader_output_path);
     if (os.is_open()) {
-        os.write(p_spirv, code_size);
+        os.write(p_spirv, static_cast<std::streamsize>(code_size));
     }
     os.flush();
     os.close();

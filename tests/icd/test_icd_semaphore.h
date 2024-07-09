@@ -27,6 +27,8 @@
 namespace icd {
 class Semaphore {
    public:
+    virtual ~Semaphore() {}
+
     // Host Functions
     virtual VkResult Signal(uint64_t value) = 0;
     virtual VkResult Wait(uint64_t timeout, uint64_t value) = 0;

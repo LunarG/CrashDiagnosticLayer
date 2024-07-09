@@ -77,7 +77,6 @@ class BufferMarkerCheckpointMgr : public CheckpointMgr {
         std::unique_ptr<Marker> top_marker, bottom_marker;
     };
 
-    Device &device_;
     BufferMarkerMgr markers_;
 
     std::unordered_map<CheckpointId, Data> checkpoint_data_;

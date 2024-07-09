@@ -62,15 +62,13 @@ TEST_F(Sync, HostWaitWrongSem) {
     vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
     device_.signalSemaphore(signal_info);
 
-    bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
         // wait on the wrong semaphore
         vk::SemaphoreWaitInfo wait_info({}, *never_signalled, gpu_wait_value);
         // could be success or timeout
         (void)device_.waitSemaphores(wait_info, kWaitTimeout);
-    } catch (vk::SystemError &err) {
-        hang_detected = true;
+    } catch (vk::SystemError &) {
     }
     monitor_.VerifyFound();
 
@@ -115,12 +113,10 @@ TEST_F(Sync, GpuWaitWrongSem) {
 
     queue_.submit(wait_submit);
 
-    bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
-        hang_detected = true;
+    } catch (vk::SystemError &) {
     }
     monitor_.VerifyFound();
 
@@ -170,14 +166,12 @@ TEST_F(Sync, HostWaitHang) {
     vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
     device_.signalSemaphore(signal_info);
 
-    bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
         // wait on the wrong semaphore
         vk::SemaphoreWaitInfo wait_info({}, *gpu_signalled, gpu_signal_value);
         (void)device_.waitSemaphores(wait_info, kWaitTimeout);
-    } catch (vk::SystemError &err) {
-        hang_detected = true;
+    } catch (vk::SystemError &) {
     }
     monitor_.VerifyFound();
 
@@ -228,15 +222,13 @@ TEST_F(Sync, HostWaitHangSubmit2) {
     vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
     device_.signalSemaphore(signal_info);
 
-    bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
         // wait on the wrong semaphore
         vk::SemaphoreWaitInfo wait_info({}, *gpu_signalled, gpu_signal_value);
         // could be success or timeout
         (void)device_.waitSemaphores(wait_info, kWaitTimeout);
-    } catch (vk::SystemError &err) {
-        hang_detected = true;
+    } catch (vk::SystemError &) {
     }
     monitor_.VerifyFound();
 
@@ -272,13 +264,11 @@ TEST_F(Sync, FenceWaitHang) {
 
     queue_.submit(submit_info, *fence);
 
-    bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
         // could be success or timeout
         (void)device_.waitForFences(*fence, vk::True, kWaitTimeout);
-    } catch (vk::SystemError &err) {
-        hang_detected = true;
+    } catch (vk::SystemError &) {
     }
     monitor_.VerifyFound();
 
@@ -312,13 +302,11 @@ TEST_F(Sync, DeviceWaitHang) {
 
     queue_.submit(submit_info);
 
-    bool hang_detected = false;
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
         // could be success or timeout
         (void)device_.waitIdle();
-    } catch (vk::SystemError &err) {
-        hang_detected = true;
+    } catch (vk::SystemError &) {
     }
     monitor_.VerifyFound();
 

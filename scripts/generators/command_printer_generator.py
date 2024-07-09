@@ -109,12 +109,12 @@ class CommandPrinter {
         out.append('};\n');
         self.write("".join(out))
 
-    def printArray(self, out, lengths, cur_length, prefix, member):
+    def printArray(self, out, lengths, cur_length, prefix, member, outer = ''):
         variable = chr(ord('i') + cur_length)
         out.append('os << YAML::BeginSeq;\n')
-        out.append(f'for (uint64_t {variable} = 0; {variable} < {lengths[cur_length]}; ++{variable}) {{\n')
+        out.append(f'for (uint64_t {variable} = 0; {variable} < uint64_t({lengths[cur_length]}); ++{variable}) {{\n')
         if cur_length < (len(lengths) - 1):
-            self.printArray(out, lengths, cur_length + 1, prefix, member)
+            self.printArray(out, lengths, cur_length + 1, prefix, member, outer + '[' + variable + ']')
         else:
             pointer_prefix = prefix
             pointer_suffix = ''
@@ -122,7 +122,7 @@ class CommandPrinter {
             if pointer_count > len(lengths):
                 pointer_prefix = '*(' + prefix
                 pointer_suffix = ')'
-            out.append(f'os << {pointer_prefix}{member.name}{pointer_suffix}[{variable}];')
+            out.append(f'os << {pointer_prefix}{member.name}{pointer_suffix}{outer}[{variable}];')
         out.append(f'}} // for {variable}\n')
         out.append('os << YAML::EndSeq;\n')
 

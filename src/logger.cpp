@@ -105,15 +105,6 @@ void LogCallback::Log(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUt
     }
 }
 
-static constexpr VkDebugUtilsMessengerCreateInfoEXT kDefaultCreateInfo{
-    VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-    nullptr,
-    0,
-    VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-    VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT,
-};
-
 Logger::Logger(const Logger::Timepoint& start_time)
     : start_time_(start_time),
       default_cb_(vku::InitStruct<VkDebugUtilsMessengerCreateInfoEXT>(
@@ -232,16 +223,16 @@ void Logger::Log(VkDebugUtilsMessageSeverityFlagBitsEXT severity, const char* fo
     if (result < 0) {
         msg = "Message generation failure";
     } else if (static_cast<size_t>(result) <= old_size) {
-        msg.resize(result);
+        msg.resize(static_cast<size_t>(result));
     } else {
         // Grow buffer to fit needed size. Note that the input size to vsnprintf() must
         // include space for the trailing '\0' character, but the return value DOES NOT
         // include the `\0' character.
-        msg.resize(result + 1);
+        msg.resize(static_cast<size_t>(result) + 1);
         // consume the va_list passed to us by the caller
         result = vsnprintf(msg.data(), msg.size(), format, argptr);
         // remove the `\0' character from the string
-        msg.resize(result);
+        msg.resize(static_cast<size_t>(result));
     }
     Log(severity, msg);
 }

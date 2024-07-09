@@ -33,7 +33,7 @@ uint32_t BoundBuffer::FindMemoryType(vk::raii::PhysicalDevice& phys_dev, const v
         }
     }
     assert(false);
-    return ~0;
+    return ~0u;
 }
 
 BoundBuffer::BoundBuffer(vk::raii::PhysicalDevice& phys_dev, vk::raii::Device& device, vk::DeviceSize size,
@@ -42,7 +42,6 @@ BoundBuffer::BoundBuffer(vk::raii::PhysicalDevice& phys_dev, vk::raii::Device& d
     : buffer(device, vk::BufferCreateInfo({}, size, usage, vk::SharingMode::eExclusive)), memory(VK_NULL_HANDLE) {
     SetObjectName(device, buffer, name + "_buffer");
 
-    auto mem_props = phys_dev.getMemoryProperties();
     auto reqs = buffer.getMemoryRequirements();
 
     vk::MemoryAllocateFlagsInfo flags_info(alloc_flags);

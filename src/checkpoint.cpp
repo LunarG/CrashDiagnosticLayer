@@ -41,7 +41,7 @@ uint32_t Checkpoint::ReadBottom() const { return mgr_->ReadBottom(*this); }
 
 void Checkpoint::Reset() { mgr_->Reset(*this); }
 
-BufferMarkerCheckpointMgr::BufferMarkerCheckpointMgr(Device &device) : device_(device), markers_(device) {}
+BufferMarkerCheckpointMgr::BufferMarkerCheckpointMgr(Device &device) : markers_(device) {}
 
 std::unique_ptr<Checkpoint> BufferMarkerCheckpointMgr::Allocate(uint32_t initial_value) {
     auto checkpoint = std::make_unique<Checkpoint>(this, next_id_++);
@@ -142,9 +142,9 @@ void DiagnosticCheckpointMgr::Update() {
         checkpoints.resize(num, vku::InitStruct<VkCheckpointDataNV>());
         device_.Dispatch().GetQueueCheckpointDataNV(q->GetVkQueue(), &num, checkpoints.data());
         for (const auto &cp : checkpoints) {
-            uintptr_t checkpoint = uintptr_t(cp.pCheckpointMarker);
-            uint32_t id = checkpoint >> kIdShift;
-            uint32_t value = uint32_t(checkpoint & kValueMask);
+            auto checkpoint = reinterpret_cast<uintptr_t>(cp.pCheckpointMarker);
+            auto id = static_cast<uint32_t>(checkpoint >> kIdShift);
+            auto value = static_cast<uint32_t>(checkpoint & kValueMask);
 
             device_.Log().Verbose("checkpoint 0x%16x id=0x%x value=%d stage=%s", checkpoint, id, value,
                                   (cp.stage == VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT ? "bottom" : "top"));
