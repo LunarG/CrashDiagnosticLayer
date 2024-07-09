@@ -3,6 +3,7 @@
     "layer": {
         "name": "VK_LAYER_LUNARG_crash_diagnostic",
         "type": "GLOBAL",
+        "status": "ALPHA",
         "library_path": "@JSON_LIBRARY_PATH@",
         "api_version": "@JSON_VERSION@",
         "implementation_version": "1",
