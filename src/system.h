@@ -41,8 +41,6 @@ class System {
     bool QueryInfoPosix();
     bool QueryInfoWindows();
 
-    Context& context_;
-
     std::string os_name_;
     std::string os_version_;
     std::string os_bitdepth_;

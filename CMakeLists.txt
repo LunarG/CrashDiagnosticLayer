@@ -143,9 +143,37 @@ endif()
 
 set(GENERATED_DIR "${CMAKE_SOURCE_DIR}/src/generated")
 
-if(MSVC)
+option(BUILD_WERROR "Treat compiler warnings as errors")
+if (BUILD_WERROR)
+    add_compile_options("$<IF:$<CXX_COMPILER_ID:MSVC>,/WX,-Werror>")
+endif()
+
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "(GNU|Clang)")
+    add_compile_options(
+        -Wall
+        -Wextra
+        -Wpointer-arith
+        -Wno-unused-parameter
+    )
+    if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+        add_compile_options(
+            -Wconversion
+            -Wimplicit-fallthrough
+            -Wstring-conversion
+        )
+    endif()
+elseif(MSVC)
+    add_compile_options(
+        /W4
+        /we5038 # Enable warning about MIL ordering in constructors
+        /wd4127 # Disable warning about if statements with constant conditions
+        /wd4996 # Disable warnings about posix functions without leading underscores
+        /wd4100 # Disable warnings about unused function/method parameters
+    )
+
     # Enforce stricter ISO C++
     add_compile_options(/permissive-)
+    add_compile_options(/utf-8)
 
     # PDBs aren't generated on Release builds by default.
     add_compile_options("$<$<CONFIG:Release>:/Zi>")

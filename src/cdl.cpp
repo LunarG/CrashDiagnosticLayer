@@ -182,7 +182,7 @@ void Settings::Print(YAML::Emitter& os) const {
 // Context
 // =============================================================================
 Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator)
-    : system_(*this), start_time_(std::chrono::system_clock::now()), logger_(start_time_) {
+    : start_time_(std::chrono::system_clock::now()), logger_(start_time_), system_(*this) {
     // Possibly create messengers for the application to recieve messages from us.
     // Note that since there aren't real handles for these messengers, we're using the create info pointers
     // as fake handles so that they can go into the logger callback map.
@@ -1289,18 +1289,18 @@ VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKH
         result = VK_ERROR_DEVICE_LOST;
     }
     if (settings_->track_semaphores) {
-        int tid = 0;
 #ifdef __linux__
-        tid = syscall(SYS_gettid);
+        pid_t tid = static_cast<pid_t>(syscall(SYS_gettid));
+#else
+        int tid = 0;
 #endif
 
 #ifdef WIN32
         int pid = _getpid();
 #else
-        int pid = getpid();
+        pid_t pid = getpid();
 #endif
 
-        auto device_state = GetDevice(device);
         device_state->GetSemaphoreTracker()->BeginWaitOnSemaphores(pid, tid, pWaitInfo);
 
         if (settings_->trace_all_semaphores) {
@@ -1314,7 +1314,7 @@ VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKH
             Log().Info(log.str());
         }
     }
-    return VK_SUCCESS;
+    return result;
 }
 
 VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKHR* pWaitInfo, uint64_t timeout,
@@ -1328,15 +1328,16 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
         return result;
     }
     if (settings_->track_semaphores && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
-        int tid = 0;
 #ifdef __linux__
-        tid = syscall(SYS_gettid);
+        pid_t tid = static_cast<pid_t>(syscall(SYS_gettid));
+#else
+        int tid = 0;
 #endif
 
 #ifdef WIN32
         int pid = _getpid();
 #else
-        int pid = getpid();
+        pid_t pid = getpid();
 #endif
         {
             // Update semaphore values

@@ -77,7 +77,7 @@ void CommandPrinter::PrintCmdSetViewportArgs(YAML::Emitter &os, const CmdSetView
         {
             os << YAML::Comment("VkViewport");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.viewportCount); ++i) {
                 os << args.pViewports[i];
             }  // for i
             os << YAML::EndSeq;
@@ -101,7 +101,7 @@ void CommandPrinter::PrintCmdSetScissorArgs(YAML::Emitter &os, const CmdSetSciss
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.scissorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.scissorCount); ++i) {
                 os << args.pScissors[i];
             }  // for i
             os << YAML::EndSeq;
@@ -135,7 +135,7 @@ void CommandPrinter::PrintCmdSetBlendConstantsArgs(YAML::Emitter &os, const CmdS
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 4; ++i) {
+            for (uint64_t i = 0; i < uint64_t(4); ++i) {
                 os << args.blendConstants[i];
             }  // for i
             os << YAML::EndSeq;
@@ -201,7 +201,7 @@ void CommandPrinter::PrintCmdBindDescriptorSetsArgs(YAML::Emitter &os, const Cmd
         {
             os << YAML::Comment("VkDescriptorSet");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.descriptorSetCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.descriptorSetCount); ++i) {
                 os << args.pDescriptorSets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -219,7 +219,7 @@ void CommandPrinter::PrintCmdBindDescriptorSetsArgs(YAML::Emitter &os, const Cmd
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.dynamicOffsetCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.dynamicOffsetCount); ++i) {
                 os << args.pDynamicOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -255,7 +255,7 @@ void CommandPrinter::PrintCmdBindVertexBuffersArgs(YAML::Emitter &os, const CmdB
         {
             os << YAML::Comment("VkBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -270,7 +270,7 @@ void CommandPrinter::PrintCmdBindVertexBuffersArgs(YAML::Emitter &os, const CmdB
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -381,7 +381,7 @@ void CommandPrinter::PrintCmdCopyBufferArgs(YAML::Emitter &os, const CmdCopyBuff
         {
             os << YAML::Comment("VkBufferCopy");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
                 os << args.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -414,7 +414,7 @@ void CommandPrinter::PrintCmdCopyImageArgs(YAML::Emitter &os, const CmdCopyImage
         {
             os << YAML::Comment("VkImageCopy");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
                 os << args.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -447,7 +447,7 @@ void CommandPrinter::PrintCmdBlitImageArgs(YAML::Emitter &os, const CmdBlitImage
         {
             os << YAML::Comment("VkImageBlit");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
                 os << args.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -480,7 +480,7 @@ void CommandPrinter::PrintCmdCopyBufferToImageArgs(YAML::Emitter &os, const CmdC
         {
             os << YAML::Comment("VkBufferImageCopy");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
                 os << args.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -510,7 +510,7 @@ void CommandPrinter::PrintCmdCopyImageToBufferArgs(YAML::Emitter &os, const CmdC
         {
             os << YAML::Comment("VkBufferImageCopy");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
                 os << args.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -584,7 +584,7 @@ void CommandPrinter::PrintCmdClearColorImageArgs(YAML::Emitter &os, const CmdCle
         {
             os << YAML::Comment("VkImageSubresourceRange");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.rangeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.rangeCount); ++i) {
                 os << args.pRanges[i];
             }  // for i
             os << YAML::EndSeq;
@@ -618,7 +618,7 @@ void CommandPrinter::PrintCmdClearDepthStencilImageArgs(YAML::Emitter &os, const
         {
             os << YAML::Comment("VkImageSubresourceRange");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.rangeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.rangeCount); ++i) {
                 os << args.pRanges[i];
             }  // for i
             os << YAML::EndSeq;
@@ -639,7 +639,7 @@ void CommandPrinter::PrintCmdClearAttachmentsArgs(YAML::Emitter &os, const CmdCl
         {
             os << YAML::Comment("VkClearAttachment");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.attachmentCount); ++i) {
                 os << args.pAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -657,7 +657,7 @@ void CommandPrinter::PrintCmdClearAttachmentsArgs(YAML::Emitter &os, const CmdCl
         {
             os << YAML::Comment("VkClearRect");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.rectCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.rectCount); ++i) {
                 os << args.pRects[i];
             }  // for i
             os << YAML::EndSeq;
@@ -690,7 +690,7 @@ void CommandPrinter::PrintCmdResolveImageArgs(YAML::Emitter &os, const CmdResolv
         {
             os << YAML::Comment("VkImageResolve");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
                 os << args.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -729,7 +729,7 @@ void CommandPrinter::PrintCmdWaitEventsArgs(YAML::Emitter &os, const CmdWaitEven
         {
             os << YAML::Comment("VkEvent");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.eventCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
                 os << args.pEvents[i];
             }  // for i
             os << YAML::EndSeq;
@@ -753,7 +753,7 @@ void CommandPrinter::PrintCmdWaitEventsArgs(YAML::Emitter &os, const CmdWaitEven
         {
             os << YAML::Comment("VkMemoryBarrier");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.memoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.memoryBarrierCount); ++i) {
                 os << args.pMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -771,7 +771,7 @@ void CommandPrinter::PrintCmdWaitEventsArgs(YAML::Emitter &os, const CmdWaitEven
         {
             os << YAML::Comment("VkBufferMemoryBarrier");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bufferMemoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bufferMemoryBarrierCount); ++i) {
                 os << args.pBufferMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -789,7 +789,7 @@ void CommandPrinter::PrintCmdWaitEventsArgs(YAML::Emitter &os, const CmdWaitEven
         {
             os << YAML::Comment("VkImageMemoryBarrier");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.imageMemoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.imageMemoryBarrierCount); ++i) {
                 os << args.pImageMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -819,7 +819,7 @@ void CommandPrinter::PrintCmdPipelineBarrierArgs(YAML::Emitter &os, const CmdPip
         {
             os << YAML::Comment("VkMemoryBarrier");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.memoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.memoryBarrierCount); ++i) {
                 os << args.pMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -837,7 +837,7 @@ void CommandPrinter::PrintCmdPipelineBarrierArgs(YAML::Emitter &os, const CmdPip
         {
             os << YAML::Comment("VkBufferMemoryBarrier");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bufferMemoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bufferMemoryBarrierCount); ++i) {
                 os << args.pBufferMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -855,7 +855,7 @@ void CommandPrinter::PrintCmdPipelineBarrierArgs(YAML::Emitter &os, const CmdPip
         {
             os << YAML::Comment("VkImageMemoryBarrier");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.imageMemoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.imageMemoryBarrierCount); ++i) {
                 os << args.pImageMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -994,7 +994,7 @@ void CommandPrinter::PrintCmdExecuteCommandsArgs(YAML::Emitter &os, const CmdExe
         {
             os << YAML::Comment("VkCommandBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.commandBufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.commandBufferCount); ++i) {
                 os << args.pCommandBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1151,7 +1151,7 @@ void CommandPrinter::PrintCmdWaitEvents2Args(YAML::Emitter &os, const CmdWaitEve
         {
             os << YAML::Comment("VkEvent");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.eventCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
                 os << args.pEvents[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1166,7 +1166,7 @@ void CommandPrinter::PrintCmdWaitEvents2Args(YAML::Emitter &os, const CmdWaitEve
         {
             os << YAML::Comment("VkDependencyInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.eventCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
                 os << args.pDependencyInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1299,7 +1299,7 @@ void CommandPrinter::PrintCmdSetViewportWithCountArgs(YAML::Emitter &os, const C
         {
             os << YAML::Comment("VkViewport");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.viewportCount); ++i) {
                 os << args.pViewports[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1320,7 +1320,7 @@ void CommandPrinter::PrintCmdSetScissorWithCountArgs(YAML::Emitter &os, const Cm
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.scissorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.scissorCount); ++i) {
                 os << args.pScissors[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1344,7 +1344,7 @@ void CommandPrinter::PrintCmdBindVertexBuffers2Args(YAML::Emitter &os, const Cmd
         {
             os << YAML::Comment("VkBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1359,7 +1359,7 @@ void CommandPrinter::PrintCmdBindVertexBuffers2Args(YAML::Emitter &os, const Cmd
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1374,7 +1374,7 @@ void CommandPrinter::PrintCmdBindVertexBuffers2Args(YAML::Emitter &os, const Cmd
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pSizes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1389,7 +1389,7 @@ void CommandPrinter::PrintCmdBindVertexBuffers2Args(YAML::Emitter &os, const Cmd
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pStrides[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1567,7 +1567,7 @@ void CommandPrinter::PrintCmdPushDescriptorSetKHRArgs(YAML::Emitter &os, const C
         {
             os << YAML::Comment("VkWriteDescriptorSet");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.descriptorWriteCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.descriptorWriteCount); ++i) {
                 os << args.pDescriptorWrites[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1694,7 +1694,7 @@ void CommandPrinter::PrintCmdSetFragmentShadingRateKHRArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkFragmentShadingRateCombinerOpKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << args.combinerOps[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1769,7 +1769,7 @@ void CommandPrinter::PrintCmdWaitEvents2KHRArgs(YAML::Emitter &os, const CmdWait
         {
             os << YAML::Comment("VkEvent");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.eventCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
                 os << args.pEvents[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1784,7 +1784,7 @@ void CommandPrinter::PrintCmdWaitEvents2KHRArgs(YAML::Emitter &os, const CmdWait
         {
             os << YAML::Comment("VkDependencyInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.eventCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
                 os << args.pDependencyInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2021,7 +2021,7 @@ void CommandPrinter::PrintCmdBindTransformFeedbackBuffersEXTArgs(YAML::Emitter &
         {
             os << YAML::Comment("VkBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2036,7 +2036,7 @@ void CommandPrinter::PrintCmdBindTransformFeedbackBuffersEXTArgs(YAML::Emitter &
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2051,7 +2051,7 @@ void CommandPrinter::PrintCmdBindTransformFeedbackBuffersEXTArgs(YAML::Emitter &
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pSizes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2076,7 +2076,7 @@ void CommandPrinter::PrintCmdBeginTransformFeedbackEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.counterBufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.counterBufferCount); ++i) {
                 os << args.pCounterBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2091,7 +2091,7 @@ void CommandPrinter::PrintCmdBeginTransformFeedbackEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.counterBufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.counterBufferCount); ++i) {
                 os << args.pCounterBufferOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2116,7 +2116,7 @@ void CommandPrinter::PrintCmdEndTransformFeedbackEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.counterBufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.counterBufferCount); ++i) {
                 os << args.pCounterBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2131,7 +2131,7 @@ void CommandPrinter::PrintCmdEndTransformFeedbackEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.counterBufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.counterBufferCount); ++i) {
                 os << args.pCounterBufferOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2271,7 +2271,7 @@ void CommandPrinter::PrintCmdSetViewportWScalingNVArgs(YAML::Emitter &os, const 
         {
             os << YAML::Comment("VkViewportWScalingNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.viewportCount); ++i) {
                 os << args.pViewportWScalings[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2295,7 +2295,7 @@ void CommandPrinter::PrintCmdSetDiscardRectangleEXTArgs(YAML::Emitter &os, const
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.discardRectangleCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.discardRectangleCount); ++i) {
                 os << args.pDiscardRectangles[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2429,7 +2429,7 @@ void CommandPrinter::PrintCmdSetViewportShadingRatePaletteNVArgs(YAML::Emitter &
         {
             os << YAML::Comment("VkShadingRatePaletteNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.viewportCount); ++i) {
                 os << args.pShadingRatePalettes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2453,7 +2453,7 @@ void CommandPrinter::PrintCmdSetCoarseSampleOrderNVArgs(YAML::Emitter &os, const
         {
             os << YAML::Comment("VkCoarseSampleOrderCustomNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.customSampleOrderCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.customSampleOrderCount); ++i) {
                 os << args.pCustomSampleOrders[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2565,7 +2565,7 @@ void CommandPrinter::PrintCmdWriteAccelerationStructuresPropertiesNVArgs(
         {
             os << YAML::Comment("VkAccelerationStructureNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.accelerationStructureCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.accelerationStructureCount); ++i) {
                 os << args.pAccelerationStructures[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2661,7 +2661,7 @@ void CommandPrinter::PrintCmdSetExclusiveScissorEnableNVArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkBool32");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.exclusiveScissorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.exclusiveScissorCount); ++i) {
                 os << args.pExclusiveScissorEnables[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2685,7 +2685,7 @@ void CommandPrinter::PrintCmdSetExclusiveScissorNVArgs(YAML::Emitter &os, const 
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.exclusiveScissorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.exclusiveScissorCount); ++i) {
                 os << args.pExclusiveScissors[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2774,7 +2774,7 @@ void CommandPrinter::PrintCmdSetViewportWithCountEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkViewport");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.viewportCount); ++i) {
                 os << args.pViewports[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2795,7 +2795,7 @@ void CommandPrinter::PrintCmdSetScissorWithCountEXTArgs(YAML::Emitter &os, const
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.scissorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.scissorCount); ++i) {
                 os << args.pScissors[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2819,7 +2819,7 @@ void CommandPrinter::PrintCmdBindVertexBuffers2EXTArgs(YAML::Emitter &os, const 
         {
             os << YAML::Comment("VkBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2834,7 +2834,7 @@ void CommandPrinter::PrintCmdBindVertexBuffers2EXTArgs(YAML::Emitter &os, const 
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2849,7 +2849,7 @@ void CommandPrinter::PrintCmdBindVertexBuffers2EXTArgs(YAML::Emitter &os, const 
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pSizes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2864,7 +2864,7 @@ void CommandPrinter::PrintCmdBindVertexBuffers2EXTArgs(YAML::Emitter &os, const 
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
                 os << args.pStrides[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2994,7 +2994,7 @@ void CommandPrinter::PrintCmdBindDescriptorBuffersEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkDescriptorBufferBindingInfoEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.bufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.bufferCount); ++i) {
                 os << args.pBindingInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3025,7 +3025,7 @@ void CommandPrinter::PrintCmdSetDescriptorBufferOffsetsEXTArgs(YAML::Emitter &os
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.setCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.setCount); ++i) {
                 os << args.pBufferIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3040,7 +3040,7 @@ void CommandPrinter::PrintCmdSetDescriptorBufferOffsetsEXTArgs(YAML::Emitter &os
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.setCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.setCount); ++i) {
                 os << args.pOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3073,7 +3073,7 @@ void CommandPrinter::PrintCmdSetFragmentShadingRateEnumNVArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkFragmentShadingRateCombinerOpKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << args.combinerOps[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3094,7 +3094,7 @@ void CommandPrinter::PrintCmdSetVertexInputEXTArgs(YAML::Emitter &os, const CmdS
         {
             os << YAML::Comment("VkVertexInputBindingDescription2EXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.vertexBindingDescriptionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.vertexBindingDescriptionCount); ++i) {
                 os << args.pVertexBindingDescriptions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3112,7 +3112,7 @@ void CommandPrinter::PrintCmdSetVertexInputEXTArgs(YAML::Emitter &os, const CmdS
         {
             os << YAML::Comment("VkVertexInputAttributeDescription2EXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.vertexAttributeDescriptionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.vertexAttributeDescriptionCount); ++i) {
                 os << args.pVertexAttributeDescriptions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3178,7 +3178,7 @@ void CommandPrinter::PrintCmdSetColorWriteEnableEXTArgs(YAML::Emitter &os, const
         {
             os << YAML::Comment("VkBool32");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.attachmentCount); ++i) {
                 os << args.pColorWriteEnables[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3199,7 +3199,7 @@ void CommandPrinter::PrintCmdDrawMultiEXTArgs(YAML::Emitter &os, const CmdDrawMu
         {
             os << YAML::Comment("VkMultiDrawInfoEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.drawCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.drawCount); ++i) {
                 os << args.pVertexInfo[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3229,7 +3229,7 @@ void CommandPrinter::PrintCmdDrawMultiIndexedEXTArgs(YAML::Emitter &os, const Cm
         {
             os << YAML::Comment("VkMultiDrawIndexedInfoEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.drawCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.drawCount); ++i) {
                 os << args.pIndexInfo[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3266,7 +3266,7 @@ void CommandPrinter::PrintCmdBuildMicromapsEXTArgs(YAML::Emitter &os, const CmdB
         {
             os << YAML::Comment("VkMicromapBuildInfoEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.infoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.infoCount); ++i) {
                 os << args.pInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3320,7 +3320,7 @@ void CommandPrinter::PrintCmdWriteMicromapsPropertiesEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkMicromapEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.micromapCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.micromapCount); ++i) {
                 os << args.pMicromaps[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3397,7 +3397,7 @@ void CommandPrinter::PrintCmdCopyMemoryToImageIndirectNVArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkImageSubresourceLayers");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.copyCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.copyCount); ++i) {
                 os << args.pImageSubresources[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3418,7 +3418,7 @@ void CommandPrinter::PrintCmdDecompressMemoryNVArgs(YAML::Emitter &os, const Cmd
         {
             os << YAML::Comment("VkDecompressMemoryRegionNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.decompressRegionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.decompressRegionCount); ++i) {
                 os << args.pDecompressMemoryRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3481,7 +3481,7 @@ void CommandPrinter::PrintCmdSetSampleMaskEXTArgs(YAML::Emitter &os, const CmdSe
         {
             os << YAML::Comment("VkSampleMask");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < ((args.samples + 31) / 32); ++i) {
+            for (uint64_t i = 0; i < uint64_t(((args.samples + 31) / 32)); ++i) {
                 os << args.pSampleMask[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3524,7 +3524,7 @@ void CommandPrinter::PrintCmdSetColorBlendEnableEXTArgs(YAML::Emitter &os, const
         {
             os << YAML::Comment("VkBool32");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.attachmentCount); ++i) {
                 os << args.pColorBlendEnables[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3549,7 +3549,7 @@ void CommandPrinter::PrintCmdSetColorBlendEquationEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkColorBlendEquationEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.attachmentCount); ++i) {
                 os << args.pColorBlendEquations[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3573,7 +3573,7 @@ void CommandPrinter::PrintCmdSetColorWriteMaskEXTArgs(YAML::Emitter &os, const C
         {
             os << YAML::Comment("VkColorComponentFlags");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.attachmentCount); ++i) {
                 os << args.pColorWriteMasks[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3639,7 +3639,7 @@ void CommandPrinter::PrintCmdSetColorBlendAdvancedEXTArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("VkColorBlendAdvancedEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.attachmentCount); ++i) {
                 os << args.pColorBlendAdvanced[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3698,7 +3698,7 @@ void CommandPrinter::PrintCmdSetViewportSwizzleNVArgs(YAML::Emitter &os, const C
         {
             os << YAML::Comment("VkViewportSwizzleNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.viewportCount); ++i) {
                 os << args.pViewportSwizzles[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3748,7 +3748,7 @@ void CommandPrinter::PrintCmdSetCoverageModulationTableNVArgs(YAML::Emitter &os,
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.coverageModulationTableCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.coverageModulationTableCount); ++i) {
                 os << args.pCoverageModulationTable[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3803,7 +3803,7 @@ void CommandPrinter::PrintCmdBindShadersEXTArgs(YAML::Emitter &os, const CmdBind
         {
             os << YAML::Comment("VkShaderStageFlagBits");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.stageCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.stageCount); ++i) {
                 os << args.pStages[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3818,7 +3818,7 @@ void CommandPrinter::PrintCmdBindShadersEXTArgs(YAML::Emitter &os, const CmdBind
         {
             os << YAML::Comment("VkShaderEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.stageCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.stageCount); ++i) {
                 os << args.pShaders[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3847,7 +3847,7 @@ void CommandPrinter::PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &o
         {
             os << YAML::Comment("VkAccelerationStructureBuildGeometryInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.infoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.infoCount); ++i) {
                 os << args.pInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3862,7 +3862,7 @@ void CommandPrinter::PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &o
         {
             os << YAML::Comment("VkAccelerationStructureBuildRangeInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.infoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.infoCount); ++i) {
                 os << *(args.ppBuildRangeInfos)[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3884,7 +3884,7 @@ void CommandPrinter::PrintCmdBuildAccelerationStructuresIndirectKHRArgs(
         {
             os << YAML::Comment("VkAccelerationStructureBuildGeometryInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.infoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.infoCount); ++i) {
                 os << args.pInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3899,7 +3899,7 @@ void CommandPrinter::PrintCmdBuildAccelerationStructuresIndirectKHRArgs(
         {
             os << YAML::Comment("VkDeviceAddress");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.infoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.infoCount); ++i) {
                 os << args.pIndirectDeviceAddresses[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3914,7 +3914,7 @@ void CommandPrinter::PrintCmdBuildAccelerationStructuresIndirectKHRArgs(
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.infoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.infoCount); ++i) {
                 os << args.pIndirectStrides[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3929,7 +3929,7 @@ void CommandPrinter::PrintCmdBuildAccelerationStructuresIndirectKHRArgs(
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.infoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.infoCount); ++i) {
                 os << *(args.ppMaxPrimitiveCounts)[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3984,7 +3984,7 @@ void CommandPrinter::PrintCmdWriteAccelerationStructuresPropertiesKHRArgs(
         {
             os << YAML::Comment("VkAccelerationStructureKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < args.accelerationStructureCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(args.accelerationStructureCount); ++i) {
                 os << args.pAccelerationStructures[i];
             }  // for i
             os << YAML::EndSeq;

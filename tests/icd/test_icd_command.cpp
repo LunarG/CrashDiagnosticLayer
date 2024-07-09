@@ -25,7 +25,6 @@ namespace icd {
 
 VkResult CommandBuffer::Execute(Queue &queue) {
     VkResult result = VK_SUCCESS;
-    bool hang_next_cmd = false;
     auto &cmds = tracker_.GetCommands();
     for (auto &cmd : cmds) {
         switch (cmd.type) {
@@ -123,8 +122,7 @@ void CommandBuffer::CmdBeginDebugUtilsLabel(const VkDebugUtilsLabelEXT *pLabelIn
     }
 }
 
-CommandPool::CommandPool(const VkCommandPoolCreateInfo &create_info)
-    : flags_(create_info.flags), qfi_(create_info.queueFamilyIndex) {}
+CommandPool::CommandPool(const VkCommandPoolCreateInfo &create_info) {}
 
 VkResult CommandPool::Allocate(const VkCommandBufferAllocateInfo &alloc_info, VkCommandBuffer *cbs) {
     VkResult result = VK_SUCCESS;

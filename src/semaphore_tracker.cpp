@@ -222,7 +222,7 @@ void SemaphoreTracker::DumpWaitingThreads(YAML::Emitter& os) const {
         os << YAML::Key << "waitType" << YAML::Value
            << ((it.wait_type == SemaphoreWaitType::kAll) ? "WaitForAll" : "WaitForAny");
         os << YAML::Key << "WaitSemaphores" << YAML::Value << YAML::BeginSeq;
-        for (int i = 0; i < it.semaphores.size(); i++) {
+        for (size_t i = 0; i < it.semaphores.size(); i++) {
             os << YAML::BeginMap;
             os << YAML::Key << "handle" << YAML::Value << device_.GetObjectInfo((uint64_t)it.semaphores[i]);
             os << YAML::Key << "type" << YAML::Value << "Timeline";

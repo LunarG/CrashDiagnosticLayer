@@ -53,7 +53,6 @@ static std::unordered_map<VkInstance, std::array<VkPhysicalDevice, icd_physical_
 static std::unordered_map<VkPhysicalDevice, std::unordered_set<VkDisplayKHR>> display_map;
 
 static std::unordered_map<VkDevice, std::unordered_map<VkImage, VkDeviceSize>> image_memory_size_map;
-static VkDeviceAddress current_available_address = 0x10000000;
 
 static constexpr uint32_t icd_swapchain_image_count = 1;
 static std::unordered_map<VkSwapchainKHR, VkImage[icd_swapchain_image_count]> swapchain_image_map;

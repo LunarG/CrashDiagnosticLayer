@@ -28,7 +28,7 @@
 #include "test_icd_queue.h"
 
 namespace icd {
-struct Queue;
+class Queue;
 
 struct QueueFamily {
     std::vector<std::unique_ptr<Queue>> queues;
@@ -46,7 +46,6 @@ class Device {
 
    private:
     VK_LOADER_DATA loader_data_;  // MUST be first data member
-    VkPhysicalDevice physical_device_;
     std::map<uint32_t, QueueFamily> queue_families_;
     std::optional<FaultInfo> fault_info_;
 };

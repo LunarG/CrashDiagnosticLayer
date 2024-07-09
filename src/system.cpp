@@ -45,7 +45,7 @@
 
 namespace crash_diagnostic_layer {
 
-System::System(Context& context) : context_(context) {
+System::System(Context& context) {
     bool success;
 #ifdef SYSTEM_TARGET_ANDROID
     success = QueryInfoAndroid();
@@ -57,6 +57,7 @@ System::System(Context& context) : context_(context) {
     assert(success);
 }
 
+#ifdef SYSTEM_TARGET_LINUX
 const char* white_space_items = " \t\n\r\f\v";
 static void TrimSurroundingWhitespace(std::string& input) {
     input.erase(std::remove_if(input.begin(), input.end(), ::isspace), input.end());
@@ -72,6 +73,7 @@ static void TrimWhitespaceAndQuotes(std::string& input) {
     TrimSurroundingWhitespace(input);
     TrimSurroundingQuotes(input);
 }
+#endif
 
 bool System::QueryInfoAndroid() {
 #ifdef SYSTEM_TARGET_ANDROID
@@ -215,21 +217,22 @@ bool System::QueryInfoPosix() {
 #endif
 
     // Number of CPUs
-    int32_t num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+    auto num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
     if (num_cpus > 0) {
         number_cpus_ = std::to_string(num_cpus);
     }
 
     // Get amount of RAM in the system
-    uint64_t memory = (sysconf(_SC_PHYS_PAGES) * sysconf(_SC_PAGE_SIZE)) >> 10;
+    auto memory =
+        (static_cast<uint64_t>(sysconf(_SC_PHYS_PAGES)) * static_cast<uint64_t>(sysconf(_SC_PAGE_SIZE))) >> 10u;
     if ((memory >> 30) > 0) {
-        total_ram_ = std::to_string((uint32_t)(memory >> 30)) + " TB";
+        total_ram_ = std::to_string(memory >> 30u) + " TB";
     } else if ((memory >> 20) > 0) {
-        total_ram_ = std::to_string(((uint32_t)memory) >> 20) + " GB";
+        total_ram_ = std::to_string(memory >> 20u) + " GB";
     } else if ((memory >> 10) > 0) {
-        total_ram_ = std::to_string(((uint32_t)memory) >> 10) + " MB";
+        total_ram_ = std::to_string(memory >> 10u) + " MB";
     } else {
-        total_ram_ = std::to_string((uint32_t)memory) + " KB";
+        total_ram_ = std::to_string(memory) + " KB";
     }
 
     // Get disk space
@@ -278,7 +281,7 @@ bool System::QueryInfoPosix() {
 static bool CheckIfGreaterThanEqualVersion(uint32_t major, uint32_t minor) {
     OSVERSIONINFOEX ms_version_info{};
     DWORDLONG condition_mask = 0;
-    int32_t compare_op = VER_GREATER_EQUAL;
+    BYTE compare_op = VER_GREATER_EQUAL;
 
     // We only care about the major/minor version
     VER_SET_CONDITION(condition_mask, VER_MAJORVERSION, compare_op);
@@ -297,7 +300,7 @@ static bool CheckIfGreaterThanEqualVersion(uint32_t major, uint32_t minor) {
 static bool CheckIsServer(const uint32_t major, const uint32_t minor) {
     OSVERSIONINFOEX ms_version_info{};
     DWORDLONG condition_mask = 0;
-    int32_t compare_op = VER_EQUAL;
+    BYTE compare_op = VER_EQUAL;
 
     // We only care about the major/minor version
     VER_SET_CONDITION(condition_mask, VER_MAJORVERSION, compare_op);
@@ -373,10 +376,9 @@ bool System::QueryInfoWindows() {
         (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
     if (nullptr != fpIsWow64Process) {
         BOOL is_wow_64_process = FALSE;
-        if (!fpIsWow64Process(GetCurrentProcess(), &is_wow_64_process)) {
-            context_.Log().Error("Failed to determine properly if 32-bit on Win64!");
+        if (fpIsWow64Process(GetCurrentProcess(), &is_wow_64_process)) {
+            is_wow64 = (is_wow_64_process == TRUE);
         }
-        is_wow64 = (is_wow_64_process == TRUE);
     }
 
     const uint32_t max_len = 2048;

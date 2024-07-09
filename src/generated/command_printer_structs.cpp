@@ -328,7 +328,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCacheHeaderVersionO
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.pipelineCacheUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -843,7 +843,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLimits &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxComputeWorkGroupCount[i];
             }  // for i
             os << YAML::EndSeq;
@@ -859,7 +859,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLimits &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxComputeWorkGroupSize[i];
             }  // for i
             os << YAML::EndSeq;
@@ -896,7 +896,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLimits &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.maxViewportDimensions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -909,7 +909,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLimits &t) {
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.viewportBoundsRange[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1018,7 +1018,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLimits &t) {
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.pointSizeRange[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1031,7 +1031,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLimits &t) {
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.lineWidthRange[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1076,7 +1076,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMemoryPropert
         {
             os << YAML::Comment("VkMemoryType");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.memoryTypeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.memoryTypeCount); ++i) {
                 os << t.memoryTypes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1094,7 +1094,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMemoryPropert
         {
             os << YAML::Comment("VkMemoryHeap");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.memoryHeapCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.memoryHeapCount); ++i) {
                 os << t.memoryHeaps[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1152,7 +1152,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceProperties &t
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.pipelineCacheUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1214,7 +1214,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceQueueCreateInfo &t) {
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.queueCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.queueCount); ++i) {
                 os << t.pQueuePriorities[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1249,7 +1249,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceCreateInfo &t) {
         {
             os << YAML::Comment("VkDeviceQueueCreateInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.queueCreateInfoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.queueCreateInfoCount); ++i) {
                 os << t.pQueueCreateInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1330,7 +1330,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubmitInfo &t) {
         {
             os << YAML::Comment("VkSemaphore");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.waitSemaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.waitSemaphoreCount); ++i) {
                 os << t.pWaitSemaphores[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1345,7 +1345,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubmitInfo &t) {
         {
             os << YAML::Comment("VkPipelineStageFlags");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.waitSemaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.waitSemaphoreCount); ++i) {
                 os << t.pWaitDstStageMask[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1363,7 +1363,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubmitInfo &t) {
         {
             os << YAML::Comment("VkCommandBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.commandBufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.commandBufferCount); ++i) {
                 os << t.pCommandBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1381,7 +1381,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubmitInfo &t) {
         {
             os << YAML::Comment("VkSemaphore");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.signalSemaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.signalSemaphoreCount); ++i) {
                 os << t.pSignalSemaphores[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1487,7 +1487,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseBufferMemoryBindInfo 
         {
             os << YAML::Comment("VkSparseMemoryBind");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.bindCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.bindCount); ++i) {
                 os << t.pBinds[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1514,7 +1514,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageOpaqueMemoryBind
         {
             os << YAML::Comment("VkSparseMemoryBind");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.bindCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.bindCount); ++i) {
                 os << t.pBinds[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1580,7 +1580,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageMemoryBindInfo &
         {
             os << YAML::Comment("VkSparseImageMemoryBind");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.bindCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.bindCount); ++i) {
                 os << t.pBinds[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1612,7 +1612,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindSparseInfo &t) {
         {
             os << YAML::Comment("VkSemaphore");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.waitSemaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.waitSemaphoreCount); ++i) {
                 os << t.pWaitSemaphores[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1630,7 +1630,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindSparseInfo &t) {
         {
             os << YAML::Comment("VkSparseBufferMemoryBindInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.bufferBindCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.bufferBindCount); ++i) {
                 os << t.pBufferBinds[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1648,7 +1648,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindSparseInfo &t) {
         {
             os << YAML::Comment("VkSparseImageOpaqueMemoryBindInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.imageOpaqueBindCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.imageOpaqueBindCount); ++i) {
                 os << t.pImageOpaqueBinds[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1666,7 +1666,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindSparseInfo &t) {
         {
             os << YAML::Comment("VkSparseImageMemoryBindInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.imageBindCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.imageBindCount); ++i) {
                 os << t.pImageBinds[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1684,7 +1684,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindSparseInfo &t) {
         {
             os << YAML::Comment("VkSemaphore");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.signalSemaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.signalSemaphoreCount); ++i) {
                 os << t.pSignalSemaphores[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1841,7 +1841,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferCreateInfo &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.queueFamilyIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.queueFamilyIndexCount); ++i) {
                 os << t.pQueueFamilyIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -1932,7 +1932,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageCreateInfo &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.queueFamilyIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.queueFamilyIndexCount); ++i) {
                 os << t.pQueueFamilyIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2041,7 +2041,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderModuleCreateInfo &t) 
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < (t.codeSize / 4); ++i) {
+            for (uint64_t i = 0; i < uint64_t((t.codeSize / 4)); ++i) {
                 os << t.pCode[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2113,7 +2113,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSpecializationInfo &t) {
         {
             os << YAML::Comment("VkSpecializationMapEntry");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.mapEntryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.mapEntryCount); ++i) {
                 os << t.pMapEntries[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2259,7 +2259,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineVertexInputStateCre
         {
             os << YAML::Comment("VkVertexInputBindingDescription");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.vertexBindingDescriptionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.vertexBindingDescriptionCount); ++i) {
                 os << t.pVertexBindingDescriptions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2277,7 +2277,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineVertexInputStateCre
         {
             os << YAML::Comment("VkVertexInputAttributeDescription");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.vertexAttributeDescriptionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.vertexAttributeDescriptionCount); ++i) {
                 os << t.pVertexAttributeDescriptions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2379,7 +2379,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportStateCreate
         {
             os << YAML::Comment("VkViewport");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.viewportCount); ++i) {
                 os << t.pViewports[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2397,7 +2397,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportStateCreate
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.scissorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.scissorCount); ++i) {
                 os << t.pScissors[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2485,7 +2485,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineMultisampleStateCre
         {
             os << YAML::Comment("VkSampleMask");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < ((t.rasterizationSamples + 31) / 32); ++i) {
+            for (uint64_t i = 0; i < uint64_t(((t.rasterizationSamples + 31) / 32)); ++i) {
                 os << t.pSampleMask[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2633,7 +2633,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineColorBlendStateCrea
         {
             os << YAML::Comment("VkPipelineColorBlendAttachmentState");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.attachmentCount); ++i) {
                 os << t.pAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2646,7 +2646,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineColorBlendStateCrea
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 4; ++i) {
+            for (uint64_t i = 0; i < uint64_t(4); ++i) {
                 os << t.blendConstants[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2681,7 +2681,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineDynamicStateCreateI
         {
             os << YAML::Comment("VkDynamicState");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.dynamicStateCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.dynamicStateCount); ++i) {
                 os << t.pDynamicStates[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2716,7 +2716,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkGraphicsPipelineCreateInfo 
         {
             os << YAML::Comment("VkPipelineShaderStageCreateInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.stageCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.stageCount); ++i) {
                 os << t.pStages[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2844,7 +2844,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineLayoutCreateInfo &t
         {
             os << YAML::Comment("VkDescriptorSetLayout");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.setLayoutCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.setLayoutCount); ++i) {
                 os << t.pSetLayouts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -2862,7 +2862,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineLayoutCreateInfo &t
         {
             os << YAML::Comment("VkPushConstantRange");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.pushConstantRangeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.pushConstantRangeCount); ++i) {
                 os << t.pPushConstantRanges[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3039,7 +3039,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorPoolCreateInfo &t
         {
             os << YAML::Comment("VkDescriptorPoolSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.poolSizeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.poolSizeCount); ++i) {
                 os << t.pPoolSizes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3074,7 +3074,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetAllocateInfo &
         {
             os << YAML::Comment("VkDescriptorSetLayout");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.descriptorSetCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.descriptorSetCount); ++i) {
                 os << t.pSetLayouts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3107,7 +3107,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetLayoutBinding 
         {
             os << YAML::Comment("VkSampler");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.descriptorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.descriptorCount); ++i) {
                 os << t.pImmutableSamplers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3142,7 +3142,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetLayoutCreateIn
         {
             os << YAML::Comment("VkDescriptorSetLayoutBinding");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.bindingCount); ++i) {
                 os << t.pBindings[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3225,7 +3225,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFramebufferCreateInfo &t) {
         {
             os << YAML::Comment("VkImageView");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.attachmentCount); ++i) {
                 os << t.pAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3264,7 +3264,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription &t) {
         {
             os << YAML::Comment("VkAttachmentReference");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.inputAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.inputAttachmentCount); ++i) {
                 os << t.pInputAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3282,7 +3282,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription &t) {
         {
             os << YAML::Comment("VkAttachmentReference");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3297,7 +3297,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription &t) {
         {
             os << YAML::Comment("VkAttachmentReference");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pResolveAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3322,7 +3322,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.preserveAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.preserveAttachmentCount); ++i) {
                 os << t.pPreserveAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3384,7 +3384,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo &t) {
         {
             os << YAML::Comment("VkAttachmentDescription");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.attachmentCount); ++i) {
                 os << t.pAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3402,7 +3402,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo &t) {
         {
             os << YAML::Comment("VkSubpassDescription");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.subpassCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.subpassCount); ++i) {
                 os << t.pSubpasses[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3420,7 +3420,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo &t) {
         {
             os << YAML::Comment("VkSubpassDependency");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.dependencyCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.dependencyCount); ++i) {
                 os << t.pDependencies[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3595,7 +3595,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearColorValue &t) {
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 4; ++i) {
+            for (uint64_t i = 0; i < uint64_t(4); ++i) {
                 os << t.float32[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3608,7 +3608,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearColorValue &t) {
         {
             os << YAML::Comment("int32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 4; ++i) {
+            for (uint64_t i = 0; i < uint64_t(4); ++i) {
                 os << t.int32[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3621,7 +3621,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearColorValue &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 4; ++i) {
+            for (uint64_t i = 0; i < uint64_t(4); ++i) {
                 os << t.uint32[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3697,7 +3697,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageBlit &t) {
         {
             os << YAML::Comment("VkOffset3D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.srcOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3713,7 +3713,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageBlit &t) {
         {
             os << YAML::Comment("VkOffset3D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.dstOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3796,7 +3796,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassBeginInfo &t) {
         {
             os << YAML::Comment("VkClearValue");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.clearValueCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.clearValueCount); ++i) {
                 os << t.pClearValues[i];
             }  // for i
             os << YAML::EndSeq;
@@ -3989,7 +3989,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceGroupRenderPassBeginI
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.deviceRenderAreaCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.deviceRenderAreaCount); ++i) {
                 os << t.pDeviceRenderAreas[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4038,7 +4038,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceGroupSubmitInfo &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.waitSemaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.waitSemaphoreCount); ++i) {
                 os << t.pWaitSemaphoreDeviceIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4056,7 +4056,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceGroupSubmitInfo &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.commandBufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.commandBufferCount); ++i) {
                 os << t.pCommandBufferDeviceMasks[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4074,7 +4074,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceGroupSubmitInfo &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.signalSemaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.signalSemaphoreCount); ++i) {
                 os << t.pSignalSemaphoreDeviceIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4126,7 +4126,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindBufferMemoryDeviceGroup
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.deviceIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.deviceIndexCount); ++i) {
                 os << t.pDeviceIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4158,7 +4158,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindImageMemoryDeviceGroupI
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.deviceIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.deviceIndexCount); ++i) {
                 os << t.pDeviceIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4176,7 +4176,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindImageMemoryDeviceGroupI
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.splitInstanceBindRegionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.splitInstanceBindRegionCount); ++i) {
                 os << t.pSplitInstanceBindRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4208,7 +4208,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceGroupProperti
         {
             os << YAML::Comment("VkPhysicalDevice");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.physicalDeviceCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.physicalDeviceCount); ++i) {
                 os << t.physicalDevices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4243,7 +4243,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceGroupDeviceCreateInfo
         {
             os << YAML::Comment("VkPhysicalDevice");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.physicalDeviceCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.physicalDeviceCount); ++i) {
                 os << t.pPhysicalDevices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4569,7 +4569,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassInputAttachmentAs
         {
             os << YAML::Comment("VkInputAttachmentAspectReference");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.aspectReferenceCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.aspectReferenceCount); ++i) {
                 os << t.pAspectReferences[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4635,7 +4635,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassMultiviewCreateIn
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.subpassCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.subpassCount); ++i) {
                 os << t.pViewMasks[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4653,7 +4653,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassMultiviewCreateIn
         {
             os << YAML::Comment("int32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.dependencyCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.dependencyCount); ++i) {
                 os << t.pViewOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4671,7 +4671,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassMultiviewCreateIn
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.correlationMaskCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.correlationMaskCount); ++i) {
                 os << t.pCorrelationMasks[i];
             }  // for i
             os << YAML::EndSeq;
@@ -4990,7 +4990,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorUpdateTemplateCre
         {
             os << YAML::Comment("VkDescriptorUpdateTemplateEntry");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.descriptorUpdateEntryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.descriptorUpdateEntryCount); ++i) {
                 os << t.pDescriptorUpdateEntries[i];
             }  // for i
             os << YAML::EndSeq;
@@ -5121,7 +5121,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceIDProperties 
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.deviceUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -5134,7 +5134,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceIDProperties 
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.driverUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -5147,7 +5147,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceIDProperties 
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_LUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_LUID_SIZE); ++i) {
                 os << t.deviceLUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -5449,7 +5449,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVulkan11Prope
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.deviceUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -5462,7 +5462,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVulkan11Prope
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.driverUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -5475,7 +5475,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVulkan11Prope
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_LUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_LUID_SIZE); ++i) {
                 os << t.deviceLUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -5886,7 +5886,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageFormatListCreateInfo &
         {
             os << YAML::Comment("VkFormat");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.viewFormatCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.viewFormatCount); ++i) {
                 os << t.pViewFormats[i];
             }  // for i
             os << YAML::EndSeq;
@@ -5991,7 +5991,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription2 &t) {
         {
             os << YAML::Comment("VkAttachmentReference2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.inputAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.inputAttachmentCount); ++i) {
                 os << t.pInputAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6009,7 +6009,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription2 &t) {
         {
             os << YAML::Comment("VkAttachmentReference2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6024,7 +6024,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription2 &t) {
         {
             os << YAML::Comment("VkAttachmentReference2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pResolveAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6049,7 +6049,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription2 &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.preserveAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.preserveAttachmentCount); ++i) {
                 os << t.pPreserveAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6122,7 +6122,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo2 &t) {
         {
             os << YAML::Comment("VkAttachmentDescription2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.attachmentCount); ++i) {
                 os << t.pAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6140,7 +6140,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo2 &t) {
         {
             os << YAML::Comment("VkSubpassDescription2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.subpassCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.subpassCount); ++i) {
                 os << t.pSubpasses[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6158,7 +6158,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo2 &t) {
         {
             os << YAML::Comment("VkSubpassDependency2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.dependencyCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.dependencyCount); ++i) {
                 os << t.pDependencies[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6176,7 +6176,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo2 &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.correlatedViewMaskCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.correlatedViewMaskCount); ++i) {
                 os << t.pCorrelatedViewMasks[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6393,7 +6393,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetLayoutBindingF
         {
             os << YAML::Comment("VkDescriptorBindingFlags");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.bindingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.bindingCount); ++i) {
                 os << t.pBindingFlags[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6582,7 +6582,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetVariableDescri
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.descriptorSetCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.descriptorSetCount); ++i) {
                 os << t.pDescriptorCounts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6810,7 +6810,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFramebufferAttachmentImageI
         {
             os << YAML::Comment("VkFormat");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.viewFormatCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.viewFormatCount); ++i) {
                 os << t.pViewFormats[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6842,7 +6842,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFramebufferAttachmentsCreat
         {
             os << YAML::Comment("VkFramebufferAttachmentImageInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.attachmentImageInfoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.attachmentImageInfoCount); ++i) {
                 os << t.pAttachmentImageInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -6874,7 +6874,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassAttachmentBeginIn
         {
             os << YAML::Comment("VkImageView");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.attachmentCount); ++i) {
                 os << t.pAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7065,7 +7065,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTimelineSemaphoreSubmitInfo
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.waitSemaphoreValueCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.waitSemaphoreValueCount); ++i) {
                 os << t.pWaitSemaphoreValues[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7083,7 +7083,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTimelineSemaphoreSubmitInfo
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.signalSemaphoreValueCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.signalSemaphoreValueCount); ++i) {
                 os << t.pSignalSemaphoreValues[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7118,7 +7118,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSemaphoreWaitInfo &t) {
         {
             os << YAML::Comment("VkSemaphore");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.semaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.semaphoreCount); ++i) {
                 os << t.pSemaphores[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7133,7 +7133,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSemaphoreWaitInfo &t) {
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.semaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.semaphoreCount); ++i) {
                 os << t.pValues[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7503,7 +7503,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCreationFeedbackCre
         {
             os << YAML::Comment("VkPipelineCreationFeedback");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.pipelineStageCreationFeedbackCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.pipelineStageCreationFeedbackCount); ++i) {
                 os << t.pPipelineStageCreationFeedbacks[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7780,7 +7780,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDependencyInfo &t) {
         {
             os << YAML::Comment("VkMemoryBarrier2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.memoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.memoryBarrierCount); ++i) {
                 os << t.pMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7798,7 +7798,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDependencyInfo &t) {
         {
             os << YAML::Comment("VkBufferMemoryBarrier2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.bufferMemoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.bufferMemoryBarrierCount); ++i) {
                 os << t.pBufferMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7816,7 +7816,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDependencyInfo &t) {
         {
             os << YAML::Comment("VkImageMemoryBarrier2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.imageMemoryBarrierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.imageMemoryBarrierCount); ++i) {
                 os << t.pImageMemoryBarriers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7897,7 +7897,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubmitInfo2 &t) {
         {
             os << YAML::Comment("VkSemaphoreSubmitInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.waitSemaphoreInfoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.waitSemaphoreInfoCount); ++i) {
                 os << t.pWaitSemaphoreInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7915,7 +7915,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubmitInfo2 &t) {
         {
             os << YAML::Comment("VkCommandBufferSubmitInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.commandBufferInfoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.commandBufferInfoCount); ++i) {
                 os << t.pCommandBufferInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -7933,7 +7933,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubmitInfo2 &t) {
         {
             os << YAML::Comment("VkSemaphoreSubmitInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.signalSemaphoreInfoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.signalSemaphoreInfoCount); ++i) {
                 os << t.pSignalSemaphoreInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8045,7 +8045,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyBufferInfo2 &t) {
         {
             os << YAML::Comment("VkBufferCopy2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8118,7 +8118,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyImageInfo2 &t) {
         {
             os << YAML::Comment("VkImageCopy2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8191,7 +8191,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyBufferToImageInfo2 &t) 
         {
             os << YAML::Comment("VkBufferImageCopy2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8232,7 +8232,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyImageToBufferInfo2 &t) 
         {
             os << YAML::Comment("VkBufferImageCopy2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8262,7 +8262,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageBlit2 &t) {
         {
             os << YAML::Comment("VkOffset3D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.srcOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8278,7 +8278,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageBlit2 &t) {
         {
             os << YAML::Comment("VkOffset3D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.dstOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8322,7 +8322,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBlitImageInfo2 &t) {
         {
             os << YAML::Comment("VkImageBlit2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8398,7 +8398,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkResolveImageInfo2 &t) {
         {
             os << YAML::Comment("VkImageResolve2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8656,7 +8656,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingInfo &t) {
         {
             os << YAML::Comment("VkRenderingAttachmentInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachments[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8705,7 +8705,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRenderingCreateInfo
         {
             os << YAML::Comment("VkFormat");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachmentFormats[i];
             }  // for i
             os << YAML::EndSeq;
@@ -8766,7 +8766,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCommandBufferInheritanceRen
         {
             os << YAML::Comment("VkFormat");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachmentFormats[i];
             }  // for i
             os << YAML::EndSeq;
@@ -9131,7 +9131,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainCreateInfoKHR &t) 
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.queueFamilyIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.queueFamilyIndexCount); ++i) {
                 os << t.pQueueFamilyIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -9178,7 +9178,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentInfoKHR &t) {
         {
             os << YAML::Comment("VkSemaphore");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.waitSemaphoreCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.waitSemaphoreCount); ++i) {
                 os << t.pWaitSemaphores[i];
             }  // for i
             os << YAML::EndSeq;
@@ -9196,7 +9196,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentInfoKHR &t) {
         {
             os << YAML::Comment("VkSwapchainKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pSwapchains[i];
             }  // for i
             os << YAML::EndSeq;
@@ -9211,7 +9211,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentInfoKHR &t) {
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pImageIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -9226,7 +9226,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentInfoKHR &t) {
         {
             os << YAML::Comment("VkResult");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pResults[i];
             }  // for i
             os << YAML::EndSeq;
@@ -9319,7 +9319,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceGroupPresentCapabilit
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_MAX_DEVICE_GROUP_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_MAX_DEVICE_GROUP_SIZE); ++i) {
                 os << t.presentMask[i];
             }  // for i
             os << YAML::EndSeq;
@@ -9354,7 +9354,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceGroupPresentInfoKHR &
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pDeviceMasks[i];
             }  // for i
             os << YAML::EndSeq;
@@ -9765,7 +9765,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoProfileListInfoKHR &t)
         {
             os << YAML::Comment("VkVideoProfileInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.profileCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.profileCount); ++i) {
                 os << t.pProfiles[i];
             }  // for i
             os << YAML::EndSeq;
@@ -10081,7 +10081,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoBeginCodingInfoKHR &t)
         {
             os << YAML::Comment("VkVideoReferenceSlotInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.referenceSlotCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.referenceSlotCount); ++i) {
                 os << t.pReferenceSlots[i];
             }  // for i
             os << YAML::EndSeq;
@@ -10203,7 +10203,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeInfoKHR &t) {
         {
             os << YAML::Comment("VkVideoReferenceSlotInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.referenceSlotCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.referenceSlotCount); ++i) {
                 os << t.pReferenceSlots[i];
             }  // for i
             os << YAML::EndSeq;
@@ -10493,7 +10493,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH264PictureInfoK
         {
             os << YAML::Comment("VkVideoEncodeH264NaluSliceInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.naluSliceEntryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.naluSliceEntryCount); ++i) {
                 os << t.pNaluSliceEntries[i];
             }  // for i
             os << YAML::EndSeq;
@@ -10954,7 +10954,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265PictureInfoK
         {
             os << YAML::Comment("VkVideoEncodeH265NaluSliceSegmentInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.naluSliceSegmentEntryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.naluSliceSegmentEntryCount); ++i) {
                 os << t.pNaluSliceSegmentEntries[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11231,7 +11231,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH264PictureInfoK
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.sliceCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.sliceCount); ++i) {
                 os << t.pSliceOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11323,7 +11323,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentSampleCountInfoAM
         {
             os << YAML::Comment("VkSampleCountFlagBits");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachmentSamples[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11527,7 +11527,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("VkDeviceMemory");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.acquireCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.acquireCount); ++i) {
                 os << t.pAcquireSyncs[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11542,7 +11542,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.acquireCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.acquireCount); ++i) {
                 os << t.pAcquireKeys[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11557,7 +11557,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.acquireCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.acquireCount); ++i) {
                 os << t.pAcquireTimeouts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11575,7 +11575,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("VkDeviceMemory");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.releaseCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.releaseCount); ++i) {
                 os << t.pReleaseSyncs[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11590,7 +11590,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.releaseCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.releaseCount); ++i) {
                 os << t.pReleaseKeys[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11680,7 +11680,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkD3D12FenceSubmitInfoKHR &t)
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.waitSemaphoreValuesCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.waitSemaphoreValuesCount); ++i) {
                 os << t.pWaitSemaphoreValues[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11698,7 +11698,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkD3D12FenceSubmitInfoKHR &t)
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.signalSemaphoreValuesCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.signalSemaphoreValuesCount); ++i) {
                 os << t.pSignalSemaphoreValues[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11823,7 +11823,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentRegionKHR &t) {
         {
             os << YAML::Comment("VkRectLayerKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.rectangleCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.rectangleCount); ++i) {
                 os << t.pRectangles[i];
             }  // for i
             os << YAML::EndSeq;
@@ -11855,7 +11855,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentRegionsKHR &t) {
         {
             os << YAML::Comment("VkPresentRegionKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -12069,7 +12069,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceCounterKHR &t) {
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.uuid[i];
             }  // for i
             os << YAML::EndSeq;
@@ -12130,7 +12130,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueryPoolPerformanceCreateI
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.counterIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.counterIndexCount); ++i) {
                 os << t.pCounterIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -12576,7 +12576,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265PictureInfoK
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.sliceSegmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.sliceSegmentCount); ++i) {
                 os << t.pSliceSegmentOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -12659,7 +12659,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyGlobalPriorityPr
         {
             os << YAML::Comment("VkQueueGlobalPriorityKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.priorityCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.priorityCount); ++i) {
                 os << t.priorities[i];
             }  // for i
             os << YAML::EndSeq;
@@ -12713,7 +12713,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineFragmentShadingRate
         {
             os << YAML::Comment("VkFragmentShadingRateCombinerOpKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.combinerOps[i];
             }  // for i
             os << YAML::EndSeq;
@@ -12870,7 +12870,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingAttachmentLocation
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachmentLocations[i];
             }  // for i
             os << YAML::EndSeq;
@@ -12902,7 +12902,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingInputAttachmentInd
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachmentInputIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -13208,7 +13208,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineLibraryCreateInfoKH
         {
             os << YAML::Comment("VkPipeline");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.libraryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.libraryCount); ++i) {
                 os << t.pLibraries[i];
             }  // for i
             os << YAML::EndSeq;
@@ -13240,7 +13240,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentIdKHR &t) {
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pPresentIds[i];
             }  // for i
             os << YAML::EndSeq;
@@ -13311,7 +13311,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeInfoKHR &t) {
         {
             os << YAML::Comment("VkVideoReferenceSlotInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.referenceSlotCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.referenceSlotCount); ++i) {
                 os << t.pReferenceSlots[i];
             }  // for i
             os << YAML::EndSeq;
@@ -13453,7 +13453,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeRateControlInfoK
         {
             os << YAML::Comment("VkVideoEncodeRateControlLayerInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.layerCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.layerCount); ++i) {
                 os << t.pLayers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -13857,7 +13857,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingAreaInfoKHR &t) {
         {
             os << YAML::Comment("VkFormat");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorAttachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorAttachmentCount); ++i) {
                 os << t.pColorAttachmentFormats[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14138,7 +14138,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1PictureInfoKH
         {
             os << YAML::Comment("int32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR); ++i) {
                 os << t.referenceNameSlotIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14159,7 +14159,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1PictureInfoKH
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.tileCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.tileCount); ++i) {
                 os << t.pTileOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14174,7 +14174,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1PictureInfoKH
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.tileCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.tileCount); ++i) {
                 os << t.pTileSizes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14295,7 +14295,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineVertexInputDivisorS
         {
             os << YAML::Comment("VkVertexInputBindingDivisorDescriptionKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.vertexBindingDivisorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.vertexBindingDivisorCount); ++i) {
                 os << t.pVertexBindingDivisors[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14560,7 +14560,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindDescriptorSetsInfoKHR &
         {
             os << YAML::Comment("VkDescriptorSet");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.descriptorSetCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.descriptorSetCount); ++i) {
                 os << t.pDescriptorSets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14578,7 +14578,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindDescriptorSetsInfoKHR &
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.dynamicOffsetCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.dynamicOffsetCount); ++i) {
                 os << t.pDynamicOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14658,7 +14658,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPushDescriptorSetInfoKHR &t
         {
             os << YAML::Comment("VkWriteDescriptorSet");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.descriptorWriteCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.descriptorWriteCount); ++i) {
                 os << t.pDescriptorWrites[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14725,7 +14725,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetDescriptorBufferOffsetsI
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.setCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.setCount); ++i) {
                 os << t.pBufferIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14740,7 +14740,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetDescriptorBufferOffsetsI
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.setCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.setCount); ++i) {
                 os << t.pOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -14893,7 +14893,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPro
         {
             os << YAML::Comment("VkPhysicalDeviceLayeredApiPropertiesKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.layeredApiCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.layeredApiCount); ++i) {
                 os << t.pLayeredApis[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15046,7 +15046,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugMarkerMarkerInfoEXT &t
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 4; ++i) {
+            for (uint64_t i = 0; i < uint64_t(4); ++i) {
                 os << t.color[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15422,7 +15422,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderStatisticsInfoAMD &t)
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.computeWorkGroupSize[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15590,7 +15590,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("VkDeviceMemory");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.acquireCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.acquireCount); ++i) {
                 os << t.pAcquireSyncs[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15605,7 +15605,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.acquireCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.acquireCount); ++i) {
                 os << t.pAcquireKeys[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15620,7 +15620,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.acquireCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.acquireCount); ++i) {
                 os << t.pAcquireTimeoutMilliseconds[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15638,7 +15638,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("VkDeviceMemory");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.releaseCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.releaseCount); ++i) {
                 os << t.pReleaseSyncs[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15653,7 +15653,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWin32KeyedMutexAcquireRelea
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.releaseCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.releaseCount); ++i) {
                 os << t.pReleaseKeys[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15686,7 +15686,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkValidationFlagsEXT &t) {
         {
             os << YAML::Comment("VkValidationCheckEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.disabledValidationCheckCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.disabledValidationCheckCount); ++i) {
                 os << t.pDisabledValidationChecks[i];
             }  // for i
             os << YAML::EndSeq;
@@ -15918,7 +15918,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportWScalingSta
         {
             os << YAML::Comment("VkViewportWScalingNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.viewportCount); ++i) {
                 os << t.pViewportWScalings[i];
             }  // for i
             os << YAML::EndSeq;
@@ -16107,7 +16107,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentTimesInfoGOOGLE &t) 
         {
             os << YAML::Comment("VkPresentTimeGOOGLE");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pTimes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -16177,7 +16177,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportSwizzleStat
         {
             os << YAML::Comment("VkViewportSwizzleNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.viewportCount); ++i) {
                 os << t.pViewportSwizzles[i];
             }  // for i
             os << YAML::EndSeq;
@@ -16232,7 +16232,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineDiscardRectangleSta
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.discardRectangleCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.discardRectangleCount); ++i) {
                 os << t.pDiscardRectangles[i];
             }  // for i
             os << YAML::EndSeq;
@@ -16474,7 +16474,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugUtilsLabelEXT &t) {
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 4; ++i) {
+            for (uint64_t i = 0; i < uint64_t(4); ++i) {
                 os << t.color[i];
             }  // for i
             os << YAML::EndSeq;
@@ -16541,7 +16541,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugUtilsMessengerCallback
         {
             os << YAML::Comment("VkDebugUtilsLabelEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.queueLabelCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.queueLabelCount); ++i) {
                 os << t.pQueueLabels[i];
             }  // for i
             os << YAML::EndSeq;
@@ -16559,7 +16559,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugUtilsMessengerCallback
         {
             os << YAML::Comment("VkDebugUtilsLabelEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.cmdBufLabelCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.cmdBufLabelCount); ++i) {
                 os << t.pCmdBufLabels[i];
             }  // for i
             os << YAML::EndSeq;
@@ -16577,7 +16577,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugUtilsMessengerCallback
         {
             os << YAML::Comment("VkDebugUtilsObjectNameInfoEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.objectCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.objectCount); ++i) {
                 os << t.pObjects[i];
             }  // for i
             os << YAML::EndSeq;
@@ -16936,7 +16936,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkExecutionGraphPipelineCreat
         {
             os << YAML::Comment("VkPipelineShaderStageCreateInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.stageCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.stageCount); ++i) {
                 os << t.pStages[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17076,7 +17076,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSampleLocationsInfoEXT &t) 
         {
             os << YAML::Comment("VkSampleLocationEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.sampleLocationsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.sampleLocationsCount); ++i) {
                 os << t.pSampleLocations[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17132,7 +17132,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassSampleLocationsBe
         {
             os << YAML::Comment("VkAttachmentSampleLocationsEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.attachmentInitialSampleLocationsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.attachmentInitialSampleLocationsCount); ++i) {
                 os << t.pAttachmentInitialSampleLocations[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17150,7 +17150,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassSampleLocationsBe
         {
             os << YAML::Comment("VkSubpassSampleLocationsEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.postSubpassSampleLocationsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.postSubpassSampleLocationsCount); ++i) {
                 os << t.pPostSubpassSampleLocations[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17203,7 +17203,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceSampleLocatio
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.sampleLocationCoordinateRange[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17362,7 +17362,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCoverageModulationS
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.coverageModulationTableCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.coverageModulationTableCount); ++i) {
                 os << t.pCoverageModulationTable[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17446,7 +17446,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrmFormatModifierProperties
         {
             os << YAML::Comment("VkDrmFormatModifierPropertiesEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.drmFormatModifierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.drmFormatModifierCount); ++i) {
                 os << t.pDrmFormatModifierProperties[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17484,7 +17484,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageDrmForma
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.queueFamilyIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.queueFamilyIndexCount); ++i) {
                 os << t.pQueueFamilyIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17516,7 +17516,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageDrmFormatModifierListC
         {
             os << YAML::Comment("uint64_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.drmFormatModifierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.drmFormatModifierCount); ++i) {
                 os << t.pDrmFormatModifiers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17551,7 +17551,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageDrmFormatModifierExpli
         {
             os << YAML::Comment("VkSubresourceLayout");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.drmFormatModifierPlaneCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.drmFormatModifierPlaneCount); ++i) {
                 os << t.pPlaneLayouts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17615,7 +17615,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrmFormatModifierProperties
         {
             os << YAML::Comment("VkDrmFormatModifierProperties2EXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.drmFormatModifierCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.drmFormatModifierCount); ++i) {
                 os << t.pDrmFormatModifierProperties[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17689,7 +17689,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShadingRatePaletteNV &t) {
         {
             os << YAML::Comment("VkShadingRatePaletteEntryNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.shadingRatePaletteEntryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.shadingRatePaletteEntryCount); ++i) {
                 os << t.pShadingRatePaletteEntries[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17724,7 +17724,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportShadingRate
         {
             os << YAML::Comment("VkShadingRatePaletteNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.viewportCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.viewportCount); ++i) {
                 os << t.pShadingRatePalettes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17812,7 +17812,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCoarseSampleOrderCustomNV &
         {
             os << YAML::Comment("VkCoarseSampleLocationNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.sampleLocationCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.sampleLocationCount); ++i) {
                 os << t.pSampleLocations[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17847,7 +17847,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportCoarseSampl
         {
             os << YAML::Comment("VkCoarseSampleOrderCustomNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.customSampleOrderCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.customSampleOrderCount); ++i) {
                 os << t.pCustomSampleOrders[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17911,7 +17911,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingPipelineCreateInf
         {
             os << YAML::Comment("VkPipelineShaderStageCreateInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.stageCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.stageCount); ++i) {
                 os << t.pStages[i];
             }  // for i
             os << YAML::EndSeq;
@@ -17929,7 +17929,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingPipelineCreateInf
         {
             os << YAML::Comment("VkRayTracingShaderGroupCreateInfoNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.groupCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.groupCount); ++i) {
                 os << t.pGroups[i];
             }  // for i
             os << YAML::EndSeq;
@@ -18090,7 +18090,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureInfoNV
         {
             os << YAML::Comment("VkGeometryNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.geometryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.geometryCount); ++i) {
                 os << t.pGeometries[i];
             }  // for i
             os << YAML::EndSeq;
@@ -18151,7 +18151,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindAccelerationStructureMe
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.deviceIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.deviceIndexCount); ++i) {
                 os << t.pDeviceIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -18183,7 +18183,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSetAccelerat
         {
             os << YAML::Comment("VkAccelerationStructureNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.accelerationStructureCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.accelerationStructureCount); ++i) {
                 os << t.pAccelerationStructures[i];
             }  // for i
             os << YAML::EndSeq;
@@ -18260,10 +18260,10 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTransformMatrixKHR &t) {
         {
             os << YAML::Comment("float");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << YAML::BeginSeq;
-                for (uint64_t j = 0; j < 4; ++j) {
-                    os << t.matrix[j];
+                for (uint64_t j = 0; j < uint64_t(4); ++j) {
+                    os << t.matrix[i][j];
                 }  // for j
                 os << YAML::EndSeq;
             }  // for i
@@ -18636,7 +18636,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderPro
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxTaskWorkGroupSize[i];
             }  // for i
             os << YAML::EndSeq;
@@ -18658,7 +18658,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderPro
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxMeshWorkGroupSize[i];
             }  // for i
             os << YAML::EndSeq;
@@ -18737,7 +18737,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportExclusiveSc
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.exclusiveScissorCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.exclusiveScissorCount); ++i) {
                 os << t.pExclusiveScissors[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19200,7 +19200,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMemoryBudgetP
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_MAX_MEMORY_HEAPS; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_MAX_MEMORY_HEAPS); ++i) {
                 os << t.heapBudget[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19213,7 +19213,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMemoryBudgetP
         {
             os << YAML::Comment("VkDeviceSize");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_MAX_MEMORY_HEAPS; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_MAX_MEMORY_HEAPS); ++i) {
                 os << t.heapUsage[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19336,7 +19336,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkValidationFeaturesEXT &t) {
         {
             os << YAML::Comment("VkValidationFeatureEnableEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.enabledValidationFeatureCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.enabledValidationFeatureCount); ++i) {
                 os << t.pEnabledValidationFeatures[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19354,7 +19354,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkValidationFeaturesEXT &t) {
         {
             os << YAML::Comment("VkValidationFeatureDisableEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.disabledValidationFeatureCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.disabledValidationFeatureCount); ++i) {
                 os << t.pDisabledValidationFeatures[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19779,7 +19779,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHostImageCopy
         {
             os << YAML::Comment("VkImageLayout");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.copySrcLayoutCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.copySrcLayoutCount); ++i) {
                 os << t.pCopySrcLayouts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19797,7 +19797,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHostImageCopy
         {
             os << YAML::Comment("VkImageLayout");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.copyDstLayoutCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.copyDstLayoutCount); ++i) {
                 os << t.pCopyDstLayouts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19810,7 +19810,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHostImageCopy
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.optimalTilingLayoutUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19918,7 +19918,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageInfoEXT &t
         {
             os << YAML::Comment("VkMemoryToImageCopyEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -19959,7 +19959,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyImageToMemoryInfoEXT &t
         {
             os << YAML::Comment("VkImageToMemoryCopyEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20006,7 +20006,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyImageToImageInfoEXT &t)
         {
             os << YAML::Comment("VkImageCopy2");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20254,7 +20254,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfacePresentModeCompatibi
         {
             os << YAML::Comment("VkPresentModeKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.presentModeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.presentModeCount); ++i) {
                 os << t.pPresentModes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20303,7 +20303,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainPresentFenceInfoEX
         {
             os << YAML::Comment("VkFence");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pFences[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20335,7 +20335,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainPresentModesCreate
         {
             os << YAML::Comment("VkPresentModeKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.presentModeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.presentModeCount); ++i) {
                 os << t.pPresentModes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20367,7 +20367,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainPresentModeInfoEXT
         {
             os << YAML::Comment("VkPresentModeKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.swapchainCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
                 os << t.pPresentModes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20425,7 +20425,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkReleaseSwapchainImagesInfoE
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.imageIndexCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.imageIndexCount); ++i) {
                 os << t.pImageIndices[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20515,7 +20515,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkGraphicsShaderGroupCreateIn
         {
             os << YAML::Comment("VkPipelineShaderStageCreateInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.stageCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.stageCount); ++i) {
                 os << t.pStages[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20561,7 +20561,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkGraphicsPipelineShaderGroup
         {
             os << YAML::Comment("VkGraphicsShaderGroupCreateInfoNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.groupCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.groupCount); ++i) {
                 os << t.pGroups[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20579,7 +20579,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkGraphicsPipelineShaderGroup
         {
             os << YAML::Comment("VkPipeline");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.pipelineCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.pipelineCount); ++i) {
                 os << t.pPipelines[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20701,7 +20701,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutToken
         {
             os << YAML::Comment("VkIndexType");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.indexTypeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.indexTypeCount); ++i) {
                 os << t.pIndexTypes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20716,7 +20716,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutToken
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.indexTypeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.indexTypeCount); ++i) {
                 os << t.pIndexTypeValues[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20754,7 +20754,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutCreat
         {
             os << YAML::Comment("VkIndirectCommandsLayoutTokenNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.tokenCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.tokenCount); ++i) {
                 os << t.pTokens[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20772,7 +20772,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutCreat
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.streamCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.streamCount); ++i) {
                 os << t.pStreamStrides[i];
             }  // for i
             os << YAML::EndSeq;
@@ -20813,7 +20813,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkGeneratedCommandsInfoNV &t)
         {
             os << YAML::Comment("VkIndirectCommandsStreamNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.streamCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.streamCount); ++i) {
                 os << t.pStreams[i];
             }  // for i
             os << YAML::EndSeq;
@@ -22280,7 +22280,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineFragmentShadingRate
         {
             os << YAML::Comment("VkFragmentShadingRateCombinerOpKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 2; ++i) {
+            for (uint64_t i = 0; i < uint64_t(2); ++i) {
                 os << t.combinerOps[i];
             }  // for i
             os << YAML::EndSeq;
@@ -22616,7 +22616,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageCompressionControlEXT 
         {
             os << YAML::Comment("VkImageCompressionFixedRateFlagsEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.compressionControlPlaneCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.compressionControlPlaneCount); ++i) {
                 os << t.pFixedRateFlags[i];
             }  // for i
             os << YAML::EndSeq;
@@ -22814,7 +22814,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorBinaryHead
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.pipelineCacheUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -22943,7 +22943,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMutableDescriptorTypeListEX
         {
             os << YAML::Comment("VkDescriptorType");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.descriptorTypeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.descriptorTypeCount); ++i) {
                 os << t.pDescriptorTypes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -22975,7 +22975,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMutableDescriptorTypeCreate
         {
             os << YAML::Comment("VkMutableDescriptorTypeListEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.mutableDescriptorTypeListCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.mutableDescriptorTypeListCount); ++i) {
                 os << t.pMutableDescriptorTypeLists[i];
             }  // for i
             os << YAML::EndSeq;
@@ -23540,7 +23540,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageFormatConstraintsInfoF
         {
             os << YAML::Comment("VkSysmemColorSpaceFUCHSIA");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.colorSpaceCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.colorSpaceCount); ++i) {
                 os << t.pColorSpaces[i];
             }  // for i
             os << YAML::EndSeq;
@@ -23574,7 +23574,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageConstraintsInfoFUCHSIA
         {
             os << YAML::Comment("VkImageFormatConstraintsInfoFUCHSIA");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.formatConstraintsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.formatConstraintsCount); ++i) {
                 os << t.pFormatConstraints[i];
             }  // for i
             os << YAML::EndSeq;
@@ -23716,7 +23716,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelinePropertiesIdentifie
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.pipelineIdentifier[i];
             }  // for i
             os << YAML::EndSeq;
@@ -23788,7 +23788,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFrameBoundaryEXT &t) {
         {
             os << YAML::Comment("VkImage");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.imageCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.imageCount); ++i) {
                 os << t.pImages[i];
             }  // for i
             os << YAML::EndSeq;
@@ -23806,7 +23806,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFrameBoundaryEXT &t) {
         {
             os << YAML::Comment("VkBuffer");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.bufferCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.bufferCount); ++i) {
                 os << t.pBuffers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -23984,7 +23984,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineColorWriteCreateInf
         {
             os << YAML::Comment("VkBool32");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.attachmentCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.attachmentCount); ++i) {
                 os << t.pColorWriteEnables[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24239,7 +24239,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapBuildInfoEXT &t) {
         {
             os << YAML::Comment("VkMicromapUsageEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.usageCountsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.usageCountsCount); ++i) {
                 os << t.pUsageCounts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24254,7 +24254,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapBuildInfoEXT &t) {
         {
             os << YAML::Comment("VkMicromapUsageEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.usageCountsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.usageCountsCount); ++i) {
                 os << *(t.ppUsageCounts)[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24370,7 +24370,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapVersionInfoEXT &t) 
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < (2 * VK_UUID_SIZE); ++i) {
+            for (uint64_t i = 0; i < uint64_t((2 * VK_UUID_SIZE)); ++i) {
                 os << t.pVersionData[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24506,7 +24506,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTriang
         {
             os << YAML::Comment("VkMicromapUsageEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.usageCountsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.usageCountsCount); ++i) {
                 os << t.pUsageCounts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24521,7 +24521,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTriang
         {
             os << YAML::Comment("VkMicromapUsageEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.usageCountsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.usageCountsCount); ++i) {
                 os << *(t.ppUsageCounts)[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24646,7 +24646,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTriang
         {
             os << YAML::Comment("VkMicromapUsageEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.usageCountsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.usageCountsCount); ++i) {
                 os << t.pUsageCounts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24661,7 +24661,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTriang
         {
             os << YAML::Comment("VkMicromapUsageEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.usageCountsCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.usageCountsCount); ++i) {
                 os << *(t.ppUsageCounts)[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24712,7 +24712,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceClusterCullin
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxWorkGroupCount[i];
             }  // for i
             os << YAML::EndSeq;
@@ -24725,7 +24725,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceClusterCullin
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxWorkGroupSize[i];
             }  // for i
             os << YAML::EndSeq;
@@ -25093,7 +25093,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassStripeBeginInfoAR
         {
             os << YAML::Comment("VkRenderPassStripeInfoARM");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.stripeInfoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.stripeInfoCount); ++i) {
                 os << t.pStripeInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -25125,7 +25125,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassStripeSubmitInfoA
         {
             os << YAML::Comment("VkSemaphoreSubmitInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.stripeSemaphoreInfoCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.stripeSemaphoreInfoCount); ++i) {
                 os << t.pStripeSemaphoreInfos[i];
             }  // for i
             os << YAML::EndSeq;
@@ -25191,7 +25191,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassFragmentDensityMapOf
         {
             os << YAML::Comment("VkOffset2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.fragmentDensityOffsetCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.fragmentDensityOffsetCount); ++i) {
                 os << t.pFragmentDensityOffsets[i];
             }  // for i
             os << YAML::EndSeq;
@@ -25888,7 +25888,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDirectDriverLoadingListLUNA
         {
             os << YAML::Comment("VkDirectDriverLoadingInfoLUNARG");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.driverCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.driverCount); ++i) {
                 os << t.pDrivers[i];
             }  // for i
             os << YAML::EndSeq;
@@ -25932,7 +25932,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderModuleI
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.shaderModuleIdentifierAlgorithmUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -25964,7 +25964,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineShaderStageModuleId
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.identifierSize; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.identifierSize); ++i) {
                 os << t.pIdentifier[i];
             }  // for i
             os << YAML::EndSeq;
@@ -25996,7 +25996,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderModuleIdentifierEXT &
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.identifierSize; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.identifierSize); ++i) {
                 os << t.identifier[i];
             }  // for i
             os << YAML::EndSeq;
@@ -26193,7 +26193,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowExecuteInfoNV &t
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.regionCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.regionCount); ++i) {
                 os << t.pRegions[i];
             }  // for i
             os << YAML::EndSeq;
@@ -26334,7 +26334,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderObjectP
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < VK_UUID_SIZE; ++i) {
+            for (uint64_t i = 0; i < uint64_t(VK_UUID_SIZE); ++i) {
                 os << t.shaderBinaryUUID[i];
             }  // for i
             os << YAML::EndSeq;
@@ -26400,7 +26400,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCreateInfoEXT &t) {
         {
             os << YAML::Comment("VkDescriptorSetLayout");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.setLayoutCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.setLayoutCount); ++i) {
                 os << t.pSetLayouts[i];
             }  // for i
             os << YAML::EndSeq;
@@ -26418,7 +26418,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCreateInfoEXT &t) {
         {
             os << YAML::Comment("VkPushConstantRange");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.pushConstantRangeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.pushConstantRangeCount); ++i) {
                 os << t.pPushConstantRanges[i];
             }  // for i
             os << YAML::EndSeq;
@@ -26690,7 +26690,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingsCreateInfoEXT 
         {
             os << YAML::Comment("VkLayerSettingEXT");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.settingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.settingCount); ++i) {
                 os << t.pSettings[i];
             }  // for i
             os << YAML::EndSeq;
@@ -26915,7 +26915,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkGetLatencyMarkerInfoNV &t) 
         {
             os << YAML::Comment("VkLatencyTimingsFrameReportNV");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.timingCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.timingCount); ++i) {
                 os << t.pTimings[i];
             }  // for i
             os << YAML::EndSeq;
@@ -26998,7 +26998,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkLatencySurfaceCapabilitiesN
         {
             os << YAML::Comment("VkPresentModeKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.presentModeCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.presentModeCount); ++i) {
                 os << t.pPresentModes[i];
             }  // for i
             os << YAML::EndSeq;
@@ -27047,7 +27047,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMultiviewPerViewRenderAreas
         {
             os << YAML::Comment("VkRect2D");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.perViewRenderAreaCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.perViewRenderAreaCount); ++i) {
                 os << t.pPerViewRenderAreas[i];
             }  // for i
             os << YAML::EndSeq;
@@ -27700,7 +27700,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildG
         {
             os << YAML::Comment("VkAccelerationStructureGeometryKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.geometryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.geometryCount); ++i) {
                 os << t.pGeometries[i];
             }  // for i
             os << YAML::EndSeq;
@@ -27715,7 +27715,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildG
         {
             os << YAML::Comment("VkAccelerationStructureGeometryKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.geometryCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.geometryCount); ++i) {
                 os << *(t.ppGeometries)[i];
             }  // for i
             os << YAML::EndSeq;
@@ -27782,7 +27782,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSetAccelerat
         {
             os << YAML::Comment("VkAccelerationStructureKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.accelerationStructureCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.accelerationStructureCount); ++i) {
                 os << t.pAccelerationStructures[i];
             }  // for i
             os << YAML::EndSeq;
@@ -27895,7 +27895,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureVersio
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < (2 * VK_UUID_SIZE); ++i) {
+            for (uint64_t i = 0; i < uint64_t((2 * VK_UUID_SIZE)); ++i) {
                 os << t.pVersionData[i];
             }  // for i
             os << YAML::EndSeq;
@@ -28074,7 +28074,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingPipelineCreateInf
         {
             os << YAML::Comment("VkPipelineShaderStageCreateInfo");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.stageCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.stageCount); ++i) {
                 os << t.pStages[i];
             }  // for i
             os << YAML::EndSeq;
@@ -28092,7 +28092,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingPipelineCreateInf
         {
             os << YAML::Comment("VkRayTracingShaderGroupCreateInfoKHR");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < t.groupCount; ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.groupCount); ++i) {
                 os << t.pGroups[i];
             }  // for i
             os << YAML::EndSeq;
@@ -28298,7 +28298,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderPro
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxTaskWorkGroupCount[i];
             }  // for i
             os << YAML::EndSeq;
@@ -28314,7 +28314,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderPro
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxTaskWorkGroupSize[i];
             }  // for i
             os << YAML::EndSeq;
@@ -28339,7 +28339,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderPro
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxMeshWorkGroupCount[i];
             }  // for i
             os << YAML::EndSeq;
@@ -28355,7 +28355,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderPro
         {
             os << YAML::Comment("uint32_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < 3; ++i) {
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
                 os << t.maxMeshWorkGroupSize[i];
             }  // for i
             os << YAML::EndSeq;

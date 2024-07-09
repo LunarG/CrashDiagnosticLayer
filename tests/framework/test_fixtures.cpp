@@ -31,7 +31,7 @@ void CDLTestBase::InitArgs(int argc, char* argv[]) {
         } else if (current_argument == "--no-mock") {
             no_mock_icd_ = true;
         } else if (current_argument == "--device-index" && ((i + 1) < argc)) {
-            phys_device_index_ = std::atoi(argv[++i]);
+            phys_device_index_ = static_cast<uint32_t>(std::atoi(argv[++i]));
         } else if (current_argument == "--print-devices") {
             print_phys_devices_ = true;
         } else if ((current_argument == "--help") || (current_argument == "-h")) {
@@ -107,7 +107,7 @@ void CDLTestBase::InitInstance() {
         }
     }
 
-    if ((phys_device_index_ >= 0) && (phys_device_index_ < int(phys_devices.size()))) {
+    if (phys_device_index_ < static_cast<uint32_t>(phys_devices.size())) {
         physical_device_ = phys_devices[phys_device_index_];
     } else {
         // Specify a "physical device priority" with larger values meaning higher priority.
@@ -122,7 +122,7 @@ void CDLTestBase::InitInstance() {
         phys_device_index_ = 0;
         auto current_props = physical_device_.getProperties();
         // See if there are any higher priority devices found
-        for (size_t i = 1; i < phys_devices.size(); i++) {
+        for (uint32_t i = 1; i < phys_devices.size(); i++) {
             auto tmp_props = phys_devices[i].getProperties();
             if (device_type_rank[tmp_props.deviceType] > device_type_rank[current_props.deviceType]) {
                 physical_device_ = phys_devices[i];

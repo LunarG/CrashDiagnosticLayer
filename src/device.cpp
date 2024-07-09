@@ -546,7 +546,7 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
     std::vector<uint8_t> binary_data;
     address_infos.resize(fault_counts.addressInfoCount);
     vendor_infos.resize(fault_counts.vendorInfoCount);
-    binary_data.resize(fault_counts.vendorBinarySize);
+    binary_data.resize(static_cast<size_t>(fault_counts.vendorBinarySize));
 
     auto fault_info = vku::InitStruct<VkDeviceFaultInfoEXT>();
     fault_info.pAddressInfos = fault_counts.addressInfoCount == 0 ? nullptr : address_infos.data();
@@ -612,7 +612,7 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
         const char* kVendorFile = "vendor_binary.dat";
         std::filesystem::path out_path = context_.GetOutputPath() / kVendorFile;
         std::ofstream outfile(out_path, std::ios_base::out | std::ios_base::binary);
-        outfile.write((char*)fault_info.pVendorBinaryData, fault_counts.vendorBinarySize);
+        outfile.write((char*)fault_info.pVendorBinaryData, static_cast<std::streamsize>(fault_counts.vendorBinarySize));
         outfile.close();
 
         os << YAML::Key << "vendorBinaryFile" << YAML::Value << kVendorFile;

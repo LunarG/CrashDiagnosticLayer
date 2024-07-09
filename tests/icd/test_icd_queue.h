@@ -36,7 +36,7 @@ namespace icd {
 class CommandBuffer;
 class Device;
 class Fence;
-class FaultInfo;
+struct FaultInfo;
 class Semaphore;
 
 class Queue {
@@ -86,7 +86,6 @@ class Queue {
     std::condition_variable cond_;
     std::condition_variable idle_cond_;
     std::list<Submission> submissions_;
-    std::atomic<uint64_t> seq_;
     std::atomic<bool> exit_thread_{false};
     std::atomic<bool> device_lost_{false};
 

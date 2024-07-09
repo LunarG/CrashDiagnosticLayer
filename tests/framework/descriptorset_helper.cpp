@@ -17,11 +17,10 @@ DescriptorSetHelper::DescriptorSetHelper(vk::raii::Device &device, const Binding
                                          vk::DescriptorPoolCreateFlags poolFlags, void *allocate_pnext,
                                          void *create_pool_pnext)
     : device_{device}, pool_(VK_NULL_HANDLE), layout_(VK_NULL_HANDLE), set_(VK_NULL_HANDLE) {
-    vk::Result err;
     std::vector<vk::DescriptorPoolSize> sizes;
     for (const auto &b : bindings) sizes.push_back({b.descriptorType, std::max(1u, b.descriptorCount)});
 
-    vk::DescriptorSetLayoutCreateInfo ds_layout_ci({}, bindings);
+    vk::DescriptorSetLayoutCreateInfo ds_layout_ci({}, bindings, layout_pnext);
     layout_ = device_.createDescriptorSetLayout(ds_layout_ci);
 
     vk::DescriptorPoolCreateInfo dspci(poolFlags, 1, uint32_t(sizes.size()), sizes.data(), create_pool_pnext);
@@ -44,7 +43,7 @@ void DescriptorSetHelper::AddDescriptorWrite(uint32_t binding, uint32_t array_el
     descriptor_writes_.emplace_back(descriptor_write);
 }
 
-void DescriptorSetHelper::WriteDescriptorBufferInfo(int binding, vk::Buffer buffer, vk::DeviceSize offset,
+void DescriptorSetHelper::WriteDescriptorBufferInfo(uint32_t binding, vk::Buffer buffer, vk::DeviceSize offset,
                                                     vk::DeviceSize range, vk::DescriptorType descriptorType,
                                                     uint32_t arrayElement) {
     vk::DescriptorBufferInfo buffer_info(buffer, offset, range);
@@ -55,7 +54,7 @@ void DescriptorSetHelper::WriteDescriptorBufferInfo(int binding, vk::Buffer buff
     AddDescriptorWrite(binding, arrayElement, descriptorType);
 }
 
-void DescriptorSetHelper::WriteDescriptorBufferView(int binding, vk::BufferView buffer_view,
+void DescriptorSetHelper::WriteDescriptorBufferView(uint32_t binding, vk::BufferView buffer_view,
                                                     vk::DescriptorType descriptorType, uint32_t arrayElement) {
     ResourceInfo resource_info;
     resource_info.buffer_view = buffer_view;
@@ -63,7 +62,7 @@ void DescriptorSetHelper::WriteDescriptorBufferView(int binding, vk::BufferView 
     AddDescriptorWrite(binding, arrayElement, descriptorType);
 }
 
-void DescriptorSetHelper::WriteDescriptorImageInfo(int binding, vk::ImageView image_view, vk::Sampler sampler,
+void DescriptorSetHelper::WriteDescriptorImageInfo(uint32_t binding, vk::ImageView image_view, vk::Sampler sampler,
                                                    vk::DescriptorType descriptorType, vk::ImageLayout imageLayout,
                                                    uint32_t arrayElement) {
     vk::DescriptorImageInfo image_info(sampler, image_view, imageLayout);
@@ -74,7 +73,7 @@ void DescriptorSetHelper::WriteDescriptorImageInfo(int binding, vk::ImageView im
     AddDescriptorWrite(binding, arrayElement, descriptorType);
 }
 
-void DescriptorSetHelper::WriteDescriptorAccelStruct(int binding, uint32_t accelerationStructureCount,
+void DescriptorSetHelper::WriteDescriptorAccelStruct(uint32_t binding, uint32_t accelerationStructureCount,
                                                      const vk::AccelerationStructureKHR *pAccelerationStructures,
                                                      uint32_t arrayElement /*= 0*/) {
     vk::WriteDescriptorSetAccelerationStructureKHR write_desc_set_accel_struct(accelerationStructureCount,

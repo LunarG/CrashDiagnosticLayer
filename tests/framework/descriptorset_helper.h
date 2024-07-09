@@ -29,17 +29,17 @@ class DescriptorSetHelper {
     vk::DescriptorSetLayout Layout() { return *layout_; }
 
     void Clear();
-    void WriteDescriptorBufferInfo(int binding, vk::Buffer buffer, vk::DeviceSize offset, vk::DeviceSize range,
+    void WriteDescriptorBufferInfo(uint32_t binding, vk::Buffer buffer, vk::DeviceSize offset, vk::DeviceSize range,
                                    vk::DescriptorType descriptorType = vk::DescriptorType::eUniformBuffer,
                                    uint32_t arrayElement = 0);
-    void WriteDescriptorBufferView(int binding, vk::BufferView buffer_view,
+    void WriteDescriptorBufferView(uint32_t binding, vk::BufferView buffer_view,
                                    vk::DescriptorType descriptorType = vk::DescriptorType::eStorageTexelBuffer,
                                    uint32_t arrayElement = 0);
-    void WriteDescriptorImageInfo(int binding, vk::ImageView image_view, vk::Sampler sampler,
+    void WriteDescriptorImageInfo(uint32_t binding, vk::ImageView image_view, vk::Sampler sampler,
                                   vk::DescriptorType descriptorType = vk::DescriptorType::eCombinedImageSampler,
                                   vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal,
                                   uint32_t arrayElement = 0);
-    void WriteDescriptorAccelStruct(int binding, uint32_t accelerationStructureCount,
+    void WriteDescriptorAccelStruct(uint32_t binding, uint32_t accelerationStructureCount,
                                     const vk::AccelerationStructureKHR *pAccelerationStructures,
                                     uint32_t arrayElement = 0);
     void UpdateDescriptorSets();

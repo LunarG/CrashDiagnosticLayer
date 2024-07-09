@@ -36,327 +36,325 @@
 // definitions.
 
 template <>
-uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, uint64_t start_index, uint64_t count);
+uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, size_t start_index, size_t count);
 template <>
-VkExtent2D* CommandRecorder::CopyArray<VkExtent2D>(const VkExtent2D* src, uint64_t start_index, uint64_t count);
+VkExtent2D* CommandRecorder::CopyArray<VkExtent2D>(const VkExtent2D* src, size_t start_index, size_t count);
 template <>
-VkExtent3D* CommandRecorder::CopyArray<VkExtent3D>(const VkExtent3D* src, uint64_t start_index, uint64_t count);
+VkExtent3D* CommandRecorder::CopyArray<VkExtent3D>(const VkExtent3D* src, size_t start_index, size_t count);
 template <>
-VkOffset2D* CommandRecorder::CopyArray<VkOffset2D>(const VkOffset2D* src, uint64_t start_index, uint64_t count);
+VkOffset2D* CommandRecorder::CopyArray<VkOffset2D>(const VkOffset2D* src, size_t start_index, size_t count);
 template <>
-VkOffset3D* CommandRecorder::CopyArray<VkOffset3D>(const VkOffset3D* src, uint64_t start_index, uint64_t count);
+VkOffset3D* CommandRecorder::CopyArray<VkOffset3D>(const VkOffset3D* src, size_t start_index, size_t count);
 template <>
-VkRect2D* CommandRecorder::CopyArray<VkRect2D>(const VkRect2D* src, uint64_t start_index, uint64_t count);
+VkRect2D* CommandRecorder::CopyArray<VkRect2D>(const VkRect2D* src, size_t start_index, size_t count);
 template <>
 VkBufferMemoryBarrier* CommandRecorder::CopyArray<VkBufferMemoryBarrier>(const VkBufferMemoryBarrier* src,
-                                                                         uint64_t start_index, uint64_t count);
+                                                                         size_t start_index, size_t count);
 template <>
 VkImageSubresourceRange* CommandRecorder::CopyArray<VkImageSubresourceRange>(const VkImageSubresourceRange* src,
-                                                                             uint64_t start_index, uint64_t count);
+                                                                             size_t start_index, size_t count);
 template <>
 VkImageMemoryBarrier* CommandRecorder::CopyArray<VkImageMemoryBarrier>(const VkImageMemoryBarrier* src,
-                                                                       uint64_t start_index, uint64_t count);
+                                                                       size_t start_index, size_t count);
 template <>
-VkMemoryBarrier* CommandRecorder::CopyArray<VkMemoryBarrier>(const VkMemoryBarrier* src, uint64_t start_index,
-                                                             uint64_t count);
+VkMemoryBarrier* CommandRecorder::CopyArray<VkMemoryBarrier>(const VkMemoryBarrier* src, size_t start_index,
+                                                             size_t count);
 template <>
-VkViewport* CommandRecorder::CopyArray<VkViewport>(const VkViewport* src, uint64_t start_index, uint64_t count);
+VkViewport* CommandRecorder::CopyArray<VkViewport>(const VkViewport* src, size_t start_index, size_t count);
 template <>
 VkDescriptorBufferInfo* CommandRecorder::CopyArray<VkDescriptorBufferInfo>(const VkDescriptorBufferInfo* src,
-                                                                           uint64_t start_index, uint64_t count);
+                                                                           size_t start_index, size_t count);
 template <>
 VkDescriptorImageInfo* CommandRecorder::CopyArray<VkDescriptorImageInfo>(const VkDescriptorImageInfo* src,
-                                                                         uint64_t start_index, uint64_t count);
+                                                                         size_t start_index, size_t count);
 template <>
 VkWriteDescriptorSet* CommandRecorder::CopyArray<VkWriteDescriptorSet>(const VkWriteDescriptorSet* src,
-                                                                       uint64_t start_index, uint64_t count);
+                                                                       size_t start_index, size_t count);
 template <>
 VkCommandBufferInheritanceInfo* CommandRecorder::CopyArray<VkCommandBufferInheritanceInfo>(
-    const VkCommandBufferInheritanceInfo* src, uint64_t start_index, uint64_t count);
+    const VkCommandBufferInheritanceInfo* src, size_t start_index, size_t count);
 template <>
 VkCommandBufferBeginInfo* CommandRecorder::CopyArray<VkCommandBufferBeginInfo>(const VkCommandBufferBeginInfo* src,
-                                                                               uint64_t start_index, uint64_t count);
+                                                                               size_t start_index, size_t count);
 template <>
-VkBufferCopy* CommandRecorder::CopyArray<VkBufferCopy>(const VkBufferCopy* src, uint64_t start_index, uint64_t count);
+VkBufferCopy* CommandRecorder::CopyArray<VkBufferCopy>(const VkBufferCopy* src, size_t start_index, size_t count);
 template <>
 VkImageSubresourceLayers* CommandRecorder::CopyArray<VkImageSubresourceLayers>(const VkImageSubresourceLayers* src,
-                                                                               uint64_t start_index, uint64_t count);
+                                                                               size_t start_index, size_t count);
 template <>
-VkBufferImageCopy* CommandRecorder::CopyArray<VkBufferImageCopy>(const VkBufferImageCopy* src, uint64_t start_index,
-                                                                 uint64_t count);
+VkBufferImageCopy* CommandRecorder::CopyArray<VkBufferImageCopy>(const VkBufferImageCopy* src, size_t start_index,
+                                                                 size_t count);
 template <>
-VkClearColorValue* CommandRecorder::CopyArray<VkClearColorValue>(const VkClearColorValue* src, uint64_t start_index,
-                                                                 uint64_t count);
+VkClearColorValue* CommandRecorder::CopyArray<VkClearColorValue>(const VkClearColorValue* src, size_t start_index,
+                                                                 size_t count);
 template <>
 VkClearDepthStencilValue* CommandRecorder::CopyArray<VkClearDepthStencilValue>(const VkClearDepthStencilValue* src,
-                                                                               uint64_t start_index, uint64_t count);
+                                                                               size_t start_index, size_t count);
 template <>
-VkClearValue* CommandRecorder::CopyArray<VkClearValue>(const VkClearValue* src, uint64_t start_index, uint64_t count);
+VkClearValue* CommandRecorder::CopyArray<VkClearValue>(const VkClearValue* src, size_t start_index, size_t count);
 template <>
-VkClearAttachment* CommandRecorder::CopyArray<VkClearAttachment>(const VkClearAttachment* src, uint64_t start_index,
-                                                                 uint64_t count);
+VkClearAttachment* CommandRecorder::CopyArray<VkClearAttachment>(const VkClearAttachment* src, size_t start_index,
+                                                                 size_t count);
 template <>
-VkClearRect* CommandRecorder::CopyArray<VkClearRect>(const VkClearRect* src, uint64_t start_index, uint64_t count);
+VkClearRect* CommandRecorder::CopyArray<VkClearRect>(const VkClearRect* src, size_t start_index, size_t count);
 template <>
-VkImageBlit* CommandRecorder::CopyArray<VkImageBlit>(const VkImageBlit* src, uint64_t start_index, uint64_t count);
+VkImageBlit* CommandRecorder::CopyArray<VkImageBlit>(const VkImageBlit* src, size_t start_index, size_t count);
 template <>
-VkImageCopy* CommandRecorder::CopyArray<VkImageCopy>(const VkImageCopy* src, uint64_t start_index, uint64_t count);
+VkImageCopy* CommandRecorder::CopyArray<VkImageCopy>(const VkImageCopy* src, size_t start_index, size_t count);
 template <>
-VkImageResolve* CommandRecorder::CopyArray<VkImageResolve>(const VkImageResolve* src, uint64_t start_index,
-                                                           uint64_t count);
+VkImageResolve* CommandRecorder::CopyArray<VkImageResolve>(const VkImageResolve* src, size_t start_index, size_t count);
 template <>
 VkRenderPassBeginInfo* CommandRecorder::CopyArray<VkRenderPassBeginInfo>(const VkRenderPassBeginInfo* src,
-                                                                         uint64_t start_index, uint64_t count);
+                                                                         size_t start_index, size_t count);
 template <>
-VkSubpassBeginInfo* CommandRecorder::CopyArray<VkSubpassBeginInfo>(const VkSubpassBeginInfo* src, uint64_t start_index,
-                                                                   uint64_t count);
+VkSubpassBeginInfo* CommandRecorder::CopyArray<VkSubpassBeginInfo>(const VkSubpassBeginInfo* src, size_t start_index,
+                                                                   size_t count);
 template <>
-VkSubpassEndInfo* CommandRecorder::CopyArray<VkSubpassEndInfo>(const VkSubpassEndInfo* src, uint64_t start_index,
-                                                               uint64_t count);
+VkSubpassEndInfo* CommandRecorder::CopyArray<VkSubpassEndInfo>(const VkSubpassEndInfo* src, size_t start_index,
+                                                               size_t count);
 template <>
-VkMemoryBarrier2* CommandRecorder::CopyArray<VkMemoryBarrier2>(const VkMemoryBarrier2* src, uint64_t start_index,
-                                                               uint64_t count);
+VkMemoryBarrier2* CommandRecorder::CopyArray<VkMemoryBarrier2>(const VkMemoryBarrier2* src, size_t start_index,
+                                                               size_t count);
 template <>
 VkBufferMemoryBarrier2* CommandRecorder::CopyArray<VkBufferMemoryBarrier2>(const VkBufferMemoryBarrier2* src,
-                                                                           uint64_t start_index, uint64_t count);
+                                                                           size_t start_index, size_t count);
 template <>
 VkImageMemoryBarrier2* CommandRecorder::CopyArray<VkImageMemoryBarrier2>(const VkImageMemoryBarrier2* src,
-                                                                         uint64_t start_index, uint64_t count);
+                                                                         size_t start_index, size_t count);
 template <>
-VkDependencyInfo* CommandRecorder::CopyArray<VkDependencyInfo>(const VkDependencyInfo* src, uint64_t start_index,
-                                                               uint64_t count);
+VkDependencyInfo* CommandRecorder::CopyArray<VkDependencyInfo>(const VkDependencyInfo* src, size_t start_index,
+                                                               size_t count);
 template <>
-VkBufferCopy2* CommandRecorder::CopyArray<VkBufferCopy2>(const VkBufferCopy2* src, uint64_t start_index,
-                                                         uint64_t count);
+VkBufferCopy2* CommandRecorder::CopyArray<VkBufferCopy2>(const VkBufferCopy2* src, size_t start_index, size_t count);
 template <>
-VkCopyBufferInfo2* CommandRecorder::CopyArray<VkCopyBufferInfo2>(const VkCopyBufferInfo2* src, uint64_t start_index,
-                                                                 uint64_t count);
+VkCopyBufferInfo2* CommandRecorder::CopyArray<VkCopyBufferInfo2>(const VkCopyBufferInfo2* src, size_t start_index,
+                                                                 size_t count);
 template <>
-VkImageCopy2* CommandRecorder::CopyArray<VkImageCopy2>(const VkImageCopy2* src, uint64_t start_index, uint64_t count);
+VkImageCopy2* CommandRecorder::CopyArray<VkImageCopy2>(const VkImageCopy2* src, size_t start_index, size_t count);
 template <>
-VkCopyImageInfo2* CommandRecorder::CopyArray<VkCopyImageInfo2>(const VkCopyImageInfo2* src, uint64_t start_index,
-                                                               uint64_t count);
+VkCopyImageInfo2* CommandRecorder::CopyArray<VkCopyImageInfo2>(const VkCopyImageInfo2* src, size_t start_index,
+                                                               size_t count);
 template <>
-VkBufferImageCopy2* CommandRecorder::CopyArray<VkBufferImageCopy2>(const VkBufferImageCopy2* src, uint64_t start_index,
-                                                                   uint64_t count);
+VkBufferImageCopy2* CommandRecorder::CopyArray<VkBufferImageCopy2>(const VkBufferImageCopy2* src, size_t start_index,
+                                                                   size_t count);
 template <>
 VkCopyBufferToImageInfo2* CommandRecorder::CopyArray<VkCopyBufferToImageInfo2>(const VkCopyBufferToImageInfo2* src,
-                                                                               uint64_t start_index, uint64_t count);
+                                                                               size_t start_index, size_t count);
 template <>
 VkCopyImageToBufferInfo2* CommandRecorder::CopyArray<VkCopyImageToBufferInfo2>(const VkCopyImageToBufferInfo2* src,
-                                                                               uint64_t start_index, uint64_t count);
+                                                                               size_t start_index, size_t count);
 template <>
-VkImageBlit2* CommandRecorder::CopyArray<VkImageBlit2>(const VkImageBlit2* src, uint64_t start_index, uint64_t count);
+VkImageBlit2* CommandRecorder::CopyArray<VkImageBlit2>(const VkImageBlit2* src, size_t start_index, size_t count);
 template <>
-VkBlitImageInfo2* CommandRecorder::CopyArray<VkBlitImageInfo2>(const VkBlitImageInfo2* src, uint64_t start_index,
-                                                               uint64_t count);
+VkBlitImageInfo2* CommandRecorder::CopyArray<VkBlitImageInfo2>(const VkBlitImageInfo2* src, size_t start_index,
+                                                               size_t count);
 template <>
-VkImageResolve2* CommandRecorder::CopyArray<VkImageResolve2>(const VkImageResolve2* src, uint64_t start_index,
-                                                             uint64_t count);
+VkImageResolve2* CommandRecorder::CopyArray<VkImageResolve2>(const VkImageResolve2* src, size_t start_index,
+                                                             size_t count);
 template <>
-VkResolveImageInfo2* CommandRecorder::CopyArray<VkResolveImageInfo2>(const VkResolveImageInfo2* src,
-                                                                     uint64_t start_index, uint64_t count);
+VkResolveImageInfo2* CommandRecorder::CopyArray<VkResolveImageInfo2>(const VkResolveImageInfo2* src, size_t start_index,
+                                                                     size_t count);
 template <>
 VkRenderingAttachmentInfo* CommandRecorder::CopyArray<VkRenderingAttachmentInfo>(const VkRenderingAttachmentInfo* src,
-                                                                                 uint64_t start_index, uint64_t count);
+                                                                                 size_t start_index, size_t count);
 template <>
-VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingInfo* src, uint64_t start_index,
-                                                             uint64_t count);
+VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingInfo* src, size_t start_index,
+                                                             size_t count);
 template <>
 VkVideoPictureResourceInfoKHR* CommandRecorder::CopyArray<VkVideoPictureResourceInfoKHR>(
-    const VkVideoPictureResourceInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkVideoPictureResourceInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkVideoReferenceSlotInfoKHR* CommandRecorder::CopyArray<VkVideoReferenceSlotInfoKHR>(
-    const VkVideoReferenceSlotInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkVideoReferenceSlotInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkVideoBeginCodingInfoKHR* CommandRecorder::CopyArray<VkVideoBeginCodingInfoKHR>(const VkVideoBeginCodingInfoKHR* src,
-                                                                                 uint64_t start_index, uint64_t count);
+                                                                                 size_t start_index, size_t count);
 template <>
 VkVideoEndCodingInfoKHR* CommandRecorder::CopyArray<VkVideoEndCodingInfoKHR>(const VkVideoEndCodingInfoKHR* src,
-                                                                             uint64_t start_index, uint64_t count);
+                                                                             size_t start_index, size_t count);
 template <>
 VkVideoCodingControlInfoKHR* CommandRecorder::CopyArray<VkVideoCodingControlInfoKHR>(
-    const VkVideoCodingControlInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkVideoCodingControlInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkVideoDecodeInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeInfoKHR>(const VkVideoDecodeInfoKHR* src,
-                                                                       uint64_t start_index, uint64_t count);
+                                                                       size_t start_index, size_t count);
 template <>
 VkRenderingAttachmentLocationInfoKHR* CommandRecorder::CopyArray<VkRenderingAttachmentLocationInfoKHR>(
-    const VkRenderingAttachmentLocationInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkRenderingAttachmentLocationInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkRenderingInputAttachmentIndexInfoKHR* CommandRecorder::CopyArray<VkRenderingInputAttachmentIndexInfoKHR>(
-    const VkRenderingInputAttachmentIndexInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkRenderingInputAttachmentIndexInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkVideoEncodeInfoKHR* CommandRecorder::CopyArray<VkVideoEncodeInfoKHR>(const VkVideoEncodeInfoKHR* src,
-                                                                       uint64_t start_index, uint64_t count);
+                                                                       size_t start_index, size_t count);
 template <>
 VkBindDescriptorSetsInfoKHR* CommandRecorder::CopyArray<VkBindDescriptorSetsInfoKHR>(
-    const VkBindDescriptorSetsInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkBindDescriptorSetsInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkPushConstantsInfoKHR* CommandRecorder::CopyArray<VkPushConstantsInfoKHR>(const VkPushConstantsInfoKHR* src,
-                                                                           uint64_t start_index, uint64_t count);
+                                                                           size_t start_index, size_t count);
 template <>
 VkPushDescriptorSetInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetInfoKHR>(
-    const VkPushDescriptorSetInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkPushDescriptorSetInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkPushDescriptorSetWithTemplateInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetWithTemplateInfoKHR>(
-    const VkPushDescriptorSetWithTemplateInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkPushDescriptorSetWithTemplateInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkSetDescriptorBufferOffsetsInfoEXT* CommandRecorder::CopyArray<VkSetDescriptorBufferOffsetsInfoEXT>(
-    const VkSetDescriptorBufferOffsetsInfoEXT* src, uint64_t start_index, uint64_t count);
+    const VkSetDescriptorBufferOffsetsInfoEXT* src, size_t start_index, size_t count);
 template <>
 VkBindDescriptorBufferEmbeddedSamplersInfoEXT*
 CommandRecorder::CopyArray<VkBindDescriptorBufferEmbeddedSamplersInfoEXT>(
-    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* src, uint64_t start_index, uint64_t count);
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* src, size_t start_index, size_t count);
 template <>
 VkDebugMarkerMarkerInfoEXT* CommandRecorder::CopyArray<VkDebugMarkerMarkerInfoEXT>(
-    const VkDebugMarkerMarkerInfoEXT* src, uint64_t start_index, uint64_t count);
+    const VkDebugMarkerMarkerInfoEXT* src, size_t start_index, size_t count);
 template <>
-VkCuLaunchInfoNVX* CommandRecorder::CopyArray<VkCuLaunchInfoNVX>(const VkCuLaunchInfoNVX* src, uint64_t start_index,
-                                                                 uint64_t count);
+VkCuLaunchInfoNVX* CommandRecorder::CopyArray<VkCuLaunchInfoNVX>(const VkCuLaunchInfoNVX* src, size_t start_index,
+                                                                 size_t count);
 template <>
 VkConditionalRenderingBeginInfoEXT* CommandRecorder::CopyArray<VkConditionalRenderingBeginInfoEXT>(
-    const VkConditionalRenderingBeginInfoEXT* src, uint64_t start_index, uint64_t count);
+    const VkConditionalRenderingBeginInfoEXT* src, size_t start_index, size_t count);
 template <>
 VkViewportWScalingNV* CommandRecorder::CopyArray<VkViewportWScalingNV>(const VkViewportWScalingNV* src,
-                                                                       uint64_t start_index, uint64_t count);
+                                                                       size_t start_index, size_t count);
 template <>
-VkViewportSwizzleNV* CommandRecorder::CopyArray<VkViewportSwizzleNV>(const VkViewportSwizzleNV* src,
-                                                                     uint64_t start_index, uint64_t count);
+VkViewportSwizzleNV* CommandRecorder::CopyArray<VkViewportSwizzleNV>(const VkViewportSwizzleNV* src, size_t start_index,
+                                                                     size_t count);
 template <>
 VkDebugUtilsLabelEXT* CommandRecorder::CopyArray<VkDebugUtilsLabelEXT>(const VkDebugUtilsLabelEXT* src,
-                                                                       uint64_t start_index, uint64_t count);
+                                                                       size_t start_index, size_t count);
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 template <>
 VkDeviceOrHostAddressConstAMDX* CommandRecorder::CopyArray<VkDeviceOrHostAddressConstAMDX>(
-    const VkDeviceOrHostAddressConstAMDX* src, uint64_t start_index, uint64_t count);
+    const VkDeviceOrHostAddressConstAMDX* src, size_t start_index, size_t count);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 template <>
 VkDispatchGraphCountInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphCountInfoAMDX>(
-    const VkDispatchGraphCountInfoAMDX* src, uint64_t start_index, uint64_t count);
+    const VkDispatchGraphCountInfoAMDX* src, size_t start_index, size_t count);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 template <>
-VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSampleLocationEXT* src,
-                                                                     uint64_t start_index, uint64_t count);
+VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSampleLocationEXT* src, size_t start_index,
+                                                                     size_t count);
 template <>
 VkSampleLocationsInfoEXT* CommandRecorder::CopyArray<VkSampleLocationsInfoEXT>(const VkSampleLocationsInfoEXT* src,
-                                                                               uint64_t start_index, uint64_t count);
+                                                                               size_t start_index, size_t count);
 template <>
 VkShadingRatePaletteNV* CommandRecorder::CopyArray<VkShadingRatePaletteNV>(const VkShadingRatePaletteNV* src,
-                                                                           uint64_t start_index, uint64_t count);
+                                                                           size_t start_index, size_t count);
 template <>
 VkCoarseSampleLocationNV* CommandRecorder::CopyArray<VkCoarseSampleLocationNV>(const VkCoarseSampleLocationNV* src,
-                                                                               uint64_t start_index, uint64_t count);
+                                                                               size_t start_index, size_t count);
 template <>
 VkCoarseSampleOrderCustomNV* CommandRecorder::CopyArray<VkCoarseSampleOrderCustomNV>(
-    const VkCoarseSampleOrderCustomNV* src, uint64_t start_index, uint64_t count);
+    const VkCoarseSampleOrderCustomNV* src, size_t start_index, size_t count);
 template <>
-VkGeometryNV* CommandRecorder::CopyArray<VkGeometryNV>(const VkGeometryNV* src, uint64_t start_index, uint64_t count);
+VkGeometryNV* CommandRecorder::CopyArray<VkGeometryNV>(const VkGeometryNV* src, size_t start_index, size_t count);
 template <>
 VkAccelerationStructureInfoNV* CommandRecorder::CopyArray<VkAccelerationStructureInfoNV>(
-    const VkAccelerationStructureInfoNV* src, uint64_t start_index, uint64_t count);
+    const VkAccelerationStructureInfoNV* src, size_t start_index, size_t count);
 template <>
 VkPerformanceMarkerInfoINTEL* CommandRecorder::CopyArray<VkPerformanceMarkerInfoINTEL>(
-    const VkPerformanceMarkerInfoINTEL* src, uint64_t start_index, uint64_t count);
+    const VkPerformanceMarkerInfoINTEL* src, size_t start_index, size_t count);
 template <>
 VkPerformanceStreamMarkerInfoINTEL* CommandRecorder::CopyArray<VkPerformanceStreamMarkerInfoINTEL>(
-    const VkPerformanceStreamMarkerInfoINTEL* src, uint64_t start_index, uint64_t count);
+    const VkPerformanceStreamMarkerInfoINTEL* src, size_t start_index, size_t count);
 template <>
 VkPerformanceOverrideInfoINTEL* CommandRecorder::CopyArray<VkPerformanceOverrideInfoINTEL>(
-    const VkPerformanceOverrideInfoINTEL* src, uint64_t start_index, uint64_t count);
+    const VkPerformanceOverrideInfoINTEL* src, size_t start_index, size_t count);
 template <>
 VkIndirectCommandsStreamNV* CommandRecorder::CopyArray<VkIndirectCommandsStreamNV>(
-    const VkIndirectCommandsStreamNV* src, uint64_t start_index, uint64_t count);
+    const VkIndirectCommandsStreamNV* src, size_t start_index, size_t count);
 template <>
 VkGeneratedCommandsInfoNV* CommandRecorder::CopyArray<VkGeneratedCommandsInfoNV>(const VkGeneratedCommandsInfoNV* src,
-                                                                                 uint64_t start_index, uint64_t count);
+                                                                                 size_t start_index, size_t count);
 template <>
-VkDepthBiasInfoEXT* CommandRecorder::CopyArray<VkDepthBiasInfoEXT>(const VkDepthBiasInfoEXT* src, uint64_t start_index,
-                                                                   uint64_t count);
+VkDepthBiasInfoEXT* CommandRecorder::CopyArray<VkDepthBiasInfoEXT>(const VkDepthBiasInfoEXT* src, size_t start_index,
+                                                                   size_t count);
 template <>
-VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaLaunchInfoNV* src, uint64_t start_index,
-                                                                   uint64_t count);
+VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaLaunchInfoNV* src, size_t start_index,
+                                                                   size_t count);
 template <>
 VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferBindingInfoEXT>(
-    const VkDescriptorBufferBindingInfoEXT* src, uint64_t start_index, uint64_t count);
+    const VkDescriptorBufferBindingInfoEXT* src, size_t start_index, size_t count);
 template <>
 VkDeviceOrHostAddressConstKHR* CommandRecorder::CopyArray<VkDeviceOrHostAddressConstKHR>(
-    const VkDeviceOrHostAddressConstKHR* src, uint64_t start_index, uint64_t count);
+    const VkDeviceOrHostAddressConstKHR* src, size_t start_index, size_t count);
 template <>
 VkVertexInputBindingDescription2EXT* CommandRecorder::CopyArray<VkVertexInputBindingDescription2EXT>(
-    const VkVertexInputBindingDescription2EXT* src, uint64_t start_index, uint64_t count);
+    const VkVertexInputBindingDescription2EXT* src, size_t start_index, size_t count);
 template <>
 VkVertexInputAttributeDescription2EXT* CommandRecorder::CopyArray<VkVertexInputAttributeDescription2EXT>(
-    const VkVertexInputAttributeDescription2EXT* src, uint64_t start_index, uint64_t count);
+    const VkVertexInputAttributeDescription2EXT* src, size_t start_index, size_t count);
 template <>
-VkMultiDrawInfoEXT* CommandRecorder::CopyArray<VkMultiDrawInfoEXT>(const VkMultiDrawInfoEXT* src, uint64_t start_index,
-                                                                   uint64_t count);
+VkMultiDrawInfoEXT* CommandRecorder::CopyArray<VkMultiDrawInfoEXT>(const VkMultiDrawInfoEXT* src, size_t start_index,
+                                                                   size_t count);
 template <>
 VkMultiDrawIndexedInfoEXT* CommandRecorder::CopyArray<VkMultiDrawIndexedInfoEXT>(const VkMultiDrawIndexedInfoEXT* src,
-                                                                                 uint64_t start_index, uint64_t count);
+                                                                                 size_t start_index, size_t count);
 template <>
-VkMicromapUsageEXT* CommandRecorder::CopyArray<VkMicromapUsageEXT>(const VkMicromapUsageEXT* src, uint64_t start_index,
-                                                                   uint64_t count);
+VkMicromapUsageEXT* CommandRecorder::CopyArray<VkMicromapUsageEXT>(const VkMicromapUsageEXT* src, size_t start_index,
+                                                                   size_t count);
 template <>
 VkDeviceOrHostAddressKHR* CommandRecorder::CopyArray<VkDeviceOrHostAddressKHR>(const VkDeviceOrHostAddressKHR* src,
-                                                                               uint64_t start_index, uint64_t count);
+                                                                               size_t start_index, size_t count);
 template <>
 VkMicromapBuildInfoEXT* CommandRecorder::CopyArray<VkMicromapBuildInfoEXT>(const VkMicromapBuildInfoEXT* src,
-                                                                           uint64_t start_index, uint64_t count);
+                                                                           size_t start_index, size_t count);
 template <>
 VkCopyMicromapToMemoryInfoEXT* CommandRecorder::CopyArray<VkCopyMicromapToMemoryInfoEXT>(
-    const VkCopyMicromapToMemoryInfoEXT* src, uint64_t start_index, uint64_t count);
+    const VkCopyMicromapToMemoryInfoEXT* src, size_t start_index, size_t count);
 template <>
 VkCopyMemoryToMicromapInfoEXT* CommandRecorder::CopyArray<VkCopyMemoryToMicromapInfoEXT>(
-    const VkCopyMemoryToMicromapInfoEXT* src, uint64_t start_index, uint64_t count);
+    const VkCopyMemoryToMicromapInfoEXT* src, size_t start_index, size_t count);
 template <>
 VkCopyMicromapInfoEXT* CommandRecorder::CopyArray<VkCopyMicromapInfoEXT>(const VkCopyMicromapInfoEXT* src,
-                                                                         uint64_t start_index, uint64_t count);
+                                                                         size_t start_index, size_t count);
 template <>
 VkDecompressMemoryRegionNV* CommandRecorder::CopyArray<VkDecompressMemoryRegionNV>(
-    const VkDecompressMemoryRegionNV* src, uint64_t start_index, uint64_t count);
+    const VkDecompressMemoryRegionNV* src, size_t start_index, size_t count);
 template <>
 VkColorBlendEquationEXT* CommandRecorder::CopyArray<VkColorBlendEquationEXT>(const VkColorBlendEquationEXT* src,
-                                                                             uint64_t start_index, uint64_t count);
+                                                                             size_t start_index, size_t count);
 template <>
 VkColorBlendAdvancedEXT* CommandRecorder::CopyArray<VkColorBlendAdvancedEXT>(const VkColorBlendAdvancedEXT* src,
-                                                                             uint64_t start_index, uint64_t count);
+                                                                             size_t start_index, size_t count);
 template <>
 VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoNV>(
-    const VkOpticalFlowExecuteInfoNV* src, uint64_t start_index, uint64_t count);
+    const VkOpticalFlowExecuteInfoNV* src, size_t start_index, size_t count);
 template <>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(
-    const VkAccelerationStructureBuildRangeInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkAccelerationStructureBuildRangeInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkAccelerationStructureGeometryKHR* CommandRecorder::CopyArray<VkAccelerationStructureGeometryKHR>(
-    const VkAccelerationStructureGeometryKHR* src, uint64_t start_index, uint64_t count);
+    const VkAccelerationStructureGeometryKHR* src, size_t start_index, size_t count);
 template <>
 VkAccelerationStructureBuildGeometryInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildGeometryInfoKHR>(
-    const VkAccelerationStructureBuildGeometryInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkAccelerationStructureBuildGeometryInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkCopyAccelerationStructureToMemoryInfoKHR* CommandRecorder::CopyArray<VkCopyAccelerationStructureToMemoryInfoKHR>(
-    const VkCopyAccelerationStructureToMemoryInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkCopyAccelerationStructureToMemoryInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkCopyMemoryToAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyMemoryToAccelerationStructureInfoKHR>(
-    const VkCopyMemoryToAccelerationStructureInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkCopyMemoryToAccelerationStructureInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkCopyAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyAccelerationStructureInfoKHR>(
-    const VkCopyAccelerationStructureInfoKHR* src, uint64_t start_index, uint64_t count);
+    const VkCopyAccelerationStructureInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkStridedDeviceAddressRegionKHR* CommandRecorder::CopyArray<VkStridedDeviceAddressRegionKHR>(
-    const VkStridedDeviceAddressRegionKHR* src, uint64_t start_index, uint64_t count);
+    const VkStridedDeviceAddressRegionKHR* src, size_t start_index, size_t count);
 
 // Define CopyArray template functions.
 
 template <>
-uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, uint64_t start_index, uint64_t count) {
+uint8_t* CommandRecorder::CopyArray<uint8_t>(const uint8_t* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<uint8_t*>(m_allocator.Alloc(sizeof(uint8_t) * count));
     memcpy(ptr, src, sizeof(uint8_t) * count);
     return ptr;
 }
 template <>
-VkExtent2D* CommandRecorder::CopyArray<VkExtent2D>(const VkExtent2D* src, uint64_t start_index, uint64_t count) {
+VkExtent2D* CommandRecorder::CopyArray<VkExtent2D>(const VkExtent2D* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkExtent2D*>(m_allocator.Alloc(sizeof(VkExtent2D) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].width = src[start_index + i].width;
@@ -366,7 +364,7 @@ VkExtent2D* CommandRecorder::CopyArray<VkExtent2D>(const VkExtent2D* src, uint64
 }
 
 template <>
-VkExtent3D* CommandRecorder::CopyArray<VkExtent3D>(const VkExtent3D* src, uint64_t start_index, uint64_t count) {
+VkExtent3D* CommandRecorder::CopyArray<VkExtent3D>(const VkExtent3D* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkExtent3D*>(m_allocator.Alloc(sizeof(VkExtent3D) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].width = src[start_index + i].width;
@@ -377,7 +375,7 @@ VkExtent3D* CommandRecorder::CopyArray<VkExtent3D>(const VkExtent3D* src, uint64
 }
 
 template <>
-VkOffset2D* CommandRecorder::CopyArray<VkOffset2D>(const VkOffset2D* src, uint64_t start_index, uint64_t count) {
+VkOffset2D* CommandRecorder::CopyArray<VkOffset2D>(const VkOffset2D* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkOffset2D*>(m_allocator.Alloc(sizeof(VkOffset2D) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].x = src[start_index + i].x;
@@ -387,7 +385,7 @@ VkOffset2D* CommandRecorder::CopyArray<VkOffset2D>(const VkOffset2D* src, uint64
 }
 
 template <>
-VkOffset3D* CommandRecorder::CopyArray<VkOffset3D>(const VkOffset3D* src, uint64_t start_index, uint64_t count) {
+VkOffset3D* CommandRecorder::CopyArray<VkOffset3D>(const VkOffset3D* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkOffset3D*>(m_allocator.Alloc(sizeof(VkOffset3D) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].x = src[start_index + i].x;
@@ -398,7 +396,7 @@ VkOffset3D* CommandRecorder::CopyArray<VkOffset3D>(const VkOffset3D* src, uint64
 }
 
 template <>
-VkRect2D* CommandRecorder::CopyArray<VkRect2D>(const VkRect2D* src, uint64_t start_index, uint64_t count) {
+VkRect2D* CommandRecorder::CopyArray<VkRect2D>(const VkRect2D* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkRect2D*>(m_allocator.Alloc(sizeof(VkRect2D) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].offset = src[start_index + i].offset;
@@ -409,7 +407,7 @@ VkRect2D* CommandRecorder::CopyArray<VkRect2D>(const VkRect2D* src, uint64_t sta
 
 template <>
 VkBufferMemoryBarrier* CommandRecorder::CopyArray<VkBufferMemoryBarrier>(const VkBufferMemoryBarrier* src,
-                                                                         uint64_t start_index, uint64_t count) {
+                                                                         size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkBufferMemoryBarrier*>(m_allocator.Alloc(sizeof(VkBufferMemoryBarrier) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -427,7 +425,7 @@ VkBufferMemoryBarrier* CommandRecorder::CopyArray<VkBufferMemoryBarrier>(const V
 
 template <>
 VkImageSubresourceRange* CommandRecorder::CopyArray<VkImageSubresourceRange>(const VkImageSubresourceRange* src,
-                                                                             uint64_t start_index, uint64_t count) {
+                                                                             size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkImageSubresourceRange*>(m_allocator.Alloc(sizeof(VkImageSubresourceRange) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].aspectMask = src[start_index + i].aspectMask;
@@ -441,7 +439,7 @@ VkImageSubresourceRange* CommandRecorder::CopyArray<VkImageSubresourceRange>(con
 
 template <>
 VkImageMemoryBarrier* CommandRecorder::CopyArray<VkImageMemoryBarrier>(const VkImageMemoryBarrier* src,
-                                                                       uint64_t start_index, uint64_t count) {
+                                                                       size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkImageMemoryBarrier*>(m_allocator.Alloc(sizeof(VkImageMemoryBarrier) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -459,8 +457,8 @@ VkImageMemoryBarrier* CommandRecorder::CopyArray<VkImageMemoryBarrier>(const VkI
 }
 
 template <>
-VkMemoryBarrier* CommandRecorder::CopyArray<VkMemoryBarrier>(const VkMemoryBarrier* src, uint64_t start_index,
-                                                             uint64_t count) {
+VkMemoryBarrier* CommandRecorder::CopyArray<VkMemoryBarrier>(const VkMemoryBarrier* src, size_t start_index,
+                                                             size_t count) {
     auto ptr = reinterpret_cast<VkMemoryBarrier*>(m_allocator.Alloc(sizeof(VkMemoryBarrier) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -472,7 +470,7 @@ VkMemoryBarrier* CommandRecorder::CopyArray<VkMemoryBarrier>(const VkMemoryBarri
 }
 
 template <>
-VkViewport* CommandRecorder::CopyArray<VkViewport>(const VkViewport* src, uint64_t start_index, uint64_t count) {
+VkViewport* CommandRecorder::CopyArray<VkViewport>(const VkViewport* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkViewport*>(m_allocator.Alloc(sizeof(VkViewport) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].x = src[start_index + i].x;
@@ -487,7 +485,7 @@ VkViewport* CommandRecorder::CopyArray<VkViewport>(const VkViewport* src, uint64
 
 template <>
 VkDescriptorBufferInfo* CommandRecorder::CopyArray<VkDescriptorBufferInfo>(const VkDescriptorBufferInfo* src,
-                                                                           uint64_t start_index, uint64_t count) {
+                                                                           size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDescriptorBufferInfo*>(m_allocator.Alloc(sizeof(VkDescriptorBufferInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].buffer = src[start_index + i].buffer;
@@ -499,7 +497,7 @@ VkDescriptorBufferInfo* CommandRecorder::CopyArray<VkDescriptorBufferInfo>(const
 
 template <>
 VkDescriptorImageInfo* CommandRecorder::CopyArray<VkDescriptorImageInfo>(const VkDescriptorImageInfo* src,
-                                                                         uint64_t start_index, uint64_t count) {
+                                                                         size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDescriptorImageInfo*>(m_allocator.Alloc(sizeof(VkDescriptorImageInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sampler = src[start_index + i].sampler;
@@ -511,7 +509,7 @@ VkDescriptorImageInfo* CommandRecorder::CopyArray<VkDescriptorImageInfo>(const V
 
 template <>
 VkWriteDescriptorSet* CommandRecorder::CopyArray<VkWriteDescriptorSet>(const VkWriteDescriptorSet* src,
-                                                                       uint64_t start_index, uint64_t count) {
+                                                                       size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkWriteDescriptorSet*>(m_allocator.Alloc(sizeof(VkWriteDescriptorSet) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -542,7 +540,7 @@ VkWriteDescriptorSet* CommandRecorder::CopyArray<VkWriteDescriptorSet>(const VkW
 
 template <>
 VkCommandBufferInheritanceInfo* CommandRecorder::CopyArray<VkCommandBufferInheritanceInfo>(
-    const VkCommandBufferInheritanceInfo* src, uint64_t start_index, uint64_t count) {
+    const VkCommandBufferInheritanceInfo* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCommandBufferInheritanceInfo*>(
         m_allocator.Alloc(sizeof(VkCommandBufferInheritanceInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -560,7 +558,7 @@ VkCommandBufferInheritanceInfo* CommandRecorder::CopyArray<VkCommandBufferInheri
 
 template <>
 VkCommandBufferBeginInfo* CommandRecorder::CopyArray<VkCommandBufferBeginInfo>(const VkCommandBufferBeginInfo* src,
-                                                                               uint64_t start_index, uint64_t count) {
+                                                                               size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCommandBufferBeginInfo*>(m_allocator.Alloc(sizeof(VkCommandBufferBeginInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -576,7 +574,7 @@ VkCommandBufferBeginInfo* CommandRecorder::CopyArray<VkCommandBufferBeginInfo>(c
 }
 
 template <>
-VkBufferCopy* CommandRecorder::CopyArray<VkBufferCopy>(const VkBufferCopy* src, uint64_t start_index, uint64_t count) {
+VkBufferCopy* CommandRecorder::CopyArray<VkBufferCopy>(const VkBufferCopy* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkBufferCopy*>(m_allocator.Alloc(sizeof(VkBufferCopy) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].srcOffset = src[start_index + i].srcOffset;
@@ -588,7 +586,7 @@ VkBufferCopy* CommandRecorder::CopyArray<VkBufferCopy>(const VkBufferCopy* src, 
 
 template <>
 VkImageSubresourceLayers* CommandRecorder::CopyArray<VkImageSubresourceLayers>(const VkImageSubresourceLayers* src,
-                                                                               uint64_t start_index, uint64_t count) {
+                                                                               size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkImageSubresourceLayers*>(m_allocator.Alloc(sizeof(VkImageSubresourceLayers) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].aspectMask = src[start_index + i].aspectMask;
@@ -600,8 +598,8 @@ VkImageSubresourceLayers* CommandRecorder::CopyArray<VkImageSubresourceLayers>(c
 }
 
 template <>
-VkBufferImageCopy* CommandRecorder::CopyArray<VkBufferImageCopy>(const VkBufferImageCopy* src, uint64_t start_index,
-                                                                 uint64_t count) {
+VkBufferImageCopy* CommandRecorder::CopyArray<VkBufferImageCopy>(const VkBufferImageCopy* src, size_t start_index,
+                                                                 size_t count) {
     auto ptr = reinterpret_cast<VkBufferImageCopy*>(m_allocator.Alloc(sizeof(VkBufferImageCopy) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].bufferOffset = src[start_index + i].bufferOffset;
@@ -615,8 +613,8 @@ VkBufferImageCopy* CommandRecorder::CopyArray<VkBufferImageCopy>(const VkBufferI
 }
 
 template <>
-VkClearColorValue* CommandRecorder::CopyArray<VkClearColorValue>(const VkClearColorValue* src, uint64_t start_index,
-                                                                 uint64_t count) {
+VkClearColorValue* CommandRecorder::CopyArray<VkClearColorValue>(const VkClearColorValue* src, size_t start_index,
+                                                                 size_t count) {
     auto ptr = reinterpret_cast<VkClearColorValue*>(m_allocator.Alloc(sizeof(VkClearColorValue) * count));
     for (uint64_t i = 0; i < count; ++i) {
         for (uint32_t j = 0; j < 4; ++j) {
@@ -634,7 +632,7 @@ VkClearColorValue* CommandRecorder::CopyArray<VkClearColorValue>(const VkClearCo
 
 template <>
 VkClearDepthStencilValue* CommandRecorder::CopyArray<VkClearDepthStencilValue>(const VkClearDepthStencilValue* src,
-                                                                               uint64_t start_index, uint64_t count) {
+                                                                               size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkClearDepthStencilValue*>(m_allocator.Alloc(sizeof(VkClearDepthStencilValue) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].depth = src[start_index + i].depth;
@@ -644,7 +642,7 @@ VkClearDepthStencilValue* CommandRecorder::CopyArray<VkClearDepthStencilValue>(c
 }
 
 template <>
-VkClearValue* CommandRecorder::CopyArray<VkClearValue>(const VkClearValue* src, uint64_t start_index, uint64_t count) {
+VkClearValue* CommandRecorder::CopyArray<VkClearValue>(const VkClearValue* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkClearValue*>(m_allocator.Alloc(sizeof(VkClearValue) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].color = src[start_index + i].color;
@@ -654,8 +652,8 @@ VkClearValue* CommandRecorder::CopyArray<VkClearValue>(const VkClearValue* src, 
 }
 
 template <>
-VkClearAttachment* CommandRecorder::CopyArray<VkClearAttachment>(const VkClearAttachment* src, uint64_t start_index,
-                                                                 uint64_t count) {
+VkClearAttachment* CommandRecorder::CopyArray<VkClearAttachment>(const VkClearAttachment* src, size_t start_index,
+                                                                 size_t count) {
     auto ptr = reinterpret_cast<VkClearAttachment*>(m_allocator.Alloc(sizeof(VkClearAttachment) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].aspectMask = src[start_index + i].aspectMask;
@@ -666,7 +664,7 @@ VkClearAttachment* CommandRecorder::CopyArray<VkClearAttachment>(const VkClearAt
 }
 
 template <>
-VkClearRect* CommandRecorder::CopyArray<VkClearRect>(const VkClearRect* src, uint64_t start_index, uint64_t count) {
+VkClearRect* CommandRecorder::CopyArray<VkClearRect>(const VkClearRect* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkClearRect*>(m_allocator.Alloc(sizeof(VkClearRect) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].rect = src[start_index + i].rect;
@@ -677,7 +675,7 @@ VkClearRect* CommandRecorder::CopyArray<VkClearRect>(const VkClearRect* src, uin
 }
 
 template <>
-VkImageBlit* CommandRecorder::CopyArray<VkImageBlit>(const VkImageBlit* src, uint64_t start_index, uint64_t count) {
+VkImageBlit* CommandRecorder::CopyArray<VkImageBlit>(const VkImageBlit* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkImageBlit*>(m_allocator.Alloc(sizeof(VkImageBlit) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].srcSubresource = src[start_index + i].srcSubresource;
@@ -693,7 +691,7 @@ VkImageBlit* CommandRecorder::CopyArray<VkImageBlit>(const VkImageBlit* src, uin
 }
 
 template <>
-VkImageCopy* CommandRecorder::CopyArray<VkImageCopy>(const VkImageCopy* src, uint64_t start_index, uint64_t count) {
+VkImageCopy* CommandRecorder::CopyArray<VkImageCopy>(const VkImageCopy* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkImageCopy*>(m_allocator.Alloc(sizeof(VkImageCopy) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].srcSubresource = src[start_index + i].srcSubresource;
@@ -706,8 +704,8 @@ VkImageCopy* CommandRecorder::CopyArray<VkImageCopy>(const VkImageCopy* src, uin
 }
 
 template <>
-VkImageResolve* CommandRecorder::CopyArray<VkImageResolve>(const VkImageResolve* src, uint64_t start_index,
-                                                           uint64_t count) {
+VkImageResolve* CommandRecorder::CopyArray<VkImageResolve>(const VkImageResolve* src, size_t start_index,
+                                                           size_t count) {
     auto ptr = reinterpret_cast<VkImageResolve*>(m_allocator.Alloc(sizeof(VkImageResolve) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].srcSubresource = src[start_index + i].srcSubresource;
@@ -721,7 +719,7 @@ VkImageResolve* CommandRecorder::CopyArray<VkImageResolve>(const VkImageResolve*
 
 template <>
 VkRenderPassBeginInfo* CommandRecorder::CopyArray<VkRenderPassBeginInfo>(const VkRenderPassBeginInfo* src,
-                                                                         uint64_t start_index, uint64_t count) {
+                                                                         size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkRenderPassBeginInfo*>(m_allocator.Alloc(sizeof(VkRenderPassBeginInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -740,8 +738,8 @@ VkRenderPassBeginInfo* CommandRecorder::CopyArray<VkRenderPassBeginInfo>(const V
 }
 
 template <>
-VkSubpassBeginInfo* CommandRecorder::CopyArray<VkSubpassBeginInfo>(const VkSubpassBeginInfo* src, uint64_t start_index,
-                                                                   uint64_t count) {
+VkSubpassBeginInfo* CommandRecorder::CopyArray<VkSubpassBeginInfo>(const VkSubpassBeginInfo* src, size_t start_index,
+                                                                   size_t count) {
     auto ptr = reinterpret_cast<VkSubpassBeginInfo*>(m_allocator.Alloc(sizeof(VkSubpassBeginInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -752,8 +750,8 @@ VkSubpassBeginInfo* CommandRecorder::CopyArray<VkSubpassBeginInfo>(const VkSubpa
 }
 
 template <>
-VkSubpassEndInfo* CommandRecorder::CopyArray<VkSubpassEndInfo>(const VkSubpassEndInfo* src, uint64_t start_index,
-                                                               uint64_t count) {
+VkSubpassEndInfo* CommandRecorder::CopyArray<VkSubpassEndInfo>(const VkSubpassEndInfo* src, size_t start_index,
+                                                               size_t count) {
     auto ptr = reinterpret_cast<VkSubpassEndInfo*>(m_allocator.Alloc(sizeof(VkSubpassEndInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -763,8 +761,8 @@ VkSubpassEndInfo* CommandRecorder::CopyArray<VkSubpassEndInfo>(const VkSubpassEn
 }
 
 template <>
-VkMemoryBarrier2* CommandRecorder::CopyArray<VkMemoryBarrier2>(const VkMemoryBarrier2* src, uint64_t start_index,
-                                                               uint64_t count) {
+VkMemoryBarrier2* CommandRecorder::CopyArray<VkMemoryBarrier2>(const VkMemoryBarrier2* src, size_t start_index,
+                                                               size_t count) {
     auto ptr = reinterpret_cast<VkMemoryBarrier2*>(m_allocator.Alloc(sizeof(VkMemoryBarrier2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -779,7 +777,7 @@ VkMemoryBarrier2* CommandRecorder::CopyArray<VkMemoryBarrier2>(const VkMemoryBar
 
 template <>
 VkBufferMemoryBarrier2* CommandRecorder::CopyArray<VkBufferMemoryBarrier2>(const VkBufferMemoryBarrier2* src,
-                                                                           uint64_t start_index, uint64_t count) {
+                                                                           size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkBufferMemoryBarrier2*>(m_allocator.Alloc(sizeof(VkBufferMemoryBarrier2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -799,7 +797,7 @@ VkBufferMemoryBarrier2* CommandRecorder::CopyArray<VkBufferMemoryBarrier2>(const
 
 template <>
 VkImageMemoryBarrier2* CommandRecorder::CopyArray<VkImageMemoryBarrier2>(const VkImageMemoryBarrier2* src,
-                                                                         uint64_t start_index, uint64_t count) {
+                                                                         size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkImageMemoryBarrier2*>(m_allocator.Alloc(sizeof(VkImageMemoryBarrier2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -819,8 +817,8 @@ VkImageMemoryBarrier2* CommandRecorder::CopyArray<VkImageMemoryBarrier2>(const V
 }
 
 template <>
-VkDependencyInfo* CommandRecorder::CopyArray<VkDependencyInfo>(const VkDependencyInfo* src, uint64_t start_index,
-                                                               uint64_t count) {
+VkDependencyInfo* CommandRecorder::CopyArray<VkDependencyInfo>(const VkDependencyInfo* src, size_t start_index,
+                                                               size_t count) {
     auto ptr = reinterpret_cast<VkDependencyInfo*>(m_allocator.Alloc(sizeof(VkDependencyInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -851,8 +849,7 @@ VkDependencyInfo* CommandRecorder::CopyArray<VkDependencyInfo>(const VkDependenc
 }
 
 template <>
-VkBufferCopy2* CommandRecorder::CopyArray<VkBufferCopy2>(const VkBufferCopy2* src, uint64_t start_index,
-                                                         uint64_t count) {
+VkBufferCopy2* CommandRecorder::CopyArray<VkBufferCopy2>(const VkBufferCopy2* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkBufferCopy2*>(m_allocator.Alloc(sizeof(VkBufferCopy2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -865,8 +862,8 @@ VkBufferCopy2* CommandRecorder::CopyArray<VkBufferCopy2>(const VkBufferCopy2* sr
 }
 
 template <>
-VkCopyBufferInfo2* CommandRecorder::CopyArray<VkCopyBufferInfo2>(const VkCopyBufferInfo2* src, uint64_t start_index,
-                                                                 uint64_t count) {
+VkCopyBufferInfo2* CommandRecorder::CopyArray<VkCopyBufferInfo2>(const VkCopyBufferInfo2* src, size_t start_index,
+                                                                 size_t count) {
     auto ptr = reinterpret_cast<VkCopyBufferInfo2*>(m_allocator.Alloc(sizeof(VkCopyBufferInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -884,7 +881,7 @@ VkCopyBufferInfo2* CommandRecorder::CopyArray<VkCopyBufferInfo2>(const VkCopyBuf
 }
 
 template <>
-VkImageCopy2* CommandRecorder::CopyArray<VkImageCopy2>(const VkImageCopy2* src, uint64_t start_index, uint64_t count) {
+VkImageCopy2* CommandRecorder::CopyArray<VkImageCopy2>(const VkImageCopy2* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkImageCopy2*>(m_allocator.Alloc(sizeof(VkImageCopy2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -899,8 +896,8 @@ VkImageCopy2* CommandRecorder::CopyArray<VkImageCopy2>(const VkImageCopy2* src, 
 }
 
 template <>
-VkCopyImageInfo2* CommandRecorder::CopyArray<VkCopyImageInfo2>(const VkCopyImageInfo2* src, uint64_t start_index,
-                                                               uint64_t count) {
+VkCopyImageInfo2* CommandRecorder::CopyArray<VkCopyImageInfo2>(const VkCopyImageInfo2* src, size_t start_index,
+                                                               size_t count) {
     auto ptr = reinterpret_cast<VkCopyImageInfo2*>(m_allocator.Alloc(sizeof(VkCopyImageInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -920,8 +917,8 @@ VkCopyImageInfo2* CommandRecorder::CopyArray<VkCopyImageInfo2>(const VkCopyImage
 }
 
 template <>
-VkBufferImageCopy2* CommandRecorder::CopyArray<VkBufferImageCopy2>(const VkBufferImageCopy2* src, uint64_t start_index,
-                                                                   uint64_t count) {
+VkBufferImageCopy2* CommandRecorder::CopyArray<VkBufferImageCopy2>(const VkBufferImageCopy2* src, size_t start_index,
+                                                                   size_t count) {
     auto ptr = reinterpret_cast<VkBufferImageCopy2*>(m_allocator.Alloc(sizeof(VkBufferImageCopy2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -938,7 +935,7 @@ VkBufferImageCopy2* CommandRecorder::CopyArray<VkBufferImageCopy2>(const VkBuffe
 
 template <>
 VkCopyBufferToImageInfo2* CommandRecorder::CopyArray<VkCopyBufferToImageInfo2>(const VkCopyBufferToImageInfo2* src,
-                                                                               uint64_t start_index, uint64_t count) {
+                                                                               size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCopyBufferToImageInfo2*>(m_allocator.Alloc(sizeof(VkCopyBufferToImageInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -958,7 +955,7 @@ VkCopyBufferToImageInfo2* CommandRecorder::CopyArray<VkCopyBufferToImageInfo2>(c
 
 template <>
 VkCopyImageToBufferInfo2* CommandRecorder::CopyArray<VkCopyImageToBufferInfo2>(const VkCopyImageToBufferInfo2* src,
-                                                                               uint64_t start_index, uint64_t count) {
+                                                                               size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCopyImageToBufferInfo2*>(m_allocator.Alloc(sizeof(VkCopyImageToBufferInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -977,7 +974,7 @@ VkCopyImageToBufferInfo2* CommandRecorder::CopyArray<VkCopyImageToBufferInfo2>(c
 }
 
 template <>
-VkImageBlit2* CommandRecorder::CopyArray<VkImageBlit2>(const VkImageBlit2* src, uint64_t start_index, uint64_t count) {
+VkImageBlit2* CommandRecorder::CopyArray<VkImageBlit2>(const VkImageBlit2* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkImageBlit2*>(m_allocator.Alloc(sizeof(VkImageBlit2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -995,8 +992,8 @@ VkImageBlit2* CommandRecorder::CopyArray<VkImageBlit2>(const VkImageBlit2* src, 
 }
 
 template <>
-VkBlitImageInfo2* CommandRecorder::CopyArray<VkBlitImageInfo2>(const VkBlitImageInfo2* src, uint64_t start_index,
-                                                               uint64_t count) {
+VkBlitImageInfo2* CommandRecorder::CopyArray<VkBlitImageInfo2>(const VkBlitImageInfo2* src, size_t start_index,
+                                                               size_t count) {
     auto ptr = reinterpret_cast<VkBlitImageInfo2*>(m_allocator.Alloc(sizeof(VkBlitImageInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1017,8 +1014,8 @@ VkBlitImageInfo2* CommandRecorder::CopyArray<VkBlitImageInfo2>(const VkBlitImage
 }
 
 template <>
-VkImageResolve2* CommandRecorder::CopyArray<VkImageResolve2>(const VkImageResolve2* src, uint64_t start_index,
-                                                             uint64_t count) {
+VkImageResolve2* CommandRecorder::CopyArray<VkImageResolve2>(const VkImageResolve2* src, size_t start_index,
+                                                             size_t count) {
     auto ptr = reinterpret_cast<VkImageResolve2*>(m_allocator.Alloc(sizeof(VkImageResolve2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1033,8 +1030,8 @@ VkImageResolve2* CommandRecorder::CopyArray<VkImageResolve2>(const VkImageResolv
 }
 
 template <>
-VkResolveImageInfo2* CommandRecorder::CopyArray<VkResolveImageInfo2>(const VkResolveImageInfo2* src,
-                                                                     uint64_t start_index, uint64_t count) {
+VkResolveImageInfo2* CommandRecorder::CopyArray<VkResolveImageInfo2>(const VkResolveImageInfo2* src, size_t start_index,
+                                                                     size_t count) {
     auto ptr = reinterpret_cast<VkResolveImageInfo2*>(m_allocator.Alloc(sizeof(VkResolveImageInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1055,7 +1052,7 @@ VkResolveImageInfo2* CommandRecorder::CopyArray<VkResolveImageInfo2>(const VkRes
 
 template <>
 VkRenderingAttachmentInfo* CommandRecorder::CopyArray<VkRenderingAttachmentInfo>(const VkRenderingAttachmentInfo* src,
-                                                                                 uint64_t start_index, uint64_t count) {
+                                                                                 size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkRenderingAttachmentInfo*>(m_allocator.Alloc(sizeof(VkRenderingAttachmentInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1074,8 +1071,8 @@ VkRenderingAttachmentInfo* CommandRecorder::CopyArray<VkRenderingAttachmentInfo>
 }
 
 template <>
-VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingInfo* src, uint64_t start_index,
-                                                             uint64_t count) {
+VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingInfo* src, size_t start_index,
+                                                             size_t count) {
     auto ptr = reinterpret_cast<VkRenderingInfo*>(m_allocator.Alloc(sizeof(VkRenderingInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1106,7 +1103,7 @@ VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingIn
 
 template <>
 VkVideoPictureResourceInfoKHR* CommandRecorder::CopyArray<VkVideoPictureResourceInfoKHR>(
-    const VkVideoPictureResourceInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkVideoPictureResourceInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkVideoPictureResourceInfoKHR*>(
         m_allocator.Alloc(sizeof(VkVideoPictureResourceInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1122,7 +1119,7 @@ VkVideoPictureResourceInfoKHR* CommandRecorder::CopyArray<VkVideoPictureResource
 
 template <>
 VkVideoReferenceSlotInfoKHR* CommandRecorder::CopyArray<VkVideoReferenceSlotInfoKHR>(
-    const VkVideoReferenceSlotInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkVideoReferenceSlotInfoKHR* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkVideoReferenceSlotInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoReferenceSlotInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1140,7 +1137,7 @@ VkVideoReferenceSlotInfoKHR* CommandRecorder::CopyArray<VkVideoReferenceSlotInfo
 
 template <>
 VkVideoBeginCodingInfoKHR* CommandRecorder::CopyArray<VkVideoBeginCodingInfoKHR>(const VkVideoBeginCodingInfoKHR* src,
-                                                                                 uint64_t start_index, uint64_t count) {
+                                                                                 size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkVideoBeginCodingInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoBeginCodingInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1161,7 +1158,7 @@ VkVideoBeginCodingInfoKHR* CommandRecorder::CopyArray<VkVideoBeginCodingInfoKHR>
 
 template <>
 VkVideoEndCodingInfoKHR* CommandRecorder::CopyArray<VkVideoEndCodingInfoKHR>(const VkVideoEndCodingInfoKHR* src,
-                                                                             uint64_t start_index, uint64_t count) {
+                                                                             size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkVideoEndCodingInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoEndCodingInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1173,7 +1170,7 @@ VkVideoEndCodingInfoKHR* CommandRecorder::CopyArray<VkVideoEndCodingInfoKHR>(con
 
 template <>
 VkVideoCodingControlInfoKHR* CommandRecorder::CopyArray<VkVideoCodingControlInfoKHR>(
-    const VkVideoCodingControlInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkVideoCodingControlInfoKHR* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkVideoCodingControlInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoCodingControlInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1186,7 +1183,7 @@ VkVideoCodingControlInfoKHR* CommandRecorder::CopyArray<VkVideoCodingControlInfo
 
 template <>
 VkVideoDecodeInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeInfoKHR>(const VkVideoDecodeInfoKHR* src,
-                                                                       uint64_t start_index, uint64_t count) {
+                                                                       size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkVideoDecodeInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoDecodeInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1213,7 +1210,7 @@ VkVideoDecodeInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeInfoKHR>(const VkV
 
 template <>
 VkRenderingAttachmentLocationInfoKHR* CommandRecorder::CopyArray<VkRenderingAttachmentLocationInfoKHR>(
-    const VkRenderingAttachmentLocationInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkRenderingAttachmentLocationInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkRenderingAttachmentLocationInfoKHR*>(
         m_allocator.Alloc(sizeof(VkRenderingAttachmentLocationInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1232,7 +1229,7 @@ VkRenderingAttachmentLocationInfoKHR* CommandRecorder::CopyArray<VkRenderingAtta
 
 template <>
 VkRenderingInputAttachmentIndexInfoKHR* CommandRecorder::CopyArray<VkRenderingInputAttachmentIndexInfoKHR>(
-    const VkRenderingInputAttachmentIndexInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkRenderingInputAttachmentIndexInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkRenderingInputAttachmentIndexInfoKHR*>(
         m_allocator.Alloc(sizeof(VkRenderingInputAttachmentIndexInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1261,7 +1258,7 @@ VkRenderingInputAttachmentIndexInfoKHR* CommandRecorder::CopyArray<VkRenderingIn
 
 template <>
 VkVideoEncodeInfoKHR* CommandRecorder::CopyArray<VkVideoEncodeInfoKHR>(const VkVideoEncodeInfoKHR* src,
-                                                                       uint64_t start_index, uint64_t count) {
+                                                                       size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkVideoEncodeInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoEncodeInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1289,7 +1286,7 @@ VkVideoEncodeInfoKHR* CommandRecorder::CopyArray<VkVideoEncodeInfoKHR>(const VkV
 
 template <>
 VkBindDescriptorSetsInfoKHR* CommandRecorder::CopyArray<VkBindDescriptorSetsInfoKHR>(
-    const VkBindDescriptorSetsInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkBindDescriptorSetsInfoKHR* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkBindDescriptorSetsInfoKHR*>(m_allocator.Alloc(sizeof(VkBindDescriptorSetsInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1316,7 +1313,7 @@ VkBindDescriptorSetsInfoKHR* CommandRecorder::CopyArray<VkBindDescriptorSetsInfo
 
 template <>
 VkPushConstantsInfoKHR* CommandRecorder::CopyArray<VkPushConstantsInfoKHR>(const VkPushConstantsInfoKHR* src,
-                                                                           uint64_t start_index, uint64_t count) {
+                                                                           size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkPushConstantsInfoKHR*>(m_allocator.Alloc(sizeof(VkPushConstantsInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1334,7 +1331,7 @@ VkPushConstantsInfoKHR* CommandRecorder::CopyArray<VkPushConstantsInfoKHR>(const
 
 template <>
 VkPushDescriptorSetInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetInfoKHR>(
-    const VkPushDescriptorSetInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkPushDescriptorSetInfoKHR* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkPushDescriptorSetInfoKHR*>(m_allocator.Alloc(sizeof(VkPushDescriptorSetInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1355,7 +1352,7 @@ VkPushDescriptorSetInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetInfoKH
 
 template <>
 VkPushDescriptorSetWithTemplateInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetWithTemplateInfoKHR>(
-    const VkPushDescriptorSetWithTemplateInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkPushDescriptorSetWithTemplateInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkPushDescriptorSetWithTemplateInfoKHR*>(
         m_allocator.Alloc(sizeof(VkPushDescriptorSetWithTemplateInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1371,7 +1368,7 @@ VkPushDescriptorSetWithTemplateInfoKHR* CommandRecorder::CopyArray<VkPushDescrip
 
 template <>
 VkSetDescriptorBufferOffsetsInfoEXT* CommandRecorder::CopyArray<VkSetDescriptorBufferOffsetsInfoEXT>(
-    const VkSetDescriptorBufferOffsetsInfoEXT* src, uint64_t start_index, uint64_t count) {
+    const VkSetDescriptorBufferOffsetsInfoEXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkSetDescriptorBufferOffsetsInfoEXT*>(
         m_allocator.Alloc(sizeof(VkSetDescriptorBufferOffsetsInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1398,7 +1395,7 @@ VkSetDescriptorBufferOffsetsInfoEXT* CommandRecorder::CopyArray<VkSetDescriptorB
 template <>
 VkBindDescriptorBufferEmbeddedSamplersInfoEXT*
 CommandRecorder::CopyArray<VkBindDescriptorBufferEmbeddedSamplersInfoEXT>(
-    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* src, uint64_t start_index, uint64_t count) {
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkBindDescriptorBufferEmbeddedSamplersInfoEXT*>(
         m_allocator.Alloc(sizeof(VkBindDescriptorBufferEmbeddedSamplersInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1413,7 +1410,7 @@ CommandRecorder::CopyArray<VkBindDescriptorBufferEmbeddedSamplersInfoEXT>(
 
 template <>
 VkDebugMarkerMarkerInfoEXT* CommandRecorder::CopyArray<VkDebugMarkerMarkerInfoEXT>(
-    const VkDebugMarkerMarkerInfoEXT* src, uint64_t start_index, uint64_t count) {
+    const VkDebugMarkerMarkerInfoEXT* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkDebugMarkerMarkerInfoEXT*>(m_allocator.Alloc(sizeof(VkDebugMarkerMarkerInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1432,8 +1429,8 @@ VkDebugMarkerMarkerInfoEXT* CommandRecorder::CopyArray<VkDebugMarkerMarkerInfoEX
 }
 
 template <>
-VkCuLaunchInfoNVX* CommandRecorder::CopyArray<VkCuLaunchInfoNVX>(const VkCuLaunchInfoNVX* src, uint64_t start_index,
-                                                                 uint64_t count) {
+VkCuLaunchInfoNVX* CommandRecorder::CopyArray<VkCuLaunchInfoNVX>(const VkCuLaunchInfoNVX* src, size_t start_index,
+                                                                 size_t count) {
     auto ptr = reinterpret_cast<VkCuLaunchInfoNVX*>(m_allocator.Alloc(sizeof(VkCuLaunchInfoNVX) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1460,7 +1457,7 @@ VkCuLaunchInfoNVX* CommandRecorder::CopyArray<VkCuLaunchInfoNVX>(const VkCuLaunc
 
 template <>
 VkConditionalRenderingBeginInfoEXT* CommandRecorder::CopyArray<VkConditionalRenderingBeginInfoEXT>(
-    const VkConditionalRenderingBeginInfoEXT* src, uint64_t start_index, uint64_t count) {
+    const VkConditionalRenderingBeginInfoEXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkConditionalRenderingBeginInfoEXT*>(
         m_allocator.Alloc(sizeof(VkConditionalRenderingBeginInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1475,7 +1472,7 @@ VkConditionalRenderingBeginInfoEXT* CommandRecorder::CopyArray<VkConditionalRend
 
 template <>
 VkViewportWScalingNV* CommandRecorder::CopyArray<VkViewportWScalingNV>(const VkViewportWScalingNV* src,
-                                                                       uint64_t start_index, uint64_t count) {
+                                                                       size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkViewportWScalingNV*>(m_allocator.Alloc(sizeof(VkViewportWScalingNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].xcoeff = src[start_index + i].xcoeff;
@@ -1485,8 +1482,8 @@ VkViewportWScalingNV* CommandRecorder::CopyArray<VkViewportWScalingNV>(const VkV
 }
 
 template <>
-VkViewportSwizzleNV* CommandRecorder::CopyArray<VkViewportSwizzleNV>(const VkViewportSwizzleNV* src,
-                                                                     uint64_t start_index, uint64_t count) {
+VkViewportSwizzleNV* CommandRecorder::CopyArray<VkViewportSwizzleNV>(const VkViewportSwizzleNV* src, size_t start_index,
+                                                                     size_t count) {
     auto ptr = reinterpret_cast<VkViewportSwizzleNV*>(m_allocator.Alloc(sizeof(VkViewportSwizzleNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].x = src[start_index + i].x;
@@ -1499,7 +1496,7 @@ VkViewportSwizzleNV* CommandRecorder::CopyArray<VkViewportSwizzleNV>(const VkVie
 
 template <>
 VkDebugUtilsLabelEXT* CommandRecorder::CopyArray<VkDebugUtilsLabelEXT>(const VkDebugUtilsLabelEXT* src,
-                                                                       uint64_t start_index, uint64_t count) {
+                                                                       size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDebugUtilsLabelEXT*>(m_allocator.Alloc(sizeof(VkDebugUtilsLabelEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1519,7 +1516,7 @@ VkDebugUtilsLabelEXT* CommandRecorder::CopyArray<VkDebugUtilsLabelEXT>(const VkD
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 template <>
 VkDeviceOrHostAddressConstAMDX* CommandRecorder::CopyArray<VkDeviceOrHostAddressConstAMDX>(
-    const VkDeviceOrHostAddressConstAMDX* src, uint64_t start_index, uint64_t count) {
+    const VkDeviceOrHostAddressConstAMDX* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDeviceOrHostAddressConstAMDX*>(
         m_allocator.Alloc(sizeof(VkDeviceOrHostAddressConstAMDX) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1533,7 +1530,7 @@ VkDeviceOrHostAddressConstAMDX* CommandRecorder::CopyArray<VkDeviceOrHostAddress
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 template <>
 VkDispatchGraphCountInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphCountInfoAMDX>(
-    const VkDispatchGraphCountInfoAMDX* src, uint64_t start_index, uint64_t count) {
+    const VkDispatchGraphCountInfoAMDX* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDispatchGraphCountInfoAMDX*>(
         m_allocator.Alloc(sizeof(VkDispatchGraphCountInfoAMDX) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1546,8 +1543,8 @@ VkDispatchGraphCountInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphCountInf
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 template <>
-VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSampleLocationEXT* src,
-                                                                     uint64_t start_index, uint64_t count) {
+VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSampleLocationEXT* src, size_t start_index,
+                                                                     size_t count) {
     auto ptr = reinterpret_cast<VkSampleLocationEXT*>(m_allocator.Alloc(sizeof(VkSampleLocationEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].x = src[start_index + i].x;
@@ -1558,7 +1555,7 @@ VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSam
 
 template <>
 VkSampleLocationsInfoEXT* CommandRecorder::CopyArray<VkSampleLocationsInfoEXT>(const VkSampleLocationsInfoEXT* src,
-                                                                               uint64_t start_index, uint64_t count) {
+                                                                               size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkSampleLocationsInfoEXT*>(m_allocator.Alloc(sizeof(VkSampleLocationsInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1577,7 +1574,7 @@ VkSampleLocationsInfoEXT* CommandRecorder::CopyArray<VkSampleLocationsInfoEXT>(c
 
 template <>
 VkShadingRatePaletteNV* CommandRecorder::CopyArray<VkShadingRatePaletteNV>(const VkShadingRatePaletteNV* src,
-                                                                           uint64_t start_index, uint64_t count) {
+                                                                           size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkShadingRatePaletteNV*>(m_allocator.Alloc(sizeof(VkShadingRatePaletteNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].shadingRatePaletteEntryCount = src[start_index + i].shadingRatePaletteEntryCount;
@@ -1593,7 +1590,7 @@ VkShadingRatePaletteNV* CommandRecorder::CopyArray<VkShadingRatePaletteNV>(const
 
 template <>
 VkCoarseSampleLocationNV* CommandRecorder::CopyArray<VkCoarseSampleLocationNV>(const VkCoarseSampleLocationNV* src,
-                                                                               uint64_t start_index, uint64_t count) {
+                                                                               size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCoarseSampleLocationNV*>(m_allocator.Alloc(sizeof(VkCoarseSampleLocationNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].pixelX = src[start_index + i].pixelX;
@@ -1605,7 +1602,7 @@ VkCoarseSampleLocationNV* CommandRecorder::CopyArray<VkCoarseSampleLocationNV>(c
 
 template <>
 VkCoarseSampleOrderCustomNV* CommandRecorder::CopyArray<VkCoarseSampleOrderCustomNV>(
-    const VkCoarseSampleOrderCustomNV* src, uint64_t start_index, uint64_t count) {
+    const VkCoarseSampleOrderCustomNV* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkCoarseSampleOrderCustomNV*>(m_allocator.Alloc(sizeof(VkCoarseSampleOrderCustomNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1622,7 +1619,7 @@ VkCoarseSampleOrderCustomNV* CommandRecorder::CopyArray<VkCoarseSampleOrderCusto
 }
 
 template <>
-VkGeometryNV* CommandRecorder::CopyArray<VkGeometryNV>(const VkGeometryNV* src, uint64_t start_index, uint64_t count) {
+VkGeometryNV* CommandRecorder::CopyArray<VkGeometryNV>(const VkGeometryNV* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkGeometryNV*>(m_allocator.Alloc(sizeof(VkGeometryNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1636,7 +1633,7 @@ VkGeometryNV* CommandRecorder::CopyArray<VkGeometryNV>(const VkGeometryNV* src, 
 
 template <>
 VkAccelerationStructureInfoNV* CommandRecorder::CopyArray<VkAccelerationStructureInfoNV>(
-    const VkAccelerationStructureInfoNV* src, uint64_t start_index, uint64_t count) {
+    const VkAccelerationStructureInfoNV* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkAccelerationStructureInfoNV*>(
         m_allocator.Alloc(sizeof(VkAccelerationStructureInfoNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1657,7 +1654,7 @@ VkAccelerationStructureInfoNV* CommandRecorder::CopyArray<VkAccelerationStructur
 
 template <>
 VkPerformanceMarkerInfoINTEL* CommandRecorder::CopyArray<VkPerformanceMarkerInfoINTEL>(
-    const VkPerformanceMarkerInfoINTEL* src, uint64_t start_index, uint64_t count) {
+    const VkPerformanceMarkerInfoINTEL* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkPerformanceMarkerInfoINTEL*>(
         m_allocator.Alloc(sizeof(VkPerformanceMarkerInfoINTEL) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1670,7 +1667,7 @@ VkPerformanceMarkerInfoINTEL* CommandRecorder::CopyArray<VkPerformanceMarkerInfo
 
 template <>
 VkPerformanceStreamMarkerInfoINTEL* CommandRecorder::CopyArray<VkPerformanceStreamMarkerInfoINTEL>(
-    const VkPerformanceStreamMarkerInfoINTEL* src, uint64_t start_index, uint64_t count) {
+    const VkPerformanceStreamMarkerInfoINTEL* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkPerformanceStreamMarkerInfoINTEL*>(
         m_allocator.Alloc(sizeof(VkPerformanceStreamMarkerInfoINTEL) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1683,7 +1680,7 @@ VkPerformanceStreamMarkerInfoINTEL* CommandRecorder::CopyArray<VkPerformanceStre
 
 template <>
 VkPerformanceOverrideInfoINTEL* CommandRecorder::CopyArray<VkPerformanceOverrideInfoINTEL>(
-    const VkPerformanceOverrideInfoINTEL* src, uint64_t start_index, uint64_t count) {
+    const VkPerformanceOverrideInfoINTEL* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkPerformanceOverrideInfoINTEL*>(
         m_allocator.Alloc(sizeof(VkPerformanceOverrideInfoINTEL) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1698,7 +1695,7 @@ VkPerformanceOverrideInfoINTEL* CommandRecorder::CopyArray<VkPerformanceOverride
 
 template <>
 VkIndirectCommandsStreamNV* CommandRecorder::CopyArray<VkIndirectCommandsStreamNV>(
-    const VkIndirectCommandsStreamNV* src, uint64_t start_index, uint64_t count) {
+    const VkIndirectCommandsStreamNV* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkIndirectCommandsStreamNV*>(m_allocator.Alloc(sizeof(VkIndirectCommandsStreamNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1710,7 +1707,7 @@ VkIndirectCommandsStreamNV* CommandRecorder::CopyArray<VkIndirectCommandsStreamN
 
 template <>
 VkGeneratedCommandsInfoNV* CommandRecorder::CopyArray<VkGeneratedCommandsInfoNV>(const VkGeneratedCommandsInfoNV* src,
-                                                                                 uint64_t start_index, uint64_t count) {
+                                                                                 size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkGeneratedCommandsInfoNV*>(m_allocator.Alloc(sizeof(VkGeneratedCommandsInfoNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1738,8 +1735,8 @@ VkGeneratedCommandsInfoNV* CommandRecorder::CopyArray<VkGeneratedCommandsInfoNV>
 }
 
 template <>
-VkDepthBiasInfoEXT* CommandRecorder::CopyArray<VkDepthBiasInfoEXT>(const VkDepthBiasInfoEXT* src, uint64_t start_index,
-                                                                   uint64_t count) {
+VkDepthBiasInfoEXT* CommandRecorder::CopyArray<VkDepthBiasInfoEXT>(const VkDepthBiasInfoEXT* src, size_t start_index,
+                                                                   size_t count) {
     auto ptr = reinterpret_cast<VkDepthBiasInfoEXT*>(m_allocator.Alloc(sizeof(VkDepthBiasInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1752,8 +1749,8 @@ VkDepthBiasInfoEXT* CommandRecorder::CopyArray<VkDepthBiasInfoEXT>(const VkDepth
 }
 
 template <>
-VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaLaunchInfoNV* src, uint64_t start_index,
-                                                                   uint64_t count) {
+VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaLaunchInfoNV* src, size_t start_index,
+                                                                   size_t count) {
     auto ptr = reinterpret_cast<VkCudaLaunchInfoNV*>(m_allocator.Alloc(sizeof(VkCudaLaunchInfoNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1780,7 +1777,7 @@ VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaL
 
 template <>
 VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferBindingInfoEXT>(
-    const VkDescriptorBufferBindingInfoEXT* src, uint64_t start_index, uint64_t count) {
+    const VkDescriptorBufferBindingInfoEXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDescriptorBufferBindingInfoEXT*>(
         m_allocator.Alloc(sizeof(VkDescriptorBufferBindingInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1794,7 +1791,7 @@ VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferB
 
 template <>
 VkDeviceOrHostAddressConstKHR* CommandRecorder::CopyArray<VkDeviceOrHostAddressConstKHR>(
-    const VkDeviceOrHostAddressConstKHR* src, uint64_t start_index, uint64_t count) {
+    const VkDeviceOrHostAddressConstKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDeviceOrHostAddressConstKHR*>(
         m_allocator.Alloc(sizeof(VkDeviceOrHostAddressConstKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1806,7 +1803,7 @@ VkDeviceOrHostAddressConstKHR* CommandRecorder::CopyArray<VkDeviceOrHostAddressC
 
 template <>
 VkVertexInputBindingDescription2EXT* CommandRecorder::CopyArray<VkVertexInputBindingDescription2EXT>(
-    const VkVertexInputBindingDescription2EXT* src, uint64_t start_index, uint64_t count) {
+    const VkVertexInputBindingDescription2EXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkVertexInputBindingDescription2EXT*>(
         m_allocator.Alloc(sizeof(VkVertexInputBindingDescription2EXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1822,7 +1819,7 @@ VkVertexInputBindingDescription2EXT* CommandRecorder::CopyArray<VkVertexInputBin
 
 template <>
 VkVertexInputAttributeDescription2EXT* CommandRecorder::CopyArray<VkVertexInputAttributeDescription2EXT>(
-    const VkVertexInputAttributeDescription2EXT* src, uint64_t start_index, uint64_t count) {
+    const VkVertexInputAttributeDescription2EXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkVertexInputAttributeDescription2EXT*>(
         m_allocator.Alloc(sizeof(VkVertexInputAttributeDescription2EXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1837,8 +1834,8 @@ VkVertexInputAttributeDescription2EXT* CommandRecorder::CopyArray<VkVertexInputA
 }
 
 template <>
-VkMultiDrawInfoEXT* CommandRecorder::CopyArray<VkMultiDrawInfoEXT>(const VkMultiDrawInfoEXT* src, uint64_t start_index,
-                                                                   uint64_t count) {
+VkMultiDrawInfoEXT* CommandRecorder::CopyArray<VkMultiDrawInfoEXT>(const VkMultiDrawInfoEXT* src, size_t start_index,
+                                                                   size_t count) {
     auto ptr = reinterpret_cast<VkMultiDrawInfoEXT*>(m_allocator.Alloc(sizeof(VkMultiDrawInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].firstVertex = src[start_index + i].firstVertex;
@@ -1849,7 +1846,7 @@ VkMultiDrawInfoEXT* CommandRecorder::CopyArray<VkMultiDrawInfoEXT>(const VkMulti
 
 template <>
 VkMultiDrawIndexedInfoEXT* CommandRecorder::CopyArray<VkMultiDrawIndexedInfoEXT>(const VkMultiDrawIndexedInfoEXT* src,
-                                                                                 uint64_t start_index, uint64_t count) {
+                                                                                 size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkMultiDrawIndexedInfoEXT*>(m_allocator.Alloc(sizeof(VkMultiDrawIndexedInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1861,8 +1858,8 @@ VkMultiDrawIndexedInfoEXT* CommandRecorder::CopyArray<VkMultiDrawIndexedInfoEXT>
 }
 
 template <>
-VkMicromapUsageEXT* CommandRecorder::CopyArray<VkMicromapUsageEXT>(const VkMicromapUsageEXT* src, uint64_t start_index,
-                                                                   uint64_t count) {
+VkMicromapUsageEXT* CommandRecorder::CopyArray<VkMicromapUsageEXT>(const VkMicromapUsageEXT* src, size_t start_index,
+                                                                   size_t count) {
     auto ptr = reinterpret_cast<VkMicromapUsageEXT*>(m_allocator.Alloc(sizeof(VkMicromapUsageEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].count = src[start_index + i].count;
@@ -1874,7 +1871,7 @@ VkMicromapUsageEXT* CommandRecorder::CopyArray<VkMicromapUsageEXT>(const VkMicro
 
 template <>
 VkDeviceOrHostAddressKHR* CommandRecorder::CopyArray<VkDeviceOrHostAddressKHR>(const VkDeviceOrHostAddressKHR* src,
-                                                                               uint64_t start_index, uint64_t count) {
+                                                                               size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDeviceOrHostAddressKHR*>(m_allocator.Alloc(sizeof(VkDeviceOrHostAddressKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].deviceAddress = src[start_index + i].deviceAddress;
@@ -1885,7 +1882,7 @@ VkDeviceOrHostAddressKHR* CommandRecorder::CopyArray<VkDeviceOrHostAddressKHR>(c
 
 template <>
 VkMicromapBuildInfoEXT* CommandRecorder::CopyArray<VkMicromapBuildInfoEXT>(const VkMicromapBuildInfoEXT* src,
-                                                                           uint64_t start_index, uint64_t count) {
+                                                                           size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkMicromapBuildInfoEXT*>(m_allocator.Alloc(sizeof(VkMicromapBuildInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1903,7 +1900,11 @@ VkMicromapBuildInfoEXT* CommandRecorder::CopyArray<VkMicromapBuildInfoEXT>(const
         ptr[i].ppUsageCounts = nullptr;
         if (src[start_index + i].ppUsageCounts) {
             ptr[i].ppUsageCounts = CopyArray(src[start_index + i].ppUsageCounts, static_cast<uint64_t>(0U),
-                                             static_cast<uint64_t>(src[start_index + i].usageCountsCount, 1));
+                                             static_cast<uint64_t>(src[start_index + i].usageCountsCount));
+            for (uint64_t j = 0; j < uint64_t(src[start_index + i].usageCountsCount); j++) {
+                const_cast<VkMicromapUsageEXT**>(ptr[i].ppUsageCounts)[j] = CopyArray(
+                    src[start_index + i].ppUsageCounts[j], static_cast<uint64_t>(0U), static_cast<uint64_t>(1));
+            }
         }
         ptr[i].data = src[start_index + i].data;
         ptr[i].scratchData = src[start_index + i].scratchData;
@@ -1915,7 +1916,7 @@ VkMicromapBuildInfoEXT* CommandRecorder::CopyArray<VkMicromapBuildInfoEXT>(const
 
 template <>
 VkCopyMicromapToMemoryInfoEXT* CommandRecorder::CopyArray<VkCopyMicromapToMemoryInfoEXT>(
-    const VkCopyMicromapToMemoryInfoEXT* src, uint64_t start_index, uint64_t count) {
+    const VkCopyMicromapToMemoryInfoEXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCopyMicromapToMemoryInfoEXT*>(
         m_allocator.Alloc(sizeof(VkCopyMicromapToMemoryInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1930,7 +1931,7 @@ VkCopyMicromapToMemoryInfoEXT* CommandRecorder::CopyArray<VkCopyMicromapToMemory
 
 template <>
 VkCopyMemoryToMicromapInfoEXT* CommandRecorder::CopyArray<VkCopyMemoryToMicromapInfoEXT>(
-    const VkCopyMemoryToMicromapInfoEXT* src, uint64_t start_index, uint64_t count) {
+    const VkCopyMemoryToMicromapInfoEXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCopyMemoryToMicromapInfoEXT*>(
         m_allocator.Alloc(sizeof(VkCopyMemoryToMicromapInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1945,7 +1946,7 @@ VkCopyMemoryToMicromapInfoEXT* CommandRecorder::CopyArray<VkCopyMemoryToMicromap
 
 template <>
 VkCopyMicromapInfoEXT* CommandRecorder::CopyArray<VkCopyMicromapInfoEXT>(const VkCopyMicromapInfoEXT* src,
-                                                                         uint64_t start_index, uint64_t count) {
+                                                                         size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCopyMicromapInfoEXT*>(m_allocator.Alloc(sizeof(VkCopyMicromapInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
@@ -1959,7 +1960,7 @@ VkCopyMicromapInfoEXT* CommandRecorder::CopyArray<VkCopyMicromapInfoEXT>(const V
 
 template <>
 VkDecompressMemoryRegionNV* CommandRecorder::CopyArray<VkDecompressMemoryRegionNV>(
-    const VkDecompressMemoryRegionNV* src, uint64_t start_index, uint64_t count) {
+    const VkDecompressMemoryRegionNV* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkDecompressMemoryRegionNV*>(m_allocator.Alloc(sizeof(VkDecompressMemoryRegionNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -1974,7 +1975,7 @@ VkDecompressMemoryRegionNV* CommandRecorder::CopyArray<VkDecompressMemoryRegionN
 
 template <>
 VkColorBlendEquationEXT* CommandRecorder::CopyArray<VkColorBlendEquationEXT>(const VkColorBlendEquationEXT* src,
-                                                                             uint64_t start_index, uint64_t count) {
+                                                                             size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkColorBlendEquationEXT*>(m_allocator.Alloc(sizeof(VkColorBlendEquationEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].srcColorBlendFactor = src[start_index + i].srcColorBlendFactor;
@@ -1989,7 +1990,7 @@ VkColorBlendEquationEXT* CommandRecorder::CopyArray<VkColorBlendEquationEXT>(con
 
 template <>
 VkColorBlendAdvancedEXT* CommandRecorder::CopyArray<VkColorBlendAdvancedEXT>(const VkColorBlendAdvancedEXT* src,
-                                                                             uint64_t start_index, uint64_t count) {
+                                                                             size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkColorBlendAdvancedEXT*>(m_allocator.Alloc(sizeof(VkColorBlendAdvancedEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].advancedBlendOp = src[start_index + i].advancedBlendOp;
@@ -2003,7 +2004,7 @@ VkColorBlendAdvancedEXT* CommandRecorder::CopyArray<VkColorBlendAdvancedEXT>(con
 
 template <>
 VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoNV>(
-    const VkOpticalFlowExecuteInfoNV* src, uint64_t start_index, uint64_t count) {
+    const VkOpticalFlowExecuteInfoNV* src, size_t start_index, size_t count) {
     auto ptr =
         reinterpret_cast<VkOpticalFlowExecuteInfoNV*>(m_allocator.Alloc(sizeof(VkOpticalFlowExecuteInfoNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -2022,7 +2023,7 @@ VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoN
 
 template <>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(
-    const VkAccelerationStructureBuildRangeInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkAccelerationStructureBuildRangeInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkAccelerationStructureBuildRangeInfoKHR*>(
         m_allocator.Alloc(sizeof(VkAccelerationStructureBuildRangeInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -2036,7 +2037,7 @@ VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerat
 
 template <>
 VkAccelerationStructureGeometryKHR* CommandRecorder::CopyArray<VkAccelerationStructureGeometryKHR>(
-    const VkAccelerationStructureGeometryKHR* src, uint64_t start_index, uint64_t count) {
+    const VkAccelerationStructureGeometryKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkAccelerationStructureGeometryKHR*>(
         m_allocator.Alloc(sizeof(VkAccelerationStructureGeometryKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -2051,7 +2052,7 @@ VkAccelerationStructureGeometryKHR* CommandRecorder::CopyArray<VkAccelerationStr
 
 template <>
 VkAccelerationStructureBuildGeometryInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildGeometryInfoKHR>(
-    const VkAccelerationStructureBuildGeometryInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkAccelerationStructureBuildGeometryInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkAccelerationStructureBuildGeometryInfoKHR*>(
         m_allocator.Alloc(sizeof(VkAccelerationStructureBuildGeometryInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -2071,7 +2072,11 @@ VkAccelerationStructureBuildGeometryInfoKHR* CommandRecorder::CopyArray<VkAccele
         ptr[i].ppGeometries = nullptr;
         if (src[start_index + i].ppGeometries) {
             ptr[i].ppGeometries = CopyArray(src[start_index + i].ppGeometries, static_cast<uint64_t>(0U),
-                                            static_cast<uint64_t>(src[start_index + i].geometryCount, 1));
+                                            static_cast<uint64_t>(src[start_index + i].geometryCount));
+            for (uint64_t j = 0; j < uint64_t(src[start_index + i].geometryCount); j++) {
+                const_cast<VkAccelerationStructureGeometryKHR**>(ptr[i].ppGeometries)[j] = CopyArray(
+                    src[start_index + i].ppGeometries[j], static_cast<uint64_t>(0U), static_cast<uint64_t>(1));
+            }
         }
         ptr[i].scratchData = src[start_index + i].scratchData;
     }
@@ -2080,7 +2085,7 @@ VkAccelerationStructureBuildGeometryInfoKHR* CommandRecorder::CopyArray<VkAccele
 
 template <>
 VkCopyAccelerationStructureToMemoryInfoKHR* CommandRecorder::CopyArray<VkCopyAccelerationStructureToMemoryInfoKHR>(
-    const VkCopyAccelerationStructureToMemoryInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkCopyAccelerationStructureToMemoryInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCopyAccelerationStructureToMemoryInfoKHR*>(
         m_allocator.Alloc(sizeof(VkCopyAccelerationStructureToMemoryInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -2095,7 +2100,7 @@ VkCopyAccelerationStructureToMemoryInfoKHR* CommandRecorder::CopyArray<VkCopyAcc
 
 template <>
 VkCopyMemoryToAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyMemoryToAccelerationStructureInfoKHR>(
-    const VkCopyMemoryToAccelerationStructureInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkCopyMemoryToAccelerationStructureInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCopyMemoryToAccelerationStructureInfoKHR*>(
         m_allocator.Alloc(sizeof(VkCopyMemoryToAccelerationStructureInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -2110,7 +2115,7 @@ VkCopyMemoryToAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyMem
 
 template <>
 VkCopyAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyAccelerationStructureInfoKHR>(
-    const VkCopyAccelerationStructureInfoKHR* src, uint64_t start_index, uint64_t count) {
+    const VkCopyAccelerationStructureInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkCopyAccelerationStructureInfoKHR*>(
         m_allocator.Alloc(sizeof(VkCopyAccelerationStructureInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -2125,7 +2130,7 @@ VkCopyAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyAcceleratio
 
 template <>
 VkStridedDeviceAddressRegionKHR* CommandRecorder::CopyArray<VkStridedDeviceAddressRegionKHR>(
-    const VkStridedDeviceAddressRegionKHR* src, uint64_t start_index, uint64_t count) {
+    const VkStridedDeviceAddressRegionKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkStridedDeviceAddressRegionKHR*>(
         m_allocator.Alloc(sizeof(VkStridedDeviceAddressRegionKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
@@ -2141,7 +2146,7 @@ BeginCommandBufferArgs* CommandRecorder::RecordBeginCommandBuffer(VkCommandBuffe
     auto* args = Alloc<BeginCommandBufferArgs>();
     args->commandBuffer = commandBuffer;
     if (pBeginInfo) {
-        args->pBeginInfo = CopyArray(pBeginInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pBeginInfo = CopyArray(pBeginInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2177,7 +2182,7 @@ CmdSetViewportArgs* CommandRecorder::RecordCmdSetViewport(VkCommandBuffer comman
     args->firstViewport = firstViewport;
     args->viewportCount = viewportCount;
     if (pViewports) {
-        args->pViewports = CopyArray(pViewports, static_cast<uint64_t>(0U), static_cast<uint64_t>(viewportCount));
+        args->pViewports = CopyArray(pViewports, static_cast<size_t>(0U), static_cast<size_t>(viewportCount));
     }
     return args;
 }
@@ -2189,7 +2194,7 @@ CmdSetScissorArgs* CommandRecorder::RecordCmdSetScissor(VkCommandBuffer commandB
     args->firstScissor = firstScissor;
     args->scissorCount = scissorCount;
     if (pScissors) {
-        args->pScissors = CopyArray(pScissors, static_cast<uint64_t>(0U), static_cast<uint64_t>(scissorCount));
+        args->pScissors = CopyArray(pScissors, static_cast<size_t>(0U), static_cast<size_t>(scissorCount));
     }
     return args;
 }
@@ -2273,12 +2278,12 @@ CmdBindDescriptorSetsArgs* CommandRecorder::RecordCmdBindDescriptorSets(
     args->descriptorSetCount = descriptorSetCount;
     if (pDescriptorSets) {
         args->pDescriptorSets =
-            CopyArray(pDescriptorSets, static_cast<uint64_t>(0U), static_cast<uint64_t>(descriptorSetCount));
+            CopyArray(pDescriptorSets, static_cast<size_t>(0U), static_cast<size_t>(descriptorSetCount));
     }
     args->dynamicOffsetCount = dynamicOffsetCount;
     if (pDynamicOffsets) {
         args->pDynamicOffsets =
-            CopyArray(pDynamicOffsets, static_cast<uint64_t>(0U), static_cast<uint64_t>(dynamicOffsetCount));
+            CopyArray(pDynamicOffsets, static_cast<size_t>(0U), static_cast<size_t>(dynamicOffsetCount));
     }
     return args;
 }
@@ -2302,10 +2307,10 @@ CmdBindVertexBuffersArgs* CommandRecorder::RecordCmdBindVertexBuffers(VkCommandB
     args->firstBinding = firstBinding;
     args->bindingCount = bindingCount;
     if (pBuffers) {
-        args->pBuffers = CopyArray(pBuffers, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pBuffers = CopyArray(pBuffers, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pOffsets) {
-        args->pOffsets = CopyArray(pOffsets, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pOffsets = CopyArray(pOffsets, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     return args;
 }
@@ -2385,7 +2390,7 @@ CmdCopyBufferArgs* CommandRecorder::RecordCmdCopyBuffer(VkCommandBuffer commandB
     args->dstBuffer = dstBuffer;
     args->regionCount = regionCount;
     if (pRegions) {
-        args->pRegions = CopyArray(pRegions, static_cast<uint64_t>(0U), static_cast<uint64_t>(regionCount));
+        args->pRegions = CopyArray(pRegions, static_cast<size_t>(0U), static_cast<size_t>(regionCount));
     }
     return args;
 }
@@ -2402,7 +2407,7 @@ CmdCopyImageArgs* CommandRecorder::RecordCmdCopyImage(VkCommandBuffer commandBuf
     args->dstImageLayout = dstImageLayout;
     args->regionCount = regionCount;
     if (pRegions) {
-        args->pRegions = CopyArray(pRegions, static_cast<uint64_t>(0U), static_cast<uint64_t>(regionCount));
+        args->pRegions = CopyArray(pRegions, static_cast<size_t>(0U), static_cast<size_t>(regionCount));
     }
     return args;
 }
@@ -2419,7 +2424,7 @@ CmdBlitImageArgs* CommandRecorder::RecordCmdBlitImage(VkCommandBuffer commandBuf
     args->dstImageLayout = dstImageLayout;
     args->regionCount = regionCount;
     if (pRegions) {
-        args->pRegions = CopyArray(pRegions, static_cast<uint64_t>(0U), static_cast<uint64_t>(regionCount));
+        args->pRegions = CopyArray(pRegions, static_cast<size_t>(0U), static_cast<size_t>(regionCount));
     }
     args->filter = filter;
     return args;
@@ -2436,7 +2441,7 @@ CmdCopyBufferToImageArgs* CommandRecorder::RecordCmdCopyBufferToImage(VkCommandB
     args->dstImageLayout = dstImageLayout;
     args->regionCount = regionCount;
     if (pRegions) {
-        args->pRegions = CopyArray(pRegions, static_cast<uint64_t>(0U), static_cast<uint64_t>(regionCount));
+        args->pRegions = CopyArray(pRegions, static_cast<size_t>(0U), static_cast<size_t>(regionCount));
     }
     return args;
 }
@@ -2452,7 +2457,7 @@ CmdCopyImageToBufferArgs* CommandRecorder::RecordCmdCopyImageToBuffer(VkCommandB
     args->dstBuffer = dstBuffer;
     args->regionCount = regionCount;
     if (pRegions) {
-        args->pRegions = CopyArray(pRegions, static_cast<uint64_t>(0U), static_cast<uint64_t>(regionCount));
+        args->pRegions = CopyArray(pRegions, static_cast<size_t>(0U), static_cast<size_t>(regionCount));
     }
     return args;
 }
@@ -2466,7 +2471,7 @@ CmdUpdateBufferArgs* CommandRecorder::RecordCmdUpdateBuffer(VkCommandBuffer comm
     args->dstOffset = dstOffset;
     args->dataSize = dataSize;
     args->pData =
-        CopyArray(reinterpret_cast<const uint8_t*>(pData), static_cast<uint64_t>(0U), static_cast<uint64_t>(dataSize));
+        CopyArray(reinterpret_cast<const uint8_t*>(pData), static_cast<size_t>(0U), static_cast<size_t>(dataSize));
     return args;
 }
 
@@ -2490,11 +2495,11 @@ CmdClearColorImageArgs* CommandRecorder::RecordCmdClearColorImage(VkCommandBuffe
     args->image = image;
     args->imageLayout = imageLayout;
     if (pColor) {
-        args->pColor = CopyArray(pColor, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pColor = CopyArray(pColor, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     args->rangeCount = rangeCount;
     if (pRanges) {
-        args->pRanges = CopyArray(pRanges, static_cast<uint64_t>(0U), static_cast<uint64_t>(rangeCount));
+        args->pRanges = CopyArray(pRanges, static_cast<size_t>(0U), static_cast<size_t>(rangeCount));
     }
     return args;
 }
@@ -2507,11 +2512,11 @@ CmdClearDepthStencilImageArgs* CommandRecorder::RecordCmdClearDepthStencilImage(
     args->image = image;
     args->imageLayout = imageLayout;
     if (pDepthStencil) {
-        args->pDepthStencil = CopyArray(pDepthStencil, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pDepthStencil = CopyArray(pDepthStencil, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     args->rangeCount = rangeCount;
     if (pRanges) {
-        args->pRanges = CopyArray(pRanges, static_cast<uint64_t>(0U), static_cast<uint64_t>(rangeCount));
+        args->pRanges = CopyArray(pRanges, static_cast<size_t>(0U), static_cast<size_t>(rangeCount));
     }
     return args;
 }
@@ -2524,11 +2529,11 @@ CmdClearAttachmentsArgs* CommandRecorder::RecordCmdClearAttachments(VkCommandBuf
     args->commandBuffer = commandBuffer;
     args->attachmentCount = attachmentCount;
     if (pAttachments) {
-        args->pAttachments = CopyArray(pAttachments, static_cast<uint64_t>(0U), static_cast<uint64_t>(attachmentCount));
+        args->pAttachments = CopyArray(pAttachments, static_cast<size_t>(0U), static_cast<size_t>(attachmentCount));
     }
     args->rectCount = rectCount;
     if (pRects) {
-        args->pRects = CopyArray(pRects, static_cast<uint64_t>(0U), static_cast<uint64_t>(rectCount));
+        args->pRects = CopyArray(pRects, static_cast<size_t>(0U), static_cast<size_t>(rectCount));
     }
     return args;
 }
@@ -2545,7 +2550,7 @@ CmdResolveImageArgs* CommandRecorder::RecordCmdResolveImage(VkCommandBuffer comm
     args->dstImageLayout = dstImageLayout;
     args->regionCount = regionCount;
     if (pRegions) {
-        args->pRegions = CopyArray(pRegions, static_cast<uint64_t>(0U), static_cast<uint64_t>(regionCount));
+        args->pRegions = CopyArray(pRegions, static_cast<size_t>(0U), static_cast<size_t>(regionCount));
     }
     return args;
 }
@@ -2577,24 +2582,24 @@ CmdWaitEventsArgs* CommandRecorder::RecordCmdWaitEvents(
     args->commandBuffer = commandBuffer;
     args->eventCount = eventCount;
     if (pEvents) {
-        args->pEvents = CopyArray(pEvents, static_cast<uint64_t>(0U), static_cast<uint64_t>(eventCount));
+        args->pEvents = CopyArray(pEvents, static_cast<size_t>(0U), static_cast<size_t>(eventCount));
     }
     args->srcStageMask = srcStageMask;
     args->dstStageMask = dstStageMask;
     args->memoryBarrierCount = memoryBarrierCount;
     if (pMemoryBarriers) {
         args->pMemoryBarriers =
-            CopyArray(pMemoryBarriers, static_cast<uint64_t>(0U), static_cast<uint64_t>(memoryBarrierCount));
+            CopyArray(pMemoryBarriers, static_cast<size_t>(0U), static_cast<size_t>(memoryBarrierCount));
     }
     args->bufferMemoryBarrierCount = bufferMemoryBarrierCount;
     if (pBufferMemoryBarriers) {
-        args->pBufferMemoryBarriers = CopyArray(pBufferMemoryBarriers, static_cast<uint64_t>(0U),
-                                                static_cast<uint64_t>(bufferMemoryBarrierCount));
+        args->pBufferMemoryBarriers =
+            CopyArray(pBufferMemoryBarriers, static_cast<size_t>(0U), static_cast<size_t>(bufferMemoryBarrierCount));
     }
     args->imageMemoryBarrierCount = imageMemoryBarrierCount;
     if (pImageMemoryBarriers) {
         args->pImageMemoryBarriers =
-            CopyArray(pImageMemoryBarriers, static_cast<uint64_t>(0U), static_cast<uint64_t>(imageMemoryBarrierCount));
+            CopyArray(pImageMemoryBarriers, static_cast<size_t>(0U), static_cast<size_t>(imageMemoryBarrierCount));
     }
     return args;
 }
@@ -2612,17 +2617,17 @@ CmdPipelineBarrierArgs* CommandRecorder::RecordCmdPipelineBarrier(
     args->memoryBarrierCount = memoryBarrierCount;
     if (pMemoryBarriers) {
         args->pMemoryBarriers =
-            CopyArray(pMemoryBarriers, static_cast<uint64_t>(0U), static_cast<uint64_t>(memoryBarrierCount));
+            CopyArray(pMemoryBarriers, static_cast<size_t>(0U), static_cast<size_t>(memoryBarrierCount));
     }
     args->bufferMemoryBarrierCount = bufferMemoryBarrierCount;
     if (pBufferMemoryBarriers) {
-        args->pBufferMemoryBarriers = CopyArray(pBufferMemoryBarriers, static_cast<uint64_t>(0U),
-                                                static_cast<uint64_t>(bufferMemoryBarrierCount));
+        args->pBufferMemoryBarriers =
+            CopyArray(pBufferMemoryBarriers, static_cast<size_t>(0U), static_cast<size_t>(bufferMemoryBarrierCount));
     }
     args->imageMemoryBarrierCount = imageMemoryBarrierCount;
     if (pImageMemoryBarriers) {
         args->pImageMemoryBarriers =
-            CopyArray(pImageMemoryBarriers, static_cast<uint64_t>(0U), static_cast<uint64_t>(imageMemoryBarrierCount));
+            CopyArray(pImageMemoryBarriers, static_cast<size_t>(0U), static_cast<size_t>(imageMemoryBarrierCount));
     }
     return args;
 }
@@ -2694,7 +2699,7 @@ CmdPushConstantsArgs* CommandRecorder::RecordCmdPushConstants(VkCommandBuffer co
     args->offset = offset;
     args->size = size;
     args->pValues =
-        CopyArray(reinterpret_cast<const uint8_t*>(pValues), static_cast<uint64_t>(0U), static_cast<uint64_t>(size));
+        CopyArray(reinterpret_cast<const uint8_t*>(pValues), static_cast<size_t>(0U), static_cast<size_t>(size));
     return args;
 }
 
@@ -2704,7 +2709,7 @@ CmdBeginRenderPassArgs* CommandRecorder::RecordCmdBeginRenderPass(VkCommandBuffe
     auto* args = Alloc<CmdBeginRenderPassArgs>();
     args->commandBuffer = commandBuffer;
     if (pRenderPassBegin) {
-        args->pRenderPassBegin = CopyArray(pRenderPassBegin, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pRenderPassBegin = CopyArray(pRenderPassBegin, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     args->contents = contents;
     return args;
@@ -2731,7 +2736,7 @@ CmdExecuteCommandsArgs* CommandRecorder::RecordCmdExecuteCommands(VkCommandBuffe
     args->commandBufferCount = commandBufferCount;
     if (pCommandBuffers) {
         args->pCommandBuffers =
-            CopyArray(pCommandBuffers, static_cast<uint64_t>(0U), static_cast<uint64_t>(commandBufferCount));
+            CopyArray(pCommandBuffers, static_cast<size_t>(0U), static_cast<size_t>(commandBufferCount));
     }
     return args;
 }
@@ -2793,10 +2798,10 @@ CmdBeginRenderPass2Args* CommandRecorder::RecordCmdBeginRenderPass2(VkCommandBuf
     auto* args = Alloc<CmdBeginRenderPass2Args>();
     args->commandBuffer = commandBuffer;
     if (pRenderPassBegin) {
-        args->pRenderPassBegin = CopyArray(pRenderPassBegin, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pRenderPassBegin = CopyArray(pRenderPassBegin, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pSubpassBeginInfo) {
-        args->pSubpassBeginInfo = CopyArray(pSubpassBeginInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSubpassBeginInfo = CopyArray(pSubpassBeginInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2807,10 +2812,10 @@ CmdNextSubpass2Args* CommandRecorder::RecordCmdNextSubpass2(VkCommandBuffer comm
     auto* args = Alloc<CmdNextSubpass2Args>();
     args->commandBuffer = commandBuffer;
     if (pSubpassBeginInfo) {
-        args->pSubpassBeginInfo = CopyArray(pSubpassBeginInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSubpassBeginInfo = CopyArray(pSubpassBeginInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pSubpassEndInfo) {
-        args->pSubpassEndInfo = CopyArray(pSubpassEndInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSubpassEndInfo = CopyArray(pSubpassEndInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2820,7 +2825,7 @@ CmdEndRenderPass2Args* CommandRecorder::RecordCmdEndRenderPass2(VkCommandBuffer 
     auto* args = Alloc<CmdEndRenderPass2Args>();
     args->commandBuffer = commandBuffer;
     if (pSubpassEndInfo) {
-        args->pSubpassEndInfo = CopyArray(pSubpassEndInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSubpassEndInfo = CopyArray(pSubpassEndInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2831,7 +2836,7 @@ CmdSetEvent2Args* CommandRecorder::RecordCmdSetEvent2(VkCommandBuffer commandBuf
     args->commandBuffer = commandBuffer;
     args->event = event;
     if (pDependencyInfo) {
-        args->pDependencyInfo = CopyArray(pDependencyInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pDependencyInfo = CopyArray(pDependencyInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2852,11 +2857,10 @@ CmdWaitEvents2Args* CommandRecorder::RecordCmdWaitEvents2(VkCommandBuffer comman
     args->commandBuffer = commandBuffer;
     args->eventCount = eventCount;
     if (pEvents) {
-        args->pEvents = CopyArray(pEvents, static_cast<uint64_t>(0U), static_cast<uint64_t>(eventCount));
+        args->pEvents = CopyArray(pEvents, static_cast<size_t>(0U), static_cast<size_t>(eventCount));
     }
     if (pDependencyInfos) {
-        args->pDependencyInfos =
-            CopyArray(pDependencyInfos, static_cast<uint64_t>(0U), static_cast<uint64_t>(eventCount));
+        args->pDependencyInfos = CopyArray(pDependencyInfos, static_cast<size_t>(0U), static_cast<size_t>(eventCount));
     }
     return args;
 }
@@ -2866,7 +2870,7 @@ CmdPipelineBarrier2Args* CommandRecorder::RecordCmdPipelineBarrier2(VkCommandBuf
     auto* args = Alloc<CmdPipelineBarrier2Args>();
     args->commandBuffer = commandBuffer;
     if (pDependencyInfo) {
-        args->pDependencyInfo = CopyArray(pDependencyInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pDependencyInfo = CopyArray(pDependencyInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2887,7 +2891,7 @@ CmdCopyBuffer2Args* CommandRecorder::RecordCmdCopyBuffer2(VkCommandBuffer comman
     auto* args = Alloc<CmdCopyBuffer2Args>();
     args->commandBuffer = commandBuffer;
     if (pCopyBufferInfo) {
-        args->pCopyBufferInfo = CopyArray(pCopyBufferInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pCopyBufferInfo = CopyArray(pCopyBufferInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2897,7 +2901,7 @@ CmdCopyImage2Args* CommandRecorder::RecordCmdCopyImage2(VkCommandBuffer commandB
     auto* args = Alloc<CmdCopyImage2Args>();
     args->commandBuffer = commandBuffer;
     if (pCopyImageInfo) {
-        args->pCopyImageInfo = CopyArray(pCopyImageInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pCopyImageInfo = CopyArray(pCopyImageInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2908,7 +2912,7 @@ CmdCopyBufferToImage2Args* CommandRecorder::RecordCmdCopyBufferToImage2(
     args->commandBuffer = commandBuffer;
     if (pCopyBufferToImageInfo) {
         args->pCopyBufferToImageInfo =
-            CopyArray(pCopyBufferToImageInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pCopyBufferToImageInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2919,7 +2923,7 @@ CmdCopyImageToBuffer2Args* CommandRecorder::RecordCmdCopyImageToBuffer2(
     args->commandBuffer = commandBuffer;
     if (pCopyImageToBufferInfo) {
         args->pCopyImageToBufferInfo =
-            CopyArray(pCopyImageToBufferInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pCopyImageToBufferInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2929,7 +2933,7 @@ CmdBlitImage2Args* CommandRecorder::RecordCmdBlitImage2(VkCommandBuffer commandB
     auto* args = Alloc<CmdBlitImage2Args>();
     args->commandBuffer = commandBuffer;
     if (pBlitImageInfo) {
-        args->pBlitImageInfo = CopyArray(pBlitImageInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pBlitImageInfo = CopyArray(pBlitImageInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2939,7 +2943,7 @@ CmdResolveImage2Args* CommandRecorder::RecordCmdResolveImage2(VkCommandBuffer co
     auto* args = Alloc<CmdResolveImage2Args>();
     args->commandBuffer = commandBuffer;
     if (pResolveImageInfo) {
-        args->pResolveImageInfo = CopyArray(pResolveImageInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pResolveImageInfo = CopyArray(pResolveImageInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2949,7 +2953,7 @@ CmdBeginRenderingArgs* CommandRecorder::RecordCmdBeginRendering(VkCommandBuffer 
     auto* args = Alloc<CmdBeginRenderingArgs>();
     args->commandBuffer = commandBuffer;
     if (pRenderingInfo) {
-        args->pRenderingInfo = CopyArray(pRenderingInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pRenderingInfo = CopyArray(pRenderingInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -2989,7 +2993,7 @@ CmdSetViewportWithCountArgs* CommandRecorder::RecordCmdSetViewportWithCount(VkCo
     args->commandBuffer = commandBuffer;
     args->viewportCount = viewportCount;
     if (pViewports) {
-        args->pViewports = CopyArray(pViewports, static_cast<uint64_t>(0U), static_cast<uint64_t>(viewportCount));
+        args->pViewports = CopyArray(pViewports, static_cast<size_t>(0U), static_cast<size_t>(viewportCount));
     }
     return args;
 }
@@ -3001,7 +3005,7 @@ CmdSetScissorWithCountArgs* CommandRecorder::RecordCmdSetScissorWithCount(VkComm
     args->commandBuffer = commandBuffer;
     args->scissorCount = scissorCount;
     if (pScissors) {
-        args->pScissors = CopyArray(pScissors, static_cast<uint64_t>(0U), static_cast<uint64_t>(scissorCount));
+        args->pScissors = CopyArray(pScissors, static_cast<size_t>(0U), static_cast<size_t>(scissorCount));
     }
     return args;
 }
@@ -3014,16 +3018,16 @@ CmdBindVertexBuffers2Args* CommandRecorder::RecordCmdBindVertexBuffers2(
     args->firstBinding = firstBinding;
     args->bindingCount = bindingCount;
     if (pBuffers) {
-        args->pBuffers = CopyArray(pBuffers, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pBuffers = CopyArray(pBuffers, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pOffsets) {
-        args->pOffsets = CopyArray(pOffsets, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pOffsets = CopyArray(pOffsets, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pSizes) {
-        args->pSizes = CopyArray(pSizes, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pSizes = CopyArray(pSizes, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pStrides) {
-        args->pStrides = CopyArray(pStrides, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pStrides = CopyArray(pStrides, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     return args;
 }
@@ -3110,7 +3114,7 @@ CmdBeginVideoCodingKHRArgs* CommandRecorder::RecordCmdBeginVideoCodingKHR(VkComm
     auto* args = Alloc<CmdBeginVideoCodingKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pBeginInfo) {
-        args->pBeginInfo = CopyArray(pBeginInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pBeginInfo = CopyArray(pBeginInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3120,7 +3124,7 @@ CmdEndVideoCodingKHRArgs* CommandRecorder::RecordCmdEndVideoCodingKHR(VkCommandB
     auto* args = Alloc<CmdEndVideoCodingKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pEndCodingInfo) {
-        args->pEndCodingInfo = CopyArray(pEndCodingInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pEndCodingInfo = CopyArray(pEndCodingInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3130,7 +3134,7 @@ CmdControlVideoCodingKHRArgs* CommandRecorder::RecordCmdControlVideoCodingKHR(
     auto* args = Alloc<CmdControlVideoCodingKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pCodingControlInfo) {
-        args->pCodingControlInfo = CopyArray(pCodingControlInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pCodingControlInfo = CopyArray(pCodingControlInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3140,7 +3144,7 @@ CmdDecodeVideoKHRArgs* CommandRecorder::RecordCmdDecodeVideoKHR(VkCommandBuffer 
     auto* args = Alloc<CmdDecodeVideoKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pDecodeInfo) {
-        args->pDecodeInfo = CopyArray(pDecodeInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pDecodeInfo = CopyArray(pDecodeInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3150,7 +3154,7 @@ CmdBeginRenderingKHRArgs* CommandRecorder::RecordCmdBeginRenderingKHR(VkCommandB
     auto* args = Alloc<CmdBeginRenderingKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pRenderingInfo) {
-        args->pRenderingInfo = CopyArray(pRenderingInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pRenderingInfo = CopyArray(pRenderingInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3195,7 +3199,7 @@ CmdPushDescriptorSetKHRArgs* CommandRecorder::RecordCmdPushDescriptorSetKHR(
     args->descriptorWriteCount = descriptorWriteCount;
     if (pDescriptorWrites) {
         args->pDescriptorWrites =
-            CopyArray(pDescriptorWrites, static_cast<uint64_t>(0U), static_cast<uint64_t>(descriptorWriteCount));
+            CopyArray(pDescriptorWrites, static_cast<size_t>(0U), static_cast<size_t>(descriptorWriteCount));
     }
     return args;
 }
@@ -3218,10 +3222,10 @@ CmdBeginRenderPass2KHRArgs* CommandRecorder::RecordCmdBeginRenderPass2KHR(VkComm
     auto* args = Alloc<CmdBeginRenderPass2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pRenderPassBegin) {
-        args->pRenderPassBegin = CopyArray(pRenderPassBegin, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pRenderPassBegin = CopyArray(pRenderPassBegin, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pSubpassBeginInfo) {
-        args->pSubpassBeginInfo = CopyArray(pSubpassBeginInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSubpassBeginInfo = CopyArray(pSubpassBeginInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3232,10 +3236,10 @@ CmdNextSubpass2KHRArgs* CommandRecorder::RecordCmdNextSubpass2KHR(VkCommandBuffe
     auto* args = Alloc<CmdNextSubpass2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pSubpassBeginInfo) {
-        args->pSubpassBeginInfo = CopyArray(pSubpassBeginInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSubpassBeginInfo = CopyArray(pSubpassBeginInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pSubpassEndInfo) {
-        args->pSubpassEndInfo = CopyArray(pSubpassEndInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSubpassEndInfo = CopyArray(pSubpassEndInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3245,7 +3249,7 @@ CmdEndRenderPass2KHRArgs* CommandRecorder::RecordCmdEndRenderPass2KHR(VkCommandB
     auto* args = Alloc<CmdEndRenderPass2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pSubpassEndInfo) {
-        args->pSubpassEndInfo = CopyArray(pSubpassEndInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSubpassEndInfo = CopyArray(pSubpassEndInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3286,7 +3290,7 @@ CmdSetFragmentShadingRateKHRArgs* CommandRecorder::RecordCmdSetFragmentShadingRa
     auto* args = Alloc<CmdSetFragmentShadingRateKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pFragmentSize) {
-        args->pFragmentSize = CopyArray(pFragmentSize, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pFragmentSize = CopyArray(pFragmentSize, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     for (uint32_t i = 0; i < 2; ++i) {
         args->combinerOps[i] = combinerOps[i];
@@ -3299,7 +3303,7 @@ CmdSetRenderingAttachmentLocationsKHRArgs* CommandRecorder::RecordCmdSetRenderin
     auto* args = Alloc<CmdSetRenderingAttachmentLocationsKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pLocationInfo) {
-        args->pLocationInfo = CopyArray(pLocationInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pLocationInfo = CopyArray(pLocationInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3310,7 +3314,7 @@ CmdSetRenderingInputAttachmentIndicesKHRArgs* CommandRecorder::RecordCmdSetRende
     args->commandBuffer = commandBuffer;
     if (pInputAttachmentIndexInfo) {
         args->pInputAttachmentIndexInfo =
-            CopyArray(pInputAttachmentIndexInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pInputAttachmentIndexInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3320,7 +3324,7 @@ CmdEncodeVideoKHRArgs* CommandRecorder::RecordCmdEncodeVideoKHR(VkCommandBuffer 
     auto* args = Alloc<CmdEncodeVideoKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pEncodeInfo) {
-        args->pEncodeInfo = CopyArray(pEncodeInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pEncodeInfo = CopyArray(pEncodeInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3331,7 +3335,7 @@ CmdSetEvent2KHRArgs* CommandRecorder::RecordCmdSetEvent2KHR(VkCommandBuffer comm
     args->commandBuffer = commandBuffer;
     args->event = event;
     if (pDependencyInfo) {
-        args->pDependencyInfo = CopyArray(pDependencyInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pDependencyInfo = CopyArray(pDependencyInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3352,11 +3356,10 @@ CmdWaitEvents2KHRArgs* CommandRecorder::RecordCmdWaitEvents2KHR(VkCommandBuffer 
     args->commandBuffer = commandBuffer;
     args->eventCount = eventCount;
     if (pEvents) {
-        args->pEvents = CopyArray(pEvents, static_cast<uint64_t>(0U), static_cast<uint64_t>(eventCount));
+        args->pEvents = CopyArray(pEvents, static_cast<size_t>(0U), static_cast<size_t>(eventCount));
     }
     if (pDependencyInfos) {
-        args->pDependencyInfos =
-            CopyArray(pDependencyInfos, static_cast<uint64_t>(0U), static_cast<uint64_t>(eventCount));
+        args->pDependencyInfos = CopyArray(pDependencyInfos, static_cast<size_t>(0U), static_cast<size_t>(eventCount));
     }
     return args;
 }
@@ -3366,7 +3369,7 @@ CmdPipelineBarrier2KHRArgs* CommandRecorder::RecordCmdPipelineBarrier2KHR(VkComm
     auto* args = Alloc<CmdPipelineBarrier2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pDependencyInfo) {
-        args->pDependencyInfo = CopyArray(pDependencyInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pDependencyInfo = CopyArray(pDependencyInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3400,7 +3403,7 @@ CmdCopyBuffer2KHRArgs* CommandRecorder::RecordCmdCopyBuffer2KHR(VkCommandBuffer 
     auto* args = Alloc<CmdCopyBuffer2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pCopyBufferInfo) {
-        args->pCopyBufferInfo = CopyArray(pCopyBufferInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pCopyBufferInfo = CopyArray(pCopyBufferInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3410,7 +3413,7 @@ CmdCopyImage2KHRArgs* CommandRecorder::RecordCmdCopyImage2KHR(VkCommandBuffer co
     auto* args = Alloc<CmdCopyImage2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pCopyImageInfo) {
-        args->pCopyImageInfo = CopyArray(pCopyImageInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pCopyImageInfo = CopyArray(pCopyImageInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3421,7 +3424,7 @@ CmdCopyBufferToImage2KHRArgs* CommandRecorder::RecordCmdCopyBufferToImage2KHR(
     args->commandBuffer = commandBuffer;
     if (pCopyBufferToImageInfo) {
         args->pCopyBufferToImageInfo =
-            CopyArray(pCopyBufferToImageInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pCopyBufferToImageInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3432,7 +3435,7 @@ CmdCopyImageToBuffer2KHRArgs* CommandRecorder::RecordCmdCopyImageToBuffer2KHR(
     args->commandBuffer = commandBuffer;
     if (pCopyImageToBufferInfo) {
         args->pCopyImageToBufferInfo =
-            CopyArray(pCopyImageToBufferInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pCopyImageToBufferInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3442,7 +3445,7 @@ CmdBlitImage2KHRArgs* CommandRecorder::RecordCmdBlitImage2KHR(VkCommandBuffer co
     auto* args = Alloc<CmdBlitImage2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pBlitImageInfo) {
-        args->pBlitImageInfo = CopyArray(pBlitImageInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pBlitImageInfo = CopyArray(pBlitImageInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3452,7 +3455,7 @@ CmdResolveImage2KHRArgs* CommandRecorder::RecordCmdResolveImage2KHR(VkCommandBuf
     auto* args = Alloc<CmdResolveImage2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pResolveImageInfo) {
-        args->pResolveImageInfo = CopyArray(pResolveImageInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pResolveImageInfo = CopyArray(pResolveImageInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3493,7 +3496,7 @@ CmdBindDescriptorSets2KHRArgs* CommandRecorder::RecordCmdBindDescriptorSets2KHR(
     args->commandBuffer = commandBuffer;
     if (pBindDescriptorSetsInfo) {
         args->pBindDescriptorSetsInfo =
-            CopyArray(pBindDescriptorSetsInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pBindDescriptorSetsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3503,7 +3506,7 @@ CmdPushConstants2KHRArgs* CommandRecorder::RecordCmdPushConstants2KHR(
     auto* args = Alloc<CmdPushConstants2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pPushConstantsInfo) {
-        args->pPushConstantsInfo = CopyArray(pPushConstantsInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pPushConstantsInfo = CopyArray(pPushConstantsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3514,7 +3517,7 @@ CmdPushDescriptorSet2KHRArgs* CommandRecorder::RecordCmdPushDescriptorSet2KHR(
     args->commandBuffer = commandBuffer;
     if (pPushDescriptorSetInfo) {
         args->pPushDescriptorSetInfo =
-            CopyArray(pPushDescriptorSetInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pPushDescriptorSetInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3525,7 +3528,7 @@ CmdPushDescriptorSetWithTemplate2KHRArgs* CommandRecorder::RecordCmdPushDescript
     args->commandBuffer = commandBuffer;
     if (pPushDescriptorSetWithTemplateInfo) {
         args->pPushDescriptorSetWithTemplateInfo =
-            CopyArray(pPushDescriptorSetWithTemplateInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pPushDescriptorSetWithTemplateInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3536,7 +3539,7 @@ CmdSetDescriptorBufferOffsets2EXTArgs* CommandRecorder::RecordCmdSetDescriptorBu
     args->commandBuffer = commandBuffer;
     if (pSetDescriptorBufferOffsetsInfo) {
         args->pSetDescriptorBufferOffsetsInfo =
-            CopyArray(pSetDescriptorBufferOffsetsInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pSetDescriptorBufferOffsetsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3548,7 +3551,7 @@ CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs* CommandRecorder::RecordCmdBindD
     args->commandBuffer = commandBuffer;
     if (pBindDescriptorBufferEmbeddedSamplersInfo) {
         args->pBindDescriptorBufferEmbeddedSamplersInfo =
-            CopyArray(pBindDescriptorBufferEmbeddedSamplersInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pBindDescriptorBufferEmbeddedSamplersInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3558,7 +3561,7 @@ CmdDebugMarkerBeginEXTArgs* CommandRecorder::RecordCmdDebugMarkerBeginEXT(
     auto* args = Alloc<CmdDebugMarkerBeginEXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pMarkerInfo) {
-        args->pMarkerInfo = CopyArray(pMarkerInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pMarkerInfo = CopyArray(pMarkerInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3574,7 +3577,7 @@ CmdDebugMarkerInsertEXTArgs* CommandRecorder::RecordCmdDebugMarkerInsertEXT(
     auto* args = Alloc<CmdDebugMarkerInsertEXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pMarkerInfo) {
-        args->pMarkerInfo = CopyArray(pMarkerInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pMarkerInfo = CopyArray(pMarkerInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3587,13 +3590,13 @@ CmdBindTransformFeedbackBuffersEXTArgs* CommandRecorder::RecordCmdBindTransformF
     args->firstBinding = firstBinding;
     args->bindingCount = bindingCount;
     if (pBuffers) {
-        args->pBuffers = CopyArray(pBuffers, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pBuffers = CopyArray(pBuffers, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pOffsets) {
-        args->pOffsets = CopyArray(pOffsets, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pOffsets = CopyArray(pOffsets, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pSizes) {
-        args->pSizes = CopyArray(pSizes, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pSizes = CopyArray(pSizes, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     return args;
 }
@@ -3607,11 +3610,11 @@ CmdBeginTransformFeedbackEXTArgs* CommandRecorder::RecordCmdBeginTransformFeedba
     args->counterBufferCount = counterBufferCount;
     if (pCounterBuffers) {
         args->pCounterBuffers =
-            CopyArray(pCounterBuffers, static_cast<uint64_t>(0U), static_cast<uint64_t>(counterBufferCount));
+            CopyArray(pCounterBuffers, static_cast<size_t>(0U), static_cast<size_t>(counterBufferCount));
     }
     if (pCounterBufferOffsets) {
         args->pCounterBufferOffsets =
-            CopyArray(pCounterBufferOffsets, static_cast<uint64_t>(0U), static_cast<uint64_t>(counterBufferCount));
+            CopyArray(pCounterBufferOffsets, static_cast<size_t>(0U), static_cast<size_t>(counterBufferCount));
     }
     return args;
 }
@@ -3625,11 +3628,11 @@ CmdEndTransformFeedbackEXTArgs* CommandRecorder::RecordCmdEndTransformFeedbackEX
     args->counterBufferCount = counterBufferCount;
     if (pCounterBuffers) {
         args->pCounterBuffers =
-            CopyArray(pCounterBuffers, static_cast<uint64_t>(0U), static_cast<uint64_t>(counterBufferCount));
+            CopyArray(pCounterBuffers, static_cast<size_t>(0U), static_cast<size_t>(counterBufferCount));
     }
     if (pCounterBufferOffsets) {
         args->pCounterBufferOffsets =
-            CopyArray(pCounterBufferOffsets, static_cast<uint64_t>(0U), static_cast<uint64_t>(counterBufferCount));
+            CopyArray(pCounterBufferOffsets, static_cast<size_t>(0U), static_cast<size_t>(counterBufferCount));
     }
     return args;
 }
@@ -3676,7 +3679,7 @@ CmdCuLaunchKernelNVXArgs* CommandRecorder::RecordCmdCuLaunchKernelNVX(VkCommandB
     auto* args = Alloc<CmdCuLaunchKernelNVXArgs>();
     args->commandBuffer = commandBuffer;
     if (pLaunchInfo) {
-        args->pLaunchInfo = CopyArray(pLaunchInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pLaunchInfo = CopyArray(pLaunchInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3717,7 +3720,7 @@ CmdBeginConditionalRenderingEXTArgs* CommandRecorder::RecordCmdBeginConditionalR
     args->commandBuffer = commandBuffer;
     if (pConditionalRenderingBegin) {
         args->pConditionalRenderingBegin =
-            CopyArray(pConditionalRenderingBegin, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pConditionalRenderingBegin, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3737,7 +3740,7 @@ CmdSetViewportWScalingNVArgs* CommandRecorder::RecordCmdSetViewportWScalingNV(
     args->viewportCount = viewportCount;
     if (pViewportWScalings) {
         args->pViewportWScalings =
-            CopyArray(pViewportWScalings, static_cast<uint64_t>(0U), static_cast<uint64_t>(viewportCount));
+            CopyArray(pViewportWScalings, static_cast<size_t>(0U), static_cast<size_t>(viewportCount));
     }
     return args;
 }
@@ -3752,7 +3755,7 @@ CmdSetDiscardRectangleEXTArgs* CommandRecorder::RecordCmdSetDiscardRectangleEXT(
     args->discardRectangleCount = discardRectangleCount;
     if (pDiscardRectangles) {
         args->pDiscardRectangles =
-            CopyArray(pDiscardRectangles, static_cast<uint64_t>(0U), static_cast<uint64_t>(discardRectangleCount));
+            CopyArray(pDiscardRectangles, static_cast<size_t>(0U), static_cast<size_t>(discardRectangleCount));
     }
     return args;
 }
@@ -3778,7 +3781,7 @@ CmdBeginDebugUtilsLabelEXTArgs* CommandRecorder::RecordCmdBeginDebugUtilsLabelEX
     auto* args = Alloc<CmdBeginDebugUtilsLabelEXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pLabelInfo) {
-        args->pLabelInfo = CopyArray(pLabelInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pLabelInfo = CopyArray(pLabelInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3794,7 +3797,7 @@ CmdInsertDebugUtilsLabelEXTArgs* CommandRecorder::RecordCmdInsertDebugUtilsLabel
     auto* args = Alloc<CmdInsertDebugUtilsLabelEXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pLabelInfo) {
-        args->pLabelInfo = CopyArray(pLabelInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pLabelInfo = CopyArray(pLabelInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3817,7 +3820,7 @@ CmdDispatchGraphAMDXArgs* CommandRecorder::RecordCmdDispatchGraphAMDX(VkCommandB
     args->commandBuffer = commandBuffer;
     args->scratch = scratch;
     if (pCountInfo) {
-        args->pCountInfo = CopyArray(pCountInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pCountInfo = CopyArray(pCountInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3830,7 +3833,7 @@ CmdDispatchGraphIndirectAMDXArgs* CommandRecorder::RecordCmdDispatchGraphIndirec
     args->commandBuffer = commandBuffer;
     args->scratch = scratch;
     if (pCountInfo) {
-        args->pCountInfo = CopyArray(pCountInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pCountInfo = CopyArray(pCountInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3852,8 +3855,7 @@ CmdSetSampleLocationsEXTArgs* CommandRecorder::RecordCmdSetSampleLocationsEXT(
     auto* args = Alloc<CmdSetSampleLocationsEXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pSampleLocationsInfo) {
-        args->pSampleLocationsInfo =
-            CopyArray(pSampleLocationsInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pSampleLocationsInfo = CopyArray(pSampleLocationsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -3877,7 +3879,7 @@ CmdSetViewportShadingRatePaletteNVArgs* CommandRecorder::RecordCmdSetViewportSha
     args->viewportCount = viewportCount;
     if (pShadingRatePalettes) {
         args->pShadingRatePalettes =
-            CopyArray(pShadingRatePalettes, static_cast<uint64_t>(0U), static_cast<uint64_t>(viewportCount));
+            CopyArray(pShadingRatePalettes, static_cast<size_t>(0U), static_cast<size_t>(viewportCount));
     }
     return args;
 }
@@ -3891,7 +3893,7 @@ CmdSetCoarseSampleOrderNVArgs* CommandRecorder::RecordCmdSetCoarseSampleOrderNV(
     args->customSampleOrderCount = customSampleOrderCount;
     if (pCustomSampleOrders) {
         args->pCustomSampleOrders =
-            CopyArray(pCustomSampleOrders, static_cast<uint64_t>(0U), static_cast<uint64_t>(customSampleOrderCount));
+            CopyArray(pCustomSampleOrders, static_cast<size_t>(0U), static_cast<size_t>(customSampleOrderCount));
     }
     return args;
 }
@@ -3903,7 +3905,7 @@ CmdBuildAccelerationStructureNVArgs* CommandRecorder::RecordCmdBuildAcceleration
     auto* args = Alloc<CmdBuildAccelerationStructureNVArgs>();
     args->commandBuffer = commandBuffer;
     if (pInfo) {
-        args->pInfo = CopyArray(pInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pInfo = CopyArray(pInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     args->instanceData = instanceData;
     args->instanceOffset = instanceOffset;
@@ -3959,8 +3961,8 @@ CmdWriteAccelerationStructuresPropertiesNVArgs* CommandRecorder::RecordCmdWriteA
     args->commandBuffer = commandBuffer;
     args->accelerationStructureCount = accelerationStructureCount;
     if (pAccelerationStructures) {
-        args->pAccelerationStructures = CopyArray(pAccelerationStructures, static_cast<uint64_t>(0U),
-                                                  static_cast<uint64_t>(accelerationStructureCount));
+        args->pAccelerationStructures = CopyArray(pAccelerationStructures, static_cast<size_t>(0U),
+                                                  static_cast<size_t>(accelerationStructureCount));
     }
     args->queryType = queryType;
     args->queryPool = queryPool;
@@ -4024,8 +4026,8 @@ CmdSetExclusiveScissorEnableNVArgs* CommandRecorder::RecordCmdSetExclusiveScisso
     args->firstExclusiveScissor = firstExclusiveScissor;
     args->exclusiveScissorCount = exclusiveScissorCount;
     if (pExclusiveScissorEnables) {
-        args->pExclusiveScissorEnables = CopyArray(pExclusiveScissorEnables, static_cast<uint64_t>(0U),
-                                                   static_cast<uint64_t>(exclusiveScissorCount));
+        args->pExclusiveScissorEnables =
+            CopyArray(pExclusiveScissorEnables, static_cast<size_t>(0U), static_cast<size_t>(exclusiveScissorCount));
     }
     return args;
 }
@@ -4040,7 +4042,7 @@ CmdSetExclusiveScissorNVArgs* CommandRecorder::RecordCmdSetExclusiveScissorNV(Vk
     args->exclusiveScissorCount = exclusiveScissorCount;
     if (pExclusiveScissors) {
         args->pExclusiveScissors =
-            CopyArray(pExclusiveScissors, static_cast<uint64_t>(0U), static_cast<uint64_t>(exclusiveScissorCount));
+            CopyArray(pExclusiveScissors, static_cast<size_t>(0U), static_cast<size_t>(exclusiveScissorCount));
     }
     return args;
 }
@@ -4058,7 +4060,7 @@ CmdSetPerformanceMarkerINTELArgs* CommandRecorder::RecordCmdSetPerformanceMarker
     auto* args = Alloc<CmdSetPerformanceMarkerINTELArgs>();
     args->commandBuffer = commandBuffer;
     if (pMarkerInfo) {
-        args->pMarkerInfo = CopyArray(pMarkerInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pMarkerInfo = CopyArray(pMarkerInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4068,7 +4070,7 @@ CmdSetPerformanceStreamMarkerINTELArgs* CommandRecorder::RecordCmdSetPerformance
     auto* args = Alloc<CmdSetPerformanceStreamMarkerINTELArgs>();
     args->commandBuffer = commandBuffer;
     if (pMarkerInfo) {
-        args->pMarkerInfo = CopyArray(pMarkerInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pMarkerInfo = CopyArray(pMarkerInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4078,7 +4080,7 @@ CmdSetPerformanceOverrideINTELArgs* CommandRecorder::RecordCmdSetPerformanceOver
     auto* args = Alloc<CmdSetPerformanceOverrideINTELArgs>();
     args->commandBuffer = commandBuffer;
     if (pOverrideInfo) {
-        args->pOverrideInfo = CopyArray(pOverrideInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pOverrideInfo = CopyArray(pOverrideInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4124,7 +4126,7 @@ CmdSetViewportWithCountEXTArgs* CommandRecorder::RecordCmdSetViewportWithCountEX
     args->commandBuffer = commandBuffer;
     args->viewportCount = viewportCount;
     if (pViewports) {
-        args->pViewports = CopyArray(pViewports, static_cast<uint64_t>(0U), static_cast<uint64_t>(viewportCount));
+        args->pViewports = CopyArray(pViewports, static_cast<size_t>(0U), static_cast<size_t>(viewportCount));
     }
     return args;
 }
@@ -4136,7 +4138,7 @@ CmdSetScissorWithCountEXTArgs* CommandRecorder::RecordCmdSetScissorWithCountEXT(
     args->commandBuffer = commandBuffer;
     args->scissorCount = scissorCount;
     if (pScissors) {
-        args->pScissors = CopyArray(pScissors, static_cast<uint64_t>(0U), static_cast<uint64_t>(scissorCount));
+        args->pScissors = CopyArray(pScissors, static_cast<size_t>(0U), static_cast<size_t>(scissorCount));
     }
     return args;
 }
@@ -4149,16 +4151,16 @@ CmdBindVertexBuffers2EXTArgs* CommandRecorder::RecordCmdBindVertexBuffers2EXT(
     args->firstBinding = firstBinding;
     args->bindingCount = bindingCount;
     if (pBuffers) {
-        args->pBuffers = CopyArray(pBuffers, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pBuffers = CopyArray(pBuffers, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pOffsets) {
-        args->pOffsets = CopyArray(pOffsets, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pOffsets = CopyArray(pOffsets, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pSizes) {
-        args->pSizes = CopyArray(pSizes, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pSizes = CopyArray(pSizes, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     if (pStrides) {
-        args->pStrides = CopyArray(pStrides, static_cast<uint64_t>(0U), static_cast<uint64_t>(bindingCount));
+        args->pStrides = CopyArray(pStrides, static_cast<size_t>(0U), static_cast<size_t>(bindingCount));
     }
     return args;
 }
@@ -4223,7 +4225,7 @@ CmdPreprocessGeneratedCommandsNVArgs* CommandRecorder::RecordCmdPreprocessGenera
     args->commandBuffer = commandBuffer;
     if (pGeneratedCommandsInfo) {
         args->pGeneratedCommandsInfo =
-            CopyArray(pGeneratedCommandsInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pGeneratedCommandsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4235,7 +4237,7 @@ CmdExecuteGeneratedCommandsNVArgs* CommandRecorder::RecordCmdExecuteGeneratedCom
     args->isPreprocessed = isPreprocessed;
     if (pGeneratedCommandsInfo) {
         args->pGeneratedCommandsInfo =
-            CopyArray(pGeneratedCommandsInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pGeneratedCommandsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4255,7 +4257,7 @@ CmdSetDepthBias2EXTArgs* CommandRecorder::RecordCmdSetDepthBias2EXT(VkCommandBuf
     auto* args = Alloc<CmdSetDepthBias2EXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pDepthBiasInfo) {
-        args->pDepthBiasInfo = CopyArray(pDepthBiasInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pDepthBiasInfo = CopyArray(pDepthBiasInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4265,7 +4267,7 @@ CmdCudaLaunchKernelNVArgs* CommandRecorder::RecordCmdCudaLaunchKernelNV(VkComman
     auto* args = Alloc<CmdCudaLaunchKernelNVArgs>();
     args->commandBuffer = commandBuffer;
     if (pLaunchInfo) {
-        args->pLaunchInfo = CopyArray(pLaunchInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pLaunchInfo = CopyArray(pLaunchInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4276,7 +4278,7 @@ CmdBindDescriptorBuffersEXTArgs* CommandRecorder::RecordCmdBindDescriptorBuffers
     args->commandBuffer = commandBuffer;
     args->bufferCount = bufferCount;
     if (pBindingInfos) {
-        args->pBindingInfos = CopyArray(pBindingInfos, static_cast<uint64_t>(0U), static_cast<uint64_t>(bufferCount));
+        args->pBindingInfos = CopyArray(pBindingInfos, static_cast<size_t>(0U), static_cast<size_t>(bufferCount));
     }
     return args;
 }
@@ -4291,10 +4293,10 @@ CmdSetDescriptorBufferOffsetsEXTArgs* CommandRecorder::RecordCmdSetDescriptorBuf
     args->firstSet = firstSet;
     args->setCount = setCount;
     if (pBufferIndices) {
-        args->pBufferIndices = CopyArray(pBufferIndices, static_cast<uint64_t>(0U), static_cast<uint64_t>(setCount));
+        args->pBufferIndices = CopyArray(pBufferIndices, static_cast<size_t>(0U), static_cast<size_t>(setCount));
     }
     if (pOffsets) {
-        args->pOffsets = CopyArray(pOffsets, static_cast<uint64_t>(0U), static_cast<uint64_t>(setCount));
+        args->pOffsets = CopyArray(pOffsets, static_cast<size_t>(0U), static_cast<size_t>(setCount));
     }
     return args;
 }
@@ -4329,13 +4331,13 @@ CmdSetVertexInputEXTArgs* CommandRecorder::RecordCmdSetVertexInputEXT(
     args->commandBuffer = commandBuffer;
     args->vertexBindingDescriptionCount = vertexBindingDescriptionCount;
     if (pVertexBindingDescriptions) {
-        args->pVertexBindingDescriptions = CopyArray(pVertexBindingDescriptions, static_cast<uint64_t>(0U),
-                                                     static_cast<uint64_t>(vertexBindingDescriptionCount));
+        args->pVertexBindingDescriptions = CopyArray(pVertexBindingDescriptions, static_cast<size_t>(0U),
+                                                     static_cast<size_t>(vertexBindingDescriptionCount));
     }
     args->vertexAttributeDescriptionCount = vertexAttributeDescriptionCount;
     if (pVertexAttributeDescriptions) {
-        args->pVertexAttributeDescriptions = CopyArray(pVertexAttributeDescriptions, static_cast<uint64_t>(0U),
-                                                       static_cast<uint64_t>(vertexAttributeDescriptionCount));
+        args->pVertexAttributeDescriptions = CopyArray(pVertexAttributeDescriptions, static_cast<size_t>(0U),
+                                                       static_cast<size_t>(vertexAttributeDescriptionCount));
     }
     return args;
 }
@@ -4403,7 +4405,7 @@ CmdSetColorWriteEnableEXTArgs* CommandRecorder::RecordCmdSetColorWriteEnableEXT(
     args->attachmentCount = attachmentCount;
     if (pColorWriteEnables) {
         args->pColorWriteEnables =
-            CopyArray(pColorWriteEnables, static_cast<uint64_t>(0U), static_cast<uint64_t>(attachmentCount));
+            CopyArray(pColorWriteEnables, static_cast<size_t>(0U), static_cast<size_t>(attachmentCount));
     }
     return args;
 }
@@ -4416,7 +4418,7 @@ CmdDrawMultiEXTArgs* CommandRecorder::RecordCmdDrawMultiEXT(VkCommandBuffer comm
     args->commandBuffer = commandBuffer;
     args->drawCount = drawCount;
     if (pVertexInfo) {
-        args->pVertexInfo = CopyArray(pVertexInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(drawCount));
+        args->pVertexInfo = CopyArray(pVertexInfo, static_cast<size_t>(0U), static_cast<size_t>(drawCount));
     }
     args->instanceCount = instanceCount;
     args->firstInstance = firstInstance;
@@ -4431,13 +4433,13 @@ CmdDrawMultiIndexedEXTArgs* CommandRecorder::RecordCmdDrawMultiIndexedEXT(
     args->commandBuffer = commandBuffer;
     args->drawCount = drawCount;
     if (pIndexInfo) {
-        args->pIndexInfo = CopyArray(pIndexInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(drawCount));
+        args->pIndexInfo = CopyArray(pIndexInfo, static_cast<size_t>(0U), static_cast<size_t>(drawCount));
     }
     args->instanceCount = instanceCount;
     args->firstInstance = firstInstance;
     args->stride = stride;
     if (pVertexOffset) {
-        args->pVertexOffset = CopyArray(pVertexOffset, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pVertexOffset = CopyArray(pVertexOffset, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4448,7 +4450,7 @@ CmdBuildMicromapsEXTArgs* CommandRecorder::RecordCmdBuildMicromapsEXT(VkCommandB
     args->commandBuffer = commandBuffer;
     args->infoCount = infoCount;
     if (pInfos) {
-        args->pInfos = CopyArray(pInfos, static_cast<uint64_t>(0U), static_cast<uint64_t>(infoCount));
+        args->pInfos = CopyArray(pInfos, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
     }
     return args;
 }
@@ -4458,7 +4460,7 @@ CmdCopyMicromapEXTArgs* CommandRecorder::RecordCmdCopyMicromapEXT(VkCommandBuffe
     auto* args = Alloc<CmdCopyMicromapEXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pInfo) {
-        args->pInfo = CopyArray(pInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pInfo = CopyArray(pInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4468,7 +4470,7 @@ CmdCopyMicromapToMemoryEXTArgs* CommandRecorder::RecordCmdCopyMicromapToMemoryEX
     auto* args = Alloc<CmdCopyMicromapToMemoryEXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pInfo) {
-        args->pInfo = CopyArray(pInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pInfo = CopyArray(pInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4478,7 +4480,7 @@ CmdCopyMemoryToMicromapEXTArgs* CommandRecorder::RecordCmdCopyMemoryToMicromapEX
     auto* args = Alloc<CmdCopyMemoryToMicromapEXTArgs>();
     args->commandBuffer = commandBuffer;
     if (pInfo) {
-        args->pInfo = CopyArray(pInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pInfo = CopyArray(pInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4490,7 +4492,7 @@ CmdWriteMicromapsPropertiesEXTArgs* CommandRecorder::RecordCmdWriteMicromapsProp
     args->commandBuffer = commandBuffer;
     args->micromapCount = micromapCount;
     if (pMicromaps) {
-        args->pMicromaps = CopyArray(pMicromaps, static_cast<uint64_t>(0U), static_cast<uint64_t>(micromapCount));
+        args->pMicromaps = CopyArray(pMicromaps, static_cast<size_t>(0U), static_cast<size_t>(micromapCount));
     }
     args->queryType = queryType;
     args->queryPool = queryPool;
@@ -4542,7 +4544,7 @@ CmdCopyMemoryToImageIndirectNVArgs* CommandRecorder::RecordCmdCopyMemoryToImageI
     args->dstImageLayout = dstImageLayout;
     if (pImageSubresources) {
         args->pImageSubresources =
-            CopyArray(pImageSubresources, static_cast<uint64_t>(0U), static_cast<uint64_t>(copyCount));
+            CopyArray(pImageSubresources, static_cast<size_t>(0U), static_cast<size_t>(copyCount));
     }
     return args;
 }
@@ -4554,8 +4556,8 @@ CmdDecompressMemoryNVArgs* CommandRecorder::RecordCmdDecompressMemoryNV(
     args->commandBuffer = commandBuffer;
     args->decompressRegionCount = decompressRegionCount;
     if (pDecompressMemoryRegions) {
-        args->pDecompressMemoryRegions = CopyArray(pDecompressMemoryRegions, static_cast<uint64_t>(0U),
-                                                   static_cast<uint64_t>(decompressRegionCount));
+        args->pDecompressMemoryRegions =
+            CopyArray(pDecompressMemoryRegions, static_cast<size_t>(0U), static_cast<size_t>(decompressRegionCount));
     }
     return args;
 }
@@ -4611,8 +4613,7 @@ CmdSetSampleMaskEXTArgs* CommandRecorder::RecordCmdSetSampleMaskEXT(VkCommandBuf
     args->commandBuffer = commandBuffer;
     args->samples = samples;
     if (pSampleMask) {
-        args->pSampleMask =
-            CopyArray(pSampleMask, static_cast<uint64_t>(0U), static_cast<uint64_t>((samples + 31) / 32));
+        args->pSampleMask = CopyArray(pSampleMask, static_cast<size_t>(0U), static_cast<size_t>((samples + 31) / 32));
     }
     return args;
 }
@@ -4651,7 +4652,7 @@ CmdSetColorBlendEnableEXTArgs* CommandRecorder::RecordCmdSetColorBlendEnableEXT(
     args->attachmentCount = attachmentCount;
     if (pColorBlendEnables) {
         args->pColorBlendEnables =
-            CopyArray(pColorBlendEnables, static_cast<uint64_t>(0U), static_cast<uint64_t>(attachmentCount));
+            CopyArray(pColorBlendEnables, static_cast<size_t>(0U), static_cast<size_t>(attachmentCount));
     }
     return args;
 }
@@ -4665,7 +4666,7 @@ CmdSetColorBlendEquationEXTArgs* CommandRecorder::RecordCmdSetColorBlendEquation
     args->attachmentCount = attachmentCount;
     if (pColorBlendEquations) {
         args->pColorBlendEquations =
-            CopyArray(pColorBlendEquations, static_cast<uint64_t>(0U), static_cast<uint64_t>(attachmentCount));
+            CopyArray(pColorBlendEquations, static_cast<size_t>(0U), static_cast<size_t>(attachmentCount));
     }
     return args;
 }
@@ -4679,7 +4680,7 @@ CmdSetColorWriteMaskEXTArgs* CommandRecorder::RecordCmdSetColorWriteMaskEXT(
     args->attachmentCount = attachmentCount;
     if (pColorWriteMasks) {
         args->pColorWriteMasks =
-            CopyArray(pColorWriteMasks, static_cast<uint64_t>(0U), static_cast<uint64_t>(attachmentCount));
+            CopyArray(pColorWriteMasks, static_cast<size_t>(0U), static_cast<size_t>(attachmentCount));
     }
     return args;
 }
@@ -4741,7 +4742,7 @@ CmdSetColorBlendAdvancedEXTArgs* CommandRecorder::RecordCmdSetColorBlendAdvanced
     args->attachmentCount = attachmentCount;
     if (pColorBlendAdvanced) {
         args->pColorBlendAdvanced =
-            CopyArray(pColorBlendAdvanced, static_cast<uint64_t>(0U), static_cast<uint64_t>(attachmentCount));
+            CopyArray(pColorBlendAdvanced, static_cast<size_t>(0U), static_cast<size_t>(attachmentCount));
     }
     return args;
 }
@@ -4795,7 +4796,7 @@ CmdSetViewportSwizzleNVArgs* CommandRecorder::RecordCmdSetViewportSwizzleNV(
     args->viewportCount = viewportCount;
     if (pViewportSwizzles) {
         args->pViewportSwizzles =
-            CopyArray(pViewportSwizzles, static_cast<uint64_t>(0U), static_cast<uint64_t>(viewportCount));
+            CopyArray(pViewportSwizzles, static_cast<size_t>(0U), static_cast<size_t>(viewportCount));
     }
     return args;
 }
@@ -4838,8 +4839,8 @@ CmdSetCoverageModulationTableNVArgs* CommandRecorder::RecordCmdSetCoverageModula
     args->commandBuffer = commandBuffer;
     args->coverageModulationTableCount = coverageModulationTableCount;
     if (pCoverageModulationTable) {
-        args->pCoverageModulationTable = CopyArray(pCoverageModulationTable, static_cast<uint64_t>(0U),
-                                                   static_cast<uint64_t>(coverageModulationTableCount));
+        args->pCoverageModulationTable = CopyArray(pCoverageModulationTable, static_cast<size_t>(0U),
+                                                   static_cast<size_t>(coverageModulationTableCount));
     }
     return args;
 }
@@ -4874,7 +4875,7 @@ CmdOpticalFlowExecuteNVArgs* CommandRecorder::RecordCmdOpticalFlowExecuteNV(
     args->commandBuffer = commandBuffer;
     args->session = session;
     if (pExecuteInfo) {
-        args->pExecuteInfo = CopyArray(pExecuteInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pExecuteInfo = CopyArray(pExecuteInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4886,10 +4887,10 @@ CmdBindShadersEXTArgs* CommandRecorder::RecordCmdBindShadersEXT(VkCommandBuffer 
     args->commandBuffer = commandBuffer;
     args->stageCount = stageCount;
     if (pStages) {
-        args->pStages = CopyArray(pStages, static_cast<uint64_t>(0U), static_cast<uint64_t>(stageCount));
+        args->pStages = CopyArray(pStages, static_cast<size_t>(0U), static_cast<size_t>(stageCount));
     }
     if (pShaders) {
-        args->pShaders = CopyArray(pShaders, static_cast<uint64_t>(0U), static_cast<uint64_t>(stageCount));
+        args->pShaders = CopyArray(pShaders, static_cast<size_t>(0U), static_cast<size_t>(stageCount));
     }
     return args;
 }
@@ -4909,11 +4910,10 @@ CmdBuildAccelerationStructuresKHRArgs* CommandRecorder::RecordCmdBuildAccelerati
     args->commandBuffer = commandBuffer;
     args->infoCount = infoCount;
     if (pInfos) {
-        args->pInfos = CopyArray(pInfos, static_cast<uint64_t>(0U), static_cast<uint64_t>(infoCount));
+        args->pInfos = CopyArray(pInfos, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
     }
     if (ppBuildRangeInfos) {
-        args->ppBuildRangeInfos =
-            CopyArray(ppBuildRangeInfos, static_cast<uint64_t>(0U), static_cast<uint64_t>(infoCount));
+        args->ppBuildRangeInfos = CopyArray(ppBuildRangeInfos, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
     }
     return args;
 }
@@ -4926,19 +4926,18 @@ CmdBuildAccelerationStructuresIndirectKHRArgs* CommandRecorder::RecordCmdBuildAc
     args->commandBuffer = commandBuffer;
     args->infoCount = infoCount;
     if (pInfos) {
-        args->pInfos = CopyArray(pInfos, static_cast<uint64_t>(0U), static_cast<uint64_t>(infoCount));
+        args->pInfos = CopyArray(pInfos, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
     }
     if (pIndirectDeviceAddresses) {
         args->pIndirectDeviceAddresses =
-            CopyArray(pIndirectDeviceAddresses, static_cast<uint64_t>(0U), static_cast<uint64_t>(infoCount));
+            CopyArray(pIndirectDeviceAddresses, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
     }
     if (pIndirectStrides) {
-        args->pIndirectStrides =
-            CopyArray(pIndirectStrides, static_cast<uint64_t>(0U), static_cast<uint64_t>(infoCount));
+        args->pIndirectStrides = CopyArray(pIndirectStrides, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
     }
     if (ppMaxPrimitiveCounts) {
         args->ppMaxPrimitiveCounts =
-            CopyArray(ppMaxPrimitiveCounts, static_cast<uint64_t>(0U), static_cast<uint64_t>(infoCount));
+            CopyArray(ppMaxPrimitiveCounts, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
     }
     return args;
 }
@@ -4948,7 +4947,7 @@ CmdCopyAccelerationStructureKHRArgs* CommandRecorder::RecordCmdCopyAccelerationS
     auto* args = Alloc<CmdCopyAccelerationStructureKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pInfo) {
-        args->pInfo = CopyArray(pInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pInfo = CopyArray(pInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4958,7 +4957,7 @@ CmdCopyAccelerationStructureToMemoryKHRArgs* CommandRecorder::RecordCmdCopyAccel
     auto* args = Alloc<CmdCopyAccelerationStructureToMemoryKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pInfo) {
-        args->pInfo = CopyArray(pInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pInfo = CopyArray(pInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4968,7 +4967,7 @@ CmdCopyMemoryToAccelerationStructureKHRArgs* CommandRecorder::RecordCmdCopyMemor
     auto* args = Alloc<CmdCopyMemoryToAccelerationStructureKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pInfo) {
-        args->pInfo = CopyArray(pInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        args->pInfo = CopyArray(pInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }
@@ -4981,8 +4980,8 @@ CmdWriteAccelerationStructuresPropertiesKHRArgs* CommandRecorder::RecordCmdWrite
     args->commandBuffer = commandBuffer;
     args->accelerationStructureCount = accelerationStructureCount;
     if (pAccelerationStructures) {
-        args->pAccelerationStructures = CopyArray(pAccelerationStructures, static_cast<uint64_t>(0U),
-                                                  static_cast<uint64_t>(accelerationStructureCount));
+        args->pAccelerationStructures = CopyArray(pAccelerationStructures, static_cast<size_t>(0U),
+                                                  static_cast<size_t>(accelerationStructureCount));
     }
     args->queryType = queryType;
     args->queryPool = queryPool;
@@ -5000,19 +4999,19 @@ CmdTraceRaysKHRArgs* CommandRecorder::RecordCmdTraceRaysKHR(
     args->commandBuffer = commandBuffer;
     if (pRaygenShaderBindingTable) {
         args->pRaygenShaderBindingTable =
-            CopyArray(pRaygenShaderBindingTable, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pRaygenShaderBindingTable, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pMissShaderBindingTable) {
         args->pMissShaderBindingTable =
-            CopyArray(pMissShaderBindingTable, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pMissShaderBindingTable, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pHitShaderBindingTable) {
         args->pHitShaderBindingTable =
-            CopyArray(pHitShaderBindingTable, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pHitShaderBindingTable, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pCallableShaderBindingTable) {
         args->pCallableShaderBindingTable =
-            CopyArray(pCallableShaderBindingTable, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pCallableShaderBindingTable, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     args->width = width;
     args->height = height;
@@ -5029,19 +5028,19 @@ CmdTraceRaysIndirectKHRArgs* CommandRecorder::RecordCmdTraceRaysIndirectKHR(
     args->commandBuffer = commandBuffer;
     if (pRaygenShaderBindingTable) {
         args->pRaygenShaderBindingTable =
-            CopyArray(pRaygenShaderBindingTable, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pRaygenShaderBindingTable, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pMissShaderBindingTable) {
         args->pMissShaderBindingTable =
-            CopyArray(pMissShaderBindingTable, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pMissShaderBindingTable, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pHitShaderBindingTable) {
         args->pHitShaderBindingTable =
-            CopyArray(pHitShaderBindingTable, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pHitShaderBindingTable, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     if (pCallableShaderBindingTable) {
         args->pCallableShaderBindingTable =
-            CopyArray(pCallableShaderBindingTable, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            CopyArray(pCallableShaderBindingTable, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     args->indirectDeviceAddress = indirectDeviceAddress;
     return args;

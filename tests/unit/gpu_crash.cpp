@@ -78,7 +78,7 @@ TEST_F(GpuCrash, CopyCrash) {
     try {
         queue_.submit(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -124,7 +124,7 @@ TEST_F(GpuCrash, ShaderCrash) {
     try {
         queue_.submit(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -165,7 +165,7 @@ TEST_F(GpuCrash, InfiniteLoop) {
     try {
         queue_.submit(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -215,7 +215,7 @@ TEST_F(GpuCrash, InfiniteLoopSubmit2) {
     try {
         queue_.submit2(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -260,7 +260,7 @@ TEST_F(GpuCrash, HangHostEvent) {
     try {
         queue_.submit(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -340,7 +340,7 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     try {
         queue_.submit(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -404,7 +404,7 @@ TEST_F(GpuCrash, VendorInfo) {
     auto fault_info = vku::InitStruct<VkDeviceFaultInfoEXT>();
     fault_info.pVendorInfos = vendor_infos.data();
     fault_info.pVendorBinaryData = (void *)vendor_binary;
-    vk::DeviceFaultCountsEXT counts(0, vendor_infos.size(), strlen(vendor_binary), &fault_info);
+    vk::DeviceFaultCountsEXT counts(0, static_cast<uint32_t>(vendor_infos.size()), strlen(vendor_binary), &fault_info);
     vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
     cmd_buff_.beginDebugUtilsLabelEXT(label);
 
@@ -421,7 +421,7 @@ TEST_F(GpuCrash, VendorInfo) {
     try {
         queue_.submit(submit_info);
         queue_.waitIdle();
-    } catch (vk::SystemError &err) {
+    } catch (vk::SystemError &) {
         hang_detected = true;
     }
     monitor_.VerifyFound();
@@ -441,13 +441,13 @@ TEST_F(GpuCrash, VendorInfo) {
         ASSERT_FALSE(dump_file.devices[0].fault_info->vendor_binary_file.empty());
         std::filesystem::path binary_path =
             dump_file.full_path.parent_path() / dump_file.devices[0].fault_info->vendor_binary_file;
-        auto file_size = std::filesystem::file_size(binary_path);
+        auto file_size = static_cast<size_t>(std::filesystem::file_size(binary_path));
         ASSERT_EQ(file_size, strlen(vendor_binary));
 
         std::vector<char> data(file_size);
         std::ifstream binary_file(binary_path, std::ios_base::in | std::ios_base::binary);
 
-        binary_file.read(data.data(), data.size());
+        binary_file.read(data.data(), std::streamsize(file_size));
         ASSERT_EQ(memcmp(data.data(), vendor_binary, file_size), 0);
     }
 }

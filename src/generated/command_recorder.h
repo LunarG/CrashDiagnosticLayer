@@ -922,7 +922,7 @@ class CommandRecorder {
         return new (m_allocator.Alloc(sizeof(T))) T;
     }
     template <typename T>
-    T* CopyArray(const T* src, uint64_t start_index, uint64_t count) {
+    T* CopyArray(const T* src, size_t start_index, size_t count) {
         auto ptr = reinterpret_cast<T*>(m_allocator.Alloc(sizeof(T) * count));
         std::memcpy(ptr, src, sizeof(T) * count);
         return ptr;

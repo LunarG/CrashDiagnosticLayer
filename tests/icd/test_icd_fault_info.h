@@ -50,8 +50,9 @@ struct FaultInfo {
         for (uint32_t i = 0; i < fault_counts->vendorInfoCount; i++) {
             vendor_infos.push_back(fault_info->pVendorInfos[i]);
         }
-        vendor_binary.resize(fault_counts->vendorBinarySize);
-        memcpy(vendor_binary.data(), fault_info->pVendorBinaryData, fault_counts->vendorBinarySize);
+        vendor_binary.resize(static_cast<size_t>(fault_counts->vendorBinarySize));
+        memcpy(vendor_binary.data(), fault_info->pVendorBinaryData,
+               static_cast<size_t>(fault_counts->vendorBinarySize));
     }
 
     std::string description;

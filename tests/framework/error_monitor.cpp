@@ -52,7 +52,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
 #endif
 
 ErrorMonitor::ErrorMonitor(const char *prefix, bool print_all_errors)
-    : msg_prefix_(prefix),
+    :
 #if !defined(VK_USE_PLATFORM_ANDROID_KHR)
       debug_create_info_({},
                          SeverityBits::eError | SeverityBits::eWarning | SeverityBits::eInfo | SeverityBits::eVerbose,
@@ -61,6 +61,7 @@ ErrorMonitor::ErrorMonitor(const char *prefix, bool print_all_errors)
       debug_create_info_({}, Severity::eError | Severity::eWarning | Severity::eInfo | Severity::eVerbose,
                          DebugCallback, this),
 #endif
+      msg_prefix_(prefix),
       print_all_errors_(print_all_errors) {
 }
 void ErrorMonitor::MonitorReset() {

@@ -189,7 +189,7 @@ MarkerDataPtr BufferMarkerMgr::AllocateData(uint32_t num_words) {
         assert(marker_buffer_index < marker_buffers_.size());
         if (num_words == 2) {
             // Make sure current_marker_index_ is even
-            current_marker_index_ = ((current_marker_index_ + 1) & -2);
+            current_marker_index_ = ((current_marker_index_ + 1u) & ~3u);
         }
     }
     auto& marker_buffer = marker_buffers_.back();

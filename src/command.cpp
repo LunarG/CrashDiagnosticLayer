@@ -362,7 +362,9 @@ class CommandBufferInternalState {
     // Print the relevant state for the command.
     bool Print(const Command& cmd, YAML::Emitter& os, const ObjectInfoDB& name_resolver);
 
-    const Pipeline* GetPipeline(VkPipelineBindPoint bind_point) const { return bound_pipelines_[bind_point]; }
+    const Pipeline* GetPipeline(VkPipelineBindPoint bind_point) const {
+        return bound_pipelines_[static_cast<uint32_t>(bind_point)];
+    }
 
    private:
     static constexpr int kNumBindPoints = 2;  // graphics, compute
@@ -451,14 +453,15 @@ bool CommandBufferInternalState::Print(const Command& cmd, YAML::Emitter& os, co
         os << YAML::Key << "internalState" << YAML::Value << YAML::BeginMap;
 
         os << YAML::Key << "pipeline" << YAML::Value;
-        if (bound_pipelines_[bind_point]) {
-            bound_pipelines_[bind_point]->Print(os, name_resolver);
+        const auto& pipeline = bound_pipelines_[static_cast<uint32_t>(bind_point)];
+        if (pipeline) {
+            pipeline->Print(os, name_resolver);
         } else {
             os << YAML::BeginMap << YAML::EndMap;
         }
 
         os << YAML::Key << "descriptorSets" << YAML::Value;
-        bound_descriptors_[bind_point].Print(device_, os);
+        bound_descriptors_[static_cast<uint32_t>(bind_point)].Print(device_, os);
         os << YAML::EndMap;
         return true;
     }
@@ -485,13 +488,14 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
             if (dump_cbs == DumpCommands::kRunning) {
                 return;
             }
+            break;
         default:
             if (dump_cbs != DumpCommands::kAll) {
                 return;
             }
+            break;
     }
 
-    auto num_commands = tracker_.GetCommands().size();
     os << YAML::BeginMap << YAML::Comment("CommandBuffer");
     os << YAML::Key << "state";
     os << YAML::Value << PrintCommandBufferState(cb_state);

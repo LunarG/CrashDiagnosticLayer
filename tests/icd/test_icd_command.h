@@ -33,7 +33,7 @@ class Queue;
 
 class CommandBuffer {
    public:
-    CommandBuffer(VkCommandBufferLevel lvl) : level_(lvl) { set_loader_magic_value(&loader_data_); }
+    CommandBuffer(VkCommandBufferLevel lvl) { set_loader_magic_value(&loader_data_); }
     VkResult Execute(Queue& queue);
     VkResult Reset(VkCommandBufferResetFlags flags);
 
@@ -49,7 +49,6 @@ class CommandBuffer {
     VkResult ExecuteCommands(Queue& queue, const CmdExecuteCommandsArgs& args);
 
     VK_LOADER_DATA loader_data_;  // MUST be first data member
-    VkCommandBufferLevel level_;
     CommandTracker tracker_;
     bool in_hang_region_{false};
     std::string fault_label_;
@@ -65,8 +64,6 @@ class CommandPool {
     void Free(uint32_t cb_count, const VkCommandBuffer* cbs);
 
    private:
-    VkCommandPoolCreateFlags flags_;
-    uint32_t qfi_;
     std::vector<std::unique_ptr<CommandBuffer>> command_buffers_;
 };
 
