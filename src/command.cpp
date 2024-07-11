@@ -617,6 +617,18 @@ void CommandBuffer::PostCmdBeginRendering(VkCommandBuffer commandBuffer, const V
     if (sync_after_commands_) {
         current_rendering_info_.emplace(pRenderingInfo);
         rendering_active_ = true;
+        for (uint32_t i = 0; i < current_rendering_info_->colorAttachmentCount; i++) {
+            current_rendering_info_->pColorAttachments[i].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+            current_rendering_info_->pColorAttachments[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        }
+        if (current_rendering_info_->pDepthAttachment) {
+            current_rendering_info_->pDepthAttachment->loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+            current_rendering_info_->pDepthAttachment->storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        }
+        if (current_rendering_info_->pStencilAttachment) {
+            current_rendering_info_->pStencilAttachment->loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+            current_rendering_info_->pStencilAttachment->storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        }
     }
 }
 
