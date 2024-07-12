@@ -196,14 +196,12 @@ The installation depends on the target platform
 For UNIX operating systems:
 
 - *install_dir*`/lib` : The Vulkan Crash Diagnostic Layer library
-- *install_dir*`/share/vulkan/implicit_layer.d` : The VkLayer_CDL.json manifest
-
-`NOTE`: Android doesn't use json manifests for Vulkan layers.
+- *install_dir*`/share/vulkan/explicit_layer.d` : The layer json manifest
 
 For WIN32:
 
 - *install_dir*`/bin` : The Vulkan Crash Diagnostic Layer library
-- *install_dir*`/bin` : The VkLayer_CDL.json manifest
+- *install_dir*`/bin` : The layer json manifest
 
 ### Software Installation
 
