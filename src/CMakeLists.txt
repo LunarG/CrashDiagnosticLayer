@@ -43,8 +43,8 @@ target_sources(crash_diagnostic PRIVATE
     generated/command_tracker.cpp
     generated/dispatch.h
     generated/dispatch.cpp
-    generated/layer_base.h
-    generated/layer_base.cpp
+    cdl.h
+    cdl.cpp
     command.h
     command.cpp
     command_buffer_tracker.h
@@ -55,10 +55,10 @@ target_sources(crash_diagnostic PRIVATE
     descriptor_set.cpp
     device.h
     device.cpp
-    cdl.h
-    cdl.cpp
     checkpoint.h
     checkpoint.cpp
+    layer_base.h
+    layer_base.cpp
     linear_allocator.h
     logger.h
     logger.cpp

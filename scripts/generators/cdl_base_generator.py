@@ -16,17 +16,6 @@
 
 from generators.base_generator import BaseGenerator
 
-implemented_instance_extensions = [
-    'VK_EXT_debug_report',
-    'VK_EXT_debug_utils',
-    'VK_EXT_layer_settings',
-]
-
-implemented_device_extensions = [
-    'VK_EXT_debug_marker',
-    'VK_EXT_tooling_info',
-]
-
 custom_intercept_commands = [
     'vkCreateInstance',
     'vkDestroyInstance',
@@ -129,19 +118,12 @@ intercept_functions = [
 ]
 
 namespace = 'crash_diagnostic_layer'
-layer_name = 'VK_LAYER_LUNARG_crash_diagnostic'
-layer_version = '1'
-layer_description = 'Crash Diagnostic Layer is a crash/hang debugging tool ' \
-                    'that helps determines GPU progress in a Vulkan application.'
 
 #
 # CdlBaseOutputGenerator - Base Generator for the whole Crash Diagnostic Layer
 class CdlBaseOutputGenerator(BaseGenerator):
     def __init__(self):
         BaseGenerator.__init__(self)
-
-        self.implemented_instance_extensions = implemented_instance_extensions
-        self.implemented_device_extensions = implemented_device_extensions
         self.custom_intercept_commands = custom_intercept_commands
 
     def GenerateFileStart(self, filename):
@@ -228,15 +210,6 @@ class CdlBaseOutputGenerator(BaseGenerator):
 
     def CommandHasReturn(self, command):
         return command.returnType is not None and command.returnType != 'void'
-
-    def GetLayerName(self):
-        return layer_name
-
-    def GetLayerVersion(self):
-        return layer_version
-
-    def GetLayerDescription(self):
-        return layer_description
 
     def GetDefaultReturnValue(self, return_type):
         return_string = ''

@@ -130,11 +130,11 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
             'generator': InterceptContextGenerator,
             'genCombined': True,
         },
-        'layer_base.h' : {
+        'layer_base.h.inc' : {
             'generator': LayerBaseOutputGenerator,
             'genCombined': True,
         },
-        'layer_base.cpp' : {
+        'layer_base.cpp.inc' : {
             'generator': LayerBaseOutputGenerator,
             'genCombined': True,
         },
