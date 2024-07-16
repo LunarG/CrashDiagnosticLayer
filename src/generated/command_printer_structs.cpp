@@ -27663,71 +27663,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeomet
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildGeometryInfoKHR &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "type";
-    // type -> Field -> VkAccelerationStructureTypeKHR
-    os << YAML::Value << t.type;
-    os << YAML::Key << "flags";
-    // flags -> Field -> VkBuildAccelerationStructureFlagsKHR
-    os << YAML::Value << t.flags;
-    os << YAML::Key << "mode";
-    // mode -> Field -> VkBuildAccelerationStructureModeKHR
-    os << YAML::Value << t.mode;
-    os << YAML::Key << "srcAccelerationStructure";
-    // srcAccelerationStructure -> Field -> VkAccelerationStructureKHR
-    os << YAML::Value << t.srcAccelerationStructure;
-    os << YAML::Key << "dstAccelerationStructure";
-    // dstAccelerationStructure -> Field -> VkAccelerationStructureKHR
-    os << YAML::Value << t.dstAccelerationStructure;
-    os << YAML::Key << "geometryCount";
-    // geometryCount -> Field -> uint32_t
-    os << YAML::Value << t.geometryCount;
-    os << YAML::Key << "pGeometries";
-    // pGeometries -> Field -> ConstDynamicArray(VkAccelerationStructureGeometryKHR)
-    if (t.geometryCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkAccelerationStructureGeometryKHR");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(t.geometryCount); ++i) {
-                os << t.pGeometries[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "ppGeometries";
-    // ppGeometries -> Field -> ConstDynamicArray(VkAccelerationStructureGeometryKHR)
-    if (t.geometryCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkAccelerationStructureGeometryKHR");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(t.geometryCount); ++i) {
-                os << *(t.ppGeometries)[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "scratchData";
-    // scratchData -> Field -> VkDeviceOrHostAddressKHR
-    os << YAML::Value << t.scratchData;
-    os << YAML::EndMap;
-    return os;
-}
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureCreateInfoKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -28483,6 +28418,76 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSet &t) {
         default:
             os << YAML::Key << "Unknown Descriptor Type" << YAML::Value << t.descriptorType;
     }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildGeometryInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "type";
+    // type -> Field -> VkAccelerationStructureTypeKHR
+    os << YAML::Value << t.type;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkBuildAccelerationStructureFlagsKHR
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "mode";
+    // mode -> Field -> VkBuildAccelerationStructureModeKHR
+    os << YAML::Value << t.mode;
+    os << YAML::Key << "srcAccelerationStructure";
+    // srcAccelerationStructure -> Field -> VkAccelerationStructureKHR
+    os << YAML::Value << t.srcAccelerationStructure;
+    os << YAML::Key << "dstAccelerationStructure";
+    // dstAccelerationStructure -> Field -> VkAccelerationStructureKHR
+    os << YAML::Value << t.dstAccelerationStructure;
+    os << YAML::Key << "geometryCount";
+    // geometryCount -> Field -> uint32_t
+    os << YAML::Value << t.geometryCount;
+    // This part needs to be manual because we don't have an easy way to automatically handle
+    // the "geometryCount refers to either pGeometries or ppGeometries" logic.
+    if (t.pGeometries) {
+        os << YAML::Key << "pGeometries";
+        // pGeometries -> Field -> ConstDynamicArray(VkAccelerationStructureGeometryKHR)
+        if (t.geometryCount == 0) {
+            os << YAML::Value << "nullptr";
+        } else {
+            os << YAML::Value;
+            {
+                os << YAML::Comment("VkAccelerationStructureGeometryKHR");
+                os << YAML::BeginSeq;
+                for (uint64_t i = 0; i < uint64_t(t.geometryCount); ++i) {
+                    os << t.pGeometries[i];
+                }  // for i
+                os << YAML::EndSeq;
+            }
+        }
+    } else if (t.ppGeometries) {
+        os << YAML::Key << "ppGeometries";
+        // ppGeometries -> Field -> ConstDynamicArray(VkAccelerationStructureGeometryKHR)
+        if (t.geometryCount == 0) {
+            os << YAML::Value << "nullptr";
+        } else {
+            os << YAML::Value;
+            {
+                os << YAML::Comment("VkAccelerationStructureGeometryKHR");
+                os << YAML::BeginSeq;
+                for (uint64_t i = 0; i < uint64_t(t.geometryCount); ++i) {
+                    os << *(t.ppGeometries)[i];
+                }  // for i
+                os << YAML::EndSeq;
+            }
+        }
+    }
+    os << YAML::Key << "scratchData";
+    // scratchData -> Field -> VkDeviceOrHostAddressKHR
+    os << YAML::Value << t.scratchData;
     os << YAML::EndMap;
     return os;
 }
