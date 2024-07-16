@@ -1563,7 +1563,7 @@ void CommandBuffer::PreCmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer ra
                             hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride,
                             callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride,
                             width, height, depth);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer,
                                        VkDeviceSize raygenShaderBindingOffset, VkBuffer missShaderBindingTableBuffer,
@@ -1573,7 +1573,7 @@ void CommandBuffer::PostCmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer r
                                        VkDeviceSize callableShaderBindingOffset,
                                        VkDeviceSize callableShaderBindingStride, uint32_t width, uint32_t height,
                                        uint32_t depth) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdWriteAccelerationStructuresPropertiesNV(
@@ -2490,12 +2490,12 @@ void CommandBuffer::PreCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
     tracker_.CmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdBuildAccelerationStructuresIndirectKHR(
@@ -2566,7 +2566,7 @@ void CommandBuffer::PreCmdTraceRaysKHR(VkCommandBuffer commandBuffer,
                                        uint32_t width, uint32_t height, uint32_t depth) {
     tracker_.CmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable,
                              pCallableShaderBindingTable, width, height, depth);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdTraceRaysKHR(VkCommandBuffer commandBuffer,
                                         const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
@@ -2574,7 +2574,7 @@ void CommandBuffer::PostCmdTraceRaysKHR(VkCommandBuffer commandBuffer,
                                         const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
                                         const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
                                         uint32_t width, uint32_t height, uint32_t depth) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer,
@@ -2585,7 +2585,7 @@ void CommandBuffer::PreCmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer,
                                                VkDeviceAddress indirectDeviceAddress) {
     tracker_.CmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable,
                                      pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer,
                                                 const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
@@ -2593,7 +2593,7 @@ void CommandBuffer::PostCmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer,
                                                 const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
                                                 const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
                                                 VkDeviceAddress indirectDeviceAddress) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer commandBuffer, uint32_t pipelineStackSize) {

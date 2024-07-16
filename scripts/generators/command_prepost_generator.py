@@ -45,6 +45,12 @@ default_instrumented_functions = (
     'vkCmdBeginDebugUtilsLabelEXT',
     'vkCmdEndDebugUtilsLabelEXT',
     'vkCmdInsertDebugUtilsLabelEXT',
+    'vkCmdTraceRaysKHR',
+    'vkCmdTraceRaysIndirectKHR',
+    'vkCmdTraceRaysNV',
+    'vkCmdBuildAccelerationStructuresKHR',
+    'vkCmdBuildAccelerationStructuresIndirectKHR'
+    'vkCmdBuildAccelerationStructuresNV',
 )
 
 #
