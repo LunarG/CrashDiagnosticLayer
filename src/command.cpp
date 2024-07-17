@@ -64,11 +64,13 @@ void CommandBuffer::WriteBeginCheckpoint() {
     // - vkEndCommandBuffer: n+2
     if (checkpoint_) {
         checkpoint_->WriteTop(vk_command_buffer_, begin_value_ + 1);
+        checkpoint_->WriteBottom(vk_command_buffer_, begin_value_ + 1);
     }
 }
 
 void CommandBuffer::WriteEndCheckpoint() {
     if (checkpoint_) {
+        checkpoint_->WriteTop(vk_command_buffer_, end_value_);
         checkpoint_->WriteBottom(vk_command_buffer_, end_value_);
     }
 }
@@ -181,9 +183,9 @@ VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
 }
 
 VkResult CommandBuffer::PreEndCommandBuffer(VkCommandBuffer commandBuffer) {
+    WriteEndCheckpoint();
     tracker_.EndCommandBuffer(commandBuffer);
 
-    WriteEndCheckpoint();
     return VK_SUCCESS;
 }
 
