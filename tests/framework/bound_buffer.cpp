@@ -52,3 +52,8 @@ BoundBuffer::BoundBuffer(vk::raii::PhysicalDevice& phys_dev, vk::raii::Device& d
 
     buffer.bindMemory(memory, 0);
 }
+
+VkDeviceAddress BoundBuffer::GetAddress(const vk::raii::Device& dev) {
+    vk::BufferDeviceAddressInfo bda_info(*buffer);
+    return dev.getBufferAddress(bda_info);
+}

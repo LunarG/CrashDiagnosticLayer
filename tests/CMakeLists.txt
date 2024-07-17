@@ -42,6 +42,7 @@ target_sources(cdl_tests PRIVATE
     unit/create_instance.cpp
     unit/gpu_crash.cpp
     unit/graphics.cpp
+    unit/ray_tracing.cpp
     unit/sync.cpp
     unit/settings.cpp
     unit/watchdog.cpp
