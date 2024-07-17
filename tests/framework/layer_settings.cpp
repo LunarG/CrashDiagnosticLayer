@@ -63,6 +63,9 @@ LayerSettings::~LayerSettings() {
     free(message_severity);
     free(log_file);
     free(dump_shaders);
+    free(dump_commands);
+    free(dump_command_buffers);
+    free(dump_queue_submits);
 }
 
 void LayerSettings::SetOutputPath(const char* s) {
@@ -81,17 +84,17 @@ void LayerSettings::SetLogFile(const char* s) {
 }
 
 void LayerSettings::SetDumpQueueSubmits(const char* s) {
-    free(dump_shaders);
+    free(dump_queue_submits);
     dump_queue_submits = strdup(s);
 }
 
 void LayerSettings::SetDumpCommandBuffers(const char* s) {
-    free(dump_shaders);
+    free(dump_command_buffers);
     dump_command_buffers = strdup(s);
 }
 
 void LayerSettings::SetDumpCommands(const char* s) {
-    free(dump_shaders);
+    free(dump_commands);
     dump_commands = strdup(s);
 }
 

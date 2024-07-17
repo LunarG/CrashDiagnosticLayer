@@ -35,6 +35,8 @@ struct BoundBuffer {
         memory.unmapMemory();
     }
 
+    VkDeviceAddress GetAddress(const vk::raii::Device& dev);
+
     vk::raii::Buffer buffer;
     vk::raii::DeviceMemory memory;
 };
