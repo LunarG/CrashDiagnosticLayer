@@ -8,6 +8,7 @@
         "api_version": "@JSON_VERSION@",
         "implementation_version": "1",
         "description": "Crash Diagnostic Layer is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application.",
+        "platforms": [ "WINDOWS", "LINUX" ],
         "functions": {
             "vkNegotiateLoaderLayerInterfaceVersion": "CDL_NegotiateLoaderLayerInterfaceVersion",
             "vkGetInstanceProcAddr": "CDL_GetInstanceProcAddr",
