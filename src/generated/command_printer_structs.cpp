@@ -13702,13 +13702,13 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTraceRaysIndirectCommand2KH
     os << YAML::BeginMap;
     os << YAML::Key << "raygenShaderRecordAddress";
     // raygenShaderRecordAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.raygenShaderRecordAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.raygenShaderRecordAddress);
     os << YAML::Key << "raygenShaderRecordSize";
     // raygenShaderRecordSize -> Field -> VkDeviceSize
     os << YAML::Value << t.raygenShaderRecordSize;
     os << YAML::Key << "missShaderBindingTableAddress";
     // missShaderBindingTableAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.missShaderBindingTableAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.missShaderBindingTableAddress);
     os << YAML::Key << "missShaderBindingTableSize";
     // missShaderBindingTableSize -> Field -> VkDeviceSize
     os << YAML::Value << t.missShaderBindingTableSize;
@@ -13717,7 +13717,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTraceRaysIndirectCommand2KH
     os << YAML::Value << t.missShaderBindingTableStride;
     os << YAML::Key << "hitShaderBindingTableAddress";
     // hitShaderBindingTableAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.hitShaderBindingTableAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.hitShaderBindingTableAddress);
     os << YAML::Key << "hitShaderBindingTableSize";
     // hitShaderBindingTableSize -> Field -> VkDeviceSize
     os << YAML::Value << t.hitShaderBindingTableSize;
@@ -13726,7 +13726,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTraceRaysIndirectCommand2KH
     os << YAML::Value << t.hitShaderBindingTableStride;
     os << YAML::Key << "callableShaderBindingTableAddress";
     // callableShaderBindingTableAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.callableShaderBindingTableAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.callableShaderBindingTableAddress);
     os << YAML::Key << "callableShaderBindingTableSize";
     // callableShaderBindingTableSize -> Field -> VkDeviceSize
     os << YAML::Value << t.callableShaderBindingTableSize;
@@ -15349,7 +15349,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewAddressPropertiesN
     os << YAML::EndSeq;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::Key << "size";
     // size -> Field -> VkDeviceSize
     os << YAML::Value << t.size;
@@ -16968,7 +16968,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceOrHostAddressConstAMD
     os << YAML::BeginMap;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::Key << "hostAddress";
     // void
     os << YAML::Value << "NOT_AVAILABLE";
@@ -19309,7 +19309,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferDeviceAddressCreateIn
     os << YAML::EndSeq;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::EndMap;
     return os;
 }
@@ -20602,7 +20602,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindIndexBufferIndirectComm
     os << YAML::BeginMap;
     os << YAML::Key << "bufferAddress";
     // bufferAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.bufferAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.bufferAddress);
     os << YAML::Key << "size";
     // size -> Field -> uint32_t
     os << YAML::Value << t.size;
@@ -20617,7 +20617,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindVertexBufferIndirectCom
     os << YAML::BeginMap;
     os << YAML::Key << "bufferAddress";
     // bufferAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.bufferAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.bufferAddress);
     os << YAML::Key << "size";
     // size -> Field -> uint32_t
     os << YAML::Value << t.size;
@@ -21901,7 +21901,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorAddressInfoEXT &t
     os << YAML::EndSeq;
     os << YAML::Key << "address";
     // address -> Field -> VkDeviceAddress
-    os << YAML::Value << t.address;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.address);
     os << YAML::Key << "range";
     // range -> Field -> VkDeviceSize
     os << YAML::Value << t.range;
@@ -21924,7 +21924,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorBufferBindingInfo
     os << YAML::EndSeq;
     os << YAML::Key << "address";
     // address -> Field -> VkDeviceAddress
-    os << YAML::Value << t.address;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.address);
     os << YAML::Key << "usage";
     // usage -> Field -> VkBufferUsageFlags
     os << YAML::Value << t.usage;
@@ -22016,7 +22016,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorDataEXT &t) {
     }
     os << YAML::Key << "accelerationStructure";
     // accelerationStructure -> Field -> VkDeviceAddress
-    os << YAML::Value << t.accelerationStructure;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.accelerationStructure);
     os << YAML::EndMap;
     return os;
 }
@@ -22294,7 +22294,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceOrHostAddressConstKHR
     os << YAML::BeginMap;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::Key << "hostAddress";
     // void
     os << YAML::Value << "NOT_AVAILABLE";
@@ -22733,7 +22733,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultAddressInfoEXT &
     os << YAML::Value << t.addressType;
     os << YAML::Key << "reportedAddress";
     // reportedAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.reportedAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.reportedAddress);
     os << YAML::Key << "addressPrecision";
     // addressPrecision -> Field -> VkDeviceSize
     os << YAML::Value << t.addressPrecision;
@@ -23118,7 +23118,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceAddressBindingCallbac
     os << YAML::Value << t.flags;
     os << YAML::Key << "baseAddress";
     // baseAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.baseAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.baseAddress);
     os << YAML::Key << "size";
     // size -> Field -> VkDeviceSize
     os << YAML::Value << t.size;
@@ -24197,7 +24197,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceOrHostAddressKHR &t) 
     os << YAML::BeginMap;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::Key << "hostAddress";
     // void
     os << YAML::Value << "NOT_AVAILABLE";
@@ -24303,7 +24303,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapCreateInfoEXT &t) {
     os << YAML::Value << t.type;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::EndMap;
     return os;
 }
@@ -25205,10 +25205,10 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectCommandNV
     os << YAML::BeginMap;
     os << YAML::Key << "srcAddress";
     // srcAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.srcAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAddress);
     os << YAML::Key << "dstAddress";
     // dstAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.dstAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.dstAddress);
     os << YAML::Key << "size";
     // size -> Field -> VkDeviceSize
     os << YAML::Value << t.size;
@@ -25220,7 +25220,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectCo
     os << YAML::BeginMap;
     os << YAML::Key << "srcAddress";
     // srcAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.srcAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAddress);
     os << YAML::Key << "bufferRowLength";
     // bufferRowLength -> Field -> uint32_t
     os << YAML::Value << t.bufferRowLength;
@@ -25278,10 +25278,10 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDecompressMemoryRegionNV &t
     os << YAML::BeginMap;
     os << YAML::Key << "srcAddress";
     // srcAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.srcAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAddress);
     os << YAML::Key << "dstAddress";
     // dstAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.dstAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.dstAddress);
     os << YAML::Key << "compressedSize";
     // compressedSize -> Field -> VkDeviceSize
     os << YAML::Value << t.compressedSize;
@@ -25367,13 +25367,13 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkComputePipelineIndirectBuff
     os << YAML::EndSeq;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::Key << "size";
     // size -> Field -> VkDeviceSize
     os << YAML::Value << t.size;
     os << YAML::Key << "pipelineDeviceAddressCaptureReplay";
     // pipelineDeviceAddressCaptureReplay -> Field -> VkDeviceAddress
-    os << YAML::Value << t.pipelineDeviceAddressCaptureReplay;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.pipelineDeviceAddressCaptureReplay);
     os << YAML::EndMap;
     return os;
 }
@@ -25402,7 +25402,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindPipelineIndirectCommand
     os << YAML::BeginMap;
     os << YAML::Key << "pipelineAddress";
     // pipelineAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.pipelineAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.pipelineAddress);
     os << YAML::EndMap;
     return os;
 }
@@ -27690,7 +27690,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureCreate
     os << YAML::Value << t.type;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::EndMap;
     return os;
 }
@@ -28141,7 +28141,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkStridedDeviceAddressRegionK
     os << YAML::BeginMap;
     os << YAML::Key << "deviceAddress";
     // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << t.deviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
     os << YAML::Key << "stride";
     // stride -> Field -> VkDeviceSize
     os << YAML::Value << t.stride;

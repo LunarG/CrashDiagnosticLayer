@@ -1892,7 +1892,7 @@ void CommandPrinter::PrintCmdResolveImage2KHRArgs(YAML::Emitter &os, const CmdRe
 void CommandPrinter::PrintCmdTraceRaysIndirect2KHRArgs(YAML::Emitter &os, const CmdTraceRaysIndirect2KHRArgs &args) {
     os << YAML::Key << "indirectDeviceAddress";
     // indirectDeviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << args.indirectDeviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.indirectDeviceAddress);
 }
 
 void CommandPrinter::PrintCmdBindIndexBuffer2KHRArgs(YAML::Emitter &os, const CmdBindIndexBuffer2KHRArgs &args) {
@@ -2346,7 +2346,7 @@ void CommandPrinter::PrintCmdInitializeGraphScratchMemoryAMDXArgs(YAML::Emitter 
                                                                   const CmdInitializeGraphScratchMemoryAMDXArgs &args) {
     os << YAML::Key << "scratch";
     // scratch -> Field -> VkDeviceAddress
-    os << YAML::Value << args.scratch;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.scratch);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
@@ -2354,7 +2354,7 @@ void CommandPrinter::PrintCmdInitializeGraphScratchMemoryAMDXArgs(YAML::Emitter 
 void CommandPrinter::PrintCmdDispatchGraphAMDXArgs(YAML::Emitter &os, const CmdDispatchGraphAMDXArgs &args) {
     os << YAML::Key << "scratch";
     // scratch -> Field -> VkDeviceAddress
-    os << YAML::Value << args.scratch;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.scratch);
     os << YAML::Key << "pCountInfo";
     // pointer
     if (args.pCountInfo != nullptr) {
@@ -2370,7 +2370,7 @@ void CommandPrinter::PrintCmdDispatchGraphIndirectAMDXArgs(YAML::Emitter &os,
                                                            const CmdDispatchGraphIndirectAMDXArgs &args) {
     os << YAML::Key << "scratch";
     // scratch -> Field -> VkDeviceAddress
-    os << YAML::Value << args.scratch;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.scratch);
     os << YAML::Key << "pCountInfo";
     // pointer
     if (args.pCountInfo != nullptr) {
@@ -2386,10 +2386,10 @@ void CommandPrinter::PrintCmdDispatchGraphIndirectCountAMDXArgs(YAML::Emitter &o
                                                                 const CmdDispatchGraphIndirectCountAMDXArgs &args) {
     os << YAML::Key << "scratch";
     // scratch -> Field -> VkDeviceAddress
-    os << YAML::Value << args.scratch;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.scratch);
     os << YAML::Key << "countInfo";
     // countInfo -> Field -> VkDeviceAddress
-    os << YAML::Value << args.countInfo;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.countInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
@@ -3362,7 +3362,7 @@ void CommandPrinter::PrintCmdDrawClusterIndirectHUAWEIArgs(YAML::Emitter &os,
 void CommandPrinter::PrintCmdCopyMemoryIndirectNVArgs(YAML::Emitter &os, const CmdCopyMemoryIndirectNVArgs &args) {
     os << YAML::Key << "copyBufferAddress";
     // copyBufferAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << args.copyBufferAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.copyBufferAddress);
     os << YAML::Key << "copyCount";
     // copyCount -> Field -> uint32_t
     os << YAML::Value << args.copyCount;
@@ -3375,7 +3375,7 @@ void CommandPrinter::PrintCmdCopyMemoryToImageIndirectNVArgs(YAML::Emitter &os,
                                                              const CmdCopyMemoryToImageIndirectNVArgs &args) {
     os << YAML::Key << "copyBufferAddress";
     // copyBufferAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << args.copyBufferAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.copyBufferAddress);
     os << YAML::Key << "copyCount";
     // copyCount -> Field -> uint32_t
     os << YAML::Value << args.copyCount;
@@ -3430,10 +3430,10 @@ void CommandPrinter::PrintCmdDecompressMemoryIndirectCountNVArgs(YAML::Emitter &
                                                                  const CmdDecompressMemoryIndirectCountNVArgs &args) {
     os << YAML::Key << "indirectCommandsAddress";
     // indirectCommandsAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << args.indirectCommandsAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.indirectCommandsAddress);
     os << YAML::Key << "indirectCommandsCountAddress";
     // indirectCommandsCountAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << args.indirectCommandsCountAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.indirectCommandsCountAddress);
     os << YAML::Key << "stride";
     // stride -> Field -> uint32_t
     os << YAML::Value << args.stride;
@@ -4072,7 +4072,7 @@ void CommandPrinter::PrintCmdTraceRaysIndirectKHRArgs(YAML::Emitter &os, const C
     }
     os << YAML::Key << "indirectDeviceAddress";
     // indirectDeviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << args.indirectDeviceAddress;
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.indirectDeviceAddress);
 }
 
 void CommandPrinter::PrintCmdSetRayTracingPipelineStackSizeKHRArgs(

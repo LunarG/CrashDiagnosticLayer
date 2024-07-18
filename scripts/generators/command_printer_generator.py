@@ -256,11 +256,10 @@ class CommandPrinter {
                 out.append('      os << YAML::Value << "nullptr";\n')
                 out.append('    }\n')
         else:
-            if member.type in self.vk.structs:
-                out.append(f'    // {member.name} -> Field -> {member.type}\n')
-                out.append(f'    os << YAML::Value << {prefix}{member.name};\n')
+            out.append(f'    // {member.name} -> Field -> {member.type}\n')
+            if member.type == 'VkDeviceAddress':
+                out.append(f'    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr({prefix}{member.name});\n')
             else:
-                out.append(f'    // {member.name} -> Field -> {member.type}\n')
                 out.append(f'    os << YAML::Value << {prefix}{member.name};\n')
 
     def generateTypesSource(self):
