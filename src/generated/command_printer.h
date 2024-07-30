@@ -357,6 +357,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassMergeStatusEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDirectDriverLoadingModeLUNARG &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowPerformanceLevelNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowSessionBindingPointNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagModeAMD &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagStageAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCodeTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingInvocationReorderModeNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingTypeEXT &t);
@@ -1501,6 +1503,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExternalForma
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAndroidHardwareBufferFormatResolvePropertiesANDROID &t);
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceAntiLagFeaturesAMD &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagPresentationInfoAMD &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagDataAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderObjectFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderObjectPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCreateInfoEXT &t);
