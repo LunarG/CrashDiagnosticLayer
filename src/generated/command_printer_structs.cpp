@@ -26300,6 +26300,70 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAndroidHardwareBufferFormat
 }
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceAntiLagFeaturesAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "antiLag";
+    // antiLag -> Field -> VkBool32
+    os << YAML::Value << t.antiLag;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagPresentationInfoAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "stage";
+    // stage -> Field -> VkAntiLagStageAMD
+    os << YAML::Value << t.stage;
+    os << YAML::Key << "frameIndex";
+    // frameIndex -> Field -> uint64_t
+    os << YAML::Value << t.frameIndex;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagDataAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "mode";
+    // mode -> Field -> VkAntiLagModeAMD
+    os << YAML::Value << t.mode;
+    os << YAML::Key << "maxFPS";
+    // maxFPS -> Field -> uint32_t
+    os << YAML::Value << t.maxFPS;
+    os << YAML::Key << "pPresentationInfo";
+    // pointer
+    if (t.pPresentationInfo != nullptr) {
+        os << YAML::Value << *t.pPresentationInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderObjectFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -31131,6 +31195,15 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkAndroidHardwareBufferFormatResolvePropertiesANDROID *>(pStruct);
             break;
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD:
+            os << *reinterpret_cast<const VkPhysicalDeviceAntiLagFeaturesAMD *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD:
+            os << *reinterpret_cast<const VkAntiLagPresentationInfoAMD *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD:
+            os << *reinterpret_cast<const VkAntiLagDataAMD *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderObjectFeaturesEXT *>(pStruct);
             break;

@@ -1010,6 +1010,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowSessionBindingPo
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagModeAMD &t) {
+    os << string_VkAntiLagModeAMD(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagStageAMD &t) {
+    os << string_VkAntiLagStageAMD(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCodeTypeEXT &t) {
     os << string_VkShaderCodeTypeEXT(t);
     return os;

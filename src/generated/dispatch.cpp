@@ -1012,6 +1012,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->BindOpticalFlowSessionImageNV =
         (PFN_vkBindOpticalFlowSessionImageNV)pa(device, "vkBindOpticalFlowSessionImageNV");
     dt->CmdOpticalFlowExecuteNV = (PFN_vkCmdOpticalFlowExecuteNV)pa(device, "vkCmdOpticalFlowExecuteNV");
+    dt->AntiLagUpdateAMD = (PFN_vkAntiLagUpdateAMD)pa(device, "vkAntiLagUpdateAMD");
     dt->CreateShadersEXT = (PFN_vkCreateShadersEXT)pa(device, "vkCreateShadersEXT");
     dt->DestroyShaderEXT = (PFN_vkDestroyShaderEXT)pa(device, "vkDestroyShaderEXT");
     dt->GetShaderBinaryDataEXT = (PFN_vkGetShaderBinaryDataEXT)pa(device, "vkGetShaderBinaryDataEXT");
