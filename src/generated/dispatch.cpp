@@ -622,6 +622,12 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
         (PFN_vkGetDeviceImageSubresourceLayoutKHR)pa(device, "vkGetDeviceImageSubresourceLayoutKHR");
     dt->GetImageSubresourceLayout2KHR =
         (PFN_vkGetImageSubresourceLayout2KHR)pa(device, "vkGetImageSubresourceLayout2KHR");
+    dt->CreatePipelineBinariesKHR = (PFN_vkCreatePipelineBinariesKHR)pa(device, "vkCreatePipelineBinariesKHR");
+    dt->DestroyPipelineBinaryKHR = (PFN_vkDestroyPipelineBinaryKHR)pa(device, "vkDestroyPipelineBinaryKHR");
+    dt->GetPipelineKeyKHR = (PFN_vkGetPipelineKeyKHR)pa(device, "vkGetPipelineKeyKHR");
+    dt->GetPipelineBinaryDataKHR = (PFN_vkGetPipelineBinaryDataKHR)pa(device, "vkGetPipelineBinaryDataKHR");
+    dt->ReleaseCapturedPipelineDataKHR =
+        (PFN_vkReleaseCapturedPipelineDataKHR)pa(device, "vkReleaseCapturedPipelineDataKHR");
     dt->CmdSetLineStippleKHR = (PFN_vkCmdSetLineStippleKHR)pa(device, "vkCmdSetLineStippleKHR");
     dt->GetCalibratedTimestampsKHR = (PFN_vkGetCalibratedTimestampsKHR)pa(device, "vkGetCalibratedTimestampsKHR");
     dt->CmdBindDescriptorSets2KHR = (PFN_vkCmdBindDescriptorSets2KHR)pa(device, "vkCmdBindDescriptorSets2KHR");

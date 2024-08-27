@@ -172,6 +172,10 @@ YAML::Emitter &operator<<(YAML::Emitter& os, const VkDeferredOperationKHR &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipelineBinaryKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
 YAML::Emitter &operator<<(YAML::Emitter& os, const VkDebugReportCallbackEXT &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
@@ -882,6 +886,18 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubresourceLayout2KHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCreateFlags2CreateInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferUsageFlags2CreateInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineBinaryFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineBinaryPropertiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDevicePipelineBinaryInternalCacheControlKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryKeyKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryDataKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryKeysAndDataKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCreateInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryCreateInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkReleaseCapturedPipelineDataInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryDataInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryHandlesInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixPropertiesKHR &t);

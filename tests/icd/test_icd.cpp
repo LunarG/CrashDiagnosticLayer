@@ -2322,4 +2322,18 @@ static VKAPI_ATTR void VKAPI_CALL CmdBeginDebugUtilsLabelEXT(VkCommandBuffer com
     cb->CmdBeginDebugUtilsLabel(pLabelInfo);
 }
 
+static VKAPI_ATTR VkResult VKAPI_CALL CreatePipelineBinariesKHR(VkDevice device, const VkPipelineBinaryCreateInfoKHR* pCreateInfo,
+                                                                const VkAllocationCallbacks* pAllocator,
+                                                                VkPipelineBinaryHandlesInfoKHR* pBinaries) {
+    unique_lock_t lock(global_lock);
+
+    pBinaries->pipelineBinaryCount = 1;
+
+    if (pBinaries->pPipelineBinaries != nullptr) {
+        pBinaries->pPipelineBinaries[0] = (VkPipelineBinaryKHR)global_unique_handle++;
+    }
+
+    return VK_SUCCESS;
+}
+
 }  // namespace icd

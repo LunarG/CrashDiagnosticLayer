@@ -141,6 +141,7 @@ class TestIcdGenerator(BaseGenerator):
             'vkGetQueueCheckpointDataNV',
             'vkGetQueueCheckpointData2NV',
             'vkCmdBeginDebugUtilsLabelEXT',
+            'vkCreatePipelineBinariesKHR',
         )
 
     def generate(self):

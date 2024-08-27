@@ -304,6 +304,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeferredOperationKHR &a) {
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryKHR &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackEXT &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
