@@ -13986,6 +13986,303 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingPos
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineBinaryFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pipelineBinaries";
+    // pipelineBinaries -> Field -> VkBool32
+    os << YAML::Value << t.pipelineBinaries;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineBinaryPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pipelineBinaryInternalCache";
+    // pipelineBinaryInternalCache -> Field -> VkBool32
+    os << YAML::Value << t.pipelineBinaryInternalCache;
+    os << YAML::Key << "pipelineBinaryInternalCacheControl";
+    // pipelineBinaryInternalCacheControl -> Field -> VkBool32
+    os << YAML::Value << t.pipelineBinaryInternalCacheControl;
+    os << YAML::Key << "pipelineBinaryPrefersInternalCache";
+    // pipelineBinaryPrefersInternalCache -> Field -> VkBool32
+    os << YAML::Value << t.pipelineBinaryPrefersInternalCache;
+    os << YAML::Key << "pipelineBinaryPrecompiledInternalCache";
+    // pipelineBinaryPrecompiledInternalCache -> Field -> VkBool32
+    os << YAML::Value << t.pipelineBinaryPrecompiledInternalCache;
+    os << YAML::Key << "pipelineBinaryCompressedData";
+    // pipelineBinaryCompressedData -> Field -> VkBool32
+    os << YAML::Value << t.pipelineBinaryCompressedData;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDevicePipelineBinaryInternalCacheControlKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "disableInternalCache";
+    // disableInternalCache -> Field -> VkBool32
+    os << YAML::Value << t.disableInternalCache;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryKeyKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "keySize";
+    // keySize -> Field -> uint32_t
+    os << YAML::Value << t.keySize;
+    os << YAML::Key << "key";
+    // key -> Field -> FixedArray(uint8_t)
+    {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("uint8_t");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(VK_MAX_PIPELINE_BINARY_KEY_SIZE_KHR); ++i) {
+                os << t.key[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryDataKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "dataSize";
+    // dataSize -> Field -> size_t
+    os << YAML::Value << t.dataSize;
+    os << YAML::Key << "pData";
+    if (t.dataSize == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value << YAML::BeginSeq;
+        {
+            const uint8_t *p = (const uint8_t *)t.pData;
+            for (uint64_t i = 0; i < t.dataSize; ++i) {
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
+            }
+        }
+        os << YAML::EndSeq;
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryKeysAndDataKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "binaryCount";
+    // binaryCount -> Field -> uint32_t
+    os << YAML::Value << t.binaryCount;
+    os << YAML::Key << "pPipelineBinaryKeys";
+    // pPipelineBinaryKeys -> Field -> ConstDynamicArray(VkPipelineBinaryKeyKHR)
+    if (t.binaryCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPipelineBinaryKeyKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.binaryCount); ++i) {
+                os << t.pPipelineBinaryKeys[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "pPipelineBinaryData";
+    // pPipelineBinaryData -> Field -> ConstDynamicArray(VkPipelineBinaryDataKHR)
+    if (t.binaryCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPipelineBinaryDataKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.binaryCount); ++i) {
+                os << t.pPipelineBinaryData[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryCreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pKeysAndDataInfo";
+    // pointer
+    if (t.pKeysAndDataInfo != nullptr) {
+        os << YAML::Value << *t.pKeysAndDataInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pipeline";
+    // pipeline -> Field -> VkPipeline
+    os << YAML::Value << t.pipeline;
+    os << YAML::Key << "pPipelineCreateInfo";
+    // pointer
+    if (t.pPipelineCreateInfo != nullptr) {
+        os << YAML::Value << *t.pPipelineCreateInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "binaryCount";
+    // binaryCount -> Field -> uint32_t
+    os << YAML::Value << t.binaryCount;
+    os << YAML::Key << "pPipelineBinaries";
+    // pPipelineBinaries -> Field -> ConstDynamicArray(VkPipelineBinaryKHR)
+    if (t.binaryCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPipelineBinaryKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.binaryCount); ++i) {
+                os << t.pPipelineBinaries[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkReleaseCapturedPipelineDataInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pipeline";
+    // pipeline -> Field -> VkPipeline
+    os << YAML::Value << t.pipeline;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryDataInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pipelineBinary";
+    // pipelineBinary -> Field -> VkPipelineBinaryKHR
+    os << YAML::Value << t.pipelineBinary;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryHandlesInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pipelineBinaryCount";
+    // pipelineBinaryCount -> Field -> uint32_t
+    os << YAML::Value << t.pipelineBinaryCount;
+    os << YAML::Key << "pPipelineBinaries";
+    // pPipelineBinaries -> Field -> DynamicArray(VkPipelineBinaryKHR)
+    if (t.pipelineBinaryCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPipelineBinaryKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.pipelineBinaryCount); ++i) {
+                os << t.pPipelineBinaries[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixPropertiesKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -29777,6 +30074,36 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_POSITION_FETCH_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDevicePipelineBinaryFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDevicePipelineBinaryPropertiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_DEVICE_PIPELINE_BINARY_INTERNAL_CACHE_CONTROL_KHR:
+            os << *reinterpret_cast<const VkDevicePipelineBinaryInternalCacheControlKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PIPELINE_BINARY_KEY_KHR:
+            os << *reinterpret_cast<const VkPipelineBinaryKeyKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PIPELINE_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkPipelineCreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PIPELINE_BINARY_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkPipelineBinaryCreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PIPELINE_BINARY_INFO_KHR:
+            os << *reinterpret_cast<const VkPipelineBinaryInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_RELEASE_CAPTURED_PIPELINE_DATA_INFO_KHR:
+            os << *reinterpret_cast<const VkReleaseCapturedPipelineDataInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PIPELINE_BINARY_DATA_INFO_KHR:
+            os << *reinterpret_cast<const VkPipelineBinaryDataInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PIPELINE_BINARY_HANDLES_INFO_KHR:
+            os << *reinterpret_cast<const VkPipelineBinaryHandlesInfoKHR *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_KHR:
             os << *reinterpret_cast<const VkCooperativeMatrixPropertiesKHR *>(pStruct);

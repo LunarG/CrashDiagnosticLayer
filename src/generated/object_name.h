@@ -84,6 +84,8 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkVideoSessionParametersKHR";
         case VK_OBJECT_TYPE_DEFERRED_OPERATION_KHR:
             return "VkDeferredOperationKHR";
+        case VK_OBJECT_TYPE_PIPELINE_BINARY_KHR:
+            return "VkPipelineBinaryKHR";
         case VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT:
             return "VkDebugReportCallbackEXT";
         case VK_OBJECT_TYPE_CU_MODULE_NVX:
