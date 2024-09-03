@@ -901,6 +901,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryHandlesInfoKH
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixPropertiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1ProfileInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1CapabilitiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1SessionParametersCreateInfoKHR &t);
@@ -1121,7 +1123,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttribu
 #ifdef VK_USE_PLATFORM_GGP
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentFrameTokenGGP &t);
 #endif  // VK_USE_PLATFORM_GGP
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeShaderDerivativesFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderPropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrawMeshTasksIndirectCommandNV &t);
