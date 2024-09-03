@@ -14361,6 +14361,43 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMa
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "computeDerivativeGroupQuads";
+    // computeDerivativeGroupQuads -> Field -> VkBool32
+    os << YAML::Value << t.computeDerivativeGroupQuads;
+    os << YAML::Key << "computeDerivativeGroupLinear";
+    // computeDerivativeGroupLinear -> Field -> VkBool32
+    os << YAML::Value << t.computeDerivativeGroupLinear;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "meshAndTaskShaderDerivatives";
+    // meshAndTaskShaderDerivatives -> Field -> VkBool32
+    os << YAML::Value << t.meshAndTaskShaderDerivatives;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1ProfileInfoKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -18869,26 +18906,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentFrameTokenGGP &t) {
     return os;
 }
 #endif  // VK_USE_PLATFORM_GGP
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeShaderDerivativesFeaturesNV &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "computeDerivativeGroupQuads";
-    // computeDerivativeGroupQuads -> Field -> VkBool32
-    os << YAML::Value << t.computeDerivativeGroupQuads;
-    os << YAML::Key << "computeDerivativeGroupLinear";
-    // computeDerivativeGroupLinear -> Field -> VkBool32
-    os << YAML::Value << t.computeDerivativeGroupLinear;
-    os << YAML::EndMap;
-    return os;
-}
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMeshShaderFeaturesNV &t) {
     os << YAML::BeginMap;
@@ -30114,6 +30131,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrixPropertiesKHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR:
             os << *reinterpret_cast<const VkVideoDecodeAV1ProfileInfoKHR *>(pStruct);
             break;
@@ -30601,9 +30624,6 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkPresentFrameTokenGGP *>(pStruct);
             break;
 #endif  // VK_USE_PLATFORM_GGP
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV:
-            os << *reinterpret_cast<const VkPhysicalDeviceComputeShaderDerivativesFeaturesNV *>(pStruct);
-            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceMeshShaderFeaturesNV *>(pStruct);
             break;
