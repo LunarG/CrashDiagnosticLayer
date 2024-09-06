@@ -171,8 +171,8 @@ bool Queue::UpdateIdleState() {
 
     uint64_t completed_seq = CompletedSeq();
 
-    Log().Verbose("completed: %lld submitted: %lld VkQueue: %s", completed_seq, submit_seq_.load(),
-                  device_.GetObjectInfo((uint64_t)vk_queue_).c_str());
+    Log().Verbose("%s completed: %lld submitted: %lld", device_.GetObjectInfo((uint64_t)vk_queue_).c_str(),
+                  completed_seq, submit_seq_.load());
     std::lock_guard<std::mutex> qlock(queue_submits_mutex_);
     while (!queue_submits_.empty()) {
         auto& submission = queue_submits_.front();
@@ -181,7 +181,9 @@ bool Queue::UpdateIdleState() {
         }
         for (auto& submit_info : submission.submit_infos) {
             if (completed_seq >= submit_info.end_seq) {
-                Log().Verbose("info start: %lld end: %lld FINISH", submit_info.start_seq, submit_info.end_seq);
+                Log().Verbose("%s info start: %lld end: %lld FINISH",
+                              device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), submit_info.start_seq,
+                              submit_info.end_seq);
                 submit_info.state = kFinished;
                 for (auto& cb : submit_info.command_buffers) {
                     auto cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
@@ -190,7 +192,9 @@ bool Queue::UpdateIdleState() {
                     }
                 }
             } else if ((completed_seq + 1) >= submit_info.start_seq) {
-                Log().Verbose("info start: %lld end: %lld RUNNING", submit_info.start_seq, submit_info.end_seq);
+                Log().Verbose("%s info start: %lld end: %lld RUNNING",
+                              device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), submit_info.start_seq,
+                              submit_info.end_seq);
                 submit_info.state = kRunning;
                 bool found_running_cb = false;
                 for (auto pos = submit_info.command_buffers.rbegin(); pos != submit_info.command_buffers.rend();
@@ -206,7 +210,9 @@ bool Queue::UpdateIdleState() {
                 }
                 break;
             } else {
-                Log().Verbose("info start: %lld end: %lld queued", submit_info.start_seq, submit_info.end_seq);
+                Log().Verbose("%s info start: %lld end: %lld queued",
+                              device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), submit_info.start_seq,
+                              submit_info.end_seq);
                 break;
             }
         }
@@ -525,6 +531,8 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
         submission.submit_infos.emplace_back(std::move(submit_info));
     }
     submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().end_seq;
+    Log().Verbose("%s submit: %lld to %lld", device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), submission.start_seq,
+                  submission.end_seq);
     {
         std::lock_guard<std::mutex> lock(queue_submits_mutex_);
         queue_submits_.emplace_back(std::move(submission));
@@ -620,6 +628,8 @@ VkResult Queue::Submit2(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkF
         submission.submit_infos.emplace_back(std::move(submit_info));
     }
     submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().end_seq;
+    Log().Verbose("%s submit2: %lld to %lld", device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), submission.start_seq,
+                  submission.end_seq);
     {
         std::lock_guard<std::mutex> lock(queue_submits_mutex_);
         queue_submits_.emplace_back(std::move(submission));
@@ -671,6 +681,8 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
         submission.submit_infos.emplace_back(std::move(submit_info));
     }
     submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().end_seq;
+    Log().Verbose("%s bindsparse: %lld to %lld", device_.GetObjectInfo((uint64_t)vk_queue_).c_str(),
+                  submission.start_seq, submission.end_seq);
     {
         std::lock_guard<std::mutex> lock(queue_submits_mutex_);
         queue_submits_.emplace_back(std::move(submission));

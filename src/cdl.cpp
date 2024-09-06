@@ -1346,8 +1346,13 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
                 crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(device))->dispatch_table;
             auto semaphore_tracker = device_state->GetSemaphoreTracker();
             for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
-                auto res =
-                    dispatch_table.GetSemaphoreCounterValueKHR(device, pWaitInfo->pSemaphores[i], &semaphore_value);
+                VkResult res;
+                if (dispatch_table.GetSemaphoreCounterValue) {
+                    res = dispatch_table.GetSemaphoreCounterValue(device, pWaitInfo->pSemaphores[i], &semaphore_value);
+                } else {
+                    res =
+                        dispatch_table.GetSemaphoreCounterValueKHR(device, pWaitInfo->pSemaphores[i], &semaphore_value);
+                }
                 if (res == VK_SUCCESS) {
                     semaphore_tracker->SignalSemaphore(pWaitInfo->pSemaphores[i], semaphore_value,
                                                        {SemaphoreModifierType::kModifierHost});
