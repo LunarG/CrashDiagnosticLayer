@@ -1067,8 +1067,8 @@ VkResult Context::PostCreateShaderModule(VkDevice device, const VkShaderModuleCr
     return callResult;
 }
 
-void Context::PostDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
-                                      const VkAllocationCallbacks* pAllocator) {
+void Context::PreDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
+                                     const VkAllocationCallbacks* pAllocator) {
     auto device_state = GetDevice(device);
     device_state->DeleteShaderModule(shaderModule);
 }

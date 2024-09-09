@@ -271,7 +271,6 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroyDevice(VkDevice device, const VkAlloc
     device_data->interceptor->PreDestroyDevice(device, pAllocator);
     auto pfn_destroy_device = device_data->dispatch_table.DestroyDevice;
     pfn_destroy_device(device, pAllocator);
-    device_data->interceptor->PostDestroyDevice(device, pAllocator);
 
     FreeDeviceLayerData(device_key);
 }
@@ -462,30 +461,28 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetPhysicalDeviceToolPropertiesEXT(
 extern "C" {
 
 CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(VkInstance inst, const char* func) {
-    PFN_vkVoidFunction return_func = crash_diagnostic_layer::GetInstanceFuncs(func);
-    if (return_func != nullptr) {
-        return return_func;
+    const auto& name_map = crash_diagnostic_layer::GetNameToFuncPtrMap();
+    const auto& item = name_map.find(func);
+    if (item != name_map.end()) {
+        return reinterpret_cast<PFN_vkVoidFunction>(item->second.funcptr);
     }
-    return_func = crash_diagnostic_layer::GetDeviceFuncs(func);
-    if (return_func != nullptr) {
-        return return_func;
-    }
-
-    // If the function was not found, just pass it down the chain to support
-    // unregistered extensions, such as vkSwapchainCallbackEXT.
     return (PFN_vkVoidFunction)crash_diagnostic_layer::PassInstanceProcDownTheChain(inst, func);
 }
 
 CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(VkDevice dev, const char* func) {
-    PFN_vkVoidFunction return_func = crash_diagnostic_layer::GetDeviceFuncs(func);
-    if (return_func != nullptr) {
-        return return_func;
+    const auto& name_map = crash_diagnostic_layer::GetNameToFuncPtrMap();
+    const auto& item = name_map.find(func);
+    if (item != name_map.end()) {
+        if (item->second.function_type != crash_diagnostic_layer::kFuncTypeDev) {
+            // See https://gitlab.khronos.org/vulkan/vulkan/-/merge_requests/6583
+            // Validation will emit a warning if this happens
+            return nullptr;
+        } else {
+            return reinterpret_cast<PFN_vkVoidFunction>(item->second.funcptr);
+        }
     }
-
-    // If the function was not found, just pass it down the chain to support
-    // unregistered extensions, such as vkSwapchainCallbackEXT.
     return (PFN_vkVoidFunction)crash_diagnostic_layer::PassDeviceProcDownTheChain(dev, func);
-}  // NOLINT(readability/fn_size)
+}
 
 CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
 CDL_NegotiateLoaderLayerInterfaceVersion(VkNegotiateLayerInterface* pVersionStruct) {

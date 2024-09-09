@@ -25,8 +25,8 @@
 
 // NOLINTBEGIN
 
-VKAPI_ATTR void VKAPI_CALL InterceptGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex,
-                                                   VkQueue* pQueue) {
+static VKAPI_ATTR void VKAPI_CALL InterceptGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex,
+                                                          uint32_t queueIndex, VkQueue* pQueue) {
     auto layer_data = GetDeviceLayerData(DataKey(device));
     PFN_vkGetDeviceQueue pfn = layer_data->dispatch_table.GetDeviceQueue;
     if (pfn != nullptr) {
@@ -36,7 +36,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptGetDeviceQueue(VkDevice device, uint32_t que
     layer_data->interceptor->PostGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptQueueWaitIdle(VkQueue queue) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptQueueWaitIdle(VkQueue queue) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(queue));
@@ -51,7 +51,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptQueueWaitIdle(VkQueue queue) {
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptDeviceWaitIdle(VkDevice device) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptDeviceWaitIdle(VkDevice device) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -66,7 +66,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptDeviceWaitIdle(VkDevice device) {
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptGetFenceStatus(VkDevice device, VkFence fence) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptGetFenceStatus(VkDevice device, VkFence fence) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -81,8 +81,9 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetFenceStatus(VkDevice device, VkFence 
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences,
-                                                      VkBool32 waitAll, uint64_t timeout) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitForFences(VkDevice device, uint32_t fenceCount,
+                                                             const VkFence* pFences, VkBool32 waitAll,
+                                                             uint64_t timeout) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -97,9 +98,10 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitForFences(VkDevice device, uint32_t 
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo,
-                                                        const VkAllocationCallbacks* pAllocator,
-                                                        VkSemaphore* pSemaphore) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateSemaphore(VkDevice device,
+                                                               const VkSemaphoreCreateInfo* pCreateInfo,
+                                                               const VkAllocationCallbacks* pAllocator,
+                                                               VkSemaphore* pSemaphore) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -114,8 +116,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateSemaphore(VkDevice device, const V
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptDestroySemaphore(VkDevice device, VkSemaphore semaphore,
-                                                     const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL InterceptDestroySemaphore(VkDevice device, VkSemaphore semaphore,
+                                                            const VkAllocationCallbacks* pAllocator) {
     auto layer_data = GetDeviceLayerData(DataKey(device));
     layer_data->interceptor->PreDestroySemaphore(device, semaphore, pAllocator);
 
@@ -127,9 +129,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroySemaphore(VkDevice device, VkSemaphor
     layer_data->interceptor->PostDestroySemaphore(device, semaphore, pAllocator);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
-                                                            uint32_t queryCount, size_t dataSize, void* pData,
-                                                            VkDeviceSize stride, VkQueryResultFlags flags) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptGetQueryPoolResults(VkDevice device, VkQueryPool queryPool,
+                                                                   uint32_t firstQuery, uint32_t queryCount,
+                                                                   size_t dataSize, void* pData, VkDeviceSize stride,
+                                                                   VkQueryResultFlags flags) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -146,9 +149,10 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetQueryPoolResults(VkDevice device, VkQ
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo,
-                                                           const VkAllocationCallbacks* pAllocator,
-                                                           VkShaderModule* pShaderModule) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateShaderModule(VkDevice device,
+                                                                  const VkShaderModuleCreateInfo* pCreateInfo,
+                                                                  const VkAllocationCallbacks* pAllocator,
+                                                                  VkShaderModule* pShaderModule) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -161,22 +165,22 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateShaderModule(VkDevice device, cons
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
-                                                        const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL InterceptDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
+                                                               const VkAllocationCallbacks* pAllocator) {
     auto layer_data = GetDeviceLayerData(DataKey(device));
+    layer_data->interceptor->PreDestroyShaderModule(device, shaderModule, pAllocator);
+
     PFN_vkDestroyShaderModule pfn = layer_data->dispatch_table.DestroyShaderModule;
     if (pfn != nullptr) {
         pfn(device, shaderModule, pAllocator);
     }
-
-    layer_data->interceptor->PostDestroyShaderModule(device, shaderModule, pAllocator);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
-                                                                uint32_t createInfoCount,
-                                                                const VkGraphicsPipelineCreateInfo* pCreateInfos,
-                                                                const VkAllocationCallbacks* pAllocator,
-                                                                VkPipeline* pPipelines) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
+                                                                       uint32_t createInfoCount,
+                                                                       const VkGraphicsPipelineCreateInfo* pCreateInfos,
+                                                                       const VkAllocationCallbacks* pAllocator,
+                                                                       VkPipeline* pPipelines) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -190,11 +194,11 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateGraphicsPipelines(VkDevice device,
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache,
-                                                               uint32_t createInfoCount,
-                                                               const VkComputePipelineCreateInfo* pCreateInfos,
-                                                               const VkAllocationCallbacks* pAllocator,
-                                                               VkPipeline* pPipelines) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache,
+                                                                      uint32_t createInfoCount,
+                                                                      const VkComputePipelineCreateInfo* pCreateInfos,
+                                                                      const VkAllocationCallbacks* pAllocator,
+                                                                      VkPipeline* pPipelines) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -208,8 +212,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateComputePipelines(VkDevice device, 
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptDestroyPipeline(VkDevice device, VkPipeline pipeline,
-                                                    const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL InterceptDestroyPipeline(VkDevice device, VkPipeline pipeline,
+                                                           const VkAllocationCallbacks* pAllocator) {
     auto layer_data = GetDeviceLayerData(DataKey(device));
     layer_data->interceptor->PreDestroyPipeline(device, pipeline, pAllocator);
 
@@ -221,9 +225,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroyPipeline(VkDevice device, VkPipeline 
     layer_data->interceptor->PostDestroyPipeline(device, pipeline, pAllocator);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
-                                                          const VkAllocationCallbacks* pAllocator,
-                                                          VkCommandPool* pCommandPool) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateCommandPool(VkDevice device,
+                                                                 const VkCommandPoolCreateInfo* pCreateInfo,
+                                                                 const VkAllocationCallbacks* pAllocator,
+                                                                 VkCommandPool* pCommandPool) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -238,8 +243,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateCommandPool(VkDevice device, const
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptDestroyCommandPool(VkDevice device, VkCommandPool commandPool,
-                                                       const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL InterceptDestroyCommandPool(VkDevice device, VkCommandPool commandPool,
+                                                              const VkAllocationCallbacks* pAllocator) {
     auto layer_data = GetDeviceLayerData(DataKey(device));
     layer_data->interceptor->PreDestroyCommandPool(device, commandPool, pAllocator);
 
@@ -251,8 +256,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroyCommandPool(VkDevice device, VkComman
     layer_data->interceptor->PostDestroyCommandPool(device, commandPool, pAllocator);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptResetCommandPool(VkDevice device, VkCommandPool commandPool,
-                                                         VkCommandPoolResetFlags flags) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptResetCommandPool(VkDevice device, VkCommandPool commandPool,
+                                                                VkCommandPoolResetFlags flags) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -267,9 +272,9 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptResetCommandPool(VkDevice device, VkComm
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptAllocateCommandBuffers(VkDevice device,
-                                                               const VkCommandBufferAllocateInfo* pAllocateInfo,
-                                                               VkCommandBuffer* pCommandBuffers) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptAllocateCommandBuffers(VkDevice device,
+                                                                      const VkCommandBufferAllocateInfo* pAllocateInfo,
+                                                                      VkCommandBuffer* pCommandBuffers) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -284,9 +289,9 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptAllocateCommandBuffers(VkDevice device,
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptFreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
-                                                       uint32_t commandBufferCount,
-                                                       const VkCommandBuffer* pCommandBuffers) {
+static VKAPI_ATTR void VKAPI_CALL InterceptFreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
+                                                              uint32_t commandBufferCount,
+                                                              const VkCommandBuffer* pCommandBuffers) {
     auto layer_data = GetDeviceLayerData(DataKey(device));
     layer_data->interceptor->PreFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 
@@ -298,8 +303,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptFreeCommandBuffers(VkDevice device, VkComman
     layer_data->interceptor->PostFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptBeginCommandBuffer(VkCommandBuffer commandBuffer,
-                                                           const VkCommandBufferBeginInfo* pBeginInfo) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptBeginCommandBuffer(VkCommandBuffer commandBuffer,
+                                                                  const VkCommandBufferBeginInfo* pBeginInfo) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -314,7 +319,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptBeginCommandBuffer(VkCommandBuffer comma
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptEndCommandBuffer(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptEndCommandBuffer(VkCommandBuffer commandBuffer) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -329,8 +334,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptEndCommandBuffer(VkCommandBuffer command
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptResetCommandBuffer(VkCommandBuffer commandBuffer,
-                                                           VkCommandBufferResetFlags flags) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptResetCommandBuffer(VkCommandBuffer commandBuffer,
+                                                                  VkCommandBufferResetFlags flags) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -345,8 +350,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptResetCommandBuffer(VkCommandBuffer comma
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindPipeline(VkCommandBuffer commandBuffer,
-                                                    VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindPipeline(VkCommandBuffer commandBuffer,
+                                                           VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 
@@ -358,8 +363,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindPipeline(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport,
-                                                   uint32_t viewportCount, const VkViewport* pViewports) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport,
+                                                          uint32_t viewportCount, const VkViewport* pViewports) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 
@@ -371,8 +376,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewport(VkCommandBuffer commandBuffer
     layer_data->interceptor->PostCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor,
-                                                  uint32_t scissorCount, const VkRect2D* pScissors) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor,
+                                                         uint32_t scissorCount, const VkRect2D* pScissors) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 
@@ -384,7 +389,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissor(VkCommandBuffer commandBuffer,
     layer_data->interceptor->PostCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetLineWidth(commandBuffer, lineWidth);
 
@@ -396,8 +401,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineWidth(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdSetLineWidth(commandBuffer, lineWidth);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor,
-                                                    float depthBiasClamp, float depthBiasSlopeFactor) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor,
+                                                           float depthBiasClamp, float depthBiasSlopeFactor) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp,
                                                 depthBiasSlopeFactor);
@@ -411,7 +416,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBias(VkCommandBuffer commandBuffe
                                                  depthBiasSlopeFactor);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4]) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetBlendConstants(VkCommandBuffer commandBuffer,
+                                                                const float blendConstants[4]) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetBlendConstants(commandBuffer, blendConstants);
 
@@ -423,8 +429,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetBlendConstants(VkCommandBuffer command
     layer_data->interceptor->PostCmdSetBlendConstants(commandBuffer, blendConstants);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds,
-                                                      float maxDepthBounds) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds,
+                                                             float maxDepthBounds) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 
@@ -436,8 +442,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBounds(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                                             uint32_t compareMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilCompareMask(VkCommandBuffer commandBuffer,
+                                                                    VkStencilFaceFlags faceMask, uint32_t compareMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 
@@ -449,8 +455,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilCompareMask(VkCommandBuffer com
     layer_data->interceptor->PostCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                                           uint32_t writeMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilWriteMask(VkCommandBuffer commandBuffer,
+                                                                  VkStencilFaceFlags faceMask, uint32_t writeMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 
@@ -462,8 +468,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilWriteMask(VkCommandBuffer comma
     layer_data->interceptor->PostCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                                           uint32_t reference) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilReference(VkCommandBuffer commandBuffer,
+                                                                  VkStencilFaceFlags faceMask, uint32_t reference) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetStencilReference(commandBuffer, faceMask, reference);
 
@@ -475,7 +481,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilReference(VkCommandBuffer comma
     layer_data->interceptor->PostCmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets(
     VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet,
     uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
     const uint32_t* pDynamicOffsets) {
@@ -495,8 +501,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets(
                                                        pDynamicOffsets);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                       VkDeviceSize offset, VkIndexType indexType) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                              VkDeviceSize offset, VkIndexType indexType) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 
@@ -508,9 +514,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding,
-                                                         uint32_t bindingCount, const VkBuffer* pBuffers,
-                                                         const VkDeviceSize* pOffsets) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                                uint32_t bindingCount, const VkBuffer* pBuffers,
+                                                                const VkDeviceSize* pOffsets) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 
@@ -522,8 +528,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers(VkCommandBuffer command
     layer_data->interceptor->PostCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount,
-                                            uint32_t firstVertex, uint32_t firstInstance) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount,
+                                                   uint32_t instanceCount, uint32_t firstVertex,
+                                                   uint32_t firstInstance) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 
@@ -535,9 +542,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDraw(VkCommandBuffer commandBuffer, uint3
     layer_data->interceptor->PostCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount,
-                                                   uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset,
-                                                   uint32_t firstInstance) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount,
+                                                          uint32_t instanceCount, uint32_t firstIndex,
+                                                          int32_t vertexOffset, uint32_t firstInstance) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset,
                                                firstInstance);
@@ -551,8 +558,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexed(VkCommandBuffer commandBuffer
                                                 firstInstance);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                                    uint32_t drawCount, uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                           VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 
@@ -564,8 +571,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirect(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                           VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                  VkDeviceSize offset, uint32_t drawCount,
+                                                                  uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 
@@ -577,8 +585,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirect(VkCommandBuffer comma
     layer_data->interceptor->PostCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX,
-                                                uint32_t groupCountY, uint32_t groupCountZ) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX,
+                                                       uint32_t groupCountY, uint32_t groupCountZ) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 
@@ -590,8 +598,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatch(VkCommandBuffer commandBuffer, u
     layer_data->interceptor->PostCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                        VkDeviceSize offset) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                               VkDeviceSize offset) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDispatchIndirect(commandBuffer, buffer, offset);
 
@@ -603,8 +611,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchIndirect(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdDispatchIndirect(commandBuffer, buffer, offset);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                                                  uint32_t regionCount, const VkBufferCopy* pRegions) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
+                                                         VkBuffer dstBuffer, uint32_t regionCount,
+                                                         const VkBufferCopy* pRegions) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 
@@ -616,10 +625,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer(VkCommandBuffer commandBuffer,
     layer_data->interceptor->PostCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                                 VkImageLayout srcImageLayout, VkImage dstImage,
-                                                 VkImageLayout dstImageLayout, uint32_t regionCount,
-                                                 const VkImageCopy* pRegions) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                                        VkImageLayout srcImageLayout, VkImage dstImage,
+                                                        VkImageLayout dstImageLayout, uint32_t regionCount,
+                                                        const VkImageCopy* pRegions) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
                                              regionCount, pRegions);
@@ -633,10 +642,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage(VkCommandBuffer commandBuffer, 
                                               regionCount, pRegions);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                                 VkImageLayout srcImageLayout, VkImage dstImage,
-                                                 VkImageLayout dstImageLayout, uint32_t regionCount,
-                                                 const VkImageBlit* pRegions, VkFilter filter) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                                        VkImageLayout srcImageLayout, VkImage dstImage,
+                                                        VkImageLayout dstImageLayout, uint32_t regionCount,
+                                                        const VkImageBlit* pRegions, VkFilter filter) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
                                              regionCount, pRegions, filter);
@@ -650,9 +659,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage(VkCommandBuffer commandBuffer, 
                                               regionCount, pRegions, filter);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
-                                                         VkImage dstImage, VkImageLayout dstImageLayout,
-                                                         uint32_t regionCount, const VkBufferImageCopy* pRegions) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
+                                                                VkImage dstImage, VkImageLayout dstImageLayout,
+                                                                uint32_t regionCount,
+                                                                const VkBufferImageCopy* pRegions) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount,
                                                      pRegions);
@@ -666,9 +676,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage(VkCommandBuffer command
                                                       pRegions);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                                         VkImageLayout srcImageLayout, VkBuffer dstBuffer,
-                                                         uint32_t regionCount, const VkBufferImageCopy* pRegions) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                                                VkImageLayout srcImageLayout, VkBuffer dstBuffer,
+                                                                uint32_t regionCount,
+                                                                const VkBufferImageCopy* pRegions) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount,
                                                      pRegions);
@@ -682,8 +693,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer(VkCommandBuffer command
                                                       pRegions);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
-                                                    VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
+                                                           VkDeviceSize dstOffset, VkDeviceSize dataSize,
+                                                           const void* pData) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 
@@ -695,8 +707,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdUpdateBuffer(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
-                                                  VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
+                                                         VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 
@@ -708,9 +720,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdFillBuffer(VkCommandBuffer commandBuffer,
     layer_data->interceptor->PostCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image,
-                                                       VkImageLayout imageLayout, const VkClearColorValue* pColor,
-                                                       uint32_t rangeCount, const VkImageSubresourceRange* pRanges) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image,
+                                                              VkImageLayout imageLayout,
+                                                              const VkClearColorValue* pColor, uint32_t rangeCount,
+                                                              const VkImageSubresourceRange* pRanges) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 
@@ -722,11 +735,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdClearColorImage(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image,
-                                                              VkImageLayout imageLayout,
-                                                              const VkClearDepthStencilValue* pDepthStencil,
-                                                              uint32_t rangeCount,
-                                                              const VkImageSubresourceRange* pRanges) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image,
+                                                                     VkImageLayout imageLayout,
+                                                                     const VkClearDepthStencilValue* pDepthStencil,
+                                                                     uint32_t rangeCount,
+                                                                     const VkImageSubresourceRange* pRanges) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount,
                                                           pRanges);
@@ -740,9 +753,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdClearDepthStencilImage(VkCommandBuffer co
                                                            pRanges);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
-                                                        const VkClearAttachment* pAttachments, uint32_t rectCount,
-                                                        const VkClearRect* pRects) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
+                                                               const VkClearAttachment* pAttachments,
+                                                               uint32_t rectCount, const VkClearRect* pRects) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 
@@ -754,10 +767,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdClearAttachments(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                                    VkImageLayout srcImageLayout, VkImage dstImage,
-                                                    VkImageLayout dstImageLayout, uint32_t regionCount,
-                                                    const VkImageResolve* pRegions) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                                           VkImageLayout srcImageLayout, VkImage dstImage,
+                                                           VkImageLayout dstImageLayout, uint32_t regionCount,
+                                                           const VkImageResolve* pRegions) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
                                                 regionCount, pRegions);
@@ -771,8 +784,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage(VkCommandBuffer commandBuffe
                                                  regionCount, pRegions);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event,
-                                                VkPipelineStageFlags stageMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event,
+                                                       VkPipelineStageFlags stageMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetEvent(commandBuffer, event, stageMask);
 
@@ -784,8 +797,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent(VkCommandBuffer commandBuffer, V
     layer_data->interceptor->PostCmdSetEvent(commandBuffer, event, stageMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event,
-                                                  VkPipelineStageFlags stageMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event,
+                                                         VkPipelineStageFlags stageMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdResetEvent(commandBuffer, event, stageMask);
 
@@ -797,7 +810,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent(VkCommandBuffer commandBuffer,
     layer_data->interceptor->PostCmdResetEvent(commandBuffer, event, stageMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents(
     VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask,
     VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
     uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
@@ -818,7 +831,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents(
                                                pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier(
     VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
     VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
     uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
@@ -839,8 +852,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier(
         bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                                                  VkQueryControlFlags flags) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                         uint32_t query, VkQueryControlFlags flags) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginQuery(commandBuffer, queryPool, query, flags);
 
@@ -852,7 +865,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginQuery(VkCommandBuffer commandBuffer,
     layer_data->interceptor->PostCmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                       uint32_t query) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndQuery(commandBuffer, queryPool, query);
 
@@ -864,8 +878,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndQuery(VkCommandBuffer commandBuffer, V
     layer_data->interceptor->PostCmdEndQuery(commandBuffer, queryPool, query);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                      uint32_t firstQuery, uint32_t queryCount) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                             uint32_t firstQuery, uint32_t queryCount) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 
@@ -877,9 +891,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdResetQueryPool(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp(VkCommandBuffer commandBuffer,
-                                                      VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool,
-                                                      uint32_t query) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp(VkCommandBuffer commandBuffer,
+                                                             VkPipelineStageFlagBits pipelineStage,
+                                                             VkQueryPool queryPool, uint32_t query) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 
@@ -891,10 +905,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                            uint32_t firstQuery, uint32_t queryCount,
-                                                            VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                                            VkDeviceSize stride, VkQueryResultFlags flags) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                                   uint32_t firstQuery, uint32_t queryCount,
+                                                                   VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                                                   VkDeviceSize stride, VkQueryResultFlags flags) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer,
                                                         dstOffset, stride, flags);
@@ -908,9 +922,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyQueryPoolResults(VkCommandBuffer comm
                                                          dstOffset, stride, flags);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
-                                                     VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
-                                                     const void* pValues) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
+                                                            VkShaderStageFlags stageFlags, uint32_t offset,
+                                                            uint32_t size, const void* pValues) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 
@@ -922,9 +936,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants(VkCommandBuffer commandBuff
     layer_data->interceptor->PostCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass(VkCommandBuffer commandBuffer,
-                                                       const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                       VkSubpassContents contents) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass(VkCommandBuffer commandBuffer,
+                                                              const VkRenderPassBeginInfo* pRenderPassBegin,
+                                                              VkSubpassContents contents) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 
@@ -936,7 +950,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdNextSubpass(commandBuffer, contents);
 
@@ -948,7 +962,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass(VkCommandBuffer commandBuffer
     layer_data->interceptor->PostCmdNextSubpass(commandBuffer, contents);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass(VkCommandBuffer commandBuffer) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndRenderPass(commandBuffer);
 
@@ -960,8 +974,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass(VkCommandBuffer commandBuff
     layer_data->interceptor->PostCmdEndRenderPass(commandBuffer);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                                                       const VkCommandBuffer* pCommandBuffers) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteCommands(VkCommandBuffer commandBuffer,
+                                                              uint32_t commandBufferCount,
+                                                              const VkCommandBuffer* pCommandBuffers) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 
@@ -973,7 +988,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteCommands(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDeviceMask(commandBuffer, deviceMask);
 
@@ -985,9 +1000,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDeviceMask(VkCommandBuffer commandBuff
     layer_data->interceptor->PostCmdSetDeviceMask(commandBuffer, deviceMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX,
-                                                    uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX,
-                                                    uint32_t groupCountY, uint32_t groupCountZ) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX,
+                                                           uint32_t baseGroupY, uint32_t baseGroupZ,
+                                                           uint32_t groupCountX, uint32_t groupCountY,
+                                                           uint32_t groupCountZ) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX,
                                                 groupCountY, groupCountZ);
@@ -1001,11 +1017,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchBase(VkCommandBuffer commandBuffe
                                                  groupCountY, groupCountZ);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo,
-                                                    VkQueue* pQueue) {
+static VKAPI_ATTR void VKAPI_CALL InterceptGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo,
+                                                           VkQueue* pQueue) {
     auto layer_data = GetDeviceLayerData(DataKey(device));
-    layer_data->interceptor->PreGetDeviceQueue2(device, pQueueInfo, pQueue);
-
     PFN_vkGetDeviceQueue2 pfn = layer_data->dispatch_table.GetDeviceQueue2;
     if (pfn != nullptr) {
         pfn(device, pQueueInfo, pQueue);
@@ -1014,10 +1028,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptGetDeviceQueue2(VkDevice device, const VkDev
     layer_data->interceptor->PostGetDeviceQueue2(device, pQueueInfo, pQueue);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                         VkDeviceSize offset, VkBuffer countBuffer,
-                                                         VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                                         uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                VkDeviceSize offset, VkBuffer countBuffer,
+                                                                VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
+                                                                uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset,
                                                      maxDrawCount, stride);
@@ -1031,10 +1045,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCount(VkCommandBuffer command
                                                       maxDrawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                                VkDeviceSize offset, VkBuffer countBuffer,
-                                                                VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                                                uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                       VkDeviceSize offset, VkBuffer countBuffer,
+                                                                       VkDeviceSize countBufferOffset,
+                                                                       uint32_t maxDrawCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer,
                                                             countBufferOffset, maxDrawCount, stride);
@@ -1048,9 +1062,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCount(VkCommandBuffer 
                                                              countBufferOffset, maxDrawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass2(VkCommandBuffer commandBuffer,
-                                                        const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                        const VkSubpassBeginInfo* pSubpassBeginInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass2(VkCommandBuffer commandBuffer,
+                                                               const VkRenderPassBeginInfo* pRenderPassBegin,
+                                                               const VkSubpassBeginInfo* pSubpassBeginInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 
@@ -1062,9 +1076,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass2(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass2(VkCommandBuffer commandBuffer,
-                                                    const VkSubpassBeginInfo* pSubpassBeginInfo,
-                                                    const VkSubpassEndInfo* pSubpassEndInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass2(VkCommandBuffer commandBuffer,
+                                                           const VkSubpassBeginInfo* pSubpassBeginInfo,
+                                                           const VkSubpassEndInfo* pSubpassEndInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 
@@ -1076,8 +1090,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass2(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass2(VkCommandBuffer commandBuffer,
-                                                      const VkSubpassEndInfo* pSubpassEndInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass2(VkCommandBuffer commandBuffer,
+                                                             const VkSubpassEndInfo* pSubpassEndInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 
@@ -1089,8 +1103,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass2(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore,
-                                                                 uint64_t* pValue) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore,
+                                                                        uint64_t* pValue) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -1105,8 +1119,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetSemaphoreCounterValue(VkDevice device
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo,
-                                                       uint64_t timeout) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo,
+                                                              uint64_t timeout) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -1121,7 +1135,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitSemaphores(VkDevice device, const Vk
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptSignalSemaphore(VkDevice device,
+                                                               const VkSemaphoreSignalInfo* pSignalInfo) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -1136,8 +1151,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptSignalSemaphore(VkDevice device, const V
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                                 const VkDependencyInfo* pDependencyInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                                        const VkDependencyInfo* pDependencyInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
 
@@ -1149,8 +1164,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent2(VkCommandBuffer commandBuffer, 
     layer_data->interceptor->PostCmdSetEvent2(commandBuffer, event, pDependencyInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                                   VkPipelineStageFlags2 stageMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                                          VkPipelineStageFlags2 stageMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdResetEvent2(commandBuffer, event, stageMask);
 
@@ -1162,8 +1177,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent2(VkCommandBuffer commandBuffer
     layer_data->interceptor->PostCmdResetEvent2(commandBuffer, event, stageMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount,
-                                                   const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount,
+                                                          const VkEvent* pEvents,
+                                                          const VkDependencyInfo* pDependencyInfos) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 
@@ -1175,8 +1191,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents2(VkCommandBuffer commandBuffer
     layer_data->interceptor->PostCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier2(VkCommandBuffer commandBuffer,
-                                                        const VkDependencyInfo* pDependencyInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier2(VkCommandBuffer commandBuffer,
+                                                               const VkDependencyInfo* pDependencyInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
 
@@ -1188,8 +1204,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier2(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                                       VkQueryPool queryPool, uint32_t query) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp2(VkCommandBuffer commandBuffer,
+                                                              VkPipelineStageFlags2 stage, VkQueryPool queryPool,
+                                                              uint32_t query) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 
@@ -1201,8 +1218,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp2(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer2(VkCommandBuffer commandBuffer,
-                                                   const VkCopyBufferInfo2* pCopyBufferInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer2(VkCommandBuffer commandBuffer,
+                                                          const VkCopyBufferInfo2* pCopyBufferInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
 
@@ -1214,8 +1231,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer2(VkCommandBuffer commandBuffer
     layer_data->interceptor->PostCmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage2(VkCommandBuffer commandBuffer,
-                                                  const VkCopyImageInfo2* pCopyImageInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage2(VkCommandBuffer commandBuffer,
+                                                         const VkCopyImageInfo2* pCopyImageInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyImage2(commandBuffer, pCopyImageInfo);
 
@@ -1227,8 +1244,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage2(VkCommandBuffer commandBuffer,
     layer_data->interceptor->PostCmdCopyImage2(commandBuffer, pCopyImageInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage2(VkCommandBuffer commandBuffer,
-                                                          const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdCopyBufferToImage2(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
 
@@ -1240,8 +1257,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage2(VkCommandBuffer comman
     layer_data->interceptor->PostCmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
-                                                          const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
 
@@ -1253,8 +1270,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer2(VkCommandBuffer comman
     layer_data->interceptor->PostCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage2(VkCommandBuffer commandBuffer,
-                                                  const VkBlitImageInfo2* pBlitImageInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage2(VkCommandBuffer commandBuffer,
+                                                         const VkBlitImageInfo2* pBlitImageInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBlitImage2(commandBuffer, pBlitImageInfo);
 
@@ -1266,8 +1283,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage2(VkCommandBuffer commandBuffer,
     layer_data->interceptor->PostCmdBlitImage2(commandBuffer, pBlitImageInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage2(VkCommandBuffer commandBuffer,
-                                                     const VkResolveImageInfo2* pResolveImageInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage2(VkCommandBuffer commandBuffer,
+                                                            const VkResolveImageInfo2* pResolveImageInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdResolveImage2(commandBuffer, pResolveImageInfo);
 
@@ -1279,8 +1296,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage2(VkCommandBuffer commandBuff
     layer_data->interceptor->PostCmdResolveImage2(commandBuffer, pResolveImageInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRendering(VkCommandBuffer commandBuffer,
-                                                      const VkRenderingInfo* pRenderingInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRendering(VkCommandBuffer commandBuffer,
+                                                             const VkRenderingInfo* pRenderingInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginRendering(commandBuffer, pRenderingInfo);
 
@@ -1292,7 +1309,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRendering(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdBeginRendering(commandBuffer, pRenderingInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRendering(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRendering(VkCommandBuffer commandBuffer) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndRendering(commandBuffer);
 
@@ -1304,7 +1321,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRendering(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdEndRendering(commandBuffer);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCullMode(commandBuffer, cullMode);
 
@@ -1316,7 +1333,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCullMode(VkCommandBuffer commandBuffer
     layer_data->interceptor->PostCmdSetCullMode(commandBuffer, cullMode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetFrontFace(commandBuffer, frontFace);
 
@@ -1328,8 +1345,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetFrontFace(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdSetFrontFace(commandBuffer, frontFace);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveTopology(VkCommandBuffer commandBuffer,
-                                                            VkPrimitiveTopology primitiveTopology) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveTopology(VkCommandBuffer commandBuffer,
+                                                                   VkPrimitiveTopology primitiveTopology) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
 
@@ -1341,8 +1358,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveTopology(VkCommandBuffer comm
     layer_data->interceptor->PostCmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_t viewportCount,
-                                                            const VkViewport* pViewports) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWithCount(VkCommandBuffer commandBuffer,
+                                                                   uint32_t viewportCount,
+                                                                   const VkViewport* pViewports) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
 
@@ -1354,8 +1372,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWithCount(VkCommandBuffer comm
     layer_data->interceptor->PostCmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCount,
-                                                           const VkRect2D* pScissors) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCount,
+                                                                  const VkRect2D* pScissors) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
 
@@ -1367,10 +1385,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissorWithCount(VkCommandBuffer comma
     layer_data->interceptor->PostCmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32_t firstBinding,
-                                                          uint32_t bindingCount, const VkBuffer* pBuffers,
-                                                          const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes,
-                                                          const VkDeviceSize* pStrides) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                                 uint32_t bindingCount, const VkBuffer* pBuffers,
+                                                                 const VkDeviceSize* pOffsets,
+                                                                 const VkDeviceSize* pSizes,
+                                                                 const VkDeviceSize* pStrides) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets,
                                                       pSizes, pStrides);
@@ -1384,7 +1403,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers2(VkCommandBuffer comman
                                                        pSizes, pStrides);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthTestEnable(VkCommandBuffer commandBuffer,
+                                                                 VkBool32 depthTestEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
 
@@ -1396,7 +1416,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthTestEnable(VkCommandBuffer comman
     layer_data->interceptor->PostCmdSetDepthTestEnable(commandBuffer, depthTestEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthWriteEnable(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthWriteEnable(VkCommandBuffer commandBuffer,
+                                                                  VkBool32 depthWriteEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
 
@@ -1408,7 +1429,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthWriteEnable(VkCommandBuffer comma
     layer_data->interceptor->PostCmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthCompareOp(VkCommandBuffer commandBuffer,
+                                                                VkCompareOp depthCompareOp) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
 
@@ -1420,8 +1442,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthCompareOp(VkCommandBuffer command
     layer_data->interceptor->PostCmdSetDepthCompareOp(commandBuffer, depthCompareOp);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer,
-                                                                VkBool32 depthBoundsTestEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer,
+                                                                       VkBool32 depthBoundsTestEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
 
@@ -1433,7 +1455,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBoundsTestEnable(VkCommandBuffer 
     layer_data->interceptor->PostCmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilTestEnable(VkCommandBuffer commandBuffer,
+                                                                   VkBool32 stencilTestEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
 
@@ -1445,9 +1468,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilTestEnable(VkCommandBuffer comm
     layer_data->interceptor->PostCmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                                    VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp,
-                                                    VkCompareOp compareOp) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
+                                                           VkStencilOp failOp, VkStencilOp passOp,
+                                                           VkStencilOp depthFailOp, VkCompareOp compareOp) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 
@@ -1459,8 +1482,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilOp(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer,
-                                                                  VkBool32 rasterizerDiscardEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer,
+                                                                         VkBool32 rasterizerDiscardEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
 
@@ -1472,7 +1495,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizerDiscardEnable(VkCommandBuffe
     layer_data->interceptor->PostCmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBiasEnable(VkCommandBuffer commandBuffer,
+                                                                 VkBool32 depthBiasEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 
@@ -1484,8 +1508,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBiasEnable(VkCommandBuffer comman
     layer_data->interceptor->PostCmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer,
-                                                                 VkBool32 primitiveRestartEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer,
+                                                                        VkBool32 primitiveRestartEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 
@@ -1497,9 +1521,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartEnable(VkCommandBuffer
     layer_data->interceptor->PostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
-                                                            VkSemaphore semaphore, VkFence fence,
-                                                            uint32_t* pImageIndex) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain,
+                                                                   uint64_t timeout, VkSemaphore semaphore,
+                                                                   VkFence fence, uint32_t* pImageIndex) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -1515,7 +1539,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptAcquireNextImageKHR(VkDevice device, VkS
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(queue));
@@ -1530,8 +1554,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptQueuePresentKHR(VkQueue queue, const VkP
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
-                                                           const VkVideoBeginCodingInfoKHR* pBeginInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
+                                                                  const VkVideoBeginCodingInfoKHR* pBeginInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
 
@@ -1543,8 +1567,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginVideoCodingKHR(VkCommandBuffer comma
     layer_data->interceptor->PostCmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndVideoCodingKHR(VkCommandBuffer commandBuffer,
-                                                         const VkVideoEndCodingInfoKHR* pEndCodingInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndVideoCodingKHR(VkCommandBuffer commandBuffer,
+                                                                const VkVideoEndCodingInfoKHR* pEndCodingInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
 
@@ -1556,8 +1580,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndVideoCodingKHR(VkCommandBuffer command
     layer_data->interceptor->PostCmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdControlVideoCodingKHR(VkCommandBuffer commandBuffer,
-                                                             const VkVideoCodingControlInfoKHR* pCodingControlInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdControlVideoCodingKHR(
+    VkCommandBuffer commandBuffer, const VkVideoCodingControlInfoKHR* pCodingControlInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
 
@@ -1569,8 +1593,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdControlVideoCodingKHR(VkCommandBuffer com
     layer_data->interceptor->PostCmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDecodeVideoKHR(VkCommandBuffer commandBuffer,
-                                                      const VkVideoDecodeInfoKHR* pDecodeInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDecodeVideoKHR(VkCommandBuffer commandBuffer,
+                                                             const VkVideoDecodeInfoKHR* pDecodeInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
 
@@ -1582,8 +1606,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDecodeVideoKHR(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderingKHR(VkCommandBuffer commandBuffer,
-                                                         const VkRenderingInfo* pRenderingInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderingKHR(VkCommandBuffer commandBuffer,
+                                                                const VkRenderingInfo* pRenderingInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 
@@ -1595,7 +1619,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderingKHR(VkCommandBuffer command
     layer_data->interceptor->PostCmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndRenderingKHR(commandBuffer);
 
@@ -1607,7 +1631,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderingKHR(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdEndRenderingKHR(commandBuffer);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
 
@@ -1619,9 +1643,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDeviceMaskKHR(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdSetDeviceMaskKHR(commandBuffer, deviceMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchBaseKHR(VkCommandBuffer commandBuffer, uint32_t baseGroupX,
-                                                       uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX,
-                                                       uint32_t groupCountY, uint32_t groupCountZ) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchBaseKHR(VkCommandBuffer commandBuffer, uint32_t baseGroupX,
+                                                              uint32_t baseGroupY, uint32_t baseGroupZ,
+                                                              uint32_t groupCountX, uint32_t groupCountY,
+                                                              uint32_t groupCountZ) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX,
                                                    groupCountY, groupCountZ);
@@ -1635,11 +1660,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchBaseKHR(VkCommandBuffer commandBu
                                                     groupCountY, groupCountZ);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetKHR(VkCommandBuffer commandBuffer,
-                                                            VkPipelineBindPoint pipelineBindPoint,
-                                                            VkPipelineLayout layout, uint32_t set,
-                                                            uint32_t descriptorWriteCount,
-                                                            const VkWriteDescriptorSet* pDescriptorWrites) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetKHR(VkCommandBuffer commandBuffer,
+                                                                   VkPipelineBindPoint pipelineBindPoint,
+                                                                   VkPipelineLayout layout, uint32_t set,
+                                                                   uint32_t descriptorWriteCount,
+                                                                   const VkWriteDescriptorSet* pDescriptorWrites) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set,
                                                         descriptorWriteCount, pDescriptorWrites);
@@ -1653,7 +1678,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetKHR(VkCommandBuffer comm
                                                          descriptorWriteCount, pDescriptorWrites);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplateKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplateKHR(
     VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
     uint32_t set, const void* pData) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -1669,9 +1694,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplateKHR(
                                                                      set, pData);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass2KHR(VkCommandBuffer commandBuffer,
-                                                           const VkRenderPassBeginInfo* pRenderPassBegin,
-                                                           const VkSubpassBeginInfo* pSubpassBeginInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass2KHR(VkCommandBuffer commandBuffer,
+                                                                  const VkRenderPassBeginInfo* pRenderPassBegin,
+                                                                  const VkSubpassBeginInfo* pSubpassBeginInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 
@@ -1683,9 +1708,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass2KHR(VkCommandBuffer comma
     layer_data->interceptor->PostCmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass2KHR(VkCommandBuffer commandBuffer,
-                                                       const VkSubpassBeginInfo* pSubpassBeginInfo,
-                                                       const VkSubpassEndInfo* pSubpassEndInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass2KHR(VkCommandBuffer commandBuffer,
+                                                              const VkSubpassBeginInfo* pSubpassBeginInfo,
+                                                              const VkSubpassEndInfo* pSubpassEndInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 
@@ -1697,8 +1722,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdNextSubpass2KHR(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass2KHR(VkCommandBuffer commandBuffer,
-                                                         const VkSubpassEndInfo* pSubpassEndInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass2KHR(VkCommandBuffer commandBuffer,
+                                                                const VkSubpassEndInfo* pSubpassEndInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
 
@@ -1710,10 +1735,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass2KHR(VkCommandBuffer command
     layer_data->interceptor->PostCmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                            VkDeviceSize offset, VkBuffer countBuffer,
-                                                            VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                                            uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                   VkDeviceSize offset, VkBuffer countBuffer,
+                                                                   VkDeviceSize countBufferOffset,
+                                                                   uint32_t maxDrawCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset,
                                                         maxDrawCount, stride);
@@ -1727,10 +1752,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCountKHR(VkCommandBuffer comm
                                                          maxDrawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                                   VkDeviceSize offset, VkBuffer countBuffer,
-                                                                   VkDeviceSize countBufferOffset,
-                                                                   uint32_t maxDrawCount, uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCountKHR(VkCommandBuffer commandBuffer,
+                                                                          VkBuffer buffer, VkDeviceSize offset,
+                                                                          VkBuffer countBuffer,
+                                                                          VkDeviceSize countBufferOffset,
+                                                                          uint32_t maxDrawCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer,
                                                                countBufferOffset, maxDrawCount, stride);
@@ -1744,8 +1770,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCountKHR(VkCommandBuff
                                                                 countBufferOffset, maxDrawCount, stride);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore,
-                                                                    uint64_t* pValue) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore,
+                                                                           uint64_t* pValue) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -1760,8 +1786,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetSemaphoreCounterValueKHR(VkDevice dev
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo,
-                                                          uint64_t timeout) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo,
+                                                                 uint64_t timeout) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -1776,7 +1802,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitSemaphoresKHR(VkDevice device, const
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptSignalSemaphoreKHR(VkDevice device,
+                                                                  const VkSemaphoreSignalInfo* pSignalInfo) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -1791,7 +1818,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptSignalSemaphoreKHR(VkDevice device, cons
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL
+static VKAPI_ATTR void VKAPI_CALL
 InterceptCmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExtent2D* pFragmentSize,
                                       const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -1805,7 +1832,7 @@ InterceptCmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExt
     layer_data->interceptor->PostCmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingAttachmentLocationsKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingAttachmentLocationsKHR(
     VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
@@ -1818,7 +1845,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingAttachmentLocationsKHR(
     layer_data->interceptor->PostCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingInputAttachmentIndicesKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingInputAttachmentIndicesKHR(
     VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
@@ -1832,8 +1859,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingInputAttachmentIndicesKHR(
     layer_data->interceptor->PostCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEncodeVideoKHR(VkCommandBuffer commandBuffer,
-                                                      const VkVideoEncodeInfoKHR* pEncodeInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEncodeVideoKHR(VkCommandBuffer commandBuffer,
+                                                             const VkVideoEncodeInfoKHR* pEncodeInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 
@@ -1845,8 +1872,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEncodeVideoKHR(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event,
-                                                    const VkDependencyInfo* pDependencyInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event,
+                                                           const VkDependencyInfo* pDependencyInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
 
@@ -1858,8 +1885,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent2KHR(VkCommandBuffer commandBuffe
     layer_data->interceptor->PostCmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event,
-                                                      VkPipelineStageFlags2 stageMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event,
+                                                             VkPipelineStageFlags2 stageMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdResetEvent2KHR(commandBuffer, event, stageMask);
 
@@ -1871,9 +1898,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent2KHR(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdResetEvent2KHR(commandBuffer, event, stageMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents2KHR(VkCommandBuffer commandBuffer, uint32_t eventCount,
-                                                      const VkEvent* pEvents,
-                                                      const VkDependencyInfo* pDependencyInfos) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents2KHR(VkCommandBuffer commandBuffer, uint32_t eventCount,
+                                                             const VkEvent* pEvents,
+                                                             const VkDependencyInfo* pDependencyInfos) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
 
@@ -1885,8 +1912,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents2KHR(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier2KHR(VkCommandBuffer commandBuffer,
-                                                           const VkDependencyInfo* pDependencyInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier2KHR(VkCommandBuffer commandBuffer,
+                                                                  const VkDependencyInfo* pDependencyInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
 
@@ -1898,8 +1925,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier2KHR(VkCommandBuffer comma
     layer_data->interceptor->PostCmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                                          VkQueryPool queryPool, uint32_t query) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer,
+                                                                 VkPipelineStageFlags2 stage, VkQueryPool queryPool,
+                                                                 uint32_t query) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 
@@ -1911,9 +1939,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp2KHR(VkCommandBuffer comman
     layer_data->interceptor->PostCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                                             VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                                             uint32_t marker) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer,
+                                                                    VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
+                                                                    VkDeviceSize dstOffset, uint32_t marker) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 
@@ -1925,8 +1953,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarker2AMD(VkCommandBuffer com
     layer_data->interceptor->PostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer,
-                                                      const VkCopyBufferInfo2* pCopyBufferInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer,
+                                                             const VkCopyBufferInfo2* pCopyBufferInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
 
@@ -1938,8 +1966,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer2KHR(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage2KHR(VkCommandBuffer commandBuffer,
-                                                     const VkCopyImageInfo2* pCopyImageInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage2KHR(VkCommandBuffer commandBuffer,
+                                                            const VkCopyImageInfo2* pCopyImageInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
 
@@ -1951,8 +1979,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage2KHR(VkCommandBuffer commandBuff
     layer_data->interceptor->PostCmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage2KHR(VkCommandBuffer commandBuffer,
-                                                             const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage2KHR(
+    VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
 
@@ -1964,8 +1992,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage2KHR(VkCommandBuffer com
     layer_data->interceptor->PostCmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer2KHR(VkCommandBuffer commandBuffer,
-                                                             const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer2KHR(
+    VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
 
@@ -1977,8 +2005,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer2KHR(VkCommandBuffer com
     layer_data->interceptor->PostCmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage2KHR(VkCommandBuffer commandBuffer,
-                                                     const VkBlitImageInfo2* pBlitImageInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage2KHR(VkCommandBuffer commandBuffer,
+                                                            const VkBlitImageInfo2* pBlitImageInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
 
@@ -1990,8 +2018,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage2KHR(VkCommandBuffer commandBuff
     layer_data->interceptor->PostCmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage2KHR(VkCommandBuffer commandBuffer,
-                                                        const VkResolveImageInfo2* pResolveImageInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage2KHR(VkCommandBuffer commandBuffer,
+                                                               const VkResolveImageInfo2* pResolveImageInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
 
@@ -2003,8 +2031,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage2KHR(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysIndirect2KHR(VkCommandBuffer commandBuffer,
-                                                             VkDeviceAddress indirectDeviceAddress) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysIndirect2KHR(VkCommandBuffer commandBuffer,
+                                                                    VkDeviceAddress indirectDeviceAddress) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 
@@ -2016,9 +2044,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysIndirect2KHR(VkCommandBuffer com
     layer_data->interceptor->PostCmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                           VkDeviceSize offset, VkDeviceSize size,
-                                                           VkIndexType indexType) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                  VkDeviceSize offset, VkDeviceSize size,
+                                                                  VkIndexType indexType) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
 
@@ -2030,8 +2058,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer2KHR(VkCommandBuffer comma
     layer_data->interceptor->PostCmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                                         uint16_t lineStipplePattern) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleKHR(VkCommandBuffer commandBuffer,
+                                                                uint32_t lineStippleFactor,
+                                                                uint16_t lineStipplePattern) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
 
@@ -2043,7 +2072,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleKHR(VkCommandBuffer command
     layer_data->interceptor->PostCmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets2KHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets2KHR(
     VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
@@ -2056,8 +2085,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets2KHR(
     layer_data->interceptor->PostCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants2KHR(VkCommandBuffer commandBuffer,
-                                                         const VkPushConstantsInfoKHR* pPushConstantsInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants2KHR(VkCommandBuffer commandBuffer,
+                                                                const VkPushConstantsInfoKHR* pPushConstantsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
 
@@ -2069,8 +2098,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants2KHR(VkCommandBuffer command
     layer_data->interceptor->PostCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                                             const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSet2KHR(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
 
@@ -2082,7 +2111,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSet2KHR(VkCommandBuffer com
     layer_data->interceptor->PostCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplate2KHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplate2KHR(
     VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
@@ -2096,7 +2125,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplate2KHR(
                                                                       pPushDescriptorSetWithTemplateInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDescriptorBufferOffsets2EXT(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDescriptorBufferOffsets2EXT(
     VkCommandBuffer commandBuffer, const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
@@ -2109,7 +2138,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDescriptorBufferOffsets2EXT(
     layer_data->interceptor->PostCmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -2126,7 +2155,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT(
                                                                              pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL
+static VKAPI_ATTR VkResult VKAPI_CALL
 InterceptCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
     VkResult result = VK_SUCCESS;
@@ -2144,9 +2173,9 @@ InterceptCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCa
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptDestroyDebugReportCallbackEXT(VkInstance instance,
-                                                                  VkDebugReportCallbackEXT callback,
-                                                                  const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL InterceptDestroyDebugReportCallbackEXT(VkInstance instance,
+                                                                         VkDebugReportCallbackEXT callback,
+                                                                         const VkAllocationCallbacks* pAllocator) {
     auto layer_data = GetInstanceLayerData(DataKey(instance));
     layer_data->interceptor->PreDestroyDebugReportCallbackEXT(instance, callback, pAllocator);
 
@@ -2158,8 +2187,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroyDebugReportCallbackEXT(VkInstance ins
     layer_data->interceptor->PostDestroyDebugReportCallbackEXT(instance, callback, pAllocator);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptDebugMarkerSetObjectNameEXT(VkDevice device,
-                                                                    const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
+static VKAPI_ATTR VkResult VKAPI_CALL
+InterceptDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -2174,8 +2203,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptDebugMarkerSetObjectNameEXT(VkDevice dev
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
-                                                           const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
+                                                                  const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 
@@ -2187,7 +2216,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerBeginEXT(VkCommandBuffer comma
     layer_data->interceptor->PostCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDebugMarkerEndEXT(commandBuffer);
 
@@ -2199,8 +2228,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerEndEXT(VkCommandBuffer command
     layer_data->interceptor->PostCmdDebugMarkerEndEXT(commandBuffer);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer,
-                                                            const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer,
+                                                                   const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
 
@@ -2212,11 +2241,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDebugMarkerInsertEXT(VkCommandBuffer comm
     layer_data->interceptor->PostCmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandBuffer,
-                                                                       uint32_t firstBinding, uint32_t bindingCount,
-                                                                       const VkBuffer* pBuffers,
-                                                                       const VkDeviceSize* pOffsets,
-                                                                       const VkDeviceSize* pSizes) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindTransformFeedbackBuffersEXT(
+    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers,
+    const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers,
                                                                    pOffsets, pSizes);
@@ -2230,11 +2257,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindTransformFeedbackBuffersEXT(VkCommand
                                                                     pOffsets, pSizes);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer,
-                                                                 uint32_t firstCounterBuffer,
-                                                                 uint32_t counterBufferCount,
-                                                                 const VkBuffer* pCounterBuffers,
-                                                                 const VkDeviceSize* pCounterBufferOffsets) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer,
+                                                                        uint32_t firstCounterBuffer,
+                                                                        uint32_t counterBufferCount,
+                                                                        const VkBuffer* pCounterBuffers,
+                                                                        const VkDeviceSize* pCounterBufferOffsets) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount,
                                                              pCounterBuffers, pCounterBufferOffsets);
@@ -2248,10 +2275,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginTransformFeedbackEXT(VkCommandBuffer
                                                               pCounterBuffers, pCounterBufferOffsets);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer,
-                                                               uint32_t firstCounterBuffer, uint32_t counterBufferCount,
-                                                               const VkBuffer* pCounterBuffers,
-                                                               const VkDeviceSize* pCounterBufferOffsets) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer,
+                                                                      uint32_t firstCounterBuffer,
+                                                                      uint32_t counterBufferCount,
+                                                                      const VkBuffer* pCounterBuffers,
+                                                                      const VkDeviceSize* pCounterBufferOffsets) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount,
                                                            pCounterBuffers, pCounterBufferOffsets);
@@ -2265,8 +2293,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndTransformFeedbackEXT(VkCommandBuffer c
                                                             pCounterBuffers, pCounterBufferOffsets);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                            uint32_t query, VkQueryControlFlags flags, uint32_t index) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                                   uint32_t query, VkQueryControlFlags flags,
+                                                                   uint32_t index) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
 
@@ -2278,8 +2307,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginQueryIndexedEXT(VkCommandBuffer comm
     layer_data->interceptor->PostCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                          uint32_t query, uint32_t index) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                                 uint32_t query, uint32_t index) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
 
@@ -2291,10 +2320,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndQueryIndexedEXT(VkCommandBuffer comman
     layer_data->interceptor->PostCmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer, uint32_t instanceCount,
-                                                                uint32_t firstInstance, VkBuffer counterBuffer,
-                                                                VkDeviceSize counterBufferOffset,
-                                                                uint32_t counterOffset, uint32_t vertexStride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer,
+                                                                       uint32_t instanceCount, uint32_t firstInstance,
+                                                                       VkBuffer counterBuffer,
+                                                                       VkDeviceSize counterBufferOffset,
+                                                                       uint32_t counterOffset, uint32_t vertexStride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer,
                                                             counterBufferOffset, counterOffset, vertexStride);
@@ -2309,8 +2339,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectByteCountEXT(VkCommandBuffer 
                                                              counterBufferOffset, counterOffset, vertexStride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer,
-                                                         const VkCuLaunchInfoNVX* pLaunchInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer,
+                                                                const VkCuLaunchInfoNVX* pLaunchInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
 
@@ -2322,10 +2352,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCuLaunchKernelNVX(VkCommandBuffer command
     layer_data->interceptor->PostCmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                            VkDeviceSize offset, VkBuffer countBuffer,
-                                                            VkDeviceSize countBufferOffset, uint32_t maxDrawCount,
-                                                            uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                   VkDeviceSize offset, VkBuffer countBuffer,
+                                                                   VkDeviceSize countBufferOffset,
+                                                                   uint32_t maxDrawCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset,
                                                         maxDrawCount, stride);
@@ -2339,10 +2369,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCountAMD(VkCommandBuffer comm
                                                          maxDrawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                                   VkDeviceSize offset, VkBuffer countBuffer,
-                                                                   VkDeviceSize countBufferOffset,
-                                                                   uint32_t maxDrawCount, uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCountAMD(VkCommandBuffer commandBuffer,
+                                                                          VkBuffer buffer, VkDeviceSize offset,
+                                                                          VkBuffer countBuffer,
+                                                                          VkDeviceSize countBufferOffset,
+                                                                          uint32_t maxDrawCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer,
                                                                countBufferOffset, maxDrawCount, stride);
@@ -2356,7 +2387,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirectCountAMD(VkCommandBuff
                                                                 countBufferOffset, maxDrawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginConditionalRenderingEXT(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginConditionalRenderingEXT(
     VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
@@ -2369,7 +2400,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginConditionalRenderingEXT(
     layer_data->interceptor->PostCmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndConditionalRenderingEXT(commandBuffer);
 
@@ -2381,9 +2412,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndConditionalRenderingEXT(VkCommandBuffe
     layer_data->interceptor->PostCmdEndConditionalRenderingEXT(commandBuffer);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWScalingNV(VkCommandBuffer commandBuffer, uint32_t firstViewport,
-                                                             uint32_t viewportCount,
-                                                             const VkViewportWScalingNV* pViewportWScalings) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWScalingNV(VkCommandBuffer commandBuffer,
+                                                                    uint32_t firstViewport, uint32_t viewportCount,
+                                                                    const VkViewportWScalingNV* pViewportWScalings) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount,
                                                          pViewportWScalings);
@@ -2397,10 +2428,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWScalingNV(VkCommandBuffer com
                                                           pViewportWScalings);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer,
-                                                              uint32_t firstDiscardRectangle,
-                                                              uint32_t discardRectangleCount,
-                                                              const VkRect2D* pDiscardRectangles) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer,
+                                                                     uint32_t firstDiscardRectangle,
+                                                                     uint32_t discardRectangleCount,
+                                                                     const VkRect2D* pDiscardRectangles) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount,
                                                           pDiscardRectangles);
@@ -2414,8 +2445,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDiscardRectangleEXT(VkCommandBuffer co
                                                            pDiscardRectangles);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDiscardRectangleEnableEXT(VkCommandBuffer commandBuffer,
-                                                                    VkBool32 discardRectangleEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDiscardRectangleEnableEXT(VkCommandBuffer commandBuffer,
+                                                                           VkBool32 discardRectangleEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
 
@@ -2427,8 +2458,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDiscardRectangleEnableEXT(VkCommandBuf
     layer_data->interceptor->PostCmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer,
-                                                                  VkDiscardRectangleModeEXT discardRectangleMode) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer, VkDiscardRectangleModeEXT discardRectangleMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 
@@ -2440,8 +2471,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDiscardRectangleModeEXT(VkCommandBuffe
     layer_data->interceptor->PostCmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptSetDebugUtilsObjectNameEXT(VkDevice device,
-                                                                   const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
+static VKAPI_ATTR VkResult VKAPI_CALL
+InterceptSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(device));
@@ -2456,8 +2487,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptSetDebugUtilsObjectNameEXT(VkDevice devi
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
-                                                               const VkDebugUtilsLabelEXT* pLabelInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
+                                                                      const VkDebugUtilsLabelEXT* pLabelInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 
@@ -2469,7 +2500,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginDebugUtilsLabelEXT(VkCommandBuffer c
     layer_data->interceptor->PostCmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndDebugUtilsLabelEXT(commandBuffer);
 
@@ -2481,8 +2512,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdEndDebugUtilsLabelEXT(VkCommandBuffer com
     layer_data->interceptor->PostCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
-                                                                const VkDebugUtilsLabelEXT* pLabelInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
+                                                                       const VkDebugUtilsLabelEXT* pLabelInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 
@@ -2494,7 +2525,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdInsertDebugUtilsLabelEXT(VkCommandBuffer 
     layer_data->interceptor->PostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL
+static VKAPI_ATTR VkResult VKAPI_CALL
 InterceptCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) {
     VkResult result = VK_SUCCESS;
@@ -2512,9 +2543,9 @@ InterceptCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMes
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptDestroyDebugUtilsMessengerEXT(VkInstance instance,
-                                                                  VkDebugUtilsMessengerEXT messenger,
-                                                                  const VkAllocationCallbacks* pAllocator) {
+static VKAPI_ATTR void VKAPI_CALL InterceptDestroyDebugUtilsMessengerEXT(VkInstance instance,
+                                                                         VkDebugUtilsMessengerEXT messenger,
+                                                                         const VkAllocationCallbacks* pAllocator) {
     auto layer_data = GetInstanceLayerData(DataKey(instance));
     layer_data->interceptor->PreDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 
@@ -2527,8 +2558,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptDestroyDebugUtilsMessengerEXT(VkInstance ins
 }
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-VKAPI_ATTR void VKAPI_CALL InterceptCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
-                                                                        VkDeviceAddress scratch) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
+                                                                               VkDeviceAddress scratch) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
 
@@ -2542,8 +2573,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdInitializeGraphScratchMemoryAMDX(VkComman
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                         const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                                const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
 
@@ -2557,8 +2588,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphAMDX(VkCommandBuffer command
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                                 const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer commandBuffer, VkDeviceAddress scratch, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
 
@@ -2572,9 +2603,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectAMDX(VkCommandBuffer
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer,
-                                                                      VkDeviceAddress scratch,
-                                                                      VkDeviceAddress countInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer,
+                                                                             VkDeviceAddress scratch,
+                                                                             VkDeviceAddress countInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
 
@@ -2587,8 +2618,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectCountAMDX(VkCommandB
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
-                                                             const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
 
@@ -2600,8 +2631,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetSampleLocationsEXT(VkCommandBuffer com
     layer_data->interceptor->PostCmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindShadingRateImageNV(VkCommandBuffer commandBuffer, VkImageView imageView,
-                                                              VkImageLayout imageLayout) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindShadingRateImageNV(VkCommandBuffer commandBuffer,
+                                                                     VkImageView imageView, VkImageLayout imageLayout) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
 
@@ -2613,7 +2644,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindShadingRateImageNV(VkCommandBuffer co
     layer_data->interceptor->PostCmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportShadingRatePaletteNV(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportShadingRatePaletteNV(
     VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
     const VkShadingRatePaletteNV* pShadingRatePalettes) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -2629,10 +2660,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportShadingRatePaletteNV(
                                                                     pShadingRatePalettes);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoarseSampleOrderNV(VkCommandBuffer commandBuffer,
-                                                              VkCoarseSampleOrderTypeNV sampleOrderType,
-                                                              uint32_t customSampleOrderCount,
-                                                              const VkCoarseSampleOrderCustomNV* pCustomSampleOrders) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoarseSampleOrderNV(
+    VkCommandBuffer commandBuffer, VkCoarseSampleOrderTypeNV sampleOrderType, uint32_t customSampleOrderCount,
+    const VkCoarseSampleOrderCustomNV* pCustomSampleOrders) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount,
                                                           pCustomSampleOrders);
@@ -2646,12 +2676,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoarseSampleOrderNV(VkCommandBuffer co
                                                            pCustomSampleOrders);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructureNV(VkCommandBuffer commandBuffer,
-                                                                    const VkAccelerationStructureInfoNV* pInfo,
-                                                                    VkBuffer instanceData, VkDeviceSize instanceOffset,
-                                                                    VkBool32 update, VkAccelerationStructureNV dst,
-                                                                    VkAccelerationStructureNV src, VkBuffer scratch,
-                                                                    VkDeviceSize scratchOffset) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructureNV(
+    VkCommandBuffer commandBuffer, const VkAccelerationStructureInfoNV* pInfo, VkBuffer instanceData,
+    VkDeviceSize instanceOffset, VkBool32 update, VkAccelerationStructureNV dst, VkAccelerationStructureNV src,
+    VkBuffer scratch, VkDeviceSize scratchOffset) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset,
                                                                 update, dst, src, scratch, scratchOffset);
@@ -2665,10 +2693,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructureNV(VkCommandBuf
                                                                  update, dst, src, scratch, scratchOffset);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffer,
-                                                                   VkAccelerationStructureNV dst,
-                                                                   VkAccelerationStructureNV src,
-                                                                   VkCopyAccelerationStructureModeKHR mode) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffer,
+                                                                          VkAccelerationStructureNV dst,
+                                                                          VkAccelerationStructureNV src,
+                                                                          VkCopyAccelerationStructureModeKHR mode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
 
@@ -2680,7 +2708,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureNV(VkCommandBuff
     layer_data->interceptor->PostCmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysNV(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysNV(
     VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer, VkDeviceSize raygenShaderBindingOffset,
     VkBuffer missShaderBindingTableBuffer, VkDeviceSize missShaderBindingOffset, VkDeviceSize missShaderBindingStride,
     VkBuffer hitShaderBindingTableBuffer, VkDeviceSize hitShaderBindingOffset, VkDeviceSize hitShaderBindingStride,
@@ -2708,7 +2736,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysNV(
         callableShaderBindingStride, width, height, depth);
 }
 
-VKAPI_ATTR void VKAPI_CALL
+static VKAPI_ATTR void VKAPI_CALL
 InterceptCmdWriteAccelerationStructuresPropertiesNV(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount,
                                                     const VkAccelerationStructureNV* pAccelerationStructures,
                                                     VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
@@ -2726,9 +2754,10 @@ InterceptCmdWriteAccelerationStructuresPropertiesNV(VkCommandBuffer commandBuffe
         commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer,
-                                                            VkPipelineStageFlagBits pipelineStage, VkBuffer dstBuffer,
-                                                            VkDeviceSize dstOffset, uint32_t marker) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer,
+                                                                   VkPipelineStageFlagBits pipelineStage,
+                                                                   VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                                                   uint32_t marker) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 
@@ -2740,8 +2769,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarkerAMD(VkCommandBuffer comm
     layer_data->interceptor->PostCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount,
-                                                       uint32_t firstTask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount,
+                                                              uint32_t firstTask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
 
@@ -2753,9 +2782,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksNV(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                               VkDeviceSize offset, uint32_t drawCount,
-                                                               uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                      VkDeviceSize offset, uint32_t drawCount,
+                                                                      uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 
@@ -2767,10 +2796,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectNV(VkCommandBuffer c
     layer_data->interceptor->PostCmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                                    VkDeviceSize offset, VkBuffer countBuffer,
-                                                                    VkDeviceSize countBufferOffset,
-                                                                    uint32_t maxDrawCount, uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer,
+                                                                           VkBuffer buffer, VkDeviceSize offset,
+                                                                           VkBuffer countBuffer,
+                                                                           VkDeviceSize countBufferOffset,
+                                                                           uint32_t maxDrawCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer,
                                                                 countBufferOffset, maxDrawCount, stride);
@@ -2784,10 +2814,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectCountNV(VkCommandBuf
                                                                  countBufferOffset, maxDrawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffer,
-                                                                   uint32_t firstExclusiveScissor,
-                                                                   uint32_t exclusiveScissorCount,
-                                                                   const VkBool32* pExclusiveScissorEnables) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffer,
+                                                                          uint32_t firstExclusiveScissor,
+                                                                          uint32_t exclusiveScissorCount,
+                                                                          const VkBool32* pExclusiveScissorEnables) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor,
                                                                exclusiveScissorCount, pExclusiveScissorEnables);
@@ -2801,10 +2831,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExclusiveScissorEnableNV(VkCommandBuff
                                                                 exclusiveScissorCount, pExclusiveScissorEnables);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer,
-                                                             uint32_t firstExclusiveScissor,
-                                                             uint32_t exclusiveScissorCount,
-                                                             const VkRect2D* pExclusiveScissors) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer,
+                                                                    uint32_t firstExclusiveScissor,
+                                                                    uint32_t exclusiveScissorCount,
+                                                                    const VkRect2D* pExclusiveScissors) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount,
                                                          pExclusiveScissors);
@@ -2818,7 +2848,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExclusiveScissorNV(VkCommandBuffer com
                                                           pExclusiveScissors);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void* pCheckpointMarker) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCheckpointNV(VkCommandBuffer commandBuffer,
+                                                              const void* pCheckpointMarker) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 
@@ -2830,8 +2861,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCheckpointNV(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer,
-                                                                     const VkPerformanceMarkerInfoINTEL* pMarkerInfo) {
+static VKAPI_ATTR VkResult VKAPI_CALL
+InterceptCmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer, const VkPerformanceMarkerInfoINTEL* pMarkerInfo) {
     VkResult result = VK_SUCCESS;
 
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -2846,7 +2877,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdSetPerformanceMarkerINTEL(VkCommandBu
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdSetPerformanceStreamMarkerINTEL(
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdSetPerformanceStreamMarkerINTEL(
     VkCommandBuffer commandBuffer, const VkPerformanceStreamMarkerInfoINTEL* pMarkerInfo) {
     VkResult result = VK_SUCCESS;
 
@@ -2862,7 +2893,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdSetPerformanceStreamMarkerINTEL(
     return result;
 }
 
-VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdSetPerformanceOverrideINTEL(
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdSetPerformanceOverrideINTEL(
     VkCommandBuffer commandBuffer, const VkPerformanceOverrideInfoINTEL* pOverrideInfo) {
     VkResult result = VK_SUCCESS;
 
@@ -2878,8 +2909,9 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdSetPerformanceOverrideINTEL(
     return result;
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleEXT(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                                         uint16_t lineStipplePattern) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleEXT(VkCommandBuffer commandBuffer,
+                                                                uint32_t lineStippleFactor,
+                                                                uint16_t lineStipplePattern) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
 
@@ -2891,7 +2923,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleEXT(VkCommandBuffer command
     layer_data->interceptor->PostCmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCullModeEXT(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCullModeEXT(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCullModeEXT(commandBuffer, cullMode);
 
@@ -2903,7 +2935,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCullModeEXT(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdSetCullModeEXT(commandBuffer, cullMode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetFrontFaceEXT(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetFrontFaceEXT(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetFrontFaceEXT(commandBuffer, frontFace);
 
@@ -2915,8 +2947,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetFrontFaceEXT(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdSetFrontFaceEXT(commandBuffer, frontFace);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveTopologyEXT(VkCommandBuffer commandBuffer,
-                                                               VkPrimitiveTopology primitiveTopology) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveTopologyEXT(VkCommandBuffer commandBuffer,
+                                                                      VkPrimitiveTopology primitiveTopology) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
 
@@ -2928,8 +2960,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveTopologyEXT(VkCommandBuffer c
     layer_data->interceptor->PostCmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWithCountEXT(VkCommandBuffer commandBuffer, uint32_t viewportCount,
-                                                               const VkViewport* pViewports) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWithCountEXT(VkCommandBuffer commandBuffer,
+                                                                      uint32_t viewportCount,
+                                                                      const VkViewport* pViewports) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
 
@@ -2941,8 +2974,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWithCountEXT(VkCommandBuffer c
     layer_data->interceptor->PostCmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissorWithCountEXT(VkCommandBuffer commandBuffer, uint32_t scissorCount,
-                                                              const VkRect2D* pScissors) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissorWithCountEXT(VkCommandBuffer commandBuffer,
+                                                                     uint32_t scissorCount, const VkRect2D* pScissors) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
 
@@ -2954,10 +2987,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetScissorWithCountEXT(VkCommandBuffer co
     layer_data->interceptor->PostCmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding,
-                                                             uint32_t bindingCount, const VkBuffer* pBuffers,
-                                                             const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes,
-                                                             const VkDeviceSize* pStrides) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers2EXT(
+    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers,
+    const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets,
                                                          pSizes, pStrides);
@@ -2971,7 +3003,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindVertexBuffers2EXT(VkCommandBuffer com
                                                           pSizes, pStrides);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthTestEnableEXT(VkCommandBuffer commandBuffer,
+                                                                    VkBool32 depthTestEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
 
@@ -2983,8 +3016,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthTestEnableEXT(VkCommandBuffer com
     layer_data->interceptor->PostCmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthWriteEnableEXT(VkCommandBuffer commandBuffer,
-                                                              VkBool32 depthWriteEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthWriteEnableEXT(VkCommandBuffer commandBuffer,
+                                                                     VkBool32 depthWriteEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
 
@@ -2996,7 +3029,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthWriteEnableEXT(VkCommandBuffer co
     layer_data->interceptor->PostCmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthCompareOpEXT(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthCompareOpEXT(VkCommandBuffer commandBuffer,
+                                                                   VkCompareOp depthCompareOp) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
 
@@ -3008,8 +3042,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthCompareOpEXT(VkCommandBuffer comm
     layer_data->interceptor->PostCmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBoundsTestEnableEXT(VkCommandBuffer commandBuffer,
-                                                                   VkBool32 depthBoundsTestEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBoundsTestEnableEXT(VkCommandBuffer commandBuffer,
+                                                                          VkBool32 depthBoundsTestEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
 
@@ -3021,8 +3055,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBoundsTestEnableEXT(VkCommandBuff
     layer_data->interceptor->PostCmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilTestEnableEXT(VkCommandBuffer commandBuffer,
-                                                               VkBool32 stencilTestEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilTestEnableEXT(VkCommandBuffer commandBuffer,
+                                                                      VkBool32 stencilTestEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
 
@@ -3034,9 +3068,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilTestEnableEXT(VkCommandBuffer c
     layer_data->interceptor->PostCmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilOpEXT(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
-                                                       VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp,
-                                                       VkCompareOp compareOp) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilOpEXT(VkCommandBuffer commandBuffer,
+                                                              VkStencilFaceFlags faceMask, VkStencilOp failOp,
+                                                              VkStencilOp passOp, VkStencilOp depthFailOp,
+                                                              VkCompareOp compareOp) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 
@@ -3048,7 +3083,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilOpEXT(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdPreprocessGeneratedCommandsNV(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPreprocessGeneratedCommandsNV(
     VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
@@ -3061,7 +3096,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdPreprocessGeneratedCommandsNV(
     layer_data->interceptor->PostCmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteGeneratedCommandsNV(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteGeneratedCommandsNV(
     VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
@@ -3074,9 +3109,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteGeneratedCommandsNV(
     layer_data->interceptor->PostCmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer,
-                                                                 VkPipelineBindPoint pipelineBindPoint,
-                                                                 VkPipeline pipeline, uint32_t groupIndex) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer,
+                                                                        VkPipelineBindPoint pipelineBindPoint,
+                                                                        VkPipeline pipeline, uint32_t groupIndex) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 
@@ -3088,8 +3123,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindPipelineShaderGroupNV(VkCommandBuffer
     layer_data->interceptor->PostCmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer,
-                                                        const VkDepthBiasInfoEXT* pDepthBiasInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer,
+                                                               const VkDepthBiasInfoEXT* pDepthBiasInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 
@@ -3101,8 +3136,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBias2EXT(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer,
-                                                          const VkCudaLaunchInfoNV* pLaunchInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer,
+                                                                 const VkCudaLaunchInfoNV* pLaunchInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 
@@ -3114,8 +3149,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCudaLaunchKernelNV(VkCommandBuffer comman
     layer_data->interceptor->PostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
-                                                                const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBuffersEXT(
+    VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
 
@@ -3127,11 +3162,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBuffersEXT(VkCommandBuffer 
     layer_data->interceptor->PostCmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDescriptorBufferOffsetsEXT(VkCommandBuffer commandBuffer,
-                                                                     VkPipelineBindPoint pipelineBindPoint,
-                                                                     VkPipelineLayout layout, uint32_t firstSet,
-                                                                     uint32_t setCount, const uint32_t* pBufferIndices,
-                                                                     const VkDeviceSize* pOffsets) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDescriptorBufferOffsetsEXT(
+    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet,
+    uint32_t setCount, const uint32_t* pBufferIndices, const VkDeviceSize* pOffsets) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet,
                                                                  setCount, pBufferIndices, pOffsets);
@@ -3145,9 +3178,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDescriptorBufferOffsetsEXT(VkCommandBu
                                                                   setCount, pBufferIndices, pOffsets);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT(VkCommandBuffer commandBuffer,
-                                                                               VkPipelineBindPoint pipelineBindPoint,
-                                                                               VkPipelineLayout layout, uint32_t set) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT(
+    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout,
                                                                            set);
@@ -3162,7 +3194,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT(V
                                                                             set);
 }
 
-VKAPI_ATTR void VKAPI_CALL
+static VKAPI_ATTR void VKAPI_CALL
 InterceptCmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuffer, VkFragmentShadingRateNV shadingRate,
                                          const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -3176,7 +3208,7 @@ InterceptCmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuffer, VkFragme
     layer_data->interceptor->PostCmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetVertexInputEXT(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetVertexInputEXT(
     VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount,
     const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions, uint32_t vertexAttributeDescriptionCount,
     const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) {
@@ -3196,7 +3228,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetVertexInputEXT(
                                                       pVertexAttributeDescriptions);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSubpassShadingHUAWEI(commandBuffer);
 
@@ -3208,8 +3240,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSubpassShadingHUAWEI(VkCommandBuffer comm
     layer_data->interceptor->PostCmdSubpassShadingHUAWEI(commandBuffer);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer, VkImageView imageView,
-                                                                VkImageLayout imageLayout) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer,
+                                                                       VkImageView imageView,
+                                                                       VkImageLayout imageLayout) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
 
@@ -3221,8 +3254,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindInvocationMaskHUAWEI(VkCommandBuffer 
     layer_data->interceptor->PostCmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPatchControlPointsEXT(VkCommandBuffer commandBuffer,
-                                                                uint32_t patchControlPoints) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPatchControlPointsEXT(VkCommandBuffer commandBuffer,
+                                                                       uint32_t patchControlPoints) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
 
@@ -3234,8 +3267,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPatchControlPointsEXT(VkCommandBuffer 
     layer_data->interceptor->PostCmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuffer,
-                                                                     VkBool32 rasterizerDiscardEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuffer,
+                                                                            VkBool32 rasterizerDiscardEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
 
@@ -3247,7 +3280,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizerDiscardEnableEXT(VkCommandBu
     layer_data->interceptor->PostCmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBiasEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBiasEnableEXT(VkCommandBuffer commandBuffer,
+                                                                    VkBool32 depthBiasEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
 
@@ -3259,7 +3293,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBiasEnableEXT(VkCommandBuffer com
     layer_data->interceptor->PostCmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp logicOp) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp logicOp) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetLogicOpEXT(commandBuffer, logicOp);
 
@@ -3271,8 +3305,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLogicOpEXT(VkCommandBuffer commandBuff
     layer_data->interceptor->PostCmdSetLogicOpEXT(commandBuffer, logicOp);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartEnableEXT(VkCommandBuffer commandBuffer,
-                                                                    VkBool32 primitiveRestartEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartEnableEXT(VkCommandBuffer commandBuffer,
+                                                                           VkBool32 primitiveRestartEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
 
@@ -3284,8 +3318,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartEnableEXT(VkCommandBuf
     layer_data->interceptor->PostCmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer, uint32_t attachmentCount,
-                                                              const VkBool32* pColorWriteEnables) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer,
+                                                                     uint32_t attachmentCount,
+                                                                     const VkBool32* pColorWriteEnables) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
 
@@ -3297,9 +3332,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorWriteEnableEXT(VkCommandBuffer co
     layer_data->interceptor->PostCmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCount,
-                                                    const VkMultiDrawInfoEXT* pVertexInfo, uint32_t instanceCount,
-                                                    uint32_t firstInstance, uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCount,
+                                                           const VkMultiDrawInfoEXT* pVertexInfo,
+                                                           uint32_t instanceCount, uint32_t firstInstance,
+                                                           uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance,
                                                 stride);
@@ -3313,10 +3349,10 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMultiEXT(VkCommandBuffer commandBuffe
                                                  stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t drawCount,
-                                                           const VkMultiDrawIndexedInfoEXT* pIndexInfo,
-                                                           uint32_t instanceCount, uint32_t firstInstance,
-                                                           uint32_t stride, const int32_t* pVertexOffset) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t drawCount,
+                                                                  const VkMultiDrawIndexedInfoEXT* pIndexInfo,
+                                                                  uint32_t instanceCount, uint32_t firstInstance,
+                                                                  uint32_t stride, const int32_t* pVertexOffset) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount,
                                                        firstInstance, stride, pVertexOffset);
@@ -3330,8 +3366,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMultiIndexedEXT(VkCommandBuffer comma
                                                         firstInstance, stride, pVertexOffset);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_t infoCount,
-                                                         const VkMicromapBuildInfoEXT* pInfos) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_t infoCount,
+                                                                const VkMicromapBuildInfoEXT* pInfos) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
 
@@ -3343,8 +3379,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildMicromapsEXT(VkCommandBuffer command
     layer_data->interceptor->PostCmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMicromapEXT(VkCommandBuffer commandBuffer,
-                                                       const VkCopyMicromapInfoEXT* pInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMicromapEXT(VkCommandBuffer commandBuffer,
+                                                              const VkCopyMicromapInfoEXT* pInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyMicromapEXT(commandBuffer, pInfo);
 
@@ -3356,8 +3392,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMicromapEXT(VkCommandBuffer commandBu
     layer_data->interceptor->PostCmdCopyMicromapEXT(commandBuffer, pInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer,
-                                                               const VkCopyMicromapToMemoryInfoEXT* pInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer,
+                                                                      const VkCopyMicromapToMemoryInfoEXT* pInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
 
@@ -3369,8 +3405,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMicromapToMemoryEXT(VkCommandBuffer c
     layer_data->interceptor->PostCmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer,
-                                                               const VkCopyMemoryToMicromapInfoEXT* pInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer,
+                                                                      const VkCopyMemoryToMicromapInfoEXT* pInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
 
@@ -3382,11 +3418,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToMicromapEXT(VkCommandBuffer c
     layer_data->interceptor->PostCmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffer,
-                                                                   uint32_t micromapCount,
-                                                                   const VkMicromapEXT* pMicromaps,
-                                                                   VkQueryType queryType, VkQueryPool queryPool,
-                                                                   uint32_t firstQuery) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffer,
+                                                                          uint32_t micromapCount,
+                                                                          const VkMicromapEXT* pMicromaps,
+                                                                          VkQueryType queryType, VkQueryPool queryPool,
+                                                                          uint32_t firstQuery) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType,
                                                                queryPool, firstQuery);
@@ -3400,8 +3436,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteMicromapsPropertiesEXT(VkCommandBuff
                                                                 queryPool, firstQuery);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t groupCountX,
-                                                         uint32_t groupCountY, uint32_t groupCountZ) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t groupCountX,
+                                                                uint32_t groupCountY, uint32_t groupCountZ) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
 
@@ -3413,8 +3449,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawClusterHUAWEI(VkCommandBuffer command
     layer_data->interceptor->PostCmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                                 VkDeviceSize offset) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                        VkDeviceSize offset) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
 
@@ -3426,9 +3462,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawClusterIndirectHUAWEI(VkCommandBuffer
     layer_data->interceptor->PostCmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer,
-                                                            VkDeviceAddress copyBufferAddress, uint32_t copyCount,
-                                                            uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer,
+                                                                   VkDeviceAddress copyBufferAddress,
+                                                                   uint32_t copyCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
 
@@ -3440,11 +3476,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryIndirectNV(VkCommandBuffer comm
     layer_data->interceptor->PostCmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer,
-                                                                   VkDeviceAddress copyBufferAddress,
-                                                                   uint32_t copyCount, uint32_t stride,
-                                                                   VkImage dstImage, VkImageLayout dstImageLayout,
-                                                                   const VkImageSubresourceLayers* pImageSubresources) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToImageIndirectNV(
+    VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount, uint32_t stride,
+    VkImage dstImage, VkImageLayout dstImageLayout, const VkImageSubresourceLayers* pImageSubresources) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride,
                                                                dstImage, dstImageLayout, pImageSubresources);
@@ -3458,8 +3492,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToImageIndirectNV(VkCommandBuff
                                                                 dstImage, dstImageLayout, pImageSubresources);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32_t decompressRegionCount,
-                                                          const VkDecompressMemoryRegionNV* pDecompressMemoryRegions) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32_t decompressRegionCount,
+                               const VkDecompressMemoryRegionNV* pDecompressMemoryRegions) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 
@@ -3471,10 +3506,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDecompressMemoryNV(VkCommandBuffer comman
     layer_data->interceptor->PostCmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandBuffer,
-                                                                       VkDeviceAddress indirectCommandsAddress,
-                                                                       VkDeviceAddress indirectCommandsCountAddress,
-                                                                       uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandBuffer, VkDeviceAddress indirectCommandsAddress,
+                                            VkDeviceAddress indirectCommandsCountAddress, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress,
                                                                    indirectCommandsCountAddress, stride);
@@ -3488,9 +3522,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDecompressMemoryIndirectCountNV(VkCommand
                                                                     indirectCommandsCountAddress, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffer,
-                                                                      VkPipelineBindPoint pipelineBindPoint,
-                                                                      VkPipeline pipeline) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffer,
+                                                                             VkPipelineBindPoint pipelineBindPoint,
+                                                                             VkPipeline pipeline) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 
@@ -3502,8 +3536,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdUpdatePipelineIndirectBufferNV(VkCommandB
     layer_data->interceptor->PostCmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer,
-                                                              VkBool32 depthClampEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer,
+                                                                     VkBool32 depthClampEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
 
@@ -3515,7 +3549,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClampEnableEXT(VkCommandBuffer co
     layer_data->interceptor->PostCmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPolygonModeEXT(VkCommandBuffer commandBuffer, VkPolygonMode polygonMode) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPolygonModeEXT(VkCommandBuffer commandBuffer,
+                                                                VkPolygonMode polygonMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetPolygonModeEXT(commandBuffer, polygonMode);
 
@@ -3527,8 +3562,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPolygonModeEXT(VkCommandBuffer command
     layer_data->interceptor->PostCmdSetPolygonModeEXT(commandBuffer, polygonMode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer,
-                                                                  VkSampleCountFlagBits rasterizationSamples) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer,
+                                                                         VkSampleCountFlagBits rasterizationSamples) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
 
@@ -3540,8 +3575,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizationSamplesEXT(VkCommandBuffe
     layer_data->interceptor->PostCmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetSampleMaskEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples,
-                                                        const VkSampleMask* pSampleMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetSampleMaskEXT(VkCommandBuffer commandBuffer,
+                                                               VkSampleCountFlagBits samples,
+                                                               const VkSampleMask* pSampleMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
 
@@ -3553,8 +3589,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetSampleMaskEXT(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAlphaToCoverageEnableEXT(VkCommandBuffer commandBuffer,
-                                                                   VkBool32 alphaToCoverageEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAlphaToCoverageEnableEXT(VkCommandBuffer commandBuffer,
+                                                                          VkBool32 alphaToCoverageEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
 
@@ -3566,8 +3602,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAlphaToCoverageEnableEXT(VkCommandBuff
     layer_data->interceptor->PostCmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer,
-                                                              VkBool32 alphaToOneEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer,
+                                                                     VkBool32 alphaToOneEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
 
@@ -3579,7 +3615,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAlphaToOneEnableEXT(VkCommandBuffer co
     layer_data->interceptor->PostCmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer, VkBool32 logicOpEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer,
+                                                                  VkBool32 logicOpEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
 
@@ -3591,9 +3628,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLogicOpEnableEXT(VkCommandBuffer comma
     layer_data->interceptor->PostCmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment,
-                                                              uint32_t attachmentCount,
-                                                              const VkBool32* pColorBlendEnables) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer,
+                                                                     uint32_t firstAttachment, uint32_t attachmentCount,
+                                                                     const VkBool32* pColorBlendEnables) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount,
                                                           pColorBlendEnables);
@@ -3607,9 +3644,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorBlendEnableEXT(VkCommandBuffer co
                                                            pColorBlendEnables);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment,
-                                                                uint32_t attachmentCount,
-                                                                const VkColorBlendEquationEXT* pColorBlendEquations) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount,
+                                     const VkColorBlendEquationEXT* pColorBlendEquations) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount,
                                                             pColorBlendEquations);
@@ -3623,9 +3660,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorBlendEquationEXT(VkCommandBuffer 
                                                              pColorBlendEquations);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment,
-                                                            uint32_t attachmentCount,
-                                                            const VkColorComponentFlags* pColorWriteMasks) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer,
+                                                                   uint32_t firstAttachment, uint32_t attachmentCount,
+                                                                   const VkColorComponentFlags* pColorWriteMasks) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount,
                                                         pColorWriteMasks);
@@ -3639,8 +3676,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorWriteMaskEXT(VkCommandBuffer comm
                                                          pColorWriteMasks);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBuffer,
-                                                                      VkTessellationDomainOrigin domainOrigin) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBuffer,
+                                                                             VkTessellationDomainOrigin domainOrigin) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 
@@ -3652,8 +3689,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetTessellationDomainOriginEXT(VkCommandB
     layer_data->interceptor->PostCmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizationStreamEXT(VkCommandBuffer commandBuffer,
-                                                                 uint32_t rasterizationStream) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizationStreamEXT(VkCommandBuffer commandBuffer,
+                                                                        uint32_t rasterizationStream) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
 
@@ -3665,7 +3702,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRasterizationStreamEXT(VkCommandBuffer
     layer_data->interceptor->PostCmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetConservativeRasterizationModeEXT(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetConservativeRasterizationModeEXT(
     VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
@@ -3679,8 +3716,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetConservativeRasterizationModeEXT(
     layer_data->interceptor->PostCmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExtraPrimitiveOverestimationSizeEXT(VkCommandBuffer commandBuffer,
-                                                                              float extraPrimitiveOverestimationSize) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExtraPrimitiveOverestimationSizeEXT(
+    VkCommandBuffer commandBuffer, float extraPrimitiveOverestimationSize) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer,
                                                                           extraPrimitiveOverestimationSize);
@@ -3695,7 +3732,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetExtraPrimitiveOverestimationSizeEXT(Vk
                                                                            extraPrimitiveOverestimationSize);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClipEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer,
+                                                                    VkBool32 depthClipEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
 
@@ -3707,8 +3745,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClipEnableEXT(VkCommandBuffer com
     layer_data->interceptor->PostCmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetSampleLocationsEnableEXT(VkCommandBuffer commandBuffer,
-                                                                   VkBool32 sampleLocationsEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetSampleLocationsEnableEXT(VkCommandBuffer commandBuffer,
+                                                                          VkBool32 sampleLocationsEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
 
@@ -3720,9 +3758,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetSampleLocationsEnableEXT(VkCommandBuff
     layer_data->interceptor->PostCmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment,
-                                                                uint32_t attachmentCount,
-                                                                const VkColorBlendAdvancedEXT* pColorBlendAdvanced) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount,
+                                     const VkColorBlendAdvancedEXT* pColorBlendAdvanced) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount,
                                                             pColorBlendAdvanced);
@@ -3736,8 +3774,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetColorBlendAdvancedEXT(VkCommandBuffer 
                                                              pColorBlendAdvanced);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer,
-                                                                 VkProvokingVertexModeEXT provokingVertexMode) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer,
+                                                                        VkProvokingVertexModeEXT provokingVertexMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
 
@@ -3749,8 +3787,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetProvokingVertexModeEXT(VkCommandBuffer
     layer_data->interceptor->PostCmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineRasterizationModeEXT(VkCommandBuffer commandBuffer,
-                                                                   VkLineRasterizationModeEXT lineRasterizationMode) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineRasterizationModeEXT(
+    VkCommandBuffer commandBuffer, VkLineRasterizationModeEXT lineRasterizationMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
 
@@ -3762,8 +3800,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineRasterizationModeEXT(VkCommandBuff
     layer_data->interceptor->PostCmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleEnableEXT(VkCommandBuffer commandBuffer,
-                                                               VkBool32 stippledLineEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleEnableEXT(VkCommandBuffer commandBuffer,
+                                                                      VkBool32 stippledLineEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
 
@@ -3775,8 +3813,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleEnableEXT(VkCommandBuffer c
     layer_data->interceptor->PostCmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClipNegativeOneToOneEXT(VkCommandBuffer commandBuffer,
-                                                                       VkBool32 negativeOneToOne) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClipNegativeOneToOneEXT(VkCommandBuffer commandBuffer,
+                                                                              VkBool32 negativeOneToOne) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
 
@@ -3788,8 +3826,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClipNegativeOneToOneEXT(VkCommand
     layer_data->interceptor->PostCmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffer,
-                                                                   VkBool32 viewportWScalingEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffer,
+                                                                          VkBool32 viewportWScalingEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
 
@@ -3801,9 +3839,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportWScalingEnableNV(VkCommandBuff
     layer_data->interceptor->PostCmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint32_t firstViewport,
-                                                            uint32_t viewportCount,
-                                                            const VkViewportSwizzleNV* pViewportSwizzles) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer,
+                                                                   uint32_t firstViewport, uint32_t viewportCount,
+                                                                   const VkViewportSwizzleNV* pViewportSwizzles) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 
@@ -3816,8 +3854,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewportSwizzleNV(VkCommandBuffer comm
                                                          pViewportSwizzles);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageToColorEnableNV(VkCommandBuffer commandBuffer,
-                                                                  VkBool32 coverageToColorEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageToColorEnableNV(VkCommandBuffer commandBuffer,
+                                                                         VkBool32 coverageToColorEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
 
@@ -3829,8 +3867,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageToColorEnableNV(VkCommandBuffe
     layer_data->interceptor->PostCmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuffer,
-                                                                    uint32_t coverageToColorLocation) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuffer,
+                                                                           uint32_t coverageToColorLocation) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
 
@@ -3842,8 +3880,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageToColorLocationNV(VkCommandBuf
     layer_data->interceptor->PostCmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageModulationModeNV(VkCommandBuffer commandBuffer,
-                                                                   VkCoverageModulationModeNV coverageModulationMode) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageModulationModeNV(
+    VkCommandBuffer commandBuffer, VkCoverageModulationModeNV coverageModulationMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
 
@@ -3855,8 +3893,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageModulationModeNV(VkCommandBuff
     layer_data->interceptor->PostCmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageModulationTableEnableNV(VkCommandBuffer commandBuffer,
-                                                                          VkBool32 coverageModulationTableEnable) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdSetCoverageModulationTableEnableNV(VkCommandBuffer commandBuffer, VkBool32 coverageModulationTableEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
 
@@ -3868,9 +3906,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageModulationTableEnableNV(VkComm
     layer_data->interceptor->PostCmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageModulationTableNV(VkCommandBuffer commandBuffer,
-                                                                    uint32_t coverageModulationTableCount,
-                                                                    const float* pCoverageModulationTable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageModulationTableNV(VkCommandBuffer commandBuffer,
+                                                                           uint32_t coverageModulationTableCount,
+                                                                           const float* pCoverageModulationTable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount,
                                                                 pCoverageModulationTable);
@@ -3884,8 +3922,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageModulationTableNV(VkCommandBuf
                                                                  pCoverageModulationTable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffer,
-                                                                   VkBool32 shadingRateImageEnable) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffer,
+                                                                          VkBool32 shadingRateImageEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
 
@@ -3897,7 +3935,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetShadingRateImageEnableNV(VkCommandBuff
     layer_data->interceptor->PostCmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRepresentativeFragmentTestEnableNV(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRepresentativeFragmentTestEnableNV(
     VkCommandBuffer commandBuffer, VkBool32 representativeFragmentTestEnable) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRepresentativeFragmentTestEnableNV(commandBuffer,
@@ -3913,8 +3951,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRepresentativeFragmentTestEnableNV(
                                                                           representativeFragmentTestEnable);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
-                                                                  VkCoverageReductionModeNV coverageReductionMode) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 
@@ -3926,9 +3964,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetCoverageReductionModeNV(VkCommandBuffe
     layer_data->interceptor->PostCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer,
-                                                            VkOpticalFlowSessionNV session,
-                                                            const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer,
+                                                                   VkOpticalFlowSessionNV session,
+                                                                   const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
 
@@ -3940,9 +3978,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdOpticalFlowExecuteNV(VkCommandBuffer comm
     layer_data->interceptor->PostCmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount,
-                                                      const VkShaderStageFlagBits* pStages,
-                                                      const VkShaderEXT* pShaders) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount,
+                                                             const VkShaderStageFlagBits* pStages,
+                                                             const VkShaderEXT* pShaders) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 
@@ -3954,8 +3992,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBindShadersEXT(VkCommandBuffer commandBuf
     layer_data->interceptor->PostCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
-                                                                          VkImageAspectFlags aspectMask) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
+                                                                                 VkImageAspectFlags aspectMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 
@@ -3967,7 +4005,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAttachmentFeedbackLoopEnableEXT(VkComm
     layer_data->interceptor->PostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructuresKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -3981,7 +4019,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructuresKHR(
     layer_data->interceptor->PostCmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructuresIndirectKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructuresIndirectKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkDeviceAddress* pIndirectDeviceAddresses, const uint32_t* pIndirectStrides,
     const uint32_t* const* ppMaxPrimitiveCounts) {
@@ -3999,8 +4037,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructuresIndirectKHR(
         commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureKHR(VkCommandBuffer commandBuffer,
-                                                                    const VkCopyAccelerationStructureInfoKHR* pInfo) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureKHR(
+    VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureInfoKHR* pInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
 
@@ -4012,7 +4050,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureKHR(VkCommandBuf
     layer_data->interceptor->PostCmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureToMemoryKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureToMemoryKHR(
     VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
@@ -4026,7 +4064,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyAccelerationStructureToMemoryKHR(
     layer_data->interceptor->PostCmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToAccelerationStructureKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToAccelerationStructureKHR(
     VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
@@ -4040,7 +4078,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToAccelerationStructureKHR(
     layer_data->interceptor->PostCmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteAccelerationStructuresPropertiesKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteAccelerationStructuresPropertiesKHR(
     VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount,
     const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool,
     uint32_t firstQuery) {
@@ -4058,12 +4096,12 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteAccelerationStructuresPropertiesKHR(
         commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysKHR(VkCommandBuffer commandBuffer,
-                                                    const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
-                                                    const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
-                                                    const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
-                                                    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
-                                                    uint32_t width, uint32_t height, uint32_t depth) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysKHR(
+    VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+    const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, uint32_t width, uint32_t height,
+    uint32_t depth) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable,
                                                 pHitShaderBindingTable, pCallableShaderBindingTable, width, height,
@@ -4080,7 +4118,7 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysKHR(VkCommandBuffer commandBuffe
                                                  depth);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysIndirectKHR(
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysIndirectKHR(
     VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
     const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
@@ -4101,8 +4139,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdTraceRaysIndirectKHR(
                                                          pCallableShaderBindingTable, indirectDeviceAddress);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer commandBuffer,
-                                                                         uint32_t pipelineStackSize) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer commandBuffer,
+                                                                                uint32_t pipelineStackSize) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
 
@@ -4114,8 +4152,8 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRayTracingPipelineStackSizeKHR(VkComma
     layer_data->interceptor->PostCmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t groupCountX,
-                                                        uint32_t groupCountY, uint32_t groupCountZ) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t groupCountX,
+                                                               uint32_t groupCountY, uint32_t groupCountZ) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
 
@@ -4127,9 +4165,9 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksEXT(VkCommandBuffer commandB
     layer_data->interceptor->PostCmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                                VkDeviceSize offset, uint32_t drawCount,
-                                                                uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                       VkDeviceSize offset, uint32_t drawCount,
+                                                                       uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
 
@@ -4141,10 +4179,11 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectEXT(VkCommandBuffer 
     layer_data->interceptor->PostCmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                                     VkDeviceSize offset, VkBuffer countBuffer,
-                                                                     VkDeviceSize countBufferOffset,
-                                                                     uint32_t maxDrawCount, uint32_t stride) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                                                            VkBuffer buffer, VkDeviceSize offset,
+                                                                            VkBuffer countBuffer,
+                                                                            VkDeviceSize countBufferOffset,
+                                                                            uint32_t maxDrawCount, uint32_t stride) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer,
                                                                  countBufferOffset, maxDrawCount, stride);
@@ -4158,420 +4197,345 @@ VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksIndirectCountEXT(VkCommandBu
                                                                   countBufferOffset, maxDrawCount, stride);
 }
 
-VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetInstanceFuncs(const char* func) {
-    if (0 == strcmp(func, "vkCreateInstance")) return (PFN_vkVoidFunction)InterceptCreateInstance;
-    if (0 == strcmp(func, "vkDestroyInstance")) return (PFN_vkVoidFunction)InterceptDestroyInstance;
-    if (0 == strcmp(func, "vkCreateDevice")) return (PFN_vkVoidFunction)InterceptCreateDevice;
-    if (0 == strcmp(func, "vkEnumerateInstanceExtensionProperties"))
-        return (PFN_vkVoidFunction)InterceptEnumerateInstanceExtensionProperties;
-    if (0 == strcmp(func, "vkEnumerateDeviceExtensionProperties"))
-        return (PFN_vkVoidFunction)InterceptEnumerateDeviceExtensionProperties;
-    if (0 == strcmp(func, "vkEnumerateInstanceLayerProperties"))
-        return (PFN_vkVoidFunction)InterceptEnumerateInstanceLayerProperties;
-    if (0 == strcmp(func, "vkEnumerateDeviceLayerProperties"))
-        return (PFN_vkVoidFunction)InterceptEnumerateDeviceLayerProperties;
-    if (0 == strcmp(func, "vkGetPhysicalDeviceToolProperties"))
-        return (PFN_vkVoidFunction)InterceptGetPhysicalDeviceToolProperties;
-    if (0 == strcmp(func, "vkGetPhysicalDeviceToolPropertiesEXT"))
-        return (PFN_vkVoidFunction)InterceptGetPhysicalDeviceToolPropertiesEXT;
+typedef enum ApiFunctionType { kFuncTypeInst = 0, kFuncTypePdev = 1, kFuncTypeDev = 2 } ApiFunctionType;
 
-    return nullptr;
-}
+typedef struct {
+    ApiFunctionType function_type;
+    void* funcptr;
+} function_data;
 
-VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetDeviceFuncs(const char* func) {
-    if (0 == strcmp(func, "vkDestroyDevice")) return (PFN_vkVoidFunction)InterceptDestroyDevice;
-    if (0 == strcmp(func, "vkGetDeviceQueue")) return (PFN_vkVoidFunction)InterceptGetDeviceQueue;
-    if (0 == strcmp(func, "vkQueueSubmit")) return (PFN_vkVoidFunction)InterceptQueueSubmit;
-    if (0 == strcmp(func, "vkQueueWaitIdle")) return (PFN_vkVoidFunction)InterceptQueueWaitIdle;
-    if (0 == strcmp(func, "vkDeviceWaitIdle")) return (PFN_vkVoidFunction)InterceptDeviceWaitIdle;
-    if (0 == strcmp(func, "vkQueueBindSparse")) return (PFN_vkVoidFunction)InterceptQueueBindSparse;
-    if (0 == strcmp(func, "vkGetFenceStatus")) return (PFN_vkVoidFunction)InterceptGetFenceStatus;
-    if (0 == strcmp(func, "vkWaitForFences")) return (PFN_vkVoidFunction)InterceptWaitForFences;
-    if (0 == strcmp(func, "vkCreateSemaphore")) return (PFN_vkVoidFunction)InterceptCreateSemaphore;
-    if (0 == strcmp(func, "vkDestroySemaphore")) return (PFN_vkVoidFunction)InterceptDestroySemaphore;
-    if (0 == strcmp(func, "vkGetQueryPoolResults")) return (PFN_vkVoidFunction)InterceptGetQueryPoolResults;
-    if (0 == strcmp(func, "vkCreateShaderModule")) return (PFN_vkVoidFunction)InterceptCreateShaderModule;
-    if (0 == strcmp(func, "vkDestroyShaderModule")) return (PFN_vkVoidFunction)InterceptDestroyShaderModule;
-    if (0 == strcmp(func, "vkCreateGraphicsPipelines")) return (PFN_vkVoidFunction)InterceptCreateGraphicsPipelines;
-    if (0 == strcmp(func, "vkCreateComputePipelines")) return (PFN_vkVoidFunction)InterceptCreateComputePipelines;
-    if (0 == strcmp(func, "vkDestroyPipeline")) return (PFN_vkVoidFunction)InterceptDestroyPipeline;
-    if (0 == strcmp(func, "vkCreateCommandPool")) return (PFN_vkVoidFunction)InterceptCreateCommandPool;
-    if (0 == strcmp(func, "vkDestroyCommandPool")) return (PFN_vkVoidFunction)InterceptDestroyCommandPool;
-    if (0 == strcmp(func, "vkResetCommandPool")) return (PFN_vkVoidFunction)InterceptResetCommandPool;
-    if (0 == strcmp(func, "vkAllocateCommandBuffers")) return (PFN_vkVoidFunction)InterceptAllocateCommandBuffers;
-    if (0 == strcmp(func, "vkFreeCommandBuffers")) return (PFN_vkVoidFunction)InterceptFreeCommandBuffers;
-    if (0 == strcmp(func, "vkBeginCommandBuffer")) return (PFN_vkVoidFunction)InterceptBeginCommandBuffer;
-    if (0 == strcmp(func, "vkEndCommandBuffer")) return (PFN_vkVoidFunction)InterceptEndCommandBuffer;
-    if (0 == strcmp(func, "vkResetCommandBuffer")) return (PFN_vkVoidFunction)InterceptResetCommandBuffer;
-    if (0 == strcmp(func, "vkCmdBindPipeline")) return (PFN_vkVoidFunction)InterceptCmdBindPipeline;
-    if (0 == strcmp(func, "vkCmdSetViewport")) return (PFN_vkVoidFunction)InterceptCmdSetViewport;
-    if (0 == strcmp(func, "vkCmdSetScissor")) return (PFN_vkVoidFunction)InterceptCmdSetScissor;
-    if (0 == strcmp(func, "vkCmdSetLineWidth")) return (PFN_vkVoidFunction)InterceptCmdSetLineWidth;
-    if (0 == strcmp(func, "vkCmdSetDepthBias")) return (PFN_vkVoidFunction)InterceptCmdSetDepthBias;
-    if (0 == strcmp(func, "vkCmdSetBlendConstants")) return (PFN_vkVoidFunction)InterceptCmdSetBlendConstants;
-    if (0 == strcmp(func, "vkCmdSetDepthBounds")) return (PFN_vkVoidFunction)InterceptCmdSetDepthBounds;
-    if (0 == strcmp(func, "vkCmdSetStencilCompareMask")) return (PFN_vkVoidFunction)InterceptCmdSetStencilCompareMask;
-    if (0 == strcmp(func, "vkCmdSetStencilWriteMask")) return (PFN_vkVoidFunction)InterceptCmdSetStencilWriteMask;
-    if (0 == strcmp(func, "vkCmdSetStencilReference")) return (PFN_vkVoidFunction)InterceptCmdSetStencilReference;
-    if (0 == strcmp(func, "vkCmdBindDescriptorSets")) return (PFN_vkVoidFunction)InterceptCmdBindDescriptorSets;
-    if (0 == strcmp(func, "vkCmdBindIndexBuffer")) return (PFN_vkVoidFunction)InterceptCmdBindIndexBuffer;
-    if (0 == strcmp(func, "vkCmdBindVertexBuffers")) return (PFN_vkVoidFunction)InterceptCmdBindVertexBuffers;
-    if (0 == strcmp(func, "vkCmdDraw")) return (PFN_vkVoidFunction)InterceptCmdDraw;
-    if (0 == strcmp(func, "vkCmdDrawIndexed")) return (PFN_vkVoidFunction)InterceptCmdDrawIndexed;
-    if (0 == strcmp(func, "vkCmdDrawIndirect")) return (PFN_vkVoidFunction)InterceptCmdDrawIndirect;
-    if (0 == strcmp(func, "vkCmdDrawIndexedIndirect")) return (PFN_vkVoidFunction)InterceptCmdDrawIndexedIndirect;
-    if (0 == strcmp(func, "vkCmdDispatch")) return (PFN_vkVoidFunction)InterceptCmdDispatch;
-    if (0 == strcmp(func, "vkCmdDispatchIndirect")) return (PFN_vkVoidFunction)InterceptCmdDispatchIndirect;
-    if (0 == strcmp(func, "vkCmdCopyBuffer")) return (PFN_vkVoidFunction)InterceptCmdCopyBuffer;
-    if (0 == strcmp(func, "vkCmdCopyImage")) return (PFN_vkVoidFunction)InterceptCmdCopyImage;
-    if (0 == strcmp(func, "vkCmdBlitImage")) return (PFN_vkVoidFunction)InterceptCmdBlitImage;
-    if (0 == strcmp(func, "vkCmdCopyBufferToImage")) return (PFN_vkVoidFunction)InterceptCmdCopyBufferToImage;
-    if (0 == strcmp(func, "vkCmdCopyImageToBuffer")) return (PFN_vkVoidFunction)InterceptCmdCopyImageToBuffer;
-    if (0 == strcmp(func, "vkCmdUpdateBuffer")) return (PFN_vkVoidFunction)InterceptCmdUpdateBuffer;
-    if (0 == strcmp(func, "vkCmdFillBuffer")) return (PFN_vkVoidFunction)InterceptCmdFillBuffer;
-    if (0 == strcmp(func, "vkCmdClearColorImage")) return (PFN_vkVoidFunction)InterceptCmdClearColorImage;
-    if (0 == strcmp(func, "vkCmdClearDepthStencilImage")) return (PFN_vkVoidFunction)InterceptCmdClearDepthStencilImage;
-    if (0 == strcmp(func, "vkCmdClearAttachments")) return (PFN_vkVoidFunction)InterceptCmdClearAttachments;
-    if (0 == strcmp(func, "vkCmdResolveImage")) return (PFN_vkVoidFunction)InterceptCmdResolveImage;
-    if (0 == strcmp(func, "vkCmdSetEvent")) return (PFN_vkVoidFunction)InterceptCmdSetEvent;
-    if (0 == strcmp(func, "vkCmdResetEvent")) return (PFN_vkVoidFunction)InterceptCmdResetEvent;
-    if (0 == strcmp(func, "vkCmdWaitEvents")) return (PFN_vkVoidFunction)InterceptCmdWaitEvents;
-    if (0 == strcmp(func, "vkCmdPipelineBarrier")) return (PFN_vkVoidFunction)InterceptCmdPipelineBarrier;
-    if (0 == strcmp(func, "vkCmdBeginQuery")) return (PFN_vkVoidFunction)InterceptCmdBeginQuery;
-    if (0 == strcmp(func, "vkCmdEndQuery")) return (PFN_vkVoidFunction)InterceptCmdEndQuery;
-    if (0 == strcmp(func, "vkCmdResetQueryPool")) return (PFN_vkVoidFunction)InterceptCmdResetQueryPool;
-    if (0 == strcmp(func, "vkCmdWriteTimestamp")) return (PFN_vkVoidFunction)InterceptCmdWriteTimestamp;
-    if (0 == strcmp(func, "vkCmdCopyQueryPoolResults")) return (PFN_vkVoidFunction)InterceptCmdCopyQueryPoolResults;
-    if (0 == strcmp(func, "vkCmdPushConstants")) return (PFN_vkVoidFunction)InterceptCmdPushConstants;
-    if (0 == strcmp(func, "vkCmdBeginRenderPass")) return (PFN_vkVoidFunction)InterceptCmdBeginRenderPass;
-    if (0 == strcmp(func, "vkCmdNextSubpass")) return (PFN_vkVoidFunction)InterceptCmdNextSubpass;
-    if (0 == strcmp(func, "vkCmdEndRenderPass")) return (PFN_vkVoidFunction)InterceptCmdEndRenderPass;
-    if (0 == strcmp(func, "vkCmdExecuteCommands")) return (PFN_vkVoidFunction)InterceptCmdExecuteCommands;
-    if (0 == strcmp(func, "vkCmdSetDeviceMask")) return (PFN_vkVoidFunction)InterceptCmdSetDeviceMask;
-    if (0 == strcmp(func, "vkCmdDispatchBase")) return (PFN_vkVoidFunction)InterceptCmdDispatchBase;
-    if (0 == strcmp(func, "vkGetDeviceQueue2")) return (PFN_vkVoidFunction)InterceptGetDeviceQueue2;
-    if (0 == strcmp(func, "vkCmdDrawIndirectCount")) return (PFN_vkVoidFunction)InterceptCmdDrawIndirectCount;
-    if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCount"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawIndexedIndirectCount;
-    if (0 == strcmp(func, "vkCmdBeginRenderPass2")) return (PFN_vkVoidFunction)InterceptCmdBeginRenderPass2;
-    if (0 == strcmp(func, "vkCmdNextSubpass2")) return (PFN_vkVoidFunction)InterceptCmdNextSubpass2;
-    if (0 == strcmp(func, "vkCmdEndRenderPass2")) return (PFN_vkVoidFunction)InterceptCmdEndRenderPass2;
-    if (0 == strcmp(func, "vkGetSemaphoreCounterValue")) return (PFN_vkVoidFunction)InterceptGetSemaphoreCounterValue;
-    if (0 == strcmp(func, "vkWaitSemaphores")) return (PFN_vkVoidFunction)InterceptWaitSemaphores;
-    if (0 == strcmp(func, "vkSignalSemaphore")) return (PFN_vkVoidFunction)InterceptSignalSemaphore;
-    if (0 == strcmp(func, "vkCmdSetEvent2")) return (PFN_vkVoidFunction)InterceptCmdSetEvent2;
-    if (0 == strcmp(func, "vkCmdResetEvent2")) return (PFN_vkVoidFunction)InterceptCmdResetEvent2;
-    if (0 == strcmp(func, "vkCmdWaitEvents2")) return (PFN_vkVoidFunction)InterceptCmdWaitEvents2;
-    if (0 == strcmp(func, "vkCmdPipelineBarrier2")) return (PFN_vkVoidFunction)InterceptCmdPipelineBarrier2;
-    if (0 == strcmp(func, "vkCmdWriteTimestamp2")) return (PFN_vkVoidFunction)InterceptCmdWriteTimestamp2;
-    if (0 == strcmp(func, "vkQueueSubmit2")) return (PFN_vkVoidFunction)InterceptQueueSubmit2;
-    if (0 == strcmp(func, "vkCmdCopyBuffer2")) return (PFN_vkVoidFunction)InterceptCmdCopyBuffer2;
-    if (0 == strcmp(func, "vkCmdCopyImage2")) return (PFN_vkVoidFunction)InterceptCmdCopyImage2;
-    if (0 == strcmp(func, "vkCmdCopyBufferToImage2")) return (PFN_vkVoidFunction)InterceptCmdCopyBufferToImage2;
-    if (0 == strcmp(func, "vkCmdCopyImageToBuffer2")) return (PFN_vkVoidFunction)InterceptCmdCopyImageToBuffer2;
-    if (0 == strcmp(func, "vkCmdBlitImage2")) return (PFN_vkVoidFunction)InterceptCmdBlitImage2;
-    if (0 == strcmp(func, "vkCmdResolveImage2")) return (PFN_vkVoidFunction)InterceptCmdResolveImage2;
-    if (0 == strcmp(func, "vkCmdBeginRendering")) return (PFN_vkVoidFunction)InterceptCmdBeginRendering;
-    if (0 == strcmp(func, "vkCmdEndRendering")) return (PFN_vkVoidFunction)InterceptCmdEndRendering;
-    if (0 == strcmp(func, "vkCmdSetCullMode")) return (PFN_vkVoidFunction)InterceptCmdSetCullMode;
-    if (0 == strcmp(func, "vkCmdSetFrontFace")) return (PFN_vkVoidFunction)InterceptCmdSetFrontFace;
-    if (0 == strcmp(func, "vkCmdSetPrimitiveTopology")) return (PFN_vkVoidFunction)InterceptCmdSetPrimitiveTopology;
-    if (0 == strcmp(func, "vkCmdSetViewportWithCount")) return (PFN_vkVoidFunction)InterceptCmdSetViewportWithCount;
-    if (0 == strcmp(func, "vkCmdSetScissorWithCount")) return (PFN_vkVoidFunction)InterceptCmdSetScissorWithCount;
-    if (0 == strcmp(func, "vkCmdBindVertexBuffers2")) return (PFN_vkVoidFunction)InterceptCmdBindVertexBuffers2;
-    if (0 == strcmp(func, "vkCmdSetDepthTestEnable")) return (PFN_vkVoidFunction)InterceptCmdSetDepthTestEnable;
-    if (0 == strcmp(func, "vkCmdSetDepthWriteEnable")) return (PFN_vkVoidFunction)InterceptCmdSetDepthWriteEnable;
-    if (0 == strcmp(func, "vkCmdSetDepthCompareOp")) return (PFN_vkVoidFunction)InterceptCmdSetDepthCompareOp;
-    if (0 == strcmp(func, "vkCmdSetDepthBoundsTestEnable"))
-        return (PFN_vkVoidFunction)InterceptCmdSetDepthBoundsTestEnable;
-    if (0 == strcmp(func, "vkCmdSetStencilTestEnable")) return (PFN_vkVoidFunction)InterceptCmdSetStencilTestEnable;
-    if (0 == strcmp(func, "vkCmdSetStencilOp")) return (PFN_vkVoidFunction)InterceptCmdSetStencilOp;
-    if (0 == strcmp(func, "vkCmdSetRasterizerDiscardEnable"))
-        return (PFN_vkVoidFunction)InterceptCmdSetRasterizerDiscardEnable;
-    if (0 == strcmp(func, "vkCmdSetDepthBiasEnable")) return (PFN_vkVoidFunction)InterceptCmdSetDepthBiasEnable;
-    if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnable"))
-        return (PFN_vkVoidFunction)InterceptCmdSetPrimitiveRestartEnable;
-    if (0 == strcmp(func, "vkAcquireNextImageKHR")) return (PFN_vkVoidFunction)InterceptAcquireNextImageKHR;
-    if (0 == strcmp(func, "vkQueuePresentKHR")) return (PFN_vkVoidFunction)InterceptQueuePresentKHR;
-    if (0 == strcmp(func, "vkCmdBeginVideoCodingKHR")) return (PFN_vkVoidFunction)InterceptCmdBeginVideoCodingKHR;
-    if (0 == strcmp(func, "vkCmdEndVideoCodingKHR")) return (PFN_vkVoidFunction)InterceptCmdEndVideoCodingKHR;
-    if (0 == strcmp(func, "vkCmdControlVideoCodingKHR")) return (PFN_vkVoidFunction)InterceptCmdControlVideoCodingKHR;
-    if (0 == strcmp(func, "vkCmdDecodeVideoKHR")) return (PFN_vkVoidFunction)InterceptCmdDecodeVideoKHR;
-    if (0 == strcmp(func, "vkCmdBeginRenderingKHR")) return (PFN_vkVoidFunction)InterceptCmdBeginRenderingKHR;
-    if (0 == strcmp(func, "vkCmdEndRenderingKHR")) return (PFN_vkVoidFunction)InterceptCmdEndRenderingKHR;
-    if (0 == strcmp(func, "vkCmdSetDeviceMaskKHR")) return (PFN_vkVoidFunction)InterceptCmdSetDeviceMaskKHR;
-    if (0 == strcmp(func, "vkCmdDispatchBaseKHR")) return (PFN_vkVoidFunction)InterceptCmdDispatchBaseKHR;
-    if (0 == strcmp(func, "vkCmdPushDescriptorSetKHR")) return (PFN_vkVoidFunction)InterceptCmdPushDescriptorSetKHR;
-    if (0 == strcmp(func, "vkCmdPushDescriptorSetWithTemplateKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdPushDescriptorSetWithTemplateKHR;
-    if (0 == strcmp(func, "vkCmdBeginRenderPass2KHR")) return (PFN_vkVoidFunction)InterceptCmdBeginRenderPass2KHR;
-    if (0 == strcmp(func, "vkCmdNextSubpass2KHR")) return (PFN_vkVoidFunction)InterceptCmdNextSubpass2KHR;
-    if (0 == strcmp(func, "vkCmdEndRenderPass2KHR")) return (PFN_vkVoidFunction)InterceptCmdEndRenderPass2KHR;
-    if (0 == strcmp(func, "vkCmdDrawIndirectCountKHR")) return (PFN_vkVoidFunction)InterceptCmdDrawIndirectCountKHR;
-    if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawIndexedIndirectCountKHR;
-    if (0 == strcmp(func, "vkGetSemaphoreCounterValueKHR"))
-        return (PFN_vkVoidFunction)InterceptGetSemaphoreCounterValueKHR;
-    if (0 == strcmp(func, "vkWaitSemaphoresKHR")) return (PFN_vkVoidFunction)InterceptWaitSemaphoresKHR;
-    if (0 == strcmp(func, "vkSignalSemaphoreKHR")) return (PFN_vkVoidFunction)InterceptSignalSemaphoreKHR;
-    if (0 == strcmp(func, "vkCmdSetFragmentShadingRateKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdSetFragmentShadingRateKHR;
-    if (0 == strcmp(func, "vkCmdSetRenderingAttachmentLocationsKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdSetRenderingAttachmentLocationsKHR;
-    if (0 == strcmp(func, "vkCmdSetRenderingInputAttachmentIndicesKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdSetRenderingInputAttachmentIndicesKHR;
-    if (0 == strcmp(func, "vkCmdEncodeVideoKHR")) return (PFN_vkVoidFunction)InterceptCmdEncodeVideoKHR;
-    if (0 == strcmp(func, "vkCmdSetEvent2KHR")) return (PFN_vkVoidFunction)InterceptCmdSetEvent2KHR;
-    if (0 == strcmp(func, "vkCmdResetEvent2KHR")) return (PFN_vkVoidFunction)InterceptCmdResetEvent2KHR;
-    if (0 == strcmp(func, "vkCmdWaitEvents2KHR")) return (PFN_vkVoidFunction)InterceptCmdWaitEvents2KHR;
-    if (0 == strcmp(func, "vkCmdPipelineBarrier2KHR")) return (PFN_vkVoidFunction)InterceptCmdPipelineBarrier2KHR;
-    if (0 == strcmp(func, "vkCmdWriteTimestamp2KHR")) return (PFN_vkVoidFunction)InterceptCmdWriteTimestamp2KHR;
-    if (0 == strcmp(func, "vkQueueSubmit2KHR")) return (PFN_vkVoidFunction)InterceptQueueSubmit2KHR;
-    if (0 == strcmp(func, "vkCmdWriteBufferMarker2AMD")) return (PFN_vkVoidFunction)InterceptCmdWriteBufferMarker2AMD;
-    if (0 == strcmp(func, "vkCmdCopyBuffer2KHR")) return (PFN_vkVoidFunction)InterceptCmdCopyBuffer2KHR;
-    if (0 == strcmp(func, "vkCmdCopyImage2KHR")) return (PFN_vkVoidFunction)InterceptCmdCopyImage2KHR;
-    if (0 == strcmp(func, "vkCmdCopyBufferToImage2KHR")) return (PFN_vkVoidFunction)InterceptCmdCopyBufferToImage2KHR;
-    if (0 == strcmp(func, "vkCmdCopyImageToBuffer2KHR")) return (PFN_vkVoidFunction)InterceptCmdCopyImageToBuffer2KHR;
-    if (0 == strcmp(func, "vkCmdBlitImage2KHR")) return (PFN_vkVoidFunction)InterceptCmdBlitImage2KHR;
-    if (0 == strcmp(func, "vkCmdResolveImage2KHR")) return (PFN_vkVoidFunction)InterceptCmdResolveImage2KHR;
-    if (0 == strcmp(func, "vkCmdTraceRaysIndirect2KHR")) return (PFN_vkVoidFunction)InterceptCmdTraceRaysIndirect2KHR;
-    if (0 == strcmp(func, "vkCmdBindIndexBuffer2KHR")) return (PFN_vkVoidFunction)InterceptCmdBindIndexBuffer2KHR;
-    if (0 == strcmp(func, "vkCmdSetLineStippleKHR")) return (PFN_vkVoidFunction)InterceptCmdSetLineStippleKHR;
-    if (0 == strcmp(func, "vkCmdBindDescriptorSets2KHR")) return (PFN_vkVoidFunction)InterceptCmdBindDescriptorSets2KHR;
-    if (0 == strcmp(func, "vkCmdPushConstants2KHR")) return (PFN_vkVoidFunction)InterceptCmdPushConstants2KHR;
-    if (0 == strcmp(func, "vkCmdPushDescriptorSet2KHR")) return (PFN_vkVoidFunction)InterceptCmdPushDescriptorSet2KHR;
-    if (0 == strcmp(func, "vkCmdPushDescriptorSetWithTemplate2KHR"))
-        return (PFN_vkVoidFunction)InterceptCmdPushDescriptorSetWithTemplate2KHR;
-    if (0 == strcmp(func, "vkCmdSetDescriptorBufferOffsets2EXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetDescriptorBufferOffsets2EXT;
-    if (0 == strcmp(func, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT"))
-        return (PFN_vkVoidFunction)InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT;
-    if (0 == strcmp(func, "vkDebugMarkerSetObjectNameEXT"))
-        return (PFN_vkVoidFunction)InterceptDebugMarkerSetObjectNameEXT;
-    if (0 == strcmp(func, "vkCmdDebugMarkerBeginEXT")) return (PFN_vkVoidFunction)InterceptCmdDebugMarkerBeginEXT;
-    if (0 == strcmp(func, "vkCmdDebugMarkerEndEXT")) return (PFN_vkVoidFunction)InterceptCmdDebugMarkerEndEXT;
-    if (0 == strcmp(func, "vkCmdDebugMarkerInsertEXT")) return (PFN_vkVoidFunction)InterceptCmdDebugMarkerInsertEXT;
-    if (0 == strcmp(func, "vkCmdBindTransformFeedbackBuffersEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdBindTransformFeedbackBuffersEXT;
-    if (0 == strcmp(func, "vkCmdBeginTransformFeedbackEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdBeginTransformFeedbackEXT;
-    if (0 == strcmp(func, "vkCmdEndTransformFeedbackEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdEndTransformFeedbackEXT;
-    if (0 == strcmp(func, "vkCmdBeginQueryIndexedEXT")) return (PFN_vkVoidFunction)InterceptCmdBeginQueryIndexedEXT;
-    if (0 == strcmp(func, "vkCmdEndQueryIndexedEXT")) return (PFN_vkVoidFunction)InterceptCmdEndQueryIndexedEXT;
-    if (0 == strcmp(func, "vkCmdDrawIndirectByteCountEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawIndirectByteCountEXT;
-    if (0 == strcmp(func, "vkCmdCuLaunchKernelNVX")) return (PFN_vkVoidFunction)InterceptCmdCuLaunchKernelNVX;
-    if (0 == strcmp(func, "vkCmdDrawIndirectCountAMD")) return (PFN_vkVoidFunction)InterceptCmdDrawIndirectCountAMD;
-    if (0 == strcmp(func, "vkCmdDrawIndexedIndirectCountAMD"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawIndexedIndirectCountAMD;
-    if (0 == strcmp(func, "vkCmdBeginConditionalRenderingEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdBeginConditionalRenderingEXT;
-    if (0 == strcmp(func, "vkCmdEndConditionalRenderingEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdEndConditionalRenderingEXT;
-    if (0 == strcmp(func, "vkCmdSetViewportWScalingNV")) return (PFN_vkVoidFunction)InterceptCmdSetViewportWScalingNV;
-    if (0 == strcmp(func, "vkCmdSetDiscardRectangleEXT")) return (PFN_vkVoidFunction)InterceptCmdSetDiscardRectangleEXT;
-    if (0 == strcmp(func, "vkCmdSetDiscardRectangleEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetDiscardRectangleEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetDiscardRectangleModeEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetDiscardRectangleModeEXT;
-    if (0 == strcmp(func, "vkSetDebugUtilsObjectNameEXT"))
-        return (PFN_vkVoidFunction)InterceptSetDebugUtilsObjectNameEXT;
-    if (0 == strcmp(func, "vkCmdBeginDebugUtilsLabelEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdBeginDebugUtilsLabelEXT;
-    if (0 == strcmp(func, "vkCmdEndDebugUtilsLabelEXT")) return (PFN_vkVoidFunction)InterceptCmdEndDebugUtilsLabelEXT;
-    if (0 == strcmp(func, "vkCmdInsertDebugUtilsLabelEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdInsertDebugUtilsLabelEXT;
+const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
+    static const std::unordered_map<std::string, function_data> name_to_func_ptr_map = {
+        {"vkCreateInstance", {kFuncTypeInst, (void*)InterceptCreateInstance}},
+        {"vkDestroyInstance", {kFuncTypeInst, (void*)InterceptDestroyInstance}},
+        {"vkCreateDevice", {kFuncTypePdev, (void*)InterceptCreateDevice}},
+        {"vkDestroyDevice", {kFuncTypeDev, (void*)InterceptDestroyDevice}},
+        {"vkEnumerateInstanceExtensionProperties",
+         {kFuncTypeInst, (void*)InterceptEnumerateInstanceExtensionProperties}},
+        {"vkEnumerateDeviceExtensionProperties", {kFuncTypePdev, (void*)InterceptEnumerateDeviceExtensionProperties}},
+        {"vkEnumerateInstanceLayerProperties", {kFuncTypeInst, (void*)InterceptEnumerateInstanceLayerProperties}},
+        {"vkEnumerateDeviceLayerProperties", {kFuncTypePdev, (void*)InterceptEnumerateDeviceLayerProperties}},
+        {"vkGetDeviceQueue", {kFuncTypeDev, (void*)InterceptGetDeviceQueue}},
+        {"vkQueueSubmit", {kFuncTypeDev, (void*)InterceptQueueSubmit}},
+        {"vkQueueWaitIdle", {kFuncTypeDev, (void*)InterceptQueueWaitIdle}},
+        {"vkDeviceWaitIdle", {kFuncTypeDev, (void*)InterceptDeviceWaitIdle}},
+        {"vkQueueBindSparse", {kFuncTypeDev, (void*)InterceptQueueBindSparse}},
+        {"vkGetFenceStatus", {kFuncTypeDev, (void*)InterceptGetFenceStatus}},
+        {"vkWaitForFences", {kFuncTypeDev, (void*)InterceptWaitForFences}},
+        {"vkCreateSemaphore", {kFuncTypeDev, (void*)InterceptCreateSemaphore}},
+        {"vkDestroySemaphore", {kFuncTypeDev, (void*)InterceptDestroySemaphore}},
+        {"vkGetQueryPoolResults", {kFuncTypeDev, (void*)InterceptGetQueryPoolResults}},
+        {"vkCreateShaderModule", {kFuncTypeDev, (void*)InterceptCreateShaderModule}},
+        {"vkDestroyShaderModule", {kFuncTypeDev, (void*)InterceptDestroyShaderModule}},
+        {"vkCreateGraphicsPipelines", {kFuncTypeDev, (void*)InterceptCreateGraphicsPipelines}},
+        {"vkCreateComputePipelines", {kFuncTypeDev, (void*)InterceptCreateComputePipelines}},
+        {"vkDestroyPipeline", {kFuncTypeDev, (void*)InterceptDestroyPipeline}},
+        {"vkCreateCommandPool", {kFuncTypeDev, (void*)InterceptCreateCommandPool}},
+        {"vkDestroyCommandPool", {kFuncTypeDev, (void*)InterceptDestroyCommandPool}},
+        {"vkResetCommandPool", {kFuncTypeDev, (void*)InterceptResetCommandPool}},
+        {"vkAllocateCommandBuffers", {kFuncTypeDev, (void*)InterceptAllocateCommandBuffers}},
+        {"vkFreeCommandBuffers", {kFuncTypeDev, (void*)InterceptFreeCommandBuffers}},
+        {"vkBeginCommandBuffer", {kFuncTypeDev, (void*)InterceptBeginCommandBuffer}},
+        {"vkEndCommandBuffer", {kFuncTypeDev, (void*)InterceptEndCommandBuffer}},
+        {"vkResetCommandBuffer", {kFuncTypeDev, (void*)InterceptResetCommandBuffer}},
+        {"vkCmdBindPipeline", {kFuncTypeDev, (void*)InterceptCmdBindPipeline}},
+        {"vkCmdSetViewport", {kFuncTypeDev, (void*)InterceptCmdSetViewport}},
+        {"vkCmdSetScissor", {kFuncTypeDev, (void*)InterceptCmdSetScissor}},
+        {"vkCmdSetLineWidth", {kFuncTypeDev, (void*)InterceptCmdSetLineWidth}},
+        {"vkCmdSetDepthBias", {kFuncTypeDev, (void*)InterceptCmdSetDepthBias}},
+        {"vkCmdSetBlendConstants", {kFuncTypeDev, (void*)InterceptCmdSetBlendConstants}},
+        {"vkCmdSetDepthBounds", {kFuncTypeDev, (void*)InterceptCmdSetDepthBounds}},
+        {"vkCmdSetStencilCompareMask", {kFuncTypeDev, (void*)InterceptCmdSetStencilCompareMask}},
+        {"vkCmdSetStencilWriteMask", {kFuncTypeDev, (void*)InterceptCmdSetStencilWriteMask}},
+        {"vkCmdSetStencilReference", {kFuncTypeDev, (void*)InterceptCmdSetStencilReference}},
+        {"vkCmdBindDescriptorSets", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorSets}},
+        {"vkCmdBindIndexBuffer", {kFuncTypeDev, (void*)InterceptCmdBindIndexBuffer}},
+        {"vkCmdBindVertexBuffers", {kFuncTypeDev, (void*)InterceptCmdBindVertexBuffers}},
+        {"vkCmdDraw", {kFuncTypeDev, (void*)InterceptCmdDraw}},
+        {"vkCmdDrawIndexed", {kFuncTypeDev, (void*)InterceptCmdDrawIndexed}},
+        {"vkCmdDrawIndirect", {kFuncTypeDev, (void*)InterceptCmdDrawIndirect}},
+        {"vkCmdDrawIndexedIndirect", {kFuncTypeDev, (void*)InterceptCmdDrawIndexedIndirect}},
+        {"vkCmdDispatch", {kFuncTypeDev, (void*)InterceptCmdDispatch}},
+        {"vkCmdDispatchIndirect", {kFuncTypeDev, (void*)InterceptCmdDispatchIndirect}},
+        {"vkCmdCopyBuffer", {kFuncTypeDev, (void*)InterceptCmdCopyBuffer}},
+        {"vkCmdCopyImage", {kFuncTypeDev, (void*)InterceptCmdCopyImage}},
+        {"vkCmdBlitImage", {kFuncTypeDev, (void*)InterceptCmdBlitImage}},
+        {"vkCmdCopyBufferToImage", {kFuncTypeDev, (void*)InterceptCmdCopyBufferToImage}},
+        {"vkCmdCopyImageToBuffer", {kFuncTypeDev, (void*)InterceptCmdCopyImageToBuffer}},
+        {"vkCmdUpdateBuffer", {kFuncTypeDev, (void*)InterceptCmdUpdateBuffer}},
+        {"vkCmdFillBuffer", {kFuncTypeDev, (void*)InterceptCmdFillBuffer}},
+        {"vkCmdClearColorImage", {kFuncTypeDev, (void*)InterceptCmdClearColorImage}},
+        {"vkCmdClearDepthStencilImage", {kFuncTypeDev, (void*)InterceptCmdClearDepthStencilImage}},
+        {"vkCmdClearAttachments", {kFuncTypeDev, (void*)InterceptCmdClearAttachments}},
+        {"vkCmdResolveImage", {kFuncTypeDev, (void*)InterceptCmdResolveImage}},
+        {"vkCmdSetEvent", {kFuncTypeDev, (void*)InterceptCmdSetEvent}},
+        {"vkCmdResetEvent", {kFuncTypeDev, (void*)InterceptCmdResetEvent}},
+        {"vkCmdWaitEvents", {kFuncTypeDev, (void*)InterceptCmdWaitEvents}},
+        {"vkCmdPipelineBarrier", {kFuncTypeDev, (void*)InterceptCmdPipelineBarrier}},
+        {"vkCmdBeginQuery", {kFuncTypeDev, (void*)InterceptCmdBeginQuery}},
+        {"vkCmdEndQuery", {kFuncTypeDev, (void*)InterceptCmdEndQuery}},
+        {"vkCmdResetQueryPool", {kFuncTypeDev, (void*)InterceptCmdResetQueryPool}},
+        {"vkCmdWriteTimestamp", {kFuncTypeDev, (void*)InterceptCmdWriteTimestamp}},
+        {"vkCmdCopyQueryPoolResults", {kFuncTypeDev, (void*)InterceptCmdCopyQueryPoolResults}},
+        {"vkCmdPushConstants", {kFuncTypeDev, (void*)InterceptCmdPushConstants}},
+        {"vkCmdBeginRenderPass", {kFuncTypeDev, (void*)InterceptCmdBeginRenderPass}},
+        {"vkCmdNextSubpass", {kFuncTypeDev, (void*)InterceptCmdNextSubpass}},
+        {"vkCmdEndRenderPass", {kFuncTypeDev, (void*)InterceptCmdEndRenderPass}},
+        {"vkCmdExecuteCommands", {kFuncTypeDev, (void*)InterceptCmdExecuteCommands}},
+        {"vkCmdSetDeviceMask", {kFuncTypeDev, (void*)InterceptCmdSetDeviceMask}},
+        {"vkCmdDispatchBase", {kFuncTypeDev, (void*)InterceptCmdDispatchBase}},
+        {"vkGetDeviceQueue2", {kFuncTypeDev, (void*)InterceptGetDeviceQueue2}},
+        {"vkCmdDrawIndirectCount", {kFuncTypeDev, (void*)InterceptCmdDrawIndirectCount}},
+        {"vkCmdDrawIndexedIndirectCount", {kFuncTypeDev, (void*)InterceptCmdDrawIndexedIndirectCount}},
+        {"vkCmdBeginRenderPass2", {kFuncTypeDev, (void*)InterceptCmdBeginRenderPass2}},
+        {"vkCmdNextSubpass2", {kFuncTypeDev, (void*)InterceptCmdNextSubpass2}},
+        {"vkCmdEndRenderPass2", {kFuncTypeDev, (void*)InterceptCmdEndRenderPass2}},
+        {"vkGetSemaphoreCounterValue", {kFuncTypeDev, (void*)InterceptGetSemaphoreCounterValue}},
+        {"vkWaitSemaphores", {kFuncTypeDev, (void*)InterceptWaitSemaphores}},
+        {"vkSignalSemaphore", {kFuncTypeDev, (void*)InterceptSignalSemaphore}},
+        {"vkGetPhysicalDeviceToolProperties", {kFuncTypePdev, (void*)InterceptGetPhysicalDeviceToolProperties}},
+        {"vkCmdSetEvent2", {kFuncTypeDev, (void*)InterceptCmdSetEvent2}},
+        {"vkCmdResetEvent2", {kFuncTypeDev, (void*)InterceptCmdResetEvent2}},
+        {"vkCmdWaitEvents2", {kFuncTypeDev, (void*)InterceptCmdWaitEvents2}},
+        {"vkCmdPipelineBarrier2", {kFuncTypeDev, (void*)InterceptCmdPipelineBarrier2}},
+        {"vkCmdWriteTimestamp2", {kFuncTypeDev, (void*)InterceptCmdWriteTimestamp2}},
+        {"vkQueueSubmit2", {kFuncTypeDev, (void*)InterceptQueueSubmit2}},
+        {"vkCmdCopyBuffer2", {kFuncTypeDev, (void*)InterceptCmdCopyBuffer2}},
+        {"vkCmdCopyImage2", {kFuncTypeDev, (void*)InterceptCmdCopyImage2}},
+        {"vkCmdCopyBufferToImage2", {kFuncTypeDev, (void*)InterceptCmdCopyBufferToImage2}},
+        {"vkCmdCopyImageToBuffer2", {kFuncTypeDev, (void*)InterceptCmdCopyImageToBuffer2}},
+        {"vkCmdBlitImage2", {kFuncTypeDev, (void*)InterceptCmdBlitImage2}},
+        {"vkCmdResolveImage2", {kFuncTypeDev, (void*)InterceptCmdResolveImage2}},
+        {"vkCmdBeginRendering", {kFuncTypeDev, (void*)InterceptCmdBeginRendering}},
+        {"vkCmdEndRendering", {kFuncTypeDev, (void*)InterceptCmdEndRendering}},
+        {"vkCmdSetCullMode", {kFuncTypeDev, (void*)InterceptCmdSetCullMode}},
+        {"vkCmdSetFrontFace", {kFuncTypeDev, (void*)InterceptCmdSetFrontFace}},
+        {"vkCmdSetPrimitiveTopology", {kFuncTypeDev, (void*)InterceptCmdSetPrimitiveTopology}},
+        {"vkCmdSetViewportWithCount", {kFuncTypeDev, (void*)InterceptCmdSetViewportWithCount}},
+        {"vkCmdSetScissorWithCount", {kFuncTypeDev, (void*)InterceptCmdSetScissorWithCount}},
+        {"vkCmdBindVertexBuffers2", {kFuncTypeDev, (void*)InterceptCmdBindVertexBuffers2}},
+        {"vkCmdSetDepthTestEnable", {kFuncTypeDev, (void*)InterceptCmdSetDepthTestEnable}},
+        {"vkCmdSetDepthWriteEnable", {kFuncTypeDev, (void*)InterceptCmdSetDepthWriteEnable}},
+        {"vkCmdSetDepthCompareOp", {kFuncTypeDev, (void*)InterceptCmdSetDepthCompareOp}},
+        {"vkCmdSetDepthBoundsTestEnable", {kFuncTypeDev, (void*)InterceptCmdSetDepthBoundsTestEnable}},
+        {"vkCmdSetStencilTestEnable", {kFuncTypeDev, (void*)InterceptCmdSetStencilTestEnable}},
+        {"vkCmdSetStencilOp", {kFuncTypeDev, (void*)InterceptCmdSetStencilOp}},
+        {"vkCmdSetRasterizerDiscardEnable", {kFuncTypeDev, (void*)InterceptCmdSetRasterizerDiscardEnable}},
+        {"vkCmdSetDepthBiasEnable", {kFuncTypeDev, (void*)InterceptCmdSetDepthBiasEnable}},
+        {"vkCmdSetPrimitiveRestartEnable", {kFuncTypeDev, (void*)InterceptCmdSetPrimitiveRestartEnable}},
+        {"vkAcquireNextImageKHR", {kFuncTypeDev, (void*)InterceptAcquireNextImageKHR}},
+        {"vkQueuePresentKHR", {kFuncTypeDev, (void*)InterceptQueuePresentKHR}},
+        {"vkCmdBeginVideoCodingKHR", {kFuncTypeDev, (void*)InterceptCmdBeginVideoCodingKHR}},
+        {"vkCmdEndVideoCodingKHR", {kFuncTypeDev, (void*)InterceptCmdEndVideoCodingKHR}},
+        {"vkCmdControlVideoCodingKHR", {kFuncTypeDev, (void*)InterceptCmdControlVideoCodingKHR}},
+        {"vkCmdDecodeVideoKHR", {kFuncTypeDev, (void*)InterceptCmdDecodeVideoKHR}},
+        {"vkCmdBeginRenderingKHR", {kFuncTypeDev, (void*)InterceptCmdBeginRenderingKHR}},
+        {"vkCmdEndRenderingKHR", {kFuncTypeDev, (void*)InterceptCmdEndRenderingKHR}},
+        {"vkCmdSetDeviceMaskKHR", {kFuncTypeDev, (void*)InterceptCmdSetDeviceMaskKHR}},
+        {"vkCmdDispatchBaseKHR", {kFuncTypeDev, (void*)InterceptCmdDispatchBaseKHR}},
+        {"vkCmdPushDescriptorSetKHR", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSetKHR}},
+        {"vkCmdPushDescriptorSetWithTemplateKHR", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSetWithTemplateKHR}},
+        {"vkCmdBeginRenderPass2KHR", {kFuncTypeDev, (void*)InterceptCmdBeginRenderPass2KHR}},
+        {"vkCmdNextSubpass2KHR", {kFuncTypeDev, (void*)InterceptCmdNextSubpass2KHR}},
+        {"vkCmdEndRenderPass2KHR", {kFuncTypeDev, (void*)InterceptCmdEndRenderPass2KHR}},
+        {"vkCmdDrawIndirectCountKHR", {kFuncTypeDev, (void*)InterceptCmdDrawIndirectCountKHR}},
+        {"vkCmdDrawIndexedIndirectCountKHR", {kFuncTypeDev, (void*)InterceptCmdDrawIndexedIndirectCountKHR}},
+        {"vkGetSemaphoreCounterValueKHR", {kFuncTypeDev, (void*)InterceptGetSemaphoreCounterValueKHR}},
+        {"vkWaitSemaphoresKHR", {kFuncTypeDev, (void*)InterceptWaitSemaphoresKHR}},
+        {"vkSignalSemaphoreKHR", {kFuncTypeDev, (void*)InterceptSignalSemaphoreKHR}},
+        {"vkCmdSetFragmentShadingRateKHR", {kFuncTypeDev, (void*)InterceptCmdSetFragmentShadingRateKHR}},
+        {"vkCmdSetRenderingAttachmentLocationsKHR",
+         {kFuncTypeDev, (void*)InterceptCmdSetRenderingAttachmentLocationsKHR}},
+        {"vkCmdSetRenderingInputAttachmentIndicesKHR",
+         {kFuncTypeDev, (void*)InterceptCmdSetRenderingInputAttachmentIndicesKHR}},
+        {"vkCmdEncodeVideoKHR", {kFuncTypeDev, (void*)InterceptCmdEncodeVideoKHR}},
+        {"vkCmdSetEvent2KHR", {kFuncTypeDev, (void*)InterceptCmdSetEvent2KHR}},
+        {"vkCmdResetEvent2KHR", {kFuncTypeDev, (void*)InterceptCmdResetEvent2KHR}},
+        {"vkCmdWaitEvents2KHR", {kFuncTypeDev, (void*)InterceptCmdWaitEvents2KHR}},
+        {"vkCmdPipelineBarrier2KHR", {kFuncTypeDev, (void*)InterceptCmdPipelineBarrier2KHR}},
+        {"vkCmdWriteTimestamp2KHR", {kFuncTypeDev, (void*)InterceptCmdWriteTimestamp2KHR}},
+        {"vkQueueSubmit2KHR", {kFuncTypeDev, (void*)InterceptQueueSubmit2KHR}},
+        {"vkCmdWriteBufferMarker2AMD", {kFuncTypeDev, (void*)InterceptCmdWriteBufferMarker2AMD}},
+        {"vkCmdCopyBuffer2KHR", {kFuncTypeDev, (void*)InterceptCmdCopyBuffer2KHR}},
+        {"vkCmdCopyImage2KHR", {kFuncTypeDev, (void*)InterceptCmdCopyImage2KHR}},
+        {"vkCmdCopyBufferToImage2KHR", {kFuncTypeDev, (void*)InterceptCmdCopyBufferToImage2KHR}},
+        {"vkCmdCopyImageToBuffer2KHR", {kFuncTypeDev, (void*)InterceptCmdCopyImageToBuffer2KHR}},
+        {"vkCmdBlitImage2KHR", {kFuncTypeDev, (void*)InterceptCmdBlitImage2KHR}},
+        {"vkCmdResolveImage2KHR", {kFuncTypeDev, (void*)InterceptCmdResolveImage2KHR}},
+        {"vkCmdTraceRaysIndirect2KHR", {kFuncTypeDev, (void*)InterceptCmdTraceRaysIndirect2KHR}},
+        {"vkCmdBindIndexBuffer2KHR", {kFuncTypeDev, (void*)InterceptCmdBindIndexBuffer2KHR}},
+        {"vkCmdSetLineStippleKHR", {kFuncTypeDev, (void*)InterceptCmdSetLineStippleKHR}},
+        {"vkCmdBindDescriptorSets2KHR", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorSets2KHR}},
+        {"vkCmdPushConstants2KHR", {kFuncTypeDev, (void*)InterceptCmdPushConstants2KHR}},
+        {"vkCmdPushDescriptorSet2KHR", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSet2KHR}},
+        {"vkCmdPushDescriptorSetWithTemplate2KHR",
+         {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSetWithTemplate2KHR}},
+        {"vkCmdSetDescriptorBufferOffsets2EXT", {kFuncTypeDev, (void*)InterceptCmdSetDescriptorBufferOffsets2EXT}},
+        {"vkCmdBindDescriptorBufferEmbeddedSamplers2EXT",
+         {kFuncTypeDev, (void*)InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT}},
+        {"vkCreateDebugReportCallbackEXT", {kFuncTypeInst, (void*)InterceptCreateDebugReportCallbackEXT}},
+        {"vkDestroyDebugReportCallbackEXT", {kFuncTypeInst, (void*)InterceptDestroyDebugReportCallbackEXT}},
+        {"vkDebugMarkerSetObjectNameEXT", {kFuncTypeDev, (void*)InterceptDebugMarkerSetObjectNameEXT}},
+        {"vkCmdDebugMarkerBeginEXT", {kFuncTypeDev, (void*)InterceptCmdDebugMarkerBeginEXT}},
+        {"vkCmdDebugMarkerEndEXT", {kFuncTypeDev, (void*)InterceptCmdDebugMarkerEndEXT}},
+        {"vkCmdDebugMarkerInsertEXT", {kFuncTypeDev, (void*)InterceptCmdDebugMarkerInsertEXT}},
+        {"vkCmdBindTransformFeedbackBuffersEXT", {kFuncTypeDev, (void*)InterceptCmdBindTransformFeedbackBuffersEXT}},
+        {"vkCmdBeginTransformFeedbackEXT", {kFuncTypeDev, (void*)InterceptCmdBeginTransformFeedbackEXT}},
+        {"vkCmdEndTransformFeedbackEXT", {kFuncTypeDev, (void*)InterceptCmdEndTransformFeedbackEXT}},
+        {"vkCmdBeginQueryIndexedEXT", {kFuncTypeDev, (void*)InterceptCmdBeginQueryIndexedEXT}},
+        {"vkCmdEndQueryIndexedEXT", {kFuncTypeDev, (void*)InterceptCmdEndQueryIndexedEXT}},
+        {"vkCmdDrawIndirectByteCountEXT", {kFuncTypeDev, (void*)InterceptCmdDrawIndirectByteCountEXT}},
+        {"vkCmdCuLaunchKernelNVX", {kFuncTypeDev, (void*)InterceptCmdCuLaunchKernelNVX}},
+        {"vkCmdDrawIndirectCountAMD", {kFuncTypeDev, (void*)InterceptCmdDrawIndirectCountAMD}},
+        {"vkCmdDrawIndexedIndirectCountAMD", {kFuncTypeDev, (void*)InterceptCmdDrawIndexedIndirectCountAMD}},
+        {"vkCmdBeginConditionalRenderingEXT", {kFuncTypeDev, (void*)InterceptCmdBeginConditionalRenderingEXT}},
+        {"vkCmdEndConditionalRenderingEXT", {kFuncTypeDev, (void*)InterceptCmdEndConditionalRenderingEXT}},
+        {"vkCmdSetViewportWScalingNV", {kFuncTypeDev, (void*)InterceptCmdSetViewportWScalingNV}},
+        {"vkCmdSetDiscardRectangleEXT", {kFuncTypeDev, (void*)InterceptCmdSetDiscardRectangleEXT}},
+        {"vkCmdSetDiscardRectangleEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetDiscardRectangleEnableEXT}},
+        {"vkCmdSetDiscardRectangleModeEXT", {kFuncTypeDev, (void*)InterceptCmdSetDiscardRectangleModeEXT}},
+        {"vkSetDebugUtilsObjectNameEXT", {kFuncTypeDev, (void*)InterceptSetDebugUtilsObjectNameEXT}},
+        {"vkCmdBeginDebugUtilsLabelEXT", {kFuncTypeDev, (void*)InterceptCmdBeginDebugUtilsLabelEXT}},
+        {"vkCmdEndDebugUtilsLabelEXT", {kFuncTypeDev, (void*)InterceptCmdEndDebugUtilsLabelEXT}},
+        {"vkCmdInsertDebugUtilsLabelEXT", {kFuncTypeDev, (void*)InterceptCmdInsertDebugUtilsLabelEXT}},
+        {"vkCreateDebugUtilsMessengerEXT", {kFuncTypeInst, (void*)InterceptCreateDebugUtilsMessengerEXT}},
+        {"vkDestroyDebugUtilsMessengerEXT", {kFuncTypeInst, (void*)InterceptDestroyDebugUtilsMessengerEXT}},
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    if (0 == strcmp(func, "vkCmdInitializeGraphScratchMemoryAMDX"))
-        return (PFN_vkVoidFunction)InterceptCmdInitializeGraphScratchMemoryAMDX;
+        {"vkCmdInitializeGraphScratchMemoryAMDX", {kFuncTypeDev, (void*)InterceptCmdInitializeGraphScratchMemoryAMDX}},
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    if (0 == strcmp(func, "vkCmdDispatchGraphAMDX")) return (PFN_vkVoidFunction)InterceptCmdDispatchGraphAMDX;
+        {"vkCmdDispatchGraphAMDX", {kFuncTypeDev, (void*)InterceptCmdDispatchGraphAMDX}},
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    if (0 == strcmp(func, "vkCmdDispatchGraphIndirectAMDX"))
-        return (PFN_vkVoidFunction)InterceptCmdDispatchGraphIndirectAMDX;
+        {"vkCmdDispatchGraphIndirectAMDX", {kFuncTypeDev, (void*)InterceptCmdDispatchGraphIndirectAMDX}},
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    if (0 == strcmp(func, "vkCmdDispatchGraphIndirectCountAMDX"))
-        return (PFN_vkVoidFunction)InterceptCmdDispatchGraphIndirectCountAMDX;
+        {"vkCmdDispatchGraphIndirectCountAMDX", {kFuncTypeDev, (void*)InterceptCmdDispatchGraphIndirectCountAMDX}},
 #endif  // VK_ENABLE_BETA_EXTENSIONS
-    if (0 == strcmp(func, "vkCmdSetSampleLocationsEXT")) return (PFN_vkVoidFunction)InterceptCmdSetSampleLocationsEXT;
-    if (0 == strcmp(func, "vkCmdBindShadingRateImageNV")) return (PFN_vkVoidFunction)InterceptCmdBindShadingRateImageNV;
-    if (0 == strcmp(func, "vkCmdSetViewportShadingRatePaletteNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetViewportShadingRatePaletteNV;
-    if (0 == strcmp(func, "vkCmdSetCoarseSampleOrderNV")) return (PFN_vkVoidFunction)InterceptCmdSetCoarseSampleOrderNV;
-    if (0 == strcmp(func, "vkCmdBuildAccelerationStructureNV"))
-        return (PFN_vkVoidFunction)InterceptCmdBuildAccelerationStructureNV;
-    if (0 == strcmp(func, "vkCmdCopyAccelerationStructureNV"))
-        return (PFN_vkVoidFunction)InterceptCmdCopyAccelerationStructureNV;
-    if (0 == strcmp(func, "vkCmdTraceRaysNV")) return (PFN_vkVoidFunction)InterceptCmdTraceRaysNV;
-    if (0 == strcmp(func, "vkCmdWriteAccelerationStructuresPropertiesNV"))
-        return (PFN_vkVoidFunction)InterceptCmdWriteAccelerationStructuresPropertiesNV;
-    if (0 == strcmp(func, "vkCmdWriteBufferMarkerAMD")) return (PFN_vkVoidFunction)InterceptCmdWriteBufferMarkerAMD;
-    if (0 == strcmp(func, "vkCmdDrawMeshTasksNV")) return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksNV;
-    if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectNV"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksIndirectNV;
-    if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectCountNV"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksIndirectCountNV;
-    if (0 == strcmp(func, "vkCmdSetExclusiveScissorEnableNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetExclusiveScissorEnableNV;
-    if (0 == strcmp(func, "vkCmdSetExclusiveScissorNV")) return (PFN_vkVoidFunction)InterceptCmdSetExclusiveScissorNV;
-    if (0 == strcmp(func, "vkCmdSetCheckpointNV")) return (PFN_vkVoidFunction)InterceptCmdSetCheckpointNV;
-    if (0 == strcmp(func, "vkCmdSetPerformanceMarkerINTEL"))
-        return (PFN_vkVoidFunction)InterceptCmdSetPerformanceMarkerINTEL;
-    if (0 == strcmp(func, "vkCmdSetPerformanceStreamMarkerINTEL"))
-        return (PFN_vkVoidFunction)InterceptCmdSetPerformanceStreamMarkerINTEL;
-    if (0 == strcmp(func, "vkCmdSetPerformanceOverrideINTEL"))
-        return (PFN_vkVoidFunction)InterceptCmdSetPerformanceOverrideINTEL;
-    if (0 == strcmp(func, "vkCmdSetLineStippleEXT")) return (PFN_vkVoidFunction)InterceptCmdSetLineStippleEXT;
-    if (0 == strcmp(func, "vkCmdSetCullModeEXT")) return (PFN_vkVoidFunction)InterceptCmdSetCullModeEXT;
-    if (0 == strcmp(func, "vkCmdSetFrontFaceEXT")) return (PFN_vkVoidFunction)InterceptCmdSetFrontFaceEXT;
-    if (0 == strcmp(func, "vkCmdSetPrimitiveTopologyEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetPrimitiveTopologyEXT;
-    if (0 == strcmp(func, "vkCmdSetViewportWithCountEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetViewportWithCountEXT;
-    if (0 == strcmp(func, "vkCmdSetScissorWithCountEXT")) return (PFN_vkVoidFunction)InterceptCmdSetScissorWithCountEXT;
-    if (0 == strcmp(func, "vkCmdBindVertexBuffers2EXT")) return (PFN_vkVoidFunction)InterceptCmdBindVertexBuffers2EXT;
-    if (0 == strcmp(func, "vkCmdSetDepthTestEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetDepthTestEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetDepthWriteEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetDepthWriteEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetDepthCompareOpEXT")) return (PFN_vkVoidFunction)InterceptCmdSetDepthCompareOpEXT;
-    if (0 == strcmp(func, "vkCmdSetDepthBoundsTestEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetDepthBoundsTestEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetStencilTestEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetStencilTestEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetStencilOpEXT")) return (PFN_vkVoidFunction)InterceptCmdSetStencilOpEXT;
-    if (0 == strcmp(func, "vkCmdPreprocessGeneratedCommandsNV"))
-        return (PFN_vkVoidFunction)InterceptCmdPreprocessGeneratedCommandsNV;
-    if (0 == strcmp(func, "vkCmdExecuteGeneratedCommandsNV"))
-        return (PFN_vkVoidFunction)InterceptCmdExecuteGeneratedCommandsNV;
-    if (0 == strcmp(func, "vkCmdBindPipelineShaderGroupNV"))
-        return (PFN_vkVoidFunction)InterceptCmdBindPipelineShaderGroupNV;
-    if (0 == strcmp(func, "vkCmdSetDepthBias2EXT")) return (PFN_vkVoidFunction)InterceptCmdSetDepthBias2EXT;
-    if (0 == strcmp(func, "vkCmdCudaLaunchKernelNV")) return (PFN_vkVoidFunction)InterceptCmdCudaLaunchKernelNV;
-    if (0 == strcmp(func, "vkCmdBindDescriptorBuffersEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdBindDescriptorBuffersEXT;
-    if (0 == strcmp(func, "vkCmdSetDescriptorBufferOffsetsEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetDescriptorBufferOffsetsEXT;
-    if (0 == strcmp(func, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT;
-    if (0 == strcmp(func, "vkCmdSetFragmentShadingRateEnumNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetFragmentShadingRateEnumNV;
-    if (0 == strcmp(func, "vkCmdSetVertexInputEXT")) return (PFN_vkVoidFunction)InterceptCmdSetVertexInputEXT;
-    if (0 == strcmp(func, "vkCmdSubpassShadingHUAWEI")) return (PFN_vkVoidFunction)InterceptCmdSubpassShadingHUAWEI;
-    if (0 == strcmp(func, "vkCmdBindInvocationMaskHUAWEI"))
-        return (PFN_vkVoidFunction)InterceptCmdBindInvocationMaskHUAWEI;
-    if (0 == strcmp(func, "vkCmdSetPatchControlPointsEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetPatchControlPointsEXT;
-    if (0 == strcmp(func, "vkCmdSetRasterizerDiscardEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetRasterizerDiscardEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetDepthBiasEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetDepthBiasEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetLogicOpEXT")) return (PFN_vkVoidFunction)InterceptCmdSetLogicOpEXT;
-    if (0 == strcmp(func, "vkCmdSetPrimitiveRestartEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetPrimitiveRestartEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetColorWriteEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetColorWriteEnableEXT;
-    if (0 == strcmp(func, "vkCmdDrawMultiEXT")) return (PFN_vkVoidFunction)InterceptCmdDrawMultiEXT;
-    if (0 == strcmp(func, "vkCmdDrawMultiIndexedEXT")) return (PFN_vkVoidFunction)InterceptCmdDrawMultiIndexedEXT;
-    if (0 == strcmp(func, "vkCmdBuildMicromapsEXT")) return (PFN_vkVoidFunction)InterceptCmdBuildMicromapsEXT;
-    if (0 == strcmp(func, "vkCmdCopyMicromapEXT")) return (PFN_vkVoidFunction)InterceptCmdCopyMicromapEXT;
-    if (0 == strcmp(func, "vkCmdCopyMicromapToMemoryEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdCopyMicromapToMemoryEXT;
-    if (0 == strcmp(func, "vkCmdCopyMemoryToMicromapEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdCopyMemoryToMicromapEXT;
-    if (0 == strcmp(func, "vkCmdWriteMicromapsPropertiesEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdWriteMicromapsPropertiesEXT;
-    if (0 == strcmp(func, "vkCmdDrawClusterHUAWEI")) return (PFN_vkVoidFunction)InterceptCmdDrawClusterHUAWEI;
-    if (0 == strcmp(func, "vkCmdDrawClusterIndirectHUAWEI"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawClusterIndirectHUAWEI;
-    if (0 == strcmp(func, "vkCmdCopyMemoryIndirectNV")) return (PFN_vkVoidFunction)InterceptCmdCopyMemoryIndirectNV;
-    if (0 == strcmp(func, "vkCmdCopyMemoryToImageIndirectNV"))
-        return (PFN_vkVoidFunction)InterceptCmdCopyMemoryToImageIndirectNV;
-    if (0 == strcmp(func, "vkCmdDecompressMemoryNV")) return (PFN_vkVoidFunction)InterceptCmdDecompressMemoryNV;
-    if (0 == strcmp(func, "vkCmdDecompressMemoryIndirectCountNV"))
-        return (PFN_vkVoidFunction)InterceptCmdDecompressMemoryIndirectCountNV;
-    if (0 == strcmp(func, "vkCmdUpdatePipelineIndirectBufferNV"))
-        return (PFN_vkVoidFunction)InterceptCmdUpdatePipelineIndirectBufferNV;
-    if (0 == strcmp(func, "vkCmdSetDepthClampEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetDepthClampEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetPolygonModeEXT")) return (PFN_vkVoidFunction)InterceptCmdSetPolygonModeEXT;
-    if (0 == strcmp(func, "vkCmdSetRasterizationSamplesEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetRasterizationSamplesEXT;
-    if (0 == strcmp(func, "vkCmdSetSampleMaskEXT")) return (PFN_vkVoidFunction)InterceptCmdSetSampleMaskEXT;
-    if (0 == strcmp(func, "vkCmdSetAlphaToCoverageEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetAlphaToCoverageEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetAlphaToOneEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetAlphaToOneEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetLogicOpEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetLogicOpEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetColorBlendEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetColorBlendEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetColorBlendEquationEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetColorBlendEquationEXT;
-    if (0 == strcmp(func, "vkCmdSetColorWriteMaskEXT")) return (PFN_vkVoidFunction)InterceptCmdSetColorWriteMaskEXT;
-    if (0 == strcmp(func, "vkCmdSetTessellationDomainOriginEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetTessellationDomainOriginEXT;
-    if (0 == strcmp(func, "vkCmdSetRasterizationStreamEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetRasterizationStreamEXT;
-    if (0 == strcmp(func, "vkCmdSetConservativeRasterizationModeEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetConservativeRasterizationModeEXT;
-    if (0 == strcmp(func, "vkCmdSetExtraPrimitiveOverestimationSizeEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetExtraPrimitiveOverestimationSizeEXT;
-    if (0 == strcmp(func, "vkCmdSetDepthClipEnableEXT")) return (PFN_vkVoidFunction)InterceptCmdSetDepthClipEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetSampleLocationsEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetSampleLocationsEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetColorBlendAdvancedEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetColorBlendAdvancedEXT;
-    if (0 == strcmp(func, "vkCmdSetProvokingVertexModeEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetProvokingVertexModeEXT;
-    if (0 == strcmp(func, "vkCmdSetLineRasterizationModeEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetLineRasterizationModeEXT;
-    if (0 == strcmp(func, "vkCmdSetLineStippleEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetLineStippleEnableEXT;
-    if (0 == strcmp(func, "vkCmdSetDepthClipNegativeOneToOneEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetDepthClipNegativeOneToOneEXT;
-    if (0 == strcmp(func, "vkCmdSetViewportWScalingEnableNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetViewportWScalingEnableNV;
-    if (0 == strcmp(func, "vkCmdSetViewportSwizzleNV")) return (PFN_vkVoidFunction)InterceptCmdSetViewportSwizzleNV;
-    if (0 == strcmp(func, "vkCmdSetCoverageToColorEnableNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetCoverageToColorEnableNV;
-    if (0 == strcmp(func, "vkCmdSetCoverageToColorLocationNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetCoverageToColorLocationNV;
-    if (0 == strcmp(func, "vkCmdSetCoverageModulationModeNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetCoverageModulationModeNV;
-    if (0 == strcmp(func, "vkCmdSetCoverageModulationTableEnableNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetCoverageModulationTableEnableNV;
-    if (0 == strcmp(func, "vkCmdSetCoverageModulationTableNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetCoverageModulationTableNV;
-    if (0 == strcmp(func, "vkCmdSetShadingRateImageEnableNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetShadingRateImageEnableNV;
-    if (0 == strcmp(func, "vkCmdSetRepresentativeFragmentTestEnableNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetRepresentativeFragmentTestEnableNV;
-    if (0 == strcmp(func, "vkCmdSetCoverageReductionModeNV"))
-        return (PFN_vkVoidFunction)InterceptCmdSetCoverageReductionModeNV;
-    if (0 == strcmp(func, "vkCmdOpticalFlowExecuteNV")) return (PFN_vkVoidFunction)InterceptCmdOpticalFlowExecuteNV;
-    if (0 == strcmp(func, "vkCmdBindShadersEXT")) return (PFN_vkVoidFunction)InterceptCmdBindShadersEXT;
-    if (0 == strcmp(func, "vkCmdSetAttachmentFeedbackLoopEnableEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdSetAttachmentFeedbackLoopEnableEXT;
-    if (0 == strcmp(func, "vkCmdBuildAccelerationStructuresKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdBuildAccelerationStructuresKHR;
-    if (0 == strcmp(func, "vkCmdBuildAccelerationStructuresIndirectKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdBuildAccelerationStructuresIndirectKHR;
-    if (0 == strcmp(func, "vkCmdCopyAccelerationStructureKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdCopyAccelerationStructureKHR;
-    if (0 == strcmp(func, "vkCmdCopyAccelerationStructureToMemoryKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdCopyAccelerationStructureToMemoryKHR;
-    if (0 == strcmp(func, "vkCmdCopyMemoryToAccelerationStructureKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdCopyMemoryToAccelerationStructureKHR;
-    if (0 == strcmp(func, "vkCmdWriteAccelerationStructuresPropertiesKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdWriteAccelerationStructuresPropertiesKHR;
-    if (0 == strcmp(func, "vkCmdTraceRaysKHR")) return (PFN_vkVoidFunction)InterceptCmdTraceRaysKHR;
-    if (0 == strcmp(func, "vkCmdTraceRaysIndirectKHR")) return (PFN_vkVoidFunction)InterceptCmdTraceRaysIndirectKHR;
-    if (0 == strcmp(func, "vkCmdSetRayTracingPipelineStackSizeKHR"))
-        return (PFN_vkVoidFunction)InterceptCmdSetRayTracingPipelineStackSizeKHR;
-    if (0 == strcmp(func, "vkCmdDrawMeshTasksEXT")) return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksEXT;
-    if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksIndirectEXT;
-    if (0 == strcmp(func, "vkCmdDrawMeshTasksIndirectCountEXT"))
-        return (PFN_vkVoidFunction)InterceptCmdDrawMeshTasksIndirectCountEXT;
-
-    return nullptr;
-}
+        {"vkCmdSetSampleLocationsEXT", {kFuncTypeDev, (void*)InterceptCmdSetSampleLocationsEXT}},
+        {"vkCmdBindShadingRateImageNV", {kFuncTypeDev, (void*)InterceptCmdBindShadingRateImageNV}},
+        {"vkCmdSetViewportShadingRatePaletteNV", {kFuncTypeDev, (void*)InterceptCmdSetViewportShadingRatePaletteNV}},
+        {"vkCmdSetCoarseSampleOrderNV", {kFuncTypeDev, (void*)InterceptCmdSetCoarseSampleOrderNV}},
+        {"vkCmdBuildAccelerationStructureNV", {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructureNV}},
+        {"vkCmdCopyAccelerationStructureNV", {kFuncTypeDev, (void*)InterceptCmdCopyAccelerationStructureNV}},
+        {"vkCmdTraceRaysNV", {kFuncTypeDev, (void*)InterceptCmdTraceRaysNV}},
+        {"vkCmdWriteAccelerationStructuresPropertiesNV",
+         {kFuncTypeDev, (void*)InterceptCmdWriteAccelerationStructuresPropertiesNV}},
+        {"vkCmdWriteBufferMarkerAMD", {kFuncTypeDev, (void*)InterceptCmdWriteBufferMarkerAMD}},
+        {"vkCmdDrawMeshTasksNV", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksNV}},
+        {"vkCmdDrawMeshTasksIndirectNV", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksIndirectNV}},
+        {"vkCmdDrawMeshTasksIndirectCountNV", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksIndirectCountNV}},
+        {"vkCmdSetExclusiveScissorEnableNV", {kFuncTypeDev, (void*)InterceptCmdSetExclusiveScissorEnableNV}},
+        {"vkCmdSetExclusiveScissorNV", {kFuncTypeDev, (void*)InterceptCmdSetExclusiveScissorNV}},
+        {"vkCmdSetCheckpointNV", {kFuncTypeDev, (void*)InterceptCmdSetCheckpointNV}},
+        {"vkCmdSetPerformanceMarkerINTEL", {kFuncTypeDev, (void*)InterceptCmdSetPerformanceMarkerINTEL}},
+        {"vkCmdSetPerformanceStreamMarkerINTEL", {kFuncTypeDev, (void*)InterceptCmdSetPerformanceStreamMarkerINTEL}},
+        {"vkCmdSetPerformanceOverrideINTEL", {kFuncTypeDev, (void*)InterceptCmdSetPerformanceOverrideINTEL}},
+        {"vkGetPhysicalDeviceToolPropertiesEXT", {kFuncTypePdev, (void*)InterceptGetPhysicalDeviceToolPropertiesEXT}},
+        {"vkCmdSetLineStippleEXT", {kFuncTypeDev, (void*)InterceptCmdSetLineStippleEXT}},
+        {"vkCmdSetCullModeEXT", {kFuncTypeDev, (void*)InterceptCmdSetCullModeEXT}},
+        {"vkCmdSetFrontFaceEXT", {kFuncTypeDev, (void*)InterceptCmdSetFrontFaceEXT}},
+        {"vkCmdSetPrimitiveTopologyEXT", {kFuncTypeDev, (void*)InterceptCmdSetPrimitiveTopologyEXT}},
+        {"vkCmdSetViewportWithCountEXT", {kFuncTypeDev, (void*)InterceptCmdSetViewportWithCountEXT}},
+        {"vkCmdSetScissorWithCountEXT", {kFuncTypeDev, (void*)InterceptCmdSetScissorWithCountEXT}},
+        {"vkCmdBindVertexBuffers2EXT", {kFuncTypeDev, (void*)InterceptCmdBindVertexBuffers2EXT}},
+        {"vkCmdSetDepthTestEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthTestEnableEXT}},
+        {"vkCmdSetDepthWriteEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthWriteEnableEXT}},
+        {"vkCmdSetDepthCompareOpEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthCompareOpEXT}},
+        {"vkCmdSetDepthBoundsTestEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthBoundsTestEnableEXT}},
+        {"vkCmdSetStencilTestEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetStencilTestEnableEXT}},
+        {"vkCmdSetStencilOpEXT", {kFuncTypeDev, (void*)InterceptCmdSetStencilOpEXT}},
+        {"vkCmdPreprocessGeneratedCommandsNV", {kFuncTypeDev, (void*)InterceptCmdPreprocessGeneratedCommandsNV}},
+        {"vkCmdExecuteGeneratedCommandsNV", {kFuncTypeDev, (void*)InterceptCmdExecuteGeneratedCommandsNV}},
+        {"vkCmdBindPipelineShaderGroupNV", {kFuncTypeDev, (void*)InterceptCmdBindPipelineShaderGroupNV}},
+        {"vkCmdSetDepthBias2EXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthBias2EXT}},
+        {"vkCmdCudaLaunchKernelNV", {kFuncTypeDev, (void*)InterceptCmdCudaLaunchKernelNV}},
+        {"vkCmdBindDescriptorBuffersEXT", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorBuffersEXT}},
+        {"vkCmdSetDescriptorBufferOffsetsEXT", {kFuncTypeDev, (void*)InterceptCmdSetDescriptorBufferOffsetsEXT}},
+        {"vkCmdBindDescriptorBufferEmbeddedSamplersEXT",
+         {kFuncTypeDev, (void*)InterceptCmdBindDescriptorBufferEmbeddedSamplersEXT}},
+        {"vkCmdSetFragmentShadingRateEnumNV", {kFuncTypeDev, (void*)InterceptCmdSetFragmentShadingRateEnumNV}},
+        {"vkCmdSetVertexInputEXT", {kFuncTypeDev, (void*)InterceptCmdSetVertexInputEXT}},
+        {"vkCmdSubpassShadingHUAWEI", {kFuncTypeDev, (void*)InterceptCmdSubpassShadingHUAWEI}},
+        {"vkCmdBindInvocationMaskHUAWEI", {kFuncTypeDev, (void*)InterceptCmdBindInvocationMaskHUAWEI}},
+        {"vkCmdSetPatchControlPointsEXT", {kFuncTypeDev, (void*)InterceptCmdSetPatchControlPointsEXT}},
+        {"vkCmdSetRasterizerDiscardEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetRasterizerDiscardEnableEXT}},
+        {"vkCmdSetDepthBiasEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthBiasEnableEXT}},
+        {"vkCmdSetLogicOpEXT", {kFuncTypeDev, (void*)InterceptCmdSetLogicOpEXT}},
+        {"vkCmdSetPrimitiveRestartEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetPrimitiveRestartEnableEXT}},
+        {"vkCmdSetColorWriteEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetColorWriteEnableEXT}},
+        {"vkCmdDrawMultiEXT", {kFuncTypeDev, (void*)InterceptCmdDrawMultiEXT}},
+        {"vkCmdDrawMultiIndexedEXT", {kFuncTypeDev, (void*)InterceptCmdDrawMultiIndexedEXT}},
+        {"vkCmdBuildMicromapsEXT", {kFuncTypeDev, (void*)InterceptCmdBuildMicromapsEXT}},
+        {"vkCmdCopyMicromapEXT", {kFuncTypeDev, (void*)InterceptCmdCopyMicromapEXT}},
+        {"vkCmdCopyMicromapToMemoryEXT", {kFuncTypeDev, (void*)InterceptCmdCopyMicromapToMemoryEXT}},
+        {"vkCmdCopyMemoryToMicromapEXT", {kFuncTypeDev, (void*)InterceptCmdCopyMemoryToMicromapEXT}},
+        {"vkCmdWriteMicromapsPropertiesEXT", {kFuncTypeDev, (void*)InterceptCmdWriteMicromapsPropertiesEXT}},
+        {"vkCmdDrawClusterHUAWEI", {kFuncTypeDev, (void*)InterceptCmdDrawClusterHUAWEI}},
+        {"vkCmdDrawClusterIndirectHUAWEI", {kFuncTypeDev, (void*)InterceptCmdDrawClusterIndirectHUAWEI}},
+        {"vkCmdCopyMemoryIndirectNV", {kFuncTypeDev, (void*)InterceptCmdCopyMemoryIndirectNV}},
+        {"vkCmdCopyMemoryToImageIndirectNV", {kFuncTypeDev, (void*)InterceptCmdCopyMemoryToImageIndirectNV}},
+        {"vkCmdDecompressMemoryNV", {kFuncTypeDev, (void*)InterceptCmdDecompressMemoryNV}},
+        {"vkCmdDecompressMemoryIndirectCountNV", {kFuncTypeDev, (void*)InterceptCmdDecompressMemoryIndirectCountNV}},
+        {"vkCmdUpdatePipelineIndirectBufferNV", {kFuncTypeDev, (void*)InterceptCmdUpdatePipelineIndirectBufferNV}},
+        {"vkCmdSetDepthClampEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthClampEnableEXT}},
+        {"vkCmdSetPolygonModeEXT", {kFuncTypeDev, (void*)InterceptCmdSetPolygonModeEXT}},
+        {"vkCmdSetRasterizationSamplesEXT", {kFuncTypeDev, (void*)InterceptCmdSetRasterizationSamplesEXT}},
+        {"vkCmdSetSampleMaskEXT", {kFuncTypeDev, (void*)InterceptCmdSetSampleMaskEXT}},
+        {"vkCmdSetAlphaToCoverageEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetAlphaToCoverageEnableEXT}},
+        {"vkCmdSetAlphaToOneEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetAlphaToOneEnableEXT}},
+        {"vkCmdSetLogicOpEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetLogicOpEnableEXT}},
+        {"vkCmdSetColorBlendEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetColorBlendEnableEXT}},
+        {"vkCmdSetColorBlendEquationEXT", {kFuncTypeDev, (void*)InterceptCmdSetColorBlendEquationEXT}},
+        {"vkCmdSetColorWriteMaskEXT", {kFuncTypeDev, (void*)InterceptCmdSetColorWriteMaskEXT}},
+        {"vkCmdSetTessellationDomainOriginEXT", {kFuncTypeDev, (void*)InterceptCmdSetTessellationDomainOriginEXT}},
+        {"vkCmdSetRasterizationStreamEXT", {kFuncTypeDev, (void*)InterceptCmdSetRasterizationStreamEXT}},
+        {"vkCmdSetConservativeRasterizationModeEXT",
+         {kFuncTypeDev, (void*)InterceptCmdSetConservativeRasterizationModeEXT}},
+        {"vkCmdSetExtraPrimitiveOverestimationSizeEXT",
+         {kFuncTypeDev, (void*)InterceptCmdSetExtraPrimitiveOverestimationSizeEXT}},
+        {"vkCmdSetDepthClipEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthClipEnableEXT}},
+        {"vkCmdSetSampleLocationsEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetSampleLocationsEnableEXT}},
+        {"vkCmdSetColorBlendAdvancedEXT", {kFuncTypeDev, (void*)InterceptCmdSetColorBlendAdvancedEXT}},
+        {"vkCmdSetProvokingVertexModeEXT", {kFuncTypeDev, (void*)InterceptCmdSetProvokingVertexModeEXT}},
+        {"vkCmdSetLineRasterizationModeEXT", {kFuncTypeDev, (void*)InterceptCmdSetLineRasterizationModeEXT}},
+        {"vkCmdSetLineStippleEnableEXT", {kFuncTypeDev, (void*)InterceptCmdSetLineStippleEnableEXT}},
+        {"vkCmdSetDepthClipNegativeOneToOneEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthClipNegativeOneToOneEXT}},
+        {"vkCmdSetViewportWScalingEnableNV", {kFuncTypeDev, (void*)InterceptCmdSetViewportWScalingEnableNV}},
+        {"vkCmdSetViewportSwizzleNV", {kFuncTypeDev, (void*)InterceptCmdSetViewportSwizzleNV}},
+        {"vkCmdSetCoverageToColorEnableNV", {kFuncTypeDev, (void*)InterceptCmdSetCoverageToColorEnableNV}},
+        {"vkCmdSetCoverageToColorLocationNV", {kFuncTypeDev, (void*)InterceptCmdSetCoverageToColorLocationNV}},
+        {"vkCmdSetCoverageModulationModeNV", {kFuncTypeDev, (void*)InterceptCmdSetCoverageModulationModeNV}},
+        {"vkCmdSetCoverageModulationTableEnableNV",
+         {kFuncTypeDev, (void*)InterceptCmdSetCoverageModulationTableEnableNV}},
+        {"vkCmdSetCoverageModulationTableNV", {kFuncTypeDev, (void*)InterceptCmdSetCoverageModulationTableNV}},
+        {"vkCmdSetShadingRateImageEnableNV", {kFuncTypeDev, (void*)InterceptCmdSetShadingRateImageEnableNV}},
+        {"vkCmdSetRepresentativeFragmentTestEnableNV",
+         {kFuncTypeDev, (void*)InterceptCmdSetRepresentativeFragmentTestEnableNV}},
+        {"vkCmdSetCoverageReductionModeNV", {kFuncTypeDev, (void*)InterceptCmdSetCoverageReductionModeNV}},
+        {"vkCmdOpticalFlowExecuteNV", {kFuncTypeDev, (void*)InterceptCmdOpticalFlowExecuteNV}},
+        {"vkCmdBindShadersEXT", {kFuncTypeDev, (void*)InterceptCmdBindShadersEXT}},
+        {"vkCmdSetAttachmentFeedbackLoopEnableEXT",
+         {kFuncTypeDev, (void*)InterceptCmdSetAttachmentFeedbackLoopEnableEXT}},
+        {"vkCmdBuildAccelerationStructuresKHR", {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructuresKHR}},
+        {"vkCmdBuildAccelerationStructuresIndirectKHR",
+         {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructuresIndirectKHR}},
+        {"vkCmdCopyAccelerationStructureKHR", {kFuncTypeDev, (void*)InterceptCmdCopyAccelerationStructureKHR}},
+        {"vkCmdCopyAccelerationStructureToMemoryKHR",
+         {kFuncTypeDev, (void*)InterceptCmdCopyAccelerationStructureToMemoryKHR}},
+        {"vkCmdCopyMemoryToAccelerationStructureKHR",
+         {kFuncTypeDev, (void*)InterceptCmdCopyMemoryToAccelerationStructureKHR}},
+        {"vkCmdWriteAccelerationStructuresPropertiesKHR",
+         {kFuncTypeDev, (void*)InterceptCmdWriteAccelerationStructuresPropertiesKHR}},
+        {"vkCmdTraceRaysKHR", {kFuncTypeDev, (void*)InterceptCmdTraceRaysKHR}},
+        {"vkCmdTraceRaysIndirectKHR", {kFuncTypeDev, (void*)InterceptCmdTraceRaysIndirectKHR}},
+        {"vkCmdSetRayTracingPipelineStackSizeKHR",
+         {kFuncTypeDev, (void*)InterceptCmdSetRayTracingPipelineStackSizeKHR}},
+        {"vkCmdDrawMeshTasksEXT", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksEXT}},
+        {"vkCmdDrawMeshTasksIndirectEXT", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksIndirectEXT}},
+        {"vkCmdDrawMeshTasksIndirectCountEXT", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksIndirectCountEXT}},
+    };
+    return name_to_func_ptr_map;
+};
 
 // NOLINTEND
