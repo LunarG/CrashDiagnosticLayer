@@ -143,8 +143,7 @@ static constexpr std::array<VkExtensionProperties, 3> instance_extensions{{
     {VK_EXT_DEBUG_UTILS_EXTENSION_NAME, VK_EXT_DEBUG_UTILS_SPEC_VERSION},
     {VK_EXT_LAYER_SETTINGS_EXTENSION_NAME, VK_EXT_LAYER_SETTINGS_SPEC_VERSION},
 }};
-static constexpr std::array<VkExtensionProperties, 2> device_extensions{{
-    {VK_EXT_DEBUG_MARKER_EXTENSION_NAME, VK_EXT_DEBUG_MARKER_SPEC_VERSION},
+static constexpr std::array<VkExtensionProperties, 1> device_extensions{{
     {VK_EXT_TOOLING_INFO_EXTENSION_NAME, VK_EXT_TOOLING_INFO_SPEC_VERSION},
 }};
 
