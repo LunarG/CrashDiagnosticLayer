@@ -238,8 +238,8 @@ class Context : public Interceptor {
                                     const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule,
                                     VkResult result) override;
 
-    void PostDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
-                                 const VkAllocationCallbacks* pAllocator) override;
+    void PreDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
+                                const VkAllocationCallbacks* pAllocator) override;
 
     VkResult PostCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount,
                                          const VkGraphicsPipelineCreateInfo* pCreateInfos,

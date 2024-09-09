@@ -15,107 +15,69 @@
 # limitations under the License.
 
 from generators.base_generator import BaseGenerator
+from enum import IntEnum
 
-custom_intercept_commands = [
-    'vkCreateInstance',
-    'vkDestroyInstance',
-    'vkCreateDevice',
-    'vkDestroyDevice',
-    'vkEnumerateInstanceLayerProperties',
-    'vkEnumerateDeviceLayerProperties',
-    'vkEnumerateInstanceExtensionProperties',
-    'vkEnumerateDeviceExtensionProperties',
-    'vkQueueSubmit',
-    'vkQueueSubmit2',
-    'vkQueueSubmit2KHR',
-    'vkQueueBindSparse',
-    'vkGetPhysicalDeviceToolPropertiesEXT',
-    'vkGetPhysicalDeviceToolProperties',
-]
+# class syntax
+class InterceptFlag(IntEnum):
+    PRE = (1 << 0)
+    POST = (1 << 1)
+    NORMAL = (PRE | POST)
+    # Single hook generated rather than Pre/Post. This hook must dispatch the call
+    OVERRIDE = (1 << 2)
+    # Intercept* function is hand coded
+    CUSTOM = (1 << 3)
 
-intercept_pre_functions = [
-    'vkDestroyInstance',
-]
-
-no_intercept_pre_functions = [
-    'vkCreateInstance',
-    'vkCreateDevice',
-    'vkEnumerateInstanceLayerProperties',
-    'vkEnumerateDeviceLayerProperties',
-    'vkEnumerateInstanceExtensionProperties',
-    'vkEnumerateDeviceExtensionProperties',
-    'vkQueueSubmit',
-    'vkQueueSubmit2',
-    'vkQueueSubmit2KHR',
-    'vkQueueBindSparse',
-    'vkGetPhysicalDeviceToolPropertiesEXT',
-    'vkGetPhysicalDeviceToolProperties',
-]
-
-intercept_post_functions = [
-    'vkGetDeviceQueue',
-    'vkCreateShaderModule',
-    'vkDestroyShaderModule',
-    'vkCreateGraphicsPipelines',
-    'vkCreateComputePipelines',
-]
-
-no_intercept_post_functions = [
-    'vkDestroyInstance',
-    'vkEnumerateInstanceLayerProperties',
-    'vkEnumerateDeviceLayerProperties',
-    'vkEnumerateInstanceExtensionProperties',
-    'vkQueueSubmit',
-    'vkQueueSubmit2',
-    'vkQueueSubmit2KHR',
-    'vkQueueBindSparse',
-    'vkGetPhysicalDeviceToolPropertiesEXT',
-    'vkGetPhysicalDeviceToolProperties',
-]
-
-intercept_override_functions = [
-    'vkQueueSubmit',
-    'vkQueueSubmit2',
-    'vkQueueSubmit2KHR',
-    'vkQueueBindSparse',
-]
-
-intercept_functions = [
-    'vkDestroyCommandPool',
-    'vkResetCommandPool',
-    'vkAllocateCommandBuffers',
-    'vkFreeCommandBuffers',
-    'vkDeviceWaitIdle',
-    'vkQueueWaitIdle',
-    'vkGetFenceStatus',
-    'vkWaitForFences',
-    'vkCreateSemaphore',
-    'vkDestroySemaphore',
-    'vkGetQueryPoolResults',
-    'vkDestroyPipeline',
-    'vkGetDeviceQueue2',
-    'vkCreateCommandPool',
-    'vkAcquireNextImageKHR',
-    'vkQueuePresentKHR',
-    'vkGetSemaphoreCounterValue',
-    'vkGetSemaphoreCounterValueKHR',
-    'vkSignalSemaphore',
-    'vkSignalSemaphoreKHR',
-    'vkWaitSemaphores',
-    'vkWaitSemaphoresKHR',
-    'vkDebugMarkerSetObjectNameEXT',
-    'vkSetDebugUtilsObjectNameEXT',
-    'vkQueueSubmit',
-    'vkQueueSubmit2',
-    'vkQueueSubmit2KHR',
-    'vkQueueBindSparse',
-    'vkGetPhysicalDeviceToolPropertiesEXT',
-    'vkGetPhysicalDeviceToolProperties',
-    'vkCreateDebugUtilsMessengerEXT',
-    'vkDestroyDebugUtilsMessengerEXT',
-    'vkCreateDebugReportCallbackEXT',
-    'vkDestroyDebugReportCallbackEXT',
-]
+#NOTE: anything named vkCmd* is implicitly a NORMAL intercept so it doesn't need to be
+# in the table below
+intercept_functions = {
+        'vkAcquireNextImageKHR' : InterceptFlag.NORMAL,
+        'vkAllocateCommandBuffers': InterceptFlag.NORMAL,
+        'vkCreateCommandPool': InterceptFlag.NORMAL,
+        'vkCreateComputePipelines': InterceptFlag.POST,
+        'vkCreateDebugReportCallbackEXT': InterceptFlag.NORMAL,
+        'vkCreateDebugUtilsMessengerEXT': InterceptFlag.NORMAL,
+        'vkCreateDevice': InterceptFlag.CUSTOM | InterceptFlag.POST,
+        'vkCreateGraphicsPipelines': InterceptFlag.POST,
+        'vkCreateInstance': InterceptFlag.CUSTOM | InterceptFlag.POST,
+        'vkCreateSemaphore': InterceptFlag.NORMAL,
+        'vkCreateShaderModule': InterceptFlag.POST,
+        'vkDebugMarkerSetObjectNameEXT': InterceptFlag.NORMAL,
+        'vkDestroyCommandPool': InterceptFlag.NORMAL,
+        'vkDestroyDebugReportCallbackEXT': InterceptFlag.NORMAL,
+        'vkDestroyDebugUtilsMessengerEXT': InterceptFlag.NORMAL,
+        'vkDestroyDevice': InterceptFlag.CUSTOM | InterceptFlag.PRE,
+        'vkDestroyInstance': InterceptFlag.CUSTOM | InterceptFlag.PRE,
+        'vkDestroyPipeline': InterceptFlag.NORMAL,
+        'vkDestroySemaphore': InterceptFlag.NORMAL,
+        'vkDestroyShaderModule': InterceptFlag.PRE,
+        'vkDeviceWaitIdle': InterceptFlag.NORMAL,
+        'vkEnumerateDeviceExtensionProperties': InterceptFlag.CUSTOM | InterceptFlag.POST,
+        'vkEnumerateDeviceLayerProperties': InterceptFlag.CUSTOM,
+        'vkEnumerateInstanceExtensionProperties': InterceptFlag.CUSTOM,
+        'vkEnumerateInstanceLayerProperties': InterceptFlag.CUSTOM,
+        'vkFreeCommandBuffers': InterceptFlag.NORMAL,
+        'vkGetDeviceQueue': InterceptFlag.POST,
+        'vkGetDeviceQueue2': InterceptFlag.POST,
+        'vkGetFenceStatus': InterceptFlag.NORMAL,
+        'vkGetPhysicalDeviceToolProperties': InterceptFlag.CUSTOM,
+        'vkGetPhysicalDeviceToolPropertiesEXT': InterceptFlag.CUSTOM,
+        'vkGetQueryPoolResults': InterceptFlag.NORMAL,
+        'vkGetSemaphoreCounterValue': InterceptFlag.NORMAL,
+        'vkGetSemaphoreCounterValueKHR': InterceptFlag.NORMAL,
+        'vkQueueBindSparse': InterceptFlag.OVERRIDE,
+        'vkQueuePresentKHR': InterceptFlag.NORMAL,
+        'vkQueueSubmit': InterceptFlag.OVERRIDE,
+        'vkQueueSubmit2': InterceptFlag.OVERRIDE,
+        'vkQueueSubmit2KHR': InterceptFlag.OVERRIDE,
+        'vkQueueWaitIdle': InterceptFlag.NORMAL,
+        'vkResetCommandPool': InterceptFlag.NORMAL,
+        'vkSetDebugUtilsObjectNameEXT': InterceptFlag.NORMAL,
+        'vkSignalSemaphore': InterceptFlag.NORMAL,
+        'vkSignalSemaphoreKHR': InterceptFlag.NORMAL,
+        'vkWaitForFences': InterceptFlag.NORMAL,
+        'vkWaitSemaphores': InterceptFlag.NORMAL,
+        'vkWaitSemaphoresKHR': InterceptFlag.NORMAL,
+}
 
 namespace = 'crash_diagnostic_layer'
 
@@ -124,7 +86,7 @@ namespace = 'crash_diagnostic_layer'
 class CdlBaseOutputGenerator(BaseGenerator):
     def __init__(self):
         BaseGenerator.__init__(self)
-        self.custom_intercept_commands = custom_intercept_commands
+        self.intercept_functions = intercept_functions
 
     def GenerateFileStart(self, filename):
         file_start = f'''
@@ -179,31 +141,30 @@ class CdlBaseOutputGenerator(BaseGenerator):
 
     def NeedsIntercept(self, command):
         intercept = (self.CommandBufferCall(command) or
-                        command.name in custom_intercept_commands)
+                        intercept_functions.get(command.name, None) is not None)
         return intercept
 
     def InterceptPreCommand(self, command):
-        intercept = False
-        if ((self.NeedsIntercept(command) or command.name in intercept_functions or command.name in intercept_pre_functions)
-            and command.name not in no_intercept_pre_functions):
-            intercept = True
-        return intercept
+        attrs = intercept_functions.get(command.name, None)
+        if attrs is not None:
+            return (attrs & InterceptFlag.PRE) != 0
+        return self.CommandBufferCall(command)
 
     def InterceptPostCommand(self, command):
-        intercept = False
-        if ((self.NeedsIntercept(command) or command.name in intercept_functions or command.name in intercept_post_functions)
-            and command.name not in no_intercept_post_functions):
-            intercept = True
-        return intercept
+        attrs = intercept_functions.get(command.name, None)
+        if attrs is not None:
+            return (attrs & InterceptFlag.POST) != 0
+        return self.CommandBufferCall(command)
+
+    def InterceptGenerateSource(self, command):
+        attrs = intercept_functions.get(command.name, None)
+        if attrs is not None:
+            return (attrs & InterceptFlag.CUSTOM) == 0
+        return self.CommandBufferCall(command)
 
     def InterceptOverrideCommand(self, command):
-        intercept = False
-        if (command.name in intercept_override_functions):
-            intercept = True
-        return intercept
-
-    def InterceptCommand(self, command):
-        return self.InterceptPreCommand(command) or self.InterceptPostCommand(command) or self.InterceptOverrideCommand(command)
+        attrs = intercept_functions.get(command.name, None)
+        return attrs is not None and (attrs & InterceptFlag.OVERRIDE) != 0
 
     def InstanceCommand(self, command):
         return command.instance or command.params[0].type == 'VkPhysicalDevice'

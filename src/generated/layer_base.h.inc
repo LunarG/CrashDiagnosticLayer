@@ -40,8 +40,6 @@ virtual VkResult PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDevic
 
 virtual void PreDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {}
 
-virtual void PostDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {}
-
 virtual VkResult PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName,
                                                         uint32_t* pPropertyCount, VkExtensionProperties* pProperties,
                                                         VkResult result) {
@@ -110,8 +108,8 @@ virtual VkResult PostCreateShaderModule(VkDevice device, const VkShaderModuleCre
     return result;
 }
 
-virtual void PostDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
-                                     const VkAllocationCallbacks* pAllocator) {}
+virtual void PreDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
+                                    const VkAllocationCallbacks* pAllocator) {}
 
 virtual VkResult PostCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount,
                                              const VkGraphicsPipelineCreateInfo* pCreateInfos,
@@ -487,8 +485,6 @@ virtual void PreCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGrou
 virtual void PostCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY,
                                  uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY,
                                  uint32_t groupCountZ) {}
-
-virtual void PreGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {}
 
 virtual void PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {}
 
