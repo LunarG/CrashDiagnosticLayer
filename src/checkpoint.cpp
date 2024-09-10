@@ -55,33 +55,42 @@ std::unique_ptr<Checkpoint> BufferMarkerCheckpointMgr::Allocate(uint32_t initial
     return checkpoint;
 }
 
-void BufferMarkerCheckpointMgr::Free(Checkpoint &c) {}
+void BufferMarkerCheckpointMgr::Free(Checkpoint &c) {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
+    checkpoint_data_.erase(c.Id());
+}
 
 void BufferMarkerCheckpointMgr::WriteTop(Checkpoint &c, VkCommandBuffer cmd, uint32_t value) {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
+
     auto iter = checkpoint_data_.find(c.Id());
     assert(iter != checkpoint_data_.end());
     iter->second.top_marker->Write(cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, value);
 }
 
 void BufferMarkerCheckpointMgr::WriteBottom(Checkpoint &c, VkCommandBuffer cmd, uint32_t value) {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     auto iter = checkpoint_data_.find(c.Id());
     assert(iter != checkpoint_data_.end());
     iter->second.bottom_marker->Write(cmd, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, value);
 }
 
 uint32_t BufferMarkerCheckpointMgr::ReadTop(const Checkpoint &c) const {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     auto iter = checkpoint_data_.find(c.Id());
     assert(iter != checkpoint_data_.end());
     return iter->second.top_marker->Read();
 }
 
 uint32_t BufferMarkerCheckpointMgr::ReadBottom(const Checkpoint &c) const {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     auto iter = checkpoint_data_.find(c.Id());
     assert(iter != checkpoint_data_.end());
     return iter->second.bottom_marker->Read();
 }
 
 void BufferMarkerCheckpointMgr::Reset(Checkpoint &c) {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     auto iter = checkpoint_data_.find(c.Id());
     assert(iter != checkpoint_data_.end());
     iter->second.top_marker->Write(0);
@@ -95,11 +104,15 @@ std::unique_ptr<Checkpoint> DiagnosticCheckpointMgr::Allocate(uint32_t initial_v
     Data data;
     data.top_value = initial_value;
     data.bottom_value = initial_value;
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     checkpoint_data_.emplace(std::make_pair(checkpoint->Id(), std::move(data)));
     return checkpoint;
 }
 
-void DiagnosticCheckpointMgr::Free(Checkpoint &c) { checkpoint_data_.erase(c.Id()); }
+void DiagnosticCheckpointMgr::Free(Checkpoint &c) {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
+    checkpoint_data_.erase(c.Id());
+}
 
 // NV checkpoints are both top and bottom markers.
 void DiagnosticCheckpointMgr::WriteTop(Checkpoint &c, VkCommandBuffer cmd, uint32_t value) {}
@@ -110,18 +123,21 @@ void DiagnosticCheckpointMgr::WriteBottom(Checkpoint &c, VkCommandBuffer cmd, ui
 }
 
 uint32_t DiagnosticCheckpointMgr::ReadTop(const Checkpoint &c) const {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     auto iter = checkpoint_data_.find(c.Id());
     assert(iter != checkpoint_data_.end());
     return iter->second.top_value;
 }
 
 uint32_t DiagnosticCheckpointMgr::ReadBottom(const Checkpoint &c) const {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     auto iter = checkpoint_data_.find(c.Id());
     assert(iter != checkpoint_data_.end());
     return iter->second.bottom_value;
 }
 
 void DiagnosticCheckpointMgr::Reset(Checkpoint &c) {
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     auto iter = checkpoint_data_.find(c.Id());
     assert(iter != checkpoint_data_.end());
     iter->second.top_value = 0;

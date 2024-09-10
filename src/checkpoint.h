@@ -17,6 +17,7 @@
 #pragma once
 
 #include "marker.h"
+#include <mutex>
 
 namespace crash_diagnostic_layer {
 
@@ -79,6 +80,7 @@ class BufferMarkerCheckpointMgr : public CheckpointMgr {
 
     BufferMarkerMgr markers_;
 
+    mutable std::mutex checkpoint_mutex_;
     std::unordered_map<CheckpointId, Data> checkpoint_data_;
     uint32_t next_id_{1};
 };
@@ -108,6 +110,7 @@ class DiagnosticCheckpointMgr : public CheckpointMgr {
     };
 
     Device &device_;
+    mutable std::mutex checkpoint_mutex_;
     std::unordered_map<CheckpointId, Data> checkpoint_data_;
     uint32_t next_id_{1};
 };
