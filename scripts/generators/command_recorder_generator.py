@@ -137,7 +137,10 @@ class CommandRecorder
                     out.append(f'  for (uint32_t j = 0; j < {vkmember.fixedSizeArray[0]}; ++j) {{\n')
                     out.append(f'    ptr[i].{vkmember.name}[j] = {src_struct}.{vkmember.name}[j];\n')
                     out.append('  }\n')
-                elif vkmember.pointer and 'void' != vkmember.type and vkmember.name != 'pNext':
+                # https://github.com/LunarG/CrashDiagnosticLayer/issues/102 we need to deep copy the pNext chain here
+                elif vkmember.name == 'pNext':
+                    out.append(f'  ptr[i].{vkmember.name} = nullptr; // pNext deep copy not implemented\n')
+                elif vkmember.pointer and 'void' != vkmember.type:
                     out.append(f'    ptr[i].{vkmember.name} = nullptr;\n')
                     out.append(f'  if ({src_struct}.{vkmember.name}) {{\n')
                     if vkmember.length is not None and len(vkmember.length) > 0:
