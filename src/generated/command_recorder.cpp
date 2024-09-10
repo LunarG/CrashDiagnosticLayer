@@ -411,7 +411,7 @@ VkBufferMemoryBarrier* CommandRecorder::CopyArray<VkBufferMemoryBarrier>(const V
     auto ptr = reinterpret_cast<VkBufferMemoryBarrier*>(m_allocator.Alloc(sizeof(VkBufferMemoryBarrier) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcAccessMask = src[start_index + i].srcAccessMask;
         ptr[i].dstAccessMask = src[start_index + i].dstAccessMask;
         ptr[i].srcQueueFamilyIndex = src[start_index + i].srcQueueFamilyIndex;
@@ -443,7 +443,7 @@ VkImageMemoryBarrier* CommandRecorder::CopyArray<VkImageMemoryBarrier>(const VkI
     auto ptr = reinterpret_cast<VkImageMemoryBarrier*>(m_allocator.Alloc(sizeof(VkImageMemoryBarrier) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcAccessMask = src[start_index + i].srcAccessMask;
         ptr[i].dstAccessMask = src[start_index + i].dstAccessMask;
         ptr[i].oldLayout = src[start_index + i].oldLayout;
@@ -462,7 +462,7 @@ VkMemoryBarrier* CommandRecorder::CopyArray<VkMemoryBarrier>(const VkMemoryBarri
     auto ptr = reinterpret_cast<VkMemoryBarrier*>(m_allocator.Alloc(sizeof(VkMemoryBarrier) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcAccessMask = src[start_index + i].srcAccessMask;
         ptr[i].dstAccessMask = src[start_index + i].dstAccessMask;
     }
@@ -513,7 +513,7 @@ VkWriteDescriptorSet* CommandRecorder::CopyArray<VkWriteDescriptorSet>(const VkW
     auto ptr = reinterpret_cast<VkWriteDescriptorSet*>(m_allocator.Alloc(sizeof(VkWriteDescriptorSet) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].dstSet = src[start_index + i].dstSet;
         ptr[i].dstBinding = src[start_index + i].dstBinding;
         ptr[i].dstArrayElement = src[start_index + i].dstArrayElement;
@@ -545,7 +545,7 @@ VkCommandBufferInheritanceInfo* CommandRecorder::CopyArray<VkCommandBufferInheri
         m_allocator.Alloc(sizeof(VkCommandBufferInheritanceInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].renderPass = src[start_index + i].renderPass;
         ptr[i].subpass = src[start_index + i].subpass;
         ptr[i].framebuffer = src[start_index + i].framebuffer;
@@ -562,7 +562,7 @@ VkCommandBufferBeginInfo* CommandRecorder::CopyArray<VkCommandBufferBeginInfo>(c
     auto ptr = reinterpret_cast<VkCommandBufferBeginInfo*>(m_allocator.Alloc(sizeof(VkCommandBufferBeginInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].pInheritanceInfo = nullptr;
         if (src[start_index + i].pInheritanceInfo) {
@@ -723,7 +723,7 @@ VkRenderPassBeginInfo* CommandRecorder::CopyArray<VkRenderPassBeginInfo>(const V
     auto ptr = reinterpret_cast<VkRenderPassBeginInfo*>(m_allocator.Alloc(sizeof(VkRenderPassBeginInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].renderPass = src[start_index + i].renderPass;
         ptr[i].framebuffer = src[start_index + i].framebuffer;
         ptr[i].renderArea = src[start_index + i].renderArea;
@@ -743,7 +743,7 @@ VkSubpassBeginInfo* CommandRecorder::CopyArray<VkSubpassBeginInfo>(const VkSubpa
     auto ptr = reinterpret_cast<VkSubpassBeginInfo*>(m_allocator.Alloc(sizeof(VkSubpassBeginInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].contents = src[start_index + i].contents;
     }
     return ptr;
@@ -755,7 +755,7 @@ VkSubpassEndInfo* CommandRecorder::CopyArray<VkSubpassEndInfo>(const VkSubpassEn
     auto ptr = reinterpret_cast<VkSubpassEndInfo*>(m_allocator.Alloc(sizeof(VkSubpassEndInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
     }
     return ptr;
 }
@@ -766,7 +766,7 @@ VkMemoryBarrier2* CommandRecorder::CopyArray<VkMemoryBarrier2>(const VkMemoryBar
     auto ptr = reinterpret_cast<VkMemoryBarrier2*>(m_allocator.Alloc(sizeof(VkMemoryBarrier2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcStageMask = src[start_index + i].srcStageMask;
         ptr[i].srcAccessMask = src[start_index + i].srcAccessMask;
         ptr[i].dstStageMask = src[start_index + i].dstStageMask;
@@ -781,7 +781,7 @@ VkBufferMemoryBarrier2* CommandRecorder::CopyArray<VkBufferMemoryBarrier2>(const
     auto ptr = reinterpret_cast<VkBufferMemoryBarrier2*>(m_allocator.Alloc(sizeof(VkBufferMemoryBarrier2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcStageMask = src[start_index + i].srcStageMask;
         ptr[i].srcAccessMask = src[start_index + i].srcAccessMask;
         ptr[i].dstStageMask = src[start_index + i].dstStageMask;
@@ -801,7 +801,7 @@ VkImageMemoryBarrier2* CommandRecorder::CopyArray<VkImageMemoryBarrier2>(const V
     auto ptr = reinterpret_cast<VkImageMemoryBarrier2*>(m_allocator.Alloc(sizeof(VkImageMemoryBarrier2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcStageMask = src[start_index + i].srcStageMask;
         ptr[i].srcAccessMask = src[start_index + i].srcAccessMask;
         ptr[i].dstStageMask = src[start_index + i].dstStageMask;
@@ -822,7 +822,7 @@ VkDependencyInfo* CommandRecorder::CopyArray<VkDependencyInfo>(const VkDependenc
     auto ptr = reinterpret_cast<VkDependencyInfo*>(m_allocator.Alloc(sizeof(VkDependencyInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].dependencyFlags = src[start_index + i].dependencyFlags;
         ptr[i].memoryBarrierCount = src[start_index + i].memoryBarrierCount;
         ptr[i].pMemoryBarriers = nullptr;
@@ -853,7 +853,7 @@ VkBufferCopy2* CommandRecorder::CopyArray<VkBufferCopy2>(const VkBufferCopy2* sr
     auto ptr = reinterpret_cast<VkBufferCopy2*>(m_allocator.Alloc(sizeof(VkBufferCopy2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcOffset = src[start_index + i].srcOffset;
         ptr[i].dstOffset = src[start_index + i].dstOffset;
         ptr[i].size = src[start_index + i].size;
@@ -867,7 +867,7 @@ VkCopyBufferInfo2* CommandRecorder::CopyArray<VkCopyBufferInfo2>(const VkCopyBuf
     auto ptr = reinterpret_cast<VkCopyBufferInfo2*>(m_allocator.Alloc(sizeof(VkCopyBufferInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcBuffer = src[start_index + i].srcBuffer;
         ptr[i].dstBuffer = src[start_index + i].dstBuffer;
         ptr[i].regionCount = src[start_index + i].regionCount;
@@ -885,7 +885,7 @@ VkImageCopy2* CommandRecorder::CopyArray<VkImageCopy2>(const VkImageCopy2* src, 
     auto ptr = reinterpret_cast<VkImageCopy2*>(m_allocator.Alloc(sizeof(VkImageCopy2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcSubresource = src[start_index + i].srcSubresource;
         ptr[i].srcOffset = src[start_index + i].srcOffset;
         ptr[i].dstSubresource = src[start_index + i].dstSubresource;
@@ -901,7 +901,7 @@ VkCopyImageInfo2* CommandRecorder::CopyArray<VkCopyImageInfo2>(const VkCopyImage
     auto ptr = reinterpret_cast<VkCopyImageInfo2*>(m_allocator.Alloc(sizeof(VkCopyImageInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcImage = src[start_index + i].srcImage;
         ptr[i].srcImageLayout = src[start_index + i].srcImageLayout;
         ptr[i].dstImage = src[start_index + i].dstImage;
@@ -922,7 +922,7 @@ VkBufferImageCopy2* CommandRecorder::CopyArray<VkBufferImageCopy2>(const VkBuffe
     auto ptr = reinterpret_cast<VkBufferImageCopy2*>(m_allocator.Alloc(sizeof(VkBufferImageCopy2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].bufferOffset = src[start_index + i].bufferOffset;
         ptr[i].bufferRowLength = src[start_index + i].bufferRowLength;
         ptr[i].bufferImageHeight = src[start_index + i].bufferImageHeight;
@@ -939,7 +939,7 @@ VkCopyBufferToImageInfo2* CommandRecorder::CopyArray<VkCopyBufferToImageInfo2>(c
     auto ptr = reinterpret_cast<VkCopyBufferToImageInfo2*>(m_allocator.Alloc(sizeof(VkCopyBufferToImageInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcBuffer = src[start_index + i].srcBuffer;
         ptr[i].dstImage = src[start_index + i].dstImage;
         ptr[i].dstImageLayout = src[start_index + i].dstImageLayout;
@@ -959,7 +959,7 @@ VkCopyImageToBufferInfo2* CommandRecorder::CopyArray<VkCopyImageToBufferInfo2>(c
     auto ptr = reinterpret_cast<VkCopyImageToBufferInfo2*>(m_allocator.Alloc(sizeof(VkCopyImageToBufferInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcImage = src[start_index + i].srcImage;
         ptr[i].srcImageLayout = src[start_index + i].srcImageLayout;
         ptr[i].dstBuffer = src[start_index + i].dstBuffer;
@@ -978,7 +978,7 @@ VkImageBlit2* CommandRecorder::CopyArray<VkImageBlit2>(const VkImageBlit2* src, 
     auto ptr = reinterpret_cast<VkImageBlit2*>(m_allocator.Alloc(sizeof(VkImageBlit2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcSubresource = src[start_index + i].srcSubresource;
         for (uint32_t j = 0; j < 2; ++j) {
             ptr[i].srcOffsets[j] = src[start_index + i].srcOffsets[j];
@@ -997,7 +997,7 @@ VkBlitImageInfo2* CommandRecorder::CopyArray<VkBlitImageInfo2>(const VkBlitImage
     auto ptr = reinterpret_cast<VkBlitImageInfo2*>(m_allocator.Alloc(sizeof(VkBlitImageInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcImage = src[start_index + i].srcImage;
         ptr[i].srcImageLayout = src[start_index + i].srcImageLayout;
         ptr[i].dstImage = src[start_index + i].dstImage;
@@ -1019,7 +1019,7 @@ VkImageResolve2* CommandRecorder::CopyArray<VkImageResolve2>(const VkImageResolv
     auto ptr = reinterpret_cast<VkImageResolve2*>(m_allocator.Alloc(sizeof(VkImageResolve2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcSubresource = src[start_index + i].srcSubresource;
         ptr[i].srcOffset = src[start_index + i].srcOffset;
         ptr[i].dstSubresource = src[start_index + i].dstSubresource;
@@ -1035,7 +1035,7 @@ VkResolveImageInfo2* CommandRecorder::CopyArray<VkResolveImageInfo2>(const VkRes
     auto ptr = reinterpret_cast<VkResolveImageInfo2*>(m_allocator.Alloc(sizeof(VkResolveImageInfo2) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].srcImage = src[start_index + i].srcImage;
         ptr[i].srcImageLayout = src[start_index + i].srcImageLayout;
         ptr[i].dstImage = src[start_index + i].dstImage;
@@ -1057,7 +1057,7 @@ VkRenderingAttachmentInfo* CommandRecorder::CopyArray<VkRenderingAttachmentInfo>
         reinterpret_cast<VkRenderingAttachmentInfo*>(m_allocator.Alloc(sizeof(VkRenderingAttachmentInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].imageView = src[start_index + i].imageView;
         ptr[i].imageLayout = src[start_index + i].imageLayout;
         ptr[i].resolveMode = src[start_index + i].resolveMode;
@@ -1076,7 +1076,7 @@ VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingIn
     auto ptr = reinterpret_cast<VkRenderingInfo*>(m_allocator.Alloc(sizeof(VkRenderingInfo) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].renderArea = src[start_index + i].renderArea;
         ptr[i].layerCount = src[start_index + i].layerCount;
@@ -1108,7 +1108,7 @@ VkVideoPictureResourceInfoKHR* CommandRecorder::CopyArray<VkVideoPictureResource
         m_allocator.Alloc(sizeof(VkVideoPictureResourceInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].codedOffset = src[start_index + i].codedOffset;
         ptr[i].codedExtent = src[start_index + i].codedExtent;
         ptr[i].baseArrayLayer = src[start_index + i].baseArrayLayer;
@@ -1124,7 +1124,7 @@ VkVideoReferenceSlotInfoKHR* CommandRecorder::CopyArray<VkVideoReferenceSlotInfo
         reinterpret_cast<VkVideoReferenceSlotInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoReferenceSlotInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].slotIndex = src[start_index + i].slotIndex;
         ptr[i].pPictureResource = nullptr;
         if (src[start_index + i].pPictureResource) {
@@ -1142,7 +1142,7 @@ VkVideoBeginCodingInfoKHR* CommandRecorder::CopyArray<VkVideoBeginCodingInfoKHR>
         reinterpret_cast<VkVideoBeginCodingInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoBeginCodingInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].videoSession = src[start_index + i].videoSession;
         ptr[i].videoSessionParameters = src[start_index + i].videoSessionParameters;
@@ -1162,7 +1162,7 @@ VkVideoEndCodingInfoKHR* CommandRecorder::CopyArray<VkVideoEndCodingInfoKHR>(con
     auto ptr = reinterpret_cast<VkVideoEndCodingInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoEndCodingInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].flags = src[start_index + i].flags;
     }
     return ptr;
@@ -1175,7 +1175,7 @@ VkVideoCodingControlInfoKHR* CommandRecorder::CopyArray<VkVideoCodingControlInfo
         reinterpret_cast<VkVideoCodingControlInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoCodingControlInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].flags = src[start_index + i].flags;
     }
     return ptr;
@@ -1187,7 +1187,7 @@ VkVideoDecodeInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeInfoKHR>(const VkV
     auto ptr = reinterpret_cast<VkVideoDecodeInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoDecodeInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].srcBuffer = src[start_index + i].srcBuffer;
         ptr[i].srcBufferOffset = src[start_index + i].srcBufferOffset;
@@ -1215,7 +1215,7 @@ VkRenderingAttachmentLocationInfoKHR* CommandRecorder::CopyArray<VkRenderingAtta
         m_allocator.Alloc(sizeof(VkRenderingAttachmentLocationInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
         ptr[i].pColorAttachmentLocations = nullptr;
         if (src[start_index + i].pColorAttachmentLocations) {
@@ -1234,7 +1234,7 @@ VkRenderingInputAttachmentIndexInfoKHR* CommandRecorder::CopyArray<VkRenderingIn
         m_allocator.Alloc(sizeof(VkRenderingInputAttachmentIndexInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
         ptr[i].pColorAttachmentInputIndices = nullptr;
         if (src[start_index + i].pColorAttachmentInputIndices) {
@@ -1262,7 +1262,7 @@ VkVideoEncodeInfoKHR* CommandRecorder::CopyArray<VkVideoEncodeInfoKHR>(const VkV
     auto ptr = reinterpret_cast<VkVideoEncodeInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoEncodeInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].dstBuffer = src[start_index + i].dstBuffer;
         ptr[i].dstBufferOffset = src[start_index + i].dstBufferOffset;
@@ -1291,7 +1291,7 @@ VkBindDescriptorSetsInfoKHR* CommandRecorder::CopyArray<VkBindDescriptorSetsInfo
         reinterpret_cast<VkBindDescriptorSetsInfoKHR*>(m_allocator.Alloc(sizeof(VkBindDescriptorSetsInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].stageFlags = src[start_index + i].stageFlags;
         ptr[i].layout = src[start_index + i].layout;
         ptr[i].firstSet = src[start_index + i].firstSet;
@@ -1317,7 +1317,7 @@ VkPushConstantsInfoKHR* CommandRecorder::CopyArray<VkPushConstantsInfoKHR>(const
     auto ptr = reinterpret_cast<VkPushConstantsInfoKHR*>(m_allocator.Alloc(sizeof(VkPushConstantsInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].layout = src[start_index + i].layout;
         ptr[i].stageFlags = src[start_index + i].stageFlags;
         ptr[i].offset = src[start_index + i].offset;
@@ -1336,7 +1336,7 @@ VkPushDescriptorSetInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetInfoKH
         reinterpret_cast<VkPushDescriptorSetInfoKHR*>(m_allocator.Alloc(sizeof(VkPushDescriptorSetInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].stageFlags = src[start_index + i].stageFlags;
         ptr[i].layout = src[start_index + i].layout;
         ptr[i].set = src[start_index + i].set;
@@ -1357,7 +1357,7 @@ VkPushDescriptorSetWithTemplateInfoKHR* CommandRecorder::CopyArray<VkPushDescrip
         m_allocator.Alloc(sizeof(VkPushDescriptorSetWithTemplateInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].descriptorUpdateTemplate = src[start_index + i].descriptorUpdateTemplate;
         ptr[i].layout = src[start_index + i].layout;
         ptr[i].set = src[start_index + i].set;
@@ -1373,7 +1373,7 @@ VkSetDescriptorBufferOffsetsInfoEXT* CommandRecorder::CopyArray<VkSetDescriptorB
         m_allocator.Alloc(sizeof(VkSetDescriptorBufferOffsetsInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].stageFlags = src[start_index + i].stageFlags;
         ptr[i].layout = src[start_index + i].layout;
         ptr[i].firstSet = src[start_index + i].firstSet;
@@ -1400,7 +1400,7 @@ CommandRecorder::CopyArray<VkBindDescriptorBufferEmbeddedSamplersInfoEXT>(
         m_allocator.Alloc(sizeof(VkBindDescriptorBufferEmbeddedSamplersInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].stageFlags = src[start_index + i].stageFlags;
         ptr[i].layout = src[start_index + i].layout;
         ptr[i].set = src[start_index + i].set;
@@ -1415,7 +1415,7 @@ VkDebugMarkerMarkerInfoEXT* CommandRecorder::CopyArray<VkDebugMarkerMarkerInfoEX
         reinterpret_cast<VkDebugMarkerMarkerInfoEXT*>(m_allocator.Alloc(sizeof(VkDebugMarkerMarkerInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].pMarkerName = nullptr;
         if (src[start_index + i].pMarkerName) {
             ptr[i].pMarkerName =
@@ -1434,7 +1434,7 @@ VkCuLaunchInfoNVX* CommandRecorder::CopyArray<VkCuLaunchInfoNVX>(const VkCuLaunc
     auto ptr = reinterpret_cast<VkCuLaunchInfoNVX*>(m_allocator.Alloc(sizeof(VkCuLaunchInfoNVX) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].function = src[start_index + i].function;
         ptr[i].gridDimX = src[start_index + i].gridDimX;
         ptr[i].gridDimY = src[start_index + i].gridDimY;
@@ -1462,7 +1462,7 @@ VkConditionalRenderingBeginInfoEXT* CommandRecorder::CopyArray<VkConditionalRend
         m_allocator.Alloc(sizeof(VkConditionalRenderingBeginInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].buffer = src[start_index + i].buffer;
         ptr[i].offset = src[start_index + i].offset;
         ptr[i].flags = src[start_index + i].flags;
@@ -1500,7 +1500,7 @@ VkDebugUtilsLabelEXT* CommandRecorder::CopyArray<VkDebugUtilsLabelEXT>(const VkD
     auto ptr = reinterpret_cast<VkDebugUtilsLabelEXT*>(m_allocator.Alloc(sizeof(VkDebugUtilsLabelEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].pLabelName = nullptr;
         if (src[start_index + i].pLabelName) {
             ptr[i].pLabelName =
@@ -1559,7 +1559,7 @@ VkSampleLocationsInfoEXT* CommandRecorder::CopyArray<VkSampleLocationsInfoEXT>(c
     auto ptr = reinterpret_cast<VkSampleLocationsInfoEXT*>(m_allocator.Alloc(sizeof(VkSampleLocationsInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].sampleLocationsPerPixel = src[start_index + i].sampleLocationsPerPixel;
         ptr[i].sampleLocationGridSize = src[start_index + i].sampleLocationGridSize;
         ptr[i].sampleLocationsCount = src[start_index + i].sampleLocationsCount;
@@ -1623,7 +1623,7 @@ VkGeometryNV* CommandRecorder::CopyArray<VkGeometryNV>(const VkGeometryNV* src, 
     auto ptr = reinterpret_cast<VkGeometryNV*>(m_allocator.Alloc(sizeof(VkGeometryNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].geometryType = src[start_index + i].geometryType;
         ptr[i].geometry = src[start_index + i].geometry;
         ptr[i].flags = src[start_index + i].flags;
@@ -1638,7 +1638,7 @@ VkAccelerationStructureInfoNV* CommandRecorder::CopyArray<VkAccelerationStructur
         m_allocator.Alloc(sizeof(VkAccelerationStructureInfoNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].type = src[start_index + i].type;
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].instanceCount = src[start_index + i].instanceCount;
@@ -1659,7 +1659,7 @@ VkPerformanceMarkerInfoINTEL* CommandRecorder::CopyArray<VkPerformanceMarkerInfo
         m_allocator.Alloc(sizeof(VkPerformanceMarkerInfoINTEL) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].marker = src[start_index + i].marker;
     }
     return ptr;
@@ -1672,7 +1672,7 @@ VkPerformanceStreamMarkerInfoINTEL* CommandRecorder::CopyArray<VkPerformanceStre
         m_allocator.Alloc(sizeof(VkPerformanceStreamMarkerInfoINTEL) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].marker = src[start_index + i].marker;
     }
     return ptr;
@@ -1685,7 +1685,7 @@ VkPerformanceOverrideInfoINTEL* CommandRecorder::CopyArray<VkPerformanceOverride
         m_allocator.Alloc(sizeof(VkPerformanceOverrideInfoINTEL) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].type = src[start_index + i].type;
         ptr[i].enable = src[start_index + i].enable;
         ptr[i].parameter = src[start_index + i].parameter;
@@ -1712,7 +1712,7 @@ VkGeneratedCommandsInfoNV* CommandRecorder::CopyArray<VkGeneratedCommandsInfoNV>
         reinterpret_cast<VkGeneratedCommandsInfoNV*>(m_allocator.Alloc(sizeof(VkGeneratedCommandsInfoNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].pipelineBindPoint = src[start_index + i].pipelineBindPoint;
         ptr[i].pipeline = src[start_index + i].pipeline;
         ptr[i].indirectCommandsLayout = src[start_index + i].indirectCommandsLayout;
@@ -1740,7 +1740,7 @@ VkDepthBiasInfoEXT* CommandRecorder::CopyArray<VkDepthBiasInfoEXT>(const VkDepth
     auto ptr = reinterpret_cast<VkDepthBiasInfoEXT*>(m_allocator.Alloc(sizeof(VkDepthBiasInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].depthBiasConstantFactor = src[start_index + i].depthBiasConstantFactor;
         ptr[i].depthBiasClamp = src[start_index + i].depthBiasClamp;
         ptr[i].depthBiasSlopeFactor = src[start_index + i].depthBiasSlopeFactor;
@@ -1754,7 +1754,7 @@ VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaL
     auto ptr = reinterpret_cast<VkCudaLaunchInfoNV*>(m_allocator.Alloc(sizeof(VkCudaLaunchInfoNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].function = src[start_index + i].function;
         ptr[i].gridDimX = src[start_index + i].gridDimX;
         ptr[i].gridDimY = src[start_index + i].gridDimY;
@@ -1782,7 +1782,7 @@ VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferB
         m_allocator.Alloc(sizeof(VkDescriptorBufferBindingInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].address = src[start_index + i].address;
         ptr[i].usage = src[start_index + i].usage;
     }
@@ -1808,7 +1808,7 @@ VkVertexInputBindingDescription2EXT* CommandRecorder::CopyArray<VkVertexInputBin
         m_allocator.Alloc(sizeof(VkVertexInputBindingDescription2EXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].binding = src[start_index + i].binding;
         ptr[i].stride = src[start_index + i].stride;
         ptr[i].inputRate = src[start_index + i].inputRate;
@@ -1824,7 +1824,7 @@ VkVertexInputAttributeDescription2EXT* CommandRecorder::CopyArray<VkVertexInputA
         m_allocator.Alloc(sizeof(VkVertexInputAttributeDescription2EXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].location = src[start_index + i].location;
         ptr[i].binding = src[start_index + i].binding;
         ptr[i].format = src[start_index + i].format;
@@ -1886,7 +1886,7 @@ VkMicromapBuildInfoEXT* CommandRecorder::CopyArray<VkMicromapBuildInfoEXT>(const
     auto ptr = reinterpret_cast<VkMicromapBuildInfoEXT*>(m_allocator.Alloc(sizeof(VkMicromapBuildInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].type = src[start_index + i].type;
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].mode = src[start_index + i].mode;
@@ -1921,7 +1921,7 @@ VkCopyMicromapToMemoryInfoEXT* CommandRecorder::CopyArray<VkCopyMicromapToMemory
         m_allocator.Alloc(sizeof(VkCopyMicromapToMemoryInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].src = src[start_index + i].src;
         ptr[i].dst = src[start_index + i].dst;
         ptr[i].mode = src[start_index + i].mode;
@@ -1936,7 +1936,7 @@ VkCopyMemoryToMicromapInfoEXT* CommandRecorder::CopyArray<VkCopyMemoryToMicromap
         m_allocator.Alloc(sizeof(VkCopyMemoryToMicromapInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].src = src[start_index + i].src;
         ptr[i].dst = src[start_index + i].dst;
         ptr[i].mode = src[start_index + i].mode;
@@ -1950,7 +1950,7 @@ VkCopyMicromapInfoEXT* CommandRecorder::CopyArray<VkCopyMicromapInfoEXT>(const V
     auto ptr = reinterpret_cast<VkCopyMicromapInfoEXT*>(m_allocator.Alloc(sizeof(VkCopyMicromapInfoEXT) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].src = src[start_index + i].src;
         ptr[i].dst = src[start_index + i].dst;
         ptr[i].mode = src[start_index + i].mode;
@@ -2009,7 +2009,7 @@ VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoN
         reinterpret_cast<VkOpticalFlowExecuteInfoNV*>(m_allocator.Alloc(sizeof(VkOpticalFlowExecuteInfoNV) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].regionCount = src[start_index + i].regionCount;
         ptr[i].pRegions = nullptr;
@@ -2042,7 +2042,7 @@ VkAccelerationStructureGeometryKHR* CommandRecorder::CopyArray<VkAccelerationStr
         m_allocator.Alloc(sizeof(VkAccelerationStructureGeometryKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].geometryType = src[start_index + i].geometryType;
         ptr[i].geometry = src[start_index + i].geometry;
         ptr[i].flags = src[start_index + i].flags;
@@ -2057,7 +2057,7 @@ VkAccelerationStructureBuildGeometryInfoKHR* CommandRecorder::CopyArray<VkAccele
         m_allocator.Alloc(sizeof(VkAccelerationStructureBuildGeometryInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].type = src[start_index + i].type;
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].mode = src[start_index + i].mode;
@@ -2090,7 +2090,7 @@ VkCopyAccelerationStructureToMemoryInfoKHR* CommandRecorder::CopyArray<VkCopyAcc
         m_allocator.Alloc(sizeof(VkCopyAccelerationStructureToMemoryInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].src = src[start_index + i].src;
         ptr[i].dst = src[start_index + i].dst;
         ptr[i].mode = src[start_index + i].mode;
@@ -2105,7 +2105,7 @@ VkCopyMemoryToAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyMem
         m_allocator.Alloc(sizeof(VkCopyMemoryToAccelerationStructureInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].src = src[start_index + i].src;
         ptr[i].dst = src[start_index + i].dst;
         ptr[i].mode = src[start_index + i].mode;
@@ -2120,7 +2120,7 @@ VkCopyAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyAcceleratio
         m_allocator.Alloc(sizeof(VkCopyAccelerationStructureInfoKHR) * count));
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = src[start_index + i].pNext;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
         ptr[i].src = src[start_index + i].src;
         ptr[i].dst = src[start_index + i].dst;
         ptr[i].mode = src[start_index + i].mode;
