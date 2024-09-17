@@ -51,6 +51,7 @@ std::unique_ptr<Checkpoint> BufferMarkerCheckpointMgr::Allocate(uint32_t initial
     if (!data.top_marker || !data.bottom_marker) {
         return nullptr;
     }
+    std::lock_guard<std::mutex> lock(checkpoint_mutex_);
     checkpoint_data_.emplace(std::make_pair(checkpoint->Id(), std::move(data)));
     return checkpoint;
 }
