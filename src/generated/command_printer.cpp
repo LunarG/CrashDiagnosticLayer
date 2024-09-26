@@ -3826,11 +3826,52 @@ void CommandPrinter::PrintCmdBindShadersEXTArgs(YAML::Emitter &os, const CmdBind
     }
 }
 
+void CommandPrinter::PrintCmdSetDepthClampRangeEXTArgs(YAML::Emitter &os, const CmdSetDepthClampRangeEXTArgs &args) {
+    os << YAML::Key << "depthClampMode";
+    // depthClampMode -> Field -> VkDepthClampModeEXT
+    os << YAML::Value << args.depthClampMode;
+    os << YAML::Key << "pDepthClampRange";
+    // pointer
+    if (args.pDepthClampRange != nullptr) {
+        os << YAML::Value << *args.pDepthClampRange;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdSetAttachmentFeedbackLoopEnableEXTArgs(
     YAML::Emitter &os, const CmdSetAttachmentFeedbackLoopEnableEXTArgs &args) {
     os << YAML::Key << "aspectMask";
     // aspectMask -> Field -> VkImageAspectFlags
     os << YAML::Value << args.aspectMask;
+}
+
+void CommandPrinter::PrintCmdPreprocessGeneratedCommandsEXTArgs(YAML::Emitter &os,
+                                                                const CmdPreprocessGeneratedCommandsEXTArgs &args) {
+    os << YAML::Key << "pGeneratedCommandsInfo";
+    // pointer
+    if (args.pGeneratedCommandsInfo != nullptr) {
+        os << YAML::Value << *args.pGeneratedCommandsInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "stateCommandBuffer";
+    // stateCommandBuffer -> Field -> VkCommandBuffer
+    os << YAML::Value << args.stateCommandBuffer;
+}
+
+void CommandPrinter::PrintCmdExecuteGeneratedCommandsEXTArgs(YAML::Emitter &os,
+                                                             const CmdExecuteGeneratedCommandsEXTArgs &args) {
+    os << YAML::Key << "isPreprocessed";
+    // isPreprocessed -> Field -> VkBool32
+    os << YAML::Value << args.isPreprocessed;
+    os << YAML::Key << "pGeneratedCommandsInfo";
+    // pointer
+    if (args.pGeneratedCommandsInfo != nullptr) {
+        os << YAML::Value << *args.pGeneratedCommandsInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
 }
 
 void CommandPrinter::PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
@@ -5848,10 +5889,31 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+        case Command::Type::kCmdSetDepthClampRangeEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDepthClampRangeEXTArgs *>(cmd.parameters);
+                PrintCmdSetDepthClampRangeEXTArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdSetAttachmentFeedbackLoopEnableEXT:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdSetAttachmentFeedbackLoopEnableEXTArgs *>(cmd.parameters);
                 PrintCmdSetAttachmentFeedbackLoopEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPreprocessGeneratedCommandsEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPreprocessGeneratedCommandsEXTArgs *>(cmd.parameters);
+                PrintCmdPreprocessGeneratedCommandsEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdExecuteGeneratedCommandsEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdExecuteGeneratedCommandsEXTArgs *>(cmd.parameters);
+                PrintCmdExecuteGeneratedCommandsEXTArgs(os, *args);
             }
             break;
 

@@ -289,7 +289,10 @@ struct Command {
         kCmdSetCoverageReductionModeNV,
         kCmdOpticalFlowExecuteNV,
         kCmdBindShadersEXT,
+        kCmdSetDepthClampRangeEXT,
         kCmdSetAttachmentFeedbackLoopEnableEXT,
+        kCmdPreprocessGeneratedCommandsEXT,
+        kCmdExecuteGeneratedCommandsEXT,
         kCmdBuildAccelerationStructuresKHR,
         kCmdBuildAccelerationStructuresIndirectKHR,
         kCmdCopyAccelerationStructureKHR,
@@ -1878,9 +1881,27 @@ struct CmdBindShadersEXTArgs {
     const VkShaderEXT* pShaders;
 };
 
+struct CmdSetDepthClampRangeEXTArgs {
+    VkCommandBuffer commandBuffer;
+    VkDepthClampModeEXT depthClampMode;
+    const VkDepthClampRangeEXT* pDepthClampRange;
+};
+
 struct CmdSetAttachmentFeedbackLoopEnableEXTArgs {
     VkCommandBuffer commandBuffer;
     VkImageAspectFlags aspectMask;
+};
+
+struct CmdPreprocessGeneratedCommandsEXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo;
+    VkCommandBuffer stateCommandBuffer;
+};
+
+struct CmdExecuteGeneratedCommandsEXTArgs {
+    VkCommandBuffer commandBuffer;
+    VkBool32 isPreprocessed;
+    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo;
 };
 
 struct CmdBuildAccelerationStructuresKHRArgs {

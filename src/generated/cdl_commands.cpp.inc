@@ -2707,6 +2707,17 @@ void Context::PostCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stag
     p_cmd->PostCmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
 
+void Context::PreCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                          const VkDepthClampRangeEXT* pDepthClampRange) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
+}
+void Context::PostCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                           const VkDepthClampRangeEXT* pDepthClampRange) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
+}
+
 void Context::PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PreCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
@@ -2714,6 +2725,30 @@ void Context::PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBu
 void Context::PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
+}
+
+void Context::PreCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                                   const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                                   VkCommandBuffer stateCommandBuffer) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdPreprocessGeneratedCommandsEXT(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
+}
+void Context::PostCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                                    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                                    VkCommandBuffer stateCommandBuffer) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdPreprocessGeneratedCommandsEXT(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
+}
+
+void Context::PreCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                                const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdExecuteGeneratedCommandsEXT(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
+}
+void Context::PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                                 const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdExecuteGeneratedCommandsEXT(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 
 void Context::PreCmdBuildAccelerationStructuresKHR(

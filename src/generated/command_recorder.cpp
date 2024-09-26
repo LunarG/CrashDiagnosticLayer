@@ -324,6 +324,12 @@ template <>
 VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoNV>(
     const VkOpticalFlowExecuteInfoNV* src, size_t start_index, size_t count);
 template <>
+VkDepthClampRangeEXT* CommandRecorder::CopyArray<VkDepthClampRangeEXT>(const VkDepthClampRangeEXT* src,
+                                                                       size_t start_index, size_t count);
+template <>
+VkGeneratedCommandsInfoEXT* CommandRecorder::CopyArray<VkGeneratedCommandsInfoEXT>(
+    const VkGeneratedCommandsInfoEXT* src, size_t start_index, size_t count);
+template <>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(
     const VkAccelerationStructureBuildRangeInfoKHR* src, size_t start_index, size_t count);
 template <>
@@ -2017,6 +2023,39 @@ VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoN
             ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, static_cast<uint64_t>(0U),
                                         static_cast<uint64_t>(src[start_index + i].regionCount));
         }
+    }
+    return ptr;
+}
+
+template <>
+VkDepthClampRangeEXT* CommandRecorder::CopyArray<VkDepthClampRangeEXT>(const VkDepthClampRangeEXT* src,
+                                                                       size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkDepthClampRangeEXT*>(m_allocator.Alloc(sizeof(VkDepthClampRangeEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].minDepthClamp = src[start_index + i].minDepthClamp;
+        ptr[i].maxDepthClamp = src[start_index + i].maxDepthClamp;
+    }
+    return ptr;
+}
+
+template <>
+VkGeneratedCommandsInfoEXT* CommandRecorder::CopyArray<VkGeneratedCommandsInfoEXT>(
+    const VkGeneratedCommandsInfoEXT* src, size_t start_index, size_t count) {
+    auto ptr =
+        reinterpret_cast<VkGeneratedCommandsInfoEXT*>(m_allocator.Alloc(sizeof(VkGeneratedCommandsInfoEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].shaderStages = src[start_index + i].shaderStages;
+        ptr[i].indirectExecutionSet = src[start_index + i].indirectExecutionSet;
+        ptr[i].indirectCommandsLayout = src[start_index + i].indirectCommandsLayout;
+        ptr[i].indirectAddress = src[start_index + i].indirectAddress;
+        ptr[i].indirectAddressSize = src[start_index + i].indirectAddressSize;
+        ptr[i].preprocessAddress = src[start_index + i].preprocessAddress;
+        ptr[i].preprocessSize = src[start_index + i].preprocessSize;
+        ptr[i].maxSequenceCount = src[start_index + i].maxSequenceCount;
+        ptr[i].sequenceCountAddress = src[start_index + i].sequenceCountAddress;
+        ptr[i].maxDrawCount = src[start_index + i].maxDrawCount;
     }
     return ptr;
 }
@@ -4895,11 +4934,47 @@ CmdBindShadersEXTArgs* CommandRecorder::RecordCmdBindShadersEXT(VkCommandBuffer 
     return args;
 }
 
+CmdSetDepthClampRangeEXTArgs* CommandRecorder::RecordCmdSetDepthClampRangeEXT(
+    VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode, const VkDepthClampRangeEXT* pDepthClampRange) {
+    auto* args = Alloc<CmdSetDepthClampRangeEXTArgs>();
+    args->commandBuffer = commandBuffer;
+    args->depthClampMode = depthClampMode;
+    if (pDepthClampRange) {
+        args->pDepthClampRange = CopyArray(pDepthClampRange, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
 CmdSetAttachmentFeedbackLoopEnableEXTArgs* CommandRecorder::RecordCmdSetAttachmentFeedbackLoopEnableEXT(
     VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
     auto* args = Alloc<CmdSetAttachmentFeedbackLoopEnableEXTArgs>();
     args->commandBuffer = commandBuffer;
     args->aspectMask = aspectMask;
+    return args;
+}
+
+CmdPreprocessGeneratedCommandsEXTArgs* CommandRecorder::RecordCmdPreprocessGeneratedCommandsEXT(
+    VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+    VkCommandBuffer stateCommandBuffer) {
+    auto* args = Alloc<CmdPreprocessGeneratedCommandsEXTArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pGeneratedCommandsInfo) {
+        args->pGeneratedCommandsInfo =
+            CopyArray(pGeneratedCommandsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    args->stateCommandBuffer = stateCommandBuffer;
+    return args;
+}
+
+CmdExecuteGeneratedCommandsEXTArgs* CommandRecorder::RecordCmdExecuteGeneratedCommandsEXT(
+    VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {
+    auto* args = Alloc<CmdExecuteGeneratedCommandsEXTArgs>();
+    args->commandBuffer = commandBuffer;
+    args->isPreprocessed = isPreprocessed;
+    if (pGeneratedCommandsInfo) {
+        args->pGeneratedCommandsInfo =
+            CopyArray(pGeneratedCommandsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
     return args;
 }
 

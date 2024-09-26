@@ -1069,8 +1069,25 @@ void PreCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount, co
 void PostCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount, const VkShaderStageFlagBits* pStages,
                            const VkShaderEXT* pShaders);
 
+void PreCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                 const VkDepthClampRangeEXT* pDepthClampRange);
+void PostCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                  const VkDepthClampRangeEXT* pDepthClampRange);
+
 void PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
 void PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
+
+void PreCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                          const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                          VkCommandBuffer stateCommandBuffer);
+void PostCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                           const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                           VkCommandBuffer stateCommandBuffer);
+
+void PreCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                       const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
+void PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                        const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
 void PreCmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                           const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,

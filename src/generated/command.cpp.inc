@@ -2476,6 +2476,16 @@ void CommandBuffer::PostCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                                const VkDepthClampRangeEXT* pDepthClampRange) {
+    tracker_.CmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                                 const VkDepthClampRangeEXT* pDepthClampRange) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
                                                              VkImageAspectFlags aspectMask) {
     tracker_.CmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
@@ -2483,6 +2493,28 @@ void CommandBuffer::PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer com
 }
 void CommandBuffer::PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
                                                               VkImageAspectFlags aspectMask) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                                         const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                                         VkCommandBuffer stateCommandBuffer) {
+    tracker_.CmdPreprocessGeneratedCommandsEXT(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                                          const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                                          VkCommandBuffer stateCommandBuffer) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                                      const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {
+    tracker_.CmdExecuteGeneratedCommandsEXT(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                                       const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 

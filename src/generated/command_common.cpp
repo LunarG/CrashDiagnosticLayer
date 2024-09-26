@@ -529,8 +529,14 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdOpticalFlowExecuteNV";
         case Command::Type::kCmdBindShadersEXT:
             return "vkCmdBindShadersEXT";
+        case Command::Type::kCmdSetDepthClampRangeEXT:
+            return "vkCmdSetDepthClampRangeEXT";
         case Command::Type::kCmdSetAttachmentFeedbackLoopEnableEXT:
             return "vkCmdSetAttachmentFeedbackLoopEnableEXT";
+        case Command::Type::kCmdPreprocessGeneratedCommandsEXT:
+            return "vkCmdPreprocessGeneratedCommandsEXT";
+        case Command::Type::kCmdExecuteGeneratedCommandsEXT:
+            return "vkCmdExecuteGeneratedCommandsEXT";
         case Command::Type::kCmdBuildAccelerationStructuresKHR:
             return "vkCmdBuildAccelerationStructuresKHR";
         case Command::Type::kCmdBuildAccelerationStructuresIndirectKHR:

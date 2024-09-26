@@ -863,8 +863,20 @@ class CommandRecorder {
     CmdBindShadersEXTArgs* RecordCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount,
                                                    const VkShaderStageFlagBits* pStages, const VkShaderEXT* pShaders);
 
+    CmdSetDepthClampRangeEXTArgs* RecordCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer,
+                                                                 VkDepthClampModeEXT depthClampMode,
+                                                                 const VkDepthClampRangeEXT* pDepthClampRange);
+
     CmdSetAttachmentFeedbackLoopEnableEXTArgs* RecordCmdSetAttachmentFeedbackLoopEnableEXT(
         VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
+
+    CmdPreprocessGeneratedCommandsEXTArgs* RecordCmdPreprocessGeneratedCommandsEXT(
+        VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+        VkCommandBuffer stateCommandBuffer);
+
+    CmdExecuteGeneratedCommandsEXTArgs* RecordCmdExecuteGeneratedCommandsEXT(
+        VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+        const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
     CmdBuildAccelerationStructuresKHRArgs* RecordCmdBuildAccelerationStructuresKHR(
         VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
