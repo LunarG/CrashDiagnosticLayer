@@ -1023,6 +1023,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->DestroyShaderEXT = (PFN_vkDestroyShaderEXT)pa(device, "vkDestroyShaderEXT");
     dt->GetShaderBinaryDataEXT = (PFN_vkGetShaderBinaryDataEXT)pa(device, "vkGetShaderBinaryDataEXT");
     dt->CmdBindShadersEXT = (PFN_vkCmdBindShadersEXT)pa(device, "vkCmdBindShadersEXT");
+    dt->CmdSetDepthClampRangeEXT = (PFN_vkCmdSetDepthClampRangeEXT)pa(device, "vkCmdSetDepthClampRangeEXT");
     dt->GetFramebufferTilePropertiesQCOM =
         (PFN_vkGetFramebufferTilePropertiesQCOM)pa(device, "vkGetFramebufferTilePropertiesQCOM");
     dt->GetDynamicRenderingTilePropertiesQCOM =
@@ -1037,6 +1038,24 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     dt->GetScreenBufferPropertiesQNX = (PFN_vkGetScreenBufferPropertiesQNX)pa(device, "vkGetScreenBufferPropertiesQNX");
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
+    dt->GetGeneratedCommandsMemoryRequirementsEXT =
+        (PFN_vkGetGeneratedCommandsMemoryRequirementsEXT)pa(device, "vkGetGeneratedCommandsMemoryRequirementsEXT");
+    dt->CmdPreprocessGeneratedCommandsEXT =
+        (PFN_vkCmdPreprocessGeneratedCommandsEXT)pa(device, "vkCmdPreprocessGeneratedCommandsEXT");
+    dt->CmdExecuteGeneratedCommandsEXT =
+        (PFN_vkCmdExecuteGeneratedCommandsEXT)pa(device, "vkCmdExecuteGeneratedCommandsEXT");
+    dt->CreateIndirectCommandsLayoutEXT =
+        (PFN_vkCreateIndirectCommandsLayoutEXT)pa(device, "vkCreateIndirectCommandsLayoutEXT");
+    dt->DestroyIndirectCommandsLayoutEXT =
+        (PFN_vkDestroyIndirectCommandsLayoutEXT)pa(device, "vkDestroyIndirectCommandsLayoutEXT");
+    dt->CreateIndirectExecutionSetEXT =
+        (PFN_vkCreateIndirectExecutionSetEXT)pa(device, "vkCreateIndirectExecutionSetEXT");
+    dt->DestroyIndirectExecutionSetEXT =
+        (PFN_vkDestroyIndirectExecutionSetEXT)pa(device, "vkDestroyIndirectExecutionSetEXT");
+    dt->UpdateIndirectExecutionSetPipelineEXT =
+        (PFN_vkUpdateIndirectExecutionSetPipelineEXT)pa(device, "vkUpdateIndirectExecutionSetPipelineEXT");
+    dt->UpdateIndirectExecutionSetShaderEXT =
+        (PFN_vkUpdateIndirectExecutionSetShaderEXT)pa(device, "vkUpdateIndirectExecutionSetShaderEXT");
     dt->CreateAccelerationStructureKHR =
         (PFN_vkCreateAccelerationStructureKHR)pa(device, "vkCreateAccelerationStructureKHR");
     dt->DestroyAccelerationStructureKHR =

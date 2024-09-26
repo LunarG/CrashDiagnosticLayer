@@ -1737,9 +1737,29 @@ virtual void PreCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageC
 virtual void PostCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount,
                                    const VkShaderStageFlagBits* pStages, const VkShaderEXT* pShaders) {}
 
+virtual void PreCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                         const VkDepthClampRangeEXT* pDepthClampRange) {}
+
+virtual void PostCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                          const VkDepthClampRangeEXT* pDepthClampRange) {}
+
 virtual void PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {}
 
 virtual void PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {}
+
+virtual void PreCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                                  const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                                  VkCommandBuffer stateCommandBuffer) {}
+
+virtual void PostCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                                   const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                                   VkCommandBuffer stateCommandBuffer) {}
+
+virtual void PreCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                               const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {}
+
+virtual void PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                                const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {}
 
 virtual void PreCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,

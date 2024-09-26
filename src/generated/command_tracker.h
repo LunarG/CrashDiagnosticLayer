@@ -698,7 +698,17 @@ class CommandTracker {
     void CmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount, const VkShaderStageFlagBits* pStages,
                            const VkShaderEXT* pShaders);
 
+    void CmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                  const VkDepthClampRangeEXT* pDepthClampRange);
+
     void CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
+
+    void CmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                           const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                           VkCommandBuffer stateCommandBuffer);
+
+    void CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                        const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
     void CmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                            const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,

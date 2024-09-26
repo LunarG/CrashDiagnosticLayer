@@ -2538,6 +2538,16 @@ void CommandTracker::CmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t s
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
+                                              const VkDepthClampRangeEXT* pDepthClampRange) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetDepthClampRangeEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
                                                            VkImageAspectFlags aspectMask) {
     Command cmd{};
@@ -2545,6 +2555,29 @@ void CommandTracker::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer comma
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
+                                                       const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,
+                                                       VkCommandBuffer stateCommandBuffer) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPreprocessGeneratedCommandsEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdPreprocessGeneratedCommandsEXT(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
+                                                    const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdExecuteGeneratedCommandsEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdExecuteGeneratedCommandsEXT(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
     commands_.push_back(cmd);
 }
 

@@ -432,6 +432,22 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderEXT &a) {
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetEXT &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutEXT &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
 // Define stream operators for enums.
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkResult &t) {
@@ -1033,6 +1049,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCodeTypeEXT &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDepthClampModeEXT &t) {
+    os << string_VkDepthClampModeEXT(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingInvocationReorderModeNV &t) {
     os << string_VkRayTracingInvocationReorderModeNV(t);
     return os;
@@ -1065,6 +1086,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCubicFilterWeightsQCOM &t) 
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayeredDriverUnderlyingApiMSFT &t) {
     os << string_VkLayeredDriverUnderlyingApiMSFT(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetInfoTypeEXT &t) {
+    os << string_VkIndirectExecutionSetInfoTypeEXT(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsTokenTypeEXT &t) {
+    os << string_VkIndirectCommandsTokenTypeEXT(t);
     return os;
 }
 

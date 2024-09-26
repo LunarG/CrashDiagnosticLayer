@@ -26813,6 +26813,18 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCreateInfoEXT &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDepthClampRangeEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "minDepthClamp";
+    // minDepthClamp -> Field -> float
+    os << YAML::Value << t.minDepthClamp;
+    os << YAML::Key << "maxDepthClamp";
+    // maxDepthClamp -> Field -> float
+    os << YAML::Value << t.maxDepthClamp;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTilePropertiesFeaturesQCOM &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -27876,6 +27888,580 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingVal
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "deviceGeneratedCommands";
+    // deviceGeneratedCommands -> Field -> VkBool32
+    os << YAML::Value << t.deviceGeneratedCommands;
+    os << YAML::Key << "dynamicGeneratedPipelineLayout";
+    // dynamicGeneratedPipelineLayout -> Field -> VkBool32
+    os << YAML::Value << t.dynamicGeneratedPipelineLayout;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxIndirectPipelineCount";
+    // maxIndirectPipelineCount -> Field -> uint32_t
+    os << YAML::Value << t.maxIndirectPipelineCount;
+    os << YAML::Key << "maxIndirectShaderObjectCount";
+    // maxIndirectShaderObjectCount -> Field -> uint32_t
+    os << YAML::Value << t.maxIndirectShaderObjectCount;
+    os << YAML::Key << "maxIndirectSequenceCount";
+    // maxIndirectSequenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxIndirectSequenceCount;
+    os << YAML::Key << "maxIndirectCommandsTokenCount";
+    // maxIndirectCommandsTokenCount -> Field -> uint32_t
+    os << YAML::Value << t.maxIndirectCommandsTokenCount;
+    os << YAML::Key << "maxIndirectCommandsTokenOffset";
+    // maxIndirectCommandsTokenOffset -> Field -> uint32_t
+    os << YAML::Value << t.maxIndirectCommandsTokenOffset;
+    os << YAML::Key << "maxIndirectCommandsIndirectStride";
+    // maxIndirectCommandsIndirectStride -> Field -> uint32_t
+    os << YAML::Value << t.maxIndirectCommandsIndirectStride;
+    os << YAML::Key << "supportedIndirectCommandsInputModes";
+    // supportedIndirectCommandsInputModes -> Field -> VkIndirectCommandsInputModeFlagsEXT
+    os << YAML::Value << t.supportedIndirectCommandsInputModes;
+    os << YAML::Key << "supportedIndirectCommandsShaderStages";
+    // supportedIndirectCommandsShaderStages -> Field -> VkShaderStageFlags
+    os << YAML::Value << t.supportedIndirectCommandsShaderStages;
+    os << YAML::Key << "supportedIndirectCommandsShaderStagesPipelineBinding";
+    // supportedIndirectCommandsShaderStagesPipelineBinding -> Field -> VkShaderStageFlags
+    os << YAML::Value << t.supportedIndirectCommandsShaderStagesPipelineBinding;
+    os << YAML::Key << "supportedIndirectCommandsShaderStagesShaderBinding";
+    // supportedIndirectCommandsShaderStagesShaderBinding -> Field -> VkShaderStageFlags
+    os << YAML::Value << t.supportedIndirectCommandsShaderStagesShaderBinding;
+    os << YAML::Key << "deviceGeneratedCommandsTransformFeedback";
+    // deviceGeneratedCommandsTransformFeedback -> Field -> VkBool32
+    os << YAML::Value << t.deviceGeneratedCommandsTransformFeedback;
+    os << YAML::Key << "deviceGeneratedCommandsMultiDrawIndirectCount";
+    // deviceGeneratedCommandsMultiDrawIndirectCount -> Field -> VkBool32
+    os << YAML::Value << t.deviceGeneratedCommandsMultiDrawIndirectCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGeneratedCommandsMemoryRequirementsInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "indirectExecutionSet";
+    // indirectExecutionSet -> Field -> VkIndirectExecutionSetEXT
+    os << YAML::Value << t.indirectExecutionSet;
+    os << YAML::Key << "indirectCommandsLayout";
+    // indirectCommandsLayout -> Field -> VkIndirectCommandsLayoutEXT
+    os << YAML::Value << t.indirectCommandsLayout;
+    os << YAML::Key << "maxSequenceCount";
+    // maxSequenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxSequenceCount;
+    os << YAML::Key << "maxDrawCount";
+    // maxDrawCount -> Field -> uint32_t
+    os << YAML::Value << t.maxDrawCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetPipelineInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "initialPipeline";
+    // initialPipeline -> Field -> VkPipeline
+    os << YAML::Value << t.initialPipeline;
+    os << YAML::Key << "maxPipelineCount";
+    // maxPipelineCount -> Field -> uint32_t
+    os << YAML::Value << t.maxPipelineCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetShaderLayoutInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "setLayoutCount";
+    // setLayoutCount -> Field -> uint32_t
+    os << YAML::Value << t.setLayoutCount;
+    os << YAML::Key << "pSetLayouts";
+    // pSetLayouts -> Field -> ConstDynamicArray(VkDescriptorSetLayout)
+    if (t.setLayoutCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkDescriptorSetLayout");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.setLayoutCount); ++i) {
+                os << t.pSetLayouts[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetShaderInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderCount";
+    // shaderCount -> Field -> uint32_t
+    os << YAML::Value << t.shaderCount;
+    os << YAML::Key << "pInitialShaders";
+    // pInitialShaders -> Field -> ConstDynamicArray(VkShaderEXT)
+    if (t.shaderCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkShaderEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.shaderCount); ++i) {
+                os << t.pInitialShaders[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "pSetLayoutInfos";
+    // pSetLayoutInfos -> Field -> ConstDynamicArray(VkIndirectExecutionSetShaderLayoutInfoEXT)
+    if (t.shaderCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkIndirectExecutionSetShaderLayoutInfoEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.shaderCount); ++i) {
+                os << t.pSetLayoutInfos[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "maxShaderCount";
+    // maxShaderCount -> Field -> uint32_t
+    os << YAML::Value << t.maxShaderCount;
+    os << YAML::Key << "pushConstantRangeCount";
+    // pushConstantRangeCount -> Field -> uint32_t
+    os << YAML::Value << t.pushConstantRangeCount;
+    os << YAML::Key << "pPushConstantRanges";
+    // pPushConstantRanges -> Field -> ConstDynamicArray(VkPushConstantRange)
+    if (t.pushConstantRangeCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPushConstantRange");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.pushConstantRangeCount); ++i) {
+                os << t.pPushConstantRanges[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "pPipelineInfo";
+    // pointer
+    if (t.pPipelineInfo != nullptr) {
+        os << YAML::Value << *t.pPipelineInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pShaderInfo";
+    // pointer
+    if (t.pShaderInfo != nullptr) {
+        os << YAML::Value << *t.pShaderInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetCreateInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "type";
+    // type -> Field -> VkIndirectExecutionSetInfoTypeEXT
+    os << YAML::Value << t.type;
+    os << YAML::Key << "info";
+    // info -> Field -> VkIndirectExecutionSetInfoEXT
+    os << YAML::Value << t.info;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGeneratedCommandsInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderStages";
+    // shaderStages -> Field -> VkShaderStageFlags
+    os << YAML::Value << t.shaderStages;
+    os << YAML::Key << "indirectExecutionSet";
+    // indirectExecutionSet -> Field -> VkIndirectExecutionSetEXT
+    os << YAML::Value << t.indirectExecutionSet;
+    os << YAML::Key << "indirectCommandsLayout";
+    // indirectCommandsLayout -> Field -> VkIndirectCommandsLayoutEXT
+    os << YAML::Value << t.indirectCommandsLayout;
+    os << YAML::Key << "indirectAddress";
+    // indirectAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.indirectAddress);
+    os << YAML::Key << "indirectAddressSize";
+    // indirectAddressSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.indirectAddressSize;
+    os << YAML::Key << "preprocessAddress";
+    // preprocessAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.preprocessAddress);
+    os << YAML::Key << "preprocessSize";
+    // preprocessSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.preprocessSize;
+    os << YAML::Key << "maxSequenceCount";
+    // maxSequenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxSequenceCount;
+    os << YAML::Key << "sequenceCountAddress";
+    // sequenceCountAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.sequenceCountAddress);
+    os << YAML::Key << "maxDrawCount";
+    // maxDrawCount -> Field -> uint32_t
+    os << YAML::Value << t.maxDrawCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteIndirectExecutionSetPipelineEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "index";
+    // index -> Field -> uint32_t
+    os << YAML::Value << t.index;
+    os << YAML::Key << "pipeline";
+    // pipeline -> Field -> VkPipeline
+    os << YAML::Value << t.pipeline;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsPushConstantTokenEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "updateRange";
+    // updateRange -> Field -> VkPushConstantRange
+    os << YAML::Value << t.updateRange;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsVertexBufferTokenEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "vertexBindingUnit";
+    // vertexBindingUnit -> Field -> uint32_t
+    os << YAML::Value << t.vertexBindingUnit;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsIndexBufferTokenEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "mode";
+    // mode -> Field -> VkIndirectCommandsInputModeFlagBitsEXT
+    os << YAML::Value << t.mode;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsExecutionSetTokenEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "type";
+    // type -> Field -> VkIndirectExecutionSetInfoTypeEXT
+    os << YAML::Value << t.type;
+    os << YAML::Key << "shaderStages";
+    // shaderStages -> Field -> VkShaderStageFlags
+    os << YAML::Value << t.shaderStages;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsTokenDataEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "pPushConstant";
+    // pointer
+    if (t.pPushConstant != nullptr) {
+        os << YAML::Value << *t.pPushConstant;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pVertexBuffer";
+    // pointer
+    if (t.pVertexBuffer != nullptr) {
+        os << YAML::Value << *t.pVertexBuffer;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pIndexBuffer";
+    // pointer
+    if (t.pIndexBuffer != nullptr) {
+        os << YAML::Value << *t.pIndexBuffer;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pExecutionSet";
+    // pointer
+    if (t.pExecutionSet != nullptr) {
+        os << YAML::Value << *t.pExecutionSet;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutTokenEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "type";
+    // type -> Field -> VkIndirectCommandsTokenTypeEXT
+    os << YAML::Value << t.type;
+    os << YAML::Key << "data";
+    // data -> Field -> VkIndirectCommandsTokenDataEXT
+    os << YAML::Value << t.data;
+    os << YAML::Key << "offset";
+    // offset -> Field -> uint32_t
+    os << YAML::Value << t.offset;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutCreateInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkIndirectCommandsLayoutUsageFlagsEXT
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "shaderStages";
+    // shaderStages -> Field -> VkShaderStageFlags
+    os << YAML::Value << t.shaderStages;
+    os << YAML::Key << "indirectStride";
+    // indirectStride -> Field -> uint32_t
+    os << YAML::Value << t.indirectStride;
+    os << YAML::Key << "pipelineLayout";
+    // pipelineLayout -> Field -> VkPipelineLayout
+    os << YAML::Value << t.pipelineLayout;
+    os << YAML::Key << "tokenCount";
+    // tokenCount -> Field -> uint32_t
+    os << YAML::Value << t.tokenCount;
+    os << YAML::Key << "pTokens";
+    // pTokens -> Field -> ConstDynamicArray(VkIndirectCommandsLayoutTokenEXT)
+    if (t.tokenCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkIndirectCommandsLayoutTokenEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.tokenCount); ++i) {
+                os << t.pTokens[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrawIndirectCountIndirectCommandEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "bufferAddress";
+    // bufferAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.bufferAddress);
+    os << YAML::Key << "stride";
+    // stride -> Field -> uint32_t
+    os << YAML::Value << t.stride;
+    os << YAML::Key << "commandCount";
+    // commandCount -> Field -> uint32_t
+    os << YAML::Value << t.commandCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindVertexBufferIndirectCommandEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "bufferAddress";
+    // bufferAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.bufferAddress);
+    os << YAML::Key << "size";
+    // size -> Field -> uint32_t
+    os << YAML::Value << t.size;
+    os << YAML::Key << "stride";
+    // stride -> Field -> uint32_t
+    os << YAML::Value << t.stride;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindIndexBufferIndirectCommandEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "bufferAddress";
+    // bufferAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.bufferAddress);
+    os << YAML::Key << "size";
+    // size -> Field -> uint32_t
+    os << YAML::Value << t.size;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> VkIndexType
+    os << YAML::Value << t.indexType;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGeneratedCommandsPipelineInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pipeline";
+    // pipeline -> Field -> VkPipeline
+    os << YAML::Value << t.pipeline;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGeneratedCommandsShaderInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderCount";
+    // shaderCount -> Field -> uint32_t
+    os << YAML::Value << t.shaderCount;
+    os << YAML::Key << "pShaders";
+    // pShaders -> Field -> ConstDynamicArray(VkShaderEXT)
+    if (t.shaderCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkShaderEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.shaderCount); ++i) {
+                os << t.pShaders[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteIndirectExecutionSetShaderEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "index";
+    // index -> Field -> uint32_t
+    os << YAML::Value << t.index;
+    os << YAML::Key << "shader";
+    // shader -> Field -> VkShaderEXT
+    os << YAML::Value << t.shader;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageAlignmentControlFeaturesMESA &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -27923,6 +28509,47 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageAlignmentControlCreate
     os << YAML::Key << "maximumRequestedAlignment";
     // maximumRequestedAlignment -> Field -> uint32_t
     os << YAML::Value << t.maximumRequestedAlignment;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampControlFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "depthClampControl";
+    // depthClampControl -> Field -> VkBool32
+    os << YAML::Value << t.depthClampControl;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClampControlCreateInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "depthClampMode";
+    // depthClampMode -> Field -> VkDepthClampModeEXT
+    os << YAML::Value << t.depthClampMode;
+    os << YAML::Key << "pDepthClampRange";
+    // pointer
+    if (t.pDepthClampRange != nullptr) {
+        os << YAML::Value << *t.pDepthClampRange;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
     os << YAML::EndMap;
     return os;
 }
@@ -31737,6 +32364,48 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VALIDATION_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceRayTracingValidationFeaturesNV *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_EXT:
+            os << *reinterpret_cast<const VkGeneratedCommandsMemoryRequirementsInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_PIPELINE_INFO_EXT:
+            os << *reinterpret_cast<const VkIndirectExecutionSetPipelineInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_LAYOUT_INFO_EXT:
+            os << *reinterpret_cast<const VkIndirectExecutionSetShaderLayoutInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_INFO_EXT:
+            os << *reinterpret_cast<const VkIndirectExecutionSetShaderInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_CREATE_INFO_EXT:
+            os << *reinterpret_cast<const VkIndirectExecutionSetCreateInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT:
+            os << *reinterpret_cast<const VkGeneratedCommandsInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_PIPELINE_EXT:
+            os << *reinterpret_cast<const VkWriteIndirectExecutionSetPipelineEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_EXT:
+            os << *reinterpret_cast<const VkIndirectCommandsLayoutTokenEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_EXT:
+            os << *reinterpret_cast<const VkIndirectCommandsLayoutCreateInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_GENERATED_COMMANDS_PIPELINE_INFO_EXT:
+            os << *reinterpret_cast<const VkGeneratedCommandsPipelineInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_GENERATED_COMMANDS_SHADER_INFO_EXT:
+            os << *reinterpret_cast<const VkGeneratedCommandsShaderInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_SHADER_EXT:
+            os << *reinterpret_cast<const VkWriteIndirectExecutionSetShaderEXT *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA:
             os << *reinterpret_cast<const VkPhysicalDeviceImageAlignmentControlFeaturesMESA *>(pStruct);
             break;
@@ -31745,6 +32414,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA:
             os << *reinterpret_cast<const VkImageAlignmentControlCreateInfoMESA *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceDepthClampControlFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT:
+            os << *reinterpret_cast<const VkPipelineViewportDepthClampControlCreateInfoEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);
