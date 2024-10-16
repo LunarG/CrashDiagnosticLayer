@@ -23497,6 +23497,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveTopo
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "presentModeFifoLatestReady";
+    // presentModeFifoLatestReady -> Field -> VkBool32
+    os << YAML::Value << t.presentModeFifoLatestReady;
+    os << YAML::EndMap;
+    return os;
+}
+
 #ifdef VK_USE_PLATFORM_FUCHSIA
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImportMemoryZirconHandleInfoFUCHSIA &t) {
     os << YAML::BeginMap;
@@ -31790,6 +31807,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_MODE_FIFO_LATEST_READY_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT *>(pStruct);
             break;
 #ifdef VK_USE_PLATFORM_FUCHSIA
         case VK_STRUCTURE_TYPE_IMPORT_MEMORY_ZIRCON_HANDLE_INFO_FUCHSIA:

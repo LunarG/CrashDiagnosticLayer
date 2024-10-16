@@ -1357,6 +1357,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceAddressBindingCallbac
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClipControlFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClipControlCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT &t);
 #ifdef VK_USE_PLATFORM_FUCHSIA
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImportMemoryZirconHandleInfoFUCHSIA &t);
 #endif  // VK_USE_PLATFORM_FUCHSIA
