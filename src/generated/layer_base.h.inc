@@ -1122,41 +1122,45 @@ virtual void PostDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtils
                                                const VkAllocationCallbacks* pAllocator) {}
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-virtual void PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {}
+virtual void PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
+                                                    VkDeviceAddress scratch, VkDeviceSize scratchSize) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-virtual void PostCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {}
+virtual void PostCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
+                                                     VkDeviceAddress scratch, VkDeviceSize scratchSize) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-virtual void PreCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+virtual void PreCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
                                      const VkDispatchGraphCountInfoAMDX* pCountInfo) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-virtual void PostCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+virtual void PostCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
                                       const VkDispatchGraphCountInfoAMDX* pCountInfo) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 virtual void PreCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                             const VkDispatchGraphCountInfoAMDX* pCountInfo) {}
+                                             VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 virtual void PostCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                              VkDeviceSize scratchSize,
                                               const VkDispatchGraphCountInfoAMDX* pCountInfo) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 virtual void PreCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                  VkDeviceAddress countInfo) {}
+                                                  VkDeviceSize scratchSize, VkDeviceAddress countInfo) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 virtual void PostCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                   VkDeviceAddress countInfo) {}
+                                                   VkDeviceSize scratchSize, VkDeviceAddress countInfo) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 virtual void PreCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,

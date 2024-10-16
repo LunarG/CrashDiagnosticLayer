@@ -3843,21 +3843,24 @@ CmdInsertDebugUtilsLabelEXTArgs* CommandRecorder::RecordCmdInsertDebugUtilsLabel
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 CmdInitializeGraphScratchMemoryAMDXArgs* CommandRecorder::RecordCmdInitializeGraphScratchMemoryAMDX(
-    VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {
+    VkCommandBuffer commandBuffer, VkPipeline executionGraph, VkDeviceAddress scratch, VkDeviceSize scratchSize) {
     auto* args = Alloc<CmdInitializeGraphScratchMemoryAMDXArgs>();
     args->commandBuffer = commandBuffer;
+    args->executionGraph = executionGraph;
     args->scratch = scratch;
+    args->scratchSize = scratchSize;
     return args;
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 CmdDispatchGraphAMDXArgs* CommandRecorder::RecordCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer,
-                                                                      VkDeviceAddress scratch,
+                                                                      VkDeviceAddress scratch, VkDeviceSize scratchSize,
                                                                       const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto* args = Alloc<CmdDispatchGraphAMDXArgs>();
     args->commandBuffer = commandBuffer;
     args->scratch = scratch;
+    args->scratchSize = scratchSize;
     if (pCountInfo) {
         args->pCountInfo = CopyArray(pCountInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
@@ -3867,10 +3870,12 @@ CmdDispatchGraphAMDXArgs* CommandRecorder::RecordCmdDispatchGraphAMDX(VkCommandB
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 CmdDispatchGraphIndirectAMDXArgs* CommandRecorder::RecordCmdDispatchGraphIndirectAMDX(
-    VkCommandBuffer commandBuffer, VkDeviceAddress scratch, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+    VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
+    const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto* args = Alloc<CmdDispatchGraphIndirectAMDXArgs>();
     args->commandBuffer = commandBuffer;
     args->scratch = scratch;
+    args->scratchSize = scratchSize;
     if (pCountInfo) {
         args->pCountInfo = CopyArray(pCountInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
@@ -3880,10 +3885,11 @@ CmdDispatchGraphIndirectAMDXArgs* CommandRecorder::RecordCmdDispatchGraphIndirec
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 CmdDispatchGraphIndirectCountAMDXArgs* CommandRecorder::RecordCmdDispatchGraphIndirectCountAMDX(
-    VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceAddress countInfo) {
+    VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, VkDeviceAddress countInfo) {
     auto* args = Alloc<CmdDispatchGraphIndirectCountAMDXArgs>();
     args->commandBuffer = commandBuffer;
     args->scratch = scratch;
+    args->scratchSize = scratchSize;
     args->countInfo = countInfo;
     return args;
 }

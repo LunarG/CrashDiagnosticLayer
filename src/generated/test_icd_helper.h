@@ -1601,13 +1601,18 @@ static VKAPI_ATTR VkResult VKAPI_CALL
 GetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline executionGraph,
                                        const VkPipelineShaderStageNodeCreateInfoAMDX* pNodeInfo, uint32_t* pNodeIndex);
 static VKAPI_ATTR void VKAPI_CALL CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
-                                                                      VkDeviceAddress scratch);
+                                                                      VkPipeline executionGraph,
+                                                                      VkDeviceAddress scratch,
+                                                                      VkDeviceSize scratchSize);
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                       VkDeviceSize scratchSize,
                                                        const VkDispatchGraphCountInfoAMDX* pCountInfo);
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                               VkDeviceSize scratchSize,
                                                                const VkDispatchGraphCountInfoAMDX* pCountInfo);
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer,
-                                                                    VkDeviceAddress scratch, VkDeviceAddress countInfo);
+                                                                    VkDeviceAddress scratch, VkDeviceSize scratchSize,
+                                                                    VkDeviceAddress countInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR void VKAPI_CALL CmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
                                                            const VkSampleLocationsInfoEXT* pSampleLocationsInfo);
@@ -5000,28 +5005,32 @@ GetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline executionGrap
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
-                                                                      VkDeviceAddress scratch) {
+                                                                      VkPipeline executionGraph,
+                                                                      VkDeviceAddress scratch,
+                                                                      VkDeviceSize scratchSize) {
     auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
-    cb->Tracker().CmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+    cb->Tracker().CmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                       VkDeviceSize scratchSize,
                                                        const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
-    cb->Tracker().CmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+    cb->Tracker().CmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                               VkDeviceSize scratchSize,
                                                                const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
-    cb->Tracker().CmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+    cb->Tracker().CmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer,
-                                                                    VkDeviceAddress scratch,
+                                                                    VkDeviceAddress scratch, VkDeviceSize scratchSize,
                                                                     VkDeviceAddress countInfo) {
     auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
-    cb->Tracker().CmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+    cb->Tracker().CmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 }
 
 #endif  // VK_ENABLE_BETA_EXTENSIONS

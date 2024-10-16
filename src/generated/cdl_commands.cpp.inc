@@ -1582,52 +1582,56 @@ void Context::PostCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, con
 }
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-void Context::PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {
+void Context::PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
+                                                     VkDeviceAddress scratch, VkDeviceSize scratchSize) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+    p_cmd->PreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
 }
-void Context::PostCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {
+void Context::PostCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
+                                                      VkDeviceAddress scratch, VkDeviceSize scratchSize) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+    p_cmd->PostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-void Context::PreCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+void Context::PreCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
                                       const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+    p_cmd->PreCmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
-void Context::PostCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+void Context::PostCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
                                        const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+    p_cmd->PostCmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void Context::PreCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                              VkDeviceSize scratchSize,
                                               const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+    p_cmd->PreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 void Context::PostCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                               VkDeviceSize scratchSize,
                                                const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+    p_cmd->PostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void Context::PreCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                   VkDeviceAddress countInfo) {
+                                                   VkDeviceSize scratchSize, VkDeviceAddress countInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+    p_cmd->PreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 }
 void Context::PostCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                    VkDeviceAddress countInfo) {
+                                                    VkDeviceSize scratchSize, VkDeviceAddress countInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+    p_cmd->PostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 

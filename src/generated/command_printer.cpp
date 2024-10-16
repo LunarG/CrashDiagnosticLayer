@@ -2344,9 +2344,15 @@ void CommandPrinter::PrintCmdInsertDebugUtilsLabelEXTArgs(YAML::Emitter &os,
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandPrinter::PrintCmdInitializeGraphScratchMemoryAMDXArgs(YAML::Emitter &os,
                                                                   const CmdInitializeGraphScratchMemoryAMDXArgs &args) {
+    os << YAML::Key << "executionGraph";
+    // executionGraph -> Field -> VkPipeline
+    os << YAML::Value << args.executionGraph;
     os << YAML::Key << "scratch";
     // scratch -> Field -> VkDeviceAddress
     os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.scratch);
+    os << YAML::Key << "scratchSize";
+    // scratchSize -> Field -> VkDeviceSize
+    os << YAML::Value << args.scratchSize;
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
@@ -2355,6 +2361,9 @@ void CommandPrinter::PrintCmdDispatchGraphAMDXArgs(YAML::Emitter &os, const CmdD
     os << YAML::Key << "scratch";
     // scratch -> Field -> VkDeviceAddress
     os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.scratch);
+    os << YAML::Key << "scratchSize";
+    // scratchSize -> Field -> VkDeviceSize
+    os << YAML::Value << args.scratchSize;
     os << YAML::Key << "pCountInfo";
     // pointer
     if (args.pCountInfo != nullptr) {
@@ -2371,6 +2380,9 @@ void CommandPrinter::PrintCmdDispatchGraphIndirectAMDXArgs(YAML::Emitter &os,
     os << YAML::Key << "scratch";
     // scratch -> Field -> VkDeviceAddress
     os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.scratch);
+    os << YAML::Key << "scratchSize";
+    // scratchSize -> Field -> VkDeviceSize
+    os << YAML::Value << args.scratchSize;
     os << YAML::Key << "pCountInfo";
     // pointer
     if (args.pCountInfo != nullptr) {
@@ -2387,6 +2399,9 @@ void CommandPrinter::PrintCmdDispatchGraphIndirectCountAMDXArgs(YAML::Emitter &o
     os << YAML::Key << "scratch";
     // scratch -> Field -> VkDeviceAddress
     os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.scratch);
+    os << YAML::Key << "scratchSize";
+    // scratchSize -> Field -> VkDeviceSize
+    os << YAML::Value << args.scratchSize;
     os << YAML::Key << "countInfo";
     // countInfo -> Field -> VkDeviceAddress
     os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.countInfo);

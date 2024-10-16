@@ -1498,48 +1498,51 @@ void CommandTracker::CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
 }
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-void CommandTracker::CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {
+void CommandTracker::CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
+                                                         VkDeviceAddress scratch, VkDeviceSize scratchSize) {
     Command cmd{};
     cmd.type = Command::Type::kCmdInitializeGraphScratchMemoryAMDX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+    cmd.parameters =
+        recorder_.RecordCmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
     commands_.push_back(cmd);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandTracker::CmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                          const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+                                          VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchGraphAMDX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+    cmd.parameters = recorder_.RecordCmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
     commands_.push_back(cmd);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandTracker::CmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                  VkDeviceSize scratchSize,
                                                   const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchGraphIndirectAMDX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+    cmd.parameters = recorder_.RecordCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
     commands_.push_back(cmd);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandTracker::CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                       VkDeviceAddress countInfo) {
+                                                       VkDeviceSize scratchSize, VkDeviceAddress countInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchGraphIndirectCountAMDX;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+    cmd.parameters = recorder_.RecordCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
     commands_.push_back(cmd);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
