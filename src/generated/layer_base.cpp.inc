@@ -2559,62 +2559,69 @@ static VKAPI_ATTR void VKAPI_CALL InterceptDestroyDebugUtilsMessengerEXT(VkInsta
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
-                                                                               VkDeviceAddress scratch) {
+                                                                               VkPipeline executionGraph,
+                                                                               VkDeviceAddress scratch,
+                                                                               VkDeviceSize scratchSize) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+    layer_data->interceptor->PreCmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch,
+                                                                    scratchSize);
 
     PFN_vkCmdInitializeGraphScratchMemoryAMDX pfn = layer_data->dispatch_table.CmdInitializeGraphScratchMemoryAMDX;
     if (pfn != nullptr) {
-        pfn(commandBuffer, scratch);
+        pfn(commandBuffer, executionGraph, scratch, scratchSize);
     }
 
-    layer_data->interceptor->PostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+    layer_data->interceptor->PostCmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch,
+                                                                     scratchSize);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                                VkDeviceSize scratchSize,
                                                                 const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+    layer_data->interceptor->PreCmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 
     PFN_vkCmdDispatchGraphAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphAMDX;
     if (pfn != nullptr) {
-        pfn(commandBuffer, scratch, pCountInfo);
+        pfn(commandBuffer, scratch, scratchSize, pCountInfo);
     }
 
-    layer_data->interceptor->PostCmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+    layer_data->interceptor->PostCmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectAMDX(
-    VkCommandBuffer commandBuffer, VkDeviceAddress scratch, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
+                                      const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+    layer_data->interceptor->PreCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 
     PFN_vkCmdDispatchGraphIndirectAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphIndirectAMDX;
     if (pfn != nullptr) {
-        pfn(commandBuffer, scratch, pCountInfo);
+        pfn(commandBuffer, scratch, scratchSize, pCountInfo);
     }
 
-    layer_data->interceptor->PostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+    layer_data->interceptor->PostCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer,
                                                                              VkDeviceAddress scratch,
+                                                                             VkDeviceSize scratchSize,
                                                                              VkDeviceAddress countInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+    layer_data->interceptor->PreCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 
     PFN_vkCmdDispatchGraphIndirectCountAMDX pfn = layer_data->dispatch_table.CmdDispatchGraphIndirectCountAMDX;
     if (pfn != nullptr) {
-        pfn(commandBuffer, scratch, countInfo);
+        pfn(commandBuffer, scratch, scratchSize, countInfo);
     }
 
-    layer_data->interceptor->PostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+    layer_data->interceptor->PostCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 

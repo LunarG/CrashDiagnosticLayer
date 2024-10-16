@@ -1428,34 +1428,38 @@ void CommandBuffer::PostCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffe
 }
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-void CommandBuffer::PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {
-    tracker_.CmdInitializeGraphScratchMemoryAMDX(commandBuffer, scratch);
+void CommandBuffer::PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
+                                                           VkDeviceAddress scratch, VkDeviceSize scratchSize) {
+    tracker_.CmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
-void CommandBuffer::PostCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch) {
+void CommandBuffer::PostCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
+                                                            VkDeviceAddress scratch, VkDeviceSize scratchSize) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandBuffer::PreCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                            const VkDispatchGraphCountInfoAMDX* pCountInfo) {
-    tracker_.CmdDispatchGraphAMDX(commandBuffer, scratch, pCountInfo);
+                                            VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+    tracker_.CmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                             const VkDispatchGraphCountInfoAMDX* pCountInfo) {
+                                             VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandBuffer::PreCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                    VkDeviceSize scratchSize,
                                                     const VkDispatchGraphCountInfoAMDX* pCountInfo) {
-    tracker_.CmdDispatchGraphIndirectAMDX(commandBuffer, scratch, pCountInfo);
+    tracker_.CmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                     VkDeviceSize scratchSize,
                                                      const VkDispatchGraphCountInfoAMDX* pCountInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
@@ -1463,12 +1467,12 @@ void CommandBuffer::PostCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuff
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandBuffer::PreCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                         VkDeviceAddress countInfo) {
-    tracker_.CmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, countInfo);
+                                                         VkDeviceSize scratchSize, VkDeviceAddress countInfo) {
+    tracker_.CmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
-                                                          VkDeviceAddress countInfo) {
+                                                          VkDeviceSize scratchSize, VkDeviceAddress countInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS

@@ -17189,6 +17189,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderEnqueue
     os << YAML::Key << "shaderEnqueue";
     // shaderEnqueue -> Field -> VkBool32
     os << YAML::Value << t.shaderEnqueue;
+    os << YAML::Key << "shaderMeshEnqueue";
+    // shaderMeshEnqueue -> Field -> VkBool32
+    os << YAML::Value << t.shaderMeshEnqueue;
     os << YAML::EndMap;
     return os;
 }
@@ -17220,6 +17223,22 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderEnqueue
     os << YAML::Key << "executionGraphDispatchAddressAlignment";
     // executionGraphDispatchAddressAlignment -> Field -> uint32_t
     os << YAML::Value << t.executionGraphDispatchAddressAlignment;
+    os << YAML::Key << "maxExecutionGraphWorkgroupCount";
+    // maxExecutionGraphWorkgroupCount -> Field -> FixedArray(uint32_t)
+    {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("uint32_t");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
+                os << t.maxExecutionGraphWorkgroupCount[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "maxExecutionGraphWorkgroups";
+    // maxExecutionGraphWorkgroups -> Field -> uint32_t
+    os << YAML::Value << t.maxExecutionGraphWorkgroups;
     os << YAML::EndMap;
     return os;
 }
@@ -17236,9 +17255,15 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkExecutionGraphPipelineScrat
     os << YAML::Value << YAML::BeginSeq;
     PrintNextPtr(os, t.pNext);
     os << YAML::EndSeq;
-    os << YAML::Key << "size";
-    // size -> Field -> VkDeviceSize
-    os << YAML::Value << t.size;
+    os << YAML::Key << "minSize";
+    // minSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.minSize;
+    os << YAML::Key << "maxSize";
+    // maxSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.maxSize;
+    os << YAML::Key << "sizeGranularity";
+    // sizeGranularity -> Field -> VkDeviceSize
+    os << YAML::Value << t.sizeGranularity;
     os << YAML::EndMap;
     return os;
 }

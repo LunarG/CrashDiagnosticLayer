@@ -513,22 +513,27 @@ class CommandRecorder {
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     CmdInitializeGraphScratchMemoryAMDXArgs* RecordCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
-                                                                                       VkDeviceAddress scratch);
+                                                                                       VkPipeline executionGraph,
+                                                                                       VkDeviceAddress scratch,
+                                                                                       VkDeviceSize scratchSize);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     CmdDispatchGraphAMDXArgs* RecordCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch,
+                                                         VkDeviceSize scratchSize,
                                                          const VkDispatchGraphCountInfoAMDX* pCountInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     CmdDispatchGraphIndirectAMDXArgs* RecordCmdDispatchGraphIndirectAMDX(
-        VkCommandBuffer commandBuffer, VkDeviceAddress scratch, const VkDispatchGraphCountInfoAMDX* pCountInfo);
+        VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize,
+        const VkDispatchGraphCountInfoAMDX* pCountInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     CmdDispatchGraphIndirectCountAMDXArgs* RecordCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer,
                                                                                    VkDeviceAddress scratch,
+                                                                                   VkDeviceSize scratchSize,
                                                                                    VkDeviceAddress countInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 

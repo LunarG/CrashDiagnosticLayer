@@ -1255,7 +1255,9 @@ struct CmdInsertDebugUtilsLabelEXTArgs {
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 struct CmdInitializeGraphScratchMemoryAMDXArgs {
     VkCommandBuffer commandBuffer;
+    VkPipeline executionGraph;
     VkDeviceAddress scratch;
+    VkDeviceSize scratchSize;
 };
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
@@ -1263,6 +1265,7 @@ struct CmdInitializeGraphScratchMemoryAMDXArgs {
 struct CmdDispatchGraphAMDXArgs {
     VkCommandBuffer commandBuffer;
     VkDeviceAddress scratch;
+    VkDeviceSize scratchSize;
     const VkDispatchGraphCountInfoAMDX* pCountInfo;
 };
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -1271,6 +1274,7 @@ struct CmdDispatchGraphAMDXArgs {
 struct CmdDispatchGraphIndirectAMDXArgs {
     VkCommandBuffer commandBuffer;
     VkDeviceAddress scratch;
+    VkDeviceSize scratchSize;
     const VkDispatchGraphCountInfoAMDX* pCountInfo;
 };
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -1279,6 +1283,7 @@ struct CmdDispatchGraphIndirectAMDXArgs {
 struct CmdDispatchGraphIndirectCountAMDXArgs {
     VkCommandBuffer commandBuffer;
     VkDeviceAddress scratch;
+    VkDeviceSize scratchSize;
     VkDeviceAddress countInfo;
 };
 #endif  // VK_ENABLE_BETA_EXTENSIONS
