@@ -552,7 +552,12 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             // Query the feature so that we know if vendor data is supported
             auto ext_device_fault = vku::InitStruct<VkPhysicalDeviceFaultFeaturesEXT>(nullptr);
             auto features2 = vku::InitStruct<VkPhysicalDeviceFeatures2>(&ext_device_fault);
-            Dispatch().GetPhysicalDeviceFeatures2(physicalDevice, &features2);
+            if (modified_create_info_.pApplicationInfo &&
+                modified_create_info_.pApplicationInfo->apiVersion >= VK_API_VERSION_1_1) {
+                Dispatch().GetPhysicalDeviceFeatures2(physicalDevice, &features2);
+            } else {
+                Dispatch().GetPhysicalDeviceFeatures2KHR(physicalDevice, &features2);
+            }
 
             vku::AddToPnext(device_ci->modified, ext_device_fault);
             vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_FAULT_EXTENSION_NAME);
