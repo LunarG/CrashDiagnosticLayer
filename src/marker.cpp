@@ -261,6 +261,8 @@ Marker::~Marker() { mgr_.Free(*this); }
 
 void Marker::Write(VkCommandBuffer cmd, VkPipelineStageFlagBits stage, uint32_t value) {
     mgr_.Dispatch().CmdWriteBufferMarkerAMD(cmd, stage, data_->buffer, data_->offset, value);
+    mgr_.Dispatch().CmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT | stage,
+                                       VK_PIPELINE_STAGE_TRANSFER_BIT | stage, 0, 0, nullptr, 0, nullptr, 0, nullptr);
 }
 
 void Marker::Write(uint32_t value) { *(uint32_t*)data_->cpu_mapped_address = value; }
