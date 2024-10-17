@@ -511,8 +511,9 @@ static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetInstanceProcAddr(VkInstance i
     if (item != name_to_func_ptr_map.end()) {
         return reinterpret_cast<PFN_vkVoidFunction>(item->second);
     }
-    printf("WARNING - Failed to find %s\n", pName);
-    // Mock should intercept all functions so if we get here just return null
+    // This mock ICD doesn't support beta extensions, but the loader will query them anyways.
+    // If someone writes a test that requires a beta extension, the nullptr returned here should
+    // be enough of a clue that they need to implement it in the icd.
     return nullptr;
 }
 
