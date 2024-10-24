@@ -40,7 +40,7 @@
             "sub_dir": "yaml-cpp",
             "build_dir": "yaml-cpp/build",
             "install_dir": "yaml-cpp/build/install",
-            "commit": "1d8ca1f35eb3a9c9142462b28282a848e5d29a91"
+            "commit": "da82fd982c260e7f335ce5acbceff24b270544d1"
         },
         {
             "name": "googletest",
