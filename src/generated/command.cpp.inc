@@ -1049,16 +1049,6 @@ void CommandBuffer::PostCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkP
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                                VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    tracker_.CmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                                 VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
     tracker_.CmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
@@ -1602,6 +1592,16 @@ void CommandBuffer::PreCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, Vk
 }
 void CommandBuffer::PostCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
                                                 VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
+                                                VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
+    tracker_.CmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
+                                                 VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 

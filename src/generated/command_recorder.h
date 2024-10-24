@@ -382,10 +382,6 @@ class CommandRecorder {
     CmdWriteTimestamp2KHRArgs* RecordCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
                                                            VkQueryPool queryPool, uint32_t query);
 
-    CmdWriteBufferMarker2AMDArgs* RecordCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer,
-                                                                 VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
-                                                                 VkDeviceSize dstOffset, uint32_t marker);
-
     CmdCopyBuffer2KHRArgs* RecordCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer,
                                                    const VkCopyBufferInfo2* pCopyBufferInfo);
 
@@ -578,6 +574,10 @@ class CommandRecorder {
                                                                VkPipelineStageFlagBits pipelineStage,
                                                                VkBuffer dstBuffer, VkDeviceSize dstOffset,
                                                                uint32_t marker);
+
+    CmdWriteBufferMarker2AMDArgs* RecordCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer,
+                                                                 VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
+                                                                 VkDeviceSize dstOffset, uint32_t marker);
 
     CmdDrawMeshTasksNVArgs* RecordCmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount,
                                                      uint32_t firstTask);

@@ -1173,17 +1173,6 @@ void Context::PostCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelin
     p_cmd->PostCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
 
-void Context::PreCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                          VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
-}
-void Context::PostCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                           VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
-}
-
 void Context::PreCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PreCmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
@@ -1772,6 +1761,17 @@ void Context::PostCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipel
                                           VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
+}
+
+void Context::PreCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
+                                          VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
+}
+void Context::PostCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
+                                           VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
 
 void Context::PreCmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount, uint32_t firstTask) {

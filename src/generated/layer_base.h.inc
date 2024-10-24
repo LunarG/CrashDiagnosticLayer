@@ -852,12 +852,6 @@ virtual void PostCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipeline
 
 virtual VkResult QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) = 0;
 
-virtual void PreCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
-                                         VkDeviceSize dstOffset, uint32_t marker) {}
-
-virtual void PostCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                          VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {}
-
 virtual void PreCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {}
 
 virtual void PostCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {}
@@ -1244,6 +1238,12 @@ virtual void PreCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelin
 
 virtual void PostCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
                                          VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {}
+
+virtual void PreCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
+                                         VkDeviceSize dstOffset, uint32_t marker) {}
+
+virtual void PostCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
+                                          VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {}
 
 virtual void PreCmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount, uint32_t firstTask) {}
 

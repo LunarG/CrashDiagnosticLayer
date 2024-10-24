@@ -1110,16 +1110,6 @@ void CommandTracker::CmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipe
     commands_.push_back(cmd);
 }
 
-void CommandTracker::CmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
-                                              VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdWriteBufferMarker2AMD;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
-    commands_.push_back(cmd);
-}
-
 void CommandTracker::CmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyBuffer2KHR;
@@ -1656,6 +1646,16 @@ void CommandTracker::CmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPi
     cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
+                                              VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdWriteBufferMarker2AMD;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
     commands_.push_back(cmd);
 }
 
