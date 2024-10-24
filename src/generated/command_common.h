@@ -144,7 +144,6 @@ struct Command {
         kCmdWaitEvents2KHR,
         kCmdPipelineBarrier2KHR,
         kCmdWriteTimestamp2KHR,
-        kCmdWriteBufferMarker2AMD,
         kCmdCopyBuffer2KHR,
         kCmdCopyImage2KHR,
         kCmdCopyBufferToImage2KHR,
@@ -202,6 +201,7 @@ struct Command {
         kCmdTraceRaysNV,
         kCmdWriteAccelerationStructuresPropertiesNV,
         kCmdWriteBufferMarkerAMD,
+        kCmdWriteBufferMarker2AMD,
         kCmdDrawMeshTasksNV,
         kCmdDrawMeshTasksIndirectNV,
         kCmdDrawMeshTasksIndirectCountNV,
@@ -1029,14 +1029,6 @@ struct CmdWriteTimestamp2KHRArgs {
     uint32_t query;
 };
 
-struct CmdWriteBufferMarker2AMDArgs {
-    VkCommandBuffer commandBuffer;
-    VkPipelineStageFlags2 stage;
-    VkBuffer dstBuffer;
-    VkDeviceSize dstOffset;
-    uint32_t marker;
-};
-
 struct CmdCopyBuffer2KHRArgs {
     VkCommandBuffer commandBuffer;
     const VkCopyBufferInfo2* pCopyBufferInfo;
@@ -1362,6 +1354,14 @@ struct CmdWriteAccelerationStructuresPropertiesNVArgs {
 struct CmdWriteBufferMarkerAMDArgs {
     VkCommandBuffer commandBuffer;
     VkPipelineStageFlagBits pipelineStage;
+    VkBuffer dstBuffer;
+    VkDeviceSize dstOffset;
+    uint32_t marker;
+};
+
+struct CmdWriteBufferMarker2AMDArgs {
+    VkCommandBuffer commandBuffer;
+    VkPipelineStageFlags2 stage;
     VkBuffer dstBuffer;
     VkDeviceSize dstOffset;
     uint32_t marker;

@@ -247,8 +247,6 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdPipelineBarrier2KHR";
         case Command::Type::kCmdWriteTimestamp2KHR:
             return "vkCmdWriteTimestamp2KHR";
-        case Command::Type::kCmdWriteBufferMarker2AMD:
-            return "vkCmdWriteBufferMarker2AMD";
         case Command::Type::kCmdCopyBuffer2KHR:
             return "vkCmdCopyBuffer2KHR";
         case Command::Type::kCmdCopyImage2KHR:
@@ -355,6 +353,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdWriteAccelerationStructuresPropertiesNV";
         case Command::Type::kCmdWriteBufferMarkerAMD:
             return "vkCmdWriteBufferMarkerAMD";
+        case Command::Type::kCmdWriteBufferMarker2AMD:
+            return "vkCmdWriteBufferMarker2AMD";
         case Command::Type::kCmdDrawMeshTasksNV:
             return "vkCmdDrawMeshTasksNV";
         case Command::Type::kCmdDrawMeshTasksIndirectNV:

@@ -3424,19 +3424,6 @@ CmdWriteTimestamp2KHRArgs* CommandRecorder::RecordCmdWriteTimestamp2KHR(VkComman
     return args;
 }
 
-CmdWriteBufferMarker2AMDArgs* CommandRecorder::RecordCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer,
-                                                                              VkPipelineStageFlags2 stage,
-                                                                              VkBuffer dstBuffer,
-                                                                              VkDeviceSize dstOffset, uint32_t marker) {
-    auto* args = Alloc<CmdWriteBufferMarker2AMDArgs>();
-    args->commandBuffer = commandBuffer;
-    args->stage = stage;
-    args->dstBuffer = dstBuffer;
-    args->dstOffset = dstOffset;
-    args->marker = marker;
-    return args;
-}
-
 CmdCopyBuffer2KHRArgs* CommandRecorder::RecordCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer,
                                                                 const VkCopyBufferInfo2* pCopyBufferInfo) {
     auto* args = Alloc<CmdCopyBuffer2KHRArgs>();
@@ -4022,6 +4009,19 @@ CmdWriteBufferMarkerAMDArgs* CommandRecorder::RecordCmdWriteBufferMarkerAMD(VkCo
     auto* args = Alloc<CmdWriteBufferMarkerAMDArgs>();
     args->commandBuffer = commandBuffer;
     args->pipelineStage = pipelineStage;
+    args->dstBuffer = dstBuffer;
+    args->dstOffset = dstOffset;
+    args->marker = marker;
+    return args;
+}
+
+CmdWriteBufferMarker2AMDArgs* CommandRecorder::RecordCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer,
+                                                                              VkPipelineStageFlags2 stage,
+                                                                              VkBuffer dstBuffer,
+                                                                              VkDeviceSize dstOffset, uint32_t marker) {
+    auto* args = Alloc<CmdWriteBufferMarker2AMDArgs>();
+    args->commandBuffer = commandBuffer;
+    args->stage = stage;
     args->dstBuffer = dstBuffer;
     args->dstOffset = dstOffset;
     args->marker = marker;

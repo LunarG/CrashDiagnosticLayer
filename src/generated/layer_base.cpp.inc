@@ -1939,20 +1939,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp2KHR(VkCommandBuffer
     layer_data->interceptor->PostCmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
 
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer,
-                                                                    VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
-                                                                    VkDeviceSize dstOffset, uint32_t marker) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
-
-    PFN_vkCmdWriteBufferMarker2AMD pfn = layer_data->dispatch_table.CmdWriteBufferMarker2AMD;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, stage, dstBuffer, dstOffset, marker);
-    }
-
-    layer_data->interceptor->PostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
-}
-
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer,
                                                              const VkCopyBufferInfo2* pCopyBufferInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -2774,6 +2760,20 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarkerAMD(VkCommandBuff
     }
 
     layer_data->interceptor->PostCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer,
+                                                                    VkPipelineStageFlags2 stage, VkBuffer dstBuffer,
+                                                                    VkDeviceSize dstOffset, uint32_t marker) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
+
+    PFN_vkCmdWriteBufferMarker2AMD pfn = layer_data->dispatch_table.CmdWriteBufferMarker2AMD;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, stage, dstBuffer, dstOffset, marker);
+    }
+
+    layer_data->interceptor->PostCmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount,
@@ -4405,7 +4405,6 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdPipelineBarrier2KHR", {kFuncTypeDev, (void*)InterceptCmdPipelineBarrier2KHR}},
         {"vkCmdWriteTimestamp2KHR", {kFuncTypeDev, (void*)InterceptCmdWriteTimestamp2KHR}},
         {"vkQueueSubmit2KHR", {kFuncTypeDev, (void*)InterceptQueueSubmit2KHR}},
-        {"vkCmdWriteBufferMarker2AMD", {kFuncTypeDev, (void*)InterceptCmdWriteBufferMarker2AMD}},
         {"vkCmdCopyBuffer2KHR", {kFuncTypeDev, (void*)InterceptCmdCopyBuffer2KHR}},
         {"vkCmdCopyImage2KHR", {kFuncTypeDev, (void*)InterceptCmdCopyImage2KHR}},
         {"vkCmdCopyBufferToImage2KHR", {kFuncTypeDev, (void*)InterceptCmdCopyBufferToImage2KHR}},
@@ -4472,6 +4471,7 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdWriteAccelerationStructuresPropertiesNV",
          {kFuncTypeDev, (void*)InterceptCmdWriteAccelerationStructuresPropertiesNV}},
         {"vkCmdWriteBufferMarkerAMD", {kFuncTypeDev, (void*)InterceptCmdWriteBufferMarkerAMD}},
+        {"vkCmdWriteBufferMarker2AMD", {kFuncTypeDev, (void*)InterceptCmdWriteBufferMarker2AMD}},
         {"vkCmdDrawMeshTasksNV", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksNV}},
         {"vkCmdDrawMeshTasksIndirectNV", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksIndirectNV}},
         {"vkCmdDrawMeshTasksIndirectCountNV", {kFuncTypeDev, (void*)InterceptCmdDrawMeshTasksIndirectCountNV}},

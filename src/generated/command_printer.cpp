@@ -1814,21 +1814,6 @@ void CommandPrinter::PrintCmdWriteTimestamp2KHRArgs(YAML::Emitter &os, const Cmd
     os << YAML::Value << args.query;
 }
 
-void CommandPrinter::PrintCmdWriteBufferMarker2AMDArgs(YAML::Emitter &os, const CmdWriteBufferMarker2AMDArgs &args) {
-    os << YAML::Key << "stage";
-    // stage -> Field -> VkPipelineStageFlags2
-    os << YAML::Value << args.stage;
-    os << YAML::Key << "dstBuffer";
-    // dstBuffer -> Field -> VkBuffer
-    os << YAML::Value << args.dstBuffer;
-    os << YAML::Key << "dstOffset";
-    // dstOffset -> Field -> VkDeviceSize
-    os << YAML::Value << args.dstOffset;
-    os << YAML::Key << "marker";
-    // marker -> Field -> uint32_t
-    os << YAML::Value << args.marker;
-}
-
 void CommandPrinter::PrintCmdCopyBuffer2KHRArgs(YAML::Emitter &os, const CmdCopyBuffer2KHRArgs &args) {
     os << YAML::Key << "pCopyBufferInfo";
     // pointer
@@ -2601,6 +2586,21 @@ void CommandPrinter::PrintCmdWriteBufferMarkerAMDArgs(YAML::Emitter &os, const C
     os << YAML::Key << "pipelineStage";
     // pipelineStage -> Field -> VkPipelineStageFlagBits
     os << YAML::Value << args.pipelineStage;
+    os << YAML::Key << "dstBuffer";
+    // dstBuffer -> Field -> VkBuffer
+    os << YAML::Value << args.dstBuffer;
+    os << YAML::Key << "dstOffset";
+    // dstOffset -> Field -> VkDeviceSize
+    os << YAML::Value << args.dstOffset;
+    os << YAML::Key << "marker";
+    // marker -> Field -> uint32_t
+    os << YAML::Value << args.marker;
+}
+
+void CommandPrinter::PrintCmdWriteBufferMarker2AMDArgs(YAML::Emitter &os, const CmdWriteBufferMarker2AMDArgs &args) {
+    os << YAML::Key << "stage";
+    // stage -> Field -> VkPipelineStageFlags2
+    os << YAML::Value << args.stage;
     os << YAML::Key << "dstBuffer";
     // dstBuffer -> Field -> VkBuffer
     os << YAML::Value << args.dstBuffer;
@@ -4937,13 +4937,6 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
-        case Command::Type::kCmdWriteBufferMarker2AMD:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdWriteBufferMarker2AMDArgs *>(cmd.parameters);
-                PrintCmdWriteBufferMarker2AMDArgs(os, *args);
-            }
-            break;
-
         case Command::Type::kCmdCopyBuffer2KHR:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdCopyBuffer2KHRArgs *>(cmd.parameters);
@@ -5292,6 +5285,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdWriteBufferMarkerAMDArgs *>(cmd.parameters);
                 PrintCmdWriteBufferMarkerAMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteBufferMarker2AMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteBufferMarker2AMDArgs *>(cmd.parameters);
+                PrintCmdWriteBufferMarker2AMDArgs(os, *args);
             }
             break;
 

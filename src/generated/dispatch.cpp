@@ -600,8 +600,6 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CmdPipelineBarrier2KHR = (PFN_vkCmdPipelineBarrier2KHR)pa(device, "vkCmdPipelineBarrier2KHR");
     dt->CmdWriteTimestamp2KHR = (PFN_vkCmdWriteTimestamp2KHR)pa(device, "vkCmdWriteTimestamp2KHR");
     dt->QueueSubmit2KHR = (PFN_vkQueueSubmit2KHR)pa(device, "vkQueueSubmit2KHR");
-    dt->CmdWriteBufferMarker2AMD = (PFN_vkCmdWriteBufferMarker2AMD)pa(device, "vkCmdWriteBufferMarker2AMD");
-    dt->GetQueueCheckpointData2NV = (PFN_vkGetQueueCheckpointData2NV)pa(device, "vkGetQueueCheckpointData2NV");
     dt->CmdCopyBuffer2KHR = (PFN_vkCmdCopyBuffer2KHR)pa(device, "vkCmdCopyBuffer2KHR");
     dt->CmdCopyImage2KHR = (PFN_vkCmdCopyImage2KHR)pa(device, "vkCmdCopyImage2KHR");
     dt->CmdCopyBufferToImage2KHR = (PFN_vkCmdCopyBufferToImage2KHR)pa(device, "vkCmdCopyBufferToImage2KHR");
@@ -764,6 +762,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->GetMemoryHostPointerPropertiesEXT =
         (PFN_vkGetMemoryHostPointerPropertiesEXT)pa(device, "vkGetMemoryHostPointerPropertiesEXT");
     dt->CmdWriteBufferMarkerAMD = (PFN_vkCmdWriteBufferMarkerAMD)pa(device, "vkCmdWriteBufferMarkerAMD");
+    dt->CmdWriteBufferMarker2AMD = (PFN_vkCmdWriteBufferMarker2AMD)pa(device, "vkCmdWriteBufferMarker2AMD");
     dt->GetCalibratedTimestampsEXT = (PFN_vkGetCalibratedTimestampsEXT)pa(device, "vkGetCalibratedTimestampsEXT");
     dt->CmdDrawMeshTasksNV = (PFN_vkCmdDrawMeshTasksNV)pa(device, "vkCmdDrawMeshTasksNV");
     dt->CmdDrawMeshTasksIndirectNV = (PFN_vkCmdDrawMeshTasksIndirectNV)pa(device, "vkCmdDrawMeshTasksIndirectNV");
@@ -774,6 +773,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CmdSetExclusiveScissorNV = (PFN_vkCmdSetExclusiveScissorNV)pa(device, "vkCmdSetExclusiveScissorNV");
     dt->CmdSetCheckpointNV = (PFN_vkCmdSetCheckpointNV)pa(device, "vkCmdSetCheckpointNV");
     dt->GetQueueCheckpointDataNV = (PFN_vkGetQueueCheckpointDataNV)pa(device, "vkGetQueueCheckpointDataNV");
+    dt->GetQueueCheckpointData2NV = (PFN_vkGetQueueCheckpointData2NV)pa(device, "vkGetQueueCheckpointData2NV");
     dt->InitializePerformanceApiINTEL =
         (PFN_vkInitializePerformanceApiINTEL)pa(device, "vkInitializePerformanceApiINTEL");
     dt->UninitializePerformanceApiINTEL =
