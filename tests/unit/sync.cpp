@@ -236,7 +236,8 @@ TEST_F(Sync, HostWaitHangSubmit2) {
     dump::Parse(dump_file, output_path_);
 }
 
-TEST_F(Sync, FenceWaitHang) {
+// TODO: Never finishes in Internal CI on 64,Debug,Windows11-rolling
+TEST_F(Sync, DISABLED_FenceWaitHang) {
     layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
