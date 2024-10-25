@@ -28596,6 +28596,108 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClampC
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixFlexibleDimensionsPropertiesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "MGranularity";
+    // MGranularity -> Field -> uint32_t
+    os << YAML::Value << t.MGranularity;
+    os << YAML::Key << "NGranularity";
+    // NGranularity -> Field -> uint32_t
+    os << YAML::Value << t.NGranularity;
+    os << YAML::Key << "KGranularity";
+    // KGranularity -> Field -> uint32_t
+    os << YAML::Value << t.KGranularity;
+    os << YAML::Key << "AType";
+    // AType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.AType;
+    os << YAML::Key << "BType";
+    // BType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.BType;
+    os << YAML::Key << "CType";
+    // CType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.CType;
+    os << YAML::Key << "ResultType";
+    // ResultType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.ResultType;
+    os << YAML::Key << "saturatingAccumulation";
+    // saturatingAccumulation -> Field -> VkBool32
+    os << YAML::Value << t.saturatingAccumulation;
+    os << YAML::Key << "scope";
+    // scope -> Field -> VkScopeKHR
+    os << YAML::Value << t.scope;
+    os << YAML::Key << "workgroupInvocations";
+    // workgroupInvocations -> Field -> uint32_t
+    os << YAML::Value << t.workgroupInvocations;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2FeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "cooperativeMatrixWorkgroupScope";
+    // cooperativeMatrixWorkgroupScope -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixWorkgroupScope;
+    os << YAML::Key << "cooperativeMatrixFlexibleDimensions";
+    // cooperativeMatrixFlexibleDimensions -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixFlexibleDimensions;
+    os << YAML::Key << "cooperativeMatrixReductions";
+    // cooperativeMatrixReductions -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixReductions;
+    os << YAML::Key << "cooperativeMatrixConversions";
+    // cooperativeMatrixConversions -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixConversions;
+    os << YAML::Key << "cooperativeMatrixPerElementOperations";
+    // cooperativeMatrixPerElementOperations -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixPerElementOperations;
+    os << YAML::Key << "cooperativeMatrixTensorAddressing";
+    // cooperativeMatrixTensorAddressing -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixTensorAddressing;
+    os << YAML::Key << "cooperativeMatrixBlockLoads";
+    // cooperativeMatrixBlockLoads -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixBlockLoads;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2PropertiesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "cooperativeMatrixWorkgroupScopeMaxWorkgroupSize";
+    // cooperativeMatrixWorkgroupScopeMaxWorkgroupSize -> Field -> uint32_t
+    os << YAML::Value << t.cooperativeMatrixWorkgroupScopeMaxWorkgroupSize;
+    os << YAML::Key << "cooperativeMatrixFlexibleDimensionsMaxDimension";
+    // cooperativeMatrixFlexibleDimensionsMaxDimension -> Field -> uint32_t
+    os << YAML::Value << t.cooperativeMatrixFlexibleDimensionsMaxDimension;
+    os << YAML::Key << "cooperativeMatrixWorkgroupScopeReservedSharedMemory";
+    // cooperativeMatrixWorkgroupScopeReservedSharedMemory -> Field -> uint32_t
+    os << YAML::Value << t.cooperativeMatrixWorkgroupScopeReservedSharedMemory;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "primitiveCount";
@@ -32465,6 +32567,15 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkPipelineViewportDepthClampControlCreateInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_FLEXIBLE_DIMENSIONS_PROPERTIES_NV:
+            os << *reinterpret_cast<const VkCooperativeMatrixFlexibleDimensionsPropertiesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrix2FeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_PROPERTIES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrix2PropertiesNV *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);

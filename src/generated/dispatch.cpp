@@ -267,6 +267,9 @@ void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
     dt->GetPhysicalDeviceOpticalFlowImageFormatsNV =
         (PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV)pa(instance, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV");
+    dt->GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV =
+        (PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV)pa(
+            instance, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV");
 };
 
 void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, DeviceDispatchTable *dt) {
