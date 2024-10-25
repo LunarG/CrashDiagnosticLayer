@@ -69,7 +69,8 @@ VkResult Device::GetFaultInfo(VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaul
         pFaultCounts->vendorInfoCount = static_cast<uint32_t>(fault_info_->vendor_infos.size());
         pFaultCounts->vendorBinarySize = static_cast<uint32_t>(fault_info_->vendor_binary.size());
     } else {
-        strncpy(pFaultInfo->description, fault_info_->description.data(), sizeof(pFaultInfo->description));
+        memset(pFaultInfo->description, 0, sizeof(pFaultInfo->description));
+        strncpy(pFaultInfo->description, fault_info_->description.data(), sizeof(pFaultInfo->description) - 1);
         if (pFaultCounts->addressInfoCount > static_cast<uint32_t>(fault_info_->address_infos.size())) {
             pFaultCounts->addressInfoCount = static_cast<uint32_t>(fault_info_->address_infos.size());
         }
