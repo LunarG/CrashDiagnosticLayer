@@ -727,7 +727,11 @@ std::ofstream Context::OpenDumpFile() {
     std::filesystem::path symlink_path(base_output_path_);
     symlink_path /= "cdl_dump.yaml.symlink";
     remove(symlink_path.string().c_str());
-    symlink(dump_file_path.string().c_str(), symlink_path.string().c_str());
+    if (symlink(dump_file_path.string().c_str(), symlink_path.string().c_str()) != 0) {
+        Log().Error("symlink %s -> %s failed: %s",
+                    dump_file_path.string().c_str(), symlink_path.string().c_str(),
+                    strerror(errno));
+    }
 #endif
 
     std::stringstream ss;

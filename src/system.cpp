@@ -46,7 +46,7 @@
 namespace crash_diagnostic_layer {
 
 System::System(Context& context) {
-    bool success;
+    [[maybe_unused]] bool success;
 #ifdef SYSTEM_TARGET_ANDROID
     success = QueryInfoAndroid();
 #elif defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || defined(SYSTEM_TARGET_BSD)
