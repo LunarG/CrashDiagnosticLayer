@@ -192,6 +192,8 @@ struct InstanceDispatchTable {
     PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX GetPhysicalDeviceScreenPresentationSupportQNX;
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
     PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV GetPhysicalDeviceOpticalFlowImageFormatsNV;
+    PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV
+        GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV;
 };
 
 struct DeviceDispatchTable {
