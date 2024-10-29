@@ -157,7 +157,10 @@ VkBool32 ErrorMonitor::CheckForDesiredMsg(const char *const msg_string) {
     return result;
 }
 
-ErrorMonitor::Severity ErrorMonitor::GetMessageFlags() const { return message_flags_; }
+ErrorMonitor::Severity ErrorMonitor::GetMessageFlags() const {
+    auto guard = Lock();
+    return message_flags_;
+}
 
 bool ErrorMonitor::AnyDesiredMsgFound() const { return message_found_; }
 
