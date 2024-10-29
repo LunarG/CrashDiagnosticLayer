@@ -231,6 +231,7 @@ void Queue::TrackCheckpoint(uintptr_t checkpoint, VkPipelineStageFlagBits stage)
 }
 
 void Queue::GetCheckpointData(uint32_t *count, VkCheckpointDataNV *checkpoints) {
+    auto guard = Lock();
     if (!checkpoints) {
         *count = uint32_t(checkpoints_.size());
         return;
@@ -244,6 +245,7 @@ void Queue::GetCheckpointData(uint32_t *count, VkCheckpointDataNV *checkpoints) 
 }
 
 void Queue::GetCheckpointData2(uint32_t *count, VkCheckpointData2NV *checkpoints) {
+    auto guard = Lock();
     if (!checkpoints) {
         *count = uint32_t(checkpoints_.size());
         return;
