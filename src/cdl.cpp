@@ -1498,6 +1498,7 @@ VkResult Context::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindS
     auto device_state = GetQueueDevice(queue);
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->BindSparse(bindInfoCount, pBindInfo, fence);
+
     PostApiFunction("vkQueueBindSparse", result);
     if (IsVkError(result)) {
         device_state->DeviceFault();
