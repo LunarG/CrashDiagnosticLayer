@@ -18,9 +18,9 @@
 
 #include <chrono>
 #include <filesystem>
+#include <fstream>
 #include <map>
 #include <mutex>
-#include <cstdio>
 #include <string>
 #include <shared_mutex>
 #include <vulkan/vulkan_core.h>
@@ -112,7 +112,8 @@ class Logger {
 
     // default logging state
     LogCallback default_cb_;
-    mutable FILE* log_file_{nullptr};
+    mutable std::ostream *log_stream_{nullptr};
+    mutable std::ofstream log_file_;
     mutable std::mutex file_access_mutex_;
 };
 
