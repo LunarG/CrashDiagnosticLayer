@@ -1628,6 +1628,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageAlignmen
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageAlignmentControlCreateInfoMESA &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampControlFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClampControlCreateInfoEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHdrVividFeaturesHUAWEI &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrVividDynamicMetadataHUAWEI &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixFlexibleDimensionsPropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2FeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2PropertiesNV &t);

@@ -28596,6 +28596,53 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClampC
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHdrVividFeaturesHUAWEI &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "hdrVivid";
+    // hdrVivid -> Field -> VkBool32
+    os << YAML::Value << t.hdrVivid;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrVividDynamicMetadataHUAWEI &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "dynamicMetadataSize";
+    // dynamicMetadataSize -> Field -> size_t
+    os << YAML::Value << t.dynamicMetadataSize;
+    os << YAML::Key << "pDynamicMetadata";
+    if (t.dynamicMetadataSize == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value << YAML::BeginSeq;
+        {
+            const uint8_t *p = (const uint8_t *)t.pDynamicMetadata;
+            for (uint64_t i = 0; i < t.dynamicMetadataSize; ++i) {
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
+            }
+        }
+        os << YAML::EndSeq;
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixFlexibleDimensionsPropertiesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -32567,6 +32614,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkPipelineViewportDepthClampControlCreateInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI:
+            os << *reinterpret_cast<const VkPhysicalDeviceHdrVividFeaturesHUAWEI *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_HDR_VIVID_DYNAMIC_METADATA_HUAWEI:
+            os << *reinterpret_cast<const VkHdrVividDynamicMetadataHUAWEI *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_FLEXIBLE_DIMENSIONS_PROPERTIES_NV:
             os << *reinterpret_cast<const VkCooperativeMatrixFlexibleDimensionsPropertiesNV *>(pStruct);
