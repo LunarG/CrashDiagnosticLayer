@@ -527,6 +527,7 @@ struct DeviceDispatchTable {
     PFN_vkDestroyCuFunctionNVX DestroyCuFunctionNVX;
     PFN_vkCmdCuLaunchKernelNVX CmdCuLaunchKernelNVX;
     PFN_vkGetImageViewHandleNVX GetImageViewHandleNVX;
+    PFN_vkGetImageViewHandle64NVX GetImageViewHandle64NVX;
     PFN_vkGetImageViewAddressNVX GetImageViewAddressNVX;
     PFN_vkCmdDrawIndirectCountAMD CmdDrawIndirectCountAMD;
     PFN_vkCmdDrawIndexedIndirectCountAMD CmdDrawIndexedIndirectCountAMD;

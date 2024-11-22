@@ -308,6 +308,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineExecutableStatistic
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeTuningModeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComponentTypeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkScopeKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1PredictionModeKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1RateControlGroupKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLineRasterizationModeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTimeDomainKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiKHR &t);
@@ -380,6 +382,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkOutOfBandQueueTypeNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBlockMatchWindowCompareModeQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCubicFilterWeightsQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayeredDriverUnderlyingApiMSFT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplaySurfaceStereoTypeNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetInfoTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsTokenTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildAccelerationStructureModeKHR &t);
@@ -914,6 +917,19 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1CapabilitiesK
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1SessionParametersCreateInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1PictureInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1DpbSlotInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoEncodeAV1FeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1CapabilitiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1QIndexKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1QualityLevelPropertiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1SessionCreateInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1SessionParametersCreateInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1PictureInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1DpbSlotInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1ProfileInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1FrameSizeKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1GopRemainingFrameInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1RateControlInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1RateControlLayerInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoMaintenance1FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoInlineQueryInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR &t);
@@ -936,6 +952,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPushDescriptorSetInfoKHR &t
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPushDescriptorSetWithTemplateInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetDescriptorBufferOffsetsInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindDescriptorBufferEmbeddedSamplersInfoEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeQuantizationMapCapabilitiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoFormatQuantizationMapPropertiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeQuantizationMapInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeQuantizationMapSessionParametersCreateInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH264QuantizationMapCapabilitiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265QuantizationMapCapabilitiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoFormatH265QuantizationMapPropertiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1QuantizationMapCapabilitiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoFormatAV1QuantizationMapPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance7FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance7PropertiesKHR &t);
@@ -954,6 +980,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTransformFeed
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTransformFeedbackPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRasterizationStateStreamCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuModuleCreateInfoNVX &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuModuleTexturingModeCreateInfoNVX &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuFunctionCreateInfoNVX &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuLaunchInfoNVX &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewHandleInfoNVX &t);
@@ -1595,6 +1622,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExternalMemor
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredDriverPropertiesMSFT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplaySurfaceStereoCreateInfoNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayModeStereoPropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRawAccessChainsFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCommandBufferInheritanceFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV &t);
@@ -1633,6 +1662,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrVividDynamicMetadataHUAW
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixFlexibleDimensionsPropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2FeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2PropertiesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
