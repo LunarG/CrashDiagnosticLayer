@@ -658,6 +658,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->DestroyCuFunctionNVX = (PFN_vkDestroyCuFunctionNVX)pa(device, "vkDestroyCuFunctionNVX");
     dt->CmdCuLaunchKernelNVX = (PFN_vkCmdCuLaunchKernelNVX)pa(device, "vkCmdCuLaunchKernelNVX");
     dt->GetImageViewHandleNVX = (PFN_vkGetImageViewHandleNVX)pa(device, "vkGetImageViewHandleNVX");
+    dt->GetImageViewHandle64NVX = (PFN_vkGetImageViewHandle64NVX)pa(device, "vkGetImageViewHandle64NVX");
     dt->GetImageViewAddressNVX = (PFN_vkGetImageViewAddressNVX)pa(device, "vkGetImageViewAddressNVX");
     dt->CmdDrawIndirectCountAMD = (PFN_vkCmdDrawIndirectCountAMD)pa(device, "vkCmdDrawIndirectCountAMD");
     dt->CmdDrawIndexedIndirectCountAMD =

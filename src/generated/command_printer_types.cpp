@@ -745,6 +745,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkScopeKHR &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1PredictionModeKHR &t) {
+    os << string_VkVideoEncodeAV1PredictionModeKHR(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1RateControlGroupKHR &t) {
+    os << string_VkVideoEncodeAV1RateControlGroupKHR(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLineRasterizationModeKHR &t) {
     os << string_VkLineRasterizationModeKHR(t);
     return os;
@@ -1086,6 +1096,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCubicFilterWeightsQCOM &t) 
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayeredDriverUnderlyingApiMSFT &t) {
     os << string_VkLayeredDriverUnderlyingApiMSFT(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplaySurfaceStereoTypeNV &t) {
+    os << string_VkDisplaySurfaceStereoTypeNV(t);
     return os;
 }
 

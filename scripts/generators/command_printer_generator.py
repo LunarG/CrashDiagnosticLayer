@@ -127,15 +127,37 @@ class CommandPrinter {
         out.append('os << YAML::EndSeq;\n')
 
     def printMember(self, out, member, prefix, is_pointer):
-        no_deref_structs = ('xcb_connection_t', 'Display', 'wl_display', 'wl_surface', 'ANativeWindow',
-                'SECURITY_ATTRIBUTES', 'CAMetalLayer',
-                'StdVideoEncodeH264SliceHeader', 'StdVideoEncodeH264PictureInfo', 'StdVideoEncodeH264ReferenceInfo',
-                'StdVideoEncodeH265SliceSegmentHeader', 'StdVideoEncodeH265PictureInfo',
-                'StdVideoEncodeH265ReferenceInfo', 'StdVideoDecodeH264PictureInfo', 'StdVideoDecodeH264ReferenceInfo',
-                'StdVideoDecodeH265PictureInfo', 'StdVideoDecodeH265ReferenceInfo', 'StdVideoAV1SequenceHeader',
-                'StdVideoDecodeAV1PictureInfo', 'StdVideoDecodeAV1ReferenceInfo',
-                'StdVideoH264PictureParameterSet', 'StdVideoH264SequenceParameterSet', 'StdVideoH265PictureParameterSet',
-                'StdVideoH265SequenceParameterSet', 'StdVideoH265VideoParameterSet')
+        no_deref_structs = (
+                'xcb_connection_t',
+                'Display',
+                'wl_display',
+                'wl_surface',
+                'ANativeWindow',
+                'SECURITY_ATTRIBUTES',
+                'CAMetalLayer',
+                'StdVideoEncodeH264SliceHeader',
+                'StdVideoEncodeH264PictureInfo',
+                'StdVideoEncodeH264ReferenceInfo',
+                'StdVideoEncodeH265SliceSegmentHeader',
+                'StdVideoEncodeH265PictureInfo',
+                'StdVideoEncodeH265ReferenceInfo',
+                'StdVideoDecodeH264PictureInfo',
+                'StdVideoDecodeH264ReferenceInfo',
+                'StdVideoDecodeH265PictureInfo',
+                'StdVideoDecodeH265ReferenceInfo',
+                'StdVideoAV1SequenceHeader',
+                'StdVideoDecodeAV1PictureInfo',
+                'StdVideoDecodeAV1ReferenceInfo',
+                'StdVideoH264PictureParameterSet',
+                'StdVideoH264SequenceParameterSet',
+                'StdVideoH265PictureParameterSet',
+                'StdVideoH265SequenceParameterSet',
+                'StdVideoH265VideoParameterSet',
+                'StdVideoEncodeAV1DecoderModelInfo',
+                'StdVideoEncodeAV1OperatingPointInfo',
+                'StdVideoEncodeAV1PictureInfo',
+                'StdVideoEncodeAV1ReferenceInfo',
+            )
         out.append(f'    os << YAML::Key <<  "{member.name}";\n')
         if is_pointer:
             prefix += '->'

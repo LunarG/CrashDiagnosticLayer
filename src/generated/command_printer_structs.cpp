@@ -14423,6 +14423,415 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1DpbSlotInfoKH
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoEncodeAV1FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "videoEncodeAV1";
+    // videoEncodeAV1 -> Field -> VkBool32
+    os << YAML::Value << t.videoEncodeAV1;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1CapabilitiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkVideoEncodeAV1CapabilityFlagsKHR
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "maxLevel";
+    // maxLevel -> Field -> StdVideoAV1Level
+    os << YAML::Value << t.maxLevel;
+    os << YAML::Key << "codedPictureAlignment";
+    // codedPictureAlignment -> Field -> VkExtent2D
+    os << YAML::Value << t.codedPictureAlignment;
+    os << YAML::Key << "maxTiles";
+    // maxTiles -> Field -> VkExtent2D
+    os << YAML::Value << t.maxTiles;
+    os << YAML::Key << "minTileSize";
+    // minTileSize -> Field -> VkExtent2D
+    os << YAML::Value << t.minTileSize;
+    os << YAML::Key << "maxTileSize";
+    // maxTileSize -> Field -> VkExtent2D
+    os << YAML::Value << t.maxTileSize;
+    os << YAML::Key << "superblockSizes";
+    // superblockSizes -> Field -> VkVideoEncodeAV1SuperblockSizeFlagsKHR
+    os << YAML::Value << t.superblockSizes;
+    os << YAML::Key << "maxSingleReferenceCount";
+    // maxSingleReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxSingleReferenceCount;
+    os << YAML::Key << "singleReferenceNameMask";
+    // singleReferenceNameMask -> Field -> uint32_t
+    os << YAML::Value << t.singleReferenceNameMask;
+    os << YAML::Key << "maxUnidirectionalCompoundReferenceCount";
+    // maxUnidirectionalCompoundReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxUnidirectionalCompoundReferenceCount;
+    os << YAML::Key << "maxUnidirectionalCompoundGroup1ReferenceCount";
+    // maxUnidirectionalCompoundGroup1ReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxUnidirectionalCompoundGroup1ReferenceCount;
+    os << YAML::Key << "unidirectionalCompoundReferenceNameMask";
+    // unidirectionalCompoundReferenceNameMask -> Field -> uint32_t
+    os << YAML::Value << t.unidirectionalCompoundReferenceNameMask;
+    os << YAML::Key << "maxBidirectionalCompoundReferenceCount";
+    // maxBidirectionalCompoundReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxBidirectionalCompoundReferenceCount;
+    os << YAML::Key << "maxBidirectionalCompoundGroup1ReferenceCount";
+    // maxBidirectionalCompoundGroup1ReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxBidirectionalCompoundGroup1ReferenceCount;
+    os << YAML::Key << "maxBidirectionalCompoundGroup2ReferenceCount";
+    // maxBidirectionalCompoundGroup2ReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.maxBidirectionalCompoundGroup2ReferenceCount;
+    os << YAML::Key << "bidirectionalCompoundReferenceNameMask";
+    // bidirectionalCompoundReferenceNameMask -> Field -> uint32_t
+    os << YAML::Value << t.bidirectionalCompoundReferenceNameMask;
+    os << YAML::Key << "maxTemporalLayerCount";
+    // maxTemporalLayerCount -> Field -> uint32_t
+    os << YAML::Value << t.maxTemporalLayerCount;
+    os << YAML::Key << "maxSpatialLayerCount";
+    // maxSpatialLayerCount -> Field -> uint32_t
+    os << YAML::Value << t.maxSpatialLayerCount;
+    os << YAML::Key << "maxOperatingPoints";
+    // maxOperatingPoints -> Field -> uint32_t
+    os << YAML::Value << t.maxOperatingPoints;
+    os << YAML::Key << "minQIndex";
+    // minQIndex -> Field -> uint32_t
+    os << YAML::Value << t.minQIndex;
+    os << YAML::Key << "maxQIndex";
+    // maxQIndex -> Field -> uint32_t
+    os << YAML::Value << t.maxQIndex;
+    os << YAML::Key << "prefersGopRemainingFrames";
+    // prefersGopRemainingFrames -> Field -> VkBool32
+    os << YAML::Value << t.prefersGopRemainingFrames;
+    os << YAML::Key << "requiresGopRemainingFrames";
+    // requiresGopRemainingFrames -> Field -> VkBool32
+    os << YAML::Value << t.requiresGopRemainingFrames;
+    os << YAML::Key << "stdSyntaxFlags";
+    // stdSyntaxFlags -> Field -> VkVideoEncodeAV1StdFlagsKHR
+    os << YAML::Value << t.stdSyntaxFlags;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1QIndexKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "intraQIndex";
+    // intraQIndex -> Field -> uint32_t
+    os << YAML::Value << t.intraQIndex;
+    os << YAML::Key << "predictiveQIndex";
+    // predictiveQIndex -> Field -> uint32_t
+    os << YAML::Value << t.predictiveQIndex;
+    os << YAML::Key << "bipredictiveQIndex";
+    // bipredictiveQIndex -> Field -> uint32_t
+    os << YAML::Value << t.bipredictiveQIndex;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1QualityLevelPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "preferredRateControlFlags";
+    // preferredRateControlFlags -> Field -> VkVideoEncodeAV1RateControlFlagsKHR
+    os << YAML::Value << t.preferredRateControlFlags;
+    os << YAML::Key << "preferredGopFrameCount";
+    // preferredGopFrameCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredGopFrameCount;
+    os << YAML::Key << "preferredKeyFramePeriod";
+    // preferredKeyFramePeriod -> Field -> uint32_t
+    os << YAML::Value << t.preferredKeyFramePeriod;
+    os << YAML::Key << "preferredConsecutiveBipredictiveFrameCount";
+    // preferredConsecutiveBipredictiveFrameCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredConsecutiveBipredictiveFrameCount;
+    os << YAML::Key << "preferredTemporalLayerCount";
+    // preferredTemporalLayerCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredTemporalLayerCount;
+    os << YAML::Key << "preferredConstantQIndex";
+    // preferredConstantQIndex -> Field -> VkVideoEncodeAV1QIndexKHR
+    os << YAML::Value << t.preferredConstantQIndex;
+    os << YAML::Key << "preferredMaxSingleReferenceCount";
+    // preferredMaxSingleReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredMaxSingleReferenceCount;
+    os << YAML::Key << "preferredSingleReferenceNameMask";
+    // preferredSingleReferenceNameMask -> Field -> uint32_t
+    os << YAML::Value << t.preferredSingleReferenceNameMask;
+    os << YAML::Key << "preferredMaxUnidirectionalCompoundReferenceCount";
+    // preferredMaxUnidirectionalCompoundReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredMaxUnidirectionalCompoundReferenceCount;
+    os << YAML::Key << "preferredMaxUnidirectionalCompoundGroup1ReferenceCount";
+    // preferredMaxUnidirectionalCompoundGroup1ReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredMaxUnidirectionalCompoundGroup1ReferenceCount;
+    os << YAML::Key << "preferredUnidirectionalCompoundReferenceNameMask";
+    // preferredUnidirectionalCompoundReferenceNameMask -> Field -> uint32_t
+    os << YAML::Value << t.preferredUnidirectionalCompoundReferenceNameMask;
+    os << YAML::Key << "preferredMaxBidirectionalCompoundReferenceCount";
+    // preferredMaxBidirectionalCompoundReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredMaxBidirectionalCompoundReferenceCount;
+    os << YAML::Key << "preferredMaxBidirectionalCompoundGroup1ReferenceCount";
+    // preferredMaxBidirectionalCompoundGroup1ReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredMaxBidirectionalCompoundGroup1ReferenceCount;
+    os << YAML::Key << "preferredMaxBidirectionalCompoundGroup2ReferenceCount";
+    // preferredMaxBidirectionalCompoundGroup2ReferenceCount -> Field -> uint32_t
+    os << YAML::Value << t.preferredMaxBidirectionalCompoundGroup2ReferenceCount;
+    os << YAML::Key << "preferredBidirectionalCompoundReferenceNameMask";
+    // preferredBidirectionalCompoundReferenceNameMask -> Field -> uint32_t
+    os << YAML::Value << t.preferredBidirectionalCompoundReferenceNameMask;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1SessionCreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "useMaxLevel";
+    // useMaxLevel -> Field -> VkBool32
+    os << YAML::Value << t.useMaxLevel;
+    os << YAML::Key << "maxLevel";
+    // maxLevel -> Field -> StdVideoAV1Level
+    os << YAML::Value << t.maxLevel;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1SessionParametersCreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pStdSequenceHeader";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdSequenceHeader;
+    os << YAML::Key << "pStdDecoderModelInfo";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdDecoderModelInfo;
+    os << YAML::Key << "stdOperatingPointCount";
+    // stdOperatingPointCount -> Field -> uint32_t
+    os << YAML::Value << t.stdOperatingPointCount;
+    os << YAML::Key << "pStdOperatingPoints";
+    // pStdOperatingPoints -> Field -> ConstDynamicArray(StdVideoEncodeAV1OperatingPointInfo)
+    if (t.stdOperatingPointCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        { os << YAML::Comment("StdVideoEncodeAV1OperatingPointInfo"); }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1PictureInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "predictionMode";
+    // predictionMode -> Field -> VkVideoEncodeAV1PredictionModeKHR
+    os << YAML::Value << t.predictionMode;
+    os << YAML::Key << "rateControlGroup";
+    // rateControlGroup -> Field -> VkVideoEncodeAV1RateControlGroupKHR
+    os << YAML::Value << t.rateControlGroup;
+    os << YAML::Key << "constantQIndex";
+    // constantQIndex -> Field -> uint32_t
+    os << YAML::Value << t.constantQIndex;
+    os << YAML::Key << "pStdPictureInfo";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdPictureInfo;
+    os << YAML::Key << "referenceNameSlotIndices";
+    // referenceNameSlotIndices -> Field -> FixedArray(int32_t)
+    {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("int32_t");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(VK_MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR); ++i) {
+                os << t.referenceNameSlotIndices[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "primaryReferenceCdfOnly";
+    // primaryReferenceCdfOnly -> Field -> VkBool32
+    os << YAML::Value << t.primaryReferenceCdfOnly;
+    os << YAML::Key << "generateObuExtensionHeader";
+    // generateObuExtensionHeader -> Field -> VkBool32
+    os << YAML::Value << t.generateObuExtensionHeader;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1DpbSlotInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pStdReferenceInfo";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdReferenceInfo;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1ProfileInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "stdProfile";
+    // stdProfile -> Field -> StdVideoAV1Profile
+    os << YAML::Value << t.stdProfile;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1FrameSizeKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "intraFrameSize";
+    // intraFrameSize -> Field -> uint32_t
+    os << YAML::Value << t.intraFrameSize;
+    os << YAML::Key << "predictiveFrameSize";
+    // predictiveFrameSize -> Field -> uint32_t
+    os << YAML::Value << t.predictiveFrameSize;
+    os << YAML::Key << "bipredictiveFrameSize";
+    // bipredictiveFrameSize -> Field -> uint32_t
+    os << YAML::Value << t.bipredictiveFrameSize;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1GopRemainingFrameInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "useGopRemainingFrames";
+    // useGopRemainingFrames -> Field -> VkBool32
+    os << YAML::Value << t.useGopRemainingFrames;
+    os << YAML::Key << "gopRemainingIntra";
+    // gopRemainingIntra -> Field -> uint32_t
+    os << YAML::Value << t.gopRemainingIntra;
+    os << YAML::Key << "gopRemainingPredictive";
+    // gopRemainingPredictive -> Field -> uint32_t
+    os << YAML::Value << t.gopRemainingPredictive;
+    os << YAML::Key << "gopRemainingBipredictive";
+    // gopRemainingBipredictive -> Field -> uint32_t
+    os << YAML::Value << t.gopRemainingBipredictive;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1RateControlInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkVideoEncodeAV1RateControlFlagsKHR
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "gopFrameCount";
+    // gopFrameCount -> Field -> uint32_t
+    os << YAML::Value << t.gopFrameCount;
+    os << YAML::Key << "keyFramePeriod";
+    // keyFramePeriod -> Field -> uint32_t
+    os << YAML::Value << t.keyFramePeriod;
+    os << YAML::Key << "consecutiveBipredictiveFrameCount";
+    // consecutiveBipredictiveFrameCount -> Field -> uint32_t
+    os << YAML::Value << t.consecutiveBipredictiveFrameCount;
+    os << YAML::Key << "temporalLayerCount";
+    // temporalLayerCount -> Field -> uint32_t
+    os << YAML::Value << t.temporalLayerCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1RateControlLayerInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "useMinQIndex";
+    // useMinQIndex -> Field -> VkBool32
+    os << YAML::Value << t.useMinQIndex;
+    os << YAML::Key << "minQIndex";
+    // minQIndex -> Field -> VkVideoEncodeAV1QIndexKHR
+    os << YAML::Value << t.minQIndex;
+    os << YAML::Key << "useMaxQIndex";
+    // useMaxQIndex -> Field -> VkBool32
+    os << YAML::Value << t.useMaxQIndex;
+    os << YAML::Key << "maxQIndex";
+    // maxQIndex -> Field -> VkVideoEncodeAV1QIndexKHR
+    os << YAML::Value << t.maxQIndex;
+    os << YAML::Key << "useMaxFrameSize";
+    // useMaxFrameSize -> Field -> VkBool32
+    os << YAML::Value << t.useMaxFrameSize;
+    os << YAML::Key << "maxFrameSize";
+    // maxFrameSize -> Field -> VkVideoEncodeAV1FrameSizeKHR
+    os << YAML::Value << t.maxFrameSize;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoMaintenance1FeaturesKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -14995,6 +15404,188 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindDescriptorBufferEmbedde
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeQuantizationMapCapabilitiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxQuantizationMapExtent";
+    // maxQuantizationMapExtent -> Field -> VkExtent2D
+    os << YAML::Value << t.maxQuantizationMapExtent;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoFormatQuantizationMapPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "quantizationMapTexelSize";
+    // quantizationMapTexelSize -> Field -> VkExtent2D
+    os << YAML::Value << t.quantizationMapTexelSize;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeQuantizationMapInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "quantizationMap";
+    // quantizationMap -> Field -> VkImageView
+    os << YAML::Value << t.quantizationMap;
+    os << YAML::Key << "quantizationMapExtent";
+    // quantizationMapExtent -> Field -> VkExtent2D
+    os << YAML::Value << t.quantizationMapExtent;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeQuantizationMapSessionParametersCreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "quantizationMapTexelSize";
+    // quantizationMapTexelSize -> Field -> VkExtent2D
+    os << YAML::Value << t.quantizationMapTexelSize;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "videoEncodeQuantizationMap";
+    // videoEncodeQuantizationMap -> Field -> VkBool32
+    os << YAML::Value << t.videoEncodeQuantizationMap;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH264QuantizationMapCapabilitiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "minQpDelta";
+    // minQpDelta -> Field -> int32_t
+    os << YAML::Value << t.minQpDelta;
+    os << YAML::Key << "maxQpDelta";
+    // maxQpDelta -> Field -> int32_t
+    os << YAML::Value << t.maxQpDelta;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265QuantizationMapCapabilitiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "minQpDelta";
+    // minQpDelta -> Field -> int32_t
+    os << YAML::Value << t.minQpDelta;
+    os << YAML::Key << "maxQpDelta";
+    // maxQpDelta -> Field -> int32_t
+    os << YAML::Value << t.maxQpDelta;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoFormatH265QuantizationMapPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "compatibleCtbSizes";
+    // compatibleCtbSizes -> Field -> VkVideoEncodeH265CtbSizeFlagsKHR
+    os << YAML::Value << t.compatibleCtbSizes;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1QuantizationMapCapabilitiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "minQIndexDelta";
+    // minQIndexDelta -> Field -> int32_t
+    os << YAML::Value << t.minQIndexDelta;
+    os << YAML::Key << "maxQIndexDelta";
+    // maxQIndexDelta -> Field -> int32_t
+    os << YAML::Value << t.maxQIndexDelta;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoFormatAV1QuantizationMapPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "compatibleSuperblockSizes";
+    // compatibleSuperblockSizes -> Field -> VkVideoEncodeAV1SuperblockSizeFlagsKHR
+    os << YAML::Value << t.compatibleSuperblockSizes;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -15442,6 +16033,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuModuleCreateInfoNVX &t) {
         }
         os << YAML::EndSeq;
     }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCuModuleTexturingModeCreateInfoNVX &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "use64bitTexturing";
+    // use64bitTexturing -> Field -> VkBool32
+    os << YAML::Value << t.use64bitTexturing;
     os << YAML::EndMap;
     return os;
 }
@@ -27845,6 +28453,40 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorPoo
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplaySurfaceStereoCreateInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "stereoType";
+    // stereoType -> Field -> VkDisplaySurfaceStereoTypeNV
+    os << YAML::Value << t.stereoType;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayModeStereoPropertiesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "hdmi3DSupported";
+    // hdmi3DSupported -> Field -> VkBool32
+    os << YAML::Value << t.hdmi3DSupported;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRawAccessChainsFeaturesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -28741,6 +29383,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMa
     os << YAML::Key << "cooperativeMatrixWorkgroupScopeReservedSharedMemory";
     // cooperativeMatrixWorkgroupScopeReservedSharedMemory -> Field -> uint32_t
     os << YAML::Value << t.cooperativeMatrixWorkgroupScopeReservedSharedMemory;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "vertexAttributeRobustness";
+    // vertexAttributeRobustness -> Field -> VkBool32
+    os << YAML::Value << t.vertexAttributeRobustness;
     os << YAML::EndMap;
     return os;
 }
@@ -30955,6 +31614,39 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_DPB_SLOT_INFO_KHR:
             os << *reinterpret_cast<const VkVideoDecodeAV1DpbSlotInfoKHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_AV1_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceVideoEncodeAV1FeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_CAPABILITIES_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1CapabilitiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUALITY_LEVEL_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1QualityLevelPropertiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_SESSION_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1SessionCreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1SessionParametersCreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PICTURE_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1PictureInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_DPB_SLOT_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1DpbSlotInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PROFILE_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1ProfileInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_GOP_REMAINING_FRAME_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1GopRemainingFrameInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_RATE_CONTROL_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1RateControlInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_RATE_CONTROL_LAYER_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1RateControlLayerInfoKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_1_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceVideoMaintenance1FeaturesKHR *>(pStruct);
             break;
@@ -31018,6 +31710,36 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_BUFFER_EMBEDDED_SAMPLERS_INFO_EXT:
             os << *reinterpret_cast<const VkBindDescriptorBufferEmbeddedSamplersInfoEXT *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeQuantizationMapCapabilitiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkVideoFormatQuantizationMapPropertiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeQuantizationMapInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_SESSION_PARAMETERS_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeQuantizationMapSessionParametersCreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_QUANTIZATION_MAP_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeH264QuantizationMapCapabilitiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeH265QuantizationMapCapabilitiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkVideoFormatH265QuantizationMapPropertiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeAV1QuantizationMapCapabilitiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkVideoFormatAV1QuantizationMapPropertiesKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_RELAXED_EXTENDED_INSTRUCTION_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR *>(pStruct);
             break;
@@ -31071,6 +31793,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_CU_MODULE_CREATE_INFO_NVX:
             os << *reinterpret_cast<const VkCuModuleCreateInfoNVX *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_CU_MODULE_TEXTURING_MODE_CREATE_INFO_NVX:
+            os << *reinterpret_cast<const VkCuModuleTexturingModeCreateInfoNVX *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_CU_FUNCTION_CREATE_INFO_NVX:
             os << *reinterpret_cast<const VkCuFunctionCreateInfoNVX *>(pStruct);
@@ -32543,6 +33268,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_DISPLAY_SURFACE_STEREO_CREATE_INFO_NV:
+            os << *reinterpret_cast<const VkDisplaySurfaceStereoCreateInfoNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_DISPLAY_MODE_STEREO_PROPERTIES_NV:
+            os << *reinterpret_cast<const VkDisplayModeStereoPropertiesNV *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAW_ACCESS_CHAINS_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceRawAccessChainsFeaturesNV *>(pStruct);
             break;
@@ -32629,6 +33360,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_PROPERTIES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrix2PropertiesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);
