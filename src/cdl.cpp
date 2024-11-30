@@ -849,7 +849,7 @@ VkResult Context::PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physic
         }
         extensions_of_interest_present_[physicalDevice] = std::move(extensions_present);
     }
-    return VK_SUCCESS;
+    return result;
 }
 
 VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
