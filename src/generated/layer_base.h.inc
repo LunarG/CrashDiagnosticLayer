@@ -676,6 +676,68 @@ virtual void PreCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBo
 
 virtual void PostCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) {}
 
+virtual void PreCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                  uint16_t lineStipplePattern) {}
+
+virtual void PostCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                   uint16_t lineStipplePattern) {}
+
+virtual void PreCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
+                                    VkDeviceSize size, VkIndexType indexType) {}
+
+virtual void PostCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
+                                     VkDeviceSize size, VkIndexType indexType) {}
+
+virtual void PreCmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                     VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
+                                     const VkWriteDescriptorSet* pDescriptorWrites) {}
+
+virtual void PostCmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                      VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
+                                      const VkWriteDescriptorSet* pDescriptorWrites) {}
+
+virtual void PreCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
+                                                 VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+                                                 VkPipelineLayout layout, uint32_t set, const void* pData) {}
+
+virtual void PostCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
+                                                  VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+                                                  VkPipelineLayout layout, uint32_t set, const void* pData) {}
+
+virtual void PreCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                                   const VkRenderingAttachmentLocationInfo* pLocationInfo) {}
+
+virtual void PostCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                                    const VkRenderingAttachmentLocationInfo* pLocationInfo) {}
+
+virtual void PreCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {}
+
+virtual void PostCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {}
+
+virtual void PreCmdBindDescriptorSets2(VkCommandBuffer commandBuffer,
+                                       const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {}
+
+virtual void PostCmdBindDescriptorSets2(VkCommandBuffer commandBuffer,
+                                        const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {}
+
+virtual void PreCmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {}
+
+virtual void PostCmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {}
+
+virtual void PreCmdPushDescriptorSet2(VkCommandBuffer commandBuffer,
+                                      const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {}
+
+virtual void PostCmdPushDescriptorSet2(VkCommandBuffer commandBuffer,
+                                       const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {}
+
+virtual void PreCmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {}
+
+virtual void PostCmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {}
+
 virtual VkResult PreAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
                                         VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) {
     return VK_SUCCESS;
@@ -809,16 +871,16 @@ virtual void PostCmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, con
                                               const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {}
 
 virtual void PreCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
-                                                      const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {}
+                                                      const VkRenderingAttachmentLocationInfo* pLocationInfo) {}
 
 virtual void PostCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
-                                                       const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {}
+                                                       const VkRenderingAttachmentLocationInfo* pLocationInfo) {}
 
 virtual void PreCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {}
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {}
 
 virtual void PostCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {}
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {}
 
 virtual void PreCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) {}
 
@@ -897,27 +959,26 @@ virtual void PostCmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t li
                                       uint16_t lineStipplePattern) {}
 
 virtual void PreCmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
-                                          const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) {}
+                                          const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {}
 
 virtual void PostCmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
-                                           const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) {}
+                                           const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {}
 
-virtual void PreCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfoKHR* pPushConstantsInfo) {}
+virtual void PreCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {}
 
-virtual void PostCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfoKHR* pPushConstantsInfo) {
-}
+virtual void PostCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {}
 
 virtual void PreCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                         const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {}
+                                         const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {}
 
 virtual void PostCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                          const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {}
+                                          const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {}
 
 virtual void PreCmdPushDescriptorSetWithTemplate2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {}
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {}
 
 virtual void PostCmdPushDescriptorSetWithTemplate2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {}
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {}
 
 virtual void PreCmdSetDescriptorBufferOffsets2EXT(
     VkCommandBuffer commandBuffer, const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo) {}

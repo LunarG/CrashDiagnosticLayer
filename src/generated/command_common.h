@@ -120,6 +120,16 @@ struct Command {
         kCmdSetRasterizerDiscardEnable,
         kCmdSetDepthBiasEnable,
         kCmdSetPrimitiveRestartEnable,
+        kCmdSetLineStipple,
+        kCmdBindIndexBuffer2,
+        kCmdPushDescriptorSet,
+        kCmdPushDescriptorSetWithTemplate,
+        kCmdSetRenderingAttachmentLocations,
+        kCmdSetRenderingInputAttachmentIndices,
+        kCmdBindDescriptorSets2,
+        kCmdPushConstants2,
+        kCmdPushDescriptorSet2,
+        kCmdPushDescriptorSetWithTemplate2,
         kCmdBeginVideoCodingKHR,
         kCmdEndVideoCodingKHR,
         kCmdControlVideoCodingKHR,
@@ -879,6 +889,67 @@ struct CmdSetPrimitiveRestartEnableArgs {
     VkBool32 primitiveRestartEnable;
 };
 
+struct CmdSetLineStippleArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t lineStippleFactor;
+    uint16_t lineStipplePattern;
+};
+
+struct CmdBindIndexBuffer2Args {
+    VkCommandBuffer commandBuffer;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+    VkDeviceSize size;
+    VkIndexType indexType;
+};
+
+struct CmdPushDescriptorSetArgs {
+    VkCommandBuffer commandBuffer;
+    VkPipelineBindPoint pipelineBindPoint;
+    VkPipelineLayout layout;
+    uint32_t set;
+    uint32_t descriptorWriteCount;
+    const VkWriteDescriptorSet* pDescriptorWrites;
+};
+
+struct CmdPushDescriptorSetWithTemplateArgs {
+    VkCommandBuffer commandBuffer;
+    VkDescriptorUpdateTemplate descriptorUpdateTemplate;
+    VkPipelineLayout layout;
+    uint32_t set;
+    const void* pData;
+};
+
+struct CmdSetRenderingAttachmentLocationsArgs {
+    VkCommandBuffer commandBuffer;
+    const VkRenderingAttachmentLocationInfo* pLocationInfo;
+};
+
+struct CmdSetRenderingInputAttachmentIndicesArgs {
+    VkCommandBuffer commandBuffer;
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo;
+};
+
+struct CmdBindDescriptorSets2Args {
+    VkCommandBuffer commandBuffer;
+    const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo;
+};
+
+struct CmdPushConstants2Args {
+    VkCommandBuffer commandBuffer;
+    const VkPushConstantsInfo* pPushConstantsInfo;
+};
+
+struct CmdPushDescriptorSet2Args {
+    VkCommandBuffer commandBuffer;
+    const VkPushDescriptorSetInfo* pPushDescriptorSetInfo;
+};
+
+struct CmdPushDescriptorSetWithTemplate2Args {
+    VkCommandBuffer commandBuffer;
+    const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo;
+};
+
 struct CmdBeginVideoCodingKHRArgs {
     VkCommandBuffer commandBuffer;
     const VkVideoBeginCodingInfoKHR* pBeginInfo;
@@ -985,12 +1056,12 @@ struct CmdSetFragmentShadingRateKHRArgs {
 
 struct CmdSetRenderingAttachmentLocationsKHRArgs {
     VkCommandBuffer commandBuffer;
-    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo;
+    const VkRenderingAttachmentLocationInfo* pLocationInfo;
 };
 
 struct CmdSetRenderingInputAttachmentIndicesKHRArgs {
     VkCommandBuffer commandBuffer;
-    const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo;
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo;
 };
 
 struct CmdEncodeVideoKHRArgs {
@@ -1080,22 +1151,22 @@ struct CmdSetLineStippleKHRArgs {
 
 struct CmdBindDescriptorSets2KHRArgs {
     VkCommandBuffer commandBuffer;
-    const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo;
+    const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo;
 };
 
 struct CmdPushConstants2KHRArgs {
     VkCommandBuffer commandBuffer;
-    const VkPushConstantsInfoKHR* pPushConstantsInfo;
+    const VkPushConstantsInfo* pPushConstantsInfo;
 };
 
 struct CmdPushDescriptorSet2KHRArgs {
     VkCommandBuffer commandBuffer;
-    const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo;
+    const VkPushDescriptorSetInfo* pPushDescriptorSetInfo;
 };
 
 struct CmdPushDescriptorSetWithTemplate2KHRArgs {
     VkCommandBuffer commandBuffer;
-    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo;
+    const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo;
 };
 
 struct CmdSetDescriptorBufferOffsets2EXTArgs {

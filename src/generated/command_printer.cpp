@@ -1466,6 +1466,139 @@ void CommandPrinter::PrintCmdSetPrimitiveRestartEnableArgs(YAML::Emitter &os,
     os << YAML::Value << args.primitiveRestartEnable;
 }
 
+void CommandPrinter::PrintCmdSetLineStippleArgs(YAML::Emitter &os, const CmdSetLineStippleArgs &args) {
+    os << YAML::Key << "lineStippleFactor";
+    // lineStippleFactor -> Field -> uint32_t
+    os << YAML::Value << args.lineStippleFactor;
+    os << YAML::Key << "lineStipplePattern";
+    // lineStipplePattern -> Field -> uint16_t
+    os << YAML::Value << args.lineStipplePattern;
+}
+
+void CommandPrinter::PrintCmdBindIndexBuffer2Args(YAML::Emitter &os, const CmdBindIndexBuffer2Args &args) {
+    os << YAML::Key << "buffer";
+    // buffer -> Field -> VkBuffer
+    os << YAML::Value << args.buffer;
+    os << YAML::Key << "offset";
+    // offset -> Field -> VkDeviceSize
+    os << YAML::Value << args.offset;
+    os << YAML::Key << "size";
+    // size -> Field -> VkDeviceSize
+    os << YAML::Value << args.size;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> VkIndexType
+    os << YAML::Value << args.indexType;
+}
+
+void CommandPrinter::PrintCmdPushDescriptorSetArgs(YAML::Emitter &os, const CmdPushDescriptorSetArgs &args) {
+    os << YAML::Key << "pipelineBindPoint";
+    // pipelineBindPoint -> Field -> VkPipelineBindPoint
+    os << YAML::Value << args.pipelineBindPoint;
+    os << YAML::Key << "layout";
+    // layout -> Field -> VkPipelineLayout
+    os << YAML::Value << args.layout;
+    os << YAML::Key << "set";
+    // set -> Field -> uint32_t
+    os << YAML::Value << args.set;
+    os << YAML::Key << "descriptorWriteCount";
+    // descriptorWriteCount -> Field -> uint32_t
+    os << YAML::Value << args.descriptorWriteCount;
+    os << YAML::Key << "pDescriptorWrites";
+    // pDescriptorWrites -> Field -> ConstDynamicArray(VkWriteDescriptorSet)
+    if (args.descriptorWriteCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkWriteDescriptorSet");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.descriptorWriteCount); ++i) {
+                os << args.pDescriptorWrites[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdPushDescriptorSetWithTemplateArgs(YAML::Emitter &os,
+                                                               const CmdPushDescriptorSetWithTemplateArgs &args) {
+    os << YAML::Key << "descriptorUpdateTemplate";
+    // descriptorUpdateTemplate -> Field -> VkDescriptorUpdateTemplate
+    os << YAML::Value << args.descriptorUpdateTemplate;
+    os << YAML::Key << "layout";
+    // layout -> Field -> VkPipelineLayout
+    os << YAML::Value << args.layout;
+    os << YAML::Key << "set";
+    // set -> Field -> uint32_t
+    os << YAML::Value << args.set;
+    os << YAML::Key << "pData";
+    // void
+    os << YAML::Value << "NOT_AVAILABLE";
+}
+
+void CommandPrinter::PrintCmdSetRenderingAttachmentLocationsArgs(YAML::Emitter &os,
+                                                                 const CmdSetRenderingAttachmentLocationsArgs &args) {
+    os << YAML::Key << "pLocationInfo";
+    // pointer
+    if (args.pLocationInfo != nullptr) {
+        os << YAML::Value << *args.pLocationInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdSetRenderingInputAttachmentIndicesArgs(
+    YAML::Emitter &os, const CmdSetRenderingInputAttachmentIndicesArgs &args) {
+    os << YAML::Key << "pInputAttachmentIndexInfo";
+    // pointer
+    if (args.pInputAttachmentIndexInfo != nullptr) {
+        os << YAML::Value << *args.pInputAttachmentIndexInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdBindDescriptorSets2Args(YAML::Emitter &os, const CmdBindDescriptorSets2Args &args) {
+    os << YAML::Key << "pBindDescriptorSetsInfo";
+    // pointer
+    if (args.pBindDescriptorSetsInfo != nullptr) {
+        os << YAML::Value << *args.pBindDescriptorSetsInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdPushConstants2Args(YAML::Emitter &os, const CmdPushConstants2Args &args) {
+    os << YAML::Key << "pPushConstantsInfo";
+    // pointer
+    if (args.pPushConstantsInfo != nullptr) {
+        os << YAML::Value << *args.pPushConstantsInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdPushDescriptorSet2Args(YAML::Emitter &os, const CmdPushDescriptorSet2Args &args) {
+    os << YAML::Key << "pPushDescriptorSetInfo";
+    // pointer
+    if (args.pPushDescriptorSetInfo != nullptr) {
+        os << YAML::Value << *args.pPushDescriptorSetInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdPushDescriptorSetWithTemplate2Args(YAML::Emitter &os,
+                                                                const CmdPushDescriptorSetWithTemplate2Args &args) {
+    os << YAML::Key << "pPushDescriptorSetWithTemplateInfo";
+    // pointer
+    if (args.pPushDescriptorSetWithTemplateInfo != nullptr) {
+        os << YAML::Value << *args.pPushDescriptorSetWithTemplateInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdBeginVideoCodingKHRArgs(YAML::Emitter &os, const CmdBeginVideoCodingKHRArgs &args) {
     os << YAML::Key << "pBeginInfo";
     // pointer
@@ -4766,6 +4899,76 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdSetPrimitiveRestartEnableArgs *>(cmd.parameters);
                 PrintCmdSetPrimitiveRestartEnableArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLineStipple:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLineStippleArgs *>(cmd.parameters);
+                PrintCmdSetLineStippleArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindIndexBuffer2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindIndexBuffer2Args *>(cmd.parameters);
+                PrintCmdBindIndexBuffer2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDescriptorSet:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDescriptorSetArgs *>(cmd.parameters);
+                PrintCmdPushDescriptorSetArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDescriptorSetWithTemplate:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDescriptorSetWithTemplateArgs *>(cmd.parameters);
+                PrintCmdPushDescriptorSetWithTemplateArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRenderingAttachmentLocations:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRenderingAttachmentLocationsArgs *>(cmd.parameters);
+                PrintCmdSetRenderingAttachmentLocationsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRenderingInputAttachmentIndices:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRenderingInputAttachmentIndicesArgs *>(cmd.parameters);
+                PrintCmdSetRenderingInputAttachmentIndicesArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindDescriptorSets2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindDescriptorSets2Args *>(cmd.parameters);
+                PrintCmdBindDescriptorSets2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushConstants2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushConstants2Args *>(cmd.parameters);
+                PrintCmdPushConstants2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDescriptorSet2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDescriptorSet2Args *>(cmd.parameters);
+                PrintCmdPushDescriptorSet2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDescriptorSetWithTemplate2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDescriptorSetWithTemplate2Args *>(cmd.parameters);
+                PrintCmdPushDescriptorSetWithTemplate2Args(os, *args);
             }
             break;
 

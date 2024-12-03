@@ -685,6 +685,26 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSemaphoreType &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRobustnessBufferBehavior &t) {
+    os << string_VkPipelineRobustnessBufferBehavior(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRobustnessImageBehavior &t) {
+    os << string_VkPipelineRobustnessImageBehavior(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueGlobalPriority &t) {
+    os << string_VkQueueGlobalPriority(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkLineRasterizationMode &t) {
+    os << string_VkLineRasterizationMode(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentModeKHR &t) {
     os << string_VkPresentModeKHR(t);
     return os;
@@ -712,11 +732,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceCounterScopeKHR 
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceCounterStorageKHR &t) {
     os << string_VkPerformanceCounterStorageKHR(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueGlobalPriorityKHR &t) {
-    os << string_VkQueueGlobalPriorityKHR(t);
     return os;
 }
 
@@ -755,11 +770,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1RateControlGr
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkLineRasterizationModeKHR &t) {
-    os << string_VkLineRasterizationModeKHR(t);
-    return os;
-}
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTimeDomainKHR &t) {
     os << string_VkTimeDomainKHR(t);
     return os;
@@ -787,16 +797,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderInfoTypeAMD &t) {
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkValidationCheckEXT &t) {
     os << string_VkValidationCheckEXT(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRobustnessBufferBehaviorEXT &t) {
-    os << string_VkPipelineRobustnessBufferBehaviorEXT(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRobustnessImageBehaviorEXT &t) {
-    os << string_VkPipelineRobustnessImageBehaviorEXT(t);
     return os;
 }
 

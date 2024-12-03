@@ -199,6 +199,26 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdSetDepthBiasEnable";
         case Command::Type::kCmdSetPrimitiveRestartEnable:
             return "vkCmdSetPrimitiveRestartEnable";
+        case Command::Type::kCmdSetLineStipple:
+            return "vkCmdSetLineStipple";
+        case Command::Type::kCmdBindIndexBuffer2:
+            return "vkCmdBindIndexBuffer2";
+        case Command::Type::kCmdPushDescriptorSet:
+            return "vkCmdPushDescriptorSet";
+        case Command::Type::kCmdPushDescriptorSetWithTemplate:
+            return "vkCmdPushDescriptorSetWithTemplate";
+        case Command::Type::kCmdSetRenderingAttachmentLocations:
+            return "vkCmdSetRenderingAttachmentLocations";
+        case Command::Type::kCmdSetRenderingInputAttachmentIndices:
+            return "vkCmdSetRenderingInputAttachmentIndices";
+        case Command::Type::kCmdBindDescriptorSets2:
+            return "vkCmdBindDescriptorSets2";
+        case Command::Type::kCmdPushConstants2:
+            return "vkCmdPushConstants2";
+        case Command::Type::kCmdPushDescriptorSet2:
+            return "vkCmdPushDescriptorSet2";
+        case Command::Type::kCmdPushDescriptorSetWithTemplate2:
+            return "vkCmdPushDescriptorSetWithTemplate2";
         case Command::Type::kCmdBeginVideoCodingKHR:
             return "vkCmdBeginVideoCodingKHR";
         case Command::Type::kCmdEndVideoCodingKHR:
