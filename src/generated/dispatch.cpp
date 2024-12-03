@@ -473,6 +473,30 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
         (PFN_vkGetDeviceImageMemoryRequirements)pa(device, "vkGetDeviceImageMemoryRequirements");
     dt->GetDeviceImageSparseMemoryRequirements =
         (PFN_vkGetDeviceImageSparseMemoryRequirements)pa(device, "vkGetDeviceImageSparseMemoryRequirements");
+    dt->CmdSetLineStipple = (PFN_vkCmdSetLineStipple)pa(device, "vkCmdSetLineStipple");
+    dt->MapMemory2 = (PFN_vkMapMemory2)pa(device, "vkMapMemory2");
+    dt->UnmapMemory2 = (PFN_vkUnmapMemory2)pa(device, "vkUnmapMemory2");
+    dt->CmdBindIndexBuffer2 = (PFN_vkCmdBindIndexBuffer2)pa(device, "vkCmdBindIndexBuffer2");
+    dt->GetRenderingAreaGranularity = (PFN_vkGetRenderingAreaGranularity)pa(device, "vkGetRenderingAreaGranularity");
+    dt->GetDeviceImageSubresourceLayout =
+        (PFN_vkGetDeviceImageSubresourceLayout)pa(device, "vkGetDeviceImageSubresourceLayout");
+    dt->GetImageSubresourceLayout2 = (PFN_vkGetImageSubresourceLayout2)pa(device, "vkGetImageSubresourceLayout2");
+    dt->CmdPushDescriptorSet = (PFN_vkCmdPushDescriptorSet)pa(device, "vkCmdPushDescriptorSet");
+    dt->CmdPushDescriptorSetWithTemplate =
+        (PFN_vkCmdPushDescriptorSetWithTemplate)pa(device, "vkCmdPushDescriptorSetWithTemplate");
+    dt->CmdSetRenderingAttachmentLocations =
+        (PFN_vkCmdSetRenderingAttachmentLocations)pa(device, "vkCmdSetRenderingAttachmentLocations");
+    dt->CmdSetRenderingInputAttachmentIndices =
+        (PFN_vkCmdSetRenderingInputAttachmentIndices)pa(device, "vkCmdSetRenderingInputAttachmentIndices");
+    dt->CmdBindDescriptorSets2 = (PFN_vkCmdBindDescriptorSets2)pa(device, "vkCmdBindDescriptorSets2");
+    dt->CmdPushConstants2 = (PFN_vkCmdPushConstants2)pa(device, "vkCmdPushConstants2");
+    dt->CmdPushDescriptorSet2 = (PFN_vkCmdPushDescriptorSet2)pa(device, "vkCmdPushDescriptorSet2");
+    dt->CmdPushDescriptorSetWithTemplate2 =
+        (PFN_vkCmdPushDescriptorSetWithTemplate2)pa(device, "vkCmdPushDescriptorSetWithTemplate2");
+    dt->CopyMemoryToImage = (PFN_vkCopyMemoryToImage)pa(device, "vkCopyMemoryToImage");
+    dt->CopyImageToMemory = (PFN_vkCopyImageToMemory)pa(device, "vkCopyImageToMemory");
+    dt->CopyImageToImage = (PFN_vkCopyImageToImage)pa(device, "vkCopyImageToImage");
+    dt->TransitionImageLayout = (PFN_vkTransitionImageLayout)pa(device, "vkTransitionImageLayout");
     dt->CreateSwapchainKHR = (PFN_vkCreateSwapchainKHR)pa(device, "vkCreateSwapchainKHR");
     dt->DestroySwapchainKHR = (PFN_vkDestroySwapchainKHR)pa(device, "vkDestroySwapchainKHR");
     dt->GetSwapchainImagesKHR = (PFN_vkGetSwapchainImagesKHR)pa(device, "vkGetSwapchainImagesKHR");

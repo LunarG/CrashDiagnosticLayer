@@ -255,6 +255,34 @@ class CommandTracker {
 
     void CmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable);
 
+    void CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
+
+    void CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,
+                             VkIndexType indexType);
+
+    void CmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                              VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
+                              const VkWriteDescriptorSet* pDescriptorWrites);
+
+    void CmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
+                                          VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
+                                          uint32_t set, const void* pData);
+
+    void CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                            const VkRenderingAttachmentLocationInfo* pLocationInfo);
+
+    void CmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer,
+                                               const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
+
+    void CmdBindDescriptorSets2(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
+
+    void CmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo);
+
+    void CmdPushDescriptorSet2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo);
+
+    void CmdPushDescriptorSetWithTemplate2(
+        VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
+
     void CmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoBeginCodingInfoKHR* pBeginInfo);
 
     void CmdEndVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoEndCodingInfoKHR* pEndCodingInfo);
@@ -300,10 +328,10 @@ class CommandTracker {
                                       const VkFragmentShadingRateCombinerOpKHR combinerOps[2]);
 
     void CmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
-                                               const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
+                                               const VkRenderingAttachmentLocationInfo* pLocationInfo);
 
-    void CmdSetRenderingInputAttachmentIndicesKHR(
-        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo);
+    void CmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer,
+                                                  const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
 
     void CmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo);
 
@@ -341,16 +369,14 @@ class CommandTracker {
     void CmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
 
     void CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
-                                   const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo);
+                                   const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
 
-    void CmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfoKHR* pPushConstantsInfo);
+    void CmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo);
 
-    void CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                  const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo);
+    void CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo);
 
     void CmdPushDescriptorSetWithTemplate2KHR(
-        VkCommandBuffer commandBuffer,
-        const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo);
+        VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
 
     void CmdSetDescriptorBufferOffsets2EXT(VkCommandBuffer commandBuffer,
                                            const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo);

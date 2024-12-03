@@ -867,6 +867,110 @@ void CommandTracker::CmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer,
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                       uint16_t lineStipplePattern) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetLineStipple;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
+                                         VkDeviceSize size, VkIndexType indexType) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindIndexBuffer2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                          VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
+                                          const VkWriteDescriptorSet* pDescriptorWrites) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPushDescriptorSet;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdPushDescriptorSet(commandBuffer, pipelineBindPoint, layout, set,
+                                                          descriptorWriteCount, pDescriptorWrites);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
+                                                      VkDescriptorUpdateTemplate descriptorUpdateTemplate,
+                                                      VkPipelineLayout layout, uint32_t set, const void* pData) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPushDescriptorSetWithTemplate;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                                        const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetRenderingAttachmentLocations;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetRenderingInputAttachmentIndices;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBindDescriptorSets2(VkCommandBuffer commandBuffer,
+                                            const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindDescriptorSets2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBindDescriptorSets2(commandBuffer, pBindDescriptorSetsInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPushConstants2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdPushConstants2(commandBuffer, pPushConstantsInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPushDescriptorSet2(VkCommandBuffer commandBuffer,
+                                           const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPushDescriptorSet2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdPushDescriptorSet2(commandBuffer, pPushDescriptorSetInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPushDescriptorSetWithTemplate2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
                                             const VkVideoBeginCodingInfoKHR* pBeginInfo) {
     Command cmd{};
@@ -1034,7 +1138,7 @@ void CommandTracker::CmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer,
 }
 
 void CommandTracker::CmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
-                                                           const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+                                                           const VkRenderingAttachmentLocationInfo* pLocationInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRenderingAttachmentLocationsKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
@@ -1044,7 +1148,7 @@ void CommandTracker::CmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer comma
 }
 
 void CommandTracker::CmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdSetRenderingInputAttachmentIndicesKHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
@@ -1196,7 +1300,7 @@ void CommandTracker::CmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_
 }
 
 void CommandTracker::CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
-                                               const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) {
+                                               const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdBindDescriptorSets2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
@@ -1206,7 +1310,7 @@ void CommandTracker::CmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
 }
 
 void CommandTracker::CmdPushConstants2KHR(VkCommandBuffer commandBuffer,
-                                          const VkPushConstantsInfoKHR* pPushConstantsInfo) {
+                                          const VkPushConstantsInfo* pPushConstantsInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdPushConstants2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
@@ -1216,7 +1320,7 @@ void CommandTracker::CmdPushConstants2KHR(VkCommandBuffer commandBuffer,
 }
 
 void CommandTracker::CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                              const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {
+                                              const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdPushDescriptorSet2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
@@ -1226,7 +1330,7 @@ void CommandTracker::CmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
 }
 
 void CommandTracker::CmdPushDescriptorSetWithTemplate2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdPushDescriptorSetWithTemplate2KHR;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;

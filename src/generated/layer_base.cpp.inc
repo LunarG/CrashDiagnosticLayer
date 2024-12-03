@@ -1521,6 +1521,145 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartEnable(VkComman
     layer_data->interceptor->PostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                                             uint16_t lineStipplePattern) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+
+    PFN_vkCmdSetLineStipple pfn = layer_data->dispatch_table.CmdSetLineStipple;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, lineStippleFactor, lineStipplePattern);
+    }
+
+    layer_data->interceptor->PostCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                               VkDeviceSize offset, VkDeviceSize size,
+                                                               VkIndexType indexType) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+
+    PFN_vkCmdBindIndexBuffer2 pfn = layer_data->dispatch_table.CmdBindIndexBuffer2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, buffer, offset, size, indexType);
+    }
+
+    layer_data->interceptor->PostCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSet(VkCommandBuffer commandBuffer,
+                                                                VkPipelineBindPoint pipelineBindPoint,
+                                                                VkPipelineLayout layout, uint32_t set,
+                                                                uint32_t descriptorWriteCount,
+                                                                const VkWriteDescriptorSet* pDescriptorWrites) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdPushDescriptorSet(commandBuffer, pipelineBindPoint, layout, set,
+                                                     descriptorWriteCount, pDescriptorWrites);
+
+    PFN_vkCmdPushDescriptorSet pfn = layer_data->dispatch_table.CmdPushDescriptorSet;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
+    }
+
+    layer_data->interceptor->PostCmdPushDescriptorSet(commandBuffer, pipelineBindPoint, layout, set,
+                                                      descriptorWriteCount, pDescriptorWrites);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplate(
+    VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
+    uint32_t set, const void* pData) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set,
+                                                                 pData);
+
+    PFN_vkCmdPushDescriptorSetWithTemplate pfn = layer_data->dispatch_table.CmdPushDescriptorSetWithTemplate;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
+    }
+
+    layer_data->interceptor->PostCmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set,
+                                                                  pData);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingAttachmentLocations(
+    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+
+    PFN_vkCmdSetRenderingAttachmentLocations pfn = layer_data->dispatch_table.CmdSetRenderingAttachmentLocations;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pLocationInfo);
+    }
+
+    layer_data->interceptor->PostCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
+
+    PFN_vkCmdSetRenderingInputAttachmentIndices pfn = layer_data->dispatch_table.CmdSetRenderingInputAttachmentIndices;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pInputAttachmentIndexInfo);
+    }
+
+    layer_data->interceptor->PostCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets2(
+    VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBindDescriptorSets2(commandBuffer, pBindDescriptorSetsInfo);
+
+    PFN_vkCmdBindDescriptorSets2 pfn = layer_data->dispatch_table.CmdBindDescriptorSets2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pBindDescriptorSetsInfo);
+    }
+
+    layer_data->interceptor->PostCmdBindDescriptorSets2(commandBuffer, pBindDescriptorSetsInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants2(VkCommandBuffer commandBuffer,
+                                                             const VkPushConstantsInfo* pPushConstantsInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdPushConstants2(commandBuffer, pPushConstantsInfo);
+
+    PFN_vkCmdPushConstants2 pfn = layer_data->dispatch_table.CmdPushConstants2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pPushConstantsInfo);
+    }
+
+    layer_data->interceptor->PostCmdPushConstants2(commandBuffer, pPushConstantsInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdPushDescriptorSet2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdPushDescriptorSet2(commandBuffer, pPushDescriptorSetInfo);
+
+    PFN_vkCmdPushDescriptorSet2 pfn = layer_data->dispatch_table.CmdPushDescriptorSet2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pPushDescriptorSetInfo);
+    }
+
+    layer_data->interceptor->PostCmdPushDescriptorSet2(commandBuffer, pPushDescriptorSetInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+
+    PFN_vkCmdPushDescriptorSetWithTemplate2 pfn = layer_data->dispatch_table.CmdPushDescriptorSetWithTemplate2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+    }
+
+    layer_data->interceptor->PostCmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+
 static VKAPI_ATTR VkResult VKAPI_CALL InterceptAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain,
                                                                    uint64_t timeout, VkSemaphore semaphore,
                                                                    VkFence fence, uint32_t* pImageIndex) {
@@ -1833,7 +1972,7 @@ InterceptCmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExt
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingAttachmentLocationsKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
 
@@ -1846,7 +1985,7 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingAttachmentLocationsKHR
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 
@@ -2059,7 +2198,7 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStippleKHR(VkCommandBuffer 
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets2KHR(
-    VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) {
+    VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
 
@@ -2072,7 +2211,7 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets2KHR(
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants2KHR(VkCommandBuffer commandBuffer,
-                                                                const VkPushConstantsInfoKHR* pPushConstantsInfo) {
+                                                                const VkPushConstantsInfo* pPushConstantsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
 
@@ -2085,7 +2224,7 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants2KHR(VkCommandBuffer 
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSet2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
 
@@ -2098,7 +2237,7 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSet2KHR(
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplate2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 
@@ -4373,6 +4512,17 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdSetRasterizerDiscardEnable", {kFuncTypeDev, (void*)InterceptCmdSetRasterizerDiscardEnable}},
         {"vkCmdSetDepthBiasEnable", {kFuncTypeDev, (void*)InterceptCmdSetDepthBiasEnable}},
         {"vkCmdSetPrimitiveRestartEnable", {kFuncTypeDev, (void*)InterceptCmdSetPrimitiveRestartEnable}},
+        {"vkCmdSetLineStipple", {kFuncTypeDev, (void*)InterceptCmdSetLineStipple}},
+        {"vkCmdBindIndexBuffer2", {kFuncTypeDev, (void*)InterceptCmdBindIndexBuffer2}},
+        {"vkCmdPushDescriptorSet", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSet}},
+        {"vkCmdPushDescriptorSetWithTemplate", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSetWithTemplate}},
+        {"vkCmdSetRenderingAttachmentLocations", {kFuncTypeDev, (void*)InterceptCmdSetRenderingAttachmentLocations}},
+        {"vkCmdSetRenderingInputAttachmentIndices",
+         {kFuncTypeDev, (void*)InterceptCmdSetRenderingInputAttachmentIndices}},
+        {"vkCmdBindDescriptorSets2", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorSets2}},
+        {"vkCmdPushConstants2", {kFuncTypeDev, (void*)InterceptCmdPushConstants2}},
+        {"vkCmdPushDescriptorSet2", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSet2}},
+        {"vkCmdPushDescriptorSetWithTemplate2", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSetWithTemplate2}},
         {"vkAcquireNextImageKHR", {kFuncTypeDev, (void*)InterceptAcquireNextImageKHR}},
         {"vkQueuePresentKHR", {kFuncTypeDev, (void*)InterceptQueuePresentKHR}},
         {"vkCmdBeginVideoCodingKHR", {kFuncTypeDev, (void*)InterceptCmdBeginVideoCodingKHR}},

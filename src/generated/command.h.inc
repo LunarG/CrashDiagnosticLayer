@@ -357,6 +357,52 @@ void PostCmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 depthBias
 void PreCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable);
 void PostCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable);
 
+void PreCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
+void PostCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
+
+void PreCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,
+                            VkIndexType indexType);
+void PostCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,
+                             VkIndexType indexType);
+
+void PreCmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                             VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
+                             const VkWriteDescriptorSet* pDescriptorWrites);
+void PostCmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                              VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
+                              const VkWriteDescriptorSet* pDescriptorWrites);
+
+void PreCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
+                                         VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
+                                         uint32_t set, const void* pData);
+void PostCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
+                                          VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
+                                          uint32_t set, const void* pData);
+
+void PreCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                           const VkRenderingAttachmentLocationInfo* pLocationInfo);
+void PostCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                            const VkRenderingAttachmentLocationInfo* pLocationInfo);
+
+void PreCmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer,
+                                              const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
+void PostCmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer,
+                                               const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
+
+void PreCmdBindDescriptorSets2(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
+void PostCmdBindDescriptorSets2(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
+
+void PreCmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo);
+void PostCmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo);
+
+void PreCmdPushDescriptorSet2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo);
+void PostCmdPushDescriptorSet2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo);
+
+void PreCmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
+void PostCmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
+
 void PreCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoBeginCodingInfoKHR* pBeginInfo);
 void PostCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoBeginCodingInfoKHR* pBeginInfo);
 
@@ -430,14 +476,14 @@ void PostCmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExt
                                       const VkFragmentShadingRateCombinerOpKHR combinerOps[2]);
 
 void PreCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
-                                              const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
+                                              const VkRenderingAttachmentLocationInfo* pLocationInfo);
 void PostCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer,
-                                               const VkRenderingAttachmentLocationInfoKHR* pLocationInfo);
+                                               const VkRenderingAttachmentLocationInfo* pLocationInfo);
 
-void PreCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo);
-void PostCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo);
+void PreCmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer,
+                                                 const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
+void PostCmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer,
+                                                  const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
 
 void PreCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo);
 void PostCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo);
@@ -493,22 +539,20 @@ void PreCmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStipple
 void PostCmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
 
 void PreCmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
-                                  const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo);
+                                  const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
 void PostCmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer,
-                                   const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo);
+                                   const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
 
-void PreCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfoKHR* pPushConstantsInfo);
-void PostCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfoKHR* pPushConstantsInfo);
+void PreCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo);
+void PostCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo);
 
-void PreCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                 const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo);
-void PostCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer,
-                                  const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo);
+void PreCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo);
+void PostCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo);
 
 void PreCmdPushDescriptorSetWithTemplate2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo);
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
 void PostCmdPushDescriptorSetWithTemplate2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo);
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
 
 void PreCmdSetDescriptorBufferOffsets2EXT(VkCommandBuffer commandBuffer,
                                           const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo);

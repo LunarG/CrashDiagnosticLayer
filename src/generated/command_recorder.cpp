@@ -161,6 +161,24 @@ template <>
 VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingInfo* src, size_t start_index,
                                                              size_t count);
 template <>
+VkRenderingAttachmentLocationInfo* CommandRecorder::CopyArray<VkRenderingAttachmentLocationInfo>(
+    const VkRenderingAttachmentLocationInfo* src, size_t start_index, size_t count);
+template <>
+VkRenderingInputAttachmentIndexInfo* CommandRecorder::CopyArray<VkRenderingInputAttachmentIndexInfo>(
+    const VkRenderingInputAttachmentIndexInfo* src, size_t start_index, size_t count);
+template <>
+VkBindDescriptorSetsInfo* CommandRecorder::CopyArray<VkBindDescriptorSetsInfo>(const VkBindDescriptorSetsInfo* src,
+                                                                               size_t start_index, size_t count);
+template <>
+VkPushConstantsInfo* CommandRecorder::CopyArray<VkPushConstantsInfo>(const VkPushConstantsInfo* src, size_t start_index,
+                                                                     size_t count);
+template <>
+VkPushDescriptorSetInfo* CommandRecorder::CopyArray<VkPushDescriptorSetInfo>(const VkPushDescriptorSetInfo* src,
+                                                                             size_t start_index, size_t count);
+template <>
+VkPushDescriptorSetWithTemplateInfo* CommandRecorder::CopyArray<VkPushDescriptorSetWithTemplateInfo>(
+    const VkPushDescriptorSetWithTemplateInfo* src, size_t start_index, size_t count);
+template <>
 VkVideoPictureResourceInfoKHR* CommandRecorder::CopyArray<VkVideoPictureResourceInfoKHR>(
     const VkVideoPictureResourceInfoKHR* src, size_t start_index, size_t count);
 template <>
@@ -179,26 +197,8 @@ template <>
 VkVideoDecodeInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeInfoKHR>(const VkVideoDecodeInfoKHR* src,
                                                                        size_t start_index, size_t count);
 template <>
-VkRenderingAttachmentLocationInfoKHR* CommandRecorder::CopyArray<VkRenderingAttachmentLocationInfoKHR>(
-    const VkRenderingAttachmentLocationInfoKHR* src, size_t start_index, size_t count);
-template <>
-VkRenderingInputAttachmentIndexInfoKHR* CommandRecorder::CopyArray<VkRenderingInputAttachmentIndexInfoKHR>(
-    const VkRenderingInputAttachmentIndexInfoKHR* src, size_t start_index, size_t count);
-template <>
 VkVideoEncodeInfoKHR* CommandRecorder::CopyArray<VkVideoEncodeInfoKHR>(const VkVideoEncodeInfoKHR* src,
                                                                        size_t start_index, size_t count);
-template <>
-VkBindDescriptorSetsInfoKHR* CommandRecorder::CopyArray<VkBindDescriptorSetsInfoKHR>(
-    const VkBindDescriptorSetsInfoKHR* src, size_t start_index, size_t count);
-template <>
-VkPushConstantsInfoKHR* CommandRecorder::CopyArray<VkPushConstantsInfoKHR>(const VkPushConstantsInfoKHR* src,
-                                                                           size_t start_index, size_t count);
-template <>
-VkPushDescriptorSetInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetInfoKHR>(
-    const VkPushDescriptorSetInfoKHR* src, size_t start_index, size_t count);
-template <>
-VkPushDescriptorSetWithTemplateInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetWithTemplateInfoKHR>(
-    const VkPushDescriptorSetWithTemplateInfoKHR* src, size_t start_index, size_t count);
 template <>
 VkSetDescriptorBufferOffsetsInfoEXT* CommandRecorder::CopyArray<VkSetDescriptorBufferOffsetsInfoEXT>(
     const VkSetDescriptorBufferOffsetsInfoEXT* src, size_t start_index, size_t count);
@@ -1108,6 +1108,134 @@ VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingIn
 }
 
 template <>
+VkRenderingAttachmentLocationInfo* CommandRecorder::CopyArray<VkRenderingAttachmentLocationInfo>(
+    const VkRenderingAttachmentLocationInfo* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkRenderingAttachmentLocationInfo*>(
+        m_allocator.Alloc(sizeof(VkRenderingAttachmentLocationInfo) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
+        ptr[i].pColorAttachmentLocations = nullptr;
+        if (src[start_index + i].pColorAttachmentLocations) {
+            ptr[i].pColorAttachmentLocations =
+                CopyArray(src[start_index + i].pColorAttachmentLocations, static_cast<uint64_t>(0U),
+                          static_cast<uint64_t>(src[start_index + i].colorAttachmentCount));
+        }
+    }
+    return ptr;
+}
+
+template <>
+VkRenderingInputAttachmentIndexInfo* CommandRecorder::CopyArray<VkRenderingInputAttachmentIndexInfo>(
+    const VkRenderingInputAttachmentIndexInfo* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkRenderingInputAttachmentIndexInfo*>(
+        m_allocator.Alloc(sizeof(VkRenderingInputAttachmentIndexInfo) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
+        ptr[i].pColorAttachmentInputIndices = nullptr;
+        if (src[start_index + i].pColorAttachmentInputIndices) {
+            ptr[i].pColorAttachmentInputIndices =
+                CopyArray(src[start_index + i].pColorAttachmentInputIndices, static_cast<uint64_t>(0U),
+                          static_cast<uint64_t>(src[start_index + i].colorAttachmentCount));
+        }
+        ptr[i].pDepthInputAttachmentIndex = nullptr;
+        if (src[start_index + i].pDepthInputAttachmentIndex) {
+            ptr[i].pDepthInputAttachmentIndex = CopyArray(src[start_index + i].pDepthInputAttachmentIndex,
+                                                          static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        }
+        ptr[i].pStencilInputAttachmentIndex = nullptr;
+        if (src[start_index + i].pStencilInputAttachmentIndex) {
+            ptr[i].pStencilInputAttachmentIndex = CopyArray(src[start_index + i].pStencilInputAttachmentIndex,
+                                                            static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+        }
+    }
+    return ptr;
+}
+
+template <>
+VkBindDescriptorSetsInfo* CommandRecorder::CopyArray<VkBindDescriptorSetsInfo>(const VkBindDescriptorSetsInfo* src,
+                                                                               size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkBindDescriptorSetsInfo*>(m_allocator.Alloc(sizeof(VkBindDescriptorSetsInfo) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].stageFlags = src[start_index + i].stageFlags;
+        ptr[i].layout = src[start_index + i].layout;
+        ptr[i].firstSet = src[start_index + i].firstSet;
+        ptr[i].descriptorSetCount = src[start_index + i].descriptorSetCount;
+        ptr[i].pDescriptorSets = nullptr;
+        if (src[start_index + i].pDescriptorSets) {
+            ptr[i].pDescriptorSets = CopyArray(src[start_index + i].pDescriptorSets, static_cast<uint64_t>(0U),
+                                               static_cast<uint64_t>(src[start_index + i].descriptorSetCount));
+        }
+        ptr[i].dynamicOffsetCount = src[start_index + i].dynamicOffsetCount;
+        ptr[i].pDynamicOffsets = nullptr;
+        if (src[start_index + i].pDynamicOffsets) {
+            ptr[i].pDynamicOffsets = CopyArray(src[start_index + i].pDynamicOffsets, static_cast<uint64_t>(0U),
+                                               static_cast<uint64_t>(src[start_index + i].dynamicOffsetCount));
+        }
+    }
+    return ptr;
+}
+
+template <>
+VkPushConstantsInfo* CommandRecorder::CopyArray<VkPushConstantsInfo>(const VkPushConstantsInfo* src, size_t start_index,
+                                                                     size_t count) {
+    auto ptr = reinterpret_cast<VkPushConstantsInfo*>(m_allocator.Alloc(sizeof(VkPushConstantsInfo) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].layout = src[start_index + i].layout;
+        ptr[i].stageFlags = src[start_index + i].stageFlags;
+        ptr[i].offset = src[start_index + i].offset;
+        ptr[i].size = src[start_index + i].size;
+        ptr[i].pValues = reinterpret_cast<const void*>(
+            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].pValues), static_cast<uint64_t>(0U),
+                      static_cast<uint64_t>(src[start_index + i].size)));
+    }
+    return ptr;
+}
+
+template <>
+VkPushDescriptorSetInfo* CommandRecorder::CopyArray<VkPushDescriptorSetInfo>(const VkPushDescriptorSetInfo* src,
+                                                                             size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkPushDescriptorSetInfo*>(m_allocator.Alloc(sizeof(VkPushDescriptorSetInfo) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].stageFlags = src[start_index + i].stageFlags;
+        ptr[i].layout = src[start_index + i].layout;
+        ptr[i].set = src[start_index + i].set;
+        ptr[i].descriptorWriteCount = src[start_index + i].descriptorWriteCount;
+        ptr[i].pDescriptorWrites = nullptr;
+        if (src[start_index + i].pDescriptorWrites) {
+            ptr[i].pDescriptorWrites = CopyArray(src[start_index + i].pDescriptorWrites, static_cast<uint64_t>(0U),
+                                                 static_cast<uint64_t>(src[start_index + i].descriptorWriteCount));
+        }
+    }
+    return ptr;
+}
+
+template <>
+VkPushDescriptorSetWithTemplateInfo* CommandRecorder::CopyArray<VkPushDescriptorSetWithTemplateInfo>(
+    const VkPushDescriptorSetWithTemplateInfo* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkPushDescriptorSetWithTemplateInfo*>(
+        m_allocator.Alloc(sizeof(VkPushDescriptorSetWithTemplateInfo) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].descriptorUpdateTemplate = src[start_index + i].descriptorUpdateTemplate;
+        ptr[i].layout = src[start_index + i].layout;
+        ptr[i].set = src[start_index + i].set;
+        ptr[i].pData = src[start_index + i].pData;
+    }
+    return ptr;
+}
+
+template <>
 VkVideoPictureResourceInfoKHR* CommandRecorder::CopyArray<VkVideoPictureResourceInfoKHR>(
     const VkVideoPictureResourceInfoKHR* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkVideoPictureResourceInfoKHR*>(
@@ -1215,54 +1343,6 @@ VkVideoDecodeInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeInfoKHR>(const VkV
 }
 
 template <>
-VkRenderingAttachmentLocationInfoKHR* CommandRecorder::CopyArray<VkRenderingAttachmentLocationInfoKHR>(
-    const VkRenderingAttachmentLocationInfoKHR* src, size_t start_index, size_t count) {
-    auto ptr = reinterpret_cast<VkRenderingAttachmentLocationInfoKHR*>(
-        m_allocator.Alloc(sizeof(VkRenderingAttachmentLocationInfoKHR) * count));
-    for (uint64_t i = 0; i < count; ++i) {
-        ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
-        ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
-        ptr[i].pColorAttachmentLocations = nullptr;
-        if (src[start_index + i].pColorAttachmentLocations) {
-            ptr[i].pColorAttachmentLocations =
-                CopyArray(src[start_index + i].pColorAttachmentLocations, static_cast<uint64_t>(0U),
-                          static_cast<uint64_t>(src[start_index + i].colorAttachmentCount));
-        }
-    }
-    return ptr;
-}
-
-template <>
-VkRenderingInputAttachmentIndexInfoKHR* CommandRecorder::CopyArray<VkRenderingInputAttachmentIndexInfoKHR>(
-    const VkRenderingInputAttachmentIndexInfoKHR* src, size_t start_index, size_t count) {
-    auto ptr = reinterpret_cast<VkRenderingInputAttachmentIndexInfoKHR*>(
-        m_allocator.Alloc(sizeof(VkRenderingInputAttachmentIndexInfoKHR) * count));
-    for (uint64_t i = 0; i < count; ++i) {
-        ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
-        ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
-        ptr[i].pColorAttachmentInputIndices = nullptr;
-        if (src[start_index + i].pColorAttachmentInputIndices) {
-            ptr[i].pColorAttachmentInputIndices =
-                CopyArray(src[start_index + i].pColorAttachmentInputIndices, static_cast<uint64_t>(0U),
-                          static_cast<uint64_t>(src[start_index + i].colorAttachmentCount));
-        }
-        ptr[i].pDepthInputAttachmentIndex = nullptr;
-        if (src[start_index + i].pDepthInputAttachmentIndex) {
-            ptr[i].pDepthInputAttachmentIndex = CopyArray(src[start_index + i].pDepthInputAttachmentIndex,
-                                                          static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
-        }
-        ptr[i].pStencilInputAttachmentIndex = nullptr;
-        if (src[start_index + i].pStencilInputAttachmentIndex) {
-            ptr[i].pStencilInputAttachmentIndex = CopyArray(src[start_index + i].pStencilInputAttachmentIndex,
-                                                            static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
-        }
-    }
-    return ptr;
-}
-
-template <>
 VkVideoEncodeInfoKHR* CommandRecorder::CopyArray<VkVideoEncodeInfoKHR>(const VkVideoEncodeInfoKHR* src,
                                                                        size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkVideoEncodeInfoKHR*>(m_allocator.Alloc(sizeof(VkVideoEncodeInfoKHR) * count));
@@ -1286,88 +1366,6 @@ VkVideoEncodeInfoKHR* CommandRecorder::CopyArray<VkVideoEncodeInfoKHR>(const VkV
                                                static_cast<uint64_t>(src[start_index + i].referenceSlotCount));
         }
         ptr[i].precedingExternallyEncodedBytes = src[start_index + i].precedingExternallyEncodedBytes;
-    }
-    return ptr;
-}
-
-template <>
-VkBindDescriptorSetsInfoKHR* CommandRecorder::CopyArray<VkBindDescriptorSetsInfoKHR>(
-    const VkBindDescriptorSetsInfoKHR* src, size_t start_index, size_t count) {
-    auto ptr =
-        reinterpret_cast<VkBindDescriptorSetsInfoKHR*>(m_allocator.Alloc(sizeof(VkBindDescriptorSetsInfoKHR) * count));
-    for (uint64_t i = 0; i < count; ++i) {
-        ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
-        ptr[i].stageFlags = src[start_index + i].stageFlags;
-        ptr[i].layout = src[start_index + i].layout;
-        ptr[i].firstSet = src[start_index + i].firstSet;
-        ptr[i].descriptorSetCount = src[start_index + i].descriptorSetCount;
-        ptr[i].pDescriptorSets = nullptr;
-        if (src[start_index + i].pDescriptorSets) {
-            ptr[i].pDescriptorSets = CopyArray(src[start_index + i].pDescriptorSets, static_cast<uint64_t>(0U),
-                                               static_cast<uint64_t>(src[start_index + i].descriptorSetCount));
-        }
-        ptr[i].dynamicOffsetCount = src[start_index + i].dynamicOffsetCount;
-        ptr[i].pDynamicOffsets = nullptr;
-        if (src[start_index + i].pDynamicOffsets) {
-            ptr[i].pDynamicOffsets = CopyArray(src[start_index + i].pDynamicOffsets, static_cast<uint64_t>(0U),
-                                               static_cast<uint64_t>(src[start_index + i].dynamicOffsetCount));
-        }
-    }
-    return ptr;
-}
-
-template <>
-VkPushConstantsInfoKHR* CommandRecorder::CopyArray<VkPushConstantsInfoKHR>(const VkPushConstantsInfoKHR* src,
-                                                                           size_t start_index, size_t count) {
-    auto ptr = reinterpret_cast<VkPushConstantsInfoKHR*>(m_allocator.Alloc(sizeof(VkPushConstantsInfoKHR) * count));
-    for (uint64_t i = 0; i < count; ++i) {
-        ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
-        ptr[i].layout = src[start_index + i].layout;
-        ptr[i].stageFlags = src[start_index + i].stageFlags;
-        ptr[i].offset = src[start_index + i].offset;
-        ptr[i].size = src[start_index + i].size;
-        ptr[i].pValues = reinterpret_cast<const void*>(
-            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].pValues), static_cast<uint64_t>(0U),
-                      static_cast<uint64_t>(src[start_index + i].size)));
-    }
-    return ptr;
-}
-
-template <>
-VkPushDescriptorSetInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetInfoKHR>(
-    const VkPushDescriptorSetInfoKHR* src, size_t start_index, size_t count) {
-    auto ptr =
-        reinterpret_cast<VkPushDescriptorSetInfoKHR*>(m_allocator.Alloc(sizeof(VkPushDescriptorSetInfoKHR) * count));
-    for (uint64_t i = 0; i < count; ++i) {
-        ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
-        ptr[i].stageFlags = src[start_index + i].stageFlags;
-        ptr[i].layout = src[start_index + i].layout;
-        ptr[i].set = src[start_index + i].set;
-        ptr[i].descriptorWriteCount = src[start_index + i].descriptorWriteCount;
-        ptr[i].pDescriptorWrites = nullptr;
-        if (src[start_index + i].pDescriptorWrites) {
-            ptr[i].pDescriptorWrites = CopyArray(src[start_index + i].pDescriptorWrites, static_cast<uint64_t>(0U),
-                                                 static_cast<uint64_t>(src[start_index + i].descriptorWriteCount));
-        }
-    }
-    return ptr;
-}
-
-template <>
-VkPushDescriptorSetWithTemplateInfoKHR* CommandRecorder::CopyArray<VkPushDescriptorSetWithTemplateInfoKHR>(
-    const VkPushDescriptorSetWithTemplateInfoKHR* src, size_t start_index, size_t count) {
-    auto ptr = reinterpret_cast<VkPushDescriptorSetWithTemplateInfoKHR*>(
-        m_allocator.Alloc(sizeof(VkPushDescriptorSetWithTemplateInfoKHR) * count));
-    for (uint64_t i = 0; i < count; ++i) {
-        ptr[i].sType = src[start_index + i].sType;
-        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
-        ptr[i].descriptorUpdateTemplate = src[start_index + i].descriptorUpdateTemplate;
-        ptr[i].layout = src[start_index + i].layout;
-        ptr[i].set = src[start_index + i].set;
-        ptr[i].pData = src[start_index + i].pData;
     }
     return ptr;
 }
@@ -3148,6 +3146,122 @@ CmdSetPrimitiveRestartEnableArgs* CommandRecorder::RecordCmdSetPrimitiveRestartE
     return args;
 }
 
+CmdSetLineStippleArgs* CommandRecorder::RecordCmdSetLineStipple(VkCommandBuffer commandBuffer,
+                                                                uint32_t lineStippleFactor,
+                                                                uint16_t lineStipplePattern) {
+    auto* args = Alloc<CmdSetLineStippleArgs>();
+    args->commandBuffer = commandBuffer;
+    args->lineStippleFactor = lineStippleFactor;
+    args->lineStipplePattern = lineStipplePattern;
+    return args;
+}
+
+CmdBindIndexBuffer2Args* CommandRecorder::RecordCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                                    VkDeviceSize offset, VkDeviceSize size,
+                                                                    VkIndexType indexType) {
+    auto* args = Alloc<CmdBindIndexBuffer2Args>();
+    args->commandBuffer = commandBuffer;
+    args->buffer = buffer;
+    args->offset = offset;
+    args->size = size;
+    args->indexType = indexType;
+    return args;
+}
+
+CmdPushDescriptorSetArgs* CommandRecorder::RecordCmdPushDescriptorSet(VkCommandBuffer commandBuffer,
+                                                                      VkPipelineBindPoint pipelineBindPoint,
+                                                                      VkPipelineLayout layout, uint32_t set,
+                                                                      uint32_t descriptorWriteCount,
+                                                                      const VkWriteDescriptorSet* pDescriptorWrites) {
+    auto* args = Alloc<CmdPushDescriptorSetArgs>();
+    args->commandBuffer = commandBuffer;
+    args->pipelineBindPoint = pipelineBindPoint;
+    args->layout = layout;
+    args->set = set;
+    args->descriptorWriteCount = descriptorWriteCount;
+    if (pDescriptorWrites) {
+        args->pDescriptorWrites =
+            CopyArray(pDescriptorWrites, static_cast<size_t>(0U), static_cast<size_t>(descriptorWriteCount));
+    }
+    return args;
+}
+
+CmdPushDescriptorSetWithTemplateArgs* CommandRecorder::RecordCmdPushDescriptorSetWithTemplate(
+    VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
+    uint32_t set, const void* pData) {
+    auto* args = Alloc<CmdPushDescriptorSetWithTemplateArgs>();
+    args->commandBuffer = commandBuffer;
+    args->descriptorUpdateTemplate = descriptorUpdateTemplate;
+    args->layout = layout;
+    args->set = set;
+    args->pData = pData;
+    return args;
+}
+
+CmdSetRenderingAttachmentLocationsArgs* CommandRecorder::RecordCmdSetRenderingAttachmentLocations(
+    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    auto* args = Alloc<CmdSetRenderingAttachmentLocationsArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pLocationInfo) {
+        args->pLocationInfo = CopyArray(pLocationInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdSetRenderingInputAttachmentIndicesArgs* CommandRecorder::RecordCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
+    auto* args = Alloc<CmdSetRenderingInputAttachmentIndicesArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pInputAttachmentIndexInfo) {
+        args->pInputAttachmentIndexInfo =
+            CopyArray(pInputAttachmentIndexInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdBindDescriptorSets2Args* CommandRecorder::RecordCmdBindDescriptorSets2(
+    VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
+    auto* args = Alloc<CmdBindDescriptorSets2Args>();
+    args->commandBuffer = commandBuffer;
+    if (pBindDescriptorSetsInfo) {
+        args->pBindDescriptorSetsInfo =
+            CopyArray(pBindDescriptorSetsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdPushConstants2Args* CommandRecorder::RecordCmdPushConstants2(VkCommandBuffer commandBuffer,
+                                                                const VkPushConstantsInfo* pPushConstantsInfo) {
+    auto* args = Alloc<CmdPushConstants2Args>();
+    args->commandBuffer = commandBuffer;
+    if (pPushConstantsInfo) {
+        args->pPushConstantsInfo = CopyArray(pPushConstantsInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdPushDescriptorSet2Args* CommandRecorder::RecordCmdPushDescriptorSet2(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
+    auto* args = Alloc<CmdPushDescriptorSet2Args>();
+    args->commandBuffer = commandBuffer;
+    if (pPushDescriptorSetInfo) {
+        args->pPushDescriptorSetInfo =
+            CopyArray(pPushDescriptorSetInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdPushDescriptorSetWithTemplate2Args* CommandRecorder::RecordCmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
+    auto* args = Alloc<CmdPushDescriptorSetWithTemplate2Args>();
+    args->commandBuffer = commandBuffer;
+    if (pPushDescriptorSetWithTemplateInfo) {
+        args->pPushDescriptorSetWithTemplateInfo =
+            CopyArray(pPushDescriptorSetWithTemplateInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
 CmdBeginVideoCodingKHRArgs* CommandRecorder::RecordCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
                                                                           const VkVideoBeginCodingInfoKHR* pBeginInfo) {
     auto* args = Alloc<CmdBeginVideoCodingKHRArgs>();
@@ -3338,7 +3452,7 @@ CmdSetFragmentShadingRateKHRArgs* CommandRecorder::RecordCmdSetFragmentShadingRa
 }
 
 CmdSetRenderingAttachmentLocationsKHRArgs* CommandRecorder::RecordCmdSetRenderingAttachmentLocationsKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfoKHR* pLocationInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
     auto* args = Alloc<CmdSetRenderingAttachmentLocationsKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pLocationInfo) {
@@ -3348,7 +3462,7 @@ CmdSetRenderingAttachmentLocationsKHRArgs* CommandRecorder::RecordCmdSetRenderin
 }
 
 CmdSetRenderingInputAttachmentIndicesKHRArgs* CommandRecorder::RecordCmdSetRenderingInputAttachmentIndicesKHR(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo) {
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
     auto* args = Alloc<CmdSetRenderingInputAttachmentIndicesKHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pInputAttachmentIndexInfo) {
@@ -3517,7 +3631,7 @@ CmdSetLineStippleKHRArgs* CommandRecorder::RecordCmdSetLineStippleKHR(VkCommandB
 }
 
 CmdBindDescriptorSets2KHRArgs* CommandRecorder::RecordCmdBindDescriptorSets2KHR(
-    VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfoKHR* pBindDescriptorSetsInfo) {
+    VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
     auto* args = Alloc<CmdBindDescriptorSets2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pBindDescriptorSetsInfo) {
@@ -3527,8 +3641,8 @@ CmdBindDescriptorSets2KHRArgs* CommandRecorder::RecordCmdBindDescriptorSets2KHR(
     return args;
 }
 
-CmdPushConstants2KHRArgs* CommandRecorder::RecordCmdPushConstants2KHR(
-    VkCommandBuffer commandBuffer, const VkPushConstantsInfoKHR* pPushConstantsInfo) {
+CmdPushConstants2KHRArgs* CommandRecorder::RecordCmdPushConstants2KHR(VkCommandBuffer commandBuffer,
+                                                                      const VkPushConstantsInfo* pPushConstantsInfo) {
     auto* args = Alloc<CmdPushConstants2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pPushConstantsInfo) {
@@ -3538,7 +3652,7 @@ CmdPushConstants2KHRArgs* CommandRecorder::RecordCmdPushConstants2KHR(
 }
 
 CmdPushDescriptorSet2KHRArgs* CommandRecorder::RecordCmdPushDescriptorSet2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfoKHR* pPushDescriptorSetInfo) {
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
     auto* args = Alloc<CmdPushDescriptorSet2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pPushDescriptorSetInfo) {
@@ -3549,7 +3663,7 @@ CmdPushDescriptorSet2KHRArgs* CommandRecorder::RecordCmdPushDescriptorSet2KHR(
 }
 
 CmdPushDescriptorSetWithTemplate2KHRArgs* CommandRecorder::RecordCmdPushDescriptorSetWithTemplate2KHR(
-    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo) {
+    VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
     auto* args = Alloc<CmdPushDescriptorSetWithTemplate2KHRArgs>();
     args->commandBuffer = commandBuffer;
     if (pPushDescriptorSetWithTemplateInfo) {
