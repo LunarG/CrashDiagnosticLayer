@@ -302,22 +302,10 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
         }
     }
 
-    // manage the watchdog thread
-    {
-        UpdateWatchdog();
-        if (settings_->watchdog_timer_ms > 0) {
-            StartWatchdogTimer();
-            Log().Info("Begin Watchdog: %" PRId64 "ms", settings_->watchdog_timer_ms);
-        }
-    }
-
     vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
 }
 
-Context::~Context() {
-    StopWatchdogTimer();
-    logger_.CloseLogFile();
-}
+Context::~Context() { logger_.CloseLogFile(); }
 
 Context::DevicePtr Context::GetDevice(VkDevice device) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
@@ -379,62 +367,6 @@ Context::ConstDevicePtr Context::GetQueueDevice(VkQueue queue) const {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto iter = devices_.find(device);
     return iter != devices_.end() ? iter->second : nullptr;
-}
-
-void Context::StartWatchdogTimer() {
-    // Start up the watchdog timer thread.
-    watchdog_running_ = true;
-    watchdog_thread_ = std::thread([&]() { this->WatchdogTimer(); });
-}
-void Context::UpdateWatchdog() {
-    using namespace std::chrono;
-    last_submit_time_ = duration_cast<milliseconds>(high_resolution_clock::now().time_since_epoch()).count();
-}
-
-void Context::StopWatchdogTimer() {
-    if (watchdog_running_) {
-        Log().Info("Stopping Watchdog");
-        watchdog_running_ = false;  // TODO: condition variable that waits
-    }
-    // make sure the watchdog thread is joined even if it quit on its own.
-    if (watchdog_thread_.joinable()) {
-        watchdog_thread_.join();
-        Log().Info("Watchdog Stopped");
-    }
-}
-
-void Context::WatchdogTimer() {
-    uint64_t test_interval_us = std::min((uint64_t)(1000 * 1000), settings_->watchdog_timer_ms * 500);
-    while (watchdog_running_) {
-        // TODO: condition variable that waits
-        std::this_thread::sleep_for(std::chrono::microseconds(test_interval_us));
-        if (!watchdog_running_) {
-            break;
-        }
-
-        auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
-                       std::chrono::high_resolution_clock::now().time_since_epoch())
-                       .count();
-        auto ms = (int64_t)(now - last_submit_time_);
-
-        if (ms > (int64_t)settings_->watchdog_timer_ms) {
-            Log().Info("CDL: Watchdog check failed, no submit in %" PRId64 "ms", ms);
-
-            auto devs = GetAllDevices();
-            bool dump_prologue = true;
-            auto file = OpenDumpFile();
-            YAML::Emitter os(file.is_open() ? file : std::cerr);
-
-            for (auto& device : devs) {
-                device->WatchdogTimeout(dump_prologue, os);
-                dump_prologue = false;
-            }
-
-            // Quit the thread after a hang is detected, it is unlikely that further dumps will
-            // show anything more useful than the first one.
-            watchdog_running_ = false;
-        }
-    }
 }
 
 void Context::PreApiFunction(const char* api_name) {
@@ -608,15 +540,10 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
     return ci_ptr;
 }
 
-void Context::DumpDeviceExecutionState(Device& device) {
+void Context::DumpDeviceExecutionState(Device& device, CrashSource cs) {
     auto file = OpenDumpFile();
     YAML::Emitter os(file.is_open() ? file : std::cerr);
-    DumpDeviceExecutionState(device, {}, true, kDeviceLostError, os);
-}
-
-void Context::DumpDeviceExecutionState(Device& device, bool dump_prologue, CrashSource crash_source,
-                                       YAML::Emitter& os) {
-    DumpDeviceExecutionState(device, {}, dump_prologue, crash_source, os);
+    DumpDeviceExecutionState(device, {}, true, cs, os);
 }
 
 void Context::DumpDeviceExecutionState(Device& device, const std::string& error_report, bool dump_prologue,
@@ -930,7 +857,7 @@ VkResult Context::PostDeviceWaitIdle(VkDevice device, VkResult result) {
     if (IsVkError(result) || result == VK_TIMEOUT) {
         device_state->DeviceFault();
     } else {
-        UpdateWatchdog();
+        device_state->UpdateWatchdog();
     }
 
     return result;
@@ -957,7 +884,7 @@ VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
     if (IsVkError(result) || result == VK_TIMEOUT) {
         device_state->DeviceFault();
     } else {
-        UpdateWatchdog();
+        device_state->UpdateWatchdog();
     }
 
     return result;
@@ -965,8 +892,8 @@ VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
 
 VkResult Context::PreQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo) {
     PreApiFunction("vkQueuePresentKHR");
-    UpdateWatchdog();
     auto device_state = GetQueueDevice(queue);
+    device_state->UpdateWatchdog();
     device_state->UpdateIdleState();
     return VK_SUCCESS;
 }
@@ -1005,7 +932,7 @@ VkResult Context::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkFenc
     if (IsVkError(result)) {
         device_state->DeviceFault();
     } else if (result == VK_SUCCESS) {
-        UpdateWatchdog();
+        device_state->UpdateWatchdog();
     }
 
     return result;
@@ -1454,8 +1381,8 @@ VkResult Context::PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
 
 VkResult Context::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit");
-    UpdateWatchdog();
     auto device_state = GetQueueDevice(queue);
+    device_state->UpdateWatchdog();
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit", result);
@@ -1467,8 +1394,8 @@ VkResult Context::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmi
 
 VkResult Context::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit2");
-    UpdateWatchdog();
     auto device_state = GetQueueDevice(queue);
+    device_state->UpdateWatchdog();
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit2(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit2", result);
@@ -1480,8 +1407,8 @@ VkResult Context::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubm
 
 VkResult Context::QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
     PreApiFunction("vkQueueSubmit2KHR");
-    UpdateWatchdog();
     auto device_state = GetQueueDevice(queue);
+    device_state->UpdateWatchdog();
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit2(submitCount, pSubmits, fence);
     PostApiFunction("vkQueueSubmit2KHR", result);
@@ -1494,8 +1421,8 @@ VkResult Context::QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkS
 VkResult Context::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindSparseInfo const* pBindInfo,
                                   VkFence fence) {
     PreApiFunction("vkQueueBindSparse");
-    UpdateWatchdog();
     auto device_state = GetQueueDevice(queue);
+    device_state->UpdateWatchdog();
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->BindSparse(bindInfoCount, pBindInfo, fence);
     PostApiFunction("vkQueueBindSparse", result);

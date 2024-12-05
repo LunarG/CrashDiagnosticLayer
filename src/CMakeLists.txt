@@ -78,6 +78,8 @@ target_sources(crash_diagnostic PRIVATE
     system.h
     system.cpp
     util.h
+    watchdog.cpp
+    watchdog.h
 )
 
 get_target_property(LAYER_SOURCES crash_diagnostic SOURCES)
