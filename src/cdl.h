@@ -153,21 +153,14 @@ class Context : public Interceptor {
                          const VkDebugUtilsObjectNameInfoEXT& object);
 
     void DumpAllDevicesExecutionState(CrashSource crash_source);
-    void DumpDeviceExecutionState(Device& device);
-    void DumpDeviceExecutionState(Device& device, bool dump_prologue, CrashSource crash_source, YAML::Emitter& os);
+    void DumpDeviceExecutionState(Device& device, CrashSource crash_source = kDeviceLostError);
     void DumpDeviceExecutionState(Device& device, const std::string& error_report, bool dump_prologue,
                                   CrashSource crash_source, YAML::Emitter& os);
     void DumpDeviceExecutionStateValidationFailed(Device& device, YAML::Emitter& os);
 
     void DumpReportPrologue(YAML::Emitter& os);
 
-    void StopWatchdogTimer();
-
    private:
-    void StartWatchdogTimer();
-    void WatchdogTimer();
-    void UpdateWatchdog();
-
     void ValidateCommandBufferNotInUse(CommandBuffer* commandBuffer);
 
    public:
@@ -383,11 +376,6 @@ class Context : public Interceptor {
     std::filesystem::path base_output_path_;
     std::filesystem::path output_path_;
     int total_logs_ = 0;
-
-    // Watchdog
-    std::thread watchdog_thread_;
-    std::atomic<bool> watchdog_running_;
-    std::atomic<long long> last_submit_time_;
 };
 
 }  // namespace crash_diagnostic_layer

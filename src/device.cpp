@@ -36,6 +36,7 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
       vk_physical_device_(vk_gpu),
       vk_device_(device),
       extensions_present_(extensions_present),
+      watchdog_(*this, context_.GetSettings()),
       device_create_info_(std::move(device_create_info)) {
     auto device_layer_data = GetDeviceLayerData(DataKey(device));
     device_dispatch_table_ = device_layer_data->dispatch_table;
@@ -57,6 +58,9 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
     // Create a semaphore tracker
     if (context_.GetSettings().track_semaphores) {
         semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this);
+    }
+    if (context_.GetSettings().watchdog_timer_ms > 0) {
+        watchdog_.Start();
     }
 }
 
@@ -436,15 +440,15 @@ void Device::DeviceFault() {
         // already hung.
         return;
     }
+    // prevent the watchdog from firing when we've already detected a fault
+    watchdog_.Stop();
     if (checkpoints_) {
         checkpoints_->Update();
     }
     context_.DumpDeviceExecutionState(*this);
-    // prevent the watchdog from firing when we've already detected a fault
-    context_.StopWatchdogTimer();
 }
 
-void Device::WatchdogTimeout(bool dump_prologue, YAML::Emitter& os) {
+void Device::WatchdogTimeout() {
     if (hang_detected_.exchange(true)) {
         // already hung.
         return;
@@ -452,7 +456,7 @@ void Device::WatchdogTimeout(bool dump_prologue, YAML::Emitter& os) {
     if (checkpoints_) {
         checkpoints_->Update();
     }
-    context_.DumpDeviceExecutionState(*this, dump_prologue, CrashSource::kWatchdogTimer, os);
+    context_.DumpDeviceExecutionState(*this, CrashSource::kWatchdogTimer);
 }
 
 YAML::Emitter& Device::Print(YAML::Emitter& os, const std::string& error_report) {

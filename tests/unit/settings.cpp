@@ -21,6 +21,16 @@
 
 class Settings : public CDLTestBase {};
 
+TEST_F(Settings, WatchdogTimeout) {
+    layer_settings_.watchdog_timeout_ms = 123456u;
+
+    layer_settings_.SetMessageSeverity("info");
+    monitor_.SetAllowedFailureMsg("Version");
+    monitor_.SetDesiredFailureMsg(ErrorMonitor::SeverityBits::eInfo, "Begin Watchdog: 123456ms");
+    InitDevice();
+    monitor_.VerifyFound();
+}
+
 TEST_F(Settings, LogFilePath) {
     // The test framework writes sets the output path to ./cdl_output/<test-suite-name>/<test-name>/
     const char* kLogFileName = "cdl_log.txt";

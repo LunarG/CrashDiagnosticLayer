@@ -35,6 +35,7 @@
 #include "queue.h"
 #include "semaphore_tracker.h"
 #include "shader_module.h"
+#include "watchdog.h"
 
 #include <vulkan/utility/vk_sparse_range_map.hpp>
 
@@ -83,7 +84,7 @@ class Device {
 
     bool HangDetected() const { return hang_detected_; }
     void DeviceFault();
-    void WatchdogTimeout(bool dump_prologue, YAML::Emitter& os);
+    void WatchdogTimeout();
 
     const Logger& Log() const;
     const DeviceDispatchTable& Dispatch() const { return device_dispatch_table_; }
@@ -162,6 +163,8 @@ class Device {
 
     bool UpdateIdleState();
 
+    void UpdateWatchdog() { watchdog_.Update(); }
+
    private:
     Context& context_;
     DeviceDispatchTable device_dispatch_table_;
@@ -170,6 +173,7 @@ class Device {
     VkPhysicalDeviceProperties physical_device_properties_{};
     DeviceExtensionsPresent extensions_present_{};
 
+    Watchdog watchdog_;
     std::atomic<bool> hang_detected_{false};
 
     std::vector<VkQueueFamilyProperties> queue_family_properties_;

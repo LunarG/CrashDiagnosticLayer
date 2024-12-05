@@ -97,35 +97,6 @@ TEST(CreateInstance, DebugReportMessenger) {
     ASSERT_TRUE(got_message);
 }
 
-TEST(CreateInstance, LayerSettings) {
-    vk::raii::Context context;
-
-    const auto* test_info = testing::UnitTest::GetInstance()->current_test_info();
-    vk::ApplicationInfo applicationInfo(test_info->test_suite_name(), 1, test_info->name(), 1, VK_API_VERSION_1_1);
-
-    std::vector<const char*> layers{kLayerName};
-    std::vector<const char*> instance_extensions{"VK_EXT_debug_utils", "VK_EXT_layer_settings"};
-
-    uint64_t value{123456u};
-    std::vector<vk::LayerSettingEXT> settings;
-    settings.emplace_back(kLayerSettingsName, "watchdog_timeout_ms", vk::LayerSettingTypeEXT::eUint64,
-                          uint32_t(sizeof(value)), &value);
-
-    vk::LayerSettingsCreateInfoEXT settings_ci(settings);
-
-    ErrorMonitor monitor(kMessagePrefix, false);
-
-    settings_ci.setPNext(monitor.GetDebugCreateInfo());
-
-    monitor.SetAllowedFailureMsg("Version");
-    monitor.SetDesiredFailureMsg(ErrorMonitor::SeverityBits::eInfo, "Begin Watchdog: 123456ms");
-
-    vk::InstanceCreateInfo ci({}, nullptr, layers, instance_extensions, &settings_ci);
-    vk::raii::Instance instance(context, ci);
-
-    monitor.VerifyFound();
-}
-
 TEST(CreateInstance, AllLayerSettings) {
     vk::raii::Context context;
 
