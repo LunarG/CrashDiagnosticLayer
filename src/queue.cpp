@@ -456,6 +456,147 @@ void Queue::PostSubmit(VkResult result) {
     }
 }
 
+static bool NeedWaitSubmission(const VkSubmitInfo& submit) {
+    if (submit.waitSemaphoreCount > 0) {
+        return true;
+    }
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+    const auto* nv_keyed_mutex = vku::FindStructInPNextChain<VkWin32KeyedMutexAcquireReleaseInfoNV>(submit.pNext);
+    if (nv_keyed_mutex && nv_keyed_mutex->acquireCount > 0) {
+        return true;
+    }
+    const auto* khr_keyed_mutex = vku::FindStructInPNextChain<VkWin32KeyedMutexAcquireReleaseInfoKHR>(submit.pNext);
+    if (khr_keyed_mutex && khr_keyed_mutex->acquireCount > 0) {
+        return true;
+    }
+#endif
+    return false;
+}
+
+static bool NeedSignalSubmission(const VkSubmitInfo& submit) {
+    if (submit.signalSemaphoreCount > 0) {
+        return true;
+    }
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+    const auto* nv_keyed_mutex = vku::FindStructInPNextChain<VkWin32KeyedMutexAcquireReleaseInfoNV>(submit.pNext);
+    if (nv_keyed_mutex && nv_keyed_mutex->releaseCount > 0) {
+        return true;
+    }
+    const auto* khr_keyed_mutex = vku::FindStructInPNextChain<VkWin32KeyedMutexAcquireReleaseInfoKHR>(submit.pNext);
+    if (khr_keyed_mutex && khr_keyed_mutex->releaseCount > 0) {
+        return true;
+    }
+#endif
+    return false;
+}
+
+void* MakeWaitSubmissionPnext(const void* in_p_next) {
+    auto* out_p_next = static_cast<VkBaseOutStructure*>(vku::SafePnextCopy(in_p_next));
+    VkBaseOutStructure* node = out_p_next;
+    while (node) {
+        switch (node->sType) {
+            case VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO:
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+            case VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR:
+#endif
+            {
+                auto* timeline_info = reinterpret_cast<VkTimelineSemaphoreSubmitInfo*>(node);
+                timeline_info->signalSemaphoreValueCount = 0;
+                delete[] timeline_info->pSignalSemaphoreValues;
+                timeline_info->pSignalSemaphoreValues = nullptr;
+                break;
+            }
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+            case VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR:
+            case VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV: {
+                auto* mutex_info = reinterpret_cast<VkWin32KeyedMutexAcquireReleaseInfoKHR*>(node);
+                mutex_info->releaseCount = 0;
+                delete[] mutex_info->pReleaseSyncs;
+                mutex_info->pReleaseSyncs = nullptr;
+                delete[] mutex_info->pReleaseKeys;
+                mutex_info->pReleaseKeys = nullptr;
+                break;
+            }
+#endif
+            default:
+                break;
+        }
+
+        node = node->pNext;
+    }
+
+    return out_p_next;
+}
+void* MakeMiddleSubmissionPnext(const void* in_p_next) {
+    auto* out_p_next = static_cast<VkBaseOutStructure*>(vku::SafePnextCopy(in_p_next));
+    VkBaseOutStructure** prev = &out_p_next;
+    VkBaseOutStructure* node = out_p_next;
+    while (node) {
+        switch (node->sType) {
+            case VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO:
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+            case VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR:
+            case VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR:
+            case VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV:
+#endif
+            {
+                *prev = node->pNext;
+                node->pNext = nullptr;
+                vku::FreePnextChain(node);
+                node = *prev;
+                continue;
+            }
+            default:
+                break;
+        }
+
+        prev = &node->pNext;
+        node = node->pNext;
+    }
+
+    return out_p_next;
+}
+
+void* MakeSignalSubmissionPnext(const void* in_p_next) {
+    auto* out_p_next = static_cast<VkBaseOutStructure*>(vku::SafePnextCopy(in_p_next));
+    VkBaseOutStructure* node = out_p_next;
+    while (node) {
+        switch (node->sType) {
+            case VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO:
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+            case VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR:
+#endif
+            {
+                auto* timeline_info = reinterpret_cast<VkTimelineSemaphoreSubmitInfo*>(node);
+                timeline_info->waitSemaphoreValueCount = 0;
+                delete[] timeline_info->pWaitSemaphoreValues;
+                timeline_info->pWaitSemaphoreValues = nullptr;
+                break;
+            }
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+            case VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR:
+            case VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV: {
+                auto* mutex_info = reinterpret_cast<VkWin32KeyedMutexAcquireReleaseInfoKHR*>(node);
+                mutex_info->acquireCount = 0;
+                delete[] mutex_info->pAcquireTimeouts;
+                mutex_info->pAcquireTimeouts = nullptr;
+                delete[] mutex_info->pAcquireSyncs;
+                mutex_info->pAcquireSyncs = nullptr;
+                delete[] mutex_info->pAcquireKeys;
+                mutex_info->pAcquireKeys = nullptr;
+                break;
+            }
+#endif
+            default:
+                break;
+        }
+
+        node = node->pNext;
+    }
+
+    return out_p_next;
+}
+
 VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
     UpdateSeq();
     VkResult result = VK_SUCCESS;
@@ -475,42 +616,49 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
                 result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             }
         }
-        if (pSubmits[i].waitSemaphoreCount > 0) {
+        if (NeedWaitSubmission(pSubmits[i])) {
             auto submit = vku::InitStruct<VkSubmitInfo>();
-            submit.pNext = pSubmits[i].pNext;
+            submit.pNext = MakeWaitSubmissionPnext(pSubmits[i].pNext);
             submit.waitSemaphoreCount = pSubmits[i].waitSemaphoreCount;
             submit.pWaitSemaphores = pSubmits[i].pWaitSemaphores;
             submit.pWaitDstStageMask = pSubmits[i].pWaitDstStageMask;
             if (result == VK_SUCCESS) {
                 result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             }
+            vku::FreePnextChain(submit.pNext);
         }
-        for (auto& cb : submit_info.command_buffers) {
-            uint64_t cb_seq = ++submit_seq_;
-            auto command_buffer = GetCommandBuffer(cb);
-            if (command_buffer) {
-                command_buffer->QueueSubmit(vk_queue_, cb_seq, fence);
+        {
+            void* p_next = MakeMiddleSubmissionPnext(pSubmits[i].pNext);
+            for (auto& cb : submit_info.command_buffers) {
+                uint64_t cb_seq = ++submit_seq_;
+                auto command_buffer = GetCommandBuffer(cb);
+                if (command_buffer) {
+                    command_buffer->QueueSubmit(vk_queue_, cb_seq, fence);
+                }
+                auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
+                timeline_values.signalSemaphoreValueCount = 1;
+                timeline_values.pSignalSemaphoreValues = &cb_seq;
+                timeline_values.pNext = p_next;
+                auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
+                submit.commandBufferCount = 1;
+                submit.pCommandBuffers = &cb;
+                submit.signalSemaphoreCount = 1;
+                submit.pSignalSemaphores = &submit_sem_;
+                if (result == VK_SUCCESS) {
+                    result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+                }
             }
-            auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
-            timeline_values.signalSemaphoreValueCount = 1;
-            timeline_values.pSignalSemaphoreValues = &cb_seq;
-            auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
-            submit.commandBufferCount = 1;
-            submit.pCommandBuffers = &cb;
-            submit.signalSemaphoreCount = 1;
-            submit.pSignalSemaphores = &submit_sem_;
-            if (result == VK_SUCCESS) {
-                result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
-            }
+            vku::FreePnextChain(p_next);
         }
-        if (pSubmits[i].signalSemaphoreCount > 0) {
+        if (NeedSignalSubmission(pSubmits[i])) {
             auto submit = vku::InitStruct<VkSubmitInfo>();
-            submit.pNext = pSubmits[i].pNext;
+            submit.pNext = MakeSignalSubmissionPnext(pSubmits[i].pNext);
             submit.signalSemaphoreCount = pSubmits[i].signalSemaphoreCount;
             submit.pSignalSemaphores = pSubmits[i].pSignalSemaphores;
             if (result == VK_SUCCESS) {
                 result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             }
+            vku::FreePnextChain(submit.pNext);
         }
 
         submit_info.end_seq = ++submit_seq_;
@@ -645,7 +793,7 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
     UpdateSeq();
     VkResult result = VK_SUCCESS;
 
-    Submission submission(kQueueSubmit, ++submit_seq_);
+    Submission submission(kQueueBindSparse, ++submit_seq_);
 
     for (uint32_t i = 0; i < bindInfoCount; i++) {
         SubmitInfo submit_info(device_, pBindInfos[i], submit_seq_++);
@@ -660,8 +808,28 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
                 result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             }
         }
+        if (pBindInfos[i].waitSemaphoreCount > 0) {
+            auto bind_info = vku::InitStruct<VkBindSparseInfo>();
+            bind_info.pNext = MakeWaitSubmissionPnext(pBindInfos[i].pNext);
+            bind_info.waitSemaphoreCount = pBindInfos[i].waitSemaphoreCount;
+            bind_info.pWaitSemaphores = pBindInfos[i].pWaitSemaphores;
+            if (result == VK_SUCCESS) {
+                result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &bind_info, VK_NULL_HANDLE);
+            }
+            vku::FreePnextChain(bind_info.pNext);
+        }
         if (result == VK_SUCCESS) {
             result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &pBindInfos[i], VK_NULL_HANDLE);
+        }
+        if (pBindInfos[i].signalSemaphoreCount > 0) {
+            auto bind_info = vku::InitStruct<VkBindSparseInfo>();
+            bind_info.pNext = MakeSignalSubmissionPnext(pBindInfos[i].pNext);
+            bind_info.signalSemaphoreCount = pBindInfos[i].signalSemaphoreCount;
+            bind_info.pSignalSemaphores = pBindInfos[i].pSignalSemaphores;
+            if (result == VK_SUCCESS) {
+                result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &bind_info, VK_NULL_HANDLE);
+            }
+            vku::FreePnextChain(bind_info.pNext);
         }
         submit_info.end_seq = ++submit_seq_;
         {
