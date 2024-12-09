@@ -124,6 +124,81 @@ TEST_F(Sync, GpuWaitWrongSem) {
     dump::Parse(dump_file, output_path_);
 }
 
+TEST_F(Sync, GpuWaitBinaryPositive) {
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    InitInstance();
+    InitDevice();
+
+    ComputeIOTest state(physical_device_, device_, kReadWriteComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
+
+    vk::CommandBufferBeginInfo begin_info;
+    cmd_buff_.begin(begin_info);
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
+    cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.end();
+
+    vk::SemaphoreCreateInfo sem_ci;
+
+    vk::raii::Semaphore binary_sem(device_, sem_ci);
+    SetObjectName(device_, binary_sem, "binary_semaphore");
+
+    vk::PipelineStageFlags wait_mask = vk::PipelineStageFlagBits::eBottomOfPipe;
+    vk::Semaphore sem_handle;
+    // NOTE: MSVC win32 doesn't won't compile this with the 'advanced' constructor
+    vk::SubmitInfo signal_submit(0, nullptr, nullptr, 0, nullptr, 1, &(*binary_sem), nullptr);
+    queue_.submit(signal_submit);
+
+    vk::SubmitInfo wait_submit(*binary_sem, wait_mask, *cmd_buff_, {}, nullptr);
+
+    queue_.submit(wait_submit);
+
+    queue_.waitIdle();
+}
+
+TEST_F(Sync, GpuWaitTimelinePositive) {
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    InitInstance();
+    InitDevice();
+
+    ComputeIOTest state(physical_device_, device_, kReadWriteComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
+
+    vk::CommandBufferBeginInfo begin_info;
+    cmd_buff_.begin(begin_info);
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
+    cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.end();
+
+    std::array<vk::CommandBuffer, 2> cbs = {*cmd_buff_, *cmd_buff_};
+
+    vk::SemaphoreTypeCreateInfo sem_type_ci(vk::SemaphoreType::eTimeline, 100);
+    vk::SemaphoreCreateInfo sem_ci({}, &sem_type_ci);
+
+    vk::raii::Semaphore tl_sem(device_, sem_ci);
+    SetObjectName(device_, tl_sem, "tl_sem");
+
+    uint64_t sem_value = 123;
+    vk::TimelineSemaphoreSubmitInfo signal_tl_info(0, nullptr, 1, &sem_value);
+    vk::PipelineStageFlags wait_mask = vk::PipelineStageFlagBits::eBottomOfPipe;
+    vk::SubmitInfo signal_submit({}, {}, {}, *tl_sem, &signal_tl_info);
+
+    queue_.submit(signal_submit);
+
+    vk::TimelineSemaphoreSubmitInfo wait_tl_info(1, &sem_value);
+    vk::SubmitInfo wait_submit(*tl_sem, wait_mask, cbs, {}, &wait_tl_info);
+
+    queue_.submit(wait_submit);
+
+    queue_.waitIdle();
+}
+
 TEST_F(Sync, HostWaitHang) {
     layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
