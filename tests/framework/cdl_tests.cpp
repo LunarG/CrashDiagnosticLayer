@@ -30,11 +30,14 @@
 #include "config.h"
 #include "test_fixtures.h"
 
+#if defined(__ANDROID__)
+static void PropCallback(void *cookie, [[maybe_unused]] const char *name, const char *value, [[maybe_unused]] uint32_t serial) {
+    std::string *property = static_cast<std::string *>(cookie);
+    *property = value;
+}
+#endif
 std::string GetEnvironment(const char *variable) {
-#if !defined(__ANDROID__) && !defined(_WIN32)
-    const char *output = getenv(variable);
-    return output == NULL ? "" : output;
-#elif defined(_WIN32)
+#if defined(_WIN32)
     int size = GetEnvironmentVariable(variable, NULL, 0);
     if (size == 0) {
         return "";
@@ -45,7 +48,8 @@ std::string GetEnvironment(const char *variable) {
     delete[] buffer;
     return output;
 #elif defined(__ANDROID__)
-    std::string var = "debug.cdl." + variable;
+    std::string var("debug.cdl.");
+    var += variable;
 
     const prop_info *prop_info = __system_property_find(var.data());
 
@@ -57,19 +61,20 @@ std::string GetEnvironment(const char *variable) {
         return "";
     }
 #else
-    return "";
+    const char *output = getenv(variable);
+    return output == NULL ? "" : output;
 #endif
 }
 
 void SetEnvironment(const char *variable, const char *value) {
-#if !defined(__ANDROID__) && !defined(_WIN32)
-    setenv(variable, value, 1);
-#elif defined(_WIN32)
+#if defined(_WIN32)
     SetEnvironmentVariable(variable, value);
 #elif defined(__ANDROID__)
     (void)variable;
     (void)value;
     assert(false && "Not supported on android");
+#else
+    setenv(variable, value, 1);
 #endif
 }
 
@@ -376,8 +381,10 @@ static void destroyActivity(struct android_app *app) {
     // Wait for APP_CMD_DESTROY
     while (app->destroyRequested == 0) {
         struct android_poll_source *source = nullptr;
-        int events = 0;
-        int result = ALooper_pollAll(-1, nullptr, &events, reinterpret_cast<void **>(&source));
+        int result = ALooper_pollOnce(-1, nullptr, nullptr, reinterpret_cast<void **>(&source));
+        if (result == ALOOPER_POLL_ERROR) {
+            __android_log_print(ANDROID_LOG_ERROR, appTag, "ALooper_pollOnce returned an error");
+        }
 
         if ((result >= 0) && (source)) {
             source->process(app, source);
@@ -392,9 +399,15 @@ void android_main(struct android_app *app) {
     app->onInputEvent = processInput;
 
     while (1) {
-        int events;
         struct android_poll_source *source;
-        while (ALooper_pollAll(active ? 0 : -1, NULL, &events, (void **)&source) >= 0) {
+
+        int result = ALooper_pollOnce(-1, nullptr, nullptr, reinterpret_cast<void **>(&source));
+        if (result == ALOOPER_POLL_ERROR) {
+            __android_log_print(ANDROID_LOG_ERROR, appTag, "ALooper_pollOnce returned an error");
+            return;
+        }
+
+        if (result >= 0) {
             if (source) {
                 source->process(app, source);
             }

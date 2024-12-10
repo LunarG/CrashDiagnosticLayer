@@ -33,15 +33,9 @@
 // failure was encountered.
 class ErrorMonitor {
    public:
-#if !defined(VK_USE_PLATFORM_ANDROID_KHR)
     using SeverityBits = vk::DebugUtilsMessageSeverityFlagBitsEXT;
     using Severity = vk::DebugUtilsMessageSeverityFlagsEXT;
     using MessengerCreateInfo = vk::DebugUtilsMessengerCreateInfoEXT;
-#else
-    using SeverityBits = vk::DebugUtilsMessageSeverityFlagBitsEXT;
-    using Severity = vk::DebugUtilsMessageSeverityFlagsEXT;
-    using MessengerCreateInfo = vk::DebugReportCallbackCreateInfoEXT;
-#endif
 
     ErrorMonitor(const char *prefix, bool print_all_errors = false);
     ~ErrorMonitor() = default;

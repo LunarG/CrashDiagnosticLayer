@@ -218,8 +218,9 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
         if (!settings_->output_path.empty()) {
             output_path_ = settings_->output_path;
         } else {
-#if defined(WIN32)
+#if defined(VK_USE_PLATFORM_WINDOWS_KHR)
             output_path_ = getenv("USERPROFILE");
+#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
 #else
             output_path_ = getenv("HOME");
 #endif
