@@ -301,114 +301,59 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptQueueSubmit2KHR(VkQueue queue, uint32_t 
 
 VKAPI_ATTR VkResult VKAPI_CALL InterceptEnumerateInstanceLayerProperties(uint32_t* pPropertyCount,
                                                                          VkLayerProperties* pProperties) {
-    VkResult result = VK_SUCCESS;
     if (pProperties != nullptr && *pPropertyCount > 0) {
         *pProperties = kLayerProperties;
     }
     *pPropertyCount = 1;
-    return result;
+    return VK_SUCCESS;
 }
 
 VKAPI_ATTR VkResult VKAPI_CALL InterceptEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
                                                                        uint32_t* pPropertyCount,
                                                                        VkLayerProperties* pProperties) {
-    (void)physicalDevice;
-    VkResult result = VK_SUCCESS;
     if (pProperties != nullptr && *pPropertyCount > 0) {
         *pProperties = kLayerProperties;
     }
     *pPropertyCount = 1;
-    return result;
+    return VK_SUCCESS;
 }
 
 VKAPI_ATTR VkResult VKAPI_CALL InterceptEnumerateInstanceExtensionProperties(const char* pLayerName,
                                                                              uint32_t* pPropertyCount,
                                                                              VkExtensionProperties* pProperties) {
-    bool layer_requested = (nullptr == pLayerName || !strcmp(pLayerName, kLayerProperties.layerName));
-    if (!layer_requested) {
-        return VK_ERROR_LAYER_NOT_PRESENT;
+    if (pLayerName && !strcmp(pLayerName, kLayerProperties.layerName)) {
+        const uint32_t count = static_cast<uint32_t>(instance_extensions.size());
+        if (pProperties == nullptr) {
+            *pPropertyCount = count;
+            return VK_SUCCESS;
+        }
+        const uint32_t copy_size = *pPropertyCount < count ? *pPropertyCount : count;
+        std::memcpy(pProperties, instance_extensions.data(), copy_size * sizeof(VkExtensionProperties));
+        *pPropertyCount = copy_size;
+        return (copy_size < count) ? VK_INCOMPLETE : VK_SUCCESS;
     }
-    if (nullptr == pProperties) {
-        *pPropertyCount += static_cast<uint32_t>(instance_extensions.size());
-        return VK_SUCCESS;
-    } else if (*pPropertyCount > 0) {
-        *pPropertyCount = static_cast<uint32_t>(instance_extensions.size());
-        memcpy(pProperties, instance_extensions.data(), instance_extensions.size() * sizeof(VkExtensionProperties));
-    }
-    VkResult result = VK_SUCCESS;
-
-    return result;
+    return VK_ERROR_LAYER_NOT_PRESENT;
 }
 
 VKAPI_ATTR VkResult VKAPI_CALL InterceptEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
                                                                            const char* pLayerName,
                                                                            uint32_t* pPropertyCount,
                                                                            VkExtensionProperties* pProperties) {
-    // we want to append our extensions, removing duplicates.
+    if (pLayerName && !strcmp(pLayerName, kLayerProperties.layerName)) {
+        const uint32_t count = static_cast<uint32_t>(device_extensions.size());
+        if (pProperties == nullptr) {
+            *pPropertyCount = count;
+            return VK_SUCCESS;
+        }
+        const uint32_t copy_size = *pPropertyCount < count ? *pPropertyCount : count;
+        std::memcpy(pProperties, device_extensions.data(), copy_size * sizeof(VkExtensionProperties));
+        *pPropertyCount = copy_size;
+        return (copy_size < count) ? VK_INCOMPLETE : VK_SUCCESS;
+    }
+
     InstanceData* instance_data = GetInstanceLayerData(DataKey(physicalDevice));
 
-    uint32_t num_other_extensions = 0;
-    VkResult result = instance_data->dispatch_table.EnumerateDeviceExtensionProperties(physicalDevice, nullptr,
-                                                                                       &num_other_extensions, nullptr);
-    if (result != VK_SUCCESS) {
-        return result;
-    }
-
-    // call down to get other device properties
-    std::vector<VkExtensionProperties> extensions(num_other_extensions);
-    result = instance_data->dispatch_table.EnumerateDeviceExtensionProperties(physicalDevice, pLayerName,
-                                                                              &num_other_extensions, &extensions[0]);
-
-    // add our extensions if we have any and requested
-    bool layer_requested = (nullptr == pLayerName || !strcmp(pLayerName, kLayerProperties.layerName));
-
-    if (result == VK_SUCCESS && layer_requested) {
-        // not just our layer, we expose all our extensions
-        uint32_t max_extensions = *pPropertyCount;
-
-        // set and copy base extensions
-        *pPropertyCount = num_other_extensions;
-
-        // find our unique extensions that need to be added
-        uint32_t num_additional_extensions = 0;
-        auto num_device_extensions = device_extensions.size();
-        std::vector<const VkExtensionProperties*> additional_extensions(num_device_extensions);
-
-        for (size_t i = 0; i < num_device_extensions; ++i) {
-            bool is_unique_extension = true;
-
-            for (size_t j = 0; j < num_other_extensions; ++j) {
-                if (0 == strcmp(extensions[j].extensionName, device_extensions[i].extensionName)) {
-                    is_unique_extension = false;
-                    break;
-                }
-            }
-
-            if (is_unique_extension) {
-                additional_extensions[num_additional_extensions++] = &device_extensions[i];
-            }
-        }
-
-        // null properties, just count total extensions
-        if (nullptr == pProperties) {
-            *pPropertyCount += num_additional_extensions;
-        } else {
-            uint32_t numExtensions = std::min(num_other_extensions, max_extensions);
-
-            memcpy(pProperties, &extensions[0], numExtensions * sizeof(VkExtensionProperties));
-
-            for (size_t i = 0; i < num_additional_extensions && numExtensions < max_extensions; ++i) {
-                pProperties[numExtensions++] = *additional_extensions[i];
-            }
-
-            *pPropertyCount = numExtensions;
-
-            // not enough space for all extensions
-            if (num_other_extensions + num_additional_extensions > max_extensions) {
-                result = VK_INCOMPLETE;
-            }
-        }
-    }
+    VkResult result = instance_data->dispatch_table.EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
 
     result = instance_data->interceptor->PostEnumerateDeviceExtensionProperties(physicalDevice, pLayerName,
                                                                                 pPropertyCount, pProperties, result);
@@ -460,7 +405,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetPhysicalDeviceToolPropertiesEXT(
 
 extern "C" {
 
-CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(VkInstance inst, const char* func) {
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance inst, const char* func) {
     const auto& name_map = crash_diagnostic_layer::GetNameToFuncPtrMap();
     const auto& item = name_map.find(func);
     if (item != name_map.end()) {
@@ -469,7 +414,7 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetInstanceProcAddr(VkIn
     return (PFN_vkVoidFunction)crash_diagnostic_layer::PassInstanceProcDownTheChain(inst, func);
 }
 
-CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(VkDevice dev, const char* func) {
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice dev, const char* func) {
     const auto& name_map = crash_diagnostic_layer::GetNameToFuncPtrMap();
     const auto& item = name_map.find(func);
     if (item != name_map.end()) {
@@ -484,15 +429,39 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL CDL_GetDeviceProcAddr(VkDevi
     return (PFN_vkVoidFunction)crash_diagnostic_layer::PassDeviceProcDownTheChain(dev, func);
 }
 
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount,
+                                                                         VkLayerProperties* pProperties) {
+    return crash_diagnostic_layer::InterceptEnumerateInstanceLayerProperties(pPropertyCount, pProperties);
+}
+
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(const char* pLayerName,
+                                                                        uint32_t* pPropertyCount,
+                                                                        VkExtensionProperties* pProperties) {
+    return crash_diagnostic_layer::InterceptEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties);
+}
+
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t* pCount,
+                                                                           VkLayerProperties* pProperties) {
+    return crash_diagnostic_layer::InterceptEnumerateDeviceLayerProperties(physicalDevice, pCount, pProperties);
+}
+
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
+                                                                               const char* pLayerName, uint32_t* pCount,
+                                                                               VkExtensionProperties* pProperties) {
+    return crash_diagnostic_layer::InterceptEnumerateDeviceExtensionProperties(VK_NULL_HANDLE, pLayerName, pCount, pProperties);
+}
+#endif
+
 CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
-CDL_NegotiateLoaderLayerInterfaceVersion(VkNegotiateLayerInterface* pVersionStruct) {
+vkNegotiateLoaderLayerInterfaceVersion(VkNegotiateLayerInterface* pVersionStruct) {
     assert(pVersionStruct != NULL);
     assert(pVersionStruct->sType == LAYER_NEGOTIATE_INTERFACE_STRUCT);
     // Fill in the function pointers if our version is at least capable of having
     // the structure contain them.
     if (pVersionStruct->loaderLayerInterfaceVersion >= 2) {
-        pVersionStruct->pfnGetInstanceProcAddr = &CDL_GetInstanceProcAddr;
-        pVersionStruct->pfnGetDeviceProcAddr = &CDL_GetDeviceProcAddr;
+        pVersionStruct->pfnGetInstanceProcAddr = &vkGetInstanceProcAddr;
+        pVersionStruct->pfnGetDeviceProcAddr = &vkGetDeviceProcAddr;
         pVersionStruct->pfnGetPhysicalDeviceProcAddr = nullptr;
     }
     if (pVersionStruct->loaderLayerInterfaceVersion > CURRENT_LOADER_LAYER_INTERFACE_VERSION) {
@@ -500,6 +469,7 @@ CDL_NegotiateLoaderLayerInterfaceVersion(VkNegotiateLayerInterface* pVersionStru
     }
     return VK_SUCCESS;
 }
+
 
 }  // extern "C"
 

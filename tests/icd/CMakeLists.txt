@@ -14,7 +14,7 @@
 # limitations under the License.
 # ~~~
 
-if (ANDROID OR MINGW)
+if (MINGW)
     return()
 elseif (APPLE)
     return()
@@ -40,6 +40,8 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if(BUILD_WSI_WAYLAND_SUPPORT)
         add_definitions(-DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_WAYLAND_KHX)
     endif()
+elseif (ANDROID)
+    # TODO build icd on android for now even though it won't be used
 else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()

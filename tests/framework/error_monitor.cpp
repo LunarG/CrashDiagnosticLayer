@@ -18,21 +18,6 @@
 #include "error_monitor.h"
 #include "test_fixtures.h"
 
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
-// Note. VK_EXT_debug_report is deprecated by the VK_EXT_debug_utils extension.
-// However, we still support this old extension due to CI running old Android devices.
-static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugReportFlagsEXT message_flags, VkDebugReportObjectTypeEXT,
-                                                    uint64_t, size_t, int32_t, const char *prefix, const char *message,
-                                                    void *user_data) {
-    auto *error_monitor = reinterpret_cast<ErrorMonitor *>(user_data);
-
-    if (error_monitor.GetPrefix() == prefix && message_flags & error_monitor->GetMessageFlags()) {
-        return error_monitor->CheckForDesiredMsg(message);
-    }
-    return VK_FALSE;
-}
-#else
-
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
                                                     VkDebugUtilsMessageTypeFlagsEXT message_types,
                                                     const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
@@ -49,18 +34,12 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityF
     }
     return VK_FALSE;
 }
-#endif
 
 ErrorMonitor::ErrorMonitor(const char *prefix, bool print_all_errors)
     :
-#if !defined(VK_USE_PLATFORM_ANDROID_KHR)
       debug_create_info_({},
                          SeverityBits::eError | SeverityBits::eWarning | SeverityBits::eInfo | SeverityBits::eVerbose,
                          vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral, DebugCallback, this),
-#else
-      debug_create_info_({}, Severity::eError | Severity::eWarning | Severity::eInfo | Severity::eVerbose,
-                         DebugCallback, this),
-#endif
       msg_prefix_(prefix),
       print_all_errors_(print_all_errors) {
 }

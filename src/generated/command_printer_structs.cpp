@@ -18158,12 +18158,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImportAndroidHardwareBuffer
     PrintNextPtr(os, t.pNext);
     os << YAML::EndSeq;
     os << YAML::Key << "buffer";
-    // pointer
-    if (t.buffer != nullptr) {
-        os << YAML::Value << *t.buffer;
-    } else {
-        os << YAML::Value << "nullptr";
-    }
+    // non-dereferenced pointer
+    os << YAML::Value << t.buffer;
     os << YAML::EndMap;
     return os;
 }

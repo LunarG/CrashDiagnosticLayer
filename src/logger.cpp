@@ -265,7 +265,6 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Logger::DefaultLogCallback(VkDebugUtilsMessageSev
                                                           VkDebugUtilsMessageTypeFlagsEXT types,
                                                           const VkDebugUtilsMessengerCallbackDataEXT* cb_data,
                                                           void* user_data) {
-    const Logger& logger = *reinterpret_cast<Logger*>(user_data);
     android_LogPriority prio = ANDROID_LOG_INFO;
     if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
         prio = ANDROID_LOG_ERROR;

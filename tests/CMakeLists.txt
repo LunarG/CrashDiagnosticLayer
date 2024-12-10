@@ -89,9 +89,14 @@ target_sources(cdl_tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 target_include_directories(cdl_tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_include_directories(cdl_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/framework)
 
-install(TARGETS cdl_tests)
-
-include(GoogleTest)
-gtest_discover_tests(cdl_tests DISCOVERY_TIMEOUT 100)
-
 add_subdirectory(icd)
+
+if (ANDROID)
+    add_subdirectory(android)
+else()
+    install(TARGETS cdl_tests)
+    include(GoogleTest)
+    gtest_discover_tests(cdl_tests DISCOVERY_TIMEOUT 100)
+endif()
+
+

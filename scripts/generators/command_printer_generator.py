@@ -133,6 +133,7 @@ class CommandPrinter {
                 'wl_display',
                 'wl_surface',
                 'ANativeWindow',
+                'AHardwareBuffer',
                 'SECURITY_ATTRIBUTES',
                 'CAMetalLayer',
                 'StdVideoEncodeH264SliceHeader',
