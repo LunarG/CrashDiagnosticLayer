@@ -19,7 +19,7 @@
 #include "util.h"
 #include <regex>
 
-#if defined(WIN32)
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
 // For OutputDebugString
 #include <process.h>
 #include <windows.h>
@@ -44,7 +44,7 @@
 
 #include <yaml-cpp/emitter.h>
 
-#if defined(WIN32)
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
 #include <direct.h>
 #endif
 
@@ -218,7 +218,7 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
         if (!settings_->output_path.empty()) {
             output_path_ = settings_->output_path;
         } else {
-#if defined(VK_USE_PLATFORM_WINDOWS_KHR)
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
             output_path_ = getenv("USERPROFILE");
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
 #else
@@ -650,7 +650,7 @@ std::ofstream Context::OpenDumpFile() {
     dump_file_path /= ss_name.str();
     total_logs_++;
 
-#if !defined(WIN32)
+#if !defined(VK_USE_PLATFORM_WIN32_KHR)
     // Create a symlink from the generated log file.
     std::filesystem::path symlink_path(base_output_path_);
     symlink_path /= "cdl_dump.yaml.symlink";
@@ -666,11 +666,11 @@ std::ofstream Context::OpenDumpFile() {
     ss << "Device error encountered and log being recorded" << std::endl;
     ;
     ss << "\tOutput written to: " << dump_file_path << std::endl;
-#if !defined(WIN32)
+#if !defined(VK_USE_PLATFORM_WIN32_KHR)
     ss << "\tSymlink to output: " << symlink_path << std::endl;
 #endif
     ss << "----------------------------------------------------------------" << std::endl;
-#if defined(WIN32)
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
     OutputDebugString(ss.str().c_str());
 #endif
     Log().Error(ss.str());
@@ -1232,7 +1232,7 @@ VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKH
         int tid = 0;
 #endif
 
-#ifdef WIN32
+#ifdef VK_USE_PLATFORM_WIN32_KHR
         int pid = _getpid();
 #else
         pid_t pid = getpid();
@@ -1271,7 +1271,7 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
         int tid = 0;
 #endif
 
-#ifdef WIN32
+#ifdef VK_USE_PLATFORM_WIN32_KHR
         int pid = _getpid();
 #else
         pid_t pid = getpid();
