@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023 LunarG, Inc.
+# Copyright (c) 2023-2024 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -80,10 +80,13 @@ void InitInstanceDispatchTable(VkInstance instance,
                                PFN_vkGetInstanceProcAddr pa,
                                InstanceDispatchTable *dt) {
 ''')
+        # The android loader complains if you look up these functions with a non-null instance handle
+        global_commands = ('vkCreateInstance', 'vkEnumerateInstanceExtensionProperties')
         for vkcommand in filter(lambda x: self.InstanceCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'  dt->{vkcommand.name[2:]} =\n')
-            out.append(f'    (PFN_{vkcommand.name})pa(instance, "{vkcommand.name}");\n')
+            instance_param = 'instance' if vkcommand.name not in global_commands else 'VK_NULL_HANDLE'
+            out.append(f'    (PFN_{vkcommand.name})pa({instance_param}, "{vkcommand.name}");\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
         out.append('};\n\n')
 

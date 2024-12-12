@@ -234,16 +234,13 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateDevice(VkPhysicalDevice gpu, const
 
     // Get the proc addr pointers for this layer and update the chain for the next
     // layer.
-    PFN_vkGetInstanceProcAddr pfn_next_instance_proc_addr = layer_create_info->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     PFN_vkGetDeviceProcAddr pfn_next_device_proc_addr = layer_create_info->u.pLayerInfo->pfnNextGetDeviceProcAddr;
-    PFN_vkCreateDevice pfn_create_device =
-        (PFN_vkCreateDevice)pfn_next_instance_proc_addr(instance_data->instance, "vkCreateDevice");
     layer_create_info->u.pLayerInfo = layer_create_info->u.pLayerInfo->pNext;
 
     const VkDeviceCreateInfo* pFinalCreateInfo =
         instance_data->interceptor->GetModifiedDeviceCreateInfo(gpu, pCreateInfo);
 
-    auto result = pfn_create_device(gpu, pFinalCreateInfo, pAllocator, pDevice);
+    auto result = instance_data->dispatch_table.CreateDevice(gpu, pFinalCreateInfo, pAllocator, pDevice);
     if (VK_SUCCESS != result) {
         return result;
     }
@@ -353,12 +350,8 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptEnumerateDeviceExtensionProperties(VkPhy
 
     InstanceData* instance_data = GetInstanceLayerData(DataKey(physicalDevice));
 
-    VkResult result = instance_data->dispatch_table.EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
-
-    result = instance_data->interceptor->PostEnumerateDeviceExtensionProperties(physicalDevice, pLayerName,
-                                                                                pPropertyCount, pProperties, result);
-
-    return result;
+    return instance_data->dispatch_table.EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount,
+                                                                            pProperties);
 }
 
 VKAPI_ATTR VkResult VKAPI_CALL InterceptGetPhysicalDeviceToolProperties(

@@ -30,7 +30,7 @@
 namespace crash_diagnostic_layer {
 
 void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa, InstanceDispatchTable *dt) {
-    dt->CreateInstance = (PFN_vkCreateInstance)pa(instance, "vkCreateInstance");
+    dt->CreateInstance = (PFN_vkCreateInstance)pa(VK_NULL_HANDLE, "vkCreateInstance");
     dt->DestroyInstance = (PFN_vkDestroyInstance)pa(instance, "vkDestroyInstance");
     dt->EnumeratePhysicalDevices = (PFN_vkEnumeratePhysicalDevices)pa(instance, "vkEnumeratePhysicalDevices");
     dt->GetPhysicalDeviceFeatures = (PFN_vkGetPhysicalDeviceFeatures)pa(instance, "vkGetPhysicalDeviceFeatures");
@@ -46,7 +46,7 @@ void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa
     dt->GetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)pa(instance, "vkGetInstanceProcAddr");
     dt->CreateDevice = (PFN_vkCreateDevice)pa(instance, "vkCreateDevice");
     dt->EnumerateInstanceExtensionProperties =
-        (PFN_vkEnumerateInstanceExtensionProperties)pa(instance, "vkEnumerateInstanceExtensionProperties");
+        (PFN_vkEnumerateInstanceExtensionProperties)pa(VK_NULL_HANDLE, "vkEnumerateInstanceExtensionProperties");
     dt->EnumerateDeviceExtensionProperties =
         (PFN_vkEnumerateDeviceExtensionProperties)pa(instance, "vkEnumerateDeviceExtensionProperties");
     dt->EnumerateInstanceLayerProperties =
