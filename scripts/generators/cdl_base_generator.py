@@ -51,7 +51,7 @@ intercept_functions = {
         'vkDestroySemaphore': InterceptFlag.NORMAL,
         'vkDestroyShaderModule': InterceptFlag.PRE,
         'vkDeviceWaitIdle': InterceptFlag.NORMAL,
-        'vkEnumerateDeviceExtensionProperties': InterceptFlag.CUSTOM | InterceptFlag.POST,
+        'vkEnumerateDeviceExtensionProperties': InterceptFlag.CUSTOM,
         'vkEnumerateDeviceLayerProperties': InterceptFlag.CUSTOM,
         'vkEnumerateInstanceExtensionProperties': InterceptFlag.CUSTOM,
         'vkEnumerateInstanceLayerProperties': InterceptFlag.CUSTOM,

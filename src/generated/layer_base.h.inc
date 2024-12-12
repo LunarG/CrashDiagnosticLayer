@@ -40,12 +40,6 @@ virtual VkResult PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDevic
 
 virtual void PreDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {}
 
-virtual VkResult PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName,
-                                                        uint32_t* pPropertyCount, VkExtensionProperties* pProperties,
-                                                        VkResult result) {
-    return result;
-}
-
 virtual void PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) {}
 
 virtual VkResult QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) = 0;

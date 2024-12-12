@@ -172,10 +172,6 @@ class Context : public Interceptor {
     const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                           const VkDeviceCreateInfo* pCreateInfo) override;
 
-    const DeviceExtensionsPresent& EnabledExtensions(VkPhysicalDevice physicalDevice) {
-        return extensions_of_interest_enabled_[physicalDevice];
-    }
-
 #include "cdl_commands.h.inc"
 
     VkResult PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
@@ -187,10 +183,6 @@ class Context : public Interceptor {
                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice, VkResult result) override;
 
     void PreDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) override;
-
-    VkResult PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName,
-                                                    uint32_t* pPropertyCount, VkExtensionProperties* pProperties,
-                                                    VkResult result) override;
 
     void PostGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) override;
 
@@ -340,9 +332,6 @@ class Context : public Interceptor {
     vku::safe_VkInstanceCreateInfo modified_create_info_;
 
     InstanceDispatchTable instance_dispatch_table_;
-
-    std::unordered_map<VkPhysicalDevice, DeviceExtensionsPresent> extensions_of_interest_present_;
-    std::unordered_map<VkPhysicalDevice, DeviceExtensionsPresent> extensions_of_interest_enabled_;
 
     mutable std::mutex device_create_infos_mutex_;
     std::unordered_map<const VkDeviceCreateInfo* /*modified_create_info*/, std::unique_ptr<DeviceCreateInfo>>

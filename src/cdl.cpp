@@ -437,10 +437,22 @@ static DeviceExtensionsPresent DecodeExtensionStrings(uint32_t count, const char
 
 const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                                const VkDeviceCreateInfo* pCreateInfo) {
+    DeviceExtensionsPresent extensions_present{};
+    {
+        // Get the list of device extensions.
+        uint32_t extension_count = 0;
+        std::vector<VkExtensionProperties> properties;
+        Dispatch().EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extension_count, nullptr);
+        properties.resize(extension_count);
+        Dispatch().EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extension_count, properties.data());
+
+        for (const auto& prop : properties) {
+            DecodeExtensionString(extensions_present, prop.extensionName);
+        }
+    }
     auto extensions_enabled =
         DecodeExtensionStrings(pCreateInfo->enabledExtensionCount, pCreateInfo->ppEnabledExtensionNames);
 
-    const auto& extensions_present = extensions_of_interest_present_[physicalDevice];
     auto device_ci = std::make_unique<DeviceCreateInfo>();
     device_ci->original.initialize(pCreateInfo);
     device_ci->modified = device_ci->original;
@@ -472,12 +484,10 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
     } else {
         Log().Warning("No VK_AMD_buffer_marker extension, semaphore tracking will be disabled.");
     }
-
     if (!extensions_present.nv_device_diagnostic_checkpoints && !extensions_present.amd_buffer_marker) {
-        Log().Error(
-            "No VK_NV_device_diagnostic_checkpoints or VK_AMD_buffer_marker extension, progression tracking will "
-            "be "
-            "disabled. ");
+        Log().Warning(
+            "No VK_NV_device_diagnostic_checkpoints or VK_AMD_buffer_marker extension, progression tracking will be "
+            "disabled.");
     }
     if (extensions_present.ext_device_fault) {
         if (!extensions_enabled.ext_device_fault) {
@@ -528,8 +538,6 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
         Log().Warning(
             "No VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
     }
-
-    extensions_of_interest_enabled_[physicalDevice] = std::move(extensions_enabled);
 
     // save the raw ptr before std::move of the std::unique_ptr
     const auto* ci_ptr = device_ci->modified.ptr();
@@ -740,7 +748,7 @@ VkResult Context::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, co
         application_info_->apiVersion = pCreateInfo->pApplicationInfo->apiVersion;
     }
     // This messenger is for messages we recieve from the ICD for device address binding events.
-    if (VK_NULL_HANDLE == utils_messenger_) {
+    if (VK_NULL_HANDLE == utils_messenger_ && instance_dispatch_table_.CreateDebugUtilsMessengerEXT) {
         VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = {
             VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
             nullptr,
@@ -762,22 +770,6 @@ void Context::PreDestroyInstance(VkInstance instance, const VkAllocationCallback
         instance_dispatch_table_.DestroyDebugUtilsMessengerEXT(vk_instance_, utils_messenger_, nullptr);
         utils_messenger_ = VK_NULL_HANDLE;
     }
-}
-
-VkResult Context::PostEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName,
-                                                         uint32_t* pPropertyCount, VkExtensionProperties* pProperties,
-                                                         VkResult result) {
-    if (result == VK_SUCCESS && pPropertyCount != nullptr && pProperties != nullptr && *pPropertyCount > 0) {
-        DeviceExtensionsPresent extensions_present{};
-
-        // Get the list of device extensions.
-        uint32_t extension_count = *pPropertyCount;
-        for (uint32_t i = 0; i < extension_count; ++i) {
-            DecodeExtensionString(extensions_present, pProperties[i].extensionName);
-        }
-        extensions_of_interest_present_[physicalDevice] = std::move(extensions_present);
-    }
-    return result;
 }
 
 VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
