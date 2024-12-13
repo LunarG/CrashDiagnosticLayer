@@ -99,6 +99,23 @@ jobs:
       - name: Test
         run: python scripts/tests.py --test
 
+  android:
+      needs: check_cdl
+      runs-on: ubuntu-22.04
+      strategy:
+        matrix:
+          abi: [ arm64-v8a, armeabi-v7a ]
+
+      steps:
+        - uses: actions/checkout@v4
+        - uses: lukka/get-cmake@latest
+        - name: Setup ccache
+          uses: hendrikmuhs/ccache-action@v1.2
+          with:
+            key: android-${{ matrix.abi }}-${{ matrix.build_tests }}-${{ matrix.stl_type }}
+        - name: Build
+          run: python3 scripts/android.py --app-abi ${{ matrix.abi }} --tests
+
   windows:
     needs: check_cdl
     runs-on: windows-2022

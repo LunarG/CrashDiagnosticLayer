@@ -84,6 +84,7 @@ def main():
     parser.add_argument('--config', type=str, choices=configs, default=configs[0])
     parser.add_argument('--app-abi', dest='android_abi', type=str, default="arm64-v8a")
     parser.add_argument('--app-stl', dest='android_stl', type=str, choices=["c++_static", "c++_shared"], default="c++_static")
+    parser.add_argument('--tests', action='store_true', help='Build unit tests')
     parser.add_argument('--apk', action='store_true', help='Generate an APK as a post build step.')
     parser.add_argument('--clean', action='store_true', help='Cleans CMake build artifacts')
     args = parser.parse_args()
@@ -91,6 +92,7 @@ def main():
     cmake_config = args.config
     android_abis = args.android_abi.split(" ")
     android_stl = args.android_stl
+    build_tests = args.tests or args.apk
     create_apk = args.apk
     clean = args.clean
 
@@ -156,7 +158,7 @@ def main():
         cmake_cmd += f' -D CMAKE_TOOLCHAIN_FILE={android_toolchain}'
         cmake_cmd += f' -D CMAKE_ANDROID_ARCH_ABI={abi}'
         cmake_cmd += f' -D CMAKE_INSTALL_LIBDIR={lib_dir}'
-        cmake_cmd += f' -D BUILD_TESTS={create_apk}'
+        cmake_cmd += f' -D BUILD_TESTS={build_tests}'
         cmake_cmd += f' -D CMAKE_ANDROID_STL_TYPE={android_stl}'
 
         cmake_cmd += ' -D ANDROID_PLATFORM=26'
