@@ -4397,6 +4397,8 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
     static const std::unordered_map<std::string, function_data> name_to_func_ptr_map = {
         {"vkCreateInstance", {kFuncTypeInst, (void*)InterceptCreateInstance}},
         {"vkDestroyInstance", {kFuncTypeInst, (void*)InterceptDestroyInstance}},
+        {"vkGetInstanceProcAddr", {kFuncTypeInst, (void*)InterceptGetInstanceProcAddr}},
+        {"vkGetDeviceProcAddr", {kFuncTypeDev, (void*)InterceptGetDeviceProcAddr}},
         {"vkCreateDevice", {kFuncTypePdev, (void*)InterceptCreateDevice}},
         {"vkDestroyDevice", {kFuncTypeDev, (void*)InterceptDestroyDevice}},
         {"vkEnumerateInstanceExtensionProperties",

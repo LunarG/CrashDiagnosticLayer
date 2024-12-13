@@ -392,13 +392,12 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetPhysicalDeviceToolPropertiesEXT(
     return result;
 }
 
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL InterceptGetInstanceProcAddr(VkInstance inst, const char* func);
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL InterceptGetDeviceProcAddr(VkDevice dev, const char* func);
+
 #include "layer_base.cpp.inc"
 
-}  // namespace crash_diagnostic_layer
-
-extern "C" {
-
-CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance inst, const char* func) {
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL InterceptGetInstanceProcAddr(VkInstance inst, const char* func) {
     const auto& name_map = crash_diagnostic_layer::GetNameToFuncPtrMap();
     const auto& item = name_map.find(func);
     if (item != name_map.end()) {
@@ -407,7 +406,7 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInst
     return (PFN_vkVoidFunction)crash_diagnostic_layer::PassInstanceProcDownTheChain(inst, func);
 }
 
-CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice dev, const char* func) {
+VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL InterceptGetDeviceProcAddr(VkDevice dev, const char* func) {
     const auto& name_map = crash_diagnostic_layer::GetNameToFuncPtrMap();
     const auto& item = name_map.find(func);
     if (item != name_map.end()) {
@@ -420,6 +419,18 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice
         }
     }
     return (PFN_vkVoidFunction)crash_diagnostic_layer::PassDeviceProcDownTheChain(dev, func);
+}
+
+}  // namespace crash_diagnostic_layer
+
+extern "C" {
+
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance inst, const char* func) {
+    return crash_diagnostic_layer::InterceptGetInstanceProcAddr(inst, func);
+}
+
+CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice dev, const char* func) {
+    return crash_diagnostic_layer::InterceptGetDeviceProcAddr(dev, func);
 }
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
@@ -462,7 +473,6 @@ vkNegotiateLoaderLayerInterfaceVersion(VkNegotiateLayerInterface* pVersionStruct
     }
     return VK_SUCCESS;
 }
-
 
 }  // extern "C"
 
