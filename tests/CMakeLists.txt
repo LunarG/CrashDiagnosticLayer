@@ -66,7 +66,7 @@ target_link_libraries(cdl_tests PRIVATE
     yaml-cpp::yaml-cpp
 )
 
-if(WIN32 AND (CMAKE_SIZEOF_VOID_P EQUAL 4))
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     #32 bit MSVC needs this option so that Vulkan-Hpp operator== statements work
     target_compile_definitions(cdl_tests PRIVATE VULKAN_HPP_TYPESAFE_CONVERSION=1)
 endif()
