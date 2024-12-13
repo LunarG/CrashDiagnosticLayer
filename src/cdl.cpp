@@ -23,12 +23,7 @@
 // For OutputDebugString
 #include <process.h>
 #include <windows.h>
-#else
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <sys/un.h>
+#include <direct.h>
 #endif
 
 #include <algorithm>
@@ -43,10 +38,6 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include <yaml-cpp/emitter.h>
-
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-#include <direct.h>
-#endif
 
 namespace crash_diagnostic_layer {
 
@@ -218,12 +209,7 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
         if (!settings_->output_path.empty()) {
             output_path_ = settings_->output_path;
         } else {
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-            output_path_ = getenv("USERPROFILE");
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-#else
-            output_path_ = getenv("HOME");
-#endif
+            output_path_ = System::GetOutputBasePath();
             output_path_ /= "cdl";
         }
 
@@ -601,7 +587,11 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
     os << YAML::Key << "osName" << YAML::Value << system_.GetOsName();
     os << YAML::Key << "osVersion" << YAML::Value << system_.GetOsVersion();
     os << YAML::Key << "osBitdepth" << YAML::Value << system_.GetOsBitdepth();
-    os << YAML::Key << "osAdditional" << YAML::Value << system_.GetOsAdditionalInfo();
+    os << YAML::Key << "osAdditional" << YAML::Value << YAML::BeginMap;
+    for (const auto& item : system_.GetOsAdditionalInfo()) {
+        os << YAML::Key << item.first << YAML::Value << item.second;
+    }
+    os << YAML::EndMap;
     os << YAML::Key << "cpuName" << YAML::Value << system_.GetHwCpuName();
     os << YAML::Key << "numCpus" << YAML::Value << system_.GetHwNumCpus();
     os << YAML::Key << "totalRam" << YAML::Value << system_.GetHwTotalRam();
@@ -658,25 +648,22 @@ std::ofstream Context::OpenDumpFile() {
     dump_file_path /= ss_name.str();
     total_logs_++;
 
-#if !defined(VK_USE_PLATFORM_WIN32_KHR)
     // Create a symlink from the generated log file.
     std::filesystem::path symlink_path(base_output_path_);
     symlink_path /= "cdl_dump.yaml.symlink";
-    remove(symlink_path.string().c_str());
-    if (symlink(dump_file_path.string().c_str(), symlink_path.string().c_str()) != 0) {
-        Log().Error("symlink %s -> %s failed: %s",
-                    dump_file_path.string().c_str(), symlink_path.string().c_str(),
-                    strerror(errno));
+    try {
+        std::filesystem::remove(symlink_path);
+        std::filesystem::create_symlink(dump_file_path, symlink_path);
+    } catch (std::filesystem::filesystem_error& err) {
+        Log().Warning("symlink %s -> %s failed: %s", dump_file_path.string().c_str(), symlink_path.string().c_str(),
+                      err.what());
     }
-#endif
 
     std::stringstream ss;
     ss << "Device error encountered and log being recorded" << std::endl;
     ;
     ss << "\tOutput written to: " << dump_file_path << std::endl;
-#if !defined(VK_USE_PLATFORM_WIN32_KHR)
     ss << "\tSymlink to output: " << symlink_path << std::endl;
-#endif
     ss << "----------------------------------------------------------------" << std::endl;
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     OutputDebugString(ss.str().c_str());
@@ -1218,17 +1205,8 @@ VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKH
         result = VK_ERROR_DEVICE_LOST;
     }
     if (settings_->track_semaphores) {
-#ifdef __linux__
-        pid_t tid = static_cast<pid_t>(syscall(SYS_gettid));
-#else
-        int tid = 0;
-#endif
-
-#ifdef VK_USE_PLATFORM_WIN32_KHR
-        int pid = _getpid();
-#else
-        pid_t pid = getpid();
-#endif
+        auto tid = System::GetTid();
+        auto pid = System::GetPid();
 
         device_state->GetSemaphoreTracker()->BeginWaitOnSemaphores(pid, tid, pWaitInfo);
 
@@ -1257,17 +1235,8 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
         return result;
     }
     if (settings_->track_semaphores && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
-#ifdef __linux__
-        pid_t tid = static_cast<pid_t>(syscall(SYS_gettid));
-#else
-        int tid = 0;
-#endif
-
-#ifdef VK_USE_PLATFORM_WIN32_KHR
-        int pid = _getpid();
-#else
-        pid_t pid = getpid();
-#endif
+        auto tid = System::GetTid();
+        auto pid = System::GetPid();
         {
             // Update semaphore values
             uint64_t semaphore_value;

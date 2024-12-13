@@ -21,9 +21,9 @@
 #include <cstdarg>
 #include <iostream>
 
-#ifdef ANDROID
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
 #include <android/log.h>
-#endif  // ANDROID
+#endif
 
 #include <vulkan/utility/vk_struct_helper.hpp>
 
@@ -260,7 +260,7 @@ void Logger::Log(VkDebugUtilsMessageSeverityFlagBitsEXT severity, const std::str
     default_cb_.Log(severity, kMessageType, &cb_data);
 }
 
-#ifdef ANDROID
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
 VKAPI_ATTR VkBool32 VKAPI_CALL Logger::DefaultLogCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
                                                           VkDebugUtilsMessageTypeFlagsEXT types,
                                                           const VkDebugUtilsMessengerCallbackDataEXT* cb_data,
@@ -303,6 +303,6 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Logger::DefaultLogCallback(VkDebugUtilsMessageSev
     }
     return VK_FALSE;
 }
-#endif  // !ANDROID
+#endif
 
 }  // namespace crash_diagnostic_layer
