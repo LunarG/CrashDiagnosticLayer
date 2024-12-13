@@ -22,13 +22,6 @@
 #include <vulkan/utility/vk_struct_helper.hpp>
 #include <vulkan/utility/vk_safe_struct.hpp>
 
-#if defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || \
-    defined(SYSTEM_TARGET_BSD)
-#include <sys/syscall.h>
-#include <unistd.h>
-#endif  // defined(SYSTEM_TARGET_ANDROID) || defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) ||
-        // defined(SYSTEM_TARGET_BSD)
-
 #include <atomic>
 #include <cassert>
 #include <chrono>

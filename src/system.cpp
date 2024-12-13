@@ -21,23 +21,18 @@
 #include <sstream>
 #include <stdlib.h>
 
-#if defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || defined(SYSTEM_TARGET_BSD)
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+#include <windows.h>
+#else
 #include <sys/types.h>
 #include <sys/statvfs.h>
-#ifdef SYSTEM_TARGET_BSD
-#include <sys/sysctl.h>
-#endif
 #include <sys/utsname.h>
-#include <dirent.h>
 #include <unistd.h>
 #include <dlfcn.h>
-#elif defined(SYSTEM_TARGET_WINDOWS)
-#include <windows.h>
-#include <stdio.h>
+#endif
 
-#elif defined(SYSTEM_TARGET_ANDROID)
-#else
-#error "Unsupported operating system"
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+#include <sys/system_properties.h>
 #endif
 
 #include "cdl.h"
@@ -45,177 +40,146 @@
 
 namespace crash_diagnostic_layer {
 
+int System::GetTid() {
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    return static_cast<int>(GetCurrentThreadId());
+#else
+    return static_cast<int>(gettid());
+#endif
+}
+
+int System::GetPid() {
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    return static_cast<int>(_getpid());
+#else
+    return static_cast<int>(getpid());
+#endif
+}
+
+std::string System::GetOutputBasePath() {
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    return getenv("USERPROFILE");
+#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
+    std::ifstream cmdline("/proc/self/cmdline");
+    std::string app_name;
+    cmdline >> app_name;
+    std::string result = "/sdcard/data/Android/";
+    result += app_name;
+    return result;
+#else
+    return getenv("HOME");
+#endif
+}
+
 System::System(Context& context) {
     [[maybe_unused]] bool success;
-#ifdef SYSTEM_TARGET_ANDROID
-    success = QueryInfoAndroid();
-#elif defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || defined(SYSTEM_TARGET_BSD)
-    success = QueryInfoPosix();
-#elif defined(SYSTEM_TARGET_WINDOWS)
+    QueryFilesystem();
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
     success = QueryInfoWindows();
+#else
+    success = QueryInfoPosix();
 #endif
     assert(success);
 }
 
-#ifdef SYSTEM_TARGET_LINUX
-const char* white_space_items = " \t\n\r\f\v";
-static void TrimSurroundingWhitespace(std::string& input) {
-    input.erase(std::remove_if(input.begin(), input.end(), ::isspace), input.end());
-}
-
-const char* quote_items = "'\"";
-static void TrimSurroundingQuotes(std::string& input) {
-    input.erase(input.find_last_not_of(quote_items) + 1);
-    input.erase(0, input.find_first_not_of(quote_items));
-}
-
+#if !defined(VK_USE_PLATFORM_WIN32_KHR) && !defined(VK_USE_PLATFORM_ANDROID_KHR)
 static void TrimWhitespaceAndQuotes(std::string& input) {
-    TrimSurroundingWhitespace(input);
-    TrimSurroundingQuotes(input);
+    const char* items = "'\" \t\n\r\f\v";
+    input.erase(input.find_last_not_of(items) + 1);
+    input.erase(0, input.find_first_not_of(items));
 }
 #endif
 
-bool System::QueryInfoAndroid() {
-#ifdef SYSTEM_TARGET_ANDROID
-    // TODO:
-#endif  // SYSTEM_TARGET_ANDROID
-    return false;
-}  // QueryInfoAndroid
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+std::string GetProperty(const char* prop) {
+    std::string result;
+    const prop_info* info = __system_property_find(prop);
+    if (info) {
+        auto callback = [](void* cookie, const char* name, const char* value, uint32_t serial) {
+            std::string* r = reinterpret_cast<std::string*>(cookie);
+            *r = value;
+        };
+        __system_property_read_callback(info, callback, &result);
+    }
+    return result;
+}
+#endif
 
 bool System::QueryInfoPosix() {
-#if defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || defined(SYSTEM_TARGET_BSD)
-    FILE* fp = nullptr;
-    const uint32_t max_len = 2048;
-    char* temp_string = new char[max_len];
-    if (temp_string == nullptr) {
-        return false;
-    }
-
-#ifdef SYSTEM_TARGET_LINUX
-    // Get distro
-    fp = popen("cat /etc/os-release", "r");
-    if (nullptr != fp) {
-        // Read the output a line at a time - output it.
-        while (nullptr != fgets(temp_string, max_len - 1, fp)) {
-            if (nullptr != strstr(temp_string, "PRETTY_NAME")) {
-                char* equal_loc = strstr(temp_string, "=");
-                os_name_ = equal_loc + 1;
-                TrimWhitespaceAndQuotes(os_name_);
-            }
-        }
-        pclose(fp);
-    }
-#elif defined(SYSTEM_TARGET_BSD)
-    os_name_ = "BSD";
-#elif defined(SYSTEM_TARGET_APPLE)
-    // Get Version
-    fp = popen("sw_vers", "r");
-    if (nullptr != fp) {
-        // Read the output a line at a time - output it.
-        while (nullptr != fgets(temp_string, max_len - 1, fp)) {
-            if (nullptr != strstr(temp_string, "ProductName")) {
-                char* colon_loc = strstr(temp_string, ":");
-                os_name_ = colon_loc + 1;
-                TrimWhitespaceAndQuotes(os_name_);
-            } else if (NULL != strstr(temp_string, "ProductVersion")) {
-                char* colon_loc = strstr(temp_string, ":");
-                os_version_ = colon_loc + 1;
-                TrimWhitespaceAndQuotes(os_version_);
-            } else if (NULL != strstr(temp_string, "BuildVersion")) {
-                char* colon_loc = strstr(temp_string, ":");
-                std::string build_version = colon_loc + 1;
-                TrimWhitespaceAndQuotes(build_version);
-                os_additional_info_ = "Build Version [";
-                os_additional_info_ += build_version;
-                os_additional_info_ += "]";
-            }
-        }
-        pclose(fp);
-    }
-#endif
-
-#if defined(SYSTEM_TARGET_LINUX) || defined(SYSTEM_TARGET_BSD)
+#if !defined(VK_USE_PLATFORM_WIN32_KHR)
     // Get kernel and os info
     errno = 0;
     utsname uts_buffer;
     if (uname(&uts_buffer) == 0) {
-        os_additional_info_ = "Kernel [";
-        os_additional_info_ += uts_buffer.release;
-        os_additional_info_ += "]";
-        os_bitdepth_ = uts_buffer.machine;
+        os_name_ = uts_buffer.sysname;
         os_version_ = uts_buffer.version;
+        os_bitdepth_ = uts_buffer.machine;
+        os_additional_info_["kernel"] = uts_buffer.release;
     }
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    {
+        os_name_ = "Android";
+        os_version_ = GetProperty("ro.product.build.version.release");
 
-    // Which desktop the user is utilizing (Gnome, etc..)
-    char* env_value = getenv("DESKTOP_SESSION");
+        std::string sdk_version = GetProperty("ro.product.build.version.sdk");
+        if (!sdk_version.empty()) {
+            os_additional_info_["sdk"] = sdk_version;
+        }
+
+        std::string manufacturer = GetProperty("ro.product.manufacturer");
+        if (!manufacturer.empty()) {
+            os_additional_info_["manufacturer"] = manufacturer;
+        }
+        std::string model = GetProperty("ro.product.model");
+        if (!model.empty()) {
+            os_additional_info_["model"] = model;
+        }
+        std::string build_id = GetProperty("ro.product.build.id");
+        if (!build_id.empty()) {
+            os_additional_info_["buildId"] = build_id;
+        }
+    }
+#else
+    {
+        std::ifstream os_release("/etc/os-release");
+        std::string line;
+        while (std::getline(os_release, line)) {
+            if (line.find("NAME=") == 0) {
+                size_t equal_loc = line.find("=");
+                line.erase(0, equal_loc + 1);
+                TrimWhitespaceAndQuotes(line);
+                os_name_ = line;
+            }
+            if (line.find("VERSION_ID=") == 0) {
+                size_t equal_loc = line.find("=");
+                line.erase(0, equal_loc + 1);
+                TrimWhitespaceAndQuotes(line);
+                os_version_ = line;
+            }
+        }
+    }
+    char* env_value = getenv("XDG_CURRENT_DESKTOP");
     if (env_value != nullptr) {
-        if (os_additional_info_.size() > 0) {
-            os_additional_info_ += ", Desktop [";
-        } else {
-            os_additional_info_ = "Desktop [";
-        }
-        os_additional_info_ += env_value;
-        os_additional_info_ += "]";
+        os_additional_info_["currentDesktop"] = env_value;
     }
-
-#ifdef SYSTEM_TARGET_LINUX
-    // Get CPU name
-    fp = popen("cat /proc/cpuinfo", "r");
-    if (nullptr != fp) {
-        // Read the output a line at a time - output it.
-        while (nullptr != fgets(temp_string, max_len - 1, fp)) {
-            if (nullptr != strstr(temp_string, "model name")) {
-                char* colon_loc = strstr(temp_string, ":");
-                if (nullptr != colon_loc) {
-                    cpu_name_ = colon_loc + 1;
-                    TrimWhitespaceAndQuotes(cpu_name_);
-                    break;
-                }
+    env_value = getenv("XDG_SESSION_TYPE");
+    if (env_value != nullptr) {
+        os_additional_info_["sessionType"] = env_value;
+    }
+    {
+        std::ifstream cpu_info("/proc/cpuinfo");
+        std::string line;
+        while (std::getline(cpu_info, line)) {
+            if (line.find("model name") == 0) {
+                size_t colon_loc = line.find(":");
+                line.erase(0, colon_loc + 1);
+                TrimWhitespaceAndQuotes(line);
+                cpu_name_ = line;
+                break;
             }
         }
-        pclose(fp);
     }
-#endif
-#ifdef SYSTEM_TARGET_BSD
-    // Get CPU name
-    fp = popen("cat /var/run/dmesg.boot", "r");
-    if (nullptr != fp) {
-        // Read the output a line at a time - output it.
-        while (nullptr != fgets(temp_string, max_len - 1, fp)) {
-            if (nullptr != strstr(temp_string, "CPU")) {
-                char* colon_loc = strstr(temp_string, ":");
-                if (nullptr != colon_loc) {
-                    cpu_name_ = colon_loc + 1;
-                    TrimWhitespaceAndQuotes(cpu_name_);
-                    break;
-                }
-            }
-        }
-        pclose(fp);
-    }
-#endif
-#elif defined(SYSTEM_TARGET_APPLE)
-
-    // Get CPU name
-#if 0  // TODO : Get this working for Mac
-    fp = popen("cat /proc/cpuinfo", "r");
-    if (nullptr != fp) {
-        // Read the output a line at a time - output it.
-        while (nullptr != fgets(temp_string, max_len - 1, fp)) {
-            if (nullptr != strstr(temp_string, "model name")) {
-                char* colon_loc = strstr(temp_string, ":");
-                if (nullptr != colon_loc) {
-                    cpu_name_ = colon_loc + 1;
-                    TrimWhitespaceAndQuotes(cpu_name_);
-                    break;
-                }
-            }
-        }
-        pclose(fp);
-    }
-#endif
-#endif
-
+#endif  // !defined(VK_USE_PLATFORM_ANDROID_KHR)
     // Number of CPUs
     auto num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
     if (num_cpus > 0) {
@@ -235,49 +199,14 @@ bool System::QueryInfoPosix() {
         total_ram_ = std::to_string(memory) + " KB";
     }
 
-    // Get disk space
-    std::string cur_path;
-    if (getcwd(temp_string, max_len - 1) != NULL) {
-        cur_path = temp_string;
-    } else {
-        cur_path = "";
-    }
-
-    struct statvfs fs_stats;
-    if (0 == statvfs(cur_path.c_str(), &fs_stats)) {
-        uint64_t bytes_total = ((uint64_t)fs_stats.f_bsize * (uint64_t)fs_stats.f_blocks) >> 10;
-        if ((bytes_total >> 30) > 0) {
-            total_disk_space_ = std::to_string((uint32_t)(bytes_total >> 30)) + " TB";
-        } else if ((bytes_total >> 20) > 0) {
-            total_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 20) + " GB";
-        } else if ((bytes_total >> 10) > 0) {
-            total_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 10) + " MB";
-        } else {
-            total_disk_space_ = std::to_string(((uint32_t)bytes_total)) + " KB";
-        }
-
-        bytes_total = ((uint64_t)fs_stats.f_bsize * (uint64_t)fs_stats.f_bavail) >> 10;
-        if ((bytes_total >> 30) > 0) {
-            avail_disk_space_ = std::to_string((uint32_t)(bytes_total >> 30)) + " TB";
-        } else if ((bytes_total >> 20) > 0) {
-            avail_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 20) + " GB";
-        } else if ((bytes_total >> 10) > 0) {
-            avail_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 10) + " MB";
-        } else {
-            avail_disk_space_ = std::to_string(((uint32_t)bytes_total)) + " KB";
-        }
-    }
-
-    delete[] temp_string;
-
     if (os_name_.size() > 0 && os_version_.size() > 0 && number_cpus_.size() > 0 && total_ram_.size() > 0) {
         return true;
     }
-#endif  // defined(SYSTEM_TARGET_APPLE) || defined(SYSTEM_TARGET_LINUX) || defined(SYSTEM_TARGET_BSD)
+#endif  // !defined(VK_USE_PLATFORM_WIN32_KHR)
     return false;
-}  // QueryInfoPosix
+}
 
-#ifdef SYSTEM_TARGET_WINDOWS
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
 static bool CheckIfGreaterThanEqualVersion(uint32_t major, uint32_t minor) {
     OSVERSIONINFOEX ms_version_info{};
     DWORDLONG condition_mask = 0;
@@ -360,11 +289,10 @@ static bool ReadRegKeyString(bool is_wow64, HKEY regFolder, const char* keyPath,
 
     return retVal;
 }
-
-#endif  // SYSTEM_TARGET_WINDOWS
+#endif
 
 bool System::QueryInfoWindows() {
-#ifdef SYSTEM_TARGET_WINDOWS
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
 
     // Determine if this is a 32-bit executable running on 64-bit Windows
     bool is_wow64 = false;
@@ -412,9 +340,7 @@ bool System::QueryInfoWindows() {
             }
             if (ReadRegKeyString(is_wow64, HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion",
                                  "BuildBranch", max_len - 1, temp_string)) {
-                os_additional_info_ = "Build [";
-                os_additional_info_ += temp_string;
-                os_additional_info_ += "]";
+                os_additional_info_["build"] = temp_string;
             }
         } else {
             if (is_server) {
@@ -439,9 +365,7 @@ bool System::QueryInfoWindows() {
                     if (ReadRegKeyString(is_wow64, HKEY_LOCAL_MACHINE,
                                          "Software\\Microsoft\\Windows NT\\CurrentVersion", "BuildBranch", max_len - 1,
                                          temp_string)) {
-                        os_additional_info_ = "Build [";
-                        os_additional_info_ += temp_string;
-                        os_additional_info_ += "]";
+                        os_additional_info_["build"] = temp_string;
                     }
                     found = true;
                 }
@@ -507,43 +431,38 @@ bool System::QueryInfoWindows() {
         }
     }
 
-    DWORD sect_per_cluster = 0;
-    DWORD bytes_per_sect = 0;
-    DWORD num_free_cluster = 0;
-    DWORD total_num_cluster = 0;
-    if (TRUE == GetDiskFreeSpaceA(NULL, &sect_per_cluster, &bytes_per_sect, &num_free_cluster, &total_num_cluster)) {
-        uint64_t bytes_total = (uint64_t)bytes_per_sect * (uint64_t)sect_per_cluster * (uint64_t)total_num_cluster;
-        bytes_total >>= 10;
-        if ((bytes_total >> 30) > 0) {
-            total_disk_space_ = std::to_string((uint32_t)(bytes_total >> 30)) + " TB";
-        } else if ((bytes_total >> 20) > 0) {
-            total_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 20) + " GB";
-        } else if ((bytes_total >> 10) > 0) {
-            total_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 10) + " MB";
-        } else {
-            total_disk_space_ = std::to_string(((uint32_t)bytes_total)) + " KB";
-        }
-
-        uint64_t bytes_free = (uint64_t)bytes_per_sect * (uint64_t)sect_per_cluster * (uint64_t)num_free_cluster;
-        bytes_free >>= 10;
-        if ((bytes_free >> 30) > 0) {
-            avail_disk_space_ = std::to_string((uint32_t)(bytes_free >> 30)) + " TB";
-        } else if ((bytes_free >> 20) > 0) {
-            avail_disk_space_ = std::to_string(((uint32_t)bytes_free) >> 20) + " GB";
-        } else if ((bytes_free >> 10) > 0) {
-            avail_disk_space_ = std::to_string(((uint32_t)bytes_free) >> 10) + " MB";
-        } else {
-            avail_disk_space_ = std::to_string(((uint32_t)bytes_free)) + " KB";
-        }
-    }
-
     delete[] temp_string;
 
     if (os_name_.size() > 0 && os_version_.size() > 0 && number_cpus_.size() > 0 && total_ram_.size() > 0) {
         return true;
     }
-#endif  // SYSTEM_TARGET_WINDOWS
+#endif  // defined(VK_USE_PLATFORM_WIN32_KHR)
     return false;
-}  // QueryInfoWindows
+}
+
+void System::QueryFilesystem() {
+    std::filesystem::space_info space = std::filesystem::space(std::filesystem::current_path());
+    uint64_t bytes_total = space.capacity >> 10;
+    if ((bytes_total >> 30) > 0) {
+        total_disk_space_ = std::to_string((uint32_t)(bytes_total >> 30)) + " TB";
+    } else if ((bytes_total >> 20) > 0) {
+        total_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 20) + " GB";
+    } else if ((bytes_total >> 10) > 0) {
+        total_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 10) + " MB";
+    } else {
+        total_disk_space_ = std::to_string(((uint32_t)bytes_total)) + " KB";
+    }
+
+    bytes_total = space.available >> 10;
+    if ((bytes_total >> 30) > 0) {
+        avail_disk_space_ = std::to_string((uint32_t)(bytes_total >> 30)) + " TB";
+    } else if ((bytes_total >> 20) > 0) {
+        avail_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 20) + " GB";
+    } else if ((bytes_total >> 10) > 0) {
+        avail_disk_space_ = std::to_string(((uint32_t)bytes_total) >> 10) + " MB";
+    } else {
+        avail_disk_space_ = std::to_string(((uint32_t)bytes_total)) + " KB";
+    }
+}
 
 }  // namespace crash_diagnostic_layer
