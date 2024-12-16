@@ -127,7 +127,7 @@ struct FaultAddressRange {
     uint64_t begin{0};
     uint64_t end{0};
     std::optional<AddressRecord> prior;
-    std::optional<AddressRecord> match;
+    std::vector<AddressRecord> matches;
     std::optional<AddressRecord> next;
 };
 
