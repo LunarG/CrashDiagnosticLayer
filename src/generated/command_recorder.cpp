@@ -527,18 +527,16 @@ VkWriteDescriptorSet* CommandRecorder::CopyArray<VkWriteDescriptorSet>(const VkW
         ptr[i].descriptorType = src[start_index + i].descriptorType;
         ptr[i].pImageInfo = nullptr;
         if (src[start_index + i].pImageInfo) {
-            ptr[i].pImageInfo = CopyArray(src[start_index + i].pImageInfo, static_cast<uint64_t>(0U),
-                                          static_cast<uint64_t>(src[start_index + i].descriptorCount));
+            ptr[i].pImageInfo = CopyArray(src[start_index + i].pImageInfo, 0U, src[start_index + i].descriptorCount);
         }
         ptr[i].pBufferInfo = nullptr;
         if (src[start_index + i].pBufferInfo) {
-            ptr[i].pBufferInfo = CopyArray(src[start_index + i].pBufferInfo, static_cast<uint64_t>(0U),
-                                           static_cast<uint64_t>(src[start_index + i].descriptorCount));
+            ptr[i].pBufferInfo = CopyArray(src[start_index + i].pBufferInfo, 0U, src[start_index + i].descriptorCount);
         }
         ptr[i].pTexelBufferView = nullptr;
         if (src[start_index + i].pTexelBufferView) {
-            ptr[i].pTexelBufferView = CopyArray(src[start_index + i].pTexelBufferView, static_cast<uint64_t>(0U),
-                                                static_cast<uint64_t>(src[start_index + i].descriptorCount));
+            ptr[i].pTexelBufferView =
+                CopyArray(src[start_index + i].pTexelBufferView, 0U, src[start_index + i].descriptorCount);
         }
     }
     return ptr;
@@ -572,8 +570,7 @@ VkCommandBufferBeginInfo* CommandRecorder::CopyArray<VkCommandBufferBeginInfo>(c
         ptr[i].flags = src[start_index + i].flags;
         ptr[i].pInheritanceInfo = nullptr;
         if (src[start_index + i].pInheritanceInfo) {
-            ptr[i].pInheritanceInfo =
-                CopyArray(src[start_index + i].pInheritanceInfo, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            ptr[i].pInheritanceInfo = CopyArray(src[start_index + i].pInheritanceInfo, 0U, 1U);
         }
     }
     return ptr;
@@ -736,8 +733,8 @@ VkRenderPassBeginInfo* CommandRecorder::CopyArray<VkRenderPassBeginInfo>(const V
         ptr[i].clearValueCount = src[start_index + i].clearValueCount;
         ptr[i].pClearValues = nullptr;
         if (src[start_index + i].pClearValues) {
-            ptr[i].pClearValues = CopyArray(src[start_index + i].pClearValues, static_cast<uint64_t>(0U),
-                                            static_cast<uint64_t>(src[start_index + i].clearValueCount));
+            ptr[i].pClearValues =
+                CopyArray(src[start_index + i].pClearValues, 0U, src[start_index + i].clearValueCount);
         }
     }
     return ptr;
@@ -833,22 +830,20 @@ VkDependencyInfo* CommandRecorder::CopyArray<VkDependencyInfo>(const VkDependenc
         ptr[i].memoryBarrierCount = src[start_index + i].memoryBarrierCount;
         ptr[i].pMemoryBarriers = nullptr;
         if (src[start_index + i].pMemoryBarriers) {
-            ptr[i].pMemoryBarriers = CopyArray(src[start_index + i].pMemoryBarriers, static_cast<uint64_t>(0U),
-                                               static_cast<uint64_t>(src[start_index + i].memoryBarrierCount));
+            ptr[i].pMemoryBarriers =
+                CopyArray(src[start_index + i].pMemoryBarriers, 0U, src[start_index + i].memoryBarrierCount);
         }
         ptr[i].bufferMemoryBarrierCount = src[start_index + i].bufferMemoryBarrierCount;
         ptr[i].pBufferMemoryBarriers = nullptr;
         if (src[start_index + i].pBufferMemoryBarriers) {
-            ptr[i].pBufferMemoryBarriers =
-                CopyArray(src[start_index + i].pBufferMemoryBarriers, static_cast<uint64_t>(0U),
-                          static_cast<uint64_t>(src[start_index + i].bufferMemoryBarrierCount));
+            ptr[i].pBufferMemoryBarriers = CopyArray(src[start_index + i].pBufferMemoryBarriers, 0U,
+                                                     src[start_index + i].bufferMemoryBarrierCount);
         }
         ptr[i].imageMemoryBarrierCount = src[start_index + i].imageMemoryBarrierCount;
         ptr[i].pImageMemoryBarriers = nullptr;
         if (src[start_index + i].pImageMemoryBarriers) {
             ptr[i].pImageMemoryBarriers =
-                CopyArray(src[start_index + i].pImageMemoryBarriers, static_cast<uint64_t>(0U),
-                          static_cast<uint64_t>(src[start_index + i].imageMemoryBarrierCount));
+                CopyArray(src[start_index + i].pImageMemoryBarriers, 0U, src[start_index + i].imageMemoryBarrierCount);
         }
     }
     return ptr;
@@ -879,8 +874,7 @@ VkCopyBufferInfo2* CommandRecorder::CopyArray<VkCopyBufferInfo2>(const VkCopyBuf
         ptr[i].regionCount = src[start_index + i].regionCount;
         ptr[i].pRegions = nullptr;
         if (src[start_index + i].pRegions) {
-            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].regionCount));
+            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, 0U, src[start_index + i].regionCount);
         }
     }
     return ptr;
@@ -915,8 +909,7 @@ VkCopyImageInfo2* CommandRecorder::CopyArray<VkCopyImageInfo2>(const VkCopyImage
         ptr[i].regionCount = src[start_index + i].regionCount;
         ptr[i].pRegions = nullptr;
         if (src[start_index + i].pRegions) {
-            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].regionCount));
+            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, 0U, src[start_index + i].regionCount);
         }
     }
     return ptr;
@@ -952,8 +945,7 @@ VkCopyBufferToImageInfo2* CommandRecorder::CopyArray<VkCopyBufferToImageInfo2>(c
         ptr[i].regionCount = src[start_index + i].regionCount;
         ptr[i].pRegions = nullptr;
         if (src[start_index + i].pRegions) {
-            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].regionCount));
+            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, 0U, src[start_index + i].regionCount);
         }
     }
     return ptr;
@@ -972,8 +964,7 @@ VkCopyImageToBufferInfo2* CommandRecorder::CopyArray<VkCopyImageToBufferInfo2>(c
         ptr[i].regionCount = src[start_index + i].regionCount;
         ptr[i].pRegions = nullptr;
         if (src[start_index + i].pRegions) {
-            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].regionCount));
+            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, 0U, src[start_index + i].regionCount);
         }
     }
     return ptr;
@@ -1011,8 +1002,7 @@ VkBlitImageInfo2* CommandRecorder::CopyArray<VkBlitImageInfo2>(const VkBlitImage
         ptr[i].regionCount = src[start_index + i].regionCount;
         ptr[i].pRegions = nullptr;
         if (src[start_index + i].pRegions) {
-            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].regionCount));
+            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, 0U, src[start_index + i].regionCount);
         }
         ptr[i].filter = src[start_index + i].filter;
     }
@@ -1049,8 +1039,7 @@ VkResolveImageInfo2* CommandRecorder::CopyArray<VkResolveImageInfo2>(const VkRes
         ptr[i].regionCount = src[start_index + i].regionCount;
         ptr[i].pRegions = nullptr;
         if (src[start_index + i].pRegions) {
-            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].regionCount));
+            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, 0U, src[start_index + i].regionCount);
         }
     }
     return ptr;
@@ -1090,18 +1079,16 @@ VkRenderingInfo* CommandRecorder::CopyArray<VkRenderingInfo>(const VkRenderingIn
         ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
         ptr[i].pColorAttachments = nullptr;
         if (src[start_index + i].pColorAttachments) {
-            ptr[i].pColorAttachments = CopyArray(src[start_index + i].pColorAttachments, static_cast<uint64_t>(0U),
-                                                 static_cast<uint64_t>(src[start_index + i].colorAttachmentCount));
+            ptr[i].pColorAttachments =
+                CopyArray(src[start_index + i].pColorAttachments, 0U, src[start_index + i].colorAttachmentCount);
         }
         ptr[i].pDepthAttachment = nullptr;
         if (src[start_index + i].pDepthAttachment) {
-            ptr[i].pDepthAttachment =
-                CopyArray(src[start_index + i].pDepthAttachment, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            ptr[i].pDepthAttachment = CopyArray(src[start_index + i].pDepthAttachment, 0U, 1U);
         }
         ptr[i].pStencilAttachment = nullptr;
         if (src[start_index + i].pStencilAttachment) {
-            ptr[i].pStencilAttachment = CopyArray(src[start_index + i].pStencilAttachment, static_cast<uint64_t>(0U),
-                                                  static_cast<uint64_t>(1U));
+            ptr[i].pStencilAttachment = CopyArray(src[start_index + i].pStencilAttachment, 0U, 1U);
         }
     }
     return ptr;
@@ -1118,9 +1105,8 @@ VkRenderingAttachmentLocationInfo* CommandRecorder::CopyArray<VkRenderingAttachm
         ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
         ptr[i].pColorAttachmentLocations = nullptr;
         if (src[start_index + i].pColorAttachmentLocations) {
-            ptr[i].pColorAttachmentLocations =
-                CopyArray(src[start_index + i].pColorAttachmentLocations, static_cast<uint64_t>(0U),
-                          static_cast<uint64_t>(src[start_index + i].colorAttachmentCount));
+            ptr[i].pColorAttachmentLocations = CopyArray(src[start_index + i].pColorAttachmentLocations, 0U,
+                                                         src[start_index + i].colorAttachmentCount);
         }
     }
     return ptr;
@@ -1137,19 +1123,16 @@ VkRenderingInputAttachmentIndexInfo* CommandRecorder::CopyArray<VkRenderingInput
         ptr[i].colorAttachmentCount = src[start_index + i].colorAttachmentCount;
         ptr[i].pColorAttachmentInputIndices = nullptr;
         if (src[start_index + i].pColorAttachmentInputIndices) {
-            ptr[i].pColorAttachmentInputIndices =
-                CopyArray(src[start_index + i].pColorAttachmentInputIndices, static_cast<uint64_t>(0U),
-                          static_cast<uint64_t>(src[start_index + i].colorAttachmentCount));
+            ptr[i].pColorAttachmentInputIndices = CopyArray(src[start_index + i].pColorAttachmentInputIndices, 0U,
+                                                            src[start_index + i].colorAttachmentCount);
         }
         ptr[i].pDepthInputAttachmentIndex = nullptr;
         if (src[start_index + i].pDepthInputAttachmentIndex) {
-            ptr[i].pDepthInputAttachmentIndex = CopyArray(src[start_index + i].pDepthInputAttachmentIndex,
-                                                          static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            ptr[i].pDepthInputAttachmentIndex = CopyArray(src[start_index + i].pDepthInputAttachmentIndex, 0U, 1U);
         }
         ptr[i].pStencilInputAttachmentIndex = nullptr;
         if (src[start_index + i].pStencilInputAttachmentIndex) {
-            ptr[i].pStencilInputAttachmentIndex = CopyArray(src[start_index + i].pStencilInputAttachmentIndex,
-                                                            static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            ptr[i].pStencilInputAttachmentIndex = CopyArray(src[start_index + i].pStencilInputAttachmentIndex, 0U, 1U);
         }
     }
     return ptr;
@@ -1168,14 +1151,14 @@ VkBindDescriptorSetsInfo* CommandRecorder::CopyArray<VkBindDescriptorSetsInfo>(c
         ptr[i].descriptorSetCount = src[start_index + i].descriptorSetCount;
         ptr[i].pDescriptorSets = nullptr;
         if (src[start_index + i].pDescriptorSets) {
-            ptr[i].pDescriptorSets = CopyArray(src[start_index + i].pDescriptorSets, static_cast<uint64_t>(0U),
-                                               static_cast<uint64_t>(src[start_index + i].descriptorSetCount));
+            ptr[i].pDescriptorSets =
+                CopyArray(src[start_index + i].pDescriptorSets, 0U, src[start_index + i].descriptorSetCount);
         }
         ptr[i].dynamicOffsetCount = src[start_index + i].dynamicOffsetCount;
         ptr[i].pDynamicOffsets = nullptr;
         if (src[start_index + i].pDynamicOffsets) {
-            ptr[i].pDynamicOffsets = CopyArray(src[start_index + i].pDynamicOffsets, static_cast<uint64_t>(0U),
-                                               static_cast<uint64_t>(src[start_index + i].dynamicOffsetCount));
+            ptr[i].pDynamicOffsets =
+                CopyArray(src[start_index + i].pDynamicOffsets, 0U, src[start_index + i].dynamicOffsetCount);
         }
     }
     return ptr;
@@ -1193,8 +1176,7 @@ VkPushConstantsInfo* CommandRecorder::CopyArray<VkPushConstantsInfo>(const VkPus
         ptr[i].offset = src[start_index + i].offset;
         ptr[i].size = src[start_index + i].size;
         ptr[i].pValues = reinterpret_cast<const void*>(
-            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].pValues), static_cast<uint64_t>(0U),
-                      static_cast<uint64_t>(src[start_index + i].size)));
+            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].pValues), 0U, src[start_index + i].size));
     }
     return ptr;
 }
@@ -1212,8 +1194,8 @@ VkPushDescriptorSetInfo* CommandRecorder::CopyArray<VkPushDescriptorSetInfo>(con
         ptr[i].descriptorWriteCount = src[start_index + i].descriptorWriteCount;
         ptr[i].pDescriptorWrites = nullptr;
         if (src[start_index + i].pDescriptorWrites) {
-            ptr[i].pDescriptorWrites = CopyArray(src[start_index + i].pDescriptorWrites, static_cast<uint64_t>(0U),
-                                                 static_cast<uint64_t>(src[start_index + i].descriptorWriteCount));
+            ptr[i].pDescriptorWrites =
+                CopyArray(src[start_index + i].pDescriptorWrites, 0U, src[start_index + i].descriptorWriteCount);
         }
     }
     return ptr;
@@ -1262,8 +1244,7 @@ VkVideoReferenceSlotInfoKHR* CommandRecorder::CopyArray<VkVideoReferenceSlotInfo
         ptr[i].slotIndex = src[start_index + i].slotIndex;
         ptr[i].pPictureResource = nullptr;
         if (src[start_index + i].pPictureResource) {
-            ptr[i].pPictureResource =
-                CopyArray(src[start_index + i].pPictureResource, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));
+            ptr[i].pPictureResource = CopyArray(src[start_index + i].pPictureResource, 0U, 1U);
         }
     }
     return ptr;
@@ -1283,8 +1264,8 @@ VkVideoBeginCodingInfoKHR* CommandRecorder::CopyArray<VkVideoBeginCodingInfoKHR>
         ptr[i].referenceSlotCount = src[start_index + i].referenceSlotCount;
         ptr[i].pReferenceSlots = nullptr;
         if (src[start_index + i].pReferenceSlots) {
-            ptr[i].pReferenceSlots = CopyArray(src[start_index + i].pReferenceSlots, static_cast<uint64_t>(0U),
-                                               static_cast<uint64_t>(src[start_index + i].referenceSlotCount));
+            ptr[i].pReferenceSlots =
+                CopyArray(src[start_index + i].pReferenceSlots, 0U, src[start_index + i].referenceSlotCount);
         }
     }
     return ptr;
@@ -1329,14 +1310,13 @@ VkVideoDecodeInfoKHR* CommandRecorder::CopyArray<VkVideoDecodeInfoKHR>(const VkV
         ptr[i].dstPictureResource = src[start_index + i].dstPictureResource;
         ptr[i].pSetupReferenceSlot = nullptr;
         if (src[start_index + i].pSetupReferenceSlot) {
-            ptr[i].pSetupReferenceSlot = CopyArray(src[start_index + i].pSetupReferenceSlot, static_cast<uint64_t>(0U),
-                                                   static_cast<uint64_t>(1U));
+            ptr[i].pSetupReferenceSlot = CopyArray(src[start_index + i].pSetupReferenceSlot, 0U, 1U);
         }
         ptr[i].referenceSlotCount = src[start_index + i].referenceSlotCount;
         ptr[i].pReferenceSlots = nullptr;
         if (src[start_index + i].pReferenceSlots) {
-            ptr[i].pReferenceSlots = CopyArray(src[start_index + i].pReferenceSlots, static_cast<uint64_t>(0U),
-                                               static_cast<uint64_t>(src[start_index + i].referenceSlotCount));
+            ptr[i].pReferenceSlots =
+                CopyArray(src[start_index + i].pReferenceSlots, 0U, src[start_index + i].referenceSlotCount);
         }
     }
     return ptr;
@@ -1356,14 +1336,13 @@ VkVideoEncodeInfoKHR* CommandRecorder::CopyArray<VkVideoEncodeInfoKHR>(const VkV
         ptr[i].srcPictureResource = src[start_index + i].srcPictureResource;
         ptr[i].pSetupReferenceSlot = nullptr;
         if (src[start_index + i].pSetupReferenceSlot) {
-            ptr[i].pSetupReferenceSlot = CopyArray(src[start_index + i].pSetupReferenceSlot, static_cast<uint64_t>(0U),
-                                                   static_cast<uint64_t>(1U));
+            ptr[i].pSetupReferenceSlot = CopyArray(src[start_index + i].pSetupReferenceSlot, 0U, 1U);
         }
         ptr[i].referenceSlotCount = src[start_index + i].referenceSlotCount;
         ptr[i].pReferenceSlots = nullptr;
         if (src[start_index + i].pReferenceSlots) {
-            ptr[i].pReferenceSlots = CopyArray(src[start_index + i].pReferenceSlots, static_cast<uint64_t>(0U),
-                                               static_cast<uint64_t>(src[start_index + i].referenceSlotCount));
+            ptr[i].pReferenceSlots =
+                CopyArray(src[start_index + i].pReferenceSlots, 0U, src[start_index + i].referenceSlotCount);
         }
         ptr[i].precedingExternallyEncodedBytes = src[start_index + i].precedingExternallyEncodedBytes;
     }
@@ -1384,13 +1363,11 @@ VkSetDescriptorBufferOffsetsInfoEXT* CommandRecorder::CopyArray<VkSetDescriptorB
         ptr[i].setCount = src[start_index + i].setCount;
         ptr[i].pBufferIndices = nullptr;
         if (src[start_index + i].pBufferIndices) {
-            ptr[i].pBufferIndices = CopyArray(src[start_index + i].pBufferIndices, static_cast<uint64_t>(0U),
-                                              static_cast<uint64_t>(src[start_index + i].setCount));
+            ptr[i].pBufferIndices = CopyArray(src[start_index + i].pBufferIndices, 0U, src[start_index + i].setCount);
         }
         ptr[i].pOffsets = nullptr;
         if (src[start_index + i].pOffsets) {
-            ptr[i].pOffsets = CopyArray(src[start_index + i].pOffsets, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].setCount));
+            ptr[i].pOffsets = CopyArray(src[start_index + i].pOffsets, 0U, src[start_index + i].setCount);
         }
     }
     return ptr;
@@ -1448,13 +1425,11 @@ VkCuLaunchInfoNVX* CommandRecorder::CopyArray<VkCuLaunchInfoNVX>(const VkCuLaunc
         ptr[i].blockDimZ = src[start_index + i].blockDimZ;
         ptr[i].sharedMemBytes = src[start_index + i].sharedMemBytes;
         ptr[i].paramCount = src[start_index + i].paramCount;
-        ptr[i].pParams = reinterpret_cast<const void* const*>(
-            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].pParams), static_cast<uint64_t>(0U),
-                      static_cast<uint64_t>(src[start_index + i].paramCount)));
+        ptr[i].pParams = reinterpret_cast<const void* const*>(CopyArray(
+            reinterpret_cast<const uint8_t*>(src[start_index + i].pParams), 0U, src[start_index + i].paramCount));
         ptr[i].extraCount = src[start_index + i].extraCount;
-        ptr[i].pExtras = reinterpret_cast<const void* const*>(
-            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].pExtras), static_cast<uint64_t>(0U),
-                      static_cast<uint64_t>(src[start_index + i].extraCount)));
+        ptr[i].pExtras = reinterpret_cast<const void* const*>(CopyArray(
+            reinterpret_cast<const uint8_t*>(src[start_index + i].pExtras), 0U, src[start_index + i].extraCount));
     }
     return ptr;
 }
@@ -1569,8 +1544,8 @@ VkSampleLocationsInfoEXT* CommandRecorder::CopyArray<VkSampleLocationsInfoEXT>(c
         ptr[i].sampleLocationsCount = src[start_index + i].sampleLocationsCount;
         ptr[i].pSampleLocations = nullptr;
         if (src[start_index + i].pSampleLocations) {
-            ptr[i].pSampleLocations = CopyArray(src[start_index + i].pSampleLocations, static_cast<uint64_t>(0U),
-                                                static_cast<uint64_t>(src[start_index + i].sampleLocationsCount));
+            ptr[i].pSampleLocations =
+                CopyArray(src[start_index + i].pSampleLocations, 0U, src[start_index + i].sampleLocationsCount);
         }
     }
     return ptr;
@@ -1584,9 +1559,8 @@ VkShadingRatePaletteNV* CommandRecorder::CopyArray<VkShadingRatePaletteNV>(const
         ptr[i].shadingRatePaletteEntryCount = src[start_index + i].shadingRatePaletteEntryCount;
         ptr[i].pShadingRatePaletteEntries = nullptr;
         if (src[start_index + i].pShadingRatePaletteEntries) {
-            ptr[i].pShadingRatePaletteEntries =
-                CopyArray(src[start_index + i].pShadingRatePaletteEntries, static_cast<uint64_t>(0U),
-                          static_cast<uint64_t>(src[start_index + i].shadingRatePaletteEntryCount));
+            ptr[i].pShadingRatePaletteEntries = CopyArray(src[start_index + i].pShadingRatePaletteEntries, 0U,
+                                                          src[start_index + i].shadingRatePaletteEntryCount);
         }
     }
     return ptr;
@@ -1615,8 +1589,8 @@ VkCoarseSampleOrderCustomNV* CommandRecorder::CopyArray<VkCoarseSampleOrderCusto
         ptr[i].sampleLocationCount = src[start_index + i].sampleLocationCount;
         ptr[i].pSampleLocations = nullptr;
         if (src[start_index + i].pSampleLocations) {
-            ptr[i].pSampleLocations = CopyArray(src[start_index + i].pSampleLocations, static_cast<uint64_t>(0U),
-                                                static_cast<uint64_t>(src[start_index + i].sampleLocationCount));
+            ptr[i].pSampleLocations =
+                CopyArray(src[start_index + i].pSampleLocations, 0U, src[start_index + i].sampleLocationCount);
         }
     }
     return ptr;
@@ -1649,8 +1623,7 @@ VkAccelerationStructureInfoNV* CommandRecorder::CopyArray<VkAccelerationStructur
         ptr[i].geometryCount = src[start_index + i].geometryCount;
         ptr[i].pGeometries = nullptr;
         if (src[start_index + i].pGeometries) {
-            ptr[i].pGeometries = CopyArray(src[start_index + i].pGeometries, static_cast<uint64_t>(0U),
-                                           static_cast<uint64_t>(src[start_index + i].geometryCount));
+            ptr[i].pGeometries = CopyArray(src[start_index + i].pGeometries, 0U, src[start_index + i].geometryCount);
         }
     }
     return ptr;
@@ -1723,8 +1696,7 @@ VkGeneratedCommandsInfoNV* CommandRecorder::CopyArray<VkGeneratedCommandsInfoNV>
         ptr[i].streamCount = src[start_index + i].streamCount;
         ptr[i].pStreams = nullptr;
         if (src[start_index + i].pStreams) {
-            ptr[i].pStreams = CopyArray(src[start_index + i].pStreams, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].streamCount));
+            ptr[i].pStreams = CopyArray(src[start_index + i].pStreams, 0U, src[start_index + i].streamCount);
         }
         ptr[i].sequencesCount = src[start_index + i].sequencesCount;
         ptr[i].preprocessBuffer = src[start_index + i].preprocessBuffer;
@@ -1768,13 +1740,11 @@ VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaL
         ptr[i].blockDimZ = src[start_index + i].blockDimZ;
         ptr[i].sharedMemBytes = src[start_index + i].sharedMemBytes;
         ptr[i].paramCount = src[start_index + i].paramCount;
-        ptr[i].pParams = reinterpret_cast<const void* const*>(
-            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].pParams), static_cast<uint64_t>(0U),
-                      static_cast<uint64_t>(src[start_index + i].paramCount)));
+        ptr[i].pParams = reinterpret_cast<const void* const*>(CopyArray(
+            reinterpret_cast<const uint8_t*>(src[start_index + i].pParams), 0U, src[start_index + i].paramCount));
         ptr[i].extraCount = src[start_index + i].extraCount;
-        ptr[i].pExtras = reinterpret_cast<const void* const*>(
-            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].pExtras), static_cast<uint64_t>(0U),
-                      static_cast<uint64_t>(src[start_index + i].extraCount)));
+        ptr[i].pExtras = reinterpret_cast<const void* const*>(CopyArray(
+            reinterpret_cast<const uint8_t*>(src[start_index + i].pExtras), 0U, src[start_index + i].extraCount));
     }
     return ptr;
 }
@@ -1898,16 +1868,16 @@ VkMicromapBuildInfoEXT* CommandRecorder::CopyArray<VkMicromapBuildInfoEXT>(const
         ptr[i].usageCountsCount = src[start_index + i].usageCountsCount;
         ptr[i].pUsageCounts = nullptr;
         if (src[start_index + i].pUsageCounts) {
-            ptr[i].pUsageCounts = CopyArray(src[start_index + i].pUsageCounts, static_cast<uint64_t>(0U),
-                                            static_cast<uint64_t>(src[start_index + i].usageCountsCount));
+            ptr[i].pUsageCounts =
+                CopyArray(src[start_index + i].pUsageCounts, 0U, src[start_index + i].usageCountsCount);
         }
         ptr[i].ppUsageCounts = nullptr;
         if (src[start_index + i].ppUsageCounts) {
-            ptr[i].ppUsageCounts = CopyArray(src[start_index + i].ppUsageCounts, static_cast<uint64_t>(0U),
-                                             static_cast<uint64_t>(src[start_index + i].usageCountsCount));
+            ptr[i].ppUsageCounts =
+                CopyArray(src[start_index + i].ppUsageCounts, 0U, src[start_index + i].usageCountsCount);
             for (uint64_t j = 0; j < uint64_t(src[start_index + i].usageCountsCount); j++) {
-                const_cast<VkMicromapUsageEXT**>(ptr[i].ppUsageCounts)[j] = CopyArray(
-                    src[start_index + i].ppUsageCounts[j], static_cast<uint64_t>(0U), static_cast<uint64_t>(1));
+                const_cast<VkMicromapUsageEXT**>(ptr[i].ppUsageCounts)[j] =
+                    CopyArray(src[start_index + i].ppUsageCounts[j], 0U, 1);
             }
         }
         ptr[i].data = src[start_index + i].data;
@@ -2018,8 +1988,7 @@ VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoN
         ptr[i].regionCount = src[start_index + i].regionCount;
         ptr[i].pRegions = nullptr;
         if (src[start_index + i].pRegions) {
-            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, static_cast<uint64_t>(0U),
-                                        static_cast<uint64_t>(src[start_index + i].regionCount));
+            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, 0U, src[start_index + i].regionCount);
         }
     }
     return ptr;
@@ -2103,16 +2072,14 @@ VkAccelerationStructureBuildGeometryInfoKHR* CommandRecorder::CopyArray<VkAccele
         ptr[i].geometryCount = src[start_index + i].geometryCount;
         ptr[i].pGeometries = nullptr;
         if (src[start_index + i].pGeometries) {
-            ptr[i].pGeometries = CopyArray(src[start_index + i].pGeometries, static_cast<uint64_t>(0U),
-                                           static_cast<uint64_t>(src[start_index + i].geometryCount));
+            ptr[i].pGeometries = CopyArray(src[start_index + i].pGeometries, 0U, src[start_index + i].geometryCount);
         }
         ptr[i].ppGeometries = nullptr;
         if (src[start_index + i].ppGeometries) {
-            ptr[i].ppGeometries = CopyArray(src[start_index + i].ppGeometries, static_cast<uint64_t>(0U),
-                                            static_cast<uint64_t>(src[start_index + i].geometryCount));
+            ptr[i].ppGeometries = CopyArray(src[start_index + i].ppGeometries, 0U, src[start_index + i].geometryCount);
             for (uint64_t j = 0; j < uint64_t(src[start_index + i].geometryCount); j++) {
-                const_cast<VkAccelerationStructureGeometryKHR**>(ptr[i].ppGeometries)[j] = CopyArray(
-                    src[start_index + i].ppGeometries[j], static_cast<uint64_t>(0U), static_cast<uint64_t>(1));
+                const_cast<VkAccelerationStructureGeometryKHR**>(ptr[i].ppGeometries)[j] =
+                    CopyArray(src[start_index + i].ppGeometries[j], 0U, 1);
             }
         }
         ptr[i].scratchData = src[start_index + i].scratchData;
