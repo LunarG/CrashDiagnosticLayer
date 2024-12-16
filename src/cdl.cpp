@@ -649,6 +649,7 @@ std::ofstream Context::OpenDumpFile() {
     total_logs_++;
 
     // Create a symlink from the generated log file.
+#if !defined(VK_USE_PLATFORM_WIN32_KHR)
     std::filesystem::path symlink_path(base_output_path_);
     symlink_path /= "cdl_dump.yaml.symlink";
     try {
@@ -658,12 +659,15 @@ std::ofstream Context::OpenDumpFile() {
         Log().Warning("symlink %s -> %s failed: %s", dump_file_path.string().c_str(), symlink_path.string().c_str(),
                       err.what());
     }
+#endif
 
     std::stringstream ss;
     ss << "Device error encountered and log being recorded" << std::endl;
     ;
     ss << "\tOutput written to: " << dump_file_path << std::endl;
+#if !defined(VK_USE_PLATFORM_WIN32_KHR)
     ss << "\tSymlink to output: " << symlink_path << std::endl;
+#endif
     ss << "----------------------------------------------------------------" << std::endl;
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     OutputDebugString(ss.str().c_str());
