@@ -46,7 +46,14 @@ TEST_F(RayTracing, BuildPositive) {
         physical_device_
             .getProperties2<vk::PhysicalDeviceProperties2, vk::PhysicalDeviceAccelerationStructurePropertiesKHR>();
 
-    InitDevice({"VK_KHR_acceleration_structure", "VK_KHR_deferred_host_operations"}, &features2);
+    std::vector<const char *> extensions{
+        VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+        VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+    };
+    if (!ExtensionsSupported(extensions)) {
+        GTEST_SKIP() << "Required extensions unsupported.";
+    }
+    InitDevice(extensions, &features2);
 
     constexpr size_t kNumElems = 256;
     constexpr VkDeviceSize kBuffSize = kNumElems * sizeof(float);
@@ -141,7 +148,14 @@ TEST_F(RayTracing, BuildCrash) {
         physical_device_
             .getProperties2<vk::PhysicalDeviceProperties2, vk::PhysicalDeviceAccelerationStructurePropertiesKHR>();
 
-    InitDevice({"VK_KHR_acceleration_structure", "VK_KHR_deferred_host_operations"}, &features2);
+    std::vector<const char *> extensions{
+        VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+        VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+    };
+    if (!ExtensionsSupported(extensions)) {
+        GTEST_SKIP() << "Required extensions unsupported.";
+    }
+    InitDevice(extensions, &features2);
 
     constexpr size_t kNumElems = 256;
     constexpr VkDeviceSize kBuffSize = kNumElems * sizeof(float);
@@ -261,9 +275,17 @@ TEST_F(RayTracing, TraceRaysPositive) {
 
     auto &rt_props = prop_chain.get<vk::PhysicalDeviceRayTracingPipelinePropertiesKHR>();
 
-    InitDevice({VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME, VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
-                VK_KHR_RAY_QUERY_EXTENSION_NAME, VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME},
-               &features2);
+    std::vector<const char *> extensions{
+        VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+        VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+        VK_KHR_RAY_QUERY_EXTENSION_NAME,
+        VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
+    };
+    if (!ExtensionsSupported(extensions)) {
+        GTEST_SKIP() << "Required extensions unsupported.";
+    }
+    InitDevice(extensions, &features2);
+
     static const char *minimal = R"glsl(
 #version 460
 #extension GL_EXT_ray_tracing : require  // Requires SPIR-V 1.5 (Vulkan 1.2)
@@ -335,9 +357,17 @@ TEST_F(RayTracing, TraceRaysCrash) {
 
     auto &rt_props = prop_chain.get<vk::PhysicalDeviceRayTracingPipelinePropertiesKHR>();
 
-    InitDevice({VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME, VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
-                VK_KHR_RAY_QUERY_EXTENSION_NAME, VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME},
-               &features2);
+    std::vector<const char *> extensions{
+        VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+        VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+        VK_KHR_RAY_QUERY_EXTENSION_NAME,
+        VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
+    };
+    if (!ExtensionsSupported(extensions)) {
+        GTEST_SKIP() << "Required extensions unsupported.";
+    }
+    InitDevice(extensions, &features2);
+
     static const char *minimal = R"glsl(
 #version 460
 #extension GL_EXT_ray_tracing : require  // Requires SPIR-V 1.5 (Vulkan 1.2)

@@ -39,6 +39,7 @@ class CDLTestBase : public ::testing::Test {
     ~CDLTestBase() {}
     void InitInstance();
     void InitDevice(std::vector<const char*> extensions = {}, const vk::PhysicalDeviceFeatures2* features2 = nullptr);
+    bool ExtensionsSupported(const std::vector<const char*>& extensions);
 
     static void InitArgs(int argc, char* argv[]);
 

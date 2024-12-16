@@ -141,6 +141,26 @@ void CDLTestBase::InitInstance() {
     print_phys_devices_ = false;
 }
 
+bool CDLTestBase::ExtensionsSupported(const std::vector<const char*>& extensions) {
+    auto extension_props = physical_device_.enumerateDeviceExtensionProperties();
+    for (const auto* ext_chars : extensions) {
+        bool found = false;
+        std::string_view ext(ext_chars);
+        for (const auto& prop : extension_props) {
+            if (ext == prop.extensionName) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            std::cout << "Device extension " << ext << " is not supported." << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
 void CDLTestBase::InitDevice(std::vector<const char*> extensions, const vk::PhysicalDeviceFeatures2* features2) {
     if (!*instance_) {
         InitInstance();
