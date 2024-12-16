@@ -332,10 +332,13 @@ static void ParseFaultAddressRange(FaultAddressRange& range, const YAML::Node& i
         } else if (key == "end") {
             range.end = node.second.as<uint64_t>();
         } else if (key == "matchingAddressRecords") {
-            ASSERT_FALSE(range.match.has_value());
-            AddressRecord rec;
-            ParseAddressRecord(rec, node.second);
-            range.match = rec;
+            ASSERT_TRUE(range.matches.empty());
+            ASSERT_TRUE(node.second.IsSequence());
+            for (const auto& addr_node: node.second) {
+                AddressRecord rec;
+                ParseAddressRecord(rec, addr_node);
+                range.matches.push_back(rec);
+            }
         } else if (key == "priorAddressRecord") {
             ASSERT_FALSE(range.prior.has_value());
             AddressRecord rec;
