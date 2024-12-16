@@ -145,22 +145,22 @@ class CommandRecorder
                     out.append(f'  if ({src_struct}.{vkmember.name}) {{\n')
                     if vkmember.length is not None and len(vkmember.length) > 0:
                         lengths = vkmember.length.split(',')
-                        out.append(f'    ptr[i].{vkmember.name} = CopyArray({src_struct}.{vkmember.name}, static_cast<uint64_t>(0U), static_cast<uint64_t>({src_struct}.{lengths[0]}));\n')
+                        out.append(f'    ptr[i].{vkmember.name} = CopyArray({src_struct}.{vkmember.name}, 0U, {src_struct}.{lengths[0]});\n')
                         # TODO: this only handles 2d arrays with a constant 2nd dimension
                         # because that's all that is in vk.xml right now
                         if len(lengths) > 1:
                             out.append(f'for (uint64_t j = 0; j < uint64_t({src_struct}.{lengths[0]}); j++) {{\n')
-                            out.append(f'    const_cast<{vkmember.type} **>(ptr[i].{vkmember.name})[j] = CopyArray({src_struct}.{vkmember.name}[j], static_cast<uint64_t>(0U), static_cast<uint64_t>({lengths[1]}));\n')
+                            out.append(f'    const_cast<{vkmember.type} **>(ptr[i].{vkmember.name})[j] = CopyArray({src_struct}.{vkmember.name}[j], 0U, {lengths[1]});\n')
                             out.append('}')
 
                     elif vkmember.type == 'char':
                         out.append(f'    ptr[i].{vkmember.name} = CopyArray<>({src_struct}.{vkmember.name}, 0, strlen({src_struct}.{vkmember.name}) + 1);\n')
                     else:
-                        out.append(f'    ptr[i].{vkmember.name} = CopyArray({src_struct}.{vkmember.name}, static_cast<uint64_t>(0U), static_cast<uint64_t>(1U));\n')
+                        out.append(f'    ptr[i].{vkmember.name} = CopyArray({src_struct}.{vkmember.name}, 0U, 1U);\n')
                     out.append('  }\n')
                 elif vkmember.length is not None and len(vkmember.length) > 0:
                     out_type = vkmember.cDeclaration.replace(vkmember.name, '').strip()
-                    out.append(f'    ptr[i].{vkmember.name} = reinterpret_cast<{out_type}>(CopyArray(reinterpret_cast<const uint8_t*>({src_struct}.{vkmember.name}), static_cast<uint64_t>(0U), static_cast<uint64_t>({src_struct}.{vkmember.length})));\n')
+                    out.append(f'    ptr[i].{vkmember.name} = reinterpret_cast<{out_type}>(CopyArray(reinterpret_cast<const uint8_t*>({src_struct}.{vkmember.name}), 0U, {src_struct}.{vkmember.length}));\n')
                 else:
                     out.append(f'  ptr[i].{vkmember.name} = {src_struct}.{vkmember.name};\n')
             out.append('  }\n')
