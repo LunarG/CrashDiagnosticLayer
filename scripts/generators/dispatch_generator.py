@@ -82,10 +82,15 @@ void InitInstanceDispatchTable(VkInstance instance,
 ''')
         # The android loader complains if you look up these functions with a non-null instance handle
         global_commands = ('vkCreateInstance', 'vkEnumerateInstanceExtensionProperties')
+        out.append(f'#ifdef VK_USE_PLATFORM_ANDROID_KHR\n')
+        out.append(f'VkInstance global_instance_param = VK_NULL_HANDLE;\n')
+        out.append(f'#else\n')
+        out.append(f'VkInstance global_instance_param = instance;\n')
+        out.append(f'#endif // VK_USE_PLATFORM_ANDROID_KHR\n')
         for vkcommand in filter(lambda x: self.InstanceCommand(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'  dt->{vkcommand.name[2:]} =\n')
-            instance_param = 'instance' if vkcommand.name not in global_commands else 'VK_NULL_HANDLE'
+            instance_param = 'instance' if vkcommand.name not in global_commands else 'global_instance_param'
             out.append(f'    (PFN_{vkcommand.name})pa({instance_param}, "{vkcommand.name}");\n')
             out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
         out.append('};\n\n')
