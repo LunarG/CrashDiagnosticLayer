@@ -1,6 +1,6 @@
 # Crash Diagnostic Layer
 
-The Crash Diagnostic Layer (CDL)  is a Vulkan layer to help track down and identify the cause of GPU hangs and crashes. It works by instrumenting command buffers with completion checkpoints. When an error is detected a dump file containing incomplete command buffers is written. Often the last complete or incomplete commands are responsible for the crash.
+The Crash Diagnostic Layer (CDL)  is a Vulkan layer to help track down and identify the cause of GPU hangs and crashes. It works by instrumenting command buffers with completion checkpoints. When an error is detected a dump file containing incomplete command buffers is written. Often the last complete or incomplete commands are responsible for the crash. The name of the layer is `VK_LAYER_LUNARG_crash_diagnostic`.
 
 ## Building
 
@@ -53,6 +53,7 @@ A unique log file directory is created every time an application is run with CDL
 
  - Linux: `${HOME}/cdl/`
  - Windows: `%USERPROFILE%\cdl\`
+ - Android: '/sdcard/data/Android/<application name>/cdl'
 
 The output directory for dump files can be changed using the `output_path` configuration setting, described below.
 
