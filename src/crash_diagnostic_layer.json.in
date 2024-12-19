@@ -3,12 +3,12 @@
     "layer": {
         "name": "VK_LAYER_LUNARG_crash_diagnostic",
         "type": "GLOBAL",
-        "status": "ALPHA",
+        "status": "BETA",
         "library_path": "@JSON_LIBRARY_PATH@",
         "api_version": "@JSON_VERSION@",
         "implementation_version": "1",
         "description": "Crash Diagnostic Layer is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application.",
-        "platforms": [ "WINDOWS", "LINUX" ],
+        "platforms": [ "WINDOWS", "LINUX" , "ANDROID" ],
         "url": "https://vulkan.lunarg.com/doc/sdk/latest/windows/crash_diagnostic_layer.html",
         "enable_environment": {
             "VK_CRASH_DIAGNOSTIC_ENABLE": "1"
