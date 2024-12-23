@@ -18,10 +18,10 @@
 #include "error_monitor.h"
 #include "test_fixtures.h"
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
-                                                    VkDebugUtilsMessageTypeFlagsEXT message_types,
-                                                    const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
-                                                    void *user_data) {
+static VKAPI_ATTR vk::Bool32 VKAPI_CALL DebugCallback(vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
+                                                      vk::DebugUtilsMessageTypeFlagsEXT message_types,
+                                                      const vk::DebugUtilsMessengerCallbackDataEXT *callback_data,
+                                                      void *user_data) {
     const char *message = callback_data->pMessage;
     auto *error_monitor = reinterpret_cast<ErrorMonitor *>(user_data);
 
