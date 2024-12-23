@@ -42,10 +42,10 @@ TEST(CreateInstance, Basic) {
     vk::raii::Instance instance(context, ci);
 }
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL DebugUtilsCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
-                                                         VkDebugUtilsMessageTypeFlagsEXT message_types,
-                                                         const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
-                                                         void* user_data) {
+static VKAPI_ATTR vk::Bool32 VKAPI_CALL DebugUtilsCallback(vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
+                                                           vk::DebugUtilsMessageTypeFlagsEXT message_types,
+                                                           const vk::DebugUtilsMessengerCallbackDataEXT* callback_data,
+                                                           void* user_data) {
     bool* got_message = reinterpret_cast<bool*>(user_data);
     if (strcmp(callback_data->pMessageIdName, "CDL") == 0) {
         *got_message = true;
@@ -70,9 +70,9 @@ TEST(CreateInstance, DebugUtilsMessenger) {
     ASSERT_TRUE(got_message);
 }
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReportCallback(VkDebugReportFlagsEXT message_flags,
-                                                          VkDebugReportObjectTypeEXT, uint64_t, size_t, int32_t,
-                                                          const char* prefix, const char* message, void* user_data) {
+static VKAPI_ATTR vk::Bool32 VKAPI_CALL DebugReportCallback(vk::DebugReportFlagsEXT message_flags,
+                                                            vk::DebugReportObjectTypeEXT, uint64_t, size_t, int32_t,
+                                                            const char* prefix, const char* message, void* user_data) {
     bool* got_message = reinterpret_cast<bool*>(user_data);
     if (strcmp(prefix, "CDL") == 0) {
         *got_message = true;
@@ -107,9 +107,9 @@ TEST(CreateInstance, AllLayerSettings) {
     std::vector<const char*> instance_extensions{"VK_EXT_debug_utils", "VK_EXT_layer_settings"};
 
     bool got_message = false;
-    vk::DebugUtilsMessengerCreateInfoEXT utils_ci({}, vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo,
-                                                  vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral, DebugUtilsCallback,
-                                                  &got_message, nullptr);
+    vk::DebugUtilsMessengerCreateInfoEXT utils_ci(
+        {}, vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo, vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral,
+        vk::PFN_DebugUtilsMessengerCallbackEXT(DebugUtilsCallback), &got_message, nullptr);
 
     LayerSettings layer_settings;
 
