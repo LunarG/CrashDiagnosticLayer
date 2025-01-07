@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright (c) 2023-2024 LunarG, Inc.
+ Copyright (c) 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -93,17 +93,21 @@ const char* kSyncAfterCommands = "sync_after_commands";
 const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
 
 template <class T>
-void GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value) {
+bool GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value) {
     if (vkuHasLayerSetting(settings, name)) {
         vkuGetLayerSettingValue(settings, name, value);
+        return true;
     }
+    return false;
 }
 
 template <class T>
-void GetEnumVal(Logger& log, VkuLayerSettingSet settings, const char* name, T& value,
+bool GetEnumVal(Logger& log, VkuLayerSettingSet settings, const char* name, T& value,
                 const std::unordered_map<std::string, T>& value_map) {
     std::string value_string;
-    GetEnvVal<std::string>(settings, name, value_string);
+    if (!GetEnvVal<std::string>(settings, name, value_string)) {
+        return false;
+    }
     if (!value_string.empty()) {
         auto iter = value_map.find(value_string);
         if (iter != value_map.end()) {
@@ -112,6 +116,7 @@ void GetEnumVal(Logger& log, VkuLayerSettingSet settings, const char* name, T& v
             log.Error("Bad value for %s setting: \"%s\"", name, value_string.c_str());
         }
     }
+    return true;
 }
 
 Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
@@ -219,21 +224,22 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
     // logging
     {
         std::string severity;
-        GetEnvVal<std::string>(layer_setting_set, settings::kMessageSeverity, severity);
-        if (!severity.empty()) {
+        if (GetEnvVal<std::string>(layer_setting_set, settings::kMessageSeverity, severity)) {
             VkDebugUtilsMessageSeverityFlagsEXT mask{0};
-            std::regex re("[\\s,]+");
-            std::sregex_token_iterator re_iter(severity.begin(), severity.end(), re, -1);
-            std::sregex_token_iterator re_end;
             bool bad_value = false;
-            for (; re_iter != re_end; ++re_iter) {
-                auto iter = settings::kSeverityValues.find(*re_iter);
-                if (iter != settings::kSeverityValues.end()) {
-                    mask |= iter->second;
-                } else {
-                    bad_value = true;
-                    std::string value = *re_iter;
-                    Log().Error("Bad value for message_severity setting: \"%s\"", value.c_str());
+            if (!severity.empty()) {
+                std::regex re("[\\s,]+");
+                std::sregex_token_iterator re_iter(severity.begin(), severity.end(), re, -1);
+                std::sregex_token_iterator re_end;
+                for (; re_iter != re_end; ++re_iter) {
+                    auto iter = settings::kSeverityValues.find(*re_iter);
+                    if (iter != settings::kSeverityValues.end()) {
+                        mask |= iter->second;
+                    } else {
+                        bad_value = true;
+                        std::string value = *re_iter;
+                        Log().Error("Bad value for message_severity setting: \"%s\"", value.c_str());
+                    }
                 }
             }
             if (!bad_value) {
@@ -242,8 +248,7 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
         }
 
         std::string log_file;
-        GetEnvVal<std::string>(layer_setting_set, settings::kLogFile, log_file);
-        if (!log_file.empty()) {
+        if (GetEnvVal<std::string>(layer_setting_set, settings::kLogFile, log_file)) {
             auto iter = settings::kLogFileValues.find(log_file);
             if (iter != settings::kLogFileValues.end()) {
                 switch (iter->second) {
