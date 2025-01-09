@@ -1,7 +1,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2024 LunarG, Inc.
+ * Copyright (c) 2023-2025 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 #include <cassert>
 #include <cstring>
 #include <memory>
-#include <mutex>
+#include <shared_mutex>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -50,14 +50,10 @@ constexpr VkPhysicalDeviceToolPropertiesEXT kToolProperties{
 
 namespace {
 
-// Generally we expect to get the same device and instance, so we keep them handy
-static thread_local InstanceData* last_used_instance_data = nullptr;
-static thread_local DeviceData* last_used_device_data = nullptr;
-
-std::mutex g_instance_mutex;
+std::shared_mutex g_instance_mutex;
 std::unordered_map<uintptr_t, std::unique_ptr<InstanceData>> g_instance_data;
 
-std::mutex g_device_mutex;
+std::shared_mutex g_device_mutex;
 std::unordered_map<uintptr_t, std::unique_ptr<DeviceData>> g_device_data;
 
 }  // namespace
@@ -65,35 +61,23 @@ std::unordered_map<uintptr_t, std::unique_ptr<DeviceData>> g_device_data;
 uintptr_t DataKey(const void* object) { return (uintptr_t)(*(void**)object); }
 
 InstanceData* GetInstanceLayerData(uintptr_t key) {
-    if (last_used_instance_data && DataKey(last_used_instance_data->instance) == key) {
-        return last_used_instance_data;
-    }
-
-    std::lock_guard<std::mutex> lock(g_instance_mutex);
-    last_used_instance_data = g_instance_data[key].get();
-    return last_used_instance_data;
+    std::shared_lock<std::shared_mutex> lock(g_instance_mutex);
+    return g_instance_data[key].get();
 }
 
 void FreeInstanceLayerData(uintptr_t key) {
-    std::lock_guard<std::mutex> lock(g_instance_mutex);
+    std::unique_lock<std::shared_mutex> lock(g_instance_mutex);
     g_instance_data.erase(key);
-    last_used_instance_data = nullptr;
 }
 
 DeviceData* GetDeviceLayerData(uintptr_t key) {
-    if (last_used_device_data && DataKey(last_used_device_data->device) == key) {
-        return last_used_device_data;
-    }
-
-    std::lock_guard<std::mutex> lock(g_device_mutex);
-    last_used_device_data = g_device_data[key].get();
-    return last_used_device_data;
+    std::shared_lock<std::shared_mutex> lock(g_device_mutex);
+    return g_device_data[key].get();
 }
 
 void FreeDeviceLayerData(uintptr_t key) {
-    std::lock_guard<std::mutex> lock(g_device_mutex);
+    std::unique_lock<std::shared_mutex> lock(g_device_mutex);
     g_device_data.erase(key);
-    last_used_device_data = nullptr;
 }
 
 static VkStruct* FindOnChain(VkStruct* s, VkStructureType type) {
@@ -204,7 +188,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateInstance(const VkInstanceCreateInf
     InitInstanceDispatchTable(*pInstance, pfn_get_instance_proc_addr, &id->dispatch_table);
 
     {
-        std::lock_guard<std::mutex> lock(g_instance_mutex);
+        std::unique_lock<std::shared_mutex> lock(g_instance_mutex);
         g_instance_data[DataKey(*pInstance)] = std::move(id);
     }
 
@@ -253,7 +237,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateDevice(VkPhysicalDevice gpu, const
     dd->pfn_next_device_proc_addr = pfn_next_device_proc_addr;
     InitDeviceDispatchTable(*pDevice, pfn_next_device_proc_addr, &dd->dispatch_table);
     {
-        std::lock_guard<std::mutex> lock(g_device_mutex);
+        std::unique_lock<std::shared_mutex> lock(g_device_mutex);
         g_device_data[DataKey(*pDevice)] = std::move(dd);
     }
 
