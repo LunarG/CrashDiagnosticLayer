@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2024 LunarG, Inc.
+ * Copyright (c) 2023-2025 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -984,6 +984,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance7P
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPropertiesListKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiVulkanPropertiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance8FeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrierAccessFlags3KHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRasterizationStateRasterizationOrderAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugMarkerObjectNameInfoEXT &t);
@@ -1499,7 +1502,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewSlicedCreateInfoEX
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetBindingReferenceVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetLayoutHostMappingInfoVALVE &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampZeroOneFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRenderPassStripedFeaturesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRenderPassStripedPropertiesARM &t);
@@ -1664,6 +1666,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrVividDynamicMetadataHUAW
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixFlexibleDimensionsPropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2FeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2PropertiesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineOpacityMicromapFeaturesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
