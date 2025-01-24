@@ -1089,6 +1089,13 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
         (PFN_vkUpdateIndirectExecutionSetPipelineEXT)pa(device, "vkUpdateIndirectExecutionSetPipelineEXT");
     dt->UpdateIndirectExecutionSetShaderEXT =
         (PFN_vkUpdateIndirectExecutionSetShaderEXT)pa(device, "vkUpdateIndirectExecutionSetShaderEXT");
+#ifdef VK_USE_PLATFORM_METAL_EXT
+    dt->GetMemoryMetalHandleEXT = (PFN_vkGetMemoryMetalHandleEXT)pa(device, "vkGetMemoryMetalHandleEXT");
+#endif  // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_METAL_EXT
+    dt->GetMemoryMetalHandlePropertiesEXT =
+        (PFN_vkGetMemoryMetalHandlePropertiesEXT)pa(device, "vkGetMemoryMetalHandlePropertiesEXT");
+#endif  // VK_USE_PLATFORM_METAL_EXT
     dt->CreateAccelerationStructureKHR =
         (PFN_vkCreateAccelerationStructureKHR)pa(device, "vkCreateAccelerationStructureKHR");
     dt->DestroyAccelerationStructureKHR =

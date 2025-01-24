@@ -16395,6 +16395,83 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrierAccessFlags3KH
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoMaintenance2FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "videoMaintenance2";
+    // videoMaintenance2 -> Field -> VkBool32
+    os << YAML::Value << t.videoMaintenance2;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH264InlineSessionParametersInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pStdSPS";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdSPS;
+    os << YAML::Key << "pStdPPS";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdPPS;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265InlineSessionParametersInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pStdVPS";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdVPS;
+    os << YAML::Key << "pStdSPS";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdSPS;
+    os << YAML::Key << "pStdPPS";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdPPS;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1InlineSessionParametersInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pStdSequenceHeader";
+    // non-dereferenced pointer
+    os << YAML::Value << t.pStdSequenceHeader;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -29637,6 +29714,69 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineOpaci
     return os;
 }
 
+#ifdef VK_USE_PLATFORM_METAL_EXT
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImportMemoryMetalHandleInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "handleType";
+    // handleType -> Field -> VkExternalMemoryHandleTypeFlagBits
+    os << YAML::Value << t.handleType;
+    os << YAML::Key << "handle";
+    // void
+    os << YAML::Value << "NOT_AVAILABLE";
+    os << YAML::EndMap;
+    return os;
+}
+#endif  // VK_USE_PLATFORM_METAL_EXT
+
+#ifdef VK_USE_PLATFORM_METAL_EXT
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryMetalHandlePropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "memoryTypeBits";
+    // memoryTypeBits -> Field -> uint32_t
+    os << YAML::Value << t.memoryTypeBits;
+    os << YAML::EndMap;
+    return os;
+}
+#endif  // VK_USE_PLATFORM_METAL_EXT
+
+#ifdef VK_USE_PLATFORM_METAL_EXT
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryGetMetalHandleInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "memory";
+    // memory -> Field -> VkDeviceMemory
+    os << YAML::Value << t.memory;
+    os << YAML::Key << "handleType";
+    // handleType -> Field -> VkExternalMemoryHandleTypeFlagBits
+    os << YAML::Value << t.handleType;
+    os << YAML::EndMap;
+    return os;
+}
+#endif  // VK_USE_PLATFORM_METAL_EXT
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -32062,6 +32202,18 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR:
             os << *reinterpret_cast<const VkMemoryBarrierAccessFlags3KHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_2_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceVideoMaintenance2FeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_INLINE_SESSION_PARAMETERS_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoDecodeH264InlineSessionParametersInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_INLINE_SESSION_PARAMETERS_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoDecodeH265InlineSessionParametersInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_INLINE_SESSION_PARAMETERS_INFO_KHR:
+            os << *reinterpret_cast<const VkVideoDecodeAV1InlineSessionParametersInfoKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR *>(pStruct);
             break;
@@ -33626,6 +33778,21 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_OPACITY_MICROMAP_FEATURES_ARM:
             os << *reinterpret_cast<const VkPhysicalDevicePipelineOpacityMicromapFeaturesARM *>(pStruct);
             break;
+#ifdef VK_USE_PLATFORM_METAL_EXT
+        case VK_STRUCTURE_TYPE_IMPORT_MEMORY_METAL_HANDLE_INFO_EXT:
+            os << *reinterpret_cast<const VkImportMemoryMetalHandleInfoEXT *>(pStruct);
+            break;
+#endif  // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_METAL_EXT
+        case VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkMemoryMetalHandlePropertiesEXT *>(pStruct);
+            break;
+#endif  // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_METAL_EXT
+        case VK_STRUCTURE_TYPE_MEMORY_GET_METAL_HANDLE_INFO_EXT:
+            os << *reinterpret_cast<const VkMemoryGetMetalHandleInfoEXT *>(pStruct);
+            break;
+#endif  // VK_USE_PLATFORM_METAL_EXT
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT *>(pStruct);
             break;
