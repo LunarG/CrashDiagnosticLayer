@@ -986,6 +986,10 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPro
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiVulkanPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance8FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrierAccessFlags3KHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoMaintenance2FeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH264InlineSessionParametersInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265InlineSessionParametersInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1InlineSessionParametersInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRasterizationStateRasterizationOrderAMD &t);
@@ -1667,6 +1671,15 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixFlexibleDi
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2FeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrix2PropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineOpacityMicromapFeaturesARM &t);
+#ifdef VK_USE_PLATFORM_METAL_EXT
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImportMemoryMetalHandleInfoEXT &t);
+#endif  // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_METAL_EXT
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryMetalHandlePropertiesEXT &t);
+#endif  // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_METAL_EXT
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryGetMetalHandleInfoEXT &t);
+#endif  // VK_USE_PLATFORM_METAL_EXT
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
