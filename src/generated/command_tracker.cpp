@@ -2655,6 +2655,16 @@ void CommandTracker::CmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkD
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
+                                                         const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdConvertCooperativeVectorMatrixNV;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
                                                            VkImageAspectFlags aspectMask) {
     Command cmd{};
@@ -2662,6 +2672,26 @@ void CommandTracker::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer comma
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBuildClusterAccelerationStructureIndirectNV;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBuildPartitionedAccelerationStructuresNV;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
     commands_.push_back(cmd);
 }
 

@@ -4152,6 +4152,19 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthClampRangeEXT(VkCommandBuf
     layer_data->interceptor->PostCmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdConvertCooperativeVectorMatrixNV(
+    VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+
+    PFN_vkCmdConvertCooperativeVectorMatrixNV pfn = layer_data->dispatch_table.CmdConvertCooperativeVectorMatrixNV;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, infoCount, pInfos);
+    }
+
+    layer_data->interceptor->PostCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+}
+
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
                                                                                  VkImageAspectFlags aspectMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -4163,6 +4176,34 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAttachmentFeedbackLoopEnableEXT
     }
 
     layer_data->interceptor->PostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
+
+    PFN_vkCmdBuildClusterAccelerationStructureIndirectNV pfn =
+        layer_data->dispatch_table.CmdBuildClusterAccelerationStructureIndirectNV;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pCommandInfos);
+    }
+
+    layer_data->interceptor->PostCmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
+
+    PFN_vkCmdBuildPartitionedAccelerationStructuresNV pfn =
+        layer_data->dispatch_table.CmdBuildPartitionedAccelerationStructuresNV;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pBuildInfo);
+    }
+
+    layer_data->interceptor->PostCmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdPreprocessGeneratedCommandsEXT(
@@ -4718,8 +4759,13 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdOpticalFlowExecuteNV", {kFuncTypeDev, (void*)InterceptCmdOpticalFlowExecuteNV}},
         {"vkCmdBindShadersEXT", {kFuncTypeDev, (void*)InterceptCmdBindShadersEXT}},
         {"vkCmdSetDepthClampRangeEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthClampRangeEXT}},
+        {"vkCmdConvertCooperativeVectorMatrixNV", {kFuncTypeDev, (void*)InterceptCmdConvertCooperativeVectorMatrixNV}},
         {"vkCmdSetAttachmentFeedbackLoopEnableEXT",
          {kFuncTypeDev, (void*)InterceptCmdSetAttachmentFeedbackLoopEnableEXT}},
+        {"vkCmdBuildClusterAccelerationStructureIndirectNV",
+         {kFuncTypeDev, (void*)InterceptCmdBuildClusterAccelerationStructureIndirectNV}},
+        {"vkCmdBuildPartitionedAccelerationStructuresNV",
+         {kFuncTypeDev, (void*)InterceptCmdBuildPartitionedAccelerationStructuresNV}},
         {"vkCmdPreprocessGeneratedCommandsEXT", {kFuncTypeDev, (void*)InterceptCmdPreprocessGeneratedCommandsEXT}},
         {"vkCmdExecuteGeneratedCommandsEXT", {kFuncTypeDev, (void*)InterceptCmdExecuteGeneratedCommandsEXT}},
         {"vkCmdBuildAccelerationStructuresKHR", {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructuresKHR}},
