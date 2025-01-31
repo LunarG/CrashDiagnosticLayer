@@ -904,8 +904,17 @@ class CommandRecorder {
                                                                  VkDepthClampModeEXT depthClampMode,
                                                                  const VkDepthClampRangeEXT* pDepthClampRange);
 
+    CmdConvertCooperativeVectorMatrixNVArgs* RecordCmdConvertCooperativeVectorMatrixNV(
+        VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
+
     CmdSetAttachmentFeedbackLoopEnableEXTArgs* RecordCmdSetAttachmentFeedbackLoopEnableEXT(
         VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
+
+    CmdBuildClusterAccelerationStructureIndirectNVArgs* RecordCmdBuildClusterAccelerationStructureIndirectNV(
+        VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos);
+
+    CmdBuildPartitionedAccelerationStructuresNVArgs* RecordCmdBuildPartitionedAccelerationStructuresNV(
+        VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo);
 
     CmdPreprocessGeneratedCommandsEXTArgs* RecordCmdPreprocessGeneratedCommandsEXT(
         VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,

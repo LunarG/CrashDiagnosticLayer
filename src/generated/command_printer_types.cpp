@@ -1024,6 +1024,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplacementMicromapFormatN
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingLssIndexingModeNV &t) {
+    os << string_VkRayTracingLssIndexingModeNV(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingLssPrimitiveEndCapsModeNV &t) {
+    os << string_VkRayTracingLssPrimitiveEndCapsModeNV(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassMergeStatusEXT &t) {
     os << string_VkSubpassMergeStatusEXT(t);
     return os;
@@ -1069,6 +1079,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingInvocationReorder
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeVectorMatrixLayoutNV &t) {
+    os << string_VkCooperativeVectorMatrixLayoutNV(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingTypeEXT &t) {
     os << string_VkLayerSettingTypeEXT(t);
     return os;
@@ -1101,6 +1116,26 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayeredDriverUnderlyingApiM
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplaySurfaceStereoTypeNV &t) {
     os << string_VkDisplaySurfaceStereoTypeNV(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureTypeNV &t) {
+    os << string_VkClusterAccelerationStructureTypeNV(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureOpTypeNV &t) {
+    os << string_VkClusterAccelerationStructureOpTypeNV(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureOpModeNV &t) {
+    os << string_VkClusterAccelerationStructureOpModeNV(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPartitionedAccelerationStructureOpTypeNV &t) {
+    os << string_VkPartitionedAccelerationStructureOpTypeNV(t);
     return os;
 }
 

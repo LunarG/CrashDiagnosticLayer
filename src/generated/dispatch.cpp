@@ -272,6 +272,8 @@ void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
     dt->GetPhysicalDeviceOpticalFlowImageFormatsNV =
         (PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV)pa(instance, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV");
+    dt->GetPhysicalDeviceCooperativeVectorPropertiesNV = (PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV)pa(
+        instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV");
     dt->GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV =
         (PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV)pa(
             instance, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV");
@@ -1061,6 +1063,10 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
         (PFN_vkGetFramebufferTilePropertiesQCOM)pa(device, "vkGetFramebufferTilePropertiesQCOM");
     dt->GetDynamicRenderingTilePropertiesQCOM =
         (PFN_vkGetDynamicRenderingTilePropertiesQCOM)pa(device, "vkGetDynamicRenderingTilePropertiesQCOM");
+    dt->ConvertCooperativeVectorMatrixNV =
+        (PFN_vkConvertCooperativeVectorMatrixNV)pa(device, "vkConvertCooperativeVectorMatrixNV");
+    dt->CmdConvertCooperativeVectorMatrixNV =
+        (PFN_vkCmdConvertCooperativeVectorMatrixNV)pa(device, "vkCmdConvertCooperativeVectorMatrixNV");
     dt->SetLatencySleepModeNV = (PFN_vkSetLatencySleepModeNV)pa(device, "vkSetLatencySleepModeNV");
     dt->LatencySleepNV = (PFN_vkLatencySleepNV)pa(device, "vkLatencySleepNV");
     dt->SetLatencyMarkerNV = (PFN_vkSetLatencyMarkerNV)pa(device, "vkSetLatencyMarkerNV");
@@ -1071,6 +1077,14 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     dt->GetScreenBufferPropertiesQNX = (PFN_vkGetScreenBufferPropertiesQNX)pa(device, "vkGetScreenBufferPropertiesQNX");
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
+    dt->GetClusterAccelerationStructureBuildSizesNV =
+        (PFN_vkGetClusterAccelerationStructureBuildSizesNV)pa(device, "vkGetClusterAccelerationStructureBuildSizesNV");
+    dt->CmdBuildClusterAccelerationStructureIndirectNV = (PFN_vkCmdBuildClusterAccelerationStructureIndirectNV)pa(
+        device, "vkCmdBuildClusterAccelerationStructureIndirectNV");
+    dt->GetPartitionedAccelerationStructuresBuildSizesNV = (PFN_vkGetPartitionedAccelerationStructuresBuildSizesNV)pa(
+        device, "vkGetPartitionedAccelerationStructuresBuildSizesNV");
+    dt->CmdBuildPartitionedAccelerationStructuresNV =
+        (PFN_vkCmdBuildPartitionedAccelerationStructuresNV)pa(device, "vkCmdBuildPartitionedAccelerationStructuresNV");
     dt->GetGeneratedCommandsMemoryRequirementsEXT =
         (PFN_vkGetGeneratedCommandsMemoryRequirementsEXT)pa(device, "vkGetGeneratedCommandsMemoryRequirementsEXT");
     dt->CmdPreprocessGeneratedCommandsEXT =

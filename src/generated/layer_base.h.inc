@@ -1802,9 +1802,27 @@ virtual void PreCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthC
 virtual void PostCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
                                           const VkDepthClampRangeEXT* pDepthClampRange) {}
 
+virtual void PreCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
+                                                    const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {}
+
+virtual void PostCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
+                                                     const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {}
+
 virtual void PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {}
 
 virtual void PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {}
+
+virtual void PreCmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {}
+
+virtual void PostCmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {}
+
+virtual void PreCmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {}
+
+virtual void PostCmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {}
 
 virtual void PreCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
                                                   const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,

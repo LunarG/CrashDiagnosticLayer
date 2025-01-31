@@ -440,6 +440,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {VK_NV_COPY_MEMORY_INDIRECT_EXTENSION_NAME, VK_NV_COPY_MEMORY_INDIRECT_SPEC_VERSION},
     {VK_NV_MEMORY_DECOMPRESSION_EXTENSION_NAME, VK_NV_MEMORY_DECOMPRESSION_SPEC_VERSION},
     {VK_NV_DEVICE_GENERATED_COMMANDS_COMPUTE_EXTENSION_NAME, VK_NV_DEVICE_GENERATED_COMMANDS_COMPUTE_SPEC_VERSION},
+    {VK_NV_RAY_TRACING_LINEAR_SWEPT_SPHERES_EXTENSION_NAME, VK_NV_RAY_TRACING_LINEAR_SWEPT_SPHERES_SPEC_VERSION},
     {VK_NV_LINEAR_COLOR_ATTACHMENT_EXTENSION_NAME, VK_NV_LINEAR_COLOR_ATTACHMENT_SPEC_VERSION},
     {VK_EXT_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_EXTENSION_NAME,
      VK_EXT_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_SPEC_VERSION},
@@ -463,6 +464,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {VK_SEC_AMIGO_PROFILING_EXTENSION_NAME, VK_SEC_AMIGO_PROFILING_SPEC_VERSION},
     {VK_QCOM_MULTIVIEW_PER_VIEW_VIEWPORTS_EXTENSION_NAME, VK_QCOM_MULTIVIEW_PER_VIEW_VIEWPORTS_SPEC_VERSION},
     {VK_NV_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME, VK_NV_RAY_TRACING_INVOCATION_REORDER_SPEC_VERSION},
+    {VK_NV_COOPERATIVE_VECTOR_EXTENSION_NAME, VK_NV_COOPERATIVE_VECTOR_SPEC_VERSION},
     {VK_NV_EXTENDED_SPARSE_ADDRESS_SPACE_EXTENSION_NAME, VK_NV_EXTENDED_SPARSE_ADDRESS_SPACE_SPEC_VERSION},
     {VK_EXT_MUTABLE_DESCRIPTOR_TYPE_EXTENSION_NAME, VK_EXT_MUTABLE_DESCRIPTOR_TYPE_SPEC_VERSION},
     {VK_EXT_LEGACY_VERTEX_ATTRIBUTES_EXTENSION_NAME, VK_EXT_LEGACY_VERTEX_ATTRIBUTES_SPEC_VERSION},
@@ -489,6 +491,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {VK_NV_SHADER_ATOMIC_FLOAT16_VECTOR_EXTENSION_NAME, VK_NV_SHADER_ATOMIC_FLOAT16_VECTOR_SPEC_VERSION},
     {VK_EXT_SHADER_REPLICATED_COMPOSITES_EXTENSION_NAME, VK_EXT_SHADER_REPLICATED_COMPOSITES_SPEC_VERSION},
     {VK_NV_RAY_TRACING_VALIDATION_EXTENSION_NAME, VK_NV_RAY_TRACING_VALIDATION_SPEC_VERSION},
+    {VK_NV_CLUSTER_ACCELERATION_STRUCTURE_EXTENSION_NAME, VK_NV_CLUSTER_ACCELERATION_STRUCTURE_SPEC_VERSION},
+    {VK_NV_PARTITIONED_ACCELERATION_STRUCTURE_EXTENSION_NAME, VK_NV_PARTITIONED_ACCELERATION_STRUCTURE_SPEC_VERSION},
     {VK_EXT_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME, VK_EXT_DEVICE_GENERATED_COMMANDS_SPEC_VERSION},
     {VK_MESA_IMAGE_ALIGNMENT_CONTROL_EXTENSION_NAME, VK_MESA_IMAGE_ALIGNMENT_CONTROL_SPEC_VERSION},
     {VK_EXT_DEPTH_CLAMP_CONTROL_EXTENSION_NAME, VK_EXT_DEPTH_CLAMP_CONTROL_SPEC_VERSION},
@@ -2191,6 +2195,12 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetFramebufferTilePropertiesQCOM(VkDevice 
 static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(VkDevice device,
                                                                             const VkRenderingInfo* pRenderingInfo,
                                                                             VkTilePropertiesQCOM* pProperties);
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeVectorPropertiesNV(
+    VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeVectorPropertiesNV* pProperties);
+static VKAPI_ATTR VkResult VKAPI_CALL
+ConvertCooperativeVectorMatrixNV(VkDevice device, const VkConvertCooperativeVectorMatrixInfoNV* pInfo);
+static VKAPI_ATTR void VKAPI_CALL CmdConvertCooperativeVectorMatrixNV(
+    VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
 static VKAPI_ATTR VkResult VKAPI_CALL SetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swapchain,
                                                             const VkLatencySleepModeInfoNV* pSleepModeInfo);
 static VKAPI_ATTR VkResult VKAPI_CALL LatencySleepNV(VkDevice device, VkSwapchainKHR swapchain,
@@ -2207,6 +2217,16 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetAttachmentFeedbackLoopEnableEXT(VkComman
 static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffer* buffer,
                                                                    VkScreenBufferPropertiesQNX* pProperties);
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
+static VKAPI_ATTR void VKAPI_CALL
+GetClusterAccelerationStructureBuildSizesNV(VkDevice device, const VkClusterAccelerationStructureInputInfoNV* pInfo,
+                                            VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo);
+static VKAPI_ATTR void VKAPI_CALL CmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos);
+static VKAPI_ATTR void VKAPI_CALL GetPartitionedAccelerationStructuresBuildSizesNV(
+    VkDevice device, const VkPartitionedAccelerationStructureInstancesInputNV* pInfo,
+    VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo);
+static VKAPI_ATTR void VKAPI_CALL CmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo);
 static VKAPI_ATTR void VKAPI_CALL
 GetGeneratedCommandsMemoryRequirementsEXT(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo,
                                           VkMemoryRequirements2* pMemoryRequirements);
@@ -3051,6 +3071,9 @@ static const std::unordered_map<std::string, void*> name_to_func_ptr_map = {
     {"vkCmdSetDepthClampRangeEXT", (void*)CmdSetDepthClampRangeEXT},
     {"vkGetFramebufferTilePropertiesQCOM", (void*)GetFramebufferTilePropertiesQCOM},
     {"vkGetDynamicRenderingTilePropertiesQCOM", (void*)GetDynamicRenderingTilePropertiesQCOM},
+    {"vkGetPhysicalDeviceCooperativeVectorPropertiesNV", (void*)GetPhysicalDeviceCooperativeVectorPropertiesNV},
+    {"vkConvertCooperativeVectorMatrixNV", (void*)ConvertCooperativeVectorMatrixNV},
+    {"vkCmdConvertCooperativeVectorMatrixNV", (void*)CmdConvertCooperativeVectorMatrixNV},
     {"vkSetLatencySleepModeNV", (void*)SetLatencySleepModeNV},
     {"vkLatencySleepNV", (void*)LatencySleepNV},
     {"vkSetLatencyMarkerNV", (void*)SetLatencyMarkerNV},
@@ -3060,6 +3083,10 @@ static const std::unordered_map<std::string, void*> name_to_func_ptr_map = {
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkGetScreenBufferPropertiesQNX", (void*)GetScreenBufferPropertiesQNX},
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
+    {"vkGetClusterAccelerationStructureBuildSizesNV", (void*)GetClusterAccelerationStructureBuildSizesNV},
+    {"vkCmdBuildClusterAccelerationStructureIndirectNV", (void*)CmdBuildClusterAccelerationStructureIndirectNV},
+    {"vkGetPartitionedAccelerationStructuresBuildSizesNV", (void*)GetPartitionedAccelerationStructuresBuildSizesNV},
+    {"vkCmdBuildPartitionedAccelerationStructuresNV", (void*)CmdBuildPartitionedAccelerationStructuresNV},
     {"vkGetGeneratedCommandsMemoryRequirementsEXT", (void*)GetGeneratedCommandsMemoryRequirementsEXT},
     {"vkCmdPreprocessGeneratedCommandsEXT", (void*)CmdPreprocessGeneratedCommandsEXT},
     {"vkCmdExecuteGeneratedCommandsEXT", (void*)CmdExecuteGeneratedCommandsEXT},
@@ -6434,6 +6461,22 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(VkDe
     return VK_SUCCESS;
 }
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeVectorPropertiesNV(
+    VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeVectorPropertiesNV* pProperties) {
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL
+ConvertCooperativeVectorMatrixNV(VkDevice device, const VkConvertCooperativeVectorMatrixInfoNV* pInfo) {
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdConvertCooperativeVectorMatrixNV(
+    VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+}
+
 static VKAPI_ATTR VkResult VKAPI_CALL SetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swapchain,
                                                             const VkLatencySleepModeInfoNV* pSleepModeInfo) {
     return VK_SUCCESS;
@@ -6466,6 +6509,26 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(VkDevice devi
 }
 
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
+static VKAPI_ATTR void VKAPI_CALL
+GetClusterAccelerationStructureBuildSizesNV(VkDevice device, const VkClusterAccelerationStructureInputInfoNV* pInfo,
+                                            VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {}
+
+static VKAPI_ATTR void VKAPI_CALL CmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetPartitionedAccelerationStructuresBuildSizesNV(
+    VkDevice device, const VkPartitionedAccelerationStructureInstancesInputNV* pInfo,
+    VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {}
+
+static VKAPI_ATTR void VKAPI_CALL CmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
+}
+
 static VKAPI_ATTR void VKAPI_CALL
 GetGeneratedCommandsMemoryRequirementsEXT(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo,
                                           VkMemoryRequirements2* pMemoryRequirements) {}

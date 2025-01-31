@@ -26698,6 +26698,114 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindPipelineIndirectCommand
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingLinearSweptSpheresFeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "spheres";
+    // spheres -> Field -> VkBool32
+    os << YAML::Value << t.spheres;
+    os << YAML::Key << "linearSweptSpheres";
+    // linearSweptSpheres -> Field -> VkBool32
+    os << YAML::Value << t.linearSweptSpheres;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryLinearSweptSpheresDataNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "vertexFormat";
+    // vertexFormat -> Field -> VkFormat
+    os << YAML::Value << t.vertexFormat;
+    os << YAML::Key << "vertexData";
+    // vertexData -> Field -> VkDeviceOrHostAddressConstKHR
+    os << YAML::Value << t.vertexData;
+    os << YAML::Key << "vertexStride";
+    // vertexStride -> Field -> VkDeviceSize
+    os << YAML::Value << t.vertexStride;
+    os << YAML::Key << "radiusFormat";
+    // radiusFormat -> Field -> VkFormat
+    os << YAML::Value << t.radiusFormat;
+    os << YAML::Key << "radiusData";
+    // radiusData -> Field -> VkDeviceOrHostAddressConstKHR
+    os << YAML::Value << t.radiusData;
+    os << YAML::Key << "radiusStride";
+    // radiusStride -> Field -> VkDeviceSize
+    os << YAML::Value << t.radiusStride;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> VkIndexType
+    os << YAML::Value << t.indexType;
+    os << YAML::Key << "indexData";
+    // indexData -> Field -> VkDeviceOrHostAddressConstKHR
+    os << YAML::Value << t.indexData;
+    os << YAML::Key << "indexStride";
+    // indexStride -> Field -> VkDeviceSize
+    os << YAML::Value << t.indexStride;
+    os << YAML::Key << "indexingMode";
+    // indexingMode -> Field -> VkRayTracingLssIndexingModeNV
+    os << YAML::Value << t.indexingMode;
+    os << YAML::Key << "endCapsMode";
+    // endCapsMode -> Field -> VkRayTracingLssPrimitiveEndCapsModeNV
+    os << YAML::Value << t.endCapsMode;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometrySpheresDataNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "vertexFormat";
+    // vertexFormat -> Field -> VkFormat
+    os << YAML::Value << t.vertexFormat;
+    os << YAML::Key << "vertexData";
+    // vertexData -> Field -> VkDeviceOrHostAddressConstKHR
+    os << YAML::Value << t.vertexData;
+    os << YAML::Key << "vertexStride";
+    // vertexStride -> Field -> VkDeviceSize
+    os << YAML::Value << t.vertexStride;
+    os << YAML::Key << "radiusFormat";
+    // radiusFormat -> Field -> VkFormat
+    os << YAML::Value << t.radiusFormat;
+    os << YAML::Key << "radiusData";
+    // radiusData -> Field -> VkDeviceOrHostAddressConstKHR
+    os << YAML::Value << t.radiusData;
+    os << YAML::Key << "radiusStride";
+    // radiusStride -> Field -> VkDeviceSize
+    os << YAML::Value << t.radiusStride;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> VkIndexType
+    os << YAML::Value << t.indexType;
+    os << YAML::Key << "indexData";
+    // indexData -> Field -> VkDeviceOrHostAddressConstKHR
+    os << YAML::Value << t.indexData;
+    os << YAML::Key << "indexStride";
+    // indexStride -> Field -> VkDeviceSize
+    os << YAML::Value << t.indexStride;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLinearColorAttachmentFeaturesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -27913,6 +28021,138 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInv
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeVectorPropertiesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "cooperativeVectorSupportedStages";
+    // cooperativeVectorSupportedStages -> Field -> VkShaderStageFlags
+    os << YAML::Value << t.cooperativeVectorSupportedStages;
+    os << YAML::Key << "cooperativeVectorTrainingFloat16Accumulation";
+    // cooperativeVectorTrainingFloat16Accumulation -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeVectorTrainingFloat16Accumulation;
+    os << YAML::Key << "cooperativeVectorTrainingFloat32Accumulation";
+    // cooperativeVectorTrainingFloat32Accumulation -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeVectorTrainingFloat32Accumulation;
+    os << YAML::Key << "maxCooperativeVectorComponents";
+    // maxCooperativeVectorComponents -> Field -> uint32_t
+    os << YAML::Value << t.maxCooperativeVectorComponents;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeVectorFeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "cooperativeVector";
+    // cooperativeVector -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeVector;
+    os << YAML::Key << "cooperativeVectorTraining";
+    // cooperativeVectorTraining -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeVectorTraining;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeVectorPropertiesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "inputType";
+    // inputType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.inputType;
+    os << YAML::Key << "inputInterpretation";
+    // inputInterpretation -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.inputInterpretation;
+    os << YAML::Key << "matrixInterpretation";
+    // matrixInterpretation -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.matrixInterpretation;
+    os << YAML::Key << "biasInterpretation";
+    // biasInterpretation -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.biasInterpretation;
+    os << YAML::Key << "resultType";
+    // resultType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.resultType;
+    os << YAML::Key << "transpose";
+    // transpose -> Field -> VkBool32
+    os << YAML::Value << t.transpose;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkConvertCooperativeVectorMatrixInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "srcSize";
+    // srcSize -> Field -> size_t
+    os << YAML::Value << t.srcSize;
+    os << YAML::Key << "srcData";
+    // srcData -> Field -> VkDeviceOrHostAddressConstKHR
+    os << YAML::Value << t.srcData;
+    os << YAML::Key << "pDstSize";
+    // pointer
+    if (t.pDstSize != nullptr) {
+        os << YAML::Value << *t.pDstSize;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "dstData";
+    // dstData -> Field -> VkDeviceOrHostAddressKHR
+    os << YAML::Value << t.dstData;
+    os << YAML::Key << "srcComponentType";
+    // srcComponentType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.srcComponentType;
+    os << YAML::Key << "dstComponentType";
+    // dstComponentType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.dstComponentType;
+    os << YAML::Key << "numRows";
+    // numRows -> Field -> uint32_t
+    os << YAML::Value << t.numRows;
+    os << YAML::Key << "numColumns";
+    // numColumns -> Field -> uint32_t
+    os << YAML::Value << t.numColumns;
+    os << YAML::Key << "srcLayout";
+    // srcLayout -> Field -> VkCooperativeVectorMatrixLayoutNV
+    os << YAML::Value << t.srcLayout;
+    os << YAML::Key << "srcStride";
+    // srcStride -> Field -> size_t
+    os << YAML::Value << t.srcStride;
+    os << YAML::Key << "dstLayout";
+    // dstLayout -> Field -> VkCooperativeVectorMatrixLayoutNV
+    os << YAML::Value << t.dstLayout;
+    os << YAML::Key << "dstStride";
+    // dstStride -> Field -> size_t
+    os << YAML::Value << t.dstStride;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -28878,6 +29118,721 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingVal
     os << YAML::Key << "rayTracingValidation";
     // rayTracingValidation -> Field -> VkBool32
     os << YAML::Value << t.rayTracingValidation;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceClusterAccelerationStructureFeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "clusterAccelerationStructure";
+    // clusterAccelerationStructure -> Field -> VkBool32
+    os << YAML::Value << t.clusterAccelerationStructure;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceClusterAccelerationStructurePropertiesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxVerticesPerCluster";
+    // maxVerticesPerCluster -> Field -> uint32_t
+    os << YAML::Value << t.maxVerticesPerCluster;
+    os << YAML::Key << "maxTrianglesPerCluster";
+    // maxTrianglesPerCluster -> Field -> uint32_t
+    os << YAML::Value << t.maxTrianglesPerCluster;
+    os << YAML::Key << "clusterScratchByteAlignment";
+    // clusterScratchByteAlignment -> Field -> uint32_t
+    os << YAML::Value << t.clusterScratchByteAlignment;
+    os << YAML::Key << "clusterByteAlignment";
+    // clusterByteAlignment -> Field -> uint32_t
+    os << YAML::Value << t.clusterByteAlignment;
+    os << YAML::Key << "clusterTemplateByteAlignment";
+    // clusterTemplateByteAlignment -> Field -> uint32_t
+    os << YAML::Value << t.clusterTemplateByteAlignment;
+    os << YAML::Key << "clusterBottomLevelByteAlignment";
+    // clusterBottomLevelByteAlignment -> Field -> uint32_t
+    os << YAML::Value << t.clusterBottomLevelByteAlignment;
+    os << YAML::Key << "clusterTemplateBoundsByteAlignment";
+    // clusterTemplateBoundsByteAlignment -> Field -> uint32_t
+    os << YAML::Value << t.clusterTemplateBoundsByteAlignment;
+    os << YAML::Key << "maxClusterGeometryIndex";
+    // maxClusterGeometryIndex -> Field -> uint32_t
+    os << YAML::Value << t.maxClusterGeometryIndex;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureClustersBottomLevelInputNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxTotalClusterCount";
+    // maxTotalClusterCount -> Field -> uint32_t
+    os << YAML::Value << t.maxTotalClusterCount;
+    os << YAML::Key << "maxClusterCountPerAccelerationStructure";
+    // maxClusterCountPerAccelerationStructure -> Field -> uint32_t
+    os << YAML::Value << t.maxClusterCountPerAccelerationStructure;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureTriangleClusterInputNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "vertexFormat";
+    // vertexFormat -> Field -> VkFormat
+    os << YAML::Value << t.vertexFormat;
+    os << YAML::Key << "maxGeometryIndexValue";
+    // maxGeometryIndexValue -> Field -> uint32_t
+    os << YAML::Value << t.maxGeometryIndexValue;
+    os << YAML::Key << "maxClusterUniqueGeometryCount";
+    // maxClusterUniqueGeometryCount -> Field -> uint32_t
+    os << YAML::Value << t.maxClusterUniqueGeometryCount;
+    os << YAML::Key << "maxClusterTriangleCount";
+    // maxClusterTriangleCount -> Field -> uint32_t
+    os << YAML::Value << t.maxClusterTriangleCount;
+    os << YAML::Key << "maxClusterVertexCount";
+    // maxClusterVertexCount -> Field -> uint32_t
+    os << YAML::Value << t.maxClusterVertexCount;
+    os << YAML::Key << "maxTotalTriangleCount";
+    // maxTotalTriangleCount -> Field -> uint32_t
+    os << YAML::Value << t.maxTotalTriangleCount;
+    os << YAML::Key << "maxTotalVertexCount";
+    // maxTotalVertexCount -> Field -> uint32_t
+    os << YAML::Value << t.maxTotalVertexCount;
+    os << YAML::Key << "minPositionTruncateBitCount";
+    // minPositionTruncateBitCount -> Field -> uint32_t
+    os << YAML::Value << t.minPositionTruncateBitCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureMoveObjectsInputNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "type";
+    // type -> Field -> VkClusterAccelerationStructureTypeNV
+    os << YAML::Value << t.type;
+    os << YAML::Key << "noMoveOverlap";
+    // noMoveOverlap -> Field -> VkBool32
+    os << YAML::Value << t.noMoveOverlap;
+    os << YAML::Key << "maxMovedBytes";
+    // maxMovedBytes -> Field -> VkDeviceSize
+    os << YAML::Value << t.maxMovedBytes;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureOpInputNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "pClustersBottomLevel";
+    // pointer
+    if (t.pClustersBottomLevel != nullptr) {
+        os << YAML::Value << *t.pClustersBottomLevel;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pTriangleClusters";
+    // pointer
+    if (t.pTriangleClusters != nullptr) {
+        os << YAML::Value << *t.pTriangleClusters;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pMoveObjects";
+    // pointer
+    if (t.pMoveObjects != nullptr) {
+        os << YAML::Value << *t.pMoveObjects;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureInputInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxAccelerationStructureCount";
+    // maxAccelerationStructureCount -> Field -> uint32_t
+    os << YAML::Value << t.maxAccelerationStructureCount;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkBuildAccelerationStructureFlagsKHR
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "opType";
+    // opType -> Field -> VkClusterAccelerationStructureOpTypeNV
+    os << YAML::Value << t.opType;
+    os << YAML::Key << "opMode";
+    // opMode -> Field -> VkClusterAccelerationStructureOpModeNV
+    os << YAML::Value << t.opMode;
+    os << YAML::Key << "opInput";
+    // opInput -> Field -> VkClusterAccelerationStructureOpInputNV
+    os << YAML::Value << t.opInput;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkStridedDeviceAddressRegionKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "deviceAddress";
+    // deviceAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
+    os << YAML::Key << "stride";
+    // stride -> Field -> VkDeviceSize
+    os << YAML::Value << t.stride;
+    os << YAML::Key << "size";
+    // size -> Field -> VkDeviceSize
+    os << YAML::Value << t.size;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureCommandsInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "input";
+    // input -> Field -> VkClusterAccelerationStructureInputInfoNV
+    os << YAML::Value << t.input;
+    os << YAML::Key << "dstImplicitData";
+    // dstImplicitData -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.dstImplicitData);
+    os << YAML::Key << "scratchData";
+    // scratchData -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.scratchData);
+    os << YAML::Key << "dstAddressesArray";
+    // dstAddressesArray -> Field -> VkStridedDeviceAddressRegionKHR
+    os << YAML::Value << t.dstAddressesArray;
+    os << YAML::Key << "dstSizesArray";
+    // dstSizesArray -> Field -> VkStridedDeviceAddressRegionKHR
+    os << YAML::Value << t.dstSizesArray;
+    os << YAML::Key << "srcInfosArray";
+    // srcInfosArray -> Field -> VkStridedDeviceAddressRegionKHR
+    os << YAML::Value << t.srcInfosArray;
+    os << YAML::Key << "srcInfosCount";
+    // srcInfosCount -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcInfosCount);
+    os << YAML::Key << "addressResolutionFlags";
+    // addressResolutionFlags -> Field -> VkClusterAccelerationStructureAddressResolutionFlagsNV
+    os << YAML::Value << t.addressResolutionFlags;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkStridedDeviceAddressNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "startAddress";
+    // startAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.startAddress);
+    os << YAML::Key << "strideInBytes";
+    // strideInBytes -> Field -> VkDeviceSize
+    os << YAML::Value << t.strideInBytes;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureGeometryIndexAndGeometryFlagsNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "geometryIndex";
+    // geometryIndex -> Field -> uint32_t
+    os << YAML::Value << t.geometryIndex;
+    os << YAML::Key << "reserved";
+    // reserved -> Field -> uint32_t
+    os << YAML::Value << t.reserved;
+    os << YAML::Key << "geometryFlags";
+    // geometryFlags -> Field -> uint32_t
+    os << YAML::Value << t.geometryFlags;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureMoveObjectsInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "srcAccelerationStructure";
+    // srcAccelerationStructure -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAccelerationStructure);
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureBuildClustersBottomLevelInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "clusterReferencesCount";
+    // clusterReferencesCount -> Field -> uint32_t
+    os << YAML::Value << t.clusterReferencesCount;
+    os << YAML::Key << "clusterReferencesStride";
+    // clusterReferencesStride -> Field -> uint32_t
+    os << YAML::Value << t.clusterReferencesStride;
+    os << YAML::Key << "clusterReferences";
+    // clusterReferences -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.clusterReferences);
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureBuildTriangleClusterInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "clusterID";
+    // clusterID -> Field -> uint32_t
+    os << YAML::Value << t.clusterID;
+    os << YAML::Key << "clusterFlags";
+    // clusterFlags -> Field -> VkClusterAccelerationStructureClusterFlagsNV
+    os << YAML::Value << t.clusterFlags;
+    os << YAML::Key << "triangleCount";
+    // triangleCount -> Field -> uint32_t
+    os << YAML::Value << t.triangleCount;
+    os << YAML::Key << "vertexCount";
+    // vertexCount -> Field -> uint32_t
+    os << YAML::Value << t.vertexCount;
+    os << YAML::Key << "positionTruncateBitCount";
+    // positionTruncateBitCount -> Field -> uint32_t
+    os << YAML::Value << t.positionTruncateBitCount;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> uint32_t
+    os << YAML::Value << t.indexType;
+    os << YAML::Key << "opacityMicromapIndexType";
+    // opacityMicromapIndexType -> Field -> uint32_t
+    os << YAML::Value << t.opacityMicromapIndexType;
+    os << YAML::Key << "baseGeometryIndexAndGeometryFlags";
+    // baseGeometryIndexAndGeometryFlags -> Field -> VkClusterAccelerationStructureGeometryIndexAndGeometryFlagsNV
+    os << YAML::Value << t.baseGeometryIndexAndGeometryFlags;
+    os << YAML::Key << "indexBufferStride";
+    // indexBufferStride -> Field -> uint16_t
+    os << YAML::Value << t.indexBufferStride;
+    os << YAML::Key << "vertexBufferStride";
+    // vertexBufferStride -> Field -> uint16_t
+    os << YAML::Value << t.vertexBufferStride;
+    os << YAML::Key << "geometryIndexAndFlagsBufferStride";
+    // geometryIndexAndFlagsBufferStride -> Field -> uint16_t
+    os << YAML::Value << t.geometryIndexAndFlagsBufferStride;
+    os << YAML::Key << "opacityMicromapIndexBufferStride";
+    // opacityMicromapIndexBufferStride -> Field -> uint16_t
+    os << YAML::Value << t.opacityMicromapIndexBufferStride;
+    os << YAML::Key << "indexBuffer";
+    // indexBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.indexBuffer);
+    os << YAML::Key << "vertexBuffer";
+    // vertexBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.vertexBuffer);
+    os << YAML::Key << "geometryIndexAndFlagsBuffer";
+    // geometryIndexAndFlagsBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.geometryIndexAndFlagsBuffer);
+    os << YAML::Key << "opacityMicromapArray";
+    // opacityMicromapArray -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.opacityMicromapArray);
+    os << YAML::Key << "opacityMicromapIndexBuffer";
+    // opacityMicromapIndexBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.opacityMicromapIndexBuffer);
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os,
+                          const VkClusterAccelerationStructureBuildTriangleClusterTemplateInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "clusterID";
+    // clusterID -> Field -> uint32_t
+    os << YAML::Value << t.clusterID;
+    os << YAML::Key << "clusterFlags";
+    // clusterFlags -> Field -> VkClusterAccelerationStructureClusterFlagsNV
+    os << YAML::Value << t.clusterFlags;
+    os << YAML::Key << "triangleCount";
+    // triangleCount -> Field -> uint32_t
+    os << YAML::Value << t.triangleCount;
+    os << YAML::Key << "vertexCount";
+    // vertexCount -> Field -> uint32_t
+    os << YAML::Value << t.vertexCount;
+    os << YAML::Key << "positionTruncateBitCount";
+    // positionTruncateBitCount -> Field -> uint32_t
+    os << YAML::Value << t.positionTruncateBitCount;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> uint32_t
+    os << YAML::Value << t.indexType;
+    os << YAML::Key << "opacityMicromapIndexType";
+    // opacityMicromapIndexType -> Field -> uint32_t
+    os << YAML::Value << t.opacityMicromapIndexType;
+    os << YAML::Key << "baseGeometryIndexAndGeometryFlags";
+    // baseGeometryIndexAndGeometryFlags -> Field -> VkClusterAccelerationStructureGeometryIndexAndGeometryFlagsNV
+    os << YAML::Value << t.baseGeometryIndexAndGeometryFlags;
+    os << YAML::Key << "indexBufferStride";
+    // indexBufferStride -> Field -> uint16_t
+    os << YAML::Value << t.indexBufferStride;
+    os << YAML::Key << "vertexBufferStride";
+    // vertexBufferStride -> Field -> uint16_t
+    os << YAML::Value << t.vertexBufferStride;
+    os << YAML::Key << "geometryIndexAndFlagsBufferStride";
+    // geometryIndexAndFlagsBufferStride -> Field -> uint16_t
+    os << YAML::Value << t.geometryIndexAndFlagsBufferStride;
+    os << YAML::Key << "opacityMicromapIndexBufferStride";
+    // opacityMicromapIndexBufferStride -> Field -> uint16_t
+    os << YAML::Value << t.opacityMicromapIndexBufferStride;
+    os << YAML::Key << "indexBuffer";
+    // indexBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.indexBuffer);
+    os << YAML::Key << "vertexBuffer";
+    // vertexBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.vertexBuffer);
+    os << YAML::Key << "geometryIndexAndFlagsBuffer";
+    // geometryIndexAndFlagsBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.geometryIndexAndFlagsBuffer);
+    os << YAML::Key << "opacityMicromapArray";
+    // opacityMicromapArray -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.opacityMicromapArray);
+    os << YAML::Key << "opacityMicromapIndexBuffer";
+    // opacityMicromapIndexBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.opacityMicromapIndexBuffer);
+    os << YAML::Key << "instantiationBoundingBoxLimit";
+    // instantiationBoundingBoxLimit -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.instantiationBoundingBoxLimit);
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClusterAccelerationStructureInstantiateClusterInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "clusterIdOffset";
+    // clusterIdOffset -> Field -> uint32_t
+    os << YAML::Value << t.clusterIdOffset;
+    os << YAML::Key << "geometryIndexOffset";
+    // geometryIndexOffset -> Field -> uint32_t
+    os << YAML::Value << t.geometryIndexOffset;
+    os << YAML::Key << "reserved";
+    // reserved -> Field -> uint32_t
+    os << YAML::Value << t.reserved;
+    os << YAML::Key << "clusterTemplateAddress";
+    // clusterTemplateAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.clusterTemplateAddress);
+    os << YAML::Key << "vertexBuffer";
+    // vertexBuffer -> Field -> VkStridedDeviceAddressNV
+    os << YAML::Value << t.vertexBuffer;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildSizesInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "accelerationStructureSize";
+    // accelerationStructureSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.accelerationStructureSize;
+    os << YAML::Key << "updateScratchSize";
+    // updateScratchSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.updateScratchSize;
+    os << YAML::Key << "buildScratchSize";
+    // buildScratchSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.buildScratchSize;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingPipelineClusterAccelerationStructureCreateInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "allowClusterAccelerationStructure";
+    // allowClusterAccelerationStructure -> Field -> VkBool32
+    os << YAML::Value << t.allowClusterAccelerationStructure;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePartitionedAccelerationStructureFeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "partitionedAccelerationStructure";
+    // partitionedAccelerationStructure -> Field -> VkBool32
+    os << YAML::Value << t.partitionedAccelerationStructure;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePartitionedAccelerationStructurePropertiesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxPartitionCount";
+    // maxPartitionCount -> Field -> uint32_t
+    os << YAML::Value << t.maxPartitionCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPartitionedAccelerationStructureFlagsNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "enablePartitionTranslation";
+    // enablePartitionTranslation -> Field -> VkBool32
+    os << YAML::Value << t.enablePartitionTranslation;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildPartitionedAccelerationStructureIndirectCommandNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "opType";
+    // opType -> Field -> VkPartitionedAccelerationStructureOpTypeNV
+    os << YAML::Value << t.opType;
+    os << YAML::Key << "argCount";
+    // argCount -> Field -> uint32_t
+    os << YAML::Value << t.argCount;
+    os << YAML::Key << "argData";
+    // argData -> Field -> VkStridedDeviceAddressNV
+    os << YAML::Value << t.argData;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPartitionedAccelerationStructureWriteInstanceDataNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "transform";
+    // transform -> Field -> VkTransformMatrixKHR
+    os << YAML::Value << t.transform;
+    os << YAML::Key << "explicitAABB";
+    // explicitAABB -> Field -> FixedArray(float)
+    {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("float");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(6); ++i) {
+                os << t.explicitAABB[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "instanceID";
+    // instanceID -> Field -> uint32_t
+    os << YAML::Value << t.instanceID;
+    os << YAML::Key << "instanceMask";
+    // instanceMask -> Field -> uint32_t
+    os << YAML::Value << t.instanceMask;
+    os << YAML::Key << "instanceContributionToHitGroupIndex";
+    // instanceContributionToHitGroupIndex -> Field -> uint32_t
+    os << YAML::Value << t.instanceContributionToHitGroupIndex;
+    os << YAML::Key << "instanceFlags";
+    // instanceFlags -> Field -> VkPartitionedAccelerationStructureInstanceFlagsNV
+    os << YAML::Value << t.instanceFlags;
+    os << YAML::Key << "instanceIndex";
+    // instanceIndex -> Field -> uint32_t
+    os << YAML::Value << t.instanceIndex;
+    os << YAML::Key << "partitionIndex";
+    // partitionIndex -> Field -> uint32_t
+    os << YAML::Value << t.partitionIndex;
+    os << YAML::Key << "accelerationStructure";
+    // accelerationStructure -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.accelerationStructure);
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPartitionedAccelerationStructureUpdateInstanceDataNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "instanceIndex";
+    // instanceIndex -> Field -> uint32_t
+    os << YAML::Value << t.instanceIndex;
+    os << YAML::Key << "instanceContributionToHitGroupIndex";
+    // instanceContributionToHitGroupIndex -> Field -> uint32_t
+    os << YAML::Value << t.instanceContributionToHitGroupIndex;
+    os << YAML::Key << "accelerationStructure";
+    // accelerationStructure -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.accelerationStructure);
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os,
+                          const VkPartitionedAccelerationStructureWritePartitionTranslationDataNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "partitionIndex";
+    // partitionIndex -> Field -> uint32_t
+    os << YAML::Value << t.partitionIndex;
+    os << YAML::Key << "partitionTranslation";
+    // partitionTranslation -> Field -> FixedArray(float)
+    {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("float");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(3); ++i) {
+                os << t.partitionTranslation[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSetPartitionedAccelerationStructureNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "accelerationStructureCount";
+    // accelerationStructureCount -> Field -> uint32_t
+    os << YAML::Value << t.accelerationStructureCount;
+    os << YAML::Key << "pAccelerationStructures";
+    // pAccelerationStructures -> Field -> ConstDynamicArray(VkDeviceAddress)
+    if (t.accelerationStructureCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkDeviceAddress");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.accelerationStructureCount); ++i) {
+                os << t.pAccelerationStructures[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPartitionedAccelerationStructureInstancesInputNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkBuildAccelerationStructureFlagsKHR
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "instanceCount";
+    // instanceCount -> Field -> uint32_t
+    os << YAML::Value << t.instanceCount;
+    os << YAML::Key << "maxInstancePerPartitionCount";
+    // maxInstancePerPartitionCount -> Field -> uint32_t
+    os << YAML::Value << t.maxInstancePerPartitionCount;
+    os << YAML::Key << "partitionCount";
+    // partitionCount -> Field -> uint32_t
+    os << YAML::Value << t.partitionCount;
+    os << YAML::Key << "maxInstanceInGlobalPartitionCount";
+    // maxInstanceInGlobalPartitionCount -> Field -> uint32_t
+    os << YAML::Value << t.maxInstanceInGlobalPartitionCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildPartitionedAccelerationStructureInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "input";
+    // input -> Field -> VkPartitionedAccelerationStructureInstancesInputNV
+    os << YAML::Value << t.input;
+    os << YAML::Key << "srcAccelerationStructureData";
+    // srcAccelerationStructureData -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAccelerationStructureData);
+    os << YAML::Key << "dstAccelerationStructureData";
+    // dstAccelerationStructureData -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.dstAccelerationStructureData);
+    os << YAML::Key << "scratchData";
+    // scratchData -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.scratchData);
+    os << YAML::Key << "srcInfos";
+    // srcInfos -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcInfos);
+    os << YAML::Key << "srcInfosCount";
+    // srcInfosCount -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcInfosCount);
     os << YAML::EndMap;
     return os;
 }
@@ -30171,29 +31126,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyAccelerationStructureIn
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildSizesInfoKHR &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "accelerationStructureSize";
-    // accelerationStructureSize -> Field -> VkDeviceSize
-    os << YAML::Value << t.accelerationStructureSize;
-    os << YAML::Key << "updateScratchSize";
-    // updateScratchSize -> Field -> VkDeviceSize
-    os << YAML::Value << t.updateScratchSize;
-    os << YAML::Key << "buildScratchSize";
-    // buildScratchSize -> Field -> VkDeviceSize
-    os << YAML::Value << t.buildScratchSize;
-    os << YAML::EndMap;
-    return os;
-}
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingShaderGroupCreateInfoKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -30395,21 +31327,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingPip
     os << YAML::Key << "maxRayHitAttributeSize";
     // maxRayHitAttributeSize -> Field -> uint32_t
     os << YAML::Value << t.maxRayHitAttributeSize;
-    os << YAML::EndMap;
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkStridedDeviceAddressRegionKHR &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "deviceAddress";
-    // deviceAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.deviceAddress);
-    os << YAML::Key << "stride";
-    // stride -> Field -> VkDeviceSize
-    os << YAML::Value << t.stride;
-    os << YAML::Key << "size";
-    // size -> Field -> VkDeviceSize
-    os << YAML::Value << t.size;
     os << YAML::EndMap;
     return os;
 }
@@ -33420,6 +34337,15 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PIPELINE_INDIRECT_DEVICE_ADDRESS_INFO_NV:
             os << *reinterpret_cast<const VkPipelineIndirectDeviceAddressInfoNV *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_LINEAR_SWEPT_SPHERES_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceRayTracingLinearSweptSpheresFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_LINEAR_SWEPT_SPHERES_DATA_NV:
+            os << *reinterpret_cast<const VkAccelerationStructureGeometryLinearSweptSpheresDataNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_SPHERES_DATA_NV:
+            os << *reinterpret_cast<const VkAccelerationStructureGeometrySpheresDataNV *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINEAR_COLOR_ATTACHMENT_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceLinearColorAttachmentFeaturesNV *>(pStruct);
             break;
@@ -33557,6 +34483,18 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_PROPERTIES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceCooperativeVectorPropertiesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceCooperativeVectorFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_COOPERATIVE_VECTOR_PROPERTIES_NV:
+            os << *reinterpret_cast<const VkCooperativeVectorPropertiesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_CONVERT_COOPERATIVE_VECTOR_MATRIX_INFO_NV:
+            os << *reinterpret_cast<const VkConvertCooperativeVectorMatrixInfoNV *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_SPARSE_ADDRESS_SPACE_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV *>(pStruct);
@@ -33703,6 +34641,51 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VALIDATION_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceRayTracingValidationFeaturesNV *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_ACCELERATION_STRUCTURE_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceClusterAccelerationStructureFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_ACCELERATION_STRUCTURE_PROPERTIES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceClusterAccelerationStructurePropertiesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_CLUSTERS_BOTTOM_LEVEL_INPUT_NV:
+            os << *reinterpret_cast<const VkClusterAccelerationStructureClustersBottomLevelInputNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_TRIANGLE_CLUSTER_INPUT_NV:
+            os << *reinterpret_cast<const VkClusterAccelerationStructureTriangleClusterInputNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_MOVE_OBJECTS_INPUT_NV:
+            os << *reinterpret_cast<const VkClusterAccelerationStructureMoveObjectsInputNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_INPUT_INFO_NV:
+            os << *reinterpret_cast<const VkClusterAccelerationStructureInputInfoNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_COMMANDS_INFO_NV:
+            os << *reinterpret_cast<const VkClusterAccelerationStructureCommandsInfoNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR:
+            os << *reinterpret_cast<const VkAccelerationStructureBuildSizesInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CLUSTER_ACCELERATION_STRUCTURE_CREATE_INFO_NV:
+            os << *reinterpret_cast<const VkRayTracingPipelineClusterAccelerationStructureCreateInfoNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PARTITIONED_ACCELERATION_STRUCTURE_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDevicePartitionedAccelerationStructureFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PARTITIONED_ACCELERATION_STRUCTURE_PROPERTIES_NV:
+            os << *reinterpret_cast<const VkPhysicalDevicePartitionedAccelerationStructurePropertiesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PARTITIONED_ACCELERATION_STRUCTURE_FLAGS_NV:
+            os << *reinterpret_cast<const VkPartitionedAccelerationStructureFlagsNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_PARTITIONED_ACCELERATION_STRUCTURE_NV:
+            os << *reinterpret_cast<const VkWriteDescriptorSetPartitionedAccelerationStructureNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCES_INPUT_NV:
+            os << *reinterpret_cast<const VkPartitionedAccelerationStructureInstancesInputNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_BUILD_PARTITIONED_ACCELERATION_STRUCTURE_INFO_NV:
+            os << *reinterpret_cast<const VkBuildPartitionedAccelerationStructureInfoNV *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT *>(pStruct);
             break;
@@ -33837,9 +34820,6 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR:
             os << *reinterpret_cast<const VkCopyAccelerationStructureInfoKHR *>(pStruct);
-            break;
-        case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR:
-            os << *reinterpret_cast<const VkAccelerationStructureBuildSizesInfoKHR *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR:
             os << *reinterpret_cast<const VkRayTracingShaderGroupCreateInfoKHR *>(pStruct);

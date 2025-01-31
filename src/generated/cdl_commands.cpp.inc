@@ -2835,6 +2835,17 @@ void Context::PostCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDept
     p_cmd->PostCmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
 }
 
+void Context::PreCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
+                                                     const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+}
+void Context::PostCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
+                                                      const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+}
+
 void Context::PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PreCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
@@ -2842,6 +2853,28 @@ void Context::PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBu
 void Context::PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
+}
+
+void Context::PreCmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
+}
+void Context::PostCmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
+}
+
+void Context::PreCmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
+}
+void Context::PostCmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
 }
 
 void Context::PreCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,

@@ -728,7 +728,16 @@ class CommandTracker {
     void CmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode,
                                   const VkDepthClampRangeEXT* pDepthClampRange);
 
+    void CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
+                                             const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
+
     void CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
+
+    void CmdBuildClusterAccelerationStructureIndirectNV(
+        VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos);
+
+    void CmdBuildPartitionedAccelerationStructuresNV(VkCommandBuffer commandBuffer,
+                                                     const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo);
 
     void CmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer,
                                            const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo,

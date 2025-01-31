@@ -3987,11 +3987,55 @@ void CommandPrinter::PrintCmdSetDepthClampRangeEXTArgs(YAML::Emitter &os, const 
     }
 }
 
+void CommandPrinter::PrintCmdConvertCooperativeVectorMatrixNVArgs(YAML::Emitter &os,
+                                                                  const CmdConvertCooperativeVectorMatrixNVArgs &args) {
+    os << YAML::Key << "infoCount";
+    // infoCount -> Field -> uint32_t
+    os << YAML::Value << args.infoCount;
+    os << YAML::Key << "pInfos";
+    // pInfos -> Field -> ConstDynamicArray(VkConvertCooperativeVectorMatrixInfoNV)
+    if (args.infoCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkConvertCooperativeVectorMatrixInfoNV");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.infoCount); ++i) {
+                os << args.pInfos[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
 void CommandPrinter::PrintCmdSetAttachmentFeedbackLoopEnableEXTArgs(
     YAML::Emitter &os, const CmdSetAttachmentFeedbackLoopEnableEXTArgs &args) {
     os << YAML::Key << "aspectMask";
     // aspectMask -> Field -> VkImageAspectFlags
     os << YAML::Value << args.aspectMask;
+}
+
+void CommandPrinter::PrintCmdBuildClusterAccelerationStructureIndirectNVArgs(
+    YAML::Emitter &os, const CmdBuildClusterAccelerationStructureIndirectNVArgs &args) {
+    os << YAML::Key << "pCommandInfos";
+    // pointer
+    if (args.pCommandInfos != nullptr) {
+        os << YAML::Value << *args.pCommandInfos;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdBuildPartitionedAccelerationStructuresNVArgs(
+    YAML::Emitter &os, const CmdBuildPartitionedAccelerationStructuresNVArgs &args) {
+    os << YAML::Key << "pBuildInfo";
+    // pointer
+    if (args.pBuildInfo != nullptr) {
+        os << YAML::Value << *args.pBuildInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
 }
 
 void CommandPrinter::PrintCmdPreprocessGeneratedCommandsEXTArgs(YAML::Emitter &os,
@@ -6114,10 +6158,31 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+        case Command::Type::kCmdConvertCooperativeVectorMatrixNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdConvertCooperativeVectorMatrixNVArgs *>(cmd.parameters);
+                PrintCmdConvertCooperativeVectorMatrixNVArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdSetAttachmentFeedbackLoopEnableEXT:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdSetAttachmentFeedbackLoopEnableEXTArgs *>(cmd.parameters);
                 PrintCmdSetAttachmentFeedbackLoopEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBuildClusterAccelerationStructureIndirectNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBuildClusterAccelerationStructureIndirectNVArgs *>(cmd.parameters);
+                PrintCmdBuildClusterAccelerationStructureIndirectNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBuildPartitionedAccelerationStructuresNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBuildPartitionedAccelerationStructuresNVArgs *>(cmd.parameters);
+                PrintCmdBuildPartitionedAccelerationStructuresNVArgs(os, *args);
             }
             break;
 

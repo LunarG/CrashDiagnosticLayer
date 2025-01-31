@@ -327,6 +327,26 @@ template <>
 VkDepthClampRangeEXT* CommandRecorder::CopyArray<VkDepthClampRangeEXT>(const VkDepthClampRangeEXT* src,
                                                                        size_t start_index, size_t count);
 template <>
+VkConvertCooperativeVectorMatrixInfoNV* CommandRecorder::CopyArray<VkConvertCooperativeVectorMatrixInfoNV>(
+    const VkConvertCooperativeVectorMatrixInfoNV* src, size_t start_index, size_t count);
+template <>
+VkClusterAccelerationStructureInputInfoNV* CommandRecorder::CopyArray<VkClusterAccelerationStructureInputInfoNV>(
+    const VkClusterAccelerationStructureInputInfoNV* src, size_t start_index, size_t count);
+template <>
+VkStridedDeviceAddressRegionKHR* CommandRecorder::CopyArray<VkStridedDeviceAddressRegionKHR>(
+    const VkStridedDeviceAddressRegionKHR* src, size_t start_index, size_t count);
+template <>
+VkClusterAccelerationStructureCommandsInfoNV* CommandRecorder::CopyArray<VkClusterAccelerationStructureCommandsInfoNV>(
+    const VkClusterAccelerationStructureCommandsInfoNV* src, size_t start_index, size_t count);
+template <>
+VkPartitionedAccelerationStructureInstancesInputNV*
+CommandRecorder::CopyArray<VkPartitionedAccelerationStructureInstancesInputNV>(
+    const VkPartitionedAccelerationStructureInstancesInputNV* src, size_t start_index, size_t count);
+template <>
+VkBuildPartitionedAccelerationStructureInfoNV*
+CommandRecorder::CopyArray<VkBuildPartitionedAccelerationStructureInfoNV>(
+    const VkBuildPartitionedAccelerationStructureInfoNV* src, size_t start_index, size_t count);
+template <>
 VkGeneratedCommandsInfoEXT* CommandRecorder::CopyArray<VkGeneratedCommandsInfoEXT>(
     const VkGeneratedCommandsInfoEXT* src, size_t start_index, size_t count);
 template <>
@@ -347,9 +367,6 @@ VkCopyMemoryToAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyMem
 template <>
 VkCopyAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyAccelerationStructureInfoKHR>(
     const VkCopyAccelerationStructureInfoKHR* src, size_t start_index, size_t count);
-template <>
-VkStridedDeviceAddressRegionKHR* CommandRecorder::CopyArray<VkStridedDeviceAddressRegionKHR>(
-    const VkStridedDeviceAddressRegionKHR* src, size_t start_index, size_t count);
 
 // Define CopyArray template functions.
 
@@ -2006,6 +2023,120 @@ VkDepthClampRangeEXT* CommandRecorder::CopyArray<VkDepthClampRangeEXT>(const VkD
 }
 
 template <>
+VkConvertCooperativeVectorMatrixInfoNV* CommandRecorder::CopyArray<VkConvertCooperativeVectorMatrixInfoNV>(
+    const VkConvertCooperativeVectorMatrixInfoNV* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkConvertCooperativeVectorMatrixInfoNV*>(
+        m_allocator.Alloc(sizeof(VkConvertCooperativeVectorMatrixInfoNV) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].srcSize = src[start_index + i].srcSize;
+        ptr[i].srcData = src[start_index + i].srcData;
+        ptr[i].pDstSize = nullptr;
+        if (src[start_index + i].pDstSize) {
+            ptr[i].pDstSize = CopyArray(src[start_index + i].pDstSize, 0U, 1U);
+        }
+        ptr[i].dstData = src[start_index + i].dstData;
+        ptr[i].srcComponentType = src[start_index + i].srcComponentType;
+        ptr[i].dstComponentType = src[start_index + i].dstComponentType;
+        ptr[i].numRows = src[start_index + i].numRows;
+        ptr[i].numColumns = src[start_index + i].numColumns;
+        ptr[i].srcLayout = src[start_index + i].srcLayout;
+        ptr[i].srcStride = src[start_index + i].srcStride;
+        ptr[i].dstLayout = src[start_index + i].dstLayout;
+        ptr[i].dstStride = src[start_index + i].dstStride;
+    }
+    return ptr;
+}
+
+template <>
+VkClusterAccelerationStructureInputInfoNV* CommandRecorder::CopyArray<VkClusterAccelerationStructureInputInfoNV>(
+    const VkClusterAccelerationStructureInputInfoNV* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkClusterAccelerationStructureInputInfoNV*>(
+        m_allocator.Alloc(sizeof(VkClusterAccelerationStructureInputInfoNV) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].maxAccelerationStructureCount = src[start_index + i].maxAccelerationStructureCount;
+        ptr[i].flags = src[start_index + i].flags;
+        ptr[i].opType = src[start_index + i].opType;
+        ptr[i].opMode = src[start_index + i].opMode;
+        ptr[i].opInput = src[start_index + i].opInput;
+    }
+    return ptr;
+}
+
+template <>
+VkStridedDeviceAddressRegionKHR* CommandRecorder::CopyArray<VkStridedDeviceAddressRegionKHR>(
+    const VkStridedDeviceAddressRegionKHR* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkStridedDeviceAddressRegionKHR*>(
+        m_allocator.Alloc(sizeof(VkStridedDeviceAddressRegionKHR) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].deviceAddress = src[start_index + i].deviceAddress;
+        ptr[i].stride = src[start_index + i].stride;
+        ptr[i].size = src[start_index + i].size;
+    }
+    return ptr;
+}
+
+template <>
+VkClusterAccelerationStructureCommandsInfoNV* CommandRecorder::CopyArray<VkClusterAccelerationStructureCommandsInfoNV>(
+    const VkClusterAccelerationStructureCommandsInfoNV* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkClusterAccelerationStructureCommandsInfoNV*>(
+        m_allocator.Alloc(sizeof(VkClusterAccelerationStructureCommandsInfoNV) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].input = src[start_index + i].input;
+        ptr[i].dstImplicitData = src[start_index + i].dstImplicitData;
+        ptr[i].scratchData = src[start_index + i].scratchData;
+        ptr[i].dstAddressesArray = src[start_index + i].dstAddressesArray;
+        ptr[i].dstSizesArray = src[start_index + i].dstSizesArray;
+        ptr[i].srcInfosArray = src[start_index + i].srcInfosArray;
+        ptr[i].srcInfosCount = src[start_index + i].srcInfosCount;
+        ptr[i].addressResolutionFlags = src[start_index + i].addressResolutionFlags;
+    }
+    return ptr;
+}
+
+template <>
+VkPartitionedAccelerationStructureInstancesInputNV*
+CommandRecorder::CopyArray<VkPartitionedAccelerationStructureInstancesInputNV>(
+    const VkPartitionedAccelerationStructureInstancesInputNV* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkPartitionedAccelerationStructureInstancesInputNV*>(
+        m_allocator.Alloc(sizeof(VkPartitionedAccelerationStructureInstancesInputNV) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].flags = src[start_index + i].flags;
+        ptr[i].instanceCount = src[start_index + i].instanceCount;
+        ptr[i].maxInstancePerPartitionCount = src[start_index + i].maxInstancePerPartitionCount;
+        ptr[i].partitionCount = src[start_index + i].partitionCount;
+        ptr[i].maxInstanceInGlobalPartitionCount = src[start_index + i].maxInstanceInGlobalPartitionCount;
+    }
+    return ptr;
+}
+
+template <>
+VkBuildPartitionedAccelerationStructureInfoNV*
+CommandRecorder::CopyArray<VkBuildPartitionedAccelerationStructureInfoNV>(
+    const VkBuildPartitionedAccelerationStructureInfoNV* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkBuildPartitionedAccelerationStructureInfoNV*>(
+        m_allocator.Alloc(sizeof(VkBuildPartitionedAccelerationStructureInfoNV) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].input = src[start_index + i].input;
+        ptr[i].srcAccelerationStructureData = src[start_index + i].srcAccelerationStructureData;
+        ptr[i].dstAccelerationStructureData = src[start_index + i].dstAccelerationStructureData;
+        ptr[i].scratchData = src[start_index + i].scratchData;
+        ptr[i].srcInfos = src[start_index + i].srcInfos;
+        ptr[i].srcInfosCount = src[start_index + i].srcInfosCount;
+    }
+    return ptr;
+}
+
+template <>
 VkGeneratedCommandsInfoEXT* CommandRecorder::CopyArray<VkGeneratedCommandsInfoEXT>(
     const VkGeneratedCommandsInfoEXT* src, size_t start_index, size_t count) {
     auto ptr =
@@ -2128,19 +2259,6 @@ VkCopyAccelerationStructureInfoKHR* CommandRecorder::CopyArray<VkCopyAcceleratio
         ptr[i].src = src[start_index + i].src;
         ptr[i].dst = src[start_index + i].dst;
         ptr[i].mode = src[start_index + i].mode;
-    }
-    return ptr;
-}
-
-template <>
-VkStridedDeviceAddressRegionKHR* CommandRecorder::CopyArray<VkStridedDeviceAddressRegionKHR>(
-    const VkStridedDeviceAddressRegionKHR* src, size_t start_index, size_t count) {
-    auto ptr = reinterpret_cast<VkStridedDeviceAddressRegionKHR*>(
-        m_allocator.Alloc(sizeof(VkStridedDeviceAddressRegionKHR) * count));
-    for (uint64_t i = 0; i < count; ++i) {
-        ptr[i].deviceAddress = src[start_index + i].deviceAddress;
-        ptr[i].stride = src[start_index + i].stride;
-        ptr[i].size = src[start_index + i].size;
     }
     return ptr;
 }
@@ -5032,11 +5150,43 @@ CmdSetDepthClampRangeEXTArgs* CommandRecorder::RecordCmdSetDepthClampRangeEXT(
     return args;
 }
 
+CmdConvertCooperativeVectorMatrixNVArgs* CommandRecorder::RecordCmdConvertCooperativeVectorMatrixNV(
+    VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
+    auto* args = Alloc<CmdConvertCooperativeVectorMatrixNVArgs>();
+    args->commandBuffer = commandBuffer;
+    args->infoCount = infoCount;
+    if (pInfos) {
+        args->pInfos = CopyArray(pInfos, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
+    }
+    return args;
+}
+
 CmdSetAttachmentFeedbackLoopEnableEXTArgs* CommandRecorder::RecordCmdSetAttachmentFeedbackLoopEnableEXT(
     VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
     auto* args = Alloc<CmdSetAttachmentFeedbackLoopEnableEXTArgs>();
     args->commandBuffer = commandBuffer;
     args->aspectMask = aspectMask;
+    return args;
+}
+
+CmdBuildClusterAccelerationStructureIndirectNVArgs*
+CommandRecorder::RecordCmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
+    auto* args = Alloc<CmdBuildClusterAccelerationStructureIndirectNVArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pCommandInfos) {
+        args->pCommandInfos = CopyArray(pCommandInfos, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdBuildPartitionedAccelerationStructuresNVArgs* CommandRecorder::RecordCmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {
+    auto* args = Alloc<CmdBuildPartitionedAccelerationStructuresNVArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pBuildInfo) {
+        args->pBuildInfo = CopyArray(pBuildInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
     return args;
 }
 

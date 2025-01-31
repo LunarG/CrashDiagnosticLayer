@@ -551,8 +551,14 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdBindShadersEXT";
         case Command::Type::kCmdSetDepthClampRangeEXT:
             return "vkCmdSetDepthClampRangeEXT";
+        case Command::Type::kCmdConvertCooperativeVectorMatrixNV:
+            return "vkCmdConvertCooperativeVectorMatrixNV";
         case Command::Type::kCmdSetAttachmentFeedbackLoopEnableEXT:
             return "vkCmdSetAttachmentFeedbackLoopEnableEXT";
+        case Command::Type::kCmdBuildClusterAccelerationStructureIndirectNV:
+            return "vkCmdBuildClusterAccelerationStructureIndirectNV";
+        case Command::Type::kCmdBuildPartitionedAccelerationStructuresNV:
+            return "vkCmdBuildPartitionedAccelerationStructuresNV";
         case Command::Type::kCmdPreprocessGeneratedCommandsEXT:
             return "vkCmdPreprocessGeneratedCommandsEXT";
         case Command::Type::kCmdExecuteGeneratedCommandsEXT:
