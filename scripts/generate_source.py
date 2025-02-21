@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# Copyright (c) 2021-2024 The Khronos Group Inc.
-# Copyright (c) 2021-2024 Valve Corporation
-# Copyright (c) 2021-2024 LunarG, Inc.
+# Copyright (c) 2021-2025 The Khronos Group Inc.
+# Copyright (c) 2021-2025 Valve Corporation
+# Copyright (c) 2021-2025 LunarG, Inc.
 # Copyright (c) 2021-2024 Google Inc.
 # Copyright (c) 2023-2024 RasterGrid Kft.
 #
@@ -51,7 +51,7 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
         print("Inside Vulkan-Headers there is a registry/reg.py file that is used.")
         sys.exit(1) # Return without call stack so easy to spot error
 
-    from generators.base_generator import BaseGeneratorOptions
+    from base_generator import BaseGeneratorOptions
     from generators.command_common_generator import CommandCommonOutputGenerator
     from generators.command_printer_generator import CommandPrinterOutputGenerator
     from generators.command_recorder_generator import CommandRecorderOutputGenerator
@@ -65,7 +65,7 @@ def RunGenerators(api: str, registry: str, grammar: str, directory: str, styleFi
 
     # These set fields that are needed by both OutputGenerator and BaseGenerator,
     # but are uniform and don't need to be set at a per-generated file level
-    from generators.base_generator import SetOutputDirectory, SetTargetApiName, SetMergedApiNames, EnableCaching
+    from base_generator import SetOutputDirectory, SetTargetApiName, SetMergedApiNames, EnableCaching
     SetOutputDirectory(directory)
     SetTargetApiName(api)
 
