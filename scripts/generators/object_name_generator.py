@@ -1,13 +1,13 @@
 #!/usr/bin/python3 -i
 #
-# Copyright 2023-2024 The Khronos Group Inc.
-# Copyright 2023-2024 Valve Corporation
-# Copyright 2023-2024 LunarG, Inc.
+# Copyright 2023-2025 The Khronos Group Inc.
+# Copyright 2023-2025 Valve Corporation
+# Copyright 2023-2025 LunarG, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-from generators.base_generator import BaseGenerator
+from base_generator import BaseGenerator
 from generators.generator_utils import PlatformGuardHelper
 
 class ObjectNameGenerator(BaseGenerator):

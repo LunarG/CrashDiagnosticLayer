@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from generators.base_generator import BaseGenerator
+from base_generator import BaseGenerator
 from enum import IntEnum
 
 # class syntax
