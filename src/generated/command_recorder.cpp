@@ -272,9 +272,11 @@ VkGeneratedCommandsInfoNV* CommandRecorder::CopyArray<VkGeneratedCommandsInfoNV>
 template <>
 VkDepthBiasInfoEXT* CommandRecorder::CopyArray<VkDepthBiasInfoEXT>(const VkDepthBiasInfoEXT* src, size_t start_index,
                                                                    size_t count);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 template <>
 VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaLaunchInfoNV* src, size_t start_index,
                                                                    size_t count);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 template <>
 VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferBindingInfoEXT>(
     const VkDescriptorBufferBindingInfoEXT* src, size_t start_index, size_t count);
@@ -1741,6 +1743,7 @@ VkDepthBiasInfoEXT* CommandRecorder::CopyArray<VkDepthBiasInfoEXT>(const VkDepth
     return ptr;
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 template <>
 VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaLaunchInfoNV* src, size_t start_index,
                                                                    size_t count) {
@@ -1765,6 +1768,7 @@ VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaL
     }
     return ptr;
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 template <>
 VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferBindingInfoEXT>(
@@ -4506,6 +4510,7 @@ CmdSetDepthBias2EXTArgs* CommandRecorder::RecordCmdSetDepthBias2EXT(VkCommandBuf
     return args;
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 CmdCudaLaunchKernelNVArgs* CommandRecorder::RecordCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer,
                                                                         const VkCudaLaunchInfoNV* pLaunchInfo) {
     auto* args = Alloc<CmdCudaLaunchKernelNVArgs>();
@@ -4515,6 +4520,7 @@ CmdCudaLaunchKernelNVArgs* CommandRecorder::RecordCmdCudaLaunchKernelNV(VkComman
     }
     return args;
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 CmdBindDescriptorBuffersEXTArgs* CommandRecorder::RecordCmdBindDescriptorBuffersEXT(
     VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {

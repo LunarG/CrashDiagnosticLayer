@@ -22595,6 +22595,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceDiagnosticsConfigCrea
     return os;
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaModuleCreateInfoNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -22624,7 +22625,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaModuleCreateInfoNV &t) 
     os << YAML::EndMap;
     return os;
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaFunctionCreateInfoNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -22644,7 +22647,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaFunctionCreateInfoNV &t
     os << YAML::EndMap;
     return os;
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaLaunchInfoNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -22714,7 +22719,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaLaunchInfoNV &t) {
     os << YAML::EndMap;
     return os;
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCudaKernelLaunchFeaturesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -22731,7 +22738,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCudaKernelLau
     os << YAML::EndMap;
     return os;
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCudaKernelLaunchPropertiesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -22751,6 +22760,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCudaKernelLau
     os << YAML::EndMap;
     return os;
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueryLowLatencySupportNV &t) {
     os << YAML::BeginMap;
@@ -30749,6 +30759,47 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttribu
     return os;
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetPresentConfigNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "numFramesPerBatch";
+    // numFramesPerBatch -> Field -> uint32_t
+    os << YAML::Value << t.numFramesPerBatch;
+    os << YAML::Key << "presentConfigFeedback";
+    // presentConfigFeedback -> Field -> uint32_t
+    os << YAML::Value << t.presentConfigFeedback;
+    os << YAML::EndMap;
+    return os;
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentMeteringFeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "presentMetering";
+    // presentMetering -> Field -> VkBool32
+    os << YAML::Value << t.presentMetering;
+    os << YAML::EndMap;
+    return os;
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "primitiveCount";
@@ -33817,21 +33868,31 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV:
             os << *reinterpret_cast<const VkDeviceDiagnosticsConfigCreateInfoNV *>(pStruct);
             break;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_CUDA_MODULE_CREATE_INFO_NV:
             os << *reinterpret_cast<const VkCudaModuleCreateInfoNV *>(pStruct);
             break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_CUDA_FUNCTION_CREATE_INFO_NV:
             os << *reinterpret_cast<const VkCudaFunctionCreateInfoNV *>(pStruct);
             break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_CUDA_LAUNCH_INFO_NV:
             os << *reinterpret_cast<const VkCudaLaunchInfoNV *>(pStruct);
             break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceCudaKernelLaunchFeaturesNV *>(pStruct);
             break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_PROPERTIES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceCudaKernelLaunchPropertiesNV *>(pStruct);
             break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_QUERY_LOW_LATENCY_SUPPORT_NV:
             os << *reinterpret_cast<const VkQueryLowLatencySupportNV *>(pStruct);
             break;
@@ -34779,6 +34840,16 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT *>(pStruct);
             break;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case VK_STRUCTURE_TYPE_SET_PRESENT_CONFIG_NV:
+            os << *reinterpret_cast<const VkSetPresentConfigNV *>(pStruct);
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDevicePresentMeteringFeaturesNV *>(pStruct);
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);
             break;

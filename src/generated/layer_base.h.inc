@@ -1454,9 +1454,13 @@ virtual void PreCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepth
 
 virtual void PostCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT* pDepthBiasInfo) {}
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 virtual void PreCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 virtual void PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 virtual void PreCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
                                             const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {}

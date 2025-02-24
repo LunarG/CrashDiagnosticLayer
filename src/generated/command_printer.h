@@ -1297,11 +1297,21 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCapabilitiesPresentB
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainPresentBarrierCreateInfoNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDiagnosticsConfigFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceDiagnosticsConfigCreateInfoNV &t);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaModuleCreateInfoNV &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaFunctionCreateInfoNV &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaLaunchInfoNV &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCudaKernelLaunchFeaturesNV &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCudaKernelLaunchPropertiesNV &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueryLowLatencySupportNV &t);
 #ifdef VK_USE_PLATFORM_METAL_EXT
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkExportMetalObjectCreateInfoEXT &t);
@@ -1724,6 +1734,12 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryMetalHandleProperties
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryGetMetalHandleInfoEXT &t);
 #endif  // VK_USE_PLATFORM_METAL_EXT
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT &t);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetPresentConfigNV &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentMeteringFeaturesNV &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
@@ -1972,7 +1988,9 @@ class CommandPrinter {
     void PrintCmdExecuteGeneratedCommandsNVArgs(YAML::Emitter &os, const CmdExecuteGeneratedCommandsNVArgs &args);
     void PrintCmdBindPipelineShaderGroupNVArgs(YAML::Emitter &os, const CmdBindPipelineShaderGroupNVArgs &args);
     void PrintCmdSetDepthBias2EXTArgs(YAML::Emitter &os, const CmdSetDepthBias2EXTArgs &args);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     void PrintCmdCudaLaunchKernelNVArgs(YAML::Emitter &os, const CmdCudaLaunchKernelNVArgs &args);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
     void PrintCmdBindDescriptorBuffersEXTArgs(YAML::Emitter &os, const CmdBindDescriptorBuffersEXTArgs &args);
     void PrintCmdSetDescriptorBufferOffsetsEXTArgs(YAML::Emitter &os, const CmdSetDescriptorBufferOffsetsEXTArgs &args);
     void PrintCmdBindDescriptorBufferEmbeddedSamplersEXTArgs(

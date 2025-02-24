@@ -3118,6 +3118,7 @@ void CommandPrinter::PrintCmdSetDepthBias2EXTArgs(YAML::Emitter &os, const CmdSe
     }
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandPrinter::PrintCmdCudaLaunchKernelNVArgs(YAML::Emitter &os, const CmdCudaLaunchKernelNVArgs &args) {
     os << YAML::Key << "pLaunchInfo";
     // pointer
@@ -3127,6 +3128,7 @@ void CommandPrinter::PrintCmdCudaLaunchKernelNVArgs(YAML::Emitter &os, const Cmd
         os << YAML::Value << "nullptr";
     }
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 void CommandPrinter::PrintCmdBindDescriptorBuffersEXTArgs(YAML::Emitter &os,
                                                           const CmdBindDescriptorBuffersEXTArgs &args) {
@@ -5724,12 +5726,14 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         case Command::Type::kCmdCudaLaunchKernelNV:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdCudaLaunchKernelNVArgs *>(cmd.parameters);
                 PrintCmdCudaLaunchKernelNVArgs(os, *args);
             }
             break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
         case Command::Type::kCmdBindDescriptorBuffersEXT:
             if (cmd.parameters) {

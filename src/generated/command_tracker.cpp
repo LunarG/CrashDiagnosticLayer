@@ -2024,6 +2024,7 @@ void CommandTracker::CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const Vk
     commands_.push_back(cmd);
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandTracker::CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdCudaLaunchKernelNV;
@@ -2032,6 +2033,7 @@ void CommandTracker::CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const 
     cmd.parameters = recorder_.RecordCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
     commands_.push_back(cmd);
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 void CommandTracker::CmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
                                                  const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {

@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2023-2024 LunarG, Inc.
+# Copyright (c) 2023-2025 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,6 +26,11 @@ class CommandRecorderOutputGenerator(CdlBaseOutputGenerator):
     #
     # Called at beginning of processing as file is opened
     def generate(self):
+        # Should be fixed in 1.4.310 headers
+        # https://gitlab.khronos.org/vulkan/vulkan/-/merge_requests/7196
+        manual_protect = ["VkCudaModuleNV", "VkCudaFunctionNV", "VkCudaModuleCreateInfoNV", "VkCudaFunctionCreateInfoNV", "VkCudaLaunchInfoNV", "VkPhysicalDeviceCudaKernelLaunchFeaturesNV", "VkPhysicalDeviceCudaKernelLaunchPropertiesNV", "VkSetPresentConfigNV", "VkPhysicalDevicePresentMeteringFeaturesNV"]
+        for struct in [x for x in self.vk.structs.values() if x.name in manual_protect]:
+            struct.protect = "VK_ENABLE_BETA_EXTENSIONS"
         file_start = self.GenerateFileStart(os.path.basename(__file__))
         self.write(file_start)
 

@@ -701,8 +701,10 @@ class CommandRecorder {
     CmdSetDepthBias2EXTArgs* RecordCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer,
                                                        const VkDepthBiasInfoEXT* pDepthBiasInfo);
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     CmdCudaLaunchKernelNVArgs* RecordCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer,
                                                            const VkCudaLaunchInfoNV* pLaunchInfo);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
     CmdBindDescriptorBuffersEXTArgs* RecordCmdBindDescriptorBuffersEXT(
         VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos);
