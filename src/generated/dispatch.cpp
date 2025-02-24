@@ -882,7 +882,9 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CreateCudaFunctionNV = (PFN_vkCreateCudaFunctionNV)pa(device, "vkCreateCudaFunctionNV");
     dt->DestroyCudaModuleNV = (PFN_vkDestroyCudaModuleNV)pa(device, "vkDestroyCudaModuleNV");
     dt->DestroyCudaFunctionNV = (PFN_vkDestroyCudaFunctionNV)pa(device, "vkDestroyCudaFunctionNV");
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->CmdCudaLaunchKernelNV = (PFN_vkCmdCudaLaunchKernelNV)pa(device, "vkCmdCudaLaunchKernelNV");
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_USE_PLATFORM_METAL_EXT
     dt->ExportMetalObjectsEXT = (PFN_vkExportMetalObjectsEXT)pa(device, "vkExportMetalObjectsEXT");
 #endif  // VK_USE_PLATFORM_METAL_EXT

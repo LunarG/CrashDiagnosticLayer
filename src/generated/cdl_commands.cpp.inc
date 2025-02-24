@@ -2165,6 +2165,7 @@ void Context::PostCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDep
     p_cmd->PostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 void Context::PreCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PreCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
@@ -2173,6 +2174,7 @@ void Context::PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkC
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 void Context::PreCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
                                              const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {

@@ -3282,6 +3282,7 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDepthBias2EXT(VkCommandBuffer c
     layer_data->interceptor->PostCmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer,
                                                                  const VkCudaLaunchInfoNV* pLaunchInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -3294,6 +3295,7 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdCudaLaunchKernelNV(VkCommandBuffer
 
     layer_data->interceptor->PostCmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBuffersEXT(
     VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
@@ -4692,7 +4694,9 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdExecuteGeneratedCommandsNV", {kFuncTypeDev, (void*)InterceptCmdExecuteGeneratedCommandsNV}},
         {"vkCmdBindPipelineShaderGroupNV", {kFuncTypeDev, (void*)InterceptCmdBindPipelineShaderGroupNV}},
         {"vkCmdSetDepthBias2EXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthBias2EXT}},
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         {"vkCmdCudaLaunchKernelNV", {kFuncTypeDev, (void*)InterceptCmdCudaLaunchKernelNV}},
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         {"vkCmdBindDescriptorBuffersEXT", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorBuffersEXT}},
         {"vkCmdSetDescriptorBufferOffsetsEXT", {kFuncTypeDev, (void*)InterceptCmdSetDescriptorBufferOffsetsEXT}},
         {"vkCmdBindDescriptorBufferEmbeddedSamplersEXT",

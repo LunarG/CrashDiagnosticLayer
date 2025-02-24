@@ -566,7 +566,9 @@ class CommandTracker {
 
     void CmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT* pDepthBiasInfo);
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     void CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
     void CmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
                                      const VkDescriptorBufferBindingInfoEXT* pBindingInfos);

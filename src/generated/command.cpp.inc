@@ -1974,6 +1974,7 @@ void CommandBuffer::PostCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandBuffer::PreCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {
     tracker_.CmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
@@ -1981,6 +1982,7 @@ void CommandBuffer::PreCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, cons
 void CommandBuffer::PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 void CommandBuffer::PreCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
                                                    const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
