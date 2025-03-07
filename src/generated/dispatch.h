@@ -688,11 +688,21 @@ struct DeviceDispatchTable {
     PFN_vkDestroyPrivateDataSlotEXT DestroyPrivateDataSlotEXT;
     PFN_vkSetPrivateDataEXT SetPrivateDataEXT;
     PFN_vkGetPrivateDataEXT GetPrivateDataEXT;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     PFN_vkCreateCudaModuleNV CreateCudaModuleNV;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     PFN_vkGetCudaModuleCacheNV GetCudaModuleCacheNV;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     PFN_vkCreateCudaFunctionNV CreateCudaFunctionNV;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     PFN_vkDestroyCudaModuleNV DestroyCudaModuleNV;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     PFN_vkDestroyCudaFunctionNV DestroyCudaFunctionNV;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     PFN_vkCmdCudaLaunchKernelNV CmdCudaLaunchKernelNV;
 #endif  // VK_ENABLE_BETA_EXTENSIONS

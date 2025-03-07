@@ -18,9 +18,9 @@ class ObjectNameGenerator(BaseGenerator):
         out = []
         out.append(f'''// *** THIS FILE IS GENERATED - DO NOT EDIT ***
 // See {os.path.basename(__file__)} for modifications
-// Copyright 2023-2024 The Khronos Group Inc.
-// Copyright 2023-2024 Valve Corporation
-// Copyright 2023-2024 LunarG, Inc.
+// Copyright 2023-2025 The Khronos Group Inc.
+// Copyright 2023-2025 Valve Corporation
+// Copyright 2023-2025 LunarG, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 ''')
@@ -32,11 +32,14 @@ class ObjectNameGenerator(BaseGenerator):
 #endif
 #include <vulkan/vulkan.h>
 ''')
+        guard_helper = PlatformGuardHelper()
         out.append(f'static inline const char* string_ObjectName(VkObjectType input_value) {{\n')
         out.append('    switch (input_value) {\n')
         for handle in self.vk.handles.values():
+            out.extend(guard_helper.add_guard(handle.protect))
             out.append(f'        case {handle.type}:\n')
             out.append(f'            return "{handle.name}";\n')
+        out.extend(guard_helper.add_guard(None))
         out.append('        default:\n')
         out.append(f'            return "UNKNOWN";\n')
         out.append('    }\n')

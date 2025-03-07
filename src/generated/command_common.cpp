@@ -427,8 +427,10 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdBindPipelineShaderGroupNV";
         case Command::Type::kCmdSetDepthBias2EXT:
             return "vkCmdSetDepthBias2EXT";
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         case Command::Type::kCmdCudaLaunchKernelNV:
             return "vkCmdCudaLaunchKernelNV";
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         case Command::Type::kCmdBindDescriptorBuffersEXT:
             return "vkCmdBindDescriptorBuffersEXT";
         case Command::Type::kCmdSetDescriptorBufferOffsetsEXT:

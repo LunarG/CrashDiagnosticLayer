@@ -1,8 +1,8 @@
 // *** THIS FILE IS GENERATED - DO NOT EDIT ***
 // See object_name_generator.py for modifications
-// Copyright 2023-2024 The Khronos Group Inc.
-// Copyright 2023-2024 Valve Corporation
-// Copyright 2023-2024 LunarG, Inc.
+// Copyright 2023-2025 The Khronos Group Inc.
+// Copyright 2023-2025 Valve Corporation
+// Copyright 2023-2025 LunarG, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -102,14 +102,18 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkPerformanceConfigurationINTEL";
         case VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NV:
             return "VkIndirectCommandsLayoutNV";
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_OBJECT_TYPE_CUDA_MODULE_NV:
             return "VkCudaModuleNV";
         case VK_OBJECT_TYPE_CUDA_FUNCTION_NV:
             return "VkCudaFunctionNV";
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         case VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_KHR:
             return "VkAccelerationStructureKHR";
+#ifdef VK_USE_PLATFORM_FUCHSIA
         case VK_OBJECT_TYPE_BUFFER_COLLECTION_FUCHSIA:
             return "VkBufferCollectionFUCHSIA";
+#endif  // VK_USE_PLATFORM_FUCHSIA
         case VK_OBJECT_TYPE_MICROMAP_EXT:
             return "VkMicromapEXT";
         case VK_OBJECT_TYPE_OPTICAL_FLOW_SESSION_NV:

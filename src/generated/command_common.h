@@ -238,7 +238,9 @@ struct Command {
         kCmdExecuteGeneratedCommandsNV,
         kCmdBindPipelineShaderGroupNV,
         kCmdSetDepthBias2EXT,
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         kCmdCudaLaunchKernelNV,
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         kCmdBindDescriptorBuffersEXT,
         kCmdSetDescriptorBufferOffsetsEXT,
         kCmdBindDescriptorBufferEmbeddedSamplersEXT,
@@ -1599,10 +1601,12 @@ struct CmdSetDepthBias2EXTArgs {
     const VkDepthBiasInfoEXT* pDepthBiasInfo;
 };
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 struct CmdCudaLaunchKernelNVArgs {
     VkCommandBuffer commandBuffer;
     const VkCudaLaunchInfoNV* pLaunchInfo;
 };
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 struct CmdBindDescriptorBuffersEXTArgs {
     VkCommandBuffer commandBuffer;

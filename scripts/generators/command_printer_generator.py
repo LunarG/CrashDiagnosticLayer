@@ -25,15 +25,6 @@ class CommandPrinterOutputGenerator(CdlBaseOutputGenerator):
     #
     # Called at beginning of processing as file is opened
     def generate(self):
-        # Should be fixed in 1.4.310 headers
-        # https://gitlab.khronos.org/vulkan/vulkan/-/merge_requests/7196
-        manual_protect = ["VkCudaModuleNV", "VkCudaFunctionNV", "VkCudaModuleCreateInfoNV", "VkCudaFunctionCreateInfoNV", "VkCudaLaunchInfoNV", "VkPhysicalDeviceCudaKernelLaunchFeaturesNV", "VkPhysicalDeviceCudaKernelLaunchPropertiesNV", "VkSetPresentConfigNV", "VkPhysicalDevicePresentMeteringFeaturesNV"]
-        for struct in [x for x in self.vk.structs.values() if x.name in manual_protect]:
-            struct.protect = "VK_ENABLE_BETA_EXTENSIONS"
-        manual_protect = ["vkCmdCudaLaunchKernelNV",]
-        for cmd in [x for x in self.vk.commands.values() if x.name in manual_protect]:
-            cmd.protect = "VK_ENABLE_BETA_EXTENSIONS"
-
         file_start = self.GenerateFileStart(os.path.basename(__file__))
         self.write(file_start)
 
