@@ -877,11 +877,21 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->DestroyPrivateDataSlotEXT = (PFN_vkDestroyPrivateDataSlotEXT)pa(device, "vkDestroyPrivateDataSlotEXT");
     dt->SetPrivateDataEXT = (PFN_vkSetPrivateDataEXT)pa(device, "vkSetPrivateDataEXT");
     dt->GetPrivateDataEXT = (PFN_vkGetPrivateDataEXT)pa(device, "vkGetPrivateDataEXT");
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->CreateCudaModuleNV = (PFN_vkCreateCudaModuleNV)pa(device, "vkCreateCudaModuleNV");
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->GetCudaModuleCacheNV = (PFN_vkGetCudaModuleCacheNV)pa(device, "vkGetCudaModuleCacheNV");
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->CreateCudaFunctionNV = (PFN_vkCreateCudaFunctionNV)pa(device, "vkCreateCudaFunctionNV");
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->DestroyCudaModuleNV = (PFN_vkDestroyCudaModuleNV)pa(device, "vkDestroyCudaModuleNV");
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->DestroyCudaFunctionNV = (PFN_vkDestroyCudaFunctionNV)pa(device, "vkDestroyCudaFunctionNV");
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->CmdCudaLaunchKernelNV = (PFN_vkCmdCudaLaunchKernelNV)pa(device, "vkCmdCudaLaunchKernelNV");
 #endif  // VK_ENABLE_BETA_EXTENSIONS

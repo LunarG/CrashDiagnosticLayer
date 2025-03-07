@@ -374,6 +374,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutNV &a
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaModuleNV &a) {
@@ -381,7 +382,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaModuleNV &a) {
     return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaFunctionNV &a) {
@@ -389,6 +392,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaFunctionNV &a) {
     return os;
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
