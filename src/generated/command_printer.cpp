@@ -4068,6 +4068,16 @@ void CommandPrinter::PrintCmdExecuteGeneratedCommandsEXTArgs(YAML::Emitter &os,
     }
 }
 
+void CommandPrinter::PrintCmdEndRendering2EXTArgs(YAML::Emitter &os, const CmdEndRendering2EXTArgs &args) {
+    os << YAML::Key << "pRenderingEndInfo";
+    // pointer
+    if (args.pRenderingEndInfo != nullptr) {
+        os << YAML::Value << *args.pRenderingEndInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
                                                                 const CmdBuildAccelerationStructuresKHRArgs &args) {
     os << YAML::Key << "infoCount";
@@ -6201,6 +6211,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdExecuteGeneratedCommandsEXTArgs *>(cmd.parameters);
                 PrintCmdExecuteGeneratedCommandsEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndRendering2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndRendering2EXTArgs *>(cmd.parameters);
+                PrintCmdEndRendering2EXTArgs(os, *args);
             }
             break;
 

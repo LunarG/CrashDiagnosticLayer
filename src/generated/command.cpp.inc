@@ -2658,6 +2658,16 @@ void CommandBuffer::PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBu
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
+                                           const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+    tracker_.CmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
+                                            const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {

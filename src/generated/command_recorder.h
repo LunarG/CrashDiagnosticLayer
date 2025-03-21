@@ -926,6 +926,9 @@ class CommandRecorder {
         VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
         const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
+    CmdEndRendering2EXTArgs* RecordCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
+                                                       const VkRenderingEndInfoEXT* pRenderingEndInfo);
+
     CmdBuildAccelerationStructuresKHRArgs* RecordCmdBuildAccelerationStructuresKHR(
         VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
         const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos);
