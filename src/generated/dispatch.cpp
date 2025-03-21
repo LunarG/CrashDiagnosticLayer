@@ -1122,6 +1122,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->GetMemoryMetalHandlePropertiesEXT =
         (PFN_vkGetMemoryMetalHandlePropertiesEXT)pa(device, "vkGetMemoryMetalHandlePropertiesEXT");
 #endif  // VK_USE_PLATFORM_METAL_EXT
+    dt->CmdEndRendering2EXT = (PFN_vkCmdEndRendering2EXT)pa(device, "vkCmdEndRendering2EXT");
     dt->CreateAccelerationStructureKHR =
         (PFN_vkCreateAccelerationStructureKHR)pa(device, "vkCreateAccelerationStructureKHR");
     dt->DestroyAccelerationStructureKHR =

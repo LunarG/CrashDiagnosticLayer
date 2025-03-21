@@ -308,6 +308,7 @@ struct Command {
         kCmdBuildPartitionedAccelerationStructuresNV,
         kCmdPreprocessGeneratedCommandsEXT,
         kCmdExecuteGeneratedCommandsEXT,
+        kCmdEndRendering2EXT,
         kCmdBuildAccelerationStructuresKHR,
         kCmdBuildAccelerationStructuresIndirectKHR,
         kCmdCopyAccelerationStructureKHR,
@@ -2001,6 +2002,11 @@ struct CmdExecuteGeneratedCommandsEXTArgs {
     VkCommandBuffer commandBuffer;
     VkBool32 isPreprocessed;
     const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo;
+};
+
+struct CmdEndRendering2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkRenderingEndInfoEXT* pRenderingEndInfo;
 };
 
 struct CmdBuildAccelerationStructuresKHRArgs {

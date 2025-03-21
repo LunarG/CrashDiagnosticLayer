@@ -888,6 +888,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayPlaneProperties2KHR 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayModeProperties2KHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayPlaneInfo2KHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayPlaneCapabilities2KHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderBfloat16FeaturesKHR &t);
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePortabilitySubsetFeaturesKHR &t);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -1533,9 +1534,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRenderPassStr
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassStripeInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassStripeBeginInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassStripeSubmitInfoARM &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassFragmentDensityMapOffsetEndInfoQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassFragmentDensityMapOffsetEndInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectCommandNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectCommandNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectFeaturesNV &t);
@@ -1744,6 +1745,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetPresentConfigNV &t);
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentMeteringFeaturesNV &t);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingEndInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
@@ -2076,6 +2078,7 @@ class CommandPrinter {
     void PrintCmdPreprocessGeneratedCommandsEXTArgs(YAML::Emitter &os,
                                                     const CmdPreprocessGeneratedCommandsEXTArgs &args);
     void PrintCmdExecuteGeneratedCommandsEXTArgs(YAML::Emitter &os, const CmdExecuteGeneratedCommandsEXTArgs &args);
+    void PrintCmdEndRendering2EXTArgs(YAML::Emitter &os, const CmdEndRendering2EXTArgs &args);
     void PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
                                                     const CmdBuildAccelerationStructuresKHRArgs &args);
     void PrintCmdBuildAccelerationStructuresIndirectKHRArgs(YAML::Emitter &os,

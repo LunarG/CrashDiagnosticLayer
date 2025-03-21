@@ -13716,6 +13716,29 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayPlaneCapabilities2KH
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderBfloat16FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderBFloat16Type";
+    // shaderBFloat16Type -> Field -> VkBool32
+    os << YAML::Value << t.shaderBFloat16Type;
+    os << YAML::Key << "shaderBFloat16DotProduct";
+    // shaderBFloat16DotProduct -> Field -> VkBool32
+    os << YAML::Value << t.shaderBFloat16DotProduct;
+    os << YAML::Key << "shaderBFloat16CooperativeMatrix";
+    // shaderBFloat16CooperativeMatrix -> Field -> VkBool32
+    os << YAML::Value << t.shaderBFloat16CooperativeMatrix;
+    os << YAML::EndMap;
+    return os;
+}
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePortabilitySubsetFeaturesKHR &t) {
     os << YAML::BeginMap;
@@ -26436,7 +26459,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassStripeSubmitInfoA
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM &t) {
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
     // sType -> Field -> VkStructureType
@@ -26453,7 +26476,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensi
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM &t) {
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
     // sType -> Field -> VkStructureType
@@ -26470,7 +26493,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensi
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassFragmentDensityMapOffsetEndInfoQCOM &t) {
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassFragmentDensityMapOffsetEndInfoEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
     // sType -> Field -> VkStructureType
@@ -30800,6 +30823,20 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentMeteri
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingEndInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "primitiveCount";
@@ -32869,6 +32906,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR:
             os << *reinterpret_cast<const VkDisplayPlaneCapabilities2KHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_BFLOAT16_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderBfloat16FeaturesKHR *>(pStruct);
+            break;
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDevicePortabilitySubsetFeaturesKHR *>(pStruct);
@@ -34368,14 +34408,14 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_SUBMIT_INFO_ARM:
             os << *reinterpret_cast<const VkRenderPassStripeSubmitInfoARM *>(pStruct);
             break;
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM:
-            os << *reinterpret_cast<const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM *>(pStruct);
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT *>(pStruct);
             break;
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM:
-            os << *reinterpret_cast<const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM *>(pStruct);
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT *>(pStruct);
             break;
-        case VK_STRUCTURE_TYPE_SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM:
-            os << *reinterpret_cast<const VkSubpassFragmentDensityMapOffsetEndInfoQCOM *>(pStruct);
+        case VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_EXT:
+            os << *reinterpret_cast<const VkRenderPassFragmentDensityMapOffsetEndInfoEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceCopyMemoryIndirectFeaturesNV *>(pStruct);
@@ -34850,6 +34890,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkPhysicalDevicePresentMeteringFeaturesNV *>(pStruct);
             break;
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+        case VK_STRUCTURE_TYPE_RENDERING_END_INFO_EXT:
+            os << *reinterpret_cast<const VkRenderingEndInfoEXT *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);
             break;

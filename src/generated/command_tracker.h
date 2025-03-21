@@ -748,6 +748,8 @@ class CommandTracker {
     void CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
                                         const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
+    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT* pRenderingEndInfo);
+
     void CmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                            const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
                                            const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos);

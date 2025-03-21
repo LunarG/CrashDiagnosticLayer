@@ -565,6 +565,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdPreprocessGeneratedCommandsEXT";
         case Command::Type::kCmdExecuteGeneratedCommandsEXT:
             return "vkCmdExecuteGeneratedCommandsEXT";
+        case Command::Type::kCmdEndRendering2EXT:
+            return "vkCmdEndRendering2EXT";
         case Command::Type::kCmdBuildAccelerationStructuresKHR:
             return "vkCmdBuildAccelerationStructuresKHR";
         case Command::Type::kCmdBuildAccelerationStructuresIndirectKHR:

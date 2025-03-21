@@ -2720,6 +2720,16 @@ void CommandTracker::CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffe
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
+                                         const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdEndRendering2EXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
