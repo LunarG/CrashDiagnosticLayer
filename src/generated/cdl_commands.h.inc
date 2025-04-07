@@ -951,6 +951,18 @@ void PreCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchI
 void PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) override;
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+void PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) override;
+void PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) override;
+
+void PreCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                     const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) override;
+void PostCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                      const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) override;
+
+void PreCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileEndInfoQCOM* pPerTileEndInfo) override;
+void PostCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                    const VkPerTileEndInfoQCOM* pPerTileEndInfo) override;
+
 void PreCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
                                     const VkDescriptorBufferBindingInfoEXT* pBindingInfos) override;
 void PostCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,

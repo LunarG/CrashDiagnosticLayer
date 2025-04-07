@@ -431,6 +431,12 @@ const char *Command::GetCommandName(const Command &cmd) {
         case Command::Type::kCmdCudaLaunchKernelNV:
             return "vkCmdCudaLaunchKernelNV";
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+        case Command::Type::kCmdDispatchTileQCOM:
+            return "vkCmdDispatchTileQCOM";
+        case Command::Type::kCmdBeginPerTileExecutionQCOM:
+            return "vkCmdBeginPerTileExecutionQCOM";
+        case Command::Type::kCmdEndPerTileExecutionQCOM:
+            return "vkCmdEndPerTileExecutionQCOM";
         case Command::Type::kCmdBindDescriptorBuffersEXT:
             return "vkCmdBindDescriptorBuffersEXT";
         case Command::Type::kCmdSetDescriptorBufferOffsetsEXT:

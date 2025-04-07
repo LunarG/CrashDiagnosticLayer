@@ -241,6 +241,9 @@ struct Command {
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         kCmdCudaLaunchKernelNV,
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+        kCmdDispatchTileQCOM,
+        kCmdBeginPerTileExecutionQCOM,
+        kCmdEndPerTileExecutionQCOM,
         kCmdBindDescriptorBuffersEXT,
         kCmdSetDescriptorBufferOffsetsEXT,
         kCmdBindDescriptorBufferEmbeddedSamplersEXT,
@@ -1608,6 +1611,20 @@ struct CmdCudaLaunchKernelNVArgs {
     const VkCudaLaunchInfoNV* pLaunchInfo;
 };
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+
+struct CmdDispatchTileQCOMArgs {
+    VkCommandBuffer commandBuffer;
+};
+
+struct CmdBeginPerTileExecutionQCOMArgs {
+    VkCommandBuffer commandBuffer;
+    const VkPerTileBeginInfoQCOM* pPerTileBeginInfo;
+};
+
+struct CmdEndPerTileExecutionQCOMArgs {
+    VkCommandBuffer commandBuffer;
+    const VkPerTileEndInfoQCOM* pPerTileEndInfo;
+};
 
 struct CmdBindDescriptorBuffersEXTArgs {
     VkCommandBuffer commandBuffer;
