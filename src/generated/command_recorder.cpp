@@ -278,6 +278,12 @@ VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaL
                                                                    size_t count);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 template <>
+VkPerTileBeginInfoQCOM* CommandRecorder::CopyArray<VkPerTileBeginInfoQCOM>(const VkPerTileBeginInfoQCOM* src,
+                                                                           size_t start_index, size_t count);
+template <>
+VkPerTileEndInfoQCOM* CommandRecorder::CopyArray<VkPerTileEndInfoQCOM>(const VkPerTileEndInfoQCOM* src,
+                                                                       size_t start_index, size_t count);
+template <>
 VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferBindingInfoEXT>(
     const VkDescriptorBufferBindingInfoEXT* src, size_t start_index, size_t count);
 template <>
@@ -1772,6 +1778,28 @@ VkCudaLaunchInfoNV* CommandRecorder::CopyArray<VkCudaLaunchInfoNV>(const VkCudaL
     return ptr;
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+
+template <>
+VkPerTileBeginInfoQCOM* CommandRecorder::CopyArray<VkPerTileBeginInfoQCOM>(const VkPerTileBeginInfoQCOM* src,
+                                                                           size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkPerTileBeginInfoQCOM*>(m_allocator.Alloc(sizeof(VkPerTileBeginInfoQCOM) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+    }
+    return ptr;
+}
+
+template <>
+VkPerTileEndInfoQCOM* CommandRecorder::CopyArray<VkPerTileEndInfoQCOM>(const VkPerTileEndInfoQCOM* src,
+                                                                       size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkPerTileEndInfoQCOM*>(m_allocator.Alloc(sizeof(VkPerTileEndInfoQCOM) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+    }
+    return ptr;
+}
 
 template <>
 VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferBindingInfoEXT>(
@@ -4535,6 +4563,32 @@ CmdCudaLaunchKernelNVArgs* CommandRecorder::RecordCmdCudaLaunchKernelNV(VkComman
     return args;
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+
+CmdDispatchTileQCOMArgs* CommandRecorder::RecordCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+    auto* args = Alloc<CmdDispatchTileQCOMArgs>();
+    args->commandBuffer = commandBuffer;
+    return args;
+}
+
+CmdBeginPerTileExecutionQCOMArgs* CommandRecorder::RecordCmdBeginPerTileExecutionQCOM(
+    VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {
+    auto* args = Alloc<CmdBeginPerTileExecutionQCOMArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pPerTileBeginInfo) {
+        args->pPerTileBeginInfo = CopyArray(pPerTileBeginInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdEndPerTileExecutionQCOMArgs* CommandRecorder::RecordCmdEndPerTileExecutionQCOM(
+    VkCommandBuffer commandBuffer, const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
+    auto* args = Alloc<CmdEndPerTileExecutionQCOMArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pPerTileEndInfo) {
+        args->pPerTileEndInfo = CopyArray(pPerTileEndInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
 
 CmdBindDescriptorBuffersEXTArgs* CommandRecorder::RecordCmdBindDescriptorBuffersEXT(
     VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {

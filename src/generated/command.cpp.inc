@@ -1984,6 +1984,34 @@ void CommandBuffer::PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, con
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+void CommandBuffer::PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+    tracker_.CmdDispatchTileQCOM(commandBuffer);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                                    const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {
+    tracker_.CmdBeginPerTileExecutionQCOM(commandBuffer, pPerTileBeginInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                                     const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                                  const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
+    tracker_.CmdEndPerTileExecutionQCOM(commandBuffer, pPerTileEndInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                                   const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
                                                    const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
     tracker_.CmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);

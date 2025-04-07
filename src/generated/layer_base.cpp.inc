@@ -3297,6 +3297,44 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdCudaLaunchKernelNV(VkCommandBuffer
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdDispatchTileQCOM(commandBuffer);
+
+    PFN_vkCmdDispatchTileQCOM pfn = layer_data->dispatch_table.CmdDispatchTileQCOM;
+    if (pfn != nullptr) {
+        pfn(commandBuffer);
+    }
+
+    layer_data->interceptor->PostCmdDispatchTileQCOM(commandBuffer);
+}
+
+static VKAPI_ATTR void VKAPI_CALL
+InterceptCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBeginPerTileExecutionQCOM(commandBuffer, pPerTileBeginInfo);
+
+    PFN_vkCmdBeginPerTileExecutionQCOM pfn = layer_data->dispatch_table.CmdBeginPerTileExecutionQCOM;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pPerTileBeginInfo);
+    }
+
+    layer_data->interceptor->PostCmdBeginPerTileExecutionQCOM(commandBuffer, pPerTileBeginInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                                                      const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdEndPerTileExecutionQCOM(commandBuffer, pPerTileEndInfo);
+
+    PFN_vkCmdEndPerTileExecutionQCOM pfn = layer_data->dispatch_table.CmdEndPerTileExecutionQCOM;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pPerTileEndInfo);
+    }
+
+    layer_data->interceptor->PostCmdEndPerTileExecutionQCOM(commandBuffer, pPerTileEndInfo);
+}
+
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBuffersEXT(
     VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -4710,6 +4748,9 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         {"vkCmdCudaLaunchKernelNV", {kFuncTypeDev, (void*)InterceptCmdCudaLaunchKernelNV}},
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+        {"vkCmdDispatchTileQCOM", {kFuncTypeDev, (void*)InterceptCmdDispatchTileQCOM}},
+        {"vkCmdBeginPerTileExecutionQCOM", {kFuncTypeDev, (void*)InterceptCmdBeginPerTileExecutionQCOM}},
+        {"vkCmdEndPerTileExecutionQCOM", {kFuncTypeDev, (void*)InterceptCmdEndPerTileExecutionQCOM}},
         {"vkCmdBindDescriptorBuffersEXT", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorBuffersEXT}},
         {"vkCmdSetDescriptorBufferOffsetsEXT", {kFuncTypeDev, (void*)InterceptCmdSetDescriptorBufferOffsetsEXT}},
         {"vkCmdBindDescriptorBufferEmbeddedSamplersEXT",

@@ -2176,6 +2176,37 @@ void Context::PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkC
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+void Context::PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdDispatchTileQCOM(commandBuffer);
+}
+void Context::PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdDispatchTileQCOM(commandBuffer);
+}
+
+void Context::PreCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                              const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBeginPerTileExecutionQCOM(commandBuffer, pPerTileBeginInfo);
+}
+void Context::PostCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                               const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBeginPerTileExecutionQCOM(commandBuffer, pPerTileBeginInfo);
+}
+
+void Context::PreCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                            const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdEndPerTileExecutionQCOM(commandBuffer, pPerTileEndInfo);
+}
+void Context::PostCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                             const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdEndPerTileExecutionQCOM(commandBuffer, pPerTileEndInfo);
+}
+
 void Context::PreCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount,
                                              const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);

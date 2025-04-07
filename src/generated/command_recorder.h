@@ -706,6 +706,14 @@ class CommandRecorder {
                                                            const VkCudaLaunchInfoNV* pLaunchInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+    CmdDispatchTileQCOMArgs* RecordCmdDispatchTileQCOM(VkCommandBuffer commandBuffer);
+
+    CmdBeginPerTileExecutionQCOMArgs* RecordCmdBeginPerTileExecutionQCOM(
+        VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo);
+
+    CmdEndPerTileExecutionQCOMArgs* RecordCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
+                                                                     const VkPerTileEndInfoQCOM* pPerTileEndInfo);
+
     CmdBindDescriptorBuffersEXTArgs* RecordCmdBindDescriptorBuffersEXT(
         VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos);
 

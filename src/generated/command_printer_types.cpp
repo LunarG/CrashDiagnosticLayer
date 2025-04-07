@@ -436,6 +436,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderEXT &a) {
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkExternalComputeQueueNV &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetEXT &a) {

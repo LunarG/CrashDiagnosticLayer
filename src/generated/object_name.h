@@ -120,6 +120,8 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkOpticalFlowSessionNV";
         case VK_OBJECT_TYPE_SHADER_EXT:
             return "VkShaderEXT";
+        case VK_OBJECT_TYPE_EXTERNAL_COMPUTE_QUEUE_NV:
+            return "VkExternalComputeQueueNV";
         case VK_OBJECT_TYPE_INDIRECT_EXECUTION_SET_EXT:
             return "VkIndirectExecutionSetEXT";
         case VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_EXT:
