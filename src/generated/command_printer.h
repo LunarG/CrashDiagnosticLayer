@@ -1666,6 +1666,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExternalMemor
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredDriverPropertiesMSFT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTileMemoryHeapFeaturesQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTileMemoryHeapPropertiesQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTileMemoryRequirementsQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTileMemoryBindInfoQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTileMemorySizeInfoQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplaySurfaceStereoCreateInfoNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplayModeStereoPropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRawAccessChainsFeaturesNV &t);
@@ -2085,6 +2090,7 @@ class CommandPrinter {
                                                       const CmdConvertCooperativeVectorMatrixNVArgs &args);
     void PrintCmdSetAttachmentFeedbackLoopEnableEXTArgs(YAML::Emitter &os,
                                                         const CmdSetAttachmentFeedbackLoopEnableEXTArgs &args);
+    void PrintCmdBindTileMemoryQCOMArgs(YAML::Emitter &os, const CmdBindTileMemoryQCOMArgs &args);
     void PrintCmdBuildClusterAccelerationStructureIndirectNVArgs(
         YAML::Emitter &os, const CmdBuildClusterAccelerationStructureIndirectNVArgs &args);
     void PrintCmdBuildPartitionedAccelerationStructuresNVArgs(

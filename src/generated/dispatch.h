@@ -848,6 +848,7 @@ struct DeviceDispatchTable {
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     PFN_vkGetScreenBufferPropertiesQNX GetScreenBufferPropertiesQNX;
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
+    PFN_vkCmdBindTileMemoryQCOM CmdBindTileMemoryQCOM;
     PFN_vkCreateExternalComputeQueueNV CreateExternalComputeQueueNV;
     PFN_vkDestroyExternalComputeQueueNV DestroyExternalComputeQueueNV;
     PFN_vkGetExternalComputeQueueDataNV GetExternalComputeQueueDataNV;

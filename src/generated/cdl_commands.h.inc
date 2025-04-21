@@ -1243,6 +1243,11 @@ void PostCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint
 void PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) override;
 void PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) override;
 
+void PreCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                              const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) override;
+void PostCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                               const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) override;
+
 void PreCmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) override;
 void PostCmdBuildClusterAccelerationStructureIndirectNV(

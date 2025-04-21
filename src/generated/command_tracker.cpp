@@ -2706,6 +2706,16 @@ void CommandTracker::CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer comma
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                           const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindTileMemoryQCOM;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
     Command cmd{};

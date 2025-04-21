@@ -4042,6 +4042,16 @@ void CommandPrinter::PrintCmdSetAttachmentFeedbackLoopEnableEXTArgs(
     os << YAML::Value << args.aspectMask;
 }
 
+void CommandPrinter::PrintCmdBindTileMemoryQCOMArgs(YAML::Emitter &os, const CmdBindTileMemoryQCOMArgs &args) {
+    os << YAML::Key << "pTileMemoryBindInfo";
+    // pointer
+    if (args.pTileMemoryBindInfo != nullptr) {
+        os << YAML::Value << *args.pTileMemoryBindInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdBuildClusterAccelerationStructureIndirectNVArgs(
     YAML::Emitter &os, const CmdBuildClusterAccelerationStructureIndirectNVArgs &args) {
     os << YAML::Key << "pCommandInfos";
@@ -6228,6 +6238,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdSetAttachmentFeedbackLoopEnableEXTArgs *>(cmd.parameters);
                 PrintCmdSetAttachmentFeedbackLoopEnableEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindTileMemoryQCOM:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindTileMemoryQCOMArgs *>(cmd.parameters);
+                PrintCmdBindTileMemoryQCOMArgs(os, *args);
             }
             break;
 
