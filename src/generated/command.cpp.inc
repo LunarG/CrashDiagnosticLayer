@@ -2644,6 +2644,16 @@ void CommandBuffer::PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer co
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                             const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
+    tracker_.CmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                              const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
     tracker_.CmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);

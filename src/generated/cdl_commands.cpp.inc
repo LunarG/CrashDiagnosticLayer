@@ -2888,6 +2888,17 @@ void Context::PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandB
     p_cmd->PostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
 
+void Context::PreCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                       const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
+}
+void Context::PostCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                        const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
+}
+
 void Context::PreCmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);

@@ -307,6 +307,7 @@ struct Command {
         kCmdSetDepthClampRangeEXT,
         kCmdConvertCooperativeVectorMatrixNV,
         kCmdSetAttachmentFeedbackLoopEnableEXT,
+        kCmdBindTileMemoryQCOM,
         kCmdBuildClusterAccelerationStructureIndirectNV,
         kCmdBuildPartitionedAccelerationStructuresNV,
         kCmdPreprocessGeneratedCommandsEXT,
@@ -1997,6 +1998,11 @@ struct CmdConvertCooperativeVectorMatrixNVArgs {
 struct CmdSetAttachmentFeedbackLoopEnableEXTArgs {
     VkCommandBuffer commandBuffer;
     VkImageAspectFlags aspectMask;
+};
+
+struct CmdBindTileMemoryQCOMArgs {
+    VkCommandBuffer commandBuffer;
+    const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo;
 };
 
 struct CmdBuildClusterAccelerationStructureIndirectNVArgs {

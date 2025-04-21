@@ -4218,6 +4218,19 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAttachmentFeedbackLoopEnableEXT
     layer_data->interceptor->PostCmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                                                 const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
+
+    PFN_vkCmdBindTileMemoryQCOM pfn = layer_data->dispatch_table.CmdBindTileMemoryQCOM;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pTileMemoryBindInfo);
+    }
+
+    layer_data->interceptor->PostCmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
+}
+
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -4820,6 +4833,7 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdConvertCooperativeVectorMatrixNV", {kFuncTypeDev, (void*)InterceptCmdConvertCooperativeVectorMatrixNV}},
         {"vkCmdSetAttachmentFeedbackLoopEnableEXT",
          {kFuncTypeDev, (void*)InterceptCmdSetAttachmentFeedbackLoopEnableEXT}},
+        {"vkCmdBindTileMemoryQCOM", {kFuncTypeDev, (void*)InterceptCmdBindTileMemoryQCOM}},
         {"vkCmdBuildClusterAccelerationStructureIndirectNV",
          {kFuncTypeDev, (void*)InterceptCmdBuildClusterAccelerationStructureIndirectNV}},
         {"vkCmdBuildPartitionedAccelerationStructuresNV",

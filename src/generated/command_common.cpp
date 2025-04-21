@@ -563,6 +563,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdConvertCooperativeVectorMatrixNV";
         case Command::Type::kCmdSetAttachmentFeedbackLoopEnableEXT:
             return "vkCmdSetAttachmentFeedbackLoopEnableEXT";
+        case Command::Type::kCmdBindTileMemoryQCOM:
+            return "vkCmdBindTileMemoryQCOM";
         case Command::Type::kCmdBuildClusterAccelerationStructureIndirectNV:
             return "vkCmdBuildClusterAccelerationStructureIndirectNV";
         case Command::Type::kCmdBuildPartitionedAccelerationStructuresNV:

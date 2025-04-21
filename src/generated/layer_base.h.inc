@@ -1832,6 +1832,12 @@ virtual void PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuf
 
 virtual void PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {}
 
+virtual void PreCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                      const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {}
+
+virtual void PostCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                       const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {}
+
 virtual void PreCmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {}
 
