@@ -115,7 +115,7 @@ elseif(APPLE)
 elseif(ANDROID)
     message(STATUS "Functions are exported via CDL_EXPORT")
     target_link_options(crash_diagnostic PRIVATE LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}-android.map,-Bsymbolic,--exclude-libs,ALL)
-else()
+elseif(NOT CMAKE_LINKER MATCHES "lld-link")
     target_link_options(crash_diagnostic PRIVATE LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.map,-Bsymbolic,--exclude-libs,ALL)
 endif()
 
