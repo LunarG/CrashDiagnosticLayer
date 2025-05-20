@@ -463,7 +463,7 @@ class GoodRepo(object):
 
         # Use the CMake -A option to select the platform architecture
         # without needing a Visual Studio generator.
-        if platform.system() == 'Windows' and self._args.generator != "Ninja":
+        if platform.system() == 'Windows' and self._args.generator != "Ninja" and self._args.generator != "Ninja Multi-Config":
             if self._args.arch.lower() == '64' or self._args.arch == 'x64' or self._args.arch == 'win64':
                 cmake_cmd.append('-A')
                 cmake_cmd.append('x64')
@@ -491,7 +491,7 @@ class GoodRepo(object):
             cmake_cmd.append('--clean-first')
 
         # Ninja is parallel by default
-        if self._args.generator != "Ninja":
+        if self._args.generator != "Ninja" and self._args.generator != "Ninja Multi-Config":
             cmake_cmd.append('--parallel')
             cmake_cmd.append(format(multiprocessing.cpu_count()))
 
