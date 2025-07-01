@@ -22,7 +22,8 @@ if (CDL_CODEGEN)
     add_custom_target(cdl_codegen
         COMMAND Python3::Interpreter
           "${CMAKE_SOURCE_DIR}/scripts/generate_source.py"
-          "${VULKAN_HEADERS_INSTALL_DIR}/share/vulkan/registry"
+#          "${VULKAN_HEADERS_INSTALL_DIR}/share/vulkan/registry"
+          "${CMAKE_SOURCE_DIR}/external/Debug"
           --incremental --generated-version ${VulkanHeaders_VERSION} --api vulkan
         WORKING_DIRECTORY ${GENERATED_DIR}
     )

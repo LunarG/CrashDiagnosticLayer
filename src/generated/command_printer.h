@@ -1004,6 +1004,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH264InlineSessio
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265InlineSessionParametersInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1InlineSessionParametersInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRobustness2FeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRobustness2PropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRasterizationStateRasterizationOrderAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugMarkerObjectNameInfoEXT &t);
@@ -1293,8 +1295,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDepthBiasRepresentationInfo
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDeviceMemoryReportFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceMemoryReportCallbackDataEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceDeviceMemoryReportCreateInfoEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRobustness2FeaturesEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRobustness2PropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerCustomBorderColorCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCustomBorderColorPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCustomBorderColorFeaturesEXT &t);

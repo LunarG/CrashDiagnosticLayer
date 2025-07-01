@@ -11852,7 +11852,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH264SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH264SequenceParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH264SequenceParameterSet");
+        }
     }
     os << YAML::Key << "stdPPSCount";
     // stdPPSCount -> Field -> uint32_t
@@ -11863,7 +11865,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH264SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH264PictureParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH264PictureParameterSet");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -12290,7 +12294,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265VideoParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265VideoParameterSet");
+        }
     }
     os << YAML::Key << "stdSPSCount";
     // stdSPSCount -> Field -> uint32_t
@@ -12301,7 +12307,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265SequenceParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265SequenceParameterSet");
+        }
     }
     os << YAML::Key << "stdPPSCount";
     // stdPPSCount -> Field -> uint32_t
@@ -12312,7 +12320,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265PictureParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265PictureParameterSet");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -12653,7 +12663,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH264SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH264SequenceParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH264SequenceParameterSet");
+        }
     }
     os << YAML::Key << "stdPPSCount";
     // stdPPSCount -> Field -> uint32_t
@@ -12664,7 +12676,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH264SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH264PictureParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH264PictureParameterSet");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -13892,7 +13906,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265VideoParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265VideoParameterSet");
+        }
     }
     os << YAML::Key << "stdSPSCount";
     // stdSPSCount -> Field -> uint32_t
@@ -13903,7 +13919,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265SequenceParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265SequenceParameterSet");
+        }
     }
     os << YAML::Key << "stdPPSCount";
     // stdPPSCount -> Field -> uint32_t
@@ -13914,7 +13932,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265PictureParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265PictureParameterSet");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -15729,7 +15749,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1SessionParame
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoEncodeAV1OperatingPointInfo"); }
+        {
+            os << YAML::Comment("StdVideoEncodeAV1OperatingPointInfo");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -16508,6 +16530,49 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampZer
     os << YAML::Key << "depthClampZeroOne";
     // depthClampZeroOne -> Field -> VkBool32
     os << YAML::Value << t.depthClampZeroOne;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRobustness2FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "robustBufferAccess2";
+    // robustBufferAccess2 -> Field -> VkBool32
+    os << YAML::Value << t.robustBufferAccess2;
+    os << YAML::Key << "robustImageAccess2";
+    // robustImageAccess2 -> Field -> VkBool32
+    os << YAML::Value << t.robustImageAccess2;
+    os << YAML::Key << "nullDescriptor";
+    // nullDescriptor -> Field -> VkBool32
+    os << YAML::Value << t.nullDescriptor;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRobustness2PropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "robustStorageBufferAccessSizeAlignment";
+    // robustStorageBufferAccessSizeAlignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.robustStorageBufferAccessSizeAlignment;
+    os << YAML::Key << "robustUniformBufferAccessSizeAlignment";
+    // robustUniformBufferAccessSizeAlignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.robustUniformBufferAccessSizeAlignment;
     os << YAML::EndMap;
     return os;
 }
@@ -22429,49 +22494,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceDeviceMemoryReportCre
     os << YAML::Key << "pUserData";
     // void
     os << YAML::Value << "NOT_AVAILABLE";
-    os << YAML::EndMap;
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRobustness2FeaturesEXT &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "robustBufferAccess2";
-    // robustBufferAccess2 -> Field -> VkBool32
-    os << YAML::Value << t.robustBufferAccess2;
-    os << YAML::Key << "robustImageAccess2";
-    // robustImageAccess2 -> Field -> VkBool32
-    os << YAML::Value << t.robustImageAccess2;
-    os << YAML::Key << "nullDescriptor";
-    // nullDescriptor -> Field -> VkBool32
-    os << YAML::Value << t.nullDescriptor;
-    os << YAML::EndMap;
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRobustness2PropertiesEXT &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "robustStorageBufferAccessSizeAlignment";
-    // robustStorageBufferAccessSizeAlignment -> Field -> VkDeviceSize
-    os << YAML::Value << t.robustStorageBufferAccessSizeAlignment;
-    os << YAML::Key << "robustUniformBufferAccessSizeAlignment";
-    // robustUniformBufferAccessSizeAlignment -> Field -> VkDeviceSize
-    os << YAML::Value << t.robustUniformBufferAccessSizeAlignment;
     os << YAML::EndMap;
     return os;
 }
@@ -33531,6 +33553,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceRobustness2FeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceRobustness2PropertiesKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkDebugReportCallbackCreateInfoEXT *>(pStruct);
             break;
@@ -34183,12 +34211,6 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_DEVICE_DEVICE_MEMORY_REPORT_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkDeviceDeviceMemoryReportCreateInfoEXT *>(pStruct);
-            break;
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT:
-            os << *reinterpret_cast<const VkPhysicalDeviceRobustness2FeaturesEXT *>(pStruct);
-            break;
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT:
-            os << *reinterpret_cast<const VkPhysicalDeviceRobustness2PropertiesEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkSamplerCustomBorderColorCreateInfoEXT *>(pStruct);
