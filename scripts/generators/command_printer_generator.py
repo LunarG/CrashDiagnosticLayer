@@ -158,6 +158,7 @@ class CommandPrinter {
                 'StdVideoEncodeAV1OperatingPointInfo',
                 'StdVideoEncodeAV1PictureInfo',
                 'StdVideoEncodeAV1ReferenceInfo',
+                'StdVideoDecodeVP9PictureInfo',
             )
         out.append(f'    os << YAML::Key <<  "{member.name}";\n')
         if is_pointer:
