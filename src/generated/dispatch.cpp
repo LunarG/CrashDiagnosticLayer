@@ -1092,6 +1092,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     dt->GetScreenBufferPropertiesQNX = (PFN_vkGetScreenBufferPropertiesQNX)pa(device, "vkGetScreenBufferPropertiesQNX");
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
+    dt->CmdBindTileMemoryQCOM = (PFN_vkCmdBindTileMemoryQCOM)pa(device, "vkCmdBindTileMemoryQCOM");
     dt->CreateExternalComputeQueueNV = (PFN_vkCreateExternalComputeQueueNV)pa(device, "vkCreateExternalComputeQueueNV");
     dt->DestroyExternalComputeQueueNV =
         (PFN_vkDestroyExternalComputeQueueNV)pa(device, "vkDestroyExternalComputeQueueNV");

@@ -11852,7 +11852,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH264SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH264SequenceParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH264SequenceParameterSet");
+        }
     }
     os << YAML::Key << "stdPPSCount";
     // stdPPSCount -> Field -> uint32_t
@@ -11863,7 +11865,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH264SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH264PictureParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH264PictureParameterSet");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -12290,7 +12294,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265VideoParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265VideoParameterSet");
+        }
     }
     os << YAML::Key << "stdSPSCount";
     // stdSPSCount -> Field -> uint32_t
@@ -12301,7 +12307,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265SequenceParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265SequenceParameterSet");
+        }
     }
     os << YAML::Key << "stdPPSCount";
     // stdPPSCount -> Field -> uint32_t
@@ -12312,7 +12320,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265PictureParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265PictureParameterSet");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -12653,7 +12663,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH264SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH264SequenceParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH264SequenceParameterSet");
+        }
     }
     os << YAML::Key << "stdPPSCount";
     // stdPPSCount -> Field -> uint32_t
@@ -12664,7 +12676,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH264SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH264PictureParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH264PictureParameterSet");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -13892,7 +13906,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265VideoParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265VideoParameterSet");
+        }
     }
     os << YAML::Key << "stdSPSCount";
     // stdSPSCount -> Field -> uint32_t
@@ -13903,7 +13919,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265SequenceParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265SequenceParameterSet");
+        }
     }
     os << YAML::Key << "stdPPSCount";
     // stdPPSCount -> Field -> uint32_t
@@ -13914,7 +13932,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeH265SessionParam
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoH265PictureParameterSet"); }
+        {
+            os << YAML::Comment("StdVideoH265PictureParameterSet");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -15729,7 +15749,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1SessionParame
         os << YAML::Value << "nullptr";
     } else {
         os << YAML::Value;
-        { os << YAML::Comment("StdVideoEncodeAV1OperatingPointInfo"); }
+        {
+            os << YAML::Comment("StdVideoEncodeAV1OperatingPointInfo");
+        }
     }
     os << YAML::EndMap;
     return os;
@@ -29180,6 +29202,97 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorPoo
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTileMemoryHeapFeaturesQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "tileMemoryHeap";
+    // tileMemoryHeap -> Field -> VkBool32
+    os << YAML::Value << t.tileMemoryHeap;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTileMemoryHeapPropertiesQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "queueSubmitBoundary";
+    // queueSubmitBoundary -> Field -> VkBool32
+    os << YAML::Value << t.queueSubmitBoundary;
+    os << YAML::Key << "tileBufferTransfers";
+    // tileBufferTransfers -> Field -> VkBool32
+    os << YAML::Value << t.tileBufferTransfers;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTileMemoryRequirementsQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "size";
+    // size -> Field -> VkDeviceSize
+    os << YAML::Value << t.size;
+    os << YAML::Key << "alignment";
+    // alignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.alignment;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTileMemoryBindInfoQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "memory";
+    // memory -> Field -> VkDeviceMemory
+    os << YAML::Value << t.memory;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTileMemorySizeInfoQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "size";
+    // size -> Field -> VkDeviceSize
+    os << YAML::Value << t.size;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDisplaySurfaceStereoCreateInfoNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -34953,6 +35066,21 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_FEATURES_QCOM:
+            os << *reinterpret_cast<const VkPhysicalDeviceTileMemoryHeapFeaturesQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_PROPERTIES_QCOM:
+            os << *reinterpret_cast<const VkPhysicalDeviceTileMemoryHeapPropertiesQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_TILE_MEMORY_REQUIREMENTS_QCOM:
+            os << *reinterpret_cast<const VkTileMemoryRequirementsQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM:
+            os << *reinterpret_cast<const VkTileMemoryBindInfoQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_TILE_MEMORY_SIZE_INFO_QCOM:
+            os << *reinterpret_cast<const VkTileMemorySizeInfoQCOM *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_DISPLAY_SURFACE_STEREO_CREATE_INFO_NV:
             os << *reinterpret_cast<const VkDisplaySurfaceStereoCreateInfoNV *>(pStruct);

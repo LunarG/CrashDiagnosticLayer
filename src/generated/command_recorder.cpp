@@ -338,6 +338,9 @@ template <>
 VkConvertCooperativeVectorMatrixInfoNV* CommandRecorder::CopyArray<VkConvertCooperativeVectorMatrixInfoNV>(
     const VkConvertCooperativeVectorMatrixInfoNV* src, size_t start_index, size_t count);
 template <>
+VkTileMemoryBindInfoQCOM* CommandRecorder::CopyArray<VkTileMemoryBindInfoQCOM>(const VkTileMemoryBindInfoQCOM* src,
+                                                                               size_t start_index, size_t count);
+template <>
 VkClusterAccelerationStructureInputInfoNV* CommandRecorder::CopyArray<VkClusterAccelerationStructureInputInfoNV>(
     const VkClusterAccelerationStructureInputInfoNV* src, size_t start_index, size_t count);
 template <>
@@ -2080,6 +2083,18 @@ VkConvertCooperativeVectorMatrixInfoNV* CommandRecorder::CopyArray<VkConvertCoop
         ptr[i].srcStride = src[start_index + i].srcStride;
         ptr[i].dstLayout = src[start_index + i].dstLayout;
         ptr[i].dstStride = src[start_index + i].dstStride;
+    }
+    return ptr;
+}
+
+template <>
+VkTileMemoryBindInfoQCOM* CommandRecorder::CopyArray<VkTileMemoryBindInfoQCOM>(const VkTileMemoryBindInfoQCOM* src,
+                                                                               size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkTileMemoryBindInfoQCOM*>(m_allocator.Alloc(sizeof(VkTileMemoryBindInfoQCOM) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].memory = src[start_index + i].memory;
     }
     return ptr;
 }
@@ -5240,6 +5255,16 @@ CmdSetAttachmentFeedbackLoopEnableEXTArgs* CommandRecorder::RecordCmdSetAttachme
     auto* args = Alloc<CmdSetAttachmentFeedbackLoopEnableEXTArgs>();
     args->commandBuffer = commandBuffer;
     args->aspectMask = aspectMask;
+    return args;
+}
+
+CmdBindTileMemoryQCOMArgs* CommandRecorder::RecordCmdBindTileMemoryQCOM(
+    VkCommandBuffer commandBuffer, const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
+    auto* args = Alloc<CmdBindTileMemoryQCOMArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pTileMemoryBindInfo) {
+        args->pTileMemoryBindInfo = CopyArray(pTileMemoryBindInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
     return args;
 }
 

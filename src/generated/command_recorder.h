@@ -920,6 +920,9 @@ class CommandRecorder {
     CmdSetAttachmentFeedbackLoopEnableEXTArgs* RecordCmdSetAttachmentFeedbackLoopEnableEXT(
         VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
 
+    CmdBindTileMemoryQCOMArgs* RecordCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
+                                                           const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo);
+
     CmdBuildClusterAccelerationStructureIndirectNVArgs* RecordCmdBuildClusterAccelerationStructureIndirectNV(
         VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos);
 
