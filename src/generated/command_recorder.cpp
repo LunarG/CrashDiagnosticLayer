@@ -284,6 +284,9 @@ template <>
 VkPerTileEndInfoQCOM* CommandRecorder::CopyArray<VkPerTileEndInfoQCOM>(const VkPerTileEndInfoQCOM* src,
                                                                        size_t start_index, size_t count);
 template <>
+VkDispatchTileInfoQCOM* CommandRecorder::CopyArray<VkDispatchTileInfoQCOM>(const VkDispatchTileInfoQCOM* src,
+                                                                           size_t start_index, size_t count);
+template <>
 VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferBindingInfoEXT>(
     const VkDescriptorBufferBindingInfoEXT* src, size_t start_index, size_t count);
 template <>
@@ -329,6 +332,12 @@ template <>
 VkColorBlendAdvancedEXT* CommandRecorder::CopyArray<VkColorBlendAdvancedEXT>(const VkColorBlendAdvancedEXT* src,
                                                                              size_t start_index, size_t count);
 template <>
+VkTensorCopyARM* CommandRecorder::CopyArray<VkTensorCopyARM>(const VkTensorCopyARM* src, size_t start_index,
+                                                             size_t count);
+template <>
+VkCopyTensorInfoARM* CommandRecorder::CopyArray<VkCopyTensorInfoARM>(const VkCopyTensorInfoARM* src, size_t start_index,
+                                                                     size_t count);
+template <>
 VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoNV>(
     const VkOpticalFlowExecuteInfoNV* src, size_t start_index, size_t count);
 template <>
@@ -337,6 +346,9 @@ VkDepthClampRangeEXT* CommandRecorder::CopyArray<VkDepthClampRangeEXT>(const VkD
 template <>
 VkConvertCooperativeVectorMatrixInfoNV* CommandRecorder::CopyArray<VkConvertCooperativeVectorMatrixInfoNV>(
     const VkConvertCooperativeVectorMatrixInfoNV* src, size_t start_index, size_t count);
+template <>
+VkDataGraphPipelineDispatchInfoARM* CommandRecorder::CopyArray<VkDataGraphPipelineDispatchInfoARM>(
+    const VkDataGraphPipelineDispatchInfoARM* src, size_t start_index, size_t count);
 template <>
 VkTileMemoryBindInfoQCOM* CommandRecorder::CopyArray<VkTileMemoryBindInfoQCOM>(const VkTileMemoryBindInfoQCOM* src,
                                                                                size_t start_index, size_t count);
@@ -1805,6 +1817,17 @@ VkPerTileEndInfoQCOM* CommandRecorder::CopyArray<VkPerTileEndInfoQCOM>(const VkP
 }
 
 template <>
+VkDispatchTileInfoQCOM* CommandRecorder::CopyArray<VkDispatchTileInfoQCOM>(const VkDispatchTileInfoQCOM* src,
+                                                                           size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkDispatchTileInfoQCOM*>(m_allocator.Alloc(sizeof(VkDispatchTileInfoQCOM) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+    }
+    return ptr;
+}
+
+template <>
 VkDescriptorBufferBindingInfoEXT* CommandRecorder::CopyArray<VkDescriptorBufferBindingInfoEXT>(
     const VkDescriptorBufferBindingInfoEXT* src, size_t start_index, size_t count) {
     auto ptr = reinterpret_cast<VkDescriptorBufferBindingInfoEXT*>(
@@ -2032,6 +2055,48 @@ VkColorBlendAdvancedEXT* CommandRecorder::CopyArray<VkColorBlendAdvancedEXT>(con
 }
 
 template <>
+VkTensorCopyARM* CommandRecorder::CopyArray<VkTensorCopyARM>(const VkTensorCopyARM* src, size_t start_index,
+                                                             size_t count) {
+    auto ptr = reinterpret_cast<VkTensorCopyARM*>(m_allocator.Alloc(sizeof(VkTensorCopyARM) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].dimensionCount = src[start_index + i].dimensionCount;
+        ptr[i].pSrcOffset = nullptr;
+        if (src[start_index + i].pSrcOffset) {
+            ptr[i].pSrcOffset = CopyArray(src[start_index + i].pSrcOffset, 0U, src[start_index + i].dimensionCount);
+        }
+        ptr[i].pDstOffset = nullptr;
+        if (src[start_index + i].pDstOffset) {
+            ptr[i].pDstOffset = CopyArray(src[start_index + i].pDstOffset, 0U, src[start_index + i].dimensionCount);
+        }
+        ptr[i].pExtent = nullptr;
+        if (src[start_index + i].pExtent) {
+            ptr[i].pExtent = CopyArray(src[start_index + i].pExtent, 0U, src[start_index + i].dimensionCount);
+        }
+    }
+    return ptr;
+}
+
+template <>
+VkCopyTensorInfoARM* CommandRecorder::CopyArray<VkCopyTensorInfoARM>(const VkCopyTensorInfoARM* src, size_t start_index,
+                                                                     size_t count) {
+    auto ptr = reinterpret_cast<VkCopyTensorInfoARM*>(m_allocator.Alloc(sizeof(VkCopyTensorInfoARM) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].srcTensor = src[start_index + i].srcTensor;
+        ptr[i].dstTensor = src[start_index + i].dstTensor;
+        ptr[i].regionCount = src[start_index + i].regionCount;
+        ptr[i].pRegions = nullptr;
+        if (src[start_index + i].pRegions) {
+            ptr[i].pRegions = CopyArray(src[start_index + i].pRegions, 0U, src[start_index + i].regionCount);
+        }
+    }
+    return ptr;
+}
+
+template <>
 VkOpticalFlowExecuteInfoNV* CommandRecorder::CopyArray<VkOpticalFlowExecuteInfoNV>(
     const VkOpticalFlowExecuteInfoNV* src, size_t start_index, size_t count) {
     auto ptr =
@@ -2083,6 +2148,19 @@ VkConvertCooperativeVectorMatrixInfoNV* CommandRecorder::CopyArray<VkConvertCoop
         ptr[i].srcStride = src[start_index + i].srcStride;
         ptr[i].dstLayout = src[start_index + i].dstLayout;
         ptr[i].dstStride = src[start_index + i].dstStride;
+    }
+    return ptr;
+}
+
+template <>
+VkDataGraphPipelineDispatchInfoARM* CommandRecorder::CopyArray<VkDataGraphPipelineDispatchInfoARM>(
+    const VkDataGraphPipelineDispatchInfoARM* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkDataGraphPipelineDispatchInfoARM*>(
+        m_allocator.Alloc(sizeof(VkDataGraphPipelineDispatchInfoARM) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].flags = src[start_index + i].flags;
     }
     return ptr;
 }
@@ -4579,9 +4657,13 @@ CmdCudaLaunchKernelNVArgs* CommandRecorder::RecordCmdCudaLaunchKernelNV(VkComman
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-CmdDispatchTileQCOMArgs* CommandRecorder::RecordCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+CmdDispatchTileQCOMArgs* CommandRecorder::RecordCmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
+                                                                    const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
     auto* args = Alloc<CmdDispatchTileQCOMArgs>();
     args->commandBuffer = commandBuffer;
+    if (pDispatchTileInfo) {
+        args->pDispatchTileInfo = CopyArray(pDispatchTileInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
     return args;
 }
 
@@ -5202,6 +5284,16 @@ CmdSetCoverageReductionModeNVArgs* CommandRecorder::RecordCmdSetCoverageReductio
     return args;
 }
 
+CmdCopyTensorARMArgs* CommandRecorder::RecordCmdCopyTensorARM(VkCommandBuffer commandBuffer,
+                                                              const VkCopyTensorInfoARM* pCopyTensorInfo) {
+    auto* args = Alloc<CmdCopyTensorARMArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pCopyTensorInfo) {
+        args->pCopyTensorInfo = CopyArray(pCopyTensorInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
 CmdOpticalFlowExecuteNVArgs* CommandRecorder::RecordCmdOpticalFlowExecuteNV(
     VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session, const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
     auto* args = Alloc<CmdOpticalFlowExecuteNVArgs>();
@@ -5246,6 +5338,18 @@ CmdConvertCooperativeVectorMatrixNVArgs* CommandRecorder::RecordCmdConvertCooper
     args->infoCount = infoCount;
     if (pInfos) {
         args->pInfos = CopyArray(pInfos, static_cast<size_t>(0U), static_cast<size_t>(infoCount));
+    }
+    return args;
+}
+
+CmdDispatchDataGraphARMArgs* CommandRecorder::RecordCmdDispatchDataGraphARM(
+    VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+    const VkDataGraphPipelineDispatchInfoARM* pInfo) {
+    auto* args = Alloc<CmdDispatchDataGraphARMArgs>();
+    args->commandBuffer = commandBuffer;
+    args->session = session;
+    if (pInfo) {
+        args->pInfo = CopyArray(pInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }

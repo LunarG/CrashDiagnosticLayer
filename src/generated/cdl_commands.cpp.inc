@@ -2176,13 +2176,13 @@ void Context::PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkC
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-void Context::PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+void Context::PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdDispatchTileQCOM(commandBuffer);
+    p_cmd->PreCmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
 }
-void Context::PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+void Context::PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdDispatchTileQCOM(commandBuffer);
+    p_cmd->PostCmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
 }
 
 void Context::PreCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
@@ -2835,6 +2835,15 @@ void Context::PostCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
     p_cmd->PostCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
 
+void Context::PreCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
+}
+void Context::PostCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
+}
+
 void Context::PreCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
                                          const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
@@ -2877,6 +2886,17 @@ void Context::PostCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuf
                                                       const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+}
+
+void Context::PreCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                         const VkDataGraphPipelineDispatchInfoARM* pInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
+}
+void Context::PostCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                          const VkDataGraphPipelineDispatchInfoARM* pInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
 }
 
 void Context::PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
