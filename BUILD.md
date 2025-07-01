@@ -61,7 +61,7 @@ The source can be generated using CMake by building the following target:
 
 ```bash
 cmake -S . -B build -D CDL_CODEGEN=ON -D CMAKE_BUILD_TYPE=Debug
-cmake --build build --target CDL_codegen
+cmake --build build --target cdl_codegen
 ```
 
 **NOTE:** This is only necessary when the Vulkan or SPIR-V header repo
