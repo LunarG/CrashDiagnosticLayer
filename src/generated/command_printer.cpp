@@ -3130,7 +3130,15 @@ void CommandPrinter::PrintCmdCudaLaunchKernelNVArgs(YAML::Emitter &os, const Cmd
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-void CommandPrinter::PrintCmdDispatchTileQCOMArgs(YAML::Emitter &os, const CmdDispatchTileQCOMArgs &args) {}
+void CommandPrinter::PrintCmdDispatchTileQCOMArgs(YAML::Emitter &os, const CmdDispatchTileQCOMArgs &args) {
+    os << YAML::Key << "pDispatchTileInfo";
+    // pointer
+    if (args.pDispatchTileInfo != nullptr) {
+        os << YAML::Value << *args.pDispatchTileInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
 
 void CommandPrinter::PrintCmdBeginPerTileExecutionQCOMArgs(YAML::Emitter &os,
                                                            const CmdBeginPerTileExecutionQCOMArgs &args) {
@@ -3951,6 +3959,16 @@ void CommandPrinter::PrintCmdSetCoverageReductionModeNVArgs(YAML::Emitter &os,
     os << YAML::Value << args.coverageReductionMode;
 }
 
+void CommandPrinter::PrintCmdCopyTensorARMArgs(YAML::Emitter &os, const CmdCopyTensorARMArgs &args) {
+    os << YAML::Key << "pCopyTensorInfo";
+    // pointer
+    if (args.pCopyTensorInfo != nullptr) {
+        os << YAML::Value << *args.pCopyTensorInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdOpticalFlowExecuteNVArgs(YAML::Emitter &os, const CmdOpticalFlowExecuteNVArgs &args) {
     os << YAML::Key << "session";
     // session -> Field -> VkOpticalFlowSessionNV
@@ -4032,6 +4050,19 @@ void CommandPrinter::PrintCmdConvertCooperativeVectorMatrixNVArgs(YAML::Emitter 
             }  // for i
             os << YAML::EndSeq;
         }
+    }
+}
+
+void CommandPrinter::PrintCmdDispatchDataGraphARMArgs(YAML::Emitter &os, const CmdDispatchDataGraphARMArgs &args) {
+    os << YAML::Key << "session";
+    // session -> Field -> VkDataGraphPipelineSessionARM
+    os << YAML::Value << args.session;
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
     }
 }
 
@@ -6206,6 +6237,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+        case Command::Type::kCmdCopyTensorARM:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyTensorARMArgs *>(cmd.parameters);
+                PrintCmdCopyTensorARMArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdOpticalFlowExecuteNV:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdOpticalFlowExecuteNVArgs *>(cmd.parameters);
@@ -6231,6 +6269,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdConvertCooperativeVectorMatrixNVArgs *>(cmd.parameters);
                 PrintCmdConvertCooperativeVectorMatrixNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDispatchDataGraphARM:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchDataGraphARMArgs *>(cmd.parameters);
+                PrintCmdDispatchDataGraphARMArgs(os, *args);
             }
             break;
 
