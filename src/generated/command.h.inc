@@ -865,8 +865,8 @@ void PreCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchI
 void PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-void PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer);
-void PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer);
+void PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo);
+void PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo);
 
 void PreCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo);
 void PostCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo);
@@ -1116,6 +1116,9 @@ void PostCmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer commandBuffer,
 void PreCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode);
 void PostCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode);
 
+void PreCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo);
+void PostCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo);
+
 void PreCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
                                 const VkOpticalFlowExecuteInfoNV* pExecuteInfo);
 void PostCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
@@ -1135,6 +1138,11 @@ void PreCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint3
                                             const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
 void PostCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                              const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
+
+void PreCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                const VkDataGraphPipelineDispatchInfoARM* pInfo);
+void PostCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                 const VkDataGraphPipelineDispatchInfoARM* pInfo);
 
 void PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
 void PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
