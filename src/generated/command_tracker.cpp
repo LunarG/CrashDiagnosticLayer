@@ -2035,12 +2035,13 @@ void CommandTracker::CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const 
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-void CommandTracker::CmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+void CommandTracker::CmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
+                                         const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdDispatchTileQCOM;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdDispatchTileQCOM(commandBuffer);
+    cmd.parameters = recorder_.RecordCmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
     commands_.push_back(cmd);
 }
 
@@ -2656,6 +2657,15 @@ void CommandTracker::CmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyTensorARM;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
                                              const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
     Command cmd{};
@@ -2693,6 +2703,16 @@ void CommandTracker::CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer command
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                             const VkDataGraphPipelineDispatchInfoARM* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDispatchDataGraphARM;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
     commands_.push_back(cmd);
 }
 
