@@ -570,7 +570,7 @@ class CommandTracker {
     void CmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-    void CmdDispatchTileQCOM(VkCommandBuffer commandBuffer);
+    void CmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo);
 
     void CmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo);
 
@@ -727,6 +727,8 @@ class CommandTracker {
 
     void CmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode);
 
+    void CmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo);
+
     void CmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
                                  const VkOpticalFlowExecuteInfoNV* pExecuteInfo);
 
@@ -738,6 +740,9 @@ class CommandTracker {
 
     void CmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                              const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
+
+    void CmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                 const VkDataGraphPipelineDispatchInfoARM* pInfo);
 
     void CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);
 

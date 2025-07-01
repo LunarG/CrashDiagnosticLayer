@@ -302,10 +302,12 @@ struct Command {
         kCmdSetShadingRateImageEnableNV,
         kCmdSetRepresentativeFragmentTestEnableNV,
         kCmdSetCoverageReductionModeNV,
+        kCmdCopyTensorARM,
         kCmdOpticalFlowExecuteNV,
         kCmdBindShadersEXT,
         kCmdSetDepthClampRangeEXT,
         kCmdConvertCooperativeVectorMatrixNV,
+        kCmdDispatchDataGraphARM,
         kCmdSetAttachmentFeedbackLoopEnableEXT,
         kCmdBindTileMemoryQCOM,
         kCmdBuildClusterAccelerationStructureIndirectNV,
@@ -1615,6 +1617,7 @@ struct CmdCudaLaunchKernelNVArgs {
 
 struct CmdDispatchTileQCOMArgs {
     VkCommandBuffer commandBuffer;
+    const VkDispatchTileInfoQCOM* pDispatchTileInfo;
 };
 
 struct CmdBeginPerTileExecutionQCOMArgs {
@@ -1970,6 +1973,11 @@ struct CmdSetCoverageReductionModeNVArgs {
     VkCoverageReductionModeNV coverageReductionMode;
 };
 
+struct CmdCopyTensorARMArgs {
+    VkCommandBuffer commandBuffer;
+    const VkCopyTensorInfoARM* pCopyTensorInfo;
+};
+
 struct CmdOpticalFlowExecuteNVArgs {
     VkCommandBuffer commandBuffer;
     VkOpticalFlowSessionNV session;
@@ -1993,6 +2001,12 @@ struct CmdConvertCooperativeVectorMatrixNVArgs {
     VkCommandBuffer commandBuffer;
     uint32_t infoCount;
     const VkConvertCooperativeVectorMatrixInfoNV* pInfos;
+};
+
+struct CmdDispatchDataGraphARMArgs {
+    VkCommandBuffer commandBuffer;
+    VkDataGraphPipelineSessionARM session;
+    const VkDataGraphPipelineDispatchInfoARM* pInfo;
 };
 
 struct CmdSetAttachmentFeedbackLoopEnableEXTArgs {

@@ -422,6 +422,22 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapEXT &a) {
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorARM &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorViewARM &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowSessionNV &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
@@ -431,6 +447,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowSessionNV &a) {
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderEXT &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSessionARM &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
 }
@@ -789,6 +813,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiKHR
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDefaultVertexAttributeValueKHR &t) {
+    os << string_VkDefaultVertexAttributeValueKHR(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportObjectTypeEXT &t) {
     os << string_VkDebugReportObjectTypeEXT(t);
     return os;
@@ -1053,6 +1082,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDirectDriverLoadingModeLUNA
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorTilingARM &t) {
+    os << string_VkTensorTilingARM(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowPerformanceLevelNV &t) {
     os << string_VkOpticalFlowPerformanceLevelNV(t);
     return os;
@@ -1105,6 +1139,31 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkLatencyMarkerNV &t) {
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkOutOfBandQueueTypeNV &t) {
     os << string_VkOutOfBandQueueTypeNV(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSessionBindPointARM &t) {
+    os << string_VkDataGraphPipelineSessionBindPointARM(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSessionBindPointTypeARM &t) {
+    os << string_VkDataGraphPipelineSessionBindPointTypeARM(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelinePropertyARM &t) {
+    os << string_VkDataGraphPipelinePropertyARM(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphProcessingEngineTypeARM &t) {
+    os << string_VkPhysicalDeviceDataGraphProcessingEngineTypeARM(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphOperationTypeARM &t) {
+    os << string_VkPhysicalDeviceDataGraphOperationTypeARM(t);
     return os;
 }
 

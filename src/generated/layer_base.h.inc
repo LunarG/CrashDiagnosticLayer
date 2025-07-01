@@ -1462,9 +1462,9 @@ virtual void PreCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCud
 virtual void PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-virtual void PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {}
+virtual void PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo) {}
 
-virtual void PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {}
+virtual void PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo) {}
 
 virtual void PreCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
                                              const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {}
@@ -1804,6 +1804,10 @@ virtual void PreCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
 virtual void PostCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
                                                VkCoverageReductionModeNV coverageReductionMode) {}
 
+virtual void PreCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {}
+
+virtual void PostCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {}
+
 virtual void PreCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
                                         const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {}
 
@@ -1827,6 +1831,12 @@ virtual void PreCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffe
 
 virtual void PostCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                                      const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {}
+
+virtual void PreCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                        const VkDataGraphPipelineDispatchInfoARM* pInfo) {}
+
+virtual void PostCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                         const VkDataGraphPipelineDispatchInfoARM* pInfo) {}
 
 virtual void PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {}
 

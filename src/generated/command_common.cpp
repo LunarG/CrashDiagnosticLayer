@@ -553,6 +553,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdSetRepresentativeFragmentTestEnableNV";
         case Command::Type::kCmdSetCoverageReductionModeNV:
             return "vkCmdSetCoverageReductionModeNV";
+        case Command::Type::kCmdCopyTensorARM:
+            return "vkCmdCopyTensorARM";
         case Command::Type::kCmdOpticalFlowExecuteNV:
             return "vkCmdOpticalFlowExecuteNV";
         case Command::Type::kCmdBindShadersEXT:
@@ -561,6 +563,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdSetDepthClampRangeEXT";
         case Command::Type::kCmdConvertCooperativeVectorMatrixNV:
             return "vkCmdConvertCooperativeVectorMatrixNV";
+        case Command::Type::kCmdDispatchDataGraphARM:
+            return "vkCmdDispatchDataGraphARM";
         case Command::Type::kCmdSetAttachmentFeedbackLoopEnableEXT:
             return "vkCmdSetAttachmentFeedbackLoopEnableEXT";
         case Command::Type::kCmdBindTileMemoryQCOM:

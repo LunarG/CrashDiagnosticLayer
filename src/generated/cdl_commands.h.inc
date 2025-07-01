@@ -951,8 +951,8 @@ void PreCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchI
 void PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) override;
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-void PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) override;
-void PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) override;
+void PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo) override;
+void PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo) override;
 
 void PreCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer,
                                      const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) override;
@@ -1220,6 +1220,9 @@ void PreCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
 void PostCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer,
                                        VkCoverageReductionModeNV coverageReductionMode) override;
 
+void PreCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) override;
+void PostCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) override;
+
 void PreCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
                                 const VkOpticalFlowExecuteInfoNV* pExecuteInfo) override;
 void PostCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
@@ -1239,6 +1242,11 @@ void PreCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint3
                                             const VkConvertCooperativeVectorMatrixInfoNV* pInfos) override;
 void PostCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                              const VkConvertCooperativeVectorMatrixInfoNV* pInfos) override;
+
+void PreCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                const VkDataGraphPipelineDispatchInfoARM* pInfo) override;
+void PostCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                 const VkDataGraphPipelineDispatchInfoARM* pInfo) override;
 
 void PreCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) override;
 void PostCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) override;

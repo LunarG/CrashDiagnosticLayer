@@ -116,10 +116,16 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
 #endif  // VK_USE_PLATFORM_FUCHSIA
         case VK_OBJECT_TYPE_MICROMAP_EXT:
             return "VkMicromapEXT";
+        case VK_OBJECT_TYPE_TENSOR_ARM:
+            return "VkTensorARM";
+        case VK_OBJECT_TYPE_TENSOR_VIEW_ARM:
+            return "VkTensorViewARM";
         case VK_OBJECT_TYPE_OPTICAL_FLOW_SESSION_NV:
             return "VkOpticalFlowSessionNV";
         case VK_OBJECT_TYPE_SHADER_EXT:
             return "VkShaderEXT";
+        case VK_OBJECT_TYPE_DATA_GRAPH_PIPELINE_SESSION_ARM:
+            return "VkDataGraphPipelineSessionARM";
         case VK_OBJECT_TYPE_EXTERNAL_COMPUTE_QUEUE_NV:
             return "VkExternalComputeQueueNV";
         case VK_OBJECT_TYPE_INDIRECT_EXECUTION_SET_EXT:

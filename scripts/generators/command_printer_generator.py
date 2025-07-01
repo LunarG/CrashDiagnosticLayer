@@ -127,6 +127,7 @@ class CommandPrinter {
         out.append('os << YAML::EndSeq;\n')
 
     def printMember(self, out, member, prefix, is_pointer):
+        # TODO: we should just blindly exclude everything that starts with StdVideo...
         no_deref_structs = (
                 'xcb_connection_t',
                 'Display',
@@ -158,6 +159,7 @@ class CommandPrinter {
                 'StdVideoEncodeAV1OperatingPointInfo',
                 'StdVideoEncodeAV1PictureInfo',
                 'StdVideoEncodeAV1ReferenceInfo',
+                'StdVideoDecodeVP9PictureInfo',
             )
         out.append(f'    os << YAML::Key <<  "{member.name}";\n')
         if is_pointer:

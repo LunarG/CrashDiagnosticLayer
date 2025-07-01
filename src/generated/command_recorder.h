@@ -706,7 +706,8 @@ class CommandRecorder {
                                                            const VkCudaLaunchInfoNV* pLaunchInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-    CmdDispatchTileQCOMArgs* RecordCmdDispatchTileQCOM(VkCommandBuffer commandBuffer);
+    CmdDispatchTileQCOMArgs* RecordCmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
+                                                       const VkDispatchTileInfoQCOM* pDispatchTileInfo);
 
     CmdBeginPerTileExecutionQCOMArgs* RecordCmdBeginPerTileExecutionQCOM(
         VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo);
@@ -903,6 +904,9 @@ class CommandRecorder {
     CmdSetCoverageReductionModeNVArgs* RecordCmdSetCoverageReductionModeNV(
         VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode);
 
+    CmdCopyTensorARMArgs* RecordCmdCopyTensorARM(VkCommandBuffer commandBuffer,
+                                                 const VkCopyTensorInfoARM* pCopyTensorInfo);
+
     CmdOpticalFlowExecuteNVArgs* RecordCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer,
                                                                VkOpticalFlowSessionNV session,
                                                                const VkOpticalFlowExecuteInfoNV* pExecuteInfo);
@@ -916,6 +920,10 @@ class CommandRecorder {
 
     CmdConvertCooperativeVectorMatrixNVArgs* RecordCmdConvertCooperativeVectorMatrixNV(
         VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
+
+    CmdDispatchDataGraphARMArgs* RecordCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer,
+                                                               VkDataGraphPipelineSessionARM session,
+                                                               const VkDataGraphPipelineDispatchInfoARM* pInfo);
 
     CmdSetAttachmentFeedbackLoopEnableEXTArgs* RecordCmdSetAttachmentFeedbackLoopEnableEXT(
         VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask);

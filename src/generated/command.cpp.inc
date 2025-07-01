@@ -1984,11 +1984,13 @@ void CommandBuffer::PostCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, con
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-void CommandBuffer::PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
-    tracker_.CmdDispatchTileQCOM(commandBuffer);
+void CommandBuffer::PreCmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
+                                           const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
+    tracker_.CmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
-void CommandBuffer::PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+void CommandBuffer::PostCmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
+                                            const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
@@ -2594,6 +2596,14 @@ void CommandBuffer::PostCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuf
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {
+    tracker_.CmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session,
                                                const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
     tracker_.CmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
@@ -2631,6 +2641,16 @@ void CommandBuffer::PreCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer comma
 }
 void CommandBuffer::PostCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                                             const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                               const VkDataGraphPipelineDispatchInfoARM* pInfo) {
+    tracker_.CmdDispatchDataGraphARM(commandBuffer, session, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session,
+                                                const VkDataGraphPipelineDispatchInfoARM* pInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
