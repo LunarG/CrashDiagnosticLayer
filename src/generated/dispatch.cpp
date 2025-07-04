@@ -672,6 +672,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->GetPipelineBinaryDataKHR = (PFN_vkGetPipelineBinaryDataKHR)pa(device, "vkGetPipelineBinaryDataKHR");
     dt->ReleaseCapturedPipelineDataKHR =
         (PFN_vkReleaseCapturedPipelineDataKHR)pa(device, "vkReleaseCapturedPipelineDataKHR");
+    dt->ReleaseSwapchainImagesKHR = (PFN_vkReleaseSwapchainImagesKHR)pa(device, "vkReleaseSwapchainImagesKHR");
     dt->CmdSetLineStippleKHR = (PFN_vkCmdSetLineStippleKHR)pa(device, "vkCmdSetLineStippleKHR");
     dt->GetCalibratedTimestampsKHR = (PFN_vkGetCalibratedTimestampsKHR)pa(device, "vkGetCalibratedTimestampsKHR");
     dt->CmdBindDescriptorSets2KHR = (PFN_vkCmdBindDescriptorSets2KHR)pa(device, "vkCmdBindDescriptorSets2KHR");
