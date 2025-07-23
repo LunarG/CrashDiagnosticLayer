@@ -3297,16 +3297,17 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdCudaLaunchKernelNV(VkCommandBuffer
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchTileQCOM(VkCommandBuffer commandBuffer) {
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchTileQCOM(VkCommandBuffer commandBuffer,
+                                                               const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdDispatchTileQCOM(commandBuffer);
+    layer_data->interceptor->PreCmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
 
     PFN_vkCmdDispatchTileQCOM pfn = layer_data->dispatch_table.CmdDispatchTileQCOM;
     if (pfn != nullptr) {
-        pfn(commandBuffer);
+        pfn(commandBuffer, pDispatchTileInfo);
     }
 
-    layer_data->interceptor->PostCmdDispatchTileQCOM(commandBuffer);
+    layer_data->interceptor->PostCmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL
@@ -4150,6 +4151,19 @@ InterceptCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer, VkCoverage
     layer_data->interceptor->PostCmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyTensorARM(VkCommandBuffer commandBuffer,
+                                                            const VkCopyTensorInfoARM* pCopyTensorInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
+
+    PFN_vkCmdCopyTensorARM pfn = layer_data->dispatch_table.CmdCopyTensorARM;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pCopyTensorInfo);
+    }
+
+    layer_data->interceptor->PostCmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
+}
+
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer,
                                                                    VkOpticalFlowSessionNV session,
                                                                    const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
@@ -4203,6 +4217,20 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdConvertCooperativeVectorMatrixNV(
     }
 
     layer_data->interceptor->PostCmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer,
+                                                                   VkDataGraphPipelineSessionARM session,
+                                                                   const VkDataGraphPipelineDispatchInfoARM* pInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
+
+    PFN_vkCmdDispatchDataGraphARM pfn = layer_data->dispatch_table.CmdDispatchDataGraphARM;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, session, pInfo);
+    }
+
+    layer_data->interceptor->PostCmdDispatchDataGraphARM(commandBuffer, session, pInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
@@ -4827,10 +4855,12 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdSetRepresentativeFragmentTestEnableNV",
          {kFuncTypeDev, (void*)InterceptCmdSetRepresentativeFragmentTestEnableNV}},
         {"vkCmdSetCoverageReductionModeNV", {kFuncTypeDev, (void*)InterceptCmdSetCoverageReductionModeNV}},
+        {"vkCmdCopyTensorARM", {kFuncTypeDev, (void*)InterceptCmdCopyTensorARM}},
         {"vkCmdOpticalFlowExecuteNV", {kFuncTypeDev, (void*)InterceptCmdOpticalFlowExecuteNV}},
         {"vkCmdBindShadersEXT", {kFuncTypeDev, (void*)InterceptCmdBindShadersEXT}},
         {"vkCmdSetDepthClampRangeEXT", {kFuncTypeDev, (void*)InterceptCmdSetDepthClampRangeEXT}},
         {"vkCmdConvertCooperativeVectorMatrixNV", {kFuncTypeDev, (void*)InterceptCmdConvertCooperativeVectorMatrixNV}},
+        {"vkCmdDispatchDataGraphARM", {kFuncTypeDev, (void*)InterceptCmdDispatchDataGraphARM}},
         {"vkCmdSetAttachmentFeedbackLoopEnableEXT",
          {kFuncTypeDev, (void*)InterceptCmdSetAttachmentFeedbackLoopEnableEXT}},
         {"vkCmdBindTileMemoryQCOM", {kFuncTypeDev, (void*)InterceptCmdBindTileMemoryQCOM}},
