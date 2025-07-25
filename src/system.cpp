@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023-2024 LunarG, Inc.
+ Copyright (c) 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ std::string System::GetOutputBasePath() {
     std::ifstream cmdline("/proc/self/cmdline");
     std::string app_name;
     cmdline >> app_name;
+    app_name.erase(std::find(app_name.begin(), app_name.end(), '\0'), app_name.end());
     std::string result = "/sdcard/data/Android/";
     result += app_name;
     return result;
