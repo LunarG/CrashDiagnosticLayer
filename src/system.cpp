@@ -121,6 +121,12 @@ bool System::QueryInfoPosix() {
     {
         os_name_ = "Android";
         os_version_ = GetProperty("ro.product.build.version.release");
+        if (os_version_.empty()) {
+            os_version_ = GetProperty("ro.build.version.release");
+            if (os_version_.empty()) {
+                os_version_ = GetProperty("ro.vendor.build.version.release");
+            }
+        }
 
         std::string sdk_version = GetProperty("ro.product.build.version.sdk");
         if (!sdk_version.empty()) {
