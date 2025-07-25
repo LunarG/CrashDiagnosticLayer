@@ -210,16 +210,18 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
     settings_.emplace(layer_setting_set, logger_);
 
     // output path
+    std::filesystem::path default_output_path = System::GetOutputBasePath();
+    default_output_path /= "cdl";
     {
         if (!settings_->output_path.empty()) {
             output_path_ = settings_->output_path;
         } else {
-            output_path_ = System::GetOutputBasePath();
-            output_path_ /= "cdl";
+            output_path_ = default_output_path;
         }
 
         base_output_path_ = output_path_;
         output_path_ /= start_time_str;
+        default_output_path /= start_time_str;
     }
     // logging
     {
@@ -271,6 +273,20 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
                         path = output_path_ / log_file;
                     }
                 }
+
+                if (path.has_parent_path()) {
+                    try {
+                        // On Windows, if the path include an invalid drive, then filesystem crash...
+                        // We need to use an exception to capture this problem
+                        std::filesystem::create_directories(path.parent_path());
+                    } catch (std::exception& e) {
+                        std::cerr << "Failed to open log file: " << path << " - " << e.what() << std::endl;
+                        // We fallback using the default path
+                        output_path_ = default_output_path;
+                        path = default_output_path / log_file;
+                    }
+                }
+
                 logger_.OpenLogFile(path);
             }
         }

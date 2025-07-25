@@ -1,5 +1,5 @@
 /*
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -132,9 +132,7 @@ bool Logger::OpenLogFile(const std::filesystem::path& path) {
     CloseLogFile();
 
     std::lock_guard<std::mutex> lock(file_access_mutex_);
-    if (path.has_parent_path()) {
-        std::filesystem::create_directories(path.parent_path());
-    }
+
     log_file_.open(path, std::ios::ate);
     if (!log_file_.is_open()) {
         std::cerr << "Failed to open log file: " << path << std::endl;
