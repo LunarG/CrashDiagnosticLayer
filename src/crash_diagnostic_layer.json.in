@@ -270,16 +270,16 @@
                             "key": "sync_after_commands",
                             "env": "CDL_SYNC_AFTER_COMMANDS",
                             "label": "Synchronize commands",
-                            "description": "Add pipeline barriers after instrumented commands to help identify whether a Vulkan crash is due to a synchronization issue. This feature doesn't support Vulkan application using Vulkan RenderPass and show remain disabled in this scenario.'",
+                            "description": "Add pipeline barriers after instrumented commands to help identify whether a Vulkan crash is due to a synchronization issue. This feature doesn't support Vulkan application using Vulkan RenderPass and shall remain disabled in this scenario.'",
                             "type": "BOOL",
                             "default": false,
                             "status": "STABLE",
                             "messages": [
                                 {
                                     "key": "sync_after_commands_msg0",
-                                    "title": "'Synchronize commands' is imcompatible with Vulkan RenderPass",
+                                    "title": "'Synchronize commands' is incompatible with Vulkan RenderPass",
                                     "version": 1,
-                                    "description": "'Synchronize commands' add pipeline barriers after instrumented commands. This feature is not supported for Vulkan application using Vulkan RenderPass which would generate Walidation layer errors.",
+                                    "description": "'Synchronize commands' add pipeline barriers after instrumented commands. This feature is not supported for Vulkan application using Vulkan RenderPass which would generate Validation layer errors.",
                                     "informative": "Are you sure you want to enable 'Synchronize commands'?",
                                     "severity": "WARNING",
                                     "conditions": [
