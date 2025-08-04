@@ -77,13 +77,7 @@
                             "label": "Output Path",
                             "description": "The directory where dump files and shader binaries are written.",
                             "type": "STRING",
-                            "default": "",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ]
+                            "default": ""
                         },
                         {
                             "key": "dump_queue_submits",
@@ -92,12 +86,6 @@
                             "description": "Control which queue submissions are included in the dump.",
                             "type": "ENUM",
                             "default": "running",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ],
                             "flags": [
                                 {
                                     "key": "running",
@@ -118,12 +106,6 @@
                             "description": "Control which command buffers are included in the dump.",
                             "type": "ENUM",
                             "default": "running",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ],
                             "flags": [
                                 {
                                     "key": "running",
@@ -149,12 +131,6 @@
                             "description": "Control which commands are included in the dump.",
                             "type": "ENUM",
                             "default": "running",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ],
                             "flags": [
                                 {
                                     "key": "running",
@@ -180,12 +156,6 @@
                             "description": "Control of shader dumping.",
                             "type": "ENUM",
                             "default": "off",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ],
                             "flags": [
                                 {
                                     "key": "off",
@@ -242,18 +212,11 @@
                                 {
                                     "key": "verbose",
                                     "label": "Verbose",
-                                    "description": "For layer development. Report messages for debugging layer behavior.",
-                                    "view": "ADVANCED"
+                                    "description": "For layer development. Report messages for debugging layer behavior."
                                 }
                             ],
                             "default": [
                                 "error"
-                            ],
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
                             ]
                         },
                         {
@@ -275,13 +238,7 @@
                             "label": "Enable Tracing",
                             "description": "All Vulkan API calls intercepted by the layer will be logged to the console.",
                             "type": "BOOL",
-                            "default": false,
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ]
+                            "default": false
                         },
                         {
                             "key": "trace_all_semaphores",
@@ -289,13 +246,7 @@
                             "label": "Enable semaphore log tracing.",
                             "description": "Semaphore events will be logged to console.",
                             "type": "BOOL",
-                            "default": false,
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ]
+                            "default": false
                         }
                     ]
                 },
@@ -304,21 +255,64 @@
                     "label": "State Tracking",
                     "description": "Control of state tracking.",
                     "type": "GROUP",
+                    "platforms": [
+                        "WINDOWS",
+                        "LINUX",
+                        "MACOS",
+                        "ANDROID"
+                    ],
                     "expanded": false,
                     "settings": [
                         {
                             "key": "sync_after_commands",
                             "env": "CDL_SYNC_AFTER_COMMANDS",
                             "label": "Synchronize commands",
-                            "description": "Add pipeline barriers after instrumented commands.",
+                            "description": "Add pipeline barriers after instrumented commands to help identify whether a Vulkan crash is due to a synchronization issue. This feature doesn't support Vulkan application using Vulkan RenderPass and show remain disabled in this scenario.'",
                             "type": "BOOL",
                             "default": false,
                             "status": "STABLE",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
+                            "messages": [
+                                {
+                                    "key": "sync_after_commands_msg0",
+                                    "title": "'Synchronize commands' is imcompatible with Vulkan RenderPass",
+                                    "version": 1,
+                                    "description": "'Synchronize commands' add pipeline barriers after instrumented commands. This feature is not supported for Vulkan application using Vulkan RenderPass which would generate Walidation layer errors.",
+                                    "informative": "Are you sure you want to enable 'Synchronize commands'?",
+                                    "severity": "WARNING",
+                                    "conditions": [
+                                        {
+                                            "setting": {
+                                                "key": "sync_after_commands",
+                                                "value": true
+                                            }
+                                        }
+                                    ],
+                                    "actions": {
+                                        "default": "BUTTON0",
+                                        "BUTTON0": {
+                                            "type": "OK",
+                                            "changes": [
+                                                {
+                                                    "setting": {
+                                                        "key": "sync_after_commands",
+                                                        "value": true
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "BUTTON1": {
+                                            "type": "CANCEL",
+                                            "changes": [
+                                                {
+                                                    "setting": {
+                                                        "key": "sync_after_commands",
+                                                        "value": false
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
                             ]
                         },
                         {
@@ -327,13 +321,7 @@
                             "label": "Instrument all commands",
                             "description": "All commands will be instrumented.",
                             "type": "BOOL",
-                            "default": false,
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ]
+                            "default": false
                         },
                         {
                             "key": "track_semaphores",
@@ -341,13 +329,7 @@
                             "label": "Track semaphores",
                             "description": "Enable semaphore tracking.",
                             "type": "BOOL",
-                            "default": true,
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS",
-                                "ANDROID"
-                            ]
+                            "default": true
                         }
                     ]
                 }
