@@ -145,6 +145,35 @@ jobs:
       - name: Build
         run: python3 scripts/tests.py --build --config debug --cmake='-DUPDATE_DEPS_SKIP_EXISTING_INSTALL=ON'
 
+  windows-arm:
+    needs: check_cdl
+    runs-on: windows-11-arm
+    strategy:
+      matrix:
+        arch: [ arm64 ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+      - name: Cache known_good.json installations
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            build-ci/external/glslang/build/install
+            build-ci/external/googletest/build/install
+            build-ci/external/yaml-cpp/build/install
+            build-ci/external/SPIRV-Headers/build/install
+            build-ci/external/Vulkan-Headers/build/install
+            build-ci/external/Vulkan-Utility-Libraries/build/install
+          key: windows-dependencies-${{ matrix.arch }}-${{ hashfiles('scripts/known_good.json') }}
+      - name: Build
+        run: python3 scripts/tests.py --build --config debug --cmake='-DUPDATE_DEPS_SKIP_EXISTING_INSTALL=ON'
+      - name: Test
+        run: python scripts/tests.py --test
+
   check_cdl:
     needs: code-format
     runs-on: ubuntu-latest
