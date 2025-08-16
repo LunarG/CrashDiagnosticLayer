@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2017 The Glslang Authors. All rights reserved.
-# Copyright (c) 2018-2023 Valve Corporation
-# Copyright (c) 2018-2023 LunarG, Inc.
+# Copyright (c) 2018-2025 Valve Corporation
+# Copyright (c) 2018-2025 LunarG, Inc.
 # Copyright (c) 2023-2023 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -141,8 +141,6 @@ to the "top" directory.
 
 The commit used to checkout the repository.  This can be a SHA-1
 object name or a refname used with the remote name "origin".
-For example, this field can be set to "origin/sdk-1.1.77" to
-select the end of the sdk-1.1.77 branch.
 
 - deps (optional)
 
@@ -220,8 +218,15 @@ Legal options include:
 "windows"
 "linux"
 "darwin"
+"android"
 
 Builds on all platforms by default.
+
+- repo_binaries_url (optional)
+
+URL to a GitHub releases page for downloading precompiled binaries.
+If this field is present, the dependency will be downloaded as a binary
+instead of being built from source.
 
 Note
 ----
@@ -235,6 +240,7 @@ option can be a relative or absolute path.
 
 import argparse
 import json
+import os
 import os.path
 import subprocess
 import sys
@@ -244,6 +250,9 @@ import shlex
 import shutil
 import stat
 import time
+import urllib.request
+import zipfile
+import struct
 
 KNOWN_GOOD_FILE_NAME = 'known_good.json'
 
@@ -254,7 +263,8 @@ CONFIG_MAP = {
     'minsizerel': 'MinSizeRel'
 }
 
-VERBOSE = False
+# NOTE: CMake also uses the VERBOSE environment variable. This is intentional.
+VERBOSE = os.getenv("VERBOSE")
 
 DEVNULL = open(os.devnull, 'wb')
 
@@ -273,25 +283,47 @@ def make_or_exist_dirs(path):
     if not os.path.isdir(path):
         os.makedirs(path)
 
-def command_output(cmd, directory, fail_ok=False):
-    """Runs a command in a directory and returns its standard output stream.
-
-    Captures the standard error stream and prints it if error.
-
-    Raises a RuntimeError if the command fails to launch or otherwise fails.
-    """
+def command_output(cmd, directory):
+    # Runs a command in a directory and returns its standard output stream.
+    # Captures the standard error stream and prints it an error occurs.
+    # Raises a RuntimeError if the command fails to launch or otherwise fails.
     if VERBOSE:
         print('In {d}: {cmd}'.format(d=directory, cmd=cmd))
-    p = subprocess.Popen(
-        cmd, cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (stdout, stderr) = p.communicate()
-    if p.returncode != 0:
-        print('*** Error ***\nstderr contents:\n{}'.format(stderr))
-        if not fail_ok:
-            raise RuntimeError('Failed to run {} in {}'.format(cmd, directory))
+
+    # errors='replace' affects only how the text output is decoded, and indicates that
+    # 8-bit characters that aren't recognized by the UTF decoder will be replaced with
+    # an "unknown character" glyph instead of crashing.
+    result = subprocess.run(cmd, cwd=directory, capture_output=True, text=True, errors='replace')
+
+    if result.returncode != 0:
+        print(f'{result.stderr}', file=sys.stderr)
+        raise RuntimeError(f'Failed to run {cmd} in {directory}')
+
     if VERBOSE:
-        print(stdout)
-    return stdout
+        print(result.stdout)
+    return result.stdout
+
+def run_cmake_command(cmake_cmd):
+    # NOTE: Because CMake is an exectuable that runs executables
+    # stdout/stderr are mixed together. So this combines the outputs
+    # and prints them properly in case there is a non-zero exit code.
+    # errors='replace' affects only how the text output is decoded, and indicates that
+    # 8-bit characters that aren't recognized by the UTF decoder will be replaced with
+    # an "unknown character" glyph instead of crashing.
+    result = subprocess.run(cmake_cmd, 
+        stdout = subprocess.PIPE,
+        stderr = subprocess.STDOUT,
+        text = True,
+        errors='replace'
+    )
+
+    if VERBOSE:
+        print(result.stdout)
+        print(f"CMake command: {cmake_cmd} ", flush=True)
+
+    if result.returncode != 0:
+        print(result.stdout, file=sys.stderr)
+        sys.exit(result.returncode)
 
 def escape(path):
     return path.replace('\\', '/')
@@ -310,9 +342,20 @@ class GoodRepo(object):
         self._args = args
         # Required JSON elements
         self.name = json['name']
-        self.url = json['url']
-        self.sub_dir = json['sub_dir']
-        self.commit = json['commit']
+
+        # Check if this is a binary dependency
+        # For binary dependencies, url and commit are optional
+        self.repo_binaries_url = json.get('repo_binaries_url')
+        self.is_binary_dependency = self.repo_binaries_url is not None
+        if not self.is_binary_dependency:
+            self.url = json['url']
+            self.commit = json['commit']
+        else:
+            self.url = json.get('url')
+            self.commit = json.get('commit')
+
+        self.sub_dir = json.get('sub_dir', '')
+
         # Optional JSON elements
         self.build_dir = None
         self.install_dir = None
@@ -334,20 +377,29 @@ class GoodRepo(object):
         self.build_platforms = json['build_platforms'] if ('build_platforms' in json) else []
         self.optional = set(json.get('optional', []))
         self.api = json['api'] if ('api' in json) else None
+
         # Absolute paths for a repo's directories
         dir_top = os.path.abspath(args.dir)
-        self.repo_dir = os.path.join(dir_top, self.sub_dir)
+        self.repo_dir = os.path.join(dir_top, self.sub_dir) if self.sub_dir else None
         if self.build_dir:
             self.build_dir = os.path.join(dir_top, self.build_dir)
         if self.install_dir:
             self.install_dir = os.path.join(dir_top, self.install_dir)
-	    # Check if platform is one to build on
+
+        # By default the target platform is the host platform.
+        target_platform = platform.system().lower()
+        # However, we need to account for cross-compiling.
+        for cmake_var in self._args.cmake_var:
+            if "android.toolchain.cmake" in cmake_var:
+                target_platform = 'android'
+
         self.on_build_platform = False
-        if self.build_platforms == [] or platform.system().lower() in self.build_platforms:
+        if self.build_platforms == [] or target_platform in self.build_platforms:
             self.on_build_platform = True
 
     def Clone(self, retries=10, retry_seconds=60):
-        print('Cloning {n} into {d}'.format(n=self.name, d=self.repo_dir))
+        if VERBOSE:
+            print('Cloning {n} into {d}'.format(n=self.name, d=self.repo_dir))
         for retry in range(retries):
             make_or_exist_dirs(self.repo_dir)
             try:
@@ -388,9 +440,18 @@ class GoodRepo(object):
                 raise e
 
     def Checkout(self):
-        print('Checking out {n} in {d}'.format(n=self.name, d=self.repo_dir))
-        if self._args.do_clean_repo:
+        if VERBOSE:
+            print('Checking out {n} in {d}'.format(n=self.name, d=self.repo_dir))
+
+        if os.path.exists(os.path.join(self.repo_dir, '.git')):
+            url_changed = command_output(['git', 'config', '--get', 'remote.origin.url'], self.repo_dir).strip() != self.url
+        else:
+            url_changed = False
+
+        if self._args.do_clean_repo or url_changed:
             if os.path.isdir(self.repo_dir):
+                if VERBOSE:
+                    print('Clearing directory {d}'.format(d=self.repo_dir))
                 shutil.rmtree(self.repo_dir, onerror = on_rm_error)
         if not os.path.exists(os.path.join(self.repo_dir, '.git')):
             self.Clone()
@@ -399,7 +460,74 @@ class GoodRepo(object):
             command_output(['git', 'checkout', self._args.ref], self.repo_dir)
         else:
             command_output(['git', 'checkout', self.commit], self.repo_dir)
-        print(command_output(['git', 'status'], self.repo_dir))
+
+        if VERBOSE:
+            print(command_output(['git', 'status'], self.repo_dir))
+
+    def GetPlatformSuffix(self):
+        """Get the platform suffix for binary downloads based on current platform."""
+        system = platform.system().lower()
+        machine = platform.machine().lower()
+        
+        # No Android support
+        for cmake_var in self._args.cmake_var:
+            if "android.toolchain.cmake" in cmake_var:
+                return None
+        
+        # No 32 bits architecture support
+        if self._args.pointer_size == 4:
+            return None
+        if self._args.arch.lower() == '32' or self._args.arch == 'x86' or self._args.arch == 'win32':
+            return None
+        
+        platform_suffix = None
+        if system == 'windows':
+            if machine in ['aarch64', 'arm64']:
+                platform_suffix = 'windows-aarch64'
+            else:
+                platform_suffix = 'windows-x86_64'
+        elif system == 'linux':
+            if machine in ['aarch64', 'arm64']:
+                platform_suffix = 'linux-aarch64'
+            else:
+                platform_suffix = 'linux-x86_64'
+        return platform_suffix
+
+    def DownloadAndExtractBinary(self):
+        """Download and extract binary dependency."""
+        platform_suffix = self.GetPlatformSuffix()
+        if not platform_suffix:
+            if VERBOSE:
+                print(f"Skipping binary download for {self.name} - unsupported platform")
+            self.on_build_platform = False
+            return False
+
+        # Extract version from the URL (assuming format like /tag/v2025.12.1)
+        if '/tag/v' in self.repo_binaries_url:
+            version = self.repo_binaries_url.split('/tag/v')[-1]
+        else:
+            version = self.repo_binaries_url.split('/')[-1].lstrip('v')
+
+        download_url = f"{self.repo_binaries_url.replace('/tag/', '/download/')}/{self.name}-{version}-{platform_suffix}.zip"
+        make_or_exist_dirs(self.build_dir)
+
+        zip_path = os.path.join(self.build_dir, f"{self.name}-{version}-{platform_suffix}.zip")
+        # Dependency already downloaded
+        if not os.path.isfile(zip_path):
+            if VERBOSE:
+                print(f"Downloading {self.name} from {download_url}")
+            try:
+                urllib.request.urlretrieve(download_url, zip_path)
+            except Exception as e:
+                print(f"Failed to download {self.name}: {e}")
+                return False
+
+        make_or_exist_dirs(self.install_dir)
+
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(self.install_dir)
+        
+        return True
 
     def CustomPreProcess(self, cmd_str, repo_dict):
         return cmd_str.format(repo_dict, self._args, CONFIG_MAP[self._args.config])
@@ -461,14 +589,29 @@ class GoodRepo(object):
         # Set build config for single-configuration generators (this is a no-op on multi-config generators)
         cmake_cmd.append(f'-D CMAKE_BUILD_TYPE={CONFIG_MAP[self._args.config]}')
 
+        # Optionally build dependencies with ASAN enabled
+        if self._args.asan:
+            cmake_cmd.append(f'-D CMAKE_CXX_FLAGS=-fsanitize=address')
+            cmake_cmd.append(f'-D CMAKE_C_FLAGS=-fsanitize=address')
+            if platform.system() != 'Windows':
+                os.environ['LDFLAGS'] = '-fsanitize=address'
+
+        # Optionally build dependencies with UBSAN enabled
+        if self._args.ubsan:
+            cmake_cmd.append('-D CMAKE_CXX_FLAGS=-fsanitize=undefined -fno-sanitize=enum')
+            cmake_cmd.append('-D CMAKE_C_FLAGS=-fsanitize=undefined')
+            cmake_cmd.append('-D ENABLE_RTTI=ON')
+            os.environ['LDFLAGS'] = '-fsanitize=undefined'
+
         # Use the CMake -A option to select the platform architecture
         # without needing a Visual Studio generator.
-        if platform.system() == 'Windows' and self._args.generator != "Ninja" and self._args.generator != "Ninja Multi-Config":
+        if platform.system() == 'Windows' and self._args.generator != "Ninja":
+            cmake_cmd.append('-A')
             if self._args.arch.lower() == '64' or self._args.arch == 'x64' or self._args.arch == 'win64':
-                cmake_cmd.append('-A')
                 cmake_cmd.append('x64')
+            elif self._args.arch == 'arm64':
+                cmake_cmd.append('arm64')
             else:
-                cmake_cmd.append('-A')
                 cmake_cmd.append('Win32')
 
         # Apply a generator, if one is specified.  This can be used to supply
@@ -477,12 +620,12 @@ class GoodRepo(object):
         if self._args.generator is not None:
             cmake_cmd.extend(['-G', self._args.generator])
 
-        if VERBOSE:
-            print("CMake command: " + " ".join(cmake_cmd))
+        # Removes warnings related to unused CLI
+        # EX: Setting CMAKE_CXX_COMPILER for a C project
+        if not VERBOSE:
+            cmake_cmd.append("--no-warn-unused-cli")
 
-        ret_code = subprocess.call(cmake_cmd)
-        if ret_code != 0:
-            sys.exit(ret_code)
+        run_cmake_command(cmake_cmd)
 
     def CMakeBuild(self):
         """Build CMake command for the build phase and execute it"""
@@ -490,23 +633,21 @@ class GoodRepo(object):
         if self._args.do_clean:
             cmake_cmd.append('--clean-first')
 
-        # Ninja is parallel by default
-        if self._args.generator != "Ninja" and self._args.generator != "Ninja Multi-Config":
+        # Xcode / Ninja are parallel by default.
+        if self._args.generator != "Ninja" or self._args.generator != "Xcode":
             cmake_cmd.append('--parallel')
             cmake_cmd.append(format(multiprocessing.cpu_count()))
 
-        if VERBOSE:
-            print("CMake command: " + " ".join(cmake_cmd))
-
-        ret_code = subprocess.call(cmake_cmd)
-        if ret_code != 0:
-            sys.exit(ret_code)
+        run_cmake_command(cmake_cmd)
 
     def Build(self, repos, repo_dict):
-        """Build the dependent repo"""
-        print('Building {n} in {d}'.format(n=self.name, d=self.repo_dir))
-        print('Build dir = {b}'.format(b=self.build_dir))
-        print('Install dir = {i}\n'.format(i=self.install_dir))
+        """Build the dependent repo and time how long it took"""
+        if VERBOSE:
+            print('Building {n} in {d}'.format(n=self.name, d=self.repo_dir))
+            print('Build dir = {b}'.format(b=self.build_dir))
+            print('Install dir = {i}\n'.format(i=self.install_dir))
+
+        start = time.time()
 
         # Run any prebuild commands
         self.PreBuild()
@@ -521,9 +662,29 @@ class GoodRepo(object):
         # Build and execute CMake command for the build
         self.CMakeBuild()
 
+        total_time = time.time() - start
+
+        print(f"Installed {self.name} ({self.commit}) in {total_time:.3f} seconds", flush=True)
+
+    def ProcessBinary(self):
+        """Process binary dependency and time how long it took"""
+        if VERBOSE:
+            print('Processing binary {n}'.format(n=self.name))
+            print('Build dir = {b}'.format(b=self.build_dir))
+            print('Install dir = {i}\n'.format(i=self.install_dir))
+
+        start = time.time()
+
+        success = self.DownloadAndExtractBinary()
+        if not success:
+            return
+
+        total_time = time.time() - start
+
+        print(f"Downloaded and extracted {self.name} in {total_time:.3f} seconds", flush=True)
+
     def IsOptional(self, opts):
-        if len(self.optional.intersection(opts)) > 0: return True
-        else: return False
+        return len(self.optional.intersection(opts)) > 0
 
 def GetGoodRepos(args):
     """Returns the latest list of GoodRepo objects.
@@ -565,7 +726,6 @@ def GetInstallNames(args):
         else:
             return None
 
-
 def CreateHelper(args, repos, filename):
     """Create a CMake config helper file.
 
@@ -585,10 +745,17 @@ def CreateHelper(args, repos, filename):
             if repo.api is not None and repo.api != args.api:
                 continue
             if install_names and repo.name in install_names and repo.on_build_platform:
-                helper_file.write('set({var} "{dir}" CACHE STRING "" FORCE)\n'
+                helper_file.write('set({var} "{dir}" CACHE STRING "")\n'
                                   .format(
                                       var=install_names[repo.name],
                                       dir=escape(repo.install_dir)))
+
+def GetDefaultArch():
+    machine = platform.machine().lower()
+    if  machine == "arm64" or machine == "aarch64":
+        return 'arm64'
+    else:
+        return '64'
 
 
 def main():
@@ -648,10 +815,10 @@ def main():
     parser.add_argument(
         '--arch',
         dest='arch',
-        choices=['32', '64', 'x86', 'x64', 'win32', 'win64'],
+        choices=['32', '64', 'x86', 'x64', 'win32', 'win64', 'arm64'],
         type=str.lower,
         help="Set build files architecture (Visual Studio Generator Only)",
-        default='64')
+        default=GetDefaultArch())
     parser.add_argument(
         '--config',
         dest='config',
@@ -683,6 +850,24 @@ def main():
         metavar='VAR[=VALUE]',
         help="Add CMake command line option -D'VAR'='VALUE' to the CMake generation command line; may be used multiple times",
         default=[])
+    parser.add_argument(
+        '--asan',
+        dest='asan',
+        action='store_true',
+        help="Build dependencies with ASAN enabled",
+        default=False)
+    parser.add_argument(
+        '--ubsan',
+        dest='ubsan',
+        action='store_true',
+        help="Build dependencies with UBSAN enabled",
+        default=False)
+    parser.add_argument(
+        '--pointer_size',
+        type=int,
+        dest='pointer_size',
+        help="pointer size in the produced executables",
+        default=8)
 
     args = parser.parse_args()
     save_cwd = os.getcwd()
@@ -741,7 +926,7 @@ def main():
         if len(repo.ci_only):
             do_build = False
             for env in repo.ci_only:
-                if not env in os.environ:
+                if env not in os.environ:
                     continue
                 if os.environ[env].lower() == 'true':
                     do_build = True
@@ -749,12 +934,17 @@ def main():
             if not do_build:
                 continue
 
-        # Clone/update the repository
-        repo.Checkout()
+        # Handle binary dependencies differently
+        if repo.is_binary_dependency:
+            if args.do_build:
+                repo.ProcessBinary()
+        else:
+            # Clone/update the repository
+            repo.Checkout()
 
-        # Build the repository
-        if args.do_build and repo.build_step != 'skip':
-            repo.Build(repos, repo_dict)
+            # Build the repository
+            if args.do_build and repo.build_step != 'skip':
+                repo.Build(repos, repo_dict)
 
     # Need to restore original cwd in order for CreateHelper to find json file
     os.chdir(save_cwd)
@@ -765,4 +955,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
