@@ -394,6 +394,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowPerformanceLevel
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpticalFlowSessionBindingPointNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagModeAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagStageAMD &t);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCompressedTriangleFormatAMDX &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCodeTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDepthClampModeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingInvocationReorderModeNV &t);
@@ -958,6 +961,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSubgrou
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTraceRaysIndirectCommand2KHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderUntypedPointersFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCapabilitiesPresentId2KHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentId2KHR &t);
@@ -1042,8 +1046,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance7P
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPropertiesListKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiVulkanPropertiesKHR &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance8FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrierAccessFlags3KHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance8FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance9FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance9PropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyOwnershipTransferPropertiesKHR &t);
@@ -1665,6 +1669,12 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAndroidHardwareBufferFormat
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceAntiLagFeaturesAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagPresentationInfoAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagDataAMD &t);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderObjectFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderObjectPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCreateInfoEXT &t);
@@ -1827,7 +1837,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageAlignmentControlCreate
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampControlFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClampControlCreateInfoEXT &t);
 #ifdef VK_USE_PLATFORM_OHOS
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkOHSurfaceCreateInfoOHOS &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCreateInfoOHOS &t);
 #endif  // VK_USE_PLATFORM_OHOS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHdrVividFeaturesHUAWEI &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrVividDynamicMetadataHUAWEI &t);

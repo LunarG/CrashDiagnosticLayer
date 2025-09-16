@@ -14924,6 +14924,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTraceRaysIndirectCommand2KH
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderUntypedPointersFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderUntypedPointers";
+    // shaderUntypedPointers -> Field -> VkBool32
+    os << YAML::Value << t.shaderUntypedPointers;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -16977,23 +16994,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiVul
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance8FeaturesKHR &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "maintenance8";
-    // maintenance8 -> Field -> VkBool32
-    os << YAML::Value << t.maintenance8;
-    os << YAML::EndMap;
-    return os;
-}
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrierAccessFlags3KHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -17010,6 +17010,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrierAccessFlags3KH
     os << YAML::Key << "dstAccessMask3";
     // dstAccessMask3 -> Field -> VkAccessFlags3KHR
     os << YAML::Value << t.dstAccessMask3;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance8FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maintenance8";
+    // maintenance8 -> Field -> VkBool32
+    os << YAML::Value << t.maintenance8;
     os << YAML::EndMap;
     return os;
 }
@@ -29006,6 +29023,62 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagDataAMD &t) {
     return os;
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "denseGeometryFormat";
+    // denseGeometryFormat -> Field -> VkBool32
+    os << YAML::Value << t.denseGeometryFormat;
+    os << YAML::EndMap;
+    return os;
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "compressedData";
+    // compressedData -> Field -> VkDeviceOrHostAddressConstKHR
+    os << YAML::Value << t.compressedData;
+    os << YAML::Key << "dataSize";
+    // dataSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.dataSize;
+    os << YAML::Key << "numTriangles";
+    // numTriangles -> Field -> uint32_t
+    os << YAML::Value << t.numTriangles;
+    os << YAML::Key << "numVertices";
+    // numVertices -> Field -> uint32_t
+    os << YAML::Value << t.numVertices;
+    os << YAML::Key << "maxPrimitiveIndex";
+    // maxPrimitiveIndex -> Field -> uint32_t
+    os << YAML::Value << t.maxPrimitiveIndex;
+    os << YAML::Key << "maxGeometryIndex";
+    // maxGeometryIndex -> Field -> uint32_t
+    os << YAML::Value << t.maxGeometryIndex;
+    os << YAML::Key << "format";
+    // format -> Field -> VkCompressedTriangleFormatAMDX
+    os << YAML::Value << t.format;
+    os << YAML::EndMap;
+    return os;
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderObjectFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -32483,7 +32556,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClampC
 }
 
 #ifdef VK_USE_PLATFORM_OHOS
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkOHSurfaceCreateInfoOHOS &t) {
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCreateInfoOHOS &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
     // sType -> Field -> VkStructureType
@@ -35116,6 +35189,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNTYPED_POINTERS_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderUntypedPointersFeaturesKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MAXIMAL_RECONVERGENCE_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR *>(pStruct);
             break;
@@ -35356,11 +35432,11 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceLayeredApiVulkanPropertiesKHR *>(pStruct);
             break;
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR:
-            os << *reinterpret_cast<const VkPhysicalDeviceMaintenance8FeaturesKHR *>(pStruct);
-            break;
         case VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR:
             os << *reinterpret_cast<const VkMemoryBarrierAccessFlags3KHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceMaintenance8FeaturesKHR *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceMaintenance9FeaturesKHR *>(pStruct);
@@ -36779,6 +36855,16 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD:
             os << *reinterpret_cast<const VkAntiLagDataAMD *>(pStruct);
             break;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DENSE_GEOMETRY_FORMAT_FEATURES_AMDX:
+            os << *reinterpret_cast<const VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX *>(pStruct);
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DENSE_GEOMETRY_FORMAT_TRIANGLES_DATA_AMDX:
+            os << *reinterpret_cast<const VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX *>(pStruct);
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderObjectFeaturesEXT *>(pStruct);
             break;
@@ -37159,8 +37245,8 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkPipelineViewportDepthClampControlCreateInfoEXT *>(pStruct);
             break;
 #ifdef VK_USE_PLATFORM_OHOS
-        case VK_STRUCTURE_TYPE_OH_SURFACE_CREATE_INFO_OHOS:
-            os << *reinterpret_cast<const VkOHSurfaceCreateInfoOHOS *>(pStruct);
+        case VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS:
+            os << *reinterpret_cast<const VkSurfaceCreateInfoOHOS *>(pStruct);
             break;
 #endif  // VK_USE_PLATFORM_OHOS
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI:
