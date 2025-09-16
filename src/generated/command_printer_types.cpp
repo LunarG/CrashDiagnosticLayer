@@ -1107,6 +1107,13 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAntiLagStageAMD &t) {
     return os;
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCompressedTriangleFormatAMDX &t) {
+    os << string_VkCompressedTriangleFormatAMDX(t);
+    return os;
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderCodeTypeEXT &t) {
     os << string_VkShaderCodeTypeEXT(t);
     return os;
