@@ -207,6 +207,15 @@ VkBindDescriptorBufferEmbeddedSamplersInfoEXT*
 CommandRecorder::CopyArray<VkBindDescriptorBufferEmbeddedSamplersInfoEXT>(
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* src, size_t start_index, size_t count);
 template <>
+VkStridedDeviceAddressRangeKHR* CommandRecorder::CopyArray<VkStridedDeviceAddressRangeKHR>(
+    const VkStridedDeviceAddressRangeKHR* src, size_t start_index, size_t count);
+template <>
+VkCopyMemoryIndirectInfoKHR* CommandRecorder::CopyArray<VkCopyMemoryIndirectInfoKHR>(
+    const VkCopyMemoryIndirectInfoKHR* src, size_t start_index, size_t count);
+template <>
+VkCopyMemoryToImageIndirectInfoKHR* CommandRecorder::CopyArray<VkCopyMemoryToImageIndirectInfoKHR>(
+    const VkCopyMemoryToImageIndirectInfoKHR* src, size_t start_index, size_t count);
+template <>
 VkDebugMarkerMarkerInfoEXT* CommandRecorder::CopyArray<VkDebugMarkerMarkerInfoEXT>(
     const VkDebugMarkerMarkerInfoEXT* src, size_t start_index, size_t count);
 template <>
@@ -1428,6 +1437,57 @@ CommandRecorder::CopyArray<VkBindDescriptorBufferEmbeddedSamplersInfoEXT>(
         ptr[i].stageFlags = src[start_index + i].stageFlags;
         ptr[i].layout = src[start_index + i].layout;
         ptr[i].set = src[start_index + i].set;
+    }
+    return ptr;
+}
+
+template <>
+VkStridedDeviceAddressRangeKHR* CommandRecorder::CopyArray<VkStridedDeviceAddressRangeKHR>(
+    const VkStridedDeviceAddressRangeKHR* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkStridedDeviceAddressRangeKHR*>(
+        m_allocator.Alloc(sizeof(VkStridedDeviceAddressRangeKHR) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].address = src[start_index + i].address;
+        ptr[i].size = src[start_index + i].size;
+        ptr[i].stride = src[start_index + i].stride;
+    }
+    return ptr;
+}
+
+template <>
+VkCopyMemoryIndirectInfoKHR* CommandRecorder::CopyArray<VkCopyMemoryIndirectInfoKHR>(
+    const VkCopyMemoryIndirectInfoKHR* src, size_t start_index, size_t count) {
+    auto ptr =
+        reinterpret_cast<VkCopyMemoryIndirectInfoKHR*>(m_allocator.Alloc(sizeof(VkCopyMemoryIndirectInfoKHR) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].srcCopyFlags = src[start_index + i].srcCopyFlags;
+        ptr[i].dstCopyFlags = src[start_index + i].dstCopyFlags;
+        ptr[i].copyCount = src[start_index + i].copyCount;
+        ptr[i].copyAddressRange = src[start_index + i].copyAddressRange;
+    }
+    return ptr;
+}
+
+template <>
+VkCopyMemoryToImageIndirectInfoKHR* CommandRecorder::CopyArray<VkCopyMemoryToImageIndirectInfoKHR>(
+    const VkCopyMemoryToImageIndirectInfoKHR* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkCopyMemoryToImageIndirectInfoKHR*>(
+        m_allocator.Alloc(sizeof(VkCopyMemoryToImageIndirectInfoKHR) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].srcCopyFlags = src[start_index + i].srcCopyFlags;
+        ptr[i].copyCount = src[start_index + i].copyCount;
+        ptr[i].copyAddressRange = src[start_index + i].copyAddressRange;
+        ptr[i].dstImage = src[start_index + i].dstImage;
+        ptr[i].dstImageLayout = src[start_index + i].dstImageLayout;
+        ptr[i].pImageSubresources = nullptr;
+        if (src[start_index + i].pImageSubresources) {
+            ptr[i].pImageSubresources =
+                CopyArray(src[start_index + i].pImageSubresources, 0U, src[start_index + i].copyCount);
+        }
     }
     return ptr;
 }
@@ -3916,6 +3976,28 @@ CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs* CommandRecorder::RecordCmdBindD
     if (pBindDescriptorBufferEmbeddedSamplersInfo) {
         args->pBindDescriptorBufferEmbeddedSamplersInfo =
             CopyArray(pBindDescriptorBufferEmbeddedSamplersInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdCopyMemoryIndirectKHRArgs* CommandRecorder::RecordCmdCopyMemoryIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
+    auto* args = Alloc<CmdCopyMemoryIndirectKHRArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pCopyMemoryIndirectInfo) {
+        args->pCopyMemoryIndirectInfo =
+            CopyArray(pCopyMemoryIndirectInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdCopyMemoryToImageIndirectKHRArgs* CommandRecorder::RecordCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    auto* args = Alloc<CmdCopyMemoryToImageIndirectKHRArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pCopyMemoryToImageIndirectInfo) {
+        args->pCopyMemoryToImageIndirectInfo =
+            CopyArray(pCopyMemoryToImageIndirectInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }

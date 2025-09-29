@@ -228,6 +228,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {VK_KHR_CALIBRATED_TIMESTAMPS_EXTENSION_NAME, VK_KHR_CALIBRATED_TIMESTAMPS_SPEC_VERSION},
     {VK_KHR_SHADER_EXPECT_ASSUME_EXTENSION_NAME, VK_KHR_SHADER_EXPECT_ASSUME_SPEC_VERSION},
     {VK_KHR_MAINTENANCE_6_EXTENSION_NAME, VK_KHR_MAINTENANCE_6_SPEC_VERSION},
+    {VK_KHR_COPY_MEMORY_INDIRECT_EXTENSION_NAME, VK_KHR_COPY_MEMORY_INDIRECT_SPEC_VERSION},
     {VK_KHR_VIDEO_ENCODE_INTRA_REFRESH_EXTENSION_NAME, VK_KHR_VIDEO_ENCODE_INTRA_REFRESH_SPEC_VERSION},
     {VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME, VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_SPEC_VERSION},
     {VK_KHR_SHADER_RELAXED_EXTENDED_INSTRUCTION_EXTENSION_NAME,
@@ -435,6 +436,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {VK_EXT_COLOR_WRITE_ENABLE_EXTENSION_NAME, VK_EXT_COLOR_WRITE_ENABLE_SPEC_VERSION},
     {VK_EXT_PRIMITIVES_GENERATED_QUERY_EXTENSION_NAME, VK_EXT_PRIMITIVES_GENERATED_QUERY_SPEC_VERSION},
     {VK_EXT_GLOBAL_PRIORITY_QUERY_EXTENSION_NAME, VK_EXT_GLOBAL_PRIORITY_QUERY_SPEC_VERSION},
+    {VK_VALVE_VIDEO_ENCODE_RGB_CONVERSION_EXTENSION_NAME, VK_VALVE_VIDEO_ENCODE_RGB_CONVERSION_SPEC_VERSION},
     {VK_EXT_IMAGE_VIEW_MIN_LOD_EXTENSION_NAME, VK_EXT_IMAGE_VIEW_MIN_LOD_SPEC_VERSION},
     {VK_EXT_MULTI_DRAW_EXTENSION_NAME, VK_EXT_MULTI_DRAW_SPEC_VERSION},
     {VK_EXT_IMAGE_2D_VIEW_OF_3D_EXTENSION_NAME, VK_EXT_IMAGE_2D_VIEW_OF_3D_SPEC_VERSION},
@@ -1519,6 +1521,10 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsets2EXT(
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
+static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                                           const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo);
+static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
 static VKAPI_ATTR VkResult VKAPI_CALL
 CreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
                              const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback);
@@ -2883,6 +2889,8 @@ static const std::unordered_map<std::string, void*> name_to_func_ptr_map = {
     {"vkCmdPushDescriptorSetWithTemplate2KHR", (void*)CmdPushDescriptorSetWithTemplate2KHR},
     {"vkCmdSetDescriptorBufferOffsets2EXT", (void*)CmdSetDescriptorBufferOffsets2EXT},
     {"vkCmdBindDescriptorBufferEmbeddedSamplers2EXT", (void*)CmdBindDescriptorBufferEmbeddedSamplers2EXT},
+    {"vkCmdCopyMemoryIndirectKHR", (void*)CmdCopyMemoryIndirectKHR},
+    {"vkCmdCopyMemoryToImageIndirectKHR", (void*)CmdCopyMemoryToImageIndirectKHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
     {"vkDebugReportMessageEXT", (void*)DebugReportMessageEXT},
@@ -5018,6 +5026,18 @@ static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
     auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
     cb->Tracker().CmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                                           const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    auto* cb = reinterpret_cast<CommandBuffer*>(commandBuffer);
+    cb->Tracker().CmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL

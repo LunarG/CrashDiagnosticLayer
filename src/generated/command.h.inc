@@ -566,6 +566,16 @@ void PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
 
+void PreCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                 const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo);
+void PostCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                  const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo);
+
+void PreCmdCopyMemoryToImageIndirectKHR(VkCommandBuffer commandBuffer,
+                                        const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+void PostCmdCopyMemoryToImageIndirectKHR(VkCommandBuffer commandBuffer,
+                                         const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+
 void PreCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
 void PostCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
 

@@ -1297,6 +1297,26 @@ void CommandBuffer::PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                                const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
+    tracker_.CmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                                 const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    tracker_.CmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
                                               const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     tracker_.CmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);

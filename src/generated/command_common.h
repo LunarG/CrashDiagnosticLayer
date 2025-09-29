@@ -169,6 +169,8 @@ struct Command {
         kCmdPushDescriptorSetWithTemplate2KHR,
         kCmdSetDescriptorBufferOffsets2EXT,
         kCmdBindDescriptorBufferEmbeddedSamplers2EXT,
+        kCmdCopyMemoryIndirectKHR,
+        kCmdCopyMemoryToImageIndirectKHR,
         kCmdDebugMarkerBeginEXT,
         kCmdDebugMarkerEndEXT,
         kCmdDebugMarkerInsertEXT,
@@ -1189,6 +1191,16 @@ struct CmdSetDescriptorBufferOffsets2EXTArgs {
 struct CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs {
     VkCommandBuffer commandBuffer;
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo;
+};
+
+struct CmdCopyMemoryIndirectKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo;
+};
+
+struct CmdCopyMemoryToImageIndirectKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo;
 };
 
 struct CmdDebugMarkerBeginEXTArgs {

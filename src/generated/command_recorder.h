@@ -460,6 +460,12 @@ class CommandRecorder {
         VkCommandBuffer commandBuffer,
         const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
 
+    CmdCopyMemoryIndirectKHRArgs* RecordCmdCopyMemoryIndirectKHR(
+        VkCommandBuffer commandBuffer, const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo);
+
+    CmdCopyMemoryToImageIndirectKHRArgs* RecordCmdCopyMemoryToImageIndirectKHR(
+        VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+
     CmdDebugMarkerBeginEXTArgs* RecordCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
                                                              const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
 

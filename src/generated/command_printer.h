@@ -1025,6 +1025,13 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentFeedbackLoopInfoE
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCalibratedTimestampInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetDescriptorBufferOffsetsInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindDescriptorBufferEmbeddedSamplersInfoEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkStridedDeviceAddressRangeKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectCommandKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectCommandKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeIntraRefreshCapabilitiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeSessionIntraRefreshCreateInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeIntraRefreshInfoKHR &t);
@@ -1532,6 +1539,10 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkScreenSurfaceCreateInfoQNX 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceColorWriteEnableFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineColorWriteCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeRgbConversionCapabilitiesVALVE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeProfileRgbConversionInfoVALVE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeSessionRgbConversionCreateInfoVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageViewMinLodFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewMinLodCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMultiDrawFeaturesEXT &t);
@@ -1587,10 +1598,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassStripeSubmitInfoA
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassFragmentDensityMapOffsetEndInfoEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectCommandNV &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectCommandNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectFeaturesNV &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectPropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDecompressMemoryRegionNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMemoryDecompressionFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMemoryDecompressionPropertiesNV &t);
@@ -2041,6 +2049,8 @@ class CommandPrinter {
                                                     const CmdSetDescriptorBufferOffsets2EXTArgs &args);
     void PrintCmdBindDescriptorBufferEmbeddedSamplers2EXTArgs(
         YAML::Emitter &os, const CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs &args);
+    void PrintCmdCopyMemoryIndirectKHRArgs(YAML::Emitter &os, const CmdCopyMemoryIndirectKHRArgs &args);
+    void PrintCmdCopyMemoryToImageIndirectKHRArgs(YAML::Emitter &os, const CmdCopyMemoryToImageIndirectKHRArgs &args);
     void PrintCmdDebugMarkerBeginEXTArgs(YAML::Emitter &os, const CmdDebugMarkerBeginEXTArgs &args);
     void PrintCmdDebugMarkerEndEXTArgs(YAML::Emitter &os, const CmdDebugMarkerEndEXTArgs &args);
     void PrintCmdDebugMarkerInsertEXTArgs(YAML::Emitter &os, const CmdDebugMarkerInsertEXTArgs &args);

@@ -1362,6 +1362,26 @@ void CommandTracker::CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                              const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyMemoryIndirectKHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyMemoryToImageIndirectKHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
                                             const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     Command cmd{};

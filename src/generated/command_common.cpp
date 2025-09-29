@@ -297,6 +297,10 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdSetDescriptorBufferOffsets2EXT";
         case Command::Type::kCmdBindDescriptorBufferEmbeddedSamplers2EXT:
             return "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT";
+        case Command::Type::kCmdCopyMemoryIndirectKHR:
+            return "vkCmdCopyMemoryIndirectKHR";
+        case Command::Type::kCmdCopyMemoryToImageIndirectKHR:
+            return "vkCmdCopyMemoryToImageIndirectKHR";
         case Command::Type::kCmdDebugMarkerBeginEXT:
             return "vkCmdDebugMarkerBeginEXT";
         case Command::Type::kCmdDebugMarkerEndEXT:

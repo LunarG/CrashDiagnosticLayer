@@ -1442,6 +1442,28 @@ void Context::PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     p_cmd->PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 
+void Context::PreCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                          const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+}
+void Context::PostCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                           const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+}
+
+void Context::PreCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+}
+void Context::PostCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+}
+
 void Context::PreCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PreCmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);

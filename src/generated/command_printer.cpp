@@ -2100,6 +2100,27 @@ void CommandPrinter::PrintCmdBindDescriptorBufferEmbeddedSamplers2EXTArgs(
     }
 }
 
+void CommandPrinter::PrintCmdCopyMemoryIndirectKHRArgs(YAML::Emitter &os, const CmdCopyMemoryIndirectKHRArgs &args) {
+    os << YAML::Key << "pCopyMemoryIndirectInfo";
+    // pointer
+    if (args.pCopyMemoryIndirectInfo != nullptr) {
+        os << YAML::Value << *args.pCopyMemoryIndirectInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdCopyMemoryToImageIndirectKHRArgs(YAML::Emitter &os,
+                                                              const CmdCopyMemoryToImageIndirectKHRArgs &args) {
+    os << YAML::Key << "pCopyMemoryToImageIndirectInfo";
+    // pointer
+    if (args.pCopyMemoryToImageIndirectInfo != nullptr) {
+        os << YAML::Value << *args.pCopyMemoryToImageIndirectInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdDebugMarkerBeginEXTArgs(YAML::Emitter &os, const CmdDebugMarkerBeginEXTArgs &args) {
     os << YAML::Key << "pMarkerInfo";
     // pointer
@@ -5363,6 +5384,20 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdBindDescriptorBufferEmbeddedSamplers2EXTArgs *>(cmd.parameters);
                 PrintCmdBindDescriptorBufferEmbeddedSamplers2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMemoryIndirectKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMemoryIndirectKHRArgs *>(cmd.parameters);
+                PrintCmdCopyMemoryIndirectKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMemoryToImageIndirectKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMemoryToImageIndirectKHRArgs *>(cmd.parameters);
+                PrintCmdCopyMemoryToImageIndirectKHRArgs(os, *args);
             }
             break;
 
