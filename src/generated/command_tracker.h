@@ -385,6 +385,12 @@ class CommandTracker {
         VkCommandBuffer commandBuffer,
         const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
 
+    void CmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                  const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo);
+
+    void CmdCopyMemoryToImageIndirectKHR(VkCommandBuffer commandBuffer,
+                                         const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+
     void CmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
 
     void CmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer);

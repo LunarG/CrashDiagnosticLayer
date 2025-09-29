@@ -16565,6 +16565,167 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindDescriptorBufferEmbedde
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkStridedDeviceAddressRangeKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "address";
+    // address -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.address);
+    os << YAML::Key << "size";
+    // size -> Field -> VkDeviceSize
+    os << YAML::Value << t.size;
+    os << YAML::Key << "stride";
+    // stride -> Field -> VkDeviceSize
+    os << YAML::Value << t.stride;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectCommandKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "srcAddress";
+    // srcAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAddress);
+    os << YAML::Key << "dstAddress";
+    // dstAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.dstAddress);
+    os << YAML::Key << "size";
+    // size -> Field -> VkDeviceSize
+    os << YAML::Value << t.size;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "srcCopyFlags";
+    // srcCopyFlags -> Field -> VkAddressCopyFlagsKHR
+    os << YAML::Value << t.srcCopyFlags;
+    os << YAML::Key << "dstCopyFlags";
+    // dstCopyFlags -> Field -> VkAddressCopyFlagsKHR
+    os << YAML::Value << t.dstCopyFlags;
+    os << YAML::Key << "copyCount";
+    // copyCount -> Field -> uint32_t
+    os << YAML::Value << t.copyCount;
+    os << YAML::Key << "copyAddressRange";
+    // copyAddressRange -> Field -> VkStridedDeviceAddressRangeKHR
+    os << YAML::Value << t.copyAddressRange;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectCommandKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "srcAddress";
+    // srcAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAddress);
+    os << YAML::Key << "bufferRowLength";
+    // bufferRowLength -> Field -> uint32_t
+    os << YAML::Value << t.bufferRowLength;
+    os << YAML::Key << "bufferImageHeight";
+    // bufferImageHeight -> Field -> uint32_t
+    os << YAML::Value << t.bufferImageHeight;
+    os << YAML::Key << "imageSubresource";
+    // imageSubresource -> Field -> VkImageSubresourceLayers
+    os << YAML::Value << t.imageSubresource;
+    os << YAML::Key << "imageOffset";
+    // imageOffset -> Field -> VkOffset3D
+    os << YAML::Value << t.imageOffset;
+    os << YAML::Key << "imageExtent";
+    // imageExtent -> Field -> VkExtent3D
+    os << YAML::Value << t.imageExtent;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "srcCopyFlags";
+    // srcCopyFlags -> Field -> VkAddressCopyFlagsKHR
+    os << YAML::Value << t.srcCopyFlags;
+    os << YAML::Key << "copyCount";
+    // copyCount -> Field -> uint32_t
+    os << YAML::Value << t.copyCount;
+    os << YAML::Key << "copyAddressRange";
+    // copyAddressRange -> Field -> VkStridedDeviceAddressRangeKHR
+    os << YAML::Value << t.copyAddressRange;
+    os << YAML::Key << "dstImage";
+    // dstImage -> Field -> VkImage
+    os << YAML::Value << t.dstImage;
+    os << YAML::Key << "dstImageLayout";
+    // dstImageLayout -> Field -> VkImageLayout
+    os << YAML::Value << t.dstImageLayout;
+    os << YAML::Key << "pImageSubresources";
+    // pImageSubresources -> Field -> ConstDynamicArray(VkImageSubresourceLayers)
+    if (t.copyCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkImageSubresourceLayers");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.copyCount); ++i) {
+                os << t.pImageSubresources[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "indirectMemoryCopy";
+    // indirectMemoryCopy -> Field -> VkBool32
+    os << YAML::Value << t.indirectMemoryCopy;
+    os << YAML::Key << "indirectMemoryToImageCopy";
+    // indirectMemoryToImageCopy -> Field -> VkBool32
+    os << YAML::Value << t.indirectMemoryToImageCopy;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "supportedQueues";
+    // supportedQueues -> Field -> VkQueueFlags
+    os << YAML::Value << t.supportedQueues;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeIntraRefreshCapabilitiesKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -25920,6 +26081,92 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitivesGen
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "videoEncodeRgbConversion";
+    // videoEncodeRgbConversion -> Field -> VkBool32
+    os << YAML::Value << t.videoEncodeRgbConversion;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeRgbConversionCapabilitiesVALVE &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "rgbModels";
+    // rgbModels -> Field -> VkVideoEncodeRgbModelConversionFlagsVALVE
+    os << YAML::Value << t.rgbModels;
+    os << YAML::Key << "rgbRanges";
+    // rgbRanges -> Field -> VkVideoEncodeRgbRangeCompressionFlagsVALVE
+    os << YAML::Value << t.rgbRanges;
+    os << YAML::Key << "xChromaOffsets";
+    // xChromaOffsets -> Field -> VkVideoEncodeRgbChromaOffsetFlagsVALVE
+    os << YAML::Value << t.xChromaOffsets;
+    os << YAML::Key << "yChromaOffsets";
+    // yChromaOffsets -> Field -> VkVideoEncodeRgbChromaOffsetFlagsVALVE
+    os << YAML::Value << t.yChromaOffsets;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeProfileRgbConversionInfoVALVE &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "performEncodeRgbConversion";
+    // performEncodeRgbConversion -> Field -> VkBool32
+    os << YAML::Value << t.performEncodeRgbConversion;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeSessionRgbConversionCreateInfoVALVE &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "rgbModel";
+    // rgbModel -> Field -> VkVideoEncodeRgbModelConversionFlagBitsVALVE
+    os << YAML::Value << t.rgbModel;
+    os << YAML::Key << "rgbRange";
+    // rgbRange -> Field -> VkVideoEncodeRgbRangeCompressionFlagBitsVALVE
+    os << YAML::Value << t.rgbRange;
+    os << YAML::Key << "xChromaOffset";
+    // xChromaOffset -> Field -> VkVideoEncodeRgbChromaOffsetFlagBitsVALVE
+    os << YAML::Value << t.xChromaOffset;
+    os << YAML::Key << "yChromaOffset";
+    // yChromaOffset -> Field -> VkVideoEncodeRgbChromaOffsetFlagBitsVALVE
+    os << YAML::Value << t.yChromaOffset;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageViewMinLodFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -27087,45 +27334,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassFragmentDensityMa
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectCommandNV &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "srcAddress";
-    // srcAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAddress);
-    os << YAML::Key << "dstAddress";
-    // dstAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.dstAddress);
-    os << YAML::Key << "size";
-    // size -> Field -> VkDeviceSize
-    os << YAML::Value << t.size;
-    os << YAML::EndMap;
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectCommandNV &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "srcAddress";
-    // srcAddress -> Field -> VkDeviceAddress
-    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.srcAddress);
-    os << YAML::Key << "bufferRowLength";
-    // bufferRowLength -> Field -> uint32_t
-    os << YAML::Value << t.bufferRowLength;
-    os << YAML::Key << "bufferImageHeight";
-    // bufferImageHeight -> Field -> uint32_t
-    os << YAML::Value << t.bufferImageHeight;
-    os << YAML::Key << "imageSubresource";
-    // imageSubresource -> Field -> VkImageSubresourceLayers
-    os << YAML::Value << t.imageSubresource;
-    os << YAML::Key << "imageOffset";
-    // imageOffset -> Field -> VkOffset3D
-    os << YAML::Value << t.imageOffset;
-    os << YAML::Key << "imageExtent";
-    // imageExtent -> Field -> VkExtent3D
-    os << YAML::Value << t.imageExtent;
-    os << YAML::EndMap;
-    return os;
-}
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectFeaturesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -27139,23 +27347,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryInd
     os << YAML::Key << "indirectCopy";
     // indirectCopy -> Field -> VkBool32
     os << YAML::Value << t.indirectCopy;
-    os << YAML::EndMap;
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCopyMemoryIndirectPropertiesNV &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "supportedQueues";
-    // supportedQueues -> Field -> VkQueueFlags
-    os << YAML::Value << t.supportedQueues;
     os << YAML::EndMap;
     return os;
 }
@@ -35369,6 +35560,18 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_BUFFER_EMBEDDED_SAMPLERS_INFO_EXT:
             os << *reinterpret_cast<const VkBindDescriptorBufferEmbeddedSamplersInfoEXT *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_COPY_MEMORY_INDIRECT_INFO_KHR:
+            os << *reinterpret_cast<const VkCopyMemoryIndirectInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INDIRECT_INFO_KHR:
+            os << *reinterpret_cast<const VkCopyMemoryToImageIndirectInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_VIDEO_ENCODE_INTRA_REFRESH_CAPABILITIES_KHR:
             os << *reinterpret_cast<const VkVideoEncodeIntraRefreshCapabilitiesKHR *>(pStruct);
             break;
@@ -36507,6 +36710,18 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_RGB_CONVERSION_FEATURES_VALVE:
+            os << *reinterpret_cast<const VkPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE:
+            os << *reinterpret_cast<const VkVideoEncodeRgbConversionCapabilitiesVALVE *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_PROFILE_RGB_CONVERSION_INFO_VALVE:
+            os << *reinterpret_cast<const VkVideoEncodeProfileRgbConversionInfoVALVE *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_RGB_CONVERSION_CREATE_INFO_VALVE:
+            os << *reinterpret_cast<const VkVideoEncodeSessionRgbConversionCreateInfoVALVE *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceImageViewMinLodFeaturesEXT *>(pStruct);
             break;
@@ -36647,9 +36862,6 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceCopyMemoryIndirectFeaturesNV *>(pStruct);
-            break;
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_NV:
-            os << *reinterpret_cast<const VkPhysicalDeviceCopyMemoryIndirectPropertiesNV *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_DECOMPRESSION_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceMemoryDecompressionFeaturesNV *>(pStruct);

@@ -2280,6 +2280,32 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorBufferEmbeddedSample
                                                                              pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+
+    PFN_vkCmdCopyMemoryIndirectKHR pfn = layer_data->dispatch_table.CmdCopyMemoryIndirectKHR;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pCopyMemoryIndirectInfo);
+    }
+
+    layer_data->interceptor->PostCmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+
+    PFN_vkCmdCopyMemoryToImageIndirectKHR pfn = layer_data->dispatch_table.CmdCopyMemoryToImageIndirectKHR;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pCopyMemoryToImageIndirectInfo);
+    }
+
+    layer_data->interceptor->PostCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+}
+
 static VKAPI_ATTR VkResult VKAPI_CALL
 InterceptCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
@@ -4709,6 +4735,8 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdSetDescriptorBufferOffsets2EXT", {kFuncTypeDev, (void*)InterceptCmdSetDescriptorBufferOffsets2EXT}},
         {"vkCmdBindDescriptorBufferEmbeddedSamplers2EXT",
          {kFuncTypeDev, (void*)InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT}},
+        {"vkCmdCopyMemoryIndirectKHR", {kFuncTypeDev, (void*)InterceptCmdCopyMemoryIndirectKHR}},
+        {"vkCmdCopyMemoryToImageIndirectKHR", {kFuncTypeDev, (void*)InterceptCmdCopyMemoryToImageIndirectKHR}},
         {"vkCreateDebugReportCallbackEXT", {kFuncTypeInst, (void*)InterceptCreateDebugReportCallbackEXT}},
         {"vkDestroyDebugReportCallbackEXT", {kFuncTypeInst, (void*)InterceptDestroyDebugReportCallbackEXT}},
         {"vkDebugMarkerSetObjectNameEXT", {kFuncTypeDev, (void*)InterceptDebugMarkerSetObjectNameEXT}},

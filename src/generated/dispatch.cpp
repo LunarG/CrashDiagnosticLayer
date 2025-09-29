@@ -684,6 +684,9 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
         (PFN_vkCmdSetDescriptorBufferOffsets2EXT)pa(device, "vkCmdSetDescriptorBufferOffsets2EXT");
     dt->CmdBindDescriptorBufferEmbeddedSamplers2EXT =
         (PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT)pa(device, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT");
+    dt->CmdCopyMemoryIndirectKHR = (PFN_vkCmdCopyMemoryIndirectKHR)pa(device, "vkCmdCopyMemoryIndirectKHR");
+    dt->CmdCopyMemoryToImageIndirectKHR =
+        (PFN_vkCmdCopyMemoryToImageIndirectKHR)pa(device, "vkCmdCopyMemoryToImageIndirectKHR");
     dt->DebugMarkerSetObjectTagEXT = (PFN_vkDebugMarkerSetObjectTagEXT)pa(device, "vkDebugMarkerSetObjectTagEXT");
     dt->DebugMarkerSetObjectNameEXT = (PFN_vkDebugMarkerSetObjectNameEXT)pa(device, "vkDebugMarkerSetObjectNameEXT");
     dt->CmdDebugMarkerBeginEXT = (PFN_vkCmdDebugMarkerBeginEXT)pa(device, "vkCmdDebugMarkerBeginEXT");

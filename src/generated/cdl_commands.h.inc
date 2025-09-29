@@ -630,6 +630,16 @@ void PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) override;
 
+void PreCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                 const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) override;
+void PostCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                  const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) override;
+
+void PreCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) override;
+void PostCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) override;
+
 void PreCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) override;
 void PostCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) override;
 

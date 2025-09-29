@@ -988,6 +988,18 @@ virtual void PostCmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {}
 
+virtual void PreCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                         const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {}
+
+virtual void PostCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer,
+                                          const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {}
+
+virtual void PreCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {}
+
+virtual void PostCmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {}
+
 virtual VkResult PreCreateDebugReportCallbackEXT(VkInstance instance,
                                                  const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
                                                  const VkAllocationCallbacks* pAllocator,
