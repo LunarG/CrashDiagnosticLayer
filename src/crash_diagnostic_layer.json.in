@@ -79,7 +79,7 @@
                             "env": "CDL_OUTPUT_PATH",
                             "label": "Output Path",
                             "description": "The directory where dump files and shader binaries are written.",
-                            "type": "STRING",
+                            "type": "SAVE_FOLDER",
                             "default": ""
                         },
                         {
@@ -227,7 +227,7 @@
                             "env": "CDL_LOG_FILE",
                             "label": "Log file name",
                             "description": "none = no logging, stderr or stdout = to the console, otherwise an absolute or relative path",
-                            "type": "STRING",
+                            "type": "LOAD_FILE",
                             "default": "stderr",
                             "platforms": [
                                 "WINDOWS",
