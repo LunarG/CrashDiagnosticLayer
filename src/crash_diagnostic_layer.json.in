@@ -51,26 +51,101 @@
         "features": {
             "settings": [
                 {
-                    "key": "watchdog_timeout_ms",
-                    "env": "CDL_WATCHDOG_TIMEOUT_MS",
-                    "label": "Watchdog timeout (ms)",
-                    "description": "If set to a non-zero number, a watchdog thread will be created. This will trigger if the application fails to submit new commands within a set time (in milliseconds) and a log will be created as if the a lost device error was encountered.",
-                    "type": "INT",
-                    "default": 30000,
-                    "range": {
-                        "min": 1
-                    },
-                    "platforms": [
-                        "WINDOWS",
-                        "LINUX",
-                        "MACOS",
-                        "ANDROID"
+                    "key": "state",
+                    "label": "State Tracking",
+                    "description": "Control of state tracking.",
+                    "type": "GROUP",
+                    "expanded": true,
+                    "settings": [
+                        {
+                            "key": "sync_after_commands",
+                            "env": "CDL_SYNC_AFTER_COMMANDS",
+                            "label": "Synchronize commands",
+                            "description": "Add pipeline barriers after instrumented commands to help identify whether a Vulkan crash is due to a synchronization issue.",
+                            "detailed": "VK_KHR_dynamic_rendering usage is required for this feature otherwise Validation layer errors will be generated.",
+                            "type": "BOOL",
+                            "default": false,
+                            "status": "STABLE",
+                            "messages": [
+                                {
+                                    "key": "sync_after_commands_msg0",
+                                    "title": "'Synchronize commands' is incompatible with Vulkan RenderPass",
+                                    "version": 1,
+                                    "description": "'Synchronize commands' add pipeline barriers after instrumented commands. This feature is not supported for Vulkan application using Vulkan RenderPass which would generate Validation layer errors.",
+                                    "informative": "Are you sure you want to enable 'Synchronize commands'?",
+                                    "severity": "WARNING",
+                                    "conditions": [
+                                        {
+                                            "setting": {
+                                                "key": "sync_after_commands",
+                                                "value": true
+                                            }
+                                        }
+                                    ],
+                                    "actions": {
+                                        "default": "BUTTON0",
+                                        "BUTTON0": {
+                                            "type": "OK",
+                                            "changes": [
+                                                {
+                                                    "setting": {
+                                                        "key": "sync_after_commands",
+                                                        "value": true
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "BUTTON1": {
+                                            "type": "CANCEL",
+                                            "changes": [
+                                                {
+                                                    "setting": {
+                                                        "key": "sync_after_commands",
+                                                        "value": false
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "key": "instrument_all_commands",
+                            "env": "CDL_INSTRUMENT_ALL_COMMANDS",
+                            "label": "Add markers on each Vulkan command",
+                            "description": "Include completion markers around every vulkan command",
+                            "detailed": "This may allow more accuratute fault locations at the expense of larger command buffers and reduced performance",
+                            "type": "BOOL",
+                            "default": false
+                        },
+                        {
+                            "key": "track_semaphores",
+                            "env": "CDL_TRACK_SEMAPHORES",
+                            "label": "Track semaphores",
+                            "description": "Include semaphore state reporting in runtime logging and dump files",
+                            "detailed": "VK_AMD_buffer_marker is required for this feature",
+                            "type": "BOOL",
+                            "default": true
+                        },
+                        {
+                            "key": "watchdog_timeout_ms",
+                            "env": "CDL_WATCHDOG_TIMEOUT_MS",
+                            "label": "Watchdog timeout (ms)",
+                            "description": "If set to a non-zero number, a watchdog thread will be created.",
+                            "detailed": "This will trigger if the application fails to submit new commands within a set time (in milliseconds) and a log will be created as if the a lost device error was encountered.",
+                            "type": "INT",
+                            "default": 30000,
+                            "range": {
+                                "min": 1
+                            }
+                        }
                     ]
                 },
                 {
                     "key": "dump",
                     "label": "Dump files",
-                    "description": "Control of dump files.",
+                    "description": "Control of dump files",
                     "type": "GROUP",
                     "expanded": true,
                     "settings": [
@@ -192,9 +267,48 @@
                     "expanded": true,
                     "settings": [
                         {
+                            "key": "log_file",
+                            "env": "CDL_LOG_FILE",
+                            "label": "Log file name",
+                            "description": "none = no logging, stderr or stdout = to the console, otherwise an absolute or relative path.",
+                            "type": "SAVE_FILE",
+                            "default": "stderr",
+                            "platforms": [
+                                "WINDOWS",
+                                "LINUX",
+                                "MACOS"
+                            ]
+                        },
+                        {
+                            "key": "message_group",
+                            "label": "Message Area",
+                            "description": "",
+                            "type": "GROUP",
+                            "expanded": true,
+                            "settings": [
+                                {
+                                    "key": "trace_on",
+                                    "env": "CDL_TRACE_ON",
+                                    "label": "Log main submission and synchronization Vulkan commands",
+                                    "description": "Add Vulkan API calls intercepted by the layer will be logged to the console.",
+                                    "detailed": "This includes: vkDeviceWaitIdle, vkQueueWaitIdle, vkQueuePresentKHR, vkWaitForFences, vkGetFenceStatus, vkAcquireNextImageKHR, vkCreateCommandPool, vkDestroyCommandPool, vkResetCommandPool, vkAllocateCommandBuffers, vkFreeCommandBuffers, vkQueueSubmit, vkQueueSubmit2, vkQueueSubmit2KHR and vkQueueBindSparse",
+                                    "type": "BOOL",
+                                    "default": false
+                                },
+                                {
+                                    "key": "trace_all_semaphores",
+                                    "env": "CDL_TRACE_ALL_SEMAPHORES",
+                                    "label": "Log Vulkan commands that use semaphores",
+                                    "description": "Add logging messages about every vulkan command that uses semaphores",
+                                    "type": "BOOL",
+                                    "default": false
+                                }
+                            ]
+                        },
+                        {
                             "key": "message_severity",
                             "label": "Message Severity",
-                            "description": "Comma-delineated list of options specifying the types of log messages to be reported",
+                            "description": "Comma-delineated list of options specifying the types of log messages to be reported.",
                             "type": "FLAGS",
                             "flags": [
                                 {
@@ -213,126 +327,15 @@
                                     "description": "Report informational messages."
                                 },
                                 {
-                                    "key": "verbose",
-                                    "label": "Verbose",
-                                    "description": "For layer development. Report messages for debugging layer behavior."
+                                    "key": "debug",
+                                    "label": "Debug",
+                                    "description": "For layer development. Report messages for debugging layer behavior.",
+                                    "view": "DEBUG"
                                 }
                             ],
                             "default": [
                                 "error"
                             ]
-                        },
-                        {
-                            "key": "log_file",
-                            "env": "CDL_LOG_FILE",
-                            "label": "Log file name",
-                            "description": "none = no logging, stderr or stdout = to the console, otherwise an absolute or relative path",
-                            "type": "LOAD_FILE",
-                            "default": "stderr",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS"
-                            ]
-                        },
-                        {
-                            "key": "trace_on",
-                            "env": "CDL_TRACE_ON",
-                            "label": "Enable Tracing",
-                            "description": "All Vulkan API calls intercepted by the layer will be logged to the console.",
-                            "type": "BOOL",
-                            "default": false
-                        },
-                        {
-                            "key": "trace_all_semaphores",
-                            "env": "CDL_TRACE_ALL_SEMAPHORES",
-                            "label": "Enable semaphore log tracing.",
-                            "description": "Semaphore events will be logged to console.",
-                            "type": "BOOL",
-                            "default": false
-                        }
-                    ]
-                },
-                {
-                    "key": "state",
-                    "label": "State Tracking",
-                    "description": "Control of state tracking.",
-                    "type": "GROUP",
-                    "platforms": [
-                        "WINDOWS",
-                        "LINUX",
-                        "MACOS",
-                        "ANDROID"
-                    ],
-                    "expanded": false,
-                    "settings": [
-                        {
-                            "key": "sync_after_commands",
-                            "env": "CDL_SYNC_AFTER_COMMANDS",
-                            "label": "Synchronize commands",
-                            "description": "Add pipeline barriers after instrumented commands to help identify whether a Vulkan crash is due to a synchronization issue. This feature doesn't support Vulkan application using Vulkan RenderPass and shall remain disabled in this scenario.'",
-                            "type": "BOOL",
-                            "default": false,
-                            "status": "STABLE",
-                            "messages": [
-                                {
-                                    "key": "sync_after_commands_msg0",
-                                    "title": "'Synchronize commands' is incompatible with Vulkan RenderPass",
-                                    "version": 1,
-                                    "description": "'Synchronize commands' add pipeline barriers after instrumented commands. This feature is not supported for Vulkan application using Vulkan RenderPass which would generate Validation layer errors.",
-                                    "informative": "Are you sure you want to enable 'Synchronize commands'?",
-                                    "severity": "WARNING",
-                                    "conditions": [
-                                        {
-                                            "setting": {
-                                                "key": "sync_after_commands",
-                                                "value": true
-                                            }
-                                        }
-                                    ],
-                                    "actions": {
-                                        "default": "BUTTON0",
-                                        "BUTTON0": {
-                                            "type": "OK",
-                                            "changes": [
-                                                {
-                                                    "setting": {
-                                                        "key": "sync_after_commands",
-                                                        "value": true
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        "BUTTON1": {
-                                            "type": "CANCEL",
-                                            "changes": [
-                                                {
-                                                    "setting": {
-                                                        "key": "sync_after_commands",
-                                                        "value": false
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "key": "instrument_all_commands",
-                            "env": "CDL_INSTRUMENT_ALL_COMMANDS",
-                            "label": "Instrument all commands",
-                            "description": "All commands will be instrumented.",
-                            "type": "BOOL",
-                            "default": false
-                        },
-                        {
-                            "key": "track_semaphores",
-                            "env": "CDL_TRACK_SEMAPHORES",
-                            "label": "Track semaphores",
-                            "description": "Enable semaphore tracking.",
-                            "type": "BOOL",
-                            "default": true
                         }
                     ]
                 }
