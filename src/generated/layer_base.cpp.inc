@@ -149,82 +149,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL InterceptGetQueryPoolResults(VkDevice devi
     return result;
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateShaderModule(VkDevice device,
-                                                                  const VkShaderModuleCreateInfo* pCreateInfo,
-                                                                  const VkAllocationCallbacks* pAllocator,
-                                                                  VkShaderModule* pShaderModule) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(device));
-    PFN_vkCreateShaderModule pfn = layer_data->dispatch_table.CreateShaderModule;
-    if (pfn != nullptr) {
-        result = pfn(device, pCreateInfo, pAllocator, pShaderModule);
-    }
-
-    result = layer_data->interceptor->PostCreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule, result);
-    return result;
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
-                                                               const VkAllocationCallbacks* pAllocator) {
-    auto layer_data = GetDeviceLayerData(DataKey(device));
-    layer_data->interceptor->PreDestroyShaderModule(device, shaderModule, pAllocator);
-
-    PFN_vkDestroyShaderModule pfn = layer_data->dispatch_table.DestroyShaderModule;
-    if (pfn != nullptr) {
-        pfn(device, shaderModule, pAllocator);
-    }
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
-                                                                       uint32_t createInfoCount,
-                                                                       const VkGraphicsPipelineCreateInfo* pCreateInfos,
-                                                                       const VkAllocationCallbacks* pAllocator,
-                                                                       VkPipeline* pPipelines) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(device));
-    PFN_vkCreateGraphicsPipelines pfn = layer_data->dispatch_table.CreateGraphicsPipelines;
-    if (pfn != nullptr) {
-        result = pfn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    }
-
-    result = layer_data->interceptor->PostCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos,
-                                                                  pAllocator, pPipelines, result);
-    return result;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache,
-                                                                      uint32_t createInfoCount,
-                                                                      const VkComputePipelineCreateInfo* pCreateInfos,
-                                                                      const VkAllocationCallbacks* pAllocator,
-                                                                      VkPipeline* pPipelines) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(device));
-    PFN_vkCreateComputePipelines pfn = layer_data->dispatch_table.CreateComputePipelines;
-    if (pfn != nullptr) {
-        result = pfn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    }
-
-    result = layer_data->interceptor->PostCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos,
-                                                                 pAllocator, pPipelines, result);
-    return result;
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptDestroyPipeline(VkDevice device, VkPipeline pipeline,
-                                                           const VkAllocationCallbacks* pAllocator) {
-    auto layer_data = GetDeviceLayerData(DataKey(device));
-    layer_data->interceptor->PreDestroyPipeline(device, pipeline, pAllocator);
-
-    PFN_vkDestroyPipeline pfn = layer_data->dispatch_table.DestroyPipeline;
-    if (pfn != nullptr) {
-        pfn(device, pipeline, pAllocator);
-    }
-
-    layer_data->interceptor->PostDestroyPipeline(device, pipeline, pAllocator);
-}
-
 static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateCommandPool(VkDevice device,
                                                                  const VkCommandPoolCreateInfo* pCreateInfo,
                                                                  const VkAllocationCallbacks* pAllocator,
@@ -350,6 +274,261 @@ static VKAPI_ATTR VkResult VKAPI_CALL InterceptResetCommandBuffer(VkCommandBuffe
     return result;
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
+                                                         VkBuffer dstBuffer, uint32_t regionCount,
+                                                         const VkBufferCopy* pRegions) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+
+    PFN_vkCmdCopyBuffer pfn = layer_data->dispatch_table.CmdCopyBuffer;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+    }
+
+    layer_data->interceptor->PostCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                                        VkImageLayout srcImageLayout, VkImage dstImage,
+                                                        VkImageLayout dstImageLayout, uint32_t regionCount,
+                                                        const VkImageCopy* pRegions) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
+                                             regionCount, pRegions);
+
+    PFN_vkCmdCopyImage pfn = layer_data->dispatch_table.CmdCopyImage;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+    }
+
+    layer_data->interceptor->PostCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
+                                              regionCount, pRegions);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
+                                                                VkImage dstImage, VkImageLayout dstImageLayout,
+                                                                uint32_t regionCount,
+                                                                const VkBufferImageCopy* pRegions) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount,
+                                                     pRegions);
+
+    PFN_vkCmdCopyBufferToImage pfn = layer_data->dispatch_table.CmdCopyBufferToImage;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
+    }
+
+    layer_data->interceptor->PostCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount,
+                                                      pRegions);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                                                VkImageLayout srcImageLayout, VkBuffer dstBuffer,
+                                                                uint32_t regionCount,
+                                                                const VkBufferImageCopy* pRegions) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount,
+                                                     pRegions);
+
+    PFN_vkCmdCopyImageToBuffer pfn = layer_data->dispatch_table.CmdCopyImageToBuffer;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
+    }
+
+    layer_data->interceptor->PostCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount,
+                                                      pRegions);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
+                                                           VkDeviceSize dstOffset, VkDeviceSize dataSize,
+                                                           const void* pData) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+
+    PFN_vkCmdUpdateBuffer pfn = layer_data->dispatch_table.CmdUpdateBuffer;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+    }
+
+    layer_data->interceptor->PostCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
+                                                         VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+
+    PFN_vkCmdFillBuffer pfn = layer_data->dispatch_table.CmdFillBuffer;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, dstBuffer, dstOffset, size, data);
+    }
+
+    layer_data->interceptor->PostCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier(
+    VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+    VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+    uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+    uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdPipelineBarrier(
+        commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
+        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+
+    PFN_vkCmdPipelineBarrier pfn = layer_data->dispatch_table.CmdPipelineBarrier;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
+            bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+    }
+
+    layer_data->interceptor->PostCmdPipelineBarrier(
+        commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
+        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                         uint32_t query, VkQueryControlFlags flags) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBeginQuery(commandBuffer, queryPool, query, flags);
+
+    PFN_vkCmdBeginQuery pfn = layer_data->dispatch_table.CmdBeginQuery;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, queryPool, query, flags);
+    }
+
+    layer_data->interceptor->PostCmdBeginQuery(commandBuffer, queryPool, query, flags);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                       uint32_t query) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdEndQuery(commandBuffer, queryPool, query);
+
+    PFN_vkCmdEndQuery pfn = layer_data->dispatch_table.CmdEndQuery;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, queryPool, query);
+    }
+
+    layer_data->interceptor->PostCmdEndQuery(commandBuffer, queryPool, query);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                             uint32_t firstQuery, uint32_t queryCount) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+
+    PFN_vkCmdResetQueryPool pfn = layer_data->dispatch_table.CmdResetQueryPool;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, queryPool, firstQuery, queryCount);
+    }
+
+    layer_data->interceptor->PostCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp(VkCommandBuffer commandBuffer,
+                                                             VkPipelineStageFlagBits pipelineStage,
+                                                             VkQueryPool queryPool, uint32_t query) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+
+    PFN_vkCmdWriteTimestamp pfn = layer_data->dispatch_table.CmdWriteTimestamp;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pipelineStage, queryPool, query);
+    }
+
+    layer_data->interceptor->PostCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                                   uint32_t firstQuery, uint32_t queryCount,
+                                                                   VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                                                   VkDeviceSize stride, VkQueryResultFlags flags) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer,
+                                                        dstOffset, stride, flags);
+
+    PFN_vkCmdCopyQueryPoolResults pfn = layer_data->dispatch_table.CmdCopyQueryPoolResults;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
+    }
+
+    layer_data->interceptor->PostCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer,
+                                                         dstOffset, stride, flags);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteCommands(VkCommandBuffer commandBuffer,
+                                                              uint32_t commandBufferCount,
+                                                              const VkCommandBuffer* pCommandBuffers) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
+
+    PFN_vkCmdExecuteCommands pfn = layer_data->dispatch_table.CmdExecuteCommands;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, commandBufferCount, pCommandBuffers);
+    }
+
+    layer_data->interceptor->PostCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateShaderModule(VkDevice device,
+                                                                  const VkShaderModuleCreateInfo* pCreateInfo,
+                                                                  const VkAllocationCallbacks* pAllocator,
+                                                                  VkShaderModule* pShaderModule) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    PFN_vkCreateShaderModule pfn = layer_data->dispatch_table.CreateShaderModule;
+    if (pfn != nullptr) {
+        result = pfn(device, pCreateInfo, pAllocator, pShaderModule);
+    }
+
+    result = layer_data->interceptor->PostCreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule, result);
+    return result;
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptDestroyShaderModule(VkDevice device, VkShaderModule shaderModule,
+                                                               const VkAllocationCallbacks* pAllocator) {
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    layer_data->interceptor->PreDestroyShaderModule(device, shaderModule, pAllocator);
+
+    PFN_vkDestroyShaderModule pfn = layer_data->dispatch_table.DestroyShaderModule;
+    if (pfn != nullptr) {
+        pfn(device, shaderModule, pAllocator);
+    }
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache,
+                                                                      uint32_t createInfoCount,
+                                                                      const VkComputePipelineCreateInfo* pCreateInfos,
+                                                                      const VkAllocationCallbacks* pAllocator,
+                                                                      VkPipeline* pPipelines) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    PFN_vkCreateComputePipelines pfn = layer_data->dispatch_table.CreateComputePipelines;
+    if (pfn != nullptr) {
+        result = pfn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+    }
+
+    result = layer_data->interceptor->PostCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos,
+                                                                 pAllocator, pPipelines, result);
+    return result;
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptDestroyPipeline(VkDevice device, VkPipeline pipeline,
+                                                           const VkAllocationCallbacks* pAllocator) {
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    layer_data->interceptor->PreDestroyPipeline(device, pipeline, pAllocator);
+
+    PFN_vkDestroyPipeline pfn = layer_data->dispatch_table.DestroyPipeline;
+    if (pfn != nullptr) {
+        pfn(device, pipeline, pAllocator);
+    }
+
+    layer_data->interceptor->PostDestroyPipeline(device, pipeline, pAllocator);
+}
+
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindPipeline(VkCommandBuffer commandBuffer,
                                                            VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -361,6 +540,146 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindPipeline(VkCommandBuffer comma
     }
 
     layer_data->interceptor->PostCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets(
+    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet,
+    uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
+    const uint32_t* pDynamicOffsets) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet,
+                                                      descriptorSetCount, pDescriptorSets, dynamicOffsetCount,
+                                                      pDynamicOffsets);
+
+    PFN_vkCmdBindDescriptorSets pfn = layer_data->dispatch_table.CmdBindDescriptorSets;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount,
+            pDynamicOffsets);
+    }
+
+    layer_data->interceptor->PostCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet,
+                                                       descriptorSetCount, pDescriptorSets, dynamicOffsetCount,
+                                                       pDynamicOffsets);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image,
+                                                              VkImageLayout imageLayout,
+                                                              const VkClearColorValue* pColor, uint32_t rangeCount,
+                                                              const VkImageSubresourceRange* pRanges) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+
+    PFN_vkCmdClearColorImage pfn = layer_data->dispatch_table.CmdClearColorImage;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+    }
+
+    layer_data->interceptor->PostCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX,
+                                                       uint32_t groupCountY, uint32_t groupCountZ) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+
+    PFN_vkCmdDispatch pfn = layer_data->dispatch_table.CmdDispatch;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, groupCountX, groupCountY, groupCountZ);
+    }
+
+    layer_data->interceptor->PostCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                               VkDeviceSize offset) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdDispatchIndirect(commandBuffer, buffer, offset);
+
+    PFN_vkCmdDispatchIndirect pfn = layer_data->dispatch_table.CmdDispatchIndirect;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, buffer, offset);
+    }
+
+    layer_data->interceptor->PostCmdDispatchIndirect(commandBuffer, buffer, offset);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event,
+                                                       VkPipelineStageFlags stageMask) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetEvent(commandBuffer, event, stageMask);
+
+    PFN_vkCmdSetEvent pfn = layer_data->dispatch_table.CmdSetEvent;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, event, stageMask);
+    }
+
+    layer_data->interceptor->PostCmdSetEvent(commandBuffer, event, stageMask);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event,
+                                                         VkPipelineStageFlags stageMask) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdResetEvent(commandBuffer, event, stageMask);
+
+    PFN_vkCmdResetEvent pfn = layer_data->dispatch_table.CmdResetEvent;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, event, stageMask);
+    }
+
+    layer_data->interceptor->PostCmdResetEvent(commandBuffer, event, stageMask);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents(
+    VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask,
+    VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+    uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+    uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask,
+                                              memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount,
+                                              pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+
+    PFN_vkCmdWaitEvents pfn = layer_data->dispatch_table.CmdWaitEvents;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers,
+            bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+    }
+
+    layer_data->interceptor->PostCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask,
+                                               memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount,
+                                               pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
+                                                            VkShaderStageFlags stageFlags, uint32_t offset,
+                                                            uint32_t size, const void* pValues) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
+
+    PFN_vkCmdPushConstants pfn = layer_data->dispatch_table.CmdPushConstants;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, layout, stageFlags, offset, size, pValues);
+    }
+
+    layer_data->interceptor->PostCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
+                                                                       uint32_t createInfoCount,
+                                                                       const VkGraphicsPipelineCreateInfo* pCreateInfos,
+                                                                       const VkAllocationCallbacks* pAllocator,
+                                                                       VkPipeline* pPipelines) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    PFN_vkCreateGraphicsPipelines pfn = layer_data->dispatch_table.CreateGraphicsPipelines;
+    if (pfn != nullptr) {
+        result = pfn(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+    }
+
+    result = layer_data->interceptor->PostCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos,
+                                                                  pAllocator, pPipelines, result);
+    return result;
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport,
@@ -481,26 +800,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetStencilReference(VkCommandBuffe
     layer_data->interceptor->PostCmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets(
-    VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet,
-    uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
-    const uint32_t* pDynamicOffsets) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet,
-                                                      descriptorSetCount, pDescriptorSets, dynamicOffsetCount,
-                                                      pDynamicOffsets);
-
-    PFN_vkCmdBindDescriptorSets pfn = layer_data->dispatch_table.CmdBindDescriptorSets;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount,
-            pDynamicOffsets);
-    }
-
-    layer_data->interceptor->PostCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet,
-                                                       descriptorSetCount, pDescriptorSets, dynamicOffsetCount,
-                                                       pDynamicOffsets);
-}
-
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                               VkDeviceSize offset, VkIndexType indexType) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -585,63 +884,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndexedIndirect(VkCommandBuffe
     layer_data->interceptor->PostCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX,
-                                                       uint32_t groupCountY, uint32_t groupCountZ) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-
-    PFN_vkCmdDispatch pfn = layer_data->dispatch_table.CmdDispatch;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, groupCountX, groupCountY, groupCountZ);
-    }
-
-    layer_data->interceptor->PostCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                               VkDeviceSize offset) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdDispatchIndirect(commandBuffer, buffer, offset);
-
-    PFN_vkCmdDispatchIndirect pfn = layer_data->dispatch_table.CmdDispatchIndirect;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, buffer, offset);
-    }
-
-    layer_data->interceptor->PostCmdDispatchIndirect(commandBuffer, buffer, offset);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
-                                                         VkBuffer dstBuffer, uint32_t regionCount,
-                                                         const VkBufferCopy* pRegions) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-
-    PFN_vkCmdCopyBuffer pfn = layer_data->dispatch_table.CmdCopyBuffer;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-    }
-
-    layer_data->interceptor->PostCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                                        VkImageLayout srcImageLayout, VkImage dstImage,
-                                                        VkImageLayout dstImageLayout, uint32_t regionCount,
-                                                        const VkImageCopy* pRegions) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
-                                             regionCount, pRegions);
-
-    PFN_vkCmdCopyImage pfn = layer_data->dispatch_table.CmdCopyImage;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-    }
-
-    layer_data->interceptor->PostCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
-                                              regionCount, pRegions);
-}
-
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage,
                                                         VkImageLayout srcImageLayout, VkImage dstImage,
                                                         VkImageLayout dstImageLayout, uint32_t regionCount,
@@ -657,82 +899,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage(VkCommandBuffer commandB
 
     layer_data->interceptor->PostCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
                                               regionCount, pRegions, filter);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
-                                                                VkImage dstImage, VkImageLayout dstImageLayout,
-                                                                uint32_t regionCount,
-                                                                const VkBufferImageCopy* pRegions) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount,
-                                                     pRegions);
-
-    PFN_vkCmdCopyBufferToImage pfn = layer_data->dispatch_table.CmdCopyBufferToImage;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-    }
-
-    layer_data->interceptor->PostCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount,
-                                                      pRegions);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                                                VkImageLayout srcImageLayout, VkBuffer dstBuffer,
-                                                                uint32_t regionCount,
-                                                                const VkBufferImageCopy* pRegions) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount,
-                                                     pRegions);
-
-    PFN_vkCmdCopyImageToBuffer pfn = layer_data->dispatch_table.CmdCopyImageToBuffer;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-    }
-
-    layer_data->interceptor->PostCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount,
-                                                      pRegions);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
-                                                           VkDeviceSize dstOffset, VkDeviceSize dataSize,
-                                                           const void* pData) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-
-    PFN_vkCmdUpdateBuffer pfn = layer_data->dispatch_table.CmdUpdateBuffer;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-    }
-
-    layer_data->interceptor->PostCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
-                                                         VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-
-    PFN_vkCmdFillBuffer pfn = layer_data->dispatch_table.CmdFillBuffer;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, dstBuffer, dstOffset, size, data);
-    }
-
-    layer_data->interceptor->PostCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image,
-                                                              VkImageLayout imageLayout,
-                                                              const VkClearColorValue* pColor, uint32_t rangeCount,
-                                                              const VkImageSubresourceRange* pRanges) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-
-    PFN_vkCmdClearColorImage pfn = layer_data->dispatch_table.CmdClearColorImage;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-    }
-
-    layer_data->interceptor->PostCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image,
@@ -784,158 +950,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdResolveImage(VkCommandBuffer comma
                                                  regionCount, pRegions);
 }
 
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event,
-                                                       VkPipelineStageFlags stageMask) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdSetEvent(commandBuffer, event, stageMask);
-
-    PFN_vkCmdSetEvent pfn = layer_data->dispatch_table.CmdSetEvent;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, event, stageMask);
-    }
-
-    layer_data->interceptor->PostCmdSetEvent(commandBuffer, event, stageMask);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event,
-                                                         VkPipelineStageFlags stageMask) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdResetEvent(commandBuffer, event, stageMask);
-
-    PFN_vkCmdResetEvent pfn = layer_data->dispatch_table.CmdResetEvent;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, event, stageMask);
-    }
-
-    layer_data->interceptor->PostCmdResetEvent(commandBuffer, event, stageMask);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents(
-    VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask,
-    VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-    uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-    uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask,
-                                              memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount,
-                                              pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-
-    PFN_vkCmdWaitEvents pfn = layer_data->dispatch_table.CmdWaitEvents;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers,
-            bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-    }
-
-    layer_data->interceptor->PostCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask,
-                                               memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount,
-                                               pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier(
-    VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-    VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-    uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-    uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdPipelineBarrier(
-        commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
-        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-
-    PFN_vkCmdPipelineBarrier pfn = layer_data->dispatch_table.CmdPipelineBarrier;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
-            bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-    }
-
-    layer_data->interceptor->PostCmdPipelineBarrier(
-        commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
-        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                         uint32_t query, VkQueryControlFlags flags) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdBeginQuery(commandBuffer, queryPool, query, flags);
-
-    PFN_vkCmdBeginQuery pfn = layer_data->dispatch_table.CmdBeginQuery;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, queryPool, query, flags);
-    }
-
-    layer_data->interceptor->PostCmdBeginQuery(commandBuffer, queryPool, query, flags);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                       uint32_t query) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdEndQuery(commandBuffer, queryPool, query);
-
-    PFN_vkCmdEndQuery pfn = layer_data->dispatch_table.CmdEndQuery;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, queryPool, query);
-    }
-
-    layer_data->interceptor->PostCmdEndQuery(commandBuffer, queryPool, query);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                             uint32_t firstQuery, uint32_t queryCount) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-
-    PFN_vkCmdResetQueryPool pfn = layer_data->dispatch_table.CmdResetQueryPool;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, queryPool, firstQuery, queryCount);
-    }
-
-    layer_data->interceptor->PostCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdWriteTimestamp(VkCommandBuffer commandBuffer,
-                                                             VkPipelineStageFlagBits pipelineStage,
-                                                             VkQueryPool queryPool, uint32_t query) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-
-    PFN_vkCmdWriteTimestamp pfn = layer_data->dispatch_table.CmdWriteTimestamp;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, pipelineStage, queryPool, query);
-    }
-
-    layer_data->interceptor->PostCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                                   uint32_t firstQuery, uint32_t queryCount,
-                                                                   VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                                                   VkDeviceSize stride, VkQueryResultFlags flags) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer,
-                                                        dstOffset, stride, flags);
-
-    PFN_vkCmdCopyQueryPoolResults pfn = layer_data->dispatch_table.CmdCopyQueryPoolResults;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
-    }
-
-    layer_data->interceptor->PostCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer,
-                                                         dstOffset, stride, flags);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
-                                                            VkShaderStageFlags stageFlags, uint32_t offset,
-                                                            uint32_t size, const void* pValues) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-
-    PFN_vkCmdPushConstants pfn = layer_data->dispatch_table.CmdPushConstants;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, layout, stageFlags, offset, size, pValues);
-    }
-
-    layer_data->interceptor->PostCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-}
-
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginRenderPass(VkCommandBuffer commandBuffer,
                                                               const VkRenderPassBeginInfo* pRenderPassBegin,
                                                               VkSubpassContents contents) {
@@ -974,20 +988,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass(VkCommandBuffer comm
     layer_data->interceptor->PostCmdEndRenderPass(commandBuffer);
 }
 
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteCommands(VkCommandBuffer commandBuffer,
-                                                              uint32_t commandBufferCount,
-                                                              const VkCommandBuffer* pCommandBuffers) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
-
-    PFN_vkCmdExecuteCommands pfn = layer_data->dispatch_table.CmdExecuteCommands;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, commandBufferCount, pCommandBuffers);
-    }
-
-    layer_data->interceptor->PostCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
-}
-
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdSetDeviceMask(commandBuffer, deviceMask);
@@ -998,6 +998,17 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetDeviceMask(VkCommandBuffer comm
     }
 
     layer_data->interceptor->PostCmdSetDeviceMask(commandBuffer, deviceMask);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo,
+                                                           VkQueue* pQueue) {
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    PFN_vkGetDeviceQueue2 pfn = layer_data->dispatch_table.GetDeviceQueue2;
+    if (pfn != nullptr) {
+        pfn(device, pQueueInfo, pQueue);
+    }
+
+    layer_data->interceptor->PostGetDeviceQueue2(device, pQueueInfo, pQueue);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX,
@@ -1017,15 +1028,52 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchBase(VkCommandBuffer comma
                                                  groupCountY, groupCountZ);
 }
 
-static VKAPI_ATTR void VKAPI_CALL InterceptGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo,
-                                                           VkQueue* pQueue) {
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore,
+                                                                        uint64_t* pValue) {
+    VkResult result = VK_SUCCESS;
+
     auto layer_data = GetDeviceLayerData(DataKey(device));
-    PFN_vkGetDeviceQueue2 pfn = layer_data->dispatch_table.GetDeviceQueue2;
+    layer_data->interceptor->PreGetSemaphoreCounterValue(device, semaphore, pValue);
+
+    PFN_vkGetSemaphoreCounterValue pfn = layer_data->dispatch_table.GetSemaphoreCounterValue;
     if (pfn != nullptr) {
-        pfn(device, pQueueInfo, pQueue);
+        result = pfn(device, semaphore, pValue);
     }
 
-    layer_data->interceptor->PostGetDeviceQueue2(device, pQueueInfo, pQueue);
+    result = layer_data->interceptor->PostGetSemaphoreCounterValue(device, semaphore, pValue, result);
+    return result;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo,
+                                                              uint64_t timeout) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    layer_data->interceptor->PreWaitSemaphores(device, pWaitInfo, timeout);
+
+    PFN_vkWaitSemaphores pfn = layer_data->dispatch_table.WaitSemaphores;
+    if (pfn != nullptr) {
+        result = pfn(device, pWaitInfo, timeout);
+    }
+
+    result = layer_data->interceptor->PostWaitSemaphores(device, pWaitInfo, timeout, result);
+    return result;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptSignalSemaphore(VkDevice device,
+                                                               const VkSemaphoreSignalInfo* pSignalInfo) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(device));
+    layer_data->interceptor->PreSignalSemaphore(device, pSignalInfo);
+
+    PFN_vkSignalSemaphore pfn = layer_data->dispatch_table.SignalSemaphore;
+    if (pfn != nullptr) {
+        result = pfn(device, pSignalInfo);
+    }
+
+    result = layer_data->interceptor->PostSignalSemaphore(device, pSignalInfo, result);
+    return result;
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer,
@@ -1101,94 +1149,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRenderPass2(VkCommandBuffer com
     }
 
     layer_data->interceptor->PostCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL InterceptGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore,
-                                                                        uint64_t* pValue) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(device));
-    layer_data->interceptor->PreGetSemaphoreCounterValue(device, semaphore, pValue);
-
-    PFN_vkGetSemaphoreCounterValue pfn = layer_data->dispatch_table.GetSemaphoreCounterValue;
-    if (pfn != nullptr) {
-        result = pfn(device, semaphore, pValue);
-    }
-
-    result = layer_data->interceptor->PostGetSemaphoreCounterValue(device, semaphore, pValue, result);
-    return result;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL InterceptWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo,
-                                                              uint64_t timeout) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(device));
-    layer_data->interceptor->PreWaitSemaphores(device, pWaitInfo, timeout);
-
-    PFN_vkWaitSemaphores pfn = layer_data->dispatch_table.WaitSemaphores;
-    if (pfn != nullptr) {
-        result = pfn(device, pWaitInfo, timeout);
-    }
-
-    result = layer_data->interceptor->PostWaitSemaphores(device, pWaitInfo, timeout, result);
-    return result;
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL InterceptSignalSemaphore(VkDevice device,
-                                                               const VkSemaphoreSignalInfo* pSignalInfo) {
-    VkResult result = VK_SUCCESS;
-
-    auto layer_data = GetDeviceLayerData(DataKey(device));
-    layer_data->interceptor->PreSignalSemaphore(device, pSignalInfo);
-
-    PFN_vkSignalSemaphore pfn = layer_data->dispatch_table.SignalSemaphore;
-    if (pfn != nullptr) {
-        result = pfn(device, pSignalInfo);
-    }
-
-    result = layer_data->interceptor->PostSignalSemaphore(device, pSignalInfo, result);
-    return result;
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                                        const VkDependencyInfo* pDependencyInfo) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
-
-    PFN_vkCmdSetEvent2 pfn = layer_data->dispatch_table.CmdSetEvent2;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, event, pDependencyInfo);
-    }
-
-    layer_data->interceptor->PostCmdSetEvent2(commandBuffer, event, pDependencyInfo);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                                          VkPipelineStageFlags2 stageMask) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdResetEvent2(commandBuffer, event, stageMask);
-
-    PFN_vkCmdResetEvent2 pfn = layer_data->dispatch_table.CmdResetEvent2;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, event, stageMask);
-    }
-
-    layer_data->interceptor->PostCmdResetEvent2(commandBuffer, event, stageMask);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount,
-                                                          const VkEvent* pEvents,
-                                                          const VkDependencyInfo* pDependencyInfos) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
-
-    PFN_vkCmdWaitEvents2 pfn = layer_data->dispatch_table.CmdWaitEvents2;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, eventCount, pEvents, pDependencyInfos);
-    }
-
-    layer_data->interceptor->PostCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdPipelineBarrier2(VkCommandBuffer commandBuffer,
@@ -1268,6 +1228,46 @@ InterceptCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer, const VkCopyImageT
     }
 
     layer_data->interceptor->PostCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                                        const VkDependencyInfo* pDependencyInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
+
+    PFN_vkCmdSetEvent2 pfn = layer_data->dispatch_table.CmdSetEvent2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, event, pDependencyInfo);
+    }
+
+    layer_data->interceptor->PostCmdSetEvent2(commandBuffer, event, pDependencyInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                                          VkPipelineStageFlags2 stageMask) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdResetEvent2(commandBuffer, event, stageMask);
+
+    PFN_vkCmdResetEvent2 pfn = layer_data->dispatch_table.CmdResetEvent2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, event, stageMask);
+    }
+
+    layer_data->interceptor->PostCmdResetEvent2(commandBuffer, event, stageMask);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount,
+                                                          const VkEvent* pEvents,
+                                                          const VkDependencyInfo* pDependencyInfos) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
+
+    PFN_vkCmdWaitEvents2 pfn = layer_data->dispatch_table.CmdWaitEvents2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, eventCount, pEvents, pDependencyInfos);
+    }
+
+    layer_data->interceptor->PostCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBlitImage2(VkCommandBuffer commandBuffer,
@@ -1521,33 +1521,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartEnable(VkComman
     layer_data->interceptor->PostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                                             uint16_t lineStipplePattern) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
-
-    PFN_vkCmdSetLineStipple pfn = layer_data->dispatch_table.CmdSetLineStipple;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, lineStippleFactor, lineStipplePattern);
-    }
-
-    layer_data->interceptor->PostCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                               VkDeviceSize offset, VkDeviceSize size,
-                                                               VkIndexType indexType) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
-
-    PFN_vkCmdBindIndexBuffer2 pfn = layer_data->dispatch_table.CmdBindIndexBuffer2;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, buffer, offset, size, indexType);
-    }
-
-    layer_data->interceptor->PostCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
-}
-
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSet(VkCommandBuffer commandBuffer,
                                                                 VkPipelineBindPoint pipelineBindPoint,
                                                                 VkPipelineLayout layout, uint32_t set,
@@ -1580,32 +1553,6 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplate(
 
     layer_data->interceptor->PostCmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set,
                                                                   pData);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingAttachmentLocations(
-    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
-
-    PFN_vkCmdSetRenderingAttachmentLocations pfn = layer_data->dispatch_table.CmdSetRenderingAttachmentLocations;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, pLocationInfo);
-    }
-
-    layer_data->interceptor->PostCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
-}
-
-static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingInputAttachmentIndices(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
-    layer_data->interceptor->PreCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
-
-    PFN_vkCmdSetRenderingInputAttachmentIndices pfn = layer_data->dispatch_table.CmdSetRenderingInputAttachmentIndices;
-    if (pfn != nullptr) {
-        pfn(commandBuffer, pInputAttachmentIndexInfo);
-    }
-
-    layer_data->interceptor->PostCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindDescriptorSets2(
@@ -1658,6 +1605,59 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDescriptorSetWithTemplate2(
     }
 
     layer_data->interceptor->PostCmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                                             uint16_t lineStipplePattern) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+
+    PFN_vkCmdSetLineStipple pfn = layer_data->dispatch_table.CmdSetLineStipple;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, lineStippleFactor, lineStipplePattern);
+    }
+
+    layer_data->interceptor->PostCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                               VkDeviceSize offset, VkDeviceSize size,
+                                                               VkIndexType indexType) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+
+    PFN_vkCmdBindIndexBuffer2 pfn = layer_data->dispatch_table.CmdBindIndexBuffer2;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, buffer, offset, size, indexType);
+    }
+
+    layer_data->interceptor->PostCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingAttachmentLocations(
+    VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+
+    PFN_vkCmdSetRenderingAttachmentLocations pfn = layer_data->dispatch_table.CmdSetRenderingAttachmentLocations;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pLocationInfo);
+    }
+
+    layer_data->interceptor->PostCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
+
+    PFN_vkCmdSetRenderingInputAttachmentIndices pfn = layer_data->dispatch_table.CmdSetRenderingInputAttachmentIndices;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pInputAttachmentIndexInfo);
+    }
+
+    layer_data->interceptor->PostCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL InterceptAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain,
@@ -2304,6 +2304,19 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyMemoryToImageIndirectKHR(
     }
 
     layer_data->interceptor->PostCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRendering2KHR(VkCommandBuffer commandBuffer,
+                                                               const VkRenderingEndInfoKHR* pRenderingEndInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
+
+    PFN_vkCmdEndRendering2KHR pfn = layer_data->dispatch_table.CmdEndRendering2KHR;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pRenderingEndInfo);
+    }
+
+    layer_data->interceptor->PostCmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL
@@ -4285,6 +4298,39 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindTileMemoryQCOM(VkCommandBuffer
     layer_data->interceptor->PostCmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDecompressMemoryEXT(
+    VkCommandBuffer commandBuffer, const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
+
+    PFN_vkCmdDecompressMemoryEXT pfn = layer_data->dispatch_table.CmdDecompressMemoryEXT;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pDecompressMemoryInfoEXT);
+    }
+
+    layer_data->interceptor->PostCmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdDecompressMemoryIndirectCountEXT(
+    VkCommandBuffer commandBuffer, VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+    VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress,
+    uint32_t maxDecompressionCount, uint32_t stride) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdDecompressMemoryIndirectCountEXT(
+        commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress,
+        maxDecompressionCount, stride);
+
+    PFN_vkCmdDecompressMemoryIndirectCountEXT pfn = layer_data->dispatch_table.CmdDecompressMemoryIndirectCountEXT;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress,
+            maxDecompressionCount, stride);
+    }
+
+    layer_data->interceptor->PostCmdDecompressMemoryIndirectCountEXT(
+        commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress,
+        maxDecompressionCount, stride);
+}
+
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -4343,7 +4389,7 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdExecuteGeneratedCommandsEXT(
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
-                                                               const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+                                                               const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
     layer_data->interceptor->PreCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
 
@@ -4353,6 +4399,19 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndRendering2EXT(VkCommandBuffer c
     }
 
     layer_data->interceptor->PostCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginCustomResolveEXT(
+    VkCommandBuffer commandBuffer, const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
+
+    PFN_vkCmdBeginCustomResolveEXT pfn = layer_data->dispatch_table.CmdBeginCustomResolveEXT;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pBeginCustomResolveInfo);
+    }
+
+    layer_data->interceptor->PostCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
 }
 
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructuresKHR(
@@ -4577,11 +4636,6 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCreateSemaphore", {kFuncTypeDev, (void*)InterceptCreateSemaphore}},
         {"vkDestroySemaphore", {kFuncTypeDev, (void*)InterceptDestroySemaphore}},
         {"vkGetQueryPoolResults", {kFuncTypeDev, (void*)InterceptGetQueryPoolResults}},
-        {"vkCreateShaderModule", {kFuncTypeDev, (void*)InterceptCreateShaderModule}},
-        {"vkDestroyShaderModule", {kFuncTypeDev, (void*)InterceptDestroyShaderModule}},
-        {"vkCreateGraphicsPipelines", {kFuncTypeDev, (void*)InterceptCreateGraphicsPipelines}},
-        {"vkCreateComputePipelines", {kFuncTypeDev, (void*)InterceptCreateComputePipelines}},
-        {"vkDestroyPipeline", {kFuncTypeDev, (void*)InterceptDestroyPipeline}},
         {"vkCreateCommandPool", {kFuncTypeDev, (void*)InterceptCreateCommandPool}},
         {"vkDestroyCommandPool", {kFuncTypeDev, (void*)InterceptDestroyCommandPool}},
         {"vkResetCommandPool", {kFuncTypeDev, (void*)InterceptResetCommandPool}},
@@ -4590,7 +4644,33 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkBeginCommandBuffer", {kFuncTypeDev, (void*)InterceptBeginCommandBuffer}},
         {"vkEndCommandBuffer", {kFuncTypeDev, (void*)InterceptEndCommandBuffer}},
         {"vkResetCommandBuffer", {kFuncTypeDev, (void*)InterceptResetCommandBuffer}},
+        {"vkCmdCopyBuffer", {kFuncTypeDev, (void*)InterceptCmdCopyBuffer}},
+        {"vkCmdCopyImage", {kFuncTypeDev, (void*)InterceptCmdCopyImage}},
+        {"vkCmdCopyBufferToImage", {kFuncTypeDev, (void*)InterceptCmdCopyBufferToImage}},
+        {"vkCmdCopyImageToBuffer", {kFuncTypeDev, (void*)InterceptCmdCopyImageToBuffer}},
+        {"vkCmdUpdateBuffer", {kFuncTypeDev, (void*)InterceptCmdUpdateBuffer}},
+        {"vkCmdFillBuffer", {kFuncTypeDev, (void*)InterceptCmdFillBuffer}},
+        {"vkCmdPipelineBarrier", {kFuncTypeDev, (void*)InterceptCmdPipelineBarrier}},
+        {"vkCmdBeginQuery", {kFuncTypeDev, (void*)InterceptCmdBeginQuery}},
+        {"vkCmdEndQuery", {kFuncTypeDev, (void*)InterceptCmdEndQuery}},
+        {"vkCmdResetQueryPool", {kFuncTypeDev, (void*)InterceptCmdResetQueryPool}},
+        {"vkCmdWriteTimestamp", {kFuncTypeDev, (void*)InterceptCmdWriteTimestamp}},
+        {"vkCmdCopyQueryPoolResults", {kFuncTypeDev, (void*)InterceptCmdCopyQueryPoolResults}},
+        {"vkCmdExecuteCommands", {kFuncTypeDev, (void*)InterceptCmdExecuteCommands}},
+        {"vkCreateShaderModule", {kFuncTypeDev, (void*)InterceptCreateShaderModule}},
+        {"vkDestroyShaderModule", {kFuncTypeDev, (void*)InterceptDestroyShaderModule}},
+        {"vkCreateComputePipelines", {kFuncTypeDev, (void*)InterceptCreateComputePipelines}},
+        {"vkDestroyPipeline", {kFuncTypeDev, (void*)InterceptDestroyPipeline}},
         {"vkCmdBindPipeline", {kFuncTypeDev, (void*)InterceptCmdBindPipeline}},
+        {"vkCmdBindDescriptorSets", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorSets}},
+        {"vkCmdClearColorImage", {kFuncTypeDev, (void*)InterceptCmdClearColorImage}},
+        {"vkCmdDispatch", {kFuncTypeDev, (void*)InterceptCmdDispatch}},
+        {"vkCmdDispatchIndirect", {kFuncTypeDev, (void*)InterceptCmdDispatchIndirect}},
+        {"vkCmdSetEvent", {kFuncTypeDev, (void*)InterceptCmdSetEvent}},
+        {"vkCmdResetEvent", {kFuncTypeDev, (void*)InterceptCmdResetEvent}},
+        {"vkCmdWaitEvents", {kFuncTypeDev, (void*)InterceptCmdWaitEvents}},
+        {"vkCmdPushConstants", {kFuncTypeDev, (void*)InterceptCmdPushConstants}},
+        {"vkCreateGraphicsPipelines", {kFuncTypeDev, (void*)InterceptCreateGraphicsPipelines}},
         {"vkCmdSetViewport", {kFuncTypeDev, (void*)InterceptCmdSetViewport}},
         {"vkCmdSetScissor", {kFuncTypeDev, (void*)InterceptCmdSetScissor}},
         {"vkCmdSetLineWidth", {kFuncTypeDev, (void*)InterceptCmdSetLineWidth}},
@@ -4600,55 +4680,31 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdSetStencilCompareMask", {kFuncTypeDev, (void*)InterceptCmdSetStencilCompareMask}},
         {"vkCmdSetStencilWriteMask", {kFuncTypeDev, (void*)InterceptCmdSetStencilWriteMask}},
         {"vkCmdSetStencilReference", {kFuncTypeDev, (void*)InterceptCmdSetStencilReference}},
-        {"vkCmdBindDescriptorSets", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorSets}},
         {"vkCmdBindIndexBuffer", {kFuncTypeDev, (void*)InterceptCmdBindIndexBuffer}},
         {"vkCmdBindVertexBuffers", {kFuncTypeDev, (void*)InterceptCmdBindVertexBuffers}},
         {"vkCmdDraw", {kFuncTypeDev, (void*)InterceptCmdDraw}},
         {"vkCmdDrawIndexed", {kFuncTypeDev, (void*)InterceptCmdDrawIndexed}},
         {"vkCmdDrawIndirect", {kFuncTypeDev, (void*)InterceptCmdDrawIndirect}},
         {"vkCmdDrawIndexedIndirect", {kFuncTypeDev, (void*)InterceptCmdDrawIndexedIndirect}},
-        {"vkCmdDispatch", {kFuncTypeDev, (void*)InterceptCmdDispatch}},
-        {"vkCmdDispatchIndirect", {kFuncTypeDev, (void*)InterceptCmdDispatchIndirect}},
-        {"vkCmdCopyBuffer", {kFuncTypeDev, (void*)InterceptCmdCopyBuffer}},
-        {"vkCmdCopyImage", {kFuncTypeDev, (void*)InterceptCmdCopyImage}},
         {"vkCmdBlitImage", {kFuncTypeDev, (void*)InterceptCmdBlitImage}},
-        {"vkCmdCopyBufferToImage", {kFuncTypeDev, (void*)InterceptCmdCopyBufferToImage}},
-        {"vkCmdCopyImageToBuffer", {kFuncTypeDev, (void*)InterceptCmdCopyImageToBuffer}},
-        {"vkCmdUpdateBuffer", {kFuncTypeDev, (void*)InterceptCmdUpdateBuffer}},
-        {"vkCmdFillBuffer", {kFuncTypeDev, (void*)InterceptCmdFillBuffer}},
-        {"vkCmdClearColorImage", {kFuncTypeDev, (void*)InterceptCmdClearColorImage}},
         {"vkCmdClearDepthStencilImage", {kFuncTypeDev, (void*)InterceptCmdClearDepthStencilImage}},
         {"vkCmdClearAttachments", {kFuncTypeDev, (void*)InterceptCmdClearAttachments}},
         {"vkCmdResolveImage", {kFuncTypeDev, (void*)InterceptCmdResolveImage}},
-        {"vkCmdSetEvent", {kFuncTypeDev, (void*)InterceptCmdSetEvent}},
-        {"vkCmdResetEvent", {kFuncTypeDev, (void*)InterceptCmdResetEvent}},
-        {"vkCmdWaitEvents", {kFuncTypeDev, (void*)InterceptCmdWaitEvents}},
-        {"vkCmdPipelineBarrier", {kFuncTypeDev, (void*)InterceptCmdPipelineBarrier}},
-        {"vkCmdBeginQuery", {kFuncTypeDev, (void*)InterceptCmdBeginQuery}},
-        {"vkCmdEndQuery", {kFuncTypeDev, (void*)InterceptCmdEndQuery}},
-        {"vkCmdResetQueryPool", {kFuncTypeDev, (void*)InterceptCmdResetQueryPool}},
-        {"vkCmdWriteTimestamp", {kFuncTypeDev, (void*)InterceptCmdWriteTimestamp}},
-        {"vkCmdCopyQueryPoolResults", {kFuncTypeDev, (void*)InterceptCmdCopyQueryPoolResults}},
-        {"vkCmdPushConstants", {kFuncTypeDev, (void*)InterceptCmdPushConstants}},
         {"vkCmdBeginRenderPass", {kFuncTypeDev, (void*)InterceptCmdBeginRenderPass}},
         {"vkCmdNextSubpass", {kFuncTypeDev, (void*)InterceptCmdNextSubpass}},
         {"vkCmdEndRenderPass", {kFuncTypeDev, (void*)InterceptCmdEndRenderPass}},
-        {"vkCmdExecuteCommands", {kFuncTypeDev, (void*)InterceptCmdExecuteCommands}},
         {"vkCmdSetDeviceMask", {kFuncTypeDev, (void*)InterceptCmdSetDeviceMask}},
-        {"vkCmdDispatchBase", {kFuncTypeDev, (void*)InterceptCmdDispatchBase}},
         {"vkGetDeviceQueue2", {kFuncTypeDev, (void*)InterceptGetDeviceQueue2}},
+        {"vkCmdDispatchBase", {kFuncTypeDev, (void*)InterceptCmdDispatchBase}},
+        {"vkGetSemaphoreCounterValue", {kFuncTypeDev, (void*)InterceptGetSemaphoreCounterValue}},
+        {"vkWaitSemaphores", {kFuncTypeDev, (void*)InterceptWaitSemaphores}},
+        {"vkSignalSemaphore", {kFuncTypeDev, (void*)InterceptSignalSemaphore}},
         {"vkCmdDrawIndirectCount", {kFuncTypeDev, (void*)InterceptCmdDrawIndirectCount}},
         {"vkCmdDrawIndexedIndirectCount", {kFuncTypeDev, (void*)InterceptCmdDrawIndexedIndirectCount}},
         {"vkCmdBeginRenderPass2", {kFuncTypeDev, (void*)InterceptCmdBeginRenderPass2}},
         {"vkCmdNextSubpass2", {kFuncTypeDev, (void*)InterceptCmdNextSubpass2}},
         {"vkCmdEndRenderPass2", {kFuncTypeDev, (void*)InterceptCmdEndRenderPass2}},
-        {"vkGetSemaphoreCounterValue", {kFuncTypeDev, (void*)InterceptGetSemaphoreCounterValue}},
-        {"vkWaitSemaphores", {kFuncTypeDev, (void*)InterceptWaitSemaphores}},
-        {"vkSignalSemaphore", {kFuncTypeDev, (void*)InterceptSignalSemaphore}},
         {"vkGetPhysicalDeviceToolProperties", {kFuncTypePdev, (void*)InterceptGetPhysicalDeviceToolProperties}},
-        {"vkCmdSetEvent2", {kFuncTypeDev, (void*)InterceptCmdSetEvent2}},
-        {"vkCmdResetEvent2", {kFuncTypeDev, (void*)InterceptCmdResetEvent2}},
-        {"vkCmdWaitEvents2", {kFuncTypeDev, (void*)InterceptCmdWaitEvents2}},
         {"vkCmdPipelineBarrier2", {kFuncTypeDev, (void*)InterceptCmdPipelineBarrier2}},
         {"vkCmdWriteTimestamp2", {kFuncTypeDev, (void*)InterceptCmdWriteTimestamp2}},
         {"vkQueueSubmit2", {kFuncTypeDev, (void*)InterceptQueueSubmit2}},
@@ -4656,6 +4712,9 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdCopyImage2", {kFuncTypeDev, (void*)InterceptCmdCopyImage2}},
         {"vkCmdCopyBufferToImage2", {kFuncTypeDev, (void*)InterceptCmdCopyBufferToImage2}},
         {"vkCmdCopyImageToBuffer2", {kFuncTypeDev, (void*)InterceptCmdCopyImageToBuffer2}},
+        {"vkCmdSetEvent2", {kFuncTypeDev, (void*)InterceptCmdSetEvent2}},
+        {"vkCmdResetEvent2", {kFuncTypeDev, (void*)InterceptCmdResetEvent2}},
+        {"vkCmdWaitEvents2", {kFuncTypeDev, (void*)InterceptCmdWaitEvents2}},
         {"vkCmdBlitImage2", {kFuncTypeDev, (void*)InterceptCmdBlitImage2}},
         {"vkCmdResolveImage2", {kFuncTypeDev, (void*)InterceptCmdResolveImage2}},
         {"vkCmdBeginRendering", {kFuncTypeDev, (void*)InterceptCmdBeginRendering}},
@@ -4675,17 +4734,17 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdSetRasterizerDiscardEnable", {kFuncTypeDev, (void*)InterceptCmdSetRasterizerDiscardEnable}},
         {"vkCmdSetDepthBiasEnable", {kFuncTypeDev, (void*)InterceptCmdSetDepthBiasEnable}},
         {"vkCmdSetPrimitiveRestartEnable", {kFuncTypeDev, (void*)InterceptCmdSetPrimitiveRestartEnable}},
-        {"vkCmdSetLineStipple", {kFuncTypeDev, (void*)InterceptCmdSetLineStipple}},
-        {"vkCmdBindIndexBuffer2", {kFuncTypeDev, (void*)InterceptCmdBindIndexBuffer2}},
         {"vkCmdPushDescriptorSet", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSet}},
         {"vkCmdPushDescriptorSetWithTemplate", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSetWithTemplate}},
-        {"vkCmdSetRenderingAttachmentLocations", {kFuncTypeDev, (void*)InterceptCmdSetRenderingAttachmentLocations}},
-        {"vkCmdSetRenderingInputAttachmentIndices",
-         {kFuncTypeDev, (void*)InterceptCmdSetRenderingInputAttachmentIndices}},
         {"vkCmdBindDescriptorSets2", {kFuncTypeDev, (void*)InterceptCmdBindDescriptorSets2}},
         {"vkCmdPushConstants2", {kFuncTypeDev, (void*)InterceptCmdPushConstants2}},
         {"vkCmdPushDescriptorSet2", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSet2}},
         {"vkCmdPushDescriptorSetWithTemplate2", {kFuncTypeDev, (void*)InterceptCmdPushDescriptorSetWithTemplate2}},
+        {"vkCmdSetLineStipple", {kFuncTypeDev, (void*)InterceptCmdSetLineStipple}},
+        {"vkCmdBindIndexBuffer2", {kFuncTypeDev, (void*)InterceptCmdBindIndexBuffer2}},
+        {"vkCmdSetRenderingAttachmentLocations", {kFuncTypeDev, (void*)InterceptCmdSetRenderingAttachmentLocations}},
+        {"vkCmdSetRenderingInputAttachmentIndices",
+         {kFuncTypeDev, (void*)InterceptCmdSetRenderingInputAttachmentIndices}},
         {"vkAcquireNextImageKHR", {kFuncTypeDev, (void*)InterceptAcquireNextImageKHR}},
         {"vkQueuePresentKHR", {kFuncTypeDev, (void*)InterceptQueuePresentKHR}},
         {"vkCmdBeginVideoCodingKHR", {kFuncTypeDev, (void*)InterceptCmdBeginVideoCodingKHR}},
@@ -4737,6 +4796,7 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
          {kFuncTypeDev, (void*)InterceptCmdBindDescriptorBufferEmbeddedSamplers2EXT}},
         {"vkCmdCopyMemoryIndirectKHR", {kFuncTypeDev, (void*)InterceptCmdCopyMemoryIndirectKHR}},
         {"vkCmdCopyMemoryToImageIndirectKHR", {kFuncTypeDev, (void*)InterceptCmdCopyMemoryToImageIndirectKHR}},
+        {"vkCmdEndRendering2KHR", {kFuncTypeDev, (void*)InterceptCmdEndRendering2KHR}},
         {"vkCreateDebugReportCallbackEXT", {kFuncTypeInst, (void*)InterceptCreateDebugReportCallbackEXT}},
         {"vkDestroyDebugReportCallbackEXT", {kFuncTypeInst, (void*)InterceptDestroyDebugReportCallbackEXT}},
         {"vkDebugMarkerSetObjectNameEXT", {kFuncTypeDev, (void*)InterceptDebugMarkerSetObjectNameEXT}},
@@ -4892,6 +4952,8 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdSetAttachmentFeedbackLoopEnableEXT",
          {kFuncTypeDev, (void*)InterceptCmdSetAttachmentFeedbackLoopEnableEXT}},
         {"vkCmdBindTileMemoryQCOM", {kFuncTypeDev, (void*)InterceptCmdBindTileMemoryQCOM}},
+        {"vkCmdDecompressMemoryEXT", {kFuncTypeDev, (void*)InterceptCmdDecompressMemoryEXT}},
+        {"vkCmdDecompressMemoryIndirectCountEXT", {kFuncTypeDev, (void*)InterceptCmdDecompressMemoryIndirectCountEXT}},
         {"vkCmdBuildClusterAccelerationStructureIndirectNV",
          {kFuncTypeDev, (void*)InterceptCmdBuildClusterAccelerationStructureIndirectNV}},
         {"vkCmdBuildPartitionedAccelerationStructuresNV",
@@ -4899,6 +4961,7 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdPreprocessGeneratedCommandsEXT", {kFuncTypeDev, (void*)InterceptCmdPreprocessGeneratedCommandsEXT}},
         {"vkCmdExecuteGeneratedCommandsEXT", {kFuncTypeDev, (void*)InterceptCmdExecuteGeneratedCommandsEXT}},
         {"vkCmdEndRendering2EXT", {kFuncTypeDev, (void*)InterceptCmdEndRendering2EXT}},
+        {"vkCmdBeginCustomResolveEXT", {kFuncTypeDev, (void*)InterceptCmdBeginCustomResolveEXT}},
         {"vkCmdBuildAccelerationStructuresKHR", {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructuresKHR}},
         {"vkCmdBuildAccelerationStructuresIndirectKHR",
          {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructuresIndirectKHR}},

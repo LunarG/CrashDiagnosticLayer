@@ -41,7 +41,28 @@ struct Command {
         kBeginCommandBuffer,
         kEndCommandBuffer,
         kResetCommandBuffer,
+        kCmdCopyBuffer,
+        kCmdCopyImage,
+        kCmdCopyBufferToImage,
+        kCmdCopyImageToBuffer,
+        kCmdUpdateBuffer,
+        kCmdFillBuffer,
+        kCmdPipelineBarrier,
+        kCmdBeginQuery,
+        kCmdEndQuery,
+        kCmdResetQueryPool,
+        kCmdWriteTimestamp,
+        kCmdCopyQueryPoolResults,
+        kCmdExecuteCommands,
         kCmdBindPipeline,
+        kCmdBindDescriptorSets,
+        kCmdClearColorImage,
+        kCmdDispatch,
+        kCmdDispatchIndirect,
+        kCmdSetEvent,
+        kCmdResetEvent,
+        kCmdWaitEvents,
+        kCmdPushConstants,
         kCmdSetViewport,
         kCmdSetScissor,
         kCmdSetLineWidth,
@@ -51,40 +72,19 @@ struct Command {
         kCmdSetStencilCompareMask,
         kCmdSetStencilWriteMask,
         kCmdSetStencilReference,
-        kCmdBindDescriptorSets,
         kCmdBindIndexBuffer,
         kCmdBindVertexBuffers,
         kCmdDraw,
         kCmdDrawIndexed,
         kCmdDrawIndirect,
         kCmdDrawIndexedIndirect,
-        kCmdDispatch,
-        kCmdDispatchIndirect,
-        kCmdCopyBuffer,
-        kCmdCopyImage,
         kCmdBlitImage,
-        kCmdCopyBufferToImage,
-        kCmdCopyImageToBuffer,
-        kCmdUpdateBuffer,
-        kCmdFillBuffer,
-        kCmdClearColorImage,
         kCmdClearDepthStencilImage,
         kCmdClearAttachments,
         kCmdResolveImage,
-        kCmdSetEvent,
-        kCmdResetEvent,
-        kCmdWaitEvents,
-        kCmdPipelineBarrier,
-        kCmdBeginQuery,
-        kCmdEndQuery,
-        kCmdResetQueryPool,
-        kCmdWriteTimestamp,
-        kCmdCopyQueryPoolResults,
-        kCmdPushConstants,
         kCmdBeginRenderPass,
         kCmdNextSubpass,
         kCmdEndRenderPass,
-        kCmdExecuteCommands,
         kCmdSetDeviceMask,
         kCmdDispatchBase,
         kCmdDrawIndirectCount,
@@ -92,15 +92,15 @@ struct Command {
         kCmdBeginRenderPass2,
         kCmdNextSubpass2,
         kCmdEndRenderPass2,
-        kCmdSetEvent2,
-        kCmdResetEvent2,
-        kCmdWaitEvents2,
         kCmdPipelineBarrier2,
         kCmdWriteTimestamp2,
         kCmdCopyBuffer2,
         kCmdCopyImage2,
         kCmdCopyBufferToImage2,
         kCmdCopyImageToBuffer2,
+        kCmdSetEvent2,
+        kCmdResetEvent2,
+        kCmdWaitEvents2,
         kCmdBlitImage2,
         kCmdResolveImage2,
         kCmdBeginRendering,
@@ -120,16 +120,16 @@ struct Command {
         kCmdSetRasterizerDiscardEnable,
         kCmdSetDepthBiasEnable,
         kCmdSetPrimitiveRestartEnable,
-        kCmdSetLineStipple,
-        kCmdBindIndexBuffer2,
         kCmdPushDescriptorSet,
         kCmdPushDescriptorSetWithTemplate,
-        kCmdSetRenderingAttachmentLocations,
-        kCmdSetRenderingInputAttachmentIndices,
         kCmdBindDescriptorSets2,
         kCmdPushConstants2,
         kCmdPushDescriptorSet2,
         kCmdPushDescriptorSetWithTemplate2,
+        kCmdSetLineStipple,
+        kCmdBindIndexBuffer2,
+        kCmdSetRenderingAttachmentLocations,
+        kCmdSetRenderingInputAttachmentIndices,
         kCmdBeginVideoCodingKHR,
         kCmdEndVideoCodingKHR,
         kCmdControlVideoCodingKHR,
@@ -171,6 +171,7 @@ struct Command {
         kCmdBindDescriptorBufferEmbeddedSamplers2EXT,
         kCmdCopyMemoryIndirectKHR,
         kCmdCopyMemoryToImageIndirectKHR,
+        kCmdEndRendering2KHR,
         kCmdDebugMarkerBeginEXT,
         kCmdDebugMarkerEndEXT,
         kCmdDebugMarkerInsertEXT,
@@ -312,11 +313,14 @@ struct Command {
         kCmdDispatchDataGraphARM,
         kCmdSetAttachmentFeedbackLoopEnableEXT,
         kCmdBindTileMemoryQCOM,
+        kCmdDecompressMemoryEXT,
+        kCmdDecompressMemoryIndirectCountEXT,
         kCmdBuildClusterAccelerationStructureIndirectNV,
         kCmdBuildPartitionedAccelerationStructuresNV,
         kCmdPreprocessGeneratedCommandsEXT,
         kCmdExecuteGeneratedCommandsEXT,
         kCmdEndRendering2EXT,
+        kCmdBeginCustomResolveEXT,
         kCmdBuildAccelerationStructuresKHR,
         kCmdBuildAccelerationStructuresIndirectKHR,
         kCmdCopyAccelerationStructureKHR,
@@ -356,10 +360,187 @@ struct ResetCommandBufferArgs {
     VkCommandBufferResetFlags flags;
 };
 
+struct CmdCopyBufferArgs {
+    VkCommandBuffer commandBuffer;
+    VkBuffer srcBuffer;
+    VkBuffer dstBuffer;
+    uint32_t regionCount;
+    const VkBufferCopy* pRegions;
+};
+
+struct CmdCopyImageArgs {
+    VkCommandBuffer commandBuffer;
+    VkImage srcImage;
+    VkImageLayout srcImageLayout;
+    VkImage dstImage;
+    VkImageLayout dstImageLayout;
+    uint32_t regionCount;
+    const VkImageCopy* pRegions;
+};
+
+struct CmdCopyBufferToImageArgs {
+    VkCommandBuffer commandBuffer;
+    VkBuffer srcBuffer;
+    VkImage dstImage;
+    VkImageLayout dstImageLayout;
+    uint32_t regionCount;
+    const VkBufferImageCopy* pRegions;
+};
+
+struct CmdCopyImageToBufferArgs {
+    VkCommandBuffer commandBuffer;
+    VkImage srcImage;
+    VkImageLayout srcImageLayout;
+    VkBuffer dstBuffer;
+    uint32_t regionCount;
+    const VkBufferImageCopy* pRegions;
+};
+
+struct CmdUpdateBufferArgs {
+    VkCommandBuffer commandBuffer;
+    VkBuffer dstBuffer;
+    VkDeviceSize dstOffset;
+    VkDeviceSize dataSize;
+    const void* pData;
+};
+
+struct CmdFillBufferArgs {
+    VkCommandBuffer commandBuffer;
+    VkBuffer dstBuffer;
+    VkDeviceSize dstOffset;
+    VkDeviceSize size;
+    uint32_t data;
+};
+
+struct CmdPipelineBarrierArgs {
+    VkCommandBuffer commandBuffer;
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+    VkDependencyFlags dependencyFlags;
+    uint32_t memoryBarrierCount;
+    const VkMemoryBarrier* pMemoryBarriers;
+    uint32_t bufferMemoryBarrierCount;
+    const VkBufferMemoryBarrier* pBufferMemoryBarriers;
+    uint32_t imageMemoryBarrierCount;
+    const VkImageMemoryBarrier* pImageMemoryBarriers;
+};
+
+struct CmdBeginQueryArgs {
+    VkCommandBuffer commandBuffer;
+    VkQueryPool queryPool;
+    uint32_t query;
+    VkQueryControlFlags flags;
+};
+
+struct CmdEndQueryArgs {
+    VkCommandBuffer commandBuffer;
+    VkQueryPool queryPool;
+    uint32_t query;
+};
+
+struct CmdResetQueryPoolArgs {
+    VkCommandBuffer commandBuffer;
+    VkQueryPool queryPool;
+    uint32_t firstQuery;
+    uint32_t queryCount;
+};
+
+struct CmdWriteTimestampArgs {
+    VkCommandBuffer commandBuffer;
+    VkPipelineStageFlagBits pipelineStage;
+    VkQueryPool queryPool;
+    uint32_t query;
+};
+
+struct CmdCopyQueryPoolResultsArgs {
+    VkCommandBuffer commandBuffer;
+    VkQueryPool queryPool;
+    uint32_t firstQuery;
+    uint32_t queryCount;
+    VkBuffer dstBuffer;
+    VkDeviceSize dstOffset;
+    VkDeviceSize stride;
+    VkQueryResultFlags flags;
+};
+
+struct CmdExecuteCommandsArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t commandBufferCount;
+    const VkCommandBuffer* pCommandBuffers;
+};
+
 struct CmdBindPipelineArgs {
     VkCommandBuffer commandBuffer;
     VkPipelineBindPoint pipelineBindPoint;
     VkPipeline pipeline;
+};
+
+struct CmdBindDescriptorSetsArgs {
+    VkCommandBuffer commandBuffer;
+    VkPipelineBindPoint pipelineBindPoint;
+    VkPipelineLayout layout;
+    uint32_t firstSet;
+    uint32_t descriptorSetCount;
+    const VkDescriptorSet* pDescriptorSets;
+    uint32_t dynamicOffsetCount;
+    const uint32_t* pDynamicOffsets;
+};
+
+struct CmdClearColorImageArgs {
+    VkCommandBuffer commandBuffer;
+    VkImage image;
+    VkImageLayout imageLayout;
+    const VkClearColorValue* pColor;
+    uint32_t rangeCount;
+    const VkImageSubresourceRange* pRanges;
+};
+
+struct CmdDispatchArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t groupCountX;
+    uint32_t groupCountY;
+    uint32_t groupCountZ;
+};
+
+struct CmdDispatchIndirectArgs {
+    VkCommandBuffer commandBuffer;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+};
+
+struct CmdSetEventArgs {
+    VkCommandBuffer commandBuffer;
+    VkEvent event;
+    VkPipelineStageFlags stageMask;
+};
+
+struct CmdResetEventArgs {
+    VkCommandBuffer commandBuffer;
+    VkEvent event;
+    VkPipelineStageFlags stageMask;
+};
+
+struct CmdWaitEventsArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t eventCount;
+    const VkEvent* pEvents;
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+    uint32_t memoryBarrierCount;
+    const VkMemoryBarrier* pMemoryBarriers;
+    uint32_t bufferMemoryBarrierCount;
+    const VkBufferMemoryBarrier* pBufferMemoryBarriers;
+    uint32_t imageMemoryBarrierCount;
+    const VkImageMemoryBarrier* pImageMemoryBarriers;
+};
+
+struct CmdPushConstantsArgs {
+    VkCommandBuffer commandBuffer;
+    VkPipelineLayout layout;
+    VkShaderStageFlags stageFlags;
+    uint32_t offset;
+    uint32_t size;
+    const void* pValues;
 };
 
 struct CmdSetViewportArgs {
@@ -417,17 +598,6 @@ struct CmdSetStencilReferenceArgs {
     uint32_t reference;
 };
 
-struct CmdBindDescriptorSetsArgs {
-    VkCommandBuffer commandBuffer;
-    VkPipelineBindPoint pipelineBindPoint;
-    VkPipelineLayout layout;
-    uint32_t firstSet;
-    uint32_t descriptorSetCount;
-    const VkDescriptorSet* pDescriptorSets;
-    uint32_t dynamicOffsetCount;
-    const uint32_t* pDynamicOffsets;
-};
-
 struct CmdBindIndexBufferArgs {
     VkCommandBuffer commandBuffer;
     VkBuffer buffer;
@@ -476,37 +646,6 @@ struct CmdDrawIndexedIndirectArgs {
     uint32_t stride;
 };
 
-struct CmdDispatchArgs {
-    VkCommandBuffer commandBuffer;
-    uint32_t groupCountX;
-    uint32_t groupCountY;
-    uint32_t groupCountZ;
-};
-
-struct CmdDispatchIndirectArgs {
-    VkCommandBuffer commandBuffer;
-    VkBuffer buffer;
-    VkDeviceSize offset;
-};
-
-struct CmdCopyBufferArgs {
-    VkCommandBuffer commandBuffer;
-    VkBuffer srcBuffer;
-    VkBuffer dstBuffer;
-    uint32_t regionCount;
-    const VkBufferCopy* pRegions;
-};
-
-struct CmdCopyImageArgs {
-    VkCommandBuffer commandBuffer;
-    VkImage srcImage;
-    VkImageLayout srcImageLayout;
-    VkImage dstImage;
-    VkImageLayout dstImageLayout;
-    uint32_t regionCount;
-    const VkImageCopy* pRegions;
-};
-
 struct CmdBlitImageArgs {
     VkCommandBuffer commandBuffer;
     VkImage srcImage;
@@ -516,49 +655,6 @@ struct CmdBlitImageArgs {
     uint32_t regionCount;
     const VkImageBlit* pRegions;
     VkFilter filter;
-};
-
-struct CmdCopyBufferToImageArgs {
-    VkCommandBuffer commandBuffer;
-    VkBuffer srcBuffer;
-    VkImage dstImage;
-    VkImageLayout dstImageLayout;
-    uint32_t regionCount;
-    const VkBufferImageCopy* pRegions;
-};
-
-struct CmdCopyImageToBufferArgs {
-    VkCommandBuffer commandBuffer;
-    VkImage srcImage;
-    VkImageLayout srcImageLayout;
-    VkBuffer dstBuffer;
-    uint32_t regionCount;
-    const VkBufferImageCopy* pRegions;
-};
-
-struct CmdUpdateBufferArgs {
-    VkCommandBuffer commandBuffer;
-    VkBuffer dstBuffer;
-    VkDeviceSize dstOffset;
-    VkDeviceSize dataSize;
-    const void* pData;
-};
-
-struct CmdFillBufferArgs {
-    VkCommandBuffer commandBuffer;
-    VkBuffer dstBuffer;
-    VkDeviceSize dstOffset;
-    VkDeviceSize size;
-    uint32_t data;
-};
-
-struct CmdClearColorImageArgs {
-    VkCommandBuffer commandBuffer;
-    VkImage image;
-    VkImageLayout imageLayout;
-    const VkClearColorValue* pColor;
-    uint32_t rangeCount;
-    const VkImageSubresourceRange* pRanges;
 };
 
 struct CmdClearDepthStencilImageArgs {
@@ -588,92 +684,6 @@ struct CmdResolveImageArgs {
     const VkImageResolve* pRegions;
 };
 
-struct CmdSetEventArgs {
-    VkCommandBuffer commandBuffer;
-    VkEvent event;
-    VkPipelineStageFlags stageMask;
-};
-
-struct CmdResetEventArgs {
-    VkCommandBuffer commandBuffer;
-    VkEvent event;
-    VkPipelineStageFlags stageMask;
-};
-
-struct CmdWaitEventsArgs {
-    VkCommandBuffer commandBuffer;
-    uint32_t eventCount;
-    const VkEvent* pEvents;
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    uint32_t memoryBarrierCount;
-    const VkMemoryBarrier* pMemoryBarriers;
-    uint32_t bufferMemoryBarrierCount;
-    const VkBufferMemoryBarrier* pBufferMemoryBarriers;
-    uint32_t imageMemoryBarrierCount;
-    const VkImageMemoryBarrier* pImageMemoryBarriers;
-};
-
-struct CmdPipelineBarrierArgs {
-    VkCommandBuffer commandBuffer;
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    VkDependencyFlags dependencyFlags;
-    uint32_t memoryBarrierCount;
-    const VkMemoryBarrier* pMemoryBarriers;
-    uint32_t bufferMemoryBarrierCount;
-    const VkBufferMemoryBarrier* pBufferMemoryBarriers;
-    uint32_t imageMemoryBarrierCount;
-    const VkImageMemoryBarrier* pImageMemoryBarriers;
-};
-
-struct CmdBeginQueryArgs {
-    VkCommandBuffer commandBuffer;
-    VkQueryPool queryPool;
-    uint32_t query;
-    VkQueryControlFlags flags;
-};
-
-struct CmdEndQueryArgs {
-    VkCommandBuffer commandBuffer;
-    VkQueryPool queryPool;
-    uint32_t query;
-};
-
-struct CmdResetQueryPoolArgs {
-    VkCommandBuffer commandBuffer;
-    VkQueryPool queryPool;
-    uint32_t firstQuery;
-    uint32_t queryCount;
-};
-
-struct CmdWriteTimestampArgs {
-    VkCommandBuffer commandBuffer;
-    VkPipelineStageFlagBits pipelineStage;
-    VkQueryPool queryPool;
-    uint32_t query;
-};
-
-struct CmdCopyQueryPoolResultsArgs {
-    VkCommandBuffer commandBuffer;
-    VkQueryPool queryPool;
-    uint32_t firstQuery;
-    uint32_t queryCount;
-    VkBuffer dstBuffer;
-    VkDeviceSize dstOffset;
-    VkDeviceSize stride;
-    VkQueryResultFlags flags;
-};
-
-struct CmdPushConstantsArgs {
-    VkCommandBuffer commandBuffer;
-    VkPipelineLayout layout;
-    VkShaderStageFlags stageFlags;
-    uint32_t offset;
-    uint32_t size;
-    const void* pValues;
-};
-
 struct CmdBeginRenderPassArgs {
     VkCommandBuffer commandBuffer;
     const VkRenderPassBeginInfo* pRenderPassBegin;
@@ -687,12 +697,6 @@ struct CmdNextSubpassArgs {
 
 struct CmdEndRenderPassArgs {
     VkCommandBuffer commandBuffer;
-};
-
-struct CmdExecuteCommandsArgs {
-    VkCommandBuffer commandBuffer;
-    uint32_t commandBufferCount;
-    const VkCommandBuffer* pCommandBuffers;
 };
 
 struct CmdSetDeviceMaskArgs {
@@ -747,25 +751,6 @@ struct CmdEndRenderPass2Args {
     const VkSubpassEndInfo* pSubpassEndInfo;
 };
 
-struct CmdSetEvent2Args {
-    VkCommandBuffer commandBuffer;
-    VkEvent event;
-    const VkDependencyInfo* pDependencyInfo;
-};
-
-struct CmdResetEvent2Args {
-    VkCommandBuffer commandBuffer;
-    VkEvent event;
-    VkPipelineStageFlags2 stageMask;
-};
-
-struct CmdWaitEvents2Args {
-    VkCommandBuffer commandBuffer;
-    uint32_t eventCount;
-    const VkEvent* pEvents;
-    const VkDependencyInfo* pDependencyInfos;
-};
-
 struct CmdPipelineBarrier2Args {
     VkCommandBuffer commandBuffer;
     const VkDependencyInfo* pDependencyInfo;
@@ -796,6 +781,25 @@ struct CmdCopyBufferToImage2Args {
 struct CmdCopyImageToBuffer2Args {
     VkCommandBuffer commandBuffer;
     const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo;
+};
+
+struct CmdSetEvent2Args {
+    VkCommandBuffer commandBuffer;
+    VkEvent event;
+    const VkDependencyInfo* pDependencyInfo;
+};
+
+struct CmdResetEvent2Args {
+    VkCommandBuffer commandBuffer;
+    VkEvent event;
+    VkPipelineStageFlags2 stageMask;
+};
+
+struct CmdWaitEvents2Args {
+    VkCommandBuffer commandBuffer;
+    uint32_t eventCount;
+    const VkEvent* pEvents;
+    const VkDependencyInfo* pDependencyInfos;
 };
 
 struct CmdBlitImage2Args {
@@ -903,20 +907,6 @@ struct CmdSetPrimitiveRestartEnableArgs {
     VkBool32 primitiveRestartEnable;
 };
 
-struct CmdSetLineStippleArgs {
-    VkCommandBuffer commandBuffer;
-    uint32_t lineStippleFactor;
-    uint16_t lineStipplePattern;
-};
-
-struct CmdBindIndexBuffer2Args {
-    VkCommandBuffer commandBuffer;
-    VkBuffer buffer;
-    VkDeviceSize offset;
-    VkDeviceSize size;
-    VkIndexType indexType;
-};
-
 struct CmdPushDescriptorSetArgs {
     VkCommandBuffer commandBuffer;
     VkPipelineBindPoint pipelineBindPoint;
@@ -932,16 +922,6 @@ struct CmdPushDescriptorSetWithTemplateArgs {
     VkPipelineLayout layout;
     uint32_t set;
     const void* pData;
-};
-
-struct CmdSetRenderingAttachmentLocationsArgs {
-    VkCommandBuffer commandBuffer;
-    const VkRenderingAttachmentLocationInfo* pLocationInfo;
-};
-
-struct CmdSetRenderingInputAttachmentIndicesArgs {
-    VkCommandBuffer commandBuffer;
-    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo;
 };
 
 struct CmdBindDescriptorSets2Args {
@@ -962,6 +942,30 @@ struct CmdPushDescriptorSet2Args {
 struct CmdPushDescriptorSetWithTemplate2Args {
     VkCommandBuffer commandBuffer;
     const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo;
+};
+
+struct CmdSetLineStippleArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t lineStippleFactor;
+    uint16_t lineStipplePattern;
+};
+
+struct CmdBindIndexBuffer2Args {
+    VkCommandBuffer commandBuffer;
+    VkBuffer buffer;
+    VkDeviceSize offset;
+    VkDeviceSize size;
+    VkIndexType indexType;
+};
+
+struct CmdSetRenderingAttachmentLocationsArgs {
+    VkCommandBuffer commandBuffer;
+    const VkRenderingAttachmentLocationInfo* pLocationInfo;
+};
+
+struct CmdSetRenderingInputAttachmentIndicesArgs {
+    VkCommandBuffer commandBuffer;
+    const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo;
 };
 
 struct CmdBeginVideoCodingKHRArgs {
@@ -1201,6 +1205,11 @@ struct CmdCopyMemoryIndirectKHRArgs {
 struct CmdCopyMemoryToImageIndirectKHRArgs {
     VkCommandBuffer commandBuffer;
     const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo;
+};
+
+struct CmdEndRendering2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkRenderingEndInfoKHR* pRenderingEndInfo;
 };
 
 struct CmdDebugMarkerBeginEXTArgs {
@@ -2031,6 +2040,20 @@ struct CmdBindTileMemoryQCOMArgs {
     const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo;
 };
 
+struct CmdDecompressMemoryEXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT;
+};
+
+struct CmdDecompressMemoryIndirectCountEXTArgs {
+    VkCommandBuffer commandBuffer;
+    VkMemoryDecompressionMethodFlagsEXT decompressionMethod;
+    VkDeviceAddress indirectCommandsAddress;
+    VkDeviceAddress indirectCommandsCountAddress;
+    uint32_t maxDecompressionCount;
+    uint32_t stride;
+};
+
 struct CmdBuildClusterAccelerationStructureIndirectNVArgs {
     VkCommandBuffer commandBuffer;
     const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos;
@@ -2055,7 +2078,12 @@ struct CmdExecuteGeneratedCommandsEXTArgs {
 
 struct CmdEndRendering2EXTArgs {
     VkCommandBuffer commandBuffer;
-    const VkRenderingEndInfoEXT* pRenderingEndInfo;
+    const VkRenderingEndInfoKHR* pRenderingEndInfo;
+};
+
+struct CmdBeginCustomResolveEXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo;
 };
 
 struct CmdBuildAccelerationStructuresKHRArgs {

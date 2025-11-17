@@ -46,10 +46,273 @@ VkResult Context::PostResetCommandBuffer(VkCommandBuffer commandBuffer, VkComman
     return p_cmd->PostResetCommandBuffer(commandBuffer, flags, result);
 }
 
+void Context::PreCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
+                               uint32_t regionCount, const VkBufferCopy* pRegions) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+}
+void Context::PostCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
+                                uint32_t regionCount, const VkBufferCopy* pRegions) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+}
+
+void Context::PreCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                              VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
+                              const VkImageCopy* pRegions) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+}
+void Context::PostCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                               VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
+                               const VkImageCopy* pRegions) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+}
+
+void Context::PreCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
+                                      VkImageLayout dstImageLayout, uint32_t regionCount,
+                                      const VkBufferImageCopy* pRegions) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
+}
+void Context::PostCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
+                                       VkImageLayout dstImageLayout, uint32_t regionCount,
+                                       const VkBufferImageCopy* pRegions) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
+}
+
+void Context::PreCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                                      VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
+}
+void Context::PostCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                                       VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
+}
+
+void Context::PreCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                 VkDeviceSize dataSize, const void* pData) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+}
+void Context::PostCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                  VkDeviceSize dataSize, const void* pData) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+}
+
+void Context::PreCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                               VkDeviceSize size, uint32_t data) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+}
+void Context::PostCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                VkDeviceSize size, uint32_t data) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+}
+
+void Context::PreCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
+                                    VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
+                                    uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                    uint32_t bufferMemoryBarrierCount,
+                                    const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                    uint32_t imageMemoryBarrierCount,
+                                    const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
+                                 pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
+                                 imageMemoryBarrierCount, pImageMemoryBarriers);
+}
+void Context::PostCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
+                                     VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
+                                     uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                     uint32_t bufferMemoryBarrierCount,
+                                     const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                     uint32_t imageMemoryBarrierCount,
+                                     const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
+                                  pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
+                                  imageMemoryBarrierCount, pImageMemoryBarriers);
+}
+
+void Context::PreCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
+                               VkQueryControlFlags flags) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBeginQuery(commandBuffer, queryPool, query, flags);
+}
+void Context::PostCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
+                                VkQueryControlFlags flags) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBeginQuery(commandBuffer, queryPool, query, flags);
+}
+
+void Context::PreCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdEndQuery(commandBuffer, queryPool, query);
+}
+void Context::PostCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdEndQuery(commandBuffer, queryPool, query);
+}
+
+void Context::PreCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                   uint32_t queryCount) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+}
+void Context::PostCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                    uint32_t queryCount) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+}
+
+void Context::PreCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
+                                   VkQueryPool queryPool, uint32_t query) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+}
+void Context::PostCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
+                                    VkQueryPool queryPool, uint32_t query) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+}
+
+void Context::PreCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                         uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                         VkDeviceSize stride, VkQueryResultFlags flags) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride,
+                                      flags);
+}
+void Context::PostCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                          uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                          VkDeviceSize stride, VkQueryResultFlags flags) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride,
+                                       flags);
+}
+
+void Context::PreCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
+                                    const VkCommandBuffer* pCommandBuffers) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
+}
+void Context::PostCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
+                                     const VkCommandBuffer* pCommandBuffers) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
+}
+
 void Context::PostCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                   VkPipeline pipeline) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
+}
+
+void Context::PreCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                       VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
+                                       const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
+                                       const uint32_t* pDynamicOffsets) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
+                                    pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+}
+void Context::PostCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                        VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
+                                        const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
+                                        const uint32_t* pDynamicOffsets) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
+                                     pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+}
+
+void Context::PreCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
+                                    const VkClearColorValue* pColor, uint32_t rangeCount,
+                                    const VkImageSubresourceRange* pRanges) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+}
+void Context::PostCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
+                                     const VkClearColorValue* pColor, uint32_t rangeCount,
+                                     const VkImageSubresourceRange* pRanges) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+}
+
+void Context::PreCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
+                             uint32_t groupCountZ) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+}
+void Context::PostCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
+                              uint32_t groupCountZ) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+}
+
+void Context::PreCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdDispatchIndirect(commandBuffer, buffer, offset);
+}
+void Context::PostCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdDispatchIndirect(commandBuffer, buffer, offset);
+}
+
+void Context::PreCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdSetEvent(commandBuffer, event, stageMask);
+}
+void Context::PostCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdSetEvent(commandBuffer, event, stageMask);
+}
+
+void Context::PreCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdResetEvent(commandBuffer, event, stageMask);
+}
+void Context::PostCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdResetEvent(commandBuffer, event, stageMask);
+}
+
+void Context::PreCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                               VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+                               uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                               uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                               uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
+                            pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount,
+                            pImageMemoryBarriers);
+}
+void Context::PostCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+                                uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
+                             pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount,
+                             pImageMemoryBarriers);
+}
+
+void Context::PreCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags,
+                                  uint32_t offset, uint32_t size, const void* pValues) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
+}
+void Context::PostCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
+                                   VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 
 void Context::PreCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
@@ -145,23 +408,6 @@ void Context::PostCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStenci
     p_cmd->PostCmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 
-void Context::PreCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                       VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
-                                       const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
-                                       const uint32_t* pDynamicOffsets) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
-                                    pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-}
-void Context::PostCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                        VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
-                                        const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
-                                        const uint32_t* pDynamicOffsets) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
-                                     pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-}
-
 void Context::PreCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                     VkIndexType indexType) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
@@ -228,50 +474,6 @@ void Context::PostCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer
     p_cmd->PostCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-void Context::PreCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                             uint32_t groupCountZ) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-}
-void Context::PostCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                              uint32_t groupCountZ) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-}
-
-void Context::PreCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdDispatchIndirect(commandBuffer, buffer, offset);
-}
-void Context::PostCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdDispatchIndirect(commandBuffer, buffer, offset);
-}
-
-void Context::PreCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                               uint32_t regionCount, const VkBufferCopy* pRegions) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-}
-void Context::PostCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                                uint32_t regionCount, const VkBufferCopy* pRegions) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-}
-
-void Context::PreCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                              VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
-                              const VkImageCopy* pRegions) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-}
-void Context::PostCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                               VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
-                               const VkImageCopy* pRegions) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-}
-
 void Context::PreCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                               VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                               const VkImageBlit* pRegions, VkFilter filter) {
@@ -285,65 +487,6 @@ void Context::PostCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, 
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions,
                             filter);
-}
-
-void Context::PreCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
-                                      VkImageLayout dstImageLayout, uint32_t regionCount,
-                                      const VkBufferImageCopy* pRegions) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-}
-void Context::PostCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
-                                       VkImageLayout dstImageLayout, uint32_t regionCount,
-                                       const VkBufferImageCopy* pRegions) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-}
-
-void Context::PreCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                                      VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-}
-void Context::PostCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                                       VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-}
-
-void Context::PreCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                 VkDeviceSize dataSize, const void* pData) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-}
-void Context::PostCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                  VkDeviceSize dataSize, const void* pData) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-}
-
-void Context::PreCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                               VkDeviceSize size, uint32_t data) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-}
-void Context::PostCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                VkDeviceSize size, uint32_t data) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-}
-
-void Context::PreCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
-                                    const VkClearColorValue* pColor, uint32_t rangeCount,
-                                    const VkImageSubresourceRange* pRanges) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-}
-void Context::PostCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
-                                     const VkClearColorValue* pColor, uint32_t rangeCount,
-                                     const VkImageSubresourceRange* pRanges) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 
 void Context::PreCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
@@ -386,138 +529,6 @@ void Context::PostCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImag
                                pRegions);
 }
 
-void Context::PreCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdSetEvent(commandBuffer, event, stageMask);
-}
-void Context::PostCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdSetEvent(commandBuffer, event, stageMask);
-}
-
-void Context::PreCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdResetEvent(commandBuffer, event, stageMask);
-}
-void Context::PostCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdResetEvent(commandBuffer, event, stageMask);
-}
-
-void Context::PreCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                               VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-                               uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                               uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                               uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
-                            pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount,
-                            pImageMemoryBarriers);
-}
-void Context::PostCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-                                uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
-                             pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount,
-                             pImageMemoryBarriers);
-}
-
-void Context::PreCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
-                                    VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
-                                    uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                    uint32_t bufferMemoryBarrierCount,
-                                    const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                    uint32_t imageMemoryBarrierCount,
-                                    const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
-                                 pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
-                                 imageMemoryBarrierCount, pImageMemoryBarriers);
-}
-void Context::PostCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
-                                     VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
-                                     uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                     uint32_t bufferMemoryBarrierCount,
-                                     const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                     uint32_t imageMemoryBarrierCount,
-                                     const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
-                                  pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
-                                  imageMemoryBarrierCount, pImageMemoryBarriers);
-}
-
-void Context::PreCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                               VkQueryControlFlags flags) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdBeginQuery(commandBuffer, queryPool, query, flags);
-}
-void Context::PostCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                                VkQueryControlFlags flags) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdBeginQuery(commandBuffer, queryPool, query, flags);
-}
-
-void Context::PreCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdEndQuery(commandBuffer, queryPool, query);
-}
-void Context::PostCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdEndQuery(commandBuffer, queryPool, query);
-}
-
-void Context::PreCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                   uint32_t queryCount) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-}
-void Context::PostCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                    uint32_t queryCount) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-}
-
-void Context::PreCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                   VkQueryPool queryPool, uint32_t query) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-}
-void Context::PostCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                    VkQueryPool queryPool, uint32_t query) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-}
-
-void Context::PreCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                         uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                         VkDeviceSize stride, VkQueryResultFlags flags) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride,
-                                      flags);
-}
-void Context::PostCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                          uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                          VkDeviceSize stride, VkQueryResultFlags flags) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride,
-                                       flags);
-}
-
-void Context::PreCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags,
-                                  uint32_t offset, uint32_t size, const void* pValues) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-}
-void Context::PostCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
-                                   VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-}
-
 void Context::PreCmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin,
                                     VkSubpassContents contents) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
@@ -545,17 +556,6 @@ void Context::PreCmdEndRenderPass(VkCommandBuffer commandBuffer) {
 void Context::PostCmdEndRenderPass(VkCommandBuffer commandBuffer) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdEndRenderPass(commandBuffer);
-}
-
-void Context::PreCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                                    const VkCommandBuffer* pCommandBuffers) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
-}
-void Context::PostCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                                     const VkCommandBuffer* pCommandBuffers) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 
 void Context::PreCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
@@ -641,35 +641,6 @@ void Context::PostCmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpa
     p_cmd->PostCmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
 
-void Context::PreCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
-}
-void Context::PostCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdSetEvent2(commandBuffer, event, pDependencyInfo);
-}
-
-void Context::PreCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdResetEvent2(commandBuffer, event, stageMask);
-}
-void Context::PostCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdResetEvent2(commandBuffer, event, stageMask);
-}
-
-void Context::PreCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                const VkDependencyInfo* pDependencyInfos) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
-}
-void Context::PostCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                 const VkDependencyInfo* pDependencyInfos) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
-}
-
 void Context::PreCmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PreCmdPipelineBarrier2(commandBuffer, pDependencyInfo);
@@ -728,6 +699,35 @@ void Context::PostCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
                                         const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
+}
+
+void Context::PreCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdSetEvent2(commandBuffer, event, pDependencyInfo);
+}
+void Context::PostCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdSetEvent2(commandBuffer, event, pDependencyInfo);
+}
+
+void Context::PreCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdResetEvent2(commandBuffer, event, stageMask);
+}
+void Context::PostCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdResetEvent2(commandBuffer, event, stageMask);
+}
+
+void Context::PreCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                const VkDependencyInfo* pDependencyInfos) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
+}
+void Context::PostCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                 const VkDependencyInfo* pDependencyInfos) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 
 void Context::PreCmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo) {
@@ -911,28 +911,6 @@ void Context::PostCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, Vk
     p_cmd->PostCmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 
-void Context::PreCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                   uint16_t lineStipplePattern) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
-}
-void Context::PostCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                    uint16_t lineStipplePattern) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
-}
-
-void Context::PreCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                     VkDeviceSize size, VkIndexType indexType) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
-}
-void Context::PostCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                      VkDeviceSize size, VkIndexType indexType) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
-}
-
 void Context::PreCmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                       VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
                                       const VkWriteDescriptorSet* pDescriptorWrites) {
@@ -959,28 +937,6 @@ void Context::PostCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer
                                                    VkPipelineLayout layout, uint32_t set, const void* pData) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
-}
-
-void Context::PreCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
-                                                    const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
-}
-void Context::PostCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
-                                                     const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
-}
-
-void Context::PreCmdSetRenderingInputAttachmentIndices(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PreCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
-}
-void Context::PostCmdSetRenderingInputAttachmentIndices(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    p_cmd->PostCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
 }
 
 void Context::PreCmdBindDescriptorSets2(VkCommandBuffer commandBuffer,
@@ -1023,6 +979,50 @@ void Context::PostCmdPushDescriptorSetWithTemplate2(
     VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+}
+
+void Context::PreCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                   uint16_t lineStipplePattern) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+}
+void Context::PostCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                    uint16_t lineStipplePattern) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+}
+
+void Context::PreCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
+                                     VkDeviceSize size, VkIndexType indexType) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+}
+void Context::PostCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
+                                      VkDeviceSize size, VkIndexType indexType) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+}
+
+void Context::PreCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                                    const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+}
+void Context::PostCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                                     const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+}
+
+void Context::PreCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
+}
+void Context::PostCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
 }
 
 void Context::PreCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoBeginCodingInfoKHR* pBeginInfo) {
@@ -1462,6 +1462,15 @@ void Context::PostCmdCopyMemoryToImageIndirectKHR(
     VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+}
+
+void Context::PreCmdEndRendering2KHR(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
+}
+void Context::PostCmdEndRendering2KHR(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
 }
 
 void Context::PreCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
@@ -2941,6 +2950,36 @@ void Context::PostCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
     p_cmd->PostCmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
 }
 
+void Context::PreCmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                        const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
+}
+void Context::PostCmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                         const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
+}
+
+void Context::PreCmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                                     VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+                                                     VkDeviceAddress indirectCommandsAddress,
+                                                     VkDeviceAddress indirectCommandsCountAddress,
+                                                     uint32_t maxDecompressionCount, uint32_t stride) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdDecompressMemoryIndirectCountEXT(commandBuffer, decompressionMethod, indirectCommandsAddress,
+                                                  indirectCommandsCountAddress, maxDecompressionCount, stride);
+}
+void Context::PostCmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                                      VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+                                                      VkDeviceAddress indirectCommandsAddress,
+                                                      VkDeviceAddress indirectCommandsCountAddress,
+                                                      uint32_t maxDecompressionCount, uint32_t stride) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdDecompressMemoryIndirectCountEXT(commandBuffer, decompressionMethod, indirectCommandsAddress,
+                                                   indirectCommandsCountAddress, maxDecompressionCount, stride);
+}
+
 void Context::PreCmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
@@ -2987,13 +3026,24 @@ void Context::PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, 
     p_cmd->PostCmdExecuteGeneratedCommandsEXT(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 
-void Context::PreCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+void Context::PreCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PreCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
 }
-void Context::PostCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+void Context::PostCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PostCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
+}
+
+void Context::PreCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
+                                          const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
+}
+void Context::PostCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
+                                           const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
 }
 
 void Context::PreCmdBuildAccelerationStructuresKHR(

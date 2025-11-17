@@ -52,316 +52,6 @@ void CommandPrinter::PrintResetCommandBufferArgs(YAML::Emitter &os, const ResetC
     os << YAML::Value << args.flags;
 }
 
-void CommandPrinter::PrintCmdBindPipelineArgs(YAML::Emitter &os, const CmdBindPipelineArgs &args) {
-    os << YAML::Key << "pipelineBindPoint";
-    // pipelineBindPoint -> Field -> VkPipelineBindPoint
-    os << YAML::Value << args.pipelineBindPoint;
-    os << YAML::Key << "pipeline";
-    // pipeline -> Field -> VkPipeline
-    os << YAML::Value << args.pipeline;
-}
-
-void CommandPrinter::PrintCmdSetViewportArgs(YAML::Emitter &os, const CmdSetViewportArgs &args) {
-    os << YAML::Key << "firstViewport";
-    // firstViewport -> Field -> uint32_t
-    os << YAML::Value << args.firstViewport;
-    os << YAML::Key << "viewportCount";
-    // viewportCount -> Field -> uint32_t
-    os << YAML::Value << args.viewportCount;
-    os << YAML::Key << "pViewports";
-    // pViewports -> Field -> ConstDynamicArray(VkViewport)
-    if (args.viewportCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkViewport");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.viewportCount); ++i) {
-                os << args.pViewports[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdSetScissorArgs(YAML::Emitter &os, const CmdSetScissorArgs &args) {
-    os << YAML::Key << "firstScissor";
-    // firstScissor -> Field -> uint32_t
-    os << YAML::Value << args.firstScissor;
-    os << YAML::Key << "scissorCount";
-    // scissorCount -> Field -> uint32_t
-    os << YAML::Value << args.scissorCount;
-    os << YAML::Key << "pScissors";
-    // pScissors -> Field -> ConstDynamicArray(VkRect2D)
-    if (args.scissorCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkRect2D");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.scissorCount); ++i) {
-                os << args.pScissors[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdSetLineWidthArgs(YAML::Emitter &os, const CmdSetLineWidthArgs &args) {
-    os << YAML::Key << "lineWidth";
-    // lineWidth -> Field -> float
-    os << YAML::Value << args.lineWidth;
-}
-
-void CommandPrinter::PrintCmdSetDepthBiasArgs(YAML::Emitter &os, const CmdSetDepthBiasArgs &args) {
-    os << YAML::Key << "depthBiasConstantFactor";
-    // depthBiasConstantFactor -> Field -> float
-    os << YAML::Value << args.depthBiasConstantFactor;
-    os << YAML::Key << "depthBiasClamp";
-    // depthBiasClamp -> Field -> float
-    os << YAML::Value << args.depthBiasClamp;
-    os << YAML::Key << "depthBiasSlopeFactor";
-    // depthBiasSlopeFactor -> Field -> float
-    os << YAML::Value << args.depthBiasSlopeFactor;
-}
-
-void CommandPrinter::PrintCmdSetBlendConstantsArgs(YAML::Emitter &os, const CmdSetBlendConstantsArgs &args) {
-    os << YAML::Key << "blendConstants";
-    // blendConstants -> Field -> ConstFixedArray(float)
-    {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("float");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(4); ++i) {
-                os << args.blendConstants[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdSetDepthBoundsArgs(YAML::Emitter &os, const CmdSetDepthBoundsArgs &args) {
-    os << YAML::Key << "minDepthBounds";
-    // minDepthBounds -> Field -> float
-    os << YAML::Value << args.minDepthBounds;
-    os << YAML::Key << "maxDepthBounds";
-    // maxDepthBounds -> Field -> float
-    os << YAML::Value << args.maxDepthBounds;
-}
-
-void CommandPrinter::PrintCmdSetStencilCompareMaskArgs(YAML::Emitter &os, const CmdSetStencilCompareMaskArgs &args) {
-    os << YAML::Key << "faceMask";
-    // faceMask -> Field -> VkStencilFaceFlags
-    os << YAML::Value << args.faceMask;
-    os << YAML::Key << "compareMask";
-    // compareMask -> Field -> uint32_t
-    os << YAML::Value << args.compareMask;
-}
-
-void CommandPrinter::PrintCmdSetStencilWriteMaskArgs(YAML::Emitter &os, const CmdSetStencilWriteMaskArgs &args) {
-    os << YAML::Key << "faceMask";
-    // faceMask -> Field -> VkStencilFaceFlags
-    os << YAML::Value << args.faceMask;
-    os << YAML::Key << "writeMask";
-    // writeMask -> Field -> uint32_t
-    os << YAML::Value << args.writeMask;
-}
-
-void CommandPrinter::PrintCmdSetStencilReferenceArgs(YAML::Emitter &os, const CmdSetStencilReferenceArgs &args) {
-    os << YAML::Key << "faceMask";
-    // faceMask -> Field -> VkStencilFaceFlags
-    os << YAML::Value << args.faceMask;
-    os << YAML::Key << "reference";
-    // reference -> Field -> uint32_t
-    os << YAML::Value << args.reference;
-}
-
-void CommandPrinter::PrintCmdBindDescriptorSetsArgs(YAML::Emitter &os, const CmdBindDescriptorSetsArgs &args) {
-    os << YAML::Key << "pipelineBindPoint";
-    // pipelineBindPoint -> Field -> VkPipelineBindPoint
-    os << YAML::Value << args.pipelineBindPoint;
-    os << YAML::Key << "layout";
-    // layout -> Field -> VkPipelineLayout
-    os << YAML::Value << args.layout;
-    os << YAML::Key << "firstSet";
-    // firstSet -> Field -> uint32_t
-    os << YAML::Value << args.firstSet;
-    os << YAML::Key << "descriptorSetCount";
-    // descriptorSetCount -> Field -> uint32_t
-    os << YAML::Value << args.descriptorSetCount;
-    os << YAML::Key << "pDescriptorSets";
-    // pDescriptorSets -> Field -> ConstDynamicArray(VkDescriptorSet)
-    if (args.descriptorSetCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkDescriptorSet");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.descriptorSetCount); ++i) {
-                os << args.pDescriptorSets[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "dynamicOffsetCount";
-    // dynamicOffsetCount -> Field -> uint32_t
-    os << YAML::Value << args.dynamicOffsetCount;
-    os << YAML::Key << "pDynamicOffsets";
-    // pDynamicOffsets -> Field -> ConstDynamicArray(uint32_t)
-    if (args.dynamicOffsetCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("uint32_t");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.dynamicOffsetCount); ++i) {
-                os << args.pDynamicOffsets[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdBindIndexBufferArgs(YAML::Emitter &os, const CmdBindIndexBufferArgs &args) {
-    os << YAML::Key << "buffer";
-    // buffer -> Field -> VkBuffer
-    os << YAML::Value << args.buffer;
-    os << YAML::Key << "offset";
-    // offset -> Field -> VkDeviceSize
-    os << YAML::Value << args.offset;
-    os << YAML::Key << "indexType";
-    // indexType -> Field -> VkIndexType
-    os << YAML::Value << args.indexType;
-}
-
-void CommandPrinter::PrintCmdBindVertexBuffersArgs(YAML::Emitter &os, const CmdBindVertexBuffersArgs &args) {
-    os << YAML::Key << "firstBinding";
-    // firstBinding -> Field -> uint32_t
-    os << YAML::Value << args.firstBinding;
-    os << YAML::Key << "bindingCount";
-    // bindingCount -> Field -> uint32_t
-    os << YAML::Value << args.bindingCount;
-    os << YAML::Key << "pBuffers";
-    // pBuffers -> Field -> ConstDynamicArray(VkBuffer)
-    if (args.bindingCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkBuffer");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
-                os << args.pBuffers[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "pOffsets";
-    // pOffsets -> Field -> ConstDynamicArray(VkDeviceSize)
-    if (args.bindingCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkDeviceSize");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
-                os << args.pOffsets[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdDrawArgs(YAML::Emitter &os, const CmdDrawArgs &args) {
-    os << YAML::Key << "vertexCount";
-    // vertexCount -> Field -> uint32_t
-    os << YAML::Value << args.vertexCount;
-    os << YAML::Key << "instanceCount";
-    // instanceCount -> Field -> uint32_t
-    os << YAML::Value << args.instanceCount;
-    os << YAML::Key << "firstVertex";
-    // firstVertex -> Field -> uint32_t
-    os << YAML::Value << args.firstVertex;
-    os << YAML::Key << "firstInstance";
-    // firstInstance -> Field -> uint32_t
-    os << YAML::Value << args.firstInstance;
-}
-
-void CommandPrinter::PrintCmdDrawIndexedArgs(YAML::Emitter &os, const CmdDrawIndexedArgs &args) {
-    os << YAML::Key << "indexCount";
-    // indexCount -> Field -> uint32_t
-    os << YAML::Value << args.indexCount;
-    os << YAML::Key << "instanceCount";
-    // instanceCount -> Field -> uint32_t
-    os << YAML::Value << args.instanceCount;
-    os << YAML::Key << "firstIndex";
-    // firstIndex -> Field -> uint32_t
-    os << YAML::Value << args.firstIndex;
-    os << YAML::Key << "vertexOffset";
-    // vertexOffset -> Field -> int32_t
-    os << YAML::Value << args.vertexOffset;
-    os << YAML::Key << "firstInstance";
-    // firstInstance -> Field -> uint32_t
-    os << YAML::Value << args.firstInstance;
-}
-
-void CommandPrinter::PrintCmdDrawIndirectArgs(YAML::Emitter &os, const CmdDrawIndirectArgs &args) {
-    os << YAML::Key << "buffer";
-    // buffer -> Field -> VkBuffer
-    os << YAML::Value << args.buffer;
-    os << YAML::Key << "offset";
-    // offset -> Field -> VkDeviceSize
-    os << YAML::Value << args.offset;
-    os << YAML::Key << "drawCount";
-    // drawCount -> Field -> uint32_t
-    os << YAML::Value << args.drawCount;
-    os << YAML::Key << "stride";
-    // stride -> Field -> uint32_t
-    os << YAML::Value << args.stride;
-}
-
-void CommandPrinter::PrintCmdDrawIndexedIndirectArgs(YAML::Emitter &os, const CmdDrawIndexedIndirectArgs &args) {
-    os << YAML::Key << "buffer";
-    // buffer -> Field -> VkBuffer
-    os << YAML::Value << args.buffer;
-    os << YAML::Key << "offset";
-    // offset -> Field -> VkDeviceSize
-    os << YAML::Value << args.offset;
-    os << YAML::Key << "drawCount";
-    // drawCount -> Field -> uint32_t
-    os << YAML::Value << args.drawCount;
-    os << YAML::Key << "stride";
-    // stride -> Field -> uint32_t
-    os << YAML::Value << args.stride;
-}
-
-void CommandPrinter::PrintCmdDispatchArgs(YAML::Emitter &os, const CmdDispatchArgs &args) {
-    os << YAML::Key << "groupCountX";
-    // groupCountX -> Field -> uint32_t
-    os << YAML::Value << args.groupCountX;
-    os << YAML::Key << "groupCountY";
-    // groupCountY -> Field -> uint32_t
-    os << YAML::Value << args.groupCountY;
-    os << YAML::Key << "groupCountZ";
-    // groupCountZ -> Field -> uint32_t
-    os << YAML::Value << args.groupCountZ;
-}
-
-void CommandPrinter::PrintCmdDispatchIndirectArgs(YAML::Emitter &os, const CmdDispatchIndirectArgs &args) {
-    os << YAML::Key << "buffer";
-    // buffer -> Field -> VkBuffer
-    os << YAML::Value << args.buffer;
-    os << YAML::Key << "offset";
-    // offset -> Field -> VkDeviceSize
-    os << YAML::Value << args.offset;
-}
-
 void CommandPrinter::PrintCmdCopyBufferArgs(YAML::Emitter &os, const CmdCopyBufferArgs &args) {
     os << YAML::Key << "srcBuffer";
     // srcBuffer -> Field -> VkBuffer
@@ -420,42 +110,6 @@ void CommandPrinter::PrintCmdCopyImageArgs(YAML::Emitter &os, const CmdCopyImage
             os << YAML::EndSeq;
         }
     }
-}
-
-void CommandPrinter::PrintCmdBlitImageArgs(YAML::Emitter &os, const CmdBlitImageArgs &args) {
-    os << YAML::Key << "srcImage";
-    // srcImage -> Field -> VkImage
-    os << YAML::Value << args.srcImage;
-    os << YAML::Key << "srcImageLayout";
-    // srcImageLayout -> Field -> VkImageLayout
-    os << YAML::Value << args.srcImageLayout;
-    os << YAML::Key << "dstImage";
-    // dstImage -> Field -> VkImage
-    os << YAML::Value << args.dstImage;
-    os << YAML::Key << "dstImageLayout";
-    // dstImageLayout -> Field -> VkImageLayout
-    os << YAML::Value << args.dstImageLayout;
-    os << YAML::Key << "regionCount";
-    // regionCount -> Field -> uint32_t
-    os << YAML::Value << args.regionCount;
-    os << YAML::Key << "pRegions";
-    // pRegions -> Field -> ConstDynamicArray(VkImageBlit)
-    if (args.regionCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkImageBlit");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
-                os << args.pRegions[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "filter";
-    // filter -> Field -> VkFilter
-    os << YAML::Value << args.filter;
 }
 
 void CommandPrinter::PrintCmdCopyBufferToImageArgs(YAML::Emitter &os, const CmdCopyBufferToImageArgs &args) {
@@ -556,245 +210,6 @@ void CommandPrinter::PrintCmdFillBufferArgs(YAML::Emitter &os, const CmdFillBuff
     os << YAML::Key << "data";
     // data -> Field -> uint32_t
     os << YAML::Value << args.data;
-}
-
-void CommandPrinter::PrintCmdClearColorImageArgs(YAML::Emitter &os, const CmdClearColorImageArgs &args) {
-    os << YAML::Key << "image";
-    // image -> Field -> VkImage
-    os << YAML::Value << args.image;
-    os << YAML::Key << "imageLayout";
-    // imageLayout -> Field -> VkImageLayout
-    os << YAML::Value << args.imageLayout;
-    os << YAML::Key << "pColor";
-    // pointer
-    if (args.pColor != nullptr) {
-        os << YAML::Value << *args.pColor;
-    } else {
-        os << YAML::Value << "nullptr";
-    }
-    os << YAML::Key << "rangeCount";
-    // rangeCount -> Field -> uint32_t
-    os << YAML::Value << args.rangeCount;
-    os << YAML::Key << "pRanges";
-    // pRanges -> Field -> ConstDynamicArray(VkImageSubresourceRange)
-    if (args.rangeCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkImageSubresourceRange");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.rangeCount); ++i) {
-                os << args.pRanges[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdClearDepthStencilImageArgs(YAML::Emitter &os, const CmdClearDepthStencilImageArgs &args) {
-    os << YAML::Key << "image";
-    // image -> Field -> VkImage
-    os << YAML::Value << args.image;
-    os << YAML::Key << "imageLayout";
-    // imageLayout -> Field -> VkImageLayout
-    os << YAML::Value << args.imageLayout;
-    os << YAML::Key << "pDepthStencil";
-    // pointer
-    if (args.pDepthStencil != nullptr) {
-        os << YAML::Value << *args.pDepthStencil;
-    } else {
-        os << YAML::Value << "nullptr";
-    }
-    os << YAML::Key << "rangeCount";
-    // rangeCount -> Field -> uint32_t
-    os << YAML::Value << args.rangeCount;
-    os << YAML::Key << "pRanges";
-    // pRanges -> Field -> ConstDynamicArray(VkImageSubresourceRange)
-    if (args.rangeCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkImageSubresourceRange");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.rangeCount); ++i) {
-                os << args.pRanges[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdClearAttachmentsArgs(YAML::Emitter &os, const CmdClearAttachmentsArgs &args) {
-    os << YAML::Key << "attachmentCount";
-    // attachmentCount -> Field -> uint32_t
-    os << YAML::Value << args.attachmentCount;
-    os << YAML::Key << "pAttachments";
-    // pAttachments -> Field -> ConstDynamicArray(VkClearAttachment)
-    if (args.attachmentCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkClearAttachment");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.attachmentCount); ++i) {
-                os << args.pAttachments[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "rectCount";
-    // rectCount -> Field -> uint32_t
-    os << YAML::Value << args.rectCount;
-    os << YAML::Key << "pRects";
-    // pRects -> Field -> ConstDynamicArray(VkClearRect)
-    if (args.rectCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkClearRect");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.rectCount); ++i) {
-                os << args.pRects[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdResolveImageArgs(YAML::Emitter &os, const CmdResolveImageArgs &args) {
-    os << YAML::Key << "srcImage";
-    // srcImage -> Field -> VkImage
-    os << YAML::Value << args.srcImage;
-    os << YAML::Key << "srcImageLayout";
-    // srcImageLayout -> Field -> VkImageLayout
-    os << YAML::Value << args.srcImageLayout;
-    os << YAML::Key << "dstImage";
-    // dstImage -> Field -> VkImage
-    os << YAML::Value << args.dstImage;
-    os << YAML::Key << "dstImageLayout";
-    // dstImageLayout -> Field -> VkImageLayout
-    os << YAML::Value << args.dstImageLayout;
-    os << YAML::Key << "regionCount";
-    // regionCount -> Field -> uint32_t
-    os << YAML::Value << args.regionCount;
-    os << YAML::Key << "pRegions";
-    // pRegions -> Field -> ConstDynamicArray(VkImageResolve)
-    if (args.regionCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkImageResolve");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
-                os << args.pRegions[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
-void CommandPrinter::PrintCmdSetEventArgs(YAML::Emitter &os, const CmdSetEventArgs &args) {
-    os << YAML::Key << "event";
-    // event -> Field -> VkEvent
-    os << YAML::Value << args.event;
-    os << YAML::Key << "stageMask";
-    // stageMask -> Field -> VkPipelineStageFlags
-    os << YAML::Value << args.stageMask;
-}
-
-void CommandPrinter::PrintCmdResetEventArgs(YAML::Emitter &os, const CmdResetEventArgs &args) {
-    os << YAML::Key << "event";
-    // event -> Field -> VkEvent
-    os << YAML::Value << args.event;
-    os << YAML::Key << "stageMask";
-    // stageMask -> Field -> VkPipelineStageFlags
-    os << YAML::Value << args.stageMask;
-}
-
-void CommandPrinter::PrintCmdWaitEventsArgs(YAML::Emitter &os, const CmdWaitEventsArgs &args) {
-    os << YAML::Key << "eventCount";
-    // eventCount -> Field -> uint32_t
-    os << YAML::Value << args.eventCount;
-    os << YAML::Key << "pEvents";
-    // pEvents -> Field -> ConstDynamicArray(VkEvent)
-    if (args.eventCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkEvent");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
-                os << args.pEvents[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "srcStageMask";
-    // srcStageMask -> Field -> VkPipelineStageFlags
-    os << YAML::Value << args.srcStageMask;
-    os << YAML::Key << "dstStageMask";
-    // dstStageMask -> Field -> VkPipelineStageFlags
-    os << YAML::Value << args.dstStageMask;
-    os << YAML::Key << "memoryBarrierCount";
-    // memoryBarrierCount -> Field -> uint32_t
-    os << YAML::Value << args.memoryBarrierCount;
-    os << YAML::Key << "pMemoryBarriers";
-    // pMemoryBarriers -> Field -> ConstDynamicArray(VkMemoryBarrier)
-    if (args.memoryBarrierCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkMemoryBarrier");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.memoryBarrierCount); ++i) {
-                os << args.pMemoryBarriers[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "bufferMemoryBarrierCount";
-    // bufferMemoryBarrierCount -> Field -> uint32_t
-    os << YAML::Value << args.bufferMemoryBarrierCount;
-    os << YAML::Key << "pBufferMemoryBarriers";
-    // pBufferMemoryBarriers -> Field -> ConstDynamicArray(VkBufferMemoryBarrier)
-    if (args.bufferMemoryBarrierCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkBufferMemoryBarrier");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.bufferMemoryBarrierCount); ++i) {
-                os << args.pBufferMemoryBarriers[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "imageMemoryBarrierCount";
-    // imageMemoryBarrierCount -> Field -> uint32_t
-    os << YAML::Value << args.imageMemoryBarrierCount;
-    os << YAML::Key << "pImageMemoryBarriers";
-    // pImageMemoryBarriers -> Field -> ConstDynamicArray(VkImageMemoryBarrier)
-    if (args.imageMemoryBarrierCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkImageMemoryBarrier");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.imageMemoryBarrierCount); ++i) {
-                os << args.pImageMemoryBarriers[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
 }
 
 void CommandPrinter::PrintCmdPipelineBarrierArgs(YAML::Emitter &os, const CmdPipelineBarrierArgs &args) {
@@ -932,6 +347,238 @@ void CommandPrinter::PrintCmdCopyQueryPoolResultsArgs(YAML::Emitter &os, const C
     os << YAML::Value << args.flags;
 }
 
+void CommandPrinter::PrintCmdExecuteCommandsArgs(YAML::Emitter &os, const CmdExecuteCommandsArgs &args) {
+    os << YAML::Key << "commandBufferCount";
+    // commandBufferCount -> Field -> uint32_t
+    os << YAML::Value << args.commandBufferCount;
+    os << YAML::Key << "pCommandBuffers";
+    // pCommandBuffers -> Field -> ConstDynamicArray(VkCommandBuffer)
+    if (args.commandBufferCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkCommandBuffer");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.commandBufferCount); ++i) {
+                os << args.pCommandBuffers[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdBindPipelineArgs(YAML::Emitter &os, const CmdBindPipelineArgs &args) {
+    os << YAML::Key << "pipelineBindPoint";
+    // pipelineBindPoint -> Field -> VkPipelineBindPoint
+    os << YAML::Value << args.pipelineBindPoint;
+    os << YAML::Key << "pipeline";
+    // pipeline -> Field -> VkPipeline
+    os << YAML::Value << args.pipeline;
+}
+
+void CommandPrinter::PrintCmdBindDescriptorSetsArgs(YAML::Emitter &os, const CmdBindDescriptorSetsArgs &args) {
+    os << YAML::Key << "pipelineBindPoint";
+    // pipelineBindPoint -> Field -> VkPipelineBindPoint
+    os << YAML::Value << args.pipelineBindPoint;
+    os << YAML::Key << "layout";
+    // layout -> Field -> VkPipelineLayout
+    os << YAML::Value << args.layout;
+    os << YAML::Key << "firstSet";
+    // firstSet -> Field -> uint32_t
+    os << YAML::Value << args.firstSet;
+    os << YAML::Key << "descriptorSetCount";
+    // descriptorSetCount -> Field -> uint32_t
+    os << YAML::Value << args.descriptorSetCount;
+    os << YAML::Key << "pDescriptorSets";
+    // pDescriptorSets -> Field -> ConstDynamicArray(VkDescriptorSet)
+    if (args.descriptorSetCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkDescriptorSet");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.descriptorSetCount); ++i) {
+                os << args.pDescriptorSets[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "dynamicOffsetCount";
+    // dynamicOffsetCount -> Field -> uint32_t
+    os << YAML::Value << args.dynamicOffsetCount;
+    os << YAML::Key << "pDynamicOffsets";
+    // pDynamicOffsets -> Field -> ConstDynamicArray(uint32_t)
+    if (args.dynamicOffsetCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("uint32_t");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.dynamicOffsetCount); ++i) {
+                os << args.pDynamicOffsets[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdClearColorImageArgs(YAML::Emitter &os, const CmdClearColorImageArgs &args) {
+    os << YAML::Key << "image";
+    // image -> Field -> VkImage
+    os << YAML::Value << args.image;
+    os << YAML::Key << "imageLayout";
+    // imageLayout -> Field -> VkImageLayout
+    os << YAML::Value << args.imageLayout;
+    os << YAML::Key << "pColor";
+    // pointer
+    if (args.pColor != nullptr) {
+        os << YAML::Value << *args.pColor;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "rangeCount";
+    // rangeCount -> Field -> uint32_t
+    os << YAML::Value << args.rangeCount;
+    os << YAML::Key << "pRanges";
+    // pRanges -> Field -> ConstDynamicArray(VkImageSubresourceRange)
+    if (args.rangeCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkImageSubresourceRange");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.rangeCount); ++i) {
+                os << args.pRanges[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdDispatchArgs(YAML::Emitter &os, const CmdDispatchArgs &args) {
+    os << YAML::Key << "groupCountX";
+    // groupCountX -> Field -> uint32_t
+    os << YAML::Value << args.groupCountX;
+    os << YAML::Key << "groupCountY";
+    // groupCountY -> Field -> uint32_t
+    os << YAML::Value << args.groupCountY;
+    os << YAML::Key << "groupCountZ";
+    // groupCountZ -> Field -> uint32_t
+    os << YAML::Value << args.groupCountZ;
+}
+
+void CommandPrinter::PrintCmdDispatchIndirectArgs(YAML::Emitter &os, const CmdDispatchIndirectArgs &args) {
+    os << YAML::Key << "buffer";
+    // buffer -> Field -> VkBuffer
+    os << YAML::Value << args.buffer;
+    os << YAML::Key << "offset";
+    // offset -> Field -> VkDeviceSize
+    os << YAML::Value << args.offset;
+}
+
+void CommandPrinter::PrintCmdSetEventArgs(YAML::Emitter &os, const CmdSetEventArgs &args) {
+    os << YAML::Key << "event";
+    // event -> Field -> VkEvent
+    os << YAML::Value << args.event;
+    os << YAML::Key << "stageMask";
+    // stageMask -> Field -> VkPipelineStageFlags
+    os << YAML::Value << args.stageMask;
+}
+
+void CommandPrinter::PrintCmdResetEventArgs(YAML::Emitter &os, const CmdResetEventArgs &args) {
+    os << YAML::Key << "event";
+    // event -> Field -> VkEvent
+    os << YAML::Value << args.event;
+    os << YAML::Key << "stageMask";
+    // stageMask -> Field -> VkPipelineStageFlags
+    os << YAML::Value << args.stageMask;
+}
+
+void CommandPrinter::PrintCmdWaitEventsArgs(YAML::Emitter &os, const CmdWaitEventsArgs &args) {
+    os << YAML::Key << "eventCount";
+    // eventCount -> Field -> uint32_t
+    os << YAML::Value << args.eventCount;
+    os << YAML::Key << "pEvents";
+    // pEvents -> Field -> ConstDynamicArray(VkEvent)
+    if (args.eventCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkEvent");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
+                os << args.pEvents[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "srcStageMask";
+    // srcStageMask -> Field -> VkPipelineStageFlags
+    os << YAML::Value << args.srcStageMask;
+    os << YAML::Key << "dstStageMask";
+    // dstStageMask -> Field -> VkPipelineStageFlags
+    os << YAML::Value << args.dstStageMask;
+    os << YAML::Key << "memoryBarrierCount";
+    // memoryBarrierCount -> Field -> uint32_t
+    os << YAML::Value << args.memoryBarrierCount;
+    os << YAML::Key << "pMemoryBarriers";
+    // pMemoryBarriers -> Field -> ConstDynamicArray(VkMemoryBarrier)
+    if (args.memoryBarrierCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkMemoryBarrier");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.memoryBarrierCount); ++i) {
+                os << args.pMemoryBarriers[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "bufferMemoryBarrierCount";
+    // bufferMemoryBarrierCount -> Field -> uint32_t
+    os << YAML::Value << args.bufferMemoryBarrierCount;
+    os << YAML::Key << "pBufferMemoryBarriers";
+    // pBufferMemoryBarriers -> Field -> ConstDynamicArray(VkBufferMemoryBarrier)
+    if (args.bufferMemoryBarrierCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkBufferMemoryBarrier");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.bufferMemoryBarrierCount); ++i) {
+                os << args.pBufferMemoryBarriers[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "imageMemoryBarrierCount";
+    // imageMemoryBarrierCount -> Field -> uint32_t
+    os << YAML::Value << args.imageMemoryBarrierCount;
+    os << YAML::Key << "pImageMemoryBarriers";
+    // pImageMemoryBarriers -> Field -> ConstDynamicArray(VkImageMemoryBarrier)
+    if (args.imageMemoryBarrierCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkImageMemoryBarrier");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.imageMemoryBarrierCount); ++i) {
+                os << args.pImageMemoryBarriers[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
 void CommandPrinter::PrintCmdPushConstantsArgs(YAML::Emitter &os, const CmdPushConstantsArgs &args) {
     os << YAML::Key << "layout";
     // layout -> Field -> VkPipelineLayout
@@ -960,6 +607,380 @@ void CommandPrinter::PrintCmdPushConstantsArgs(YAML::Emitter &os, const CmdPushC
     }
 }
 
+void CommandPrinter::PrintCmdSetViewportArgs(YAML::Emitter &os, const CmdSetViewportArgs &args) {
+    os << YAML::Key << "firstViewport";
+    // firstViewport -> Field -> uint32_t
+    os << YAML::Value << args.firstViewport;
+    os << YAML::Key << "viewportCount";
+    // viewportCount -> Field -> uint32_t
+    os << YAML::Value << args.viewportCount;
+    os << YAML::Key << "pViewports";
+    // pViewports -> Field -> ConstDynamicArray(VkViewport)
+    if (args.viewportCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkViewport");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.viewportCount); ++i) {
+                os << args.pViewports[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdSetScissorArgs(YAML::Emitter &os, const CmdSetScissorArgs &args) {
+    os << YAML::Key << "firstScissor";
+    // firstScissor -> Field -> uint32_t
+    os << YAML::Value << args.firstScissor;
+    os << YAML::Key << "scissorCount";
+    // scissorCount -> Field -> uint32_t
+    os << YAML::Value << args.scissorCount;
+    os << YAML::Key << "pScissors";
+    // pScissors -> Field -> ConstDynamicArray(VkRect2D)
+    if (args.scissorCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkRect2D");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.scissorCount); ++i) {
+                os << args.pScissors[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdSetLineWidthArgs(YAML::Emitter &os, const CmdSetLineWidthArgs &args) {
+    os << YAML::Key << "lineWidth";
+    // lineWidth -> Field -> float
+    os << YAML::Value << args.lineWidth;
+}
+
+void CommandPrinter::PrintCmdSetDepthBiasArgs(YAML::Emitter &os, const CmdSetDepthBiasArgs &args) {
+    os << YAML::Key << "depthBiasConstantFactor";
+    // depthBiasConstantFactor -> Field -> float
+    os << YAML::Value << args.depthBiasConstantFactor;
+    os << YAML::Key << "depthBiasClamp";
+    // depthBiasClamp -> Field -> float
+    os << YAML::Value << args.depthBiasClamp;
+    os << YAML::Key << "depthBiasSlopeFactor";
+    // depthBiasSlopeFactor -> Field -> float
+    os << YAML::Value << args.depthBiasSlopeFactor;
+}
+
+void CommandPrinter::PrintCmdSetBlendConstantsArgs(YAML::Emitter &os, const CmdSetBlendConstantsArgs &args) {
+    os << YAML::Key << "blendConstants";
+    // blendConstants -> Field -> ConstFixedArray(float)
+    {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("float");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(4); ++i) {
+                os << args.blendConstants[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdSetDepthBoundsArgs(YAML::Emitter &os, const CmdSetDepthBoundsArgs &args) {
+    os << YAML::Key << "minDepthBounds";
+    // minDepthBounds -> Field -> float
+    os << YAML::Value << args.minDepthBounds;
+    os << YAML::Key << "maxDepthBounds";
+    // maxDepthBounds -> Field -> float
+    os << YAML::Value << args.maxDepthBounds;
+}
+
+void CommandPrinter::PrintCmdSetStencilCompareMaskArgs(YAML::Emitter &os, const CmdSetStencilCompareMaskArgs &args) {
+    os << YAML::Key << "faceMask";
+    // faceMask -> Field -> VkStencilFaceFlags
+    os << YAML::Value << args.faceMask;
+    os << YAML::Key << "compareMask";
+    // compareMask -> Field -> uint32_t
+    os << YAML::Value << args.compareMask;
+}
+
+void CommandPrinter::PrintCmdSetStencilWriteMaskArgs(YAML::Emitter &os, const CmdSetStencilWriteMaskArgs &args) {
+    os << YAML::Key << "faceMask";
+    // faceMask -> Field -> VkStencilFaceFlags
+    os << YAML::Value << args.faceMask;
+    os << YAML::Key << "writeMask";
+    // writeMask -> Field -> uint32_t
+    os << YAML::Value << args.writeMask;
+}
+
+void CommandPrinter::PrintCmdSetStencilReferenceArgs(YAML::Emitter &os, const CmdSetStencilReferenceArgs &args) {
+    os << YAML::Key << "faceMask";
+    // faceMask -> Field -> VkStencilFaceFlags
+    os << YAML::Value << args.faceMask;
+    os << YAML::Key << "reference";
+    // reference -> Field -> uint32_t
+    os << YAML::Value << args.reference;
+}
+
+void CommandPrinter::PrintCmdBindIndexBufferArgs(YAML::Emitter &os, const CmdBindIndexBufferArgs &args) {
+    os << YAML::Key << "buffer";
+    // buffer -> Field -> VkBuffer
+    os << YAML::Value << args.buffer;
+    os << YAML::Key << "offset";
+    // offset -> Field -> VkDeviceSize
+    os << YAML::Value << args.offset;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> VkIndexType
+    os << YAML::Value << args.indexType;
+}
+
+void CommandPrinter::PrintCmdBindVertexBuffersArgs(YAML::Emitter &os, const CmdBindVertexBuffersArgs &args) {
+    os << YAML::Key << "firstBinding";
+    // firstBinding -> Field -> uint32_t
+    os << YAML::Value << args.firstBinding;
+    os << YAML::Key << "bindingCount";
+    // bindingCount -> Field -> uint32_t
+    os << YAML::Value << args.bindingCount;
+    os << YAML::Key << "pBuffers";
+    // pBuffers -> Field -> ConstDynamicArray(VkBuffer)
+    if (args.bindingCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkBuffer");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
+                os << args.pBuffers[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "pOffsets";
+    // pOffsets -> Field -> ConstDynamicArray(VkDeviceSize)
+    if (args.bindingCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkDeviceSize");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
+                os << args.pOffsets[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdDrawArgs(YAML::Emitter &os, const CmdDrawArgs &args) {
+    os << YAML::Key << "vertexCount";
+    // vertexCount -> Field -> uint32_t
+    os << YAML::Value << args.vertexCount;
+    os << YAML::Key << "instanceCount";
+    // instanceCount -> Field -> uint32_t
+    os << YAML::Value << args.instanceCount;
+    os << YAML::Key << "firstVertex";
+    // firstVertex -> Field -> uint32_t
+    os << YAML::Value << args.firstVertex;
+    os << YAML::Key << "firstInstance";
+    // firstInstance -> Field -> uint32_t
+    os << YAML::Value << args.firstInstance;
+}
+
+void CommandPrinter::PrintCmdDrawIndexedArgs(YAML::Emitter &os, const CmdDrawIndexedArgs &args) {
+    os << YAML::Key << "indexCount";
+    // indexCount -> Field -> uint32_t
+    os << YAML::Value << args.indexCount;
+    os << YAML::Key << "instanceCount";
+    // instanceCount -> Field -> uint32_t
+    os << YAML::Value << args.instanceCount;
+    os << YAML::Key << "firstIndex";
+    // firstIndex -> Field -> uint32_t
+    os << YAML::Value << args.firstIndex;
+    os << YAML::Key << "vertexOffset";
+    // vertexOffset -> Field -> int32_t
+    os << YAML::Value << args.vertexOffset;
+    os << YAML::Key << "firstInstance";
+    // firstInstance -> Field -> uint32_t
+    os << YAML::Value << args.firstInstance;
+}
+
+void CommandPrinter::PrintCmdDrawIndirectArgs(YAML::Emitter &os, const CmdDrawIndirectArgs &args) {
+    os << YAML::Key << "buffer";
+    // buffer -> Field -> VkBuffer
+    os << YAML::Value << args.buffer;
+    os << YAML::Key << "offset";
+    // offset -> Field -> VkDeviceSize
+    os << YAML::Value << args.offset;
+    os << YAML::Key << "drawCount";
+    // drawCount -> Field -> uint32_t
+    os << YAML::Value << args.drawCount;
+    os << YAML::Key << "stride";
+    // stride -> Field -> uint32_t
+    os << YAML::Value << args.stride;
+}
+
+void CommandPrinter::PrintCmdDrawIndexedIndirectArgs(YAML::Emitter &os, const CmdDrawIndexedIndirectArgs &args) {
+    os << YAML::Key << "buffer";
+    // buffer -> Field -> VkBuffer
+    os << YAML::Value << args.buffer;
+    os << YAML::Key << "offset";
+    // offset -> Field -> VkDeviceSize
+    os << YAML::Value << args.offset;
+    os << YAML::Key << "drawCount";
+    // drawCount -> Field -> uint32_t
+    os << YAML::Value << args.drawCount;
+    os << YAML::Key << "stride";
+    // stride -> Field -> uint32_t
+    os << YAML::Value << args.stride;
+}
+
+void CommandPrinter::PrintCmdBlitImageArgs(YAML::Emitter &os, const CmdBlitImageArgs &args) {
+    os << YAML::Key << "srcImage";
+    // srcImage -> Field -> VkImage
+    os << YAML::Value << args.srcImage;
+    os << YAML::Key << "srcImageLayout";
+    // srcImageLayout -> Field -> VkImageLayout
+    os << YAML::Value << args.srcImageLayout;
+    os << YAML::Key << "dstImage";
+    // dstImage -> Field -> VkImage
+    os << YAML::Value << args.dstImage;
+    os << YAML::Key << "dstImageLayout";
+    // dstImageLayout -> Field -> VkImageLayout
+    os << YAML::Value << args.dstImageLayout;
+    os << YAML::Key << "regionCount";
+    // regionCount -> Field -> uint32_t
+    os << YAML::Value << args.regionCount;
+    os << YAML::Key << "pRegions";
+    // pRegions -> Field -> ConstDynamicArray(VkImageBlit)
+    if (args.regionCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkImageBlit");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
+                os << args.pRegions[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "filter";
+    // filter -> Field -> VkFilter
+    os << YAML::Value << args.filter;
+}
+
+void CommandPrinter::PrintCmdClearDepthStencilImageArgs(YAML::Emitter &os, const CmdClearDepthStencilImageArgs &args) {
+    os << YAML::Key << "image";
+    // image -> Field -> VkImage
+    os << YAML::Value << args.image;
+    os << YAML::Key << "imageLayout";
+    // imageLayout -> Field -> VkImageLayout
+    os << YAML::Value << args.imageLayout;
+    os << YAML::Key << "pDepthStencil";
+    // pointer
+    if (args.pDepthStencil != nullptr) {
+        os << YAML::Value << *args.pDepthStencil;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "rangeCount";
+    // rangeCount -> Field -> uint32_t
+    os << YAML::Value << args.rangeCount;
+    os << YAML::Key << "pRanges";
+    // pRanges -> Field -> ConstDynamicArray(VkImageSubresourceRange)
+    if (args.rangeCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkImageSubresourceRange");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.rangeCount); ++i) {
+                os << args.pRanges[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdClearAttachmentsArgs(YAML::Emitter &os, const CmdClearAttachmentsArgs &args) {
+    os << YAML::Key << "attachmentCount";
+    // attachmentCount -> Field -> uint32_t
+    os << YAML::Value << args.attachmentCount;
+    os << YAML::Key << "pAttachments";
+    // pAttachments -> Field -> ConstDynamicArray(VkClearAttachment)
+    if (args.attachmentCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkClearAttachment");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.attachmentCount); ++i) {
+                os << args.pAttachments[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "rectCount";
+    // rectCount -> Field -> uint32_t
+    os << YAML::Value << args.rectCount;
+    os << YAML::Key << "pRects";
+    // pRects -> Field -> ConstDynamicArray(VkClearRect)
+    if (args.rectCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkClearRect");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.rectCount); ++i) {
+                os << args.pRects[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdResolveImageArgs(YAML::Emitter &os, const CmdResolveImageArgs &args) {
+    os << YAML::Key << "srcImage";
+    // srcImage -> Field -> VkImage
+    os << YAML::Value << args.srcImage;
+    os << YAML::Key << "srcImageLayout";
+    // srcImageLayout -> Field -> VkImageLayout
+    os << YAML::Value << args.srcImageLayout;
+    os << YAML::Key << "dstImage";
+    // dstImage -> Field -> VkImage
+    os << YAML::Value << args.dstImage;
+    os << YAML::Key << "dstImageLayout";
+    // dstImageLayout -> Field -> VkImageLayout
+    os << YAML::Value << args.dstImageLayout;
+    os << YAML::Key << "regionCount";
+    // regionCount -> Field -> uint32_t
+    os << YAML::Value << args.regionCount;
+    os << YAML::Key << "pRegions";
+    // pRegions -> Field -> ConstDynamicArray(VkImageResolve)
+    if (args.regionCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkImageResolve");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.regionCount); ++i) {
+                os << args.pRegions[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
 void CommandPrinter::PrintCmdBeginRenderPassArgs(YAML::Emitter &os, const CmdBeginRenderPassArgs &args) {
     os << YAML::Key << "pRenderPassBegin";
     // pointer
@@ -980,27 +1001,6 @@ void CommandPrinter::PrintCmdNextSubpassArgs(YAML::Emitter &os, const CmdNextSub
 }
 
 void CommandPrinter::PrintCmdEndRenderPassArgs(YAML::Emitter &os, const CmdEndRenderPassArgs &args) {}
-
-void CommandPrinter::PrintCmdExecuteCommandsArgs(YAML::Emitter &os, const CmdExecuteCommandsArgs &args) {
-    os << YAML::Key << "commandBufferCount";
-    // commandBufferCount -> Field -> uint32_t
-    os << YAML::Value << args.commandBufferCount;
-    os << YAML::Key << "pCommandBuffers";
-    // pCommandBuffers -> Field -> ConstDynamicArray(VkCommandBuffer)
-    if (args.commandBufferCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkCommandBuffer");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.commandBufferCount); ++i) {
-                os << args.pCommandBuffers[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
 
 void CommandPrinter::PrintCmdSetDeviceMaskArgs(YAML::Emitter &os, const CmdSetDeviceMaskArgs &args) {
     os << YAML::Key << "deviceMask";
@@ -1116,64 +1116,6 @@ void CommandPrinter::PrintCmdEndRenderPass2Args(YAML::Emitter &os, const CmdEndR
     }
 }
 
-void CommandPrinter::PrintCmdSetEvent2Args(YAML::Emitter &os, const CmdSetEvent2Args &args) {
-    os << YAML::Key << "event";
-    // event -> Field -> VkEvent
-    os << YAML::Value << args.event;
-    os << YAML::Key << "pDependencyInfo";
-    // pointer
-    if (args.pDependencyInfo != nullptr) {
-        os << YAML::Value << *args.pDependencyInfo;
-    } else {
-        os << YAML::Value << "nullptr";
-    }
-}
-
-void CommandPrinter::PrintCmdResetEvent2Args(YAML::Emitter &os, const CmdResetEvent2Args &args) {
-    os << YAML::Key << "event";
-    // event -> Field -> VkEvent
-    os << YAML::Value << args.event;
-    os << YAML::Key << "stageMask";
-    // stageMask -> Field -> VkPipelineStageFlags2
-    os << YAML::Value << args.stageMask;
-}
-
-void CommandPrinter::PrintCmdWaitEvents2Args(YAML::Emitter &os, const CmdWaitEvents2Args &args) {
-    os << YAML::Key << "eventCount";
-    // eventCount -> Field -> uint32_t
-    os << YAML::Value << args.eventCount;
-    os << YAML::Key << "pEvents";
-    // pEvents -> Field -> ConstDynamicArray(VkEvent)
-    if (args.eventCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkEvent");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
-                os << args.pEvents[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-    os << YAML::Key << "pDependencyInfos";
-    // pDependencyInfos -> Field -> ConstDynamicArray(VkDependencyInfo)
-    if (args.eventCount == 0) {
-        os << YAML::Value << "nullptr";
-    } else {
-        os << YAML::Value;
-        {
-            os << YAML::Comment("VkDependencyInfo");
-            os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
-                os << args.pDependencyInfos[i];
-            }  // for i
-            os << YAML::EndSeq;
-        }
-    }
-}
-
 void CommandPrinter::PrintCmdPipelineBarrier2Args(YAML::Emitter &os, const CmdPipelineBarrier2Args &args) {
     os << YAML::Key << "pDependencyInfo";
     // pointer
@@ -1233,6 +1175,64 @@ void CommandPrinter::PrintCmdCopyImageToBuffer2Args(YAML::Emitter &os, const Cmd
         os << YAML::Value << *args.pCopyImageToBufferInfo;
     } else {
         os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdSetEvent2Args(YAML::Emitter &os, const CmdSetEvent2Args &args) {
+    os << YAML::Key << "event";
+    // event -> Field -> VkEvent
+    os << YAML::Value << args.event;
+    os << YAML::Key << "pDependencyInfo";
+    // pointer
+    if (args.pDependencyInfo != nullptr) {
+        os << YAML::Value << *args.pDependencyInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdResetEvent2Args(YAML::Emitter &os, const CmdResetEvent2Args &args) {
+    os << YAML::Key << "event";
+    // event -> Field -> VkEvent
+    os << YAML::Value << args.event;
+    os << YAML::Key << "stageMask";
+    // stageMask -> Field -> VkPipelineStageFlags2
+    os << YAML::Value << args.stageMask;
+}
+
+void CommandPrinter::PrintCmdWaitEvents2Args(YAML::Emitter &os, const CmdWaitEvents2Args &args) {
+    os << YAML::Key << "eventCount";
+    // eventCount -> Field -> uint32_t
+    os << YAML::Value << args.eventCount;
+    os << YAML::Key << "pEvents";
+    // pEvents -> Field -> ConstDynamicArray(VkEvent)
+    if (args.eventCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkEvent");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
+                os << args.pEvents[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "pDependencyInfos";
+    // pDependencyInfos -> Field -> ConstDynamicArray(VkDependencyInfo)
+    if (args.eventCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkDependencyInfo");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.eventCount); ++i) {
+                os << args.pDependencyInfos[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
     }
 }
 
@@ -1466,30 +1466,6 @@ void CommandPrinter::PrintCmdSetPrimitiveRestartEnableArgs(YAML::Emitter &os,
     os << YAML::Value << args.primitiveRestartEnable;
 }
 
-void CommandPrinter::PrintCmdSetLineStippleArgs(YAML::Emitter &os, const CmdSetLineStippleArgs &args) {
-    os << YAML::Key << "lineStippleFactor";
-    // lineStippleFactor -> Field -> uint32_t
-    os << YAML::Value << args.lineStippleFactor;
-    os << YAML::Key << "lineStipplePattern";
-    // lineStipplePattern -> Field -> uint16_t
-    os << YAML::Value << args.lineStipplePattern;
-}
-
-void CommandPrinter::PrintCmdBindIndexBuffer2Args(YAML::Emitter &os, const CmdBindIndexBuffer2Args &args) {
-    os << YAML::Key << "buffer";
-    // buffer -> Field -> VkBuffer
-    os << YAML::Value << args.buffer;
-    os << YAML::Key << "offset";
-    // offset -> Field -> VkDeviceSize
-    os << YAML::Value << args.offset;
-    os << YAML::Key << "size";
-    // size -> Field -> VkDeviceSize
-    os << YAML::Value << args.size;
-    os << YAML::Key << "indexType";
-    // indexType -> Field -> VkIndexType
-    os << YAML::Value << args.indexType;
-}
-
 void CommandPrinter::PrintCmdPushDescriptorSetArgs(YAML::Emitter &os, const CmdPushDescriptorSetArgs &args) {
     os << YAML::Key << "pipelineBindPoint";
     // pipelineBindPoint -> Field -> VkPipelineBindPoint
@@ -1536,28 +1512,6 @@ void CommandPrinter::PrintCmdPushDescriptorSetWithTemplateArgs(YAML::Emitter &os
     os << YAML::Value << "NOT_AVAILABLE";
 }
 
-void CommandPrinter::PrintCmdSetRenderingAttachmentLocationsArgs(YAML::Emitter &os,
-                                                                 const CmdSetRenderingAttachmentLocationsArgs &args) {
-    os << YAML::Key << "pLocationInfo";
-    // pointer
-    if (args.pLocationInfo != nullptr) {
-        os << YAML::Value << *args.pLocationInfo;
-    } else {
-        os << YAML::Value << "nullptr";
-    }
-}
-
-void CommandPrinter::PrintCmdSetRenderingInputAttachmentIndicesArgs(
-    YAML::Emitter &os, const CmdSetRenderingInputAttachmentIndicesArgs &args) {
-    os << YAML::Key << "pInputAttachmentIndexInfo";
-    // pointer
-    if (args.pInputAttachmentIndexInfo != nullptr) {
-        os << YAML::Value << *args.pInputAttachmentIndexInfo;
-    } else {
-        os << YAML::Value << "nullptr";
-    }
-}
-
 void CommandPrinter::PrintCmdBindDescriptorSets2Args(YAML::Emitter &os, const CmdBindDescriptorSets2Args &args) {
     os << YAML::Key << "pBindDescriptorSetsInfo";
     // pointer
@@ -1594,6 +1548,52 @@ void CommandPrinter::PrintCmdPushDescriptorSetWithTemplate2Args(YAML::Emitter &o
     // pointer
     if (args.pPushDescriptorSetWithTemplateInfo != nullptr) {
         os << YAML::Value << *args.pPushDescriptorSetWithTemplateInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdSetLineStippleArgs(YAML::Emitter &os, const CmdSetLineStippleArgs &args) {
+    os << YAML::Key << "lineStippleFactor";
+    // lineStippleFactor -> Field -> uint32_t
+    os << YAML::Value << args.lineStippleFactor;
+    os << YAML::Key << "lineStipplePattern";
+    // lineStipplePattern -> Field -> uint16_t
+    os << YAML::Value << args.lineStipplePattern;
+}
+
+void CommandPrinter::PrintCmdBindIndexBuffer2Args(YAML::Emitter &os, const CmdBindIndexBuffer2Args &args) {
+    os << YAML::Key << "buffer";
+    // buffer -> Field -> VkBuffer
+    os << YAML::Value << args.buffer;
+    os << YAML::Key << "offset";
+    // offset -> Field -> VkDeviceSize
+    os << YAML::Value << args.offset;
+    os << YAML::Key << "size";
+    // size -> Field -> VkDeviceSize
+    os << YAML::Value << args.size;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> VkIndexType
+    os << YAML::Value << args.indexType;
+}
+
+void CommandPrinter::PrintCmdSetRenderingAttachmentLocationsArgs(YAML::Emitter &os,
+                                                                 const CmdSetRenderingAttachmentLocationsArgs &args) {
+    os << YAML::Key << "pLocationInfo";
+    // pointer
+    if (args.pLocationInfo != nullptr) {
+        os << YAML::Value << *args.pLocationInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdSetRenderingInputAttachmentIndicesArgs(
+    YAML::Emitter &os, const CmdSetRenderingInputAttachmentIndicesArgs &args) {
+    os << YAML::Key << "pInputAttachmentIndexInfo";
+    // pointer
+    if (args.pInputAttachmentIndexInfo != nullptr) {
+        os << YAML::Value << *args.pInputAttachmentIndexInfo;
     } else {
         os << YAML::Value << "nullptr";
     }
@@ -2116,6 +2116,16 @@ void CommandPrinter::PrintCmdCopyMemoryToImageIndirectKHRArgs(YAML::Emitter &os,
     // pointer
     if (args.pCopyMemoryToImageIndirectInfo != nullptr) {
         os << YAML::Value << *args.pCopyMemoryToImageIndirectInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdEndRendering2KHRArgs(YAML::Emitter &os, const CmdEndRendering2KHRArgs &args) {
+    os << YAML::Key << "pRenderingEndInfo";
+    // pointer
+    if (args.pRenderingEndInfo != nullptr) {
+        os << YAML::Value << *args.pRenderingEndInfo;
     } else {
         os << YAML::Value << "nullptr";
     }
@@ -4104,6 +4114,35 @@ void CommandPrinter::PrintCmdBindTileMemoryQCOMArgs(YAML::Emitter &os, const Cmd
     }
 }
 
+void CommandPrinter::PrintCmdDecompressMemoryEXTArgs(YAML::Emitter &os, const CmdDecompressMemoryEXTArgs &args) {
+    os << YAML::Key << "pDecompressMemoryInfoEXT";
+    // pointer
+    if (args.pDecompressMemoryInfoEXT != nullptr) {
+        os << YAML::Value << *args.pDecompressMemoryInfoEXT;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdDecompressMemoryIndirectCountEXTArgs(YAML::Emitter &os,
+                                                                  const CmdDecompressMemoryIndirectCountEXTArgs &args) {
+    os << YAML::Key << "decompressionMethod";
+    // decompressionMethod -> Field -> VkMemoryDecompressionMethodFlagsEXT
+    os << YAML::Value << args.decompressionMethod;
+    os << YAML::Key << "indirectCommandsAddress";
+    // indirectCommandsAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.indirectCommandsAddress);
+    os << YAML::Key << "indirectCommandsCountAddress";
+    // indirectCommandsCountAddress -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(args.indirectCommandsCountAddress);
+    os << YAML::Key << "maxDecompressionCount";
+    // maxDecompressionCount -> Field -> uint32_t
+    os << YAML::Value << args.maxDecompressionCount;
+    os << YAML::Key << "stride";
+    // stride -> Field -> uint32_t
+    os << YAML::Value << args.stride;
+}
+
 void CommandPrinter::PrintCmdBuildClusterAccelerationStructureIndirectNVArgs(
     YAML::Emitter &os, const CmdBuildClusterAccelerationStructureIndirectNVArgs &args) {
     os << YAML::Key << "pCommandInfos";
@@ -4159,6 +4198,16 @@ void CommandPrinter::PrintCmdEndRendering2EXTArgs(YAML::Emitter &os, const CmdEn
     // pointer
     if (args.pRenderingEndInfo != nullptr) {
         os << YAML::Value << *args.pRenderingEndInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdBeginCustomResolveEXTArgs(YAML::Emitter &os, const CmdBeginCustomResolveEXTArgs &args) {
+    os << YAML::Key << "pBeginCustomResolveInfo";
+    // pointer
+    if (args.pBeginCustomResolveInfo != nullptr) {
+        os << YAML::Value << *args.pBeginCustomResolveInfo;
     } else {
         os << YAML::Value << "nullptr";
     }
@@ -4491,10 +4540,157 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+        case Command::Type::kCmdCopyBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyBufferArgs *>(cmd.parameters);
+                PrintCmdCopyBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImageArgs *>(cmd.parameters);
+                PrintCmdCopyImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyBufferToImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyBufferToImageArgs *>(cmd.parameters);
+                PrintCmdCopyBufferToImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImageToBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImageToBufferArgs *>(cmd.parameters);
+                PrintCmdCopyImageToBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdUpdateBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdUpdateBufferArgs *>(cmd.parameters);
+                PrintCmdUpdateBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdFillBuffer:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdFillBufferArgs *>(cmd.parameters);
+                PrintCmdFillBufferArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPipelineBarrier:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPipelineBarrierArgs *>(cmd.parameters);
+                PrintCmdPipelineBarrierArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginQuery:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginQueryArgs *>(cmd.parameters);
+                PrintCmdBeginQueryArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndQuery:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndQueryArgs *>(cmd.parameters);
+                PrintCmdEndQueryArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResetQueryPool:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResetQueryPoolArgs *>(cmd.parameters);
+                PrintCmdResetQueryPoolArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteTimestamp:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteTimestampArgs *>(cmd.parameters);
+                PrintCmdWriteTimestampArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyQueryPoolResults:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyQueryPoolResultsArgs *>(cmd.parameters);
+                PrintCmdCopyQueryPoolResultsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdExecuteCommands:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdExecuteCommandsArgs *>(cmd.parameters);
+                PrintCmdExecuteCommandsArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdBindPipeline:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdBindPipelineArgs *>(cmd.parameters);
                 PrintCmdBindPipelineArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindDescriptorSets:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindDescriptorSetsArgs *>(cmd.parameters);
+                PrintCmdBindDescriptorSetsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdClearColorImage:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdClearColorImageArgs *>(cmd.parameters);
+                PrintCmdClearColorImageArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDispatch:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchArgs *>(cmd.parameters);
+                PrintCmdDispatchArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDispatchIndirect:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchIndirectArgs *>(cmd.parameters);
+                PrintCmdDispatchIndirectArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetEvent:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetEventArgs *>(cmd.parameters);
+                PrintCmdSetEventArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResetEvent:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResetEventArgs *>(cmd.parameters);
+                PrintCmdResetEventArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWaitEvents:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWaitEventsArgs *>(cmd.parameters);
+                PrintCmdWaitEventsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushConstants:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushConstantsArgs *>(cmd.parameters);
+                PrintCmdPushConstantsArgs(os, *args);
             }
             break;
 
@@ -4561,13 +4757,6 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
-        case Command::Type::kCmdBindDescriptorSets:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdBindDescriptorSetsArgs *>(cmd.parameters);
-                PrintCmdBindDescriptorSetsArgs(os, *args);
-            }
-            break;
-
         case Command::Type::kCmdBindIndexBuffer:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdBindIndexBufferArgs *>(cmd.parameters);
@@ -4610,73 +4799,10 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
-        case Command::Type::kCmdDispatch:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdDispatchArgs *>(cmd.parameters);
-                PrintCmdDispatchArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdDispatchIndirect:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdDispatchIndirectArgs *>(cmd.parameters);
-                PrintCmdDispatchIndirectArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdCopyBuffer:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdCopyBufferArgs *>(cmd.parameters);
-                PrintCmdCopyBufferArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdCopyImage:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdCopyImageArgs *>(cmd.parameters);
-                PrintCmdCopyImageArgs(os, *args);
-            }
-            break;
-
         case Command::Type::kCmdBlitImage:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdBlitImageArgs *>(cmd.parameters);
                 PrintCmdBlitImageArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdCopyBufferToImage:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdCopyBufferToImageArgs *>(cmd.parameters);
-                PrintCmdCopyBufferToImageArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdCopyImageToBuffer:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdCopyImageToBufferArgs *>(cmd.parameters);
-                PrintCmdCopyImageToBufferArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdUpdateBuffer:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdUpdateBufferArgs *>(cmd.parameters);
-                PrintCmdUpdateBufferArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdFillBuffer:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdFillBufferArgs *>(cmd.parameters);
-                PrintCmdFillBufferArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdClearColorImage:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdClearColorImageArgs *>(cmd.parameters);
-                PrintCmdClearColorImageArgs(os, *args);
             }
             break;
 
@@ -4701,76 +4827,6 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
-        case Command::Type::kCmdSetEvent:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdSetEventArgs *>(cmd.parameters);
-                PrintCmdSetEventArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdResetEvent:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdResetEventArgs *>(cmd.parameters);
-                PrintCmdResetEventArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdWaitEvents:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdWaitEventsArgs *>(cmd.parameters);
-                PrintCmdWaitEventsArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdPipelineBarrier:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdPipelineBarrierArgs *>(cmd.parameters);
-                PrintCmdPipelineBarrierArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdBeginQuery:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdBeginQueryArgs *>(cmd.parameters);
-                PrintCmdBeginQueryArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdEndQuery:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdEndQueryArgs *>(cmd.parameters);
-                PrintCmdEndQueryArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdResetQueryPool:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdResetQueryPoolArgs *>(cmd.parameters);
-                PrintCmdResetQueryPoolArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdWriteTimestamp:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdWriteTimestampArgs *>(cmd.parameters);
-                PrintCmdWriteTimestampArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdCopyQueryPoolResults:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdCopyQueryPoolResultsArgs *>(cmd.parameters);
-                PrintCmdCopyQueryPoolResultsArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdPushConstants:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdPushConstantsArgs *>(cmd.parameters);
-                PrintCmdPushConstantsArgs(os, *args);
-            }
-            break;
-
         case Command::Type::kCmdBeginRenderPass:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdBeginRenderPassArgs *>(cmd.parameters);
@@ -4789,13 +4845,6 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdEndRenderPassArgs *>(cmd.parameters);
                 PrintCmdEndRenderPassArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdExecuteCommands:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdExecuteCommandsArgs *>(cmd.parameters);
-                PrintCmdExecuteCommandsArgs(os, *args);
             }
             break;
 
@@ -4848,27 +4897,6 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
-        case Command::Type::kCmdSetEvent2:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdSetEvent2Args *>(cmd.parameters);
-                PrintCmdSetEvent2Args(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdResetEvent2:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdResetEvent2Args *>(cmd.parameters);
-                PrintCmdResetEvent2Args(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdWaitEvents2:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdWaitEvents2Args *>(cmd.parameters);
-                PrintCmdWaitEvents2Args(os, *args);
-            }
-            break;
-
         case Command::Type::kCmdPipelineBarrier2:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdPipelineBarrier2Args *>(cmd.parameters);
@@ -4908,6 +4936,27 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdCopyImageToBuffer2Args *>(cmd.parameters);
                 PrintCmdCopyImageToBuffer2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetEvent2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetEvent2Args *>(cmd.parameters);
+                PrintCmdSetEvent2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdResetEvent2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdResetEvent2Args *>(cmd.parameters);
+                PrintCmdResetEvent2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWaitEvents2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWaitEvents2Args *>(cmd.parameters);
+                PrintCmdWaitEvents2Args(os, *args);
             }
             break;
 
@@ -5044,20 +5093,6 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
-        case Command::Type::kCmdSetLineStipple:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdSetLineStippleArgs *>(cmd.parameters);
-                PrintCmdSetLineStippleArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdBindIndexBuffer2:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdBindIndexBuffer2Args *>(cmd.parameters);
-                PrintCmdBindIndexBuffer2Args(os, *args);
-            }
-            break;
-
         case Command::Type::kCmdPushDescriptorSet:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdPushDescriptorSetArgs *>(cmd.parameters);
@@ -5069,20 +5104,6 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdPushDescriptorSetWithTemplateArgs *>(cmd.parameters);
                 PrintCmdPushDescriptorSetWithTemplateArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdSetRenderingAttachmentLocations:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdSetRenderingAttachmentLocationsArgs *>(cmd.parameters);
-                PrintCmdSetRenderingAttachmentLocationsArgs(os, *args);
-            }
-            break;
-
-        case Command::Type::kCmdSetRenderingInputAttachmentIndices:
-            if (cmd.parameters) {
-                auto args = reinterpret_cast<CmdSetRenderingInputAttachmentIndicesArgs *>(cmd.parameters);
-                PrintCmdSetRenderingInputAttachmentIndicesArgs(os, *args);
             }
             break;
 
@@ -5111,6 +5132,34 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdPushDescriptorSetWithTemplate2Args *>(cmd.parameters);
                 PrintCmdPushDescriptorSetWithTemplate2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetLineStipple:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetLineStippleArgs *>(cmd.parameters);
+                PrintCmdSetLineStippleArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindIndexBuffer2:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindIndexBuffer2Args *>(cmd.parameters);
+                PrintCmdBindIndexBuffer2Args(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRenderingAttachmentLocations:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRenderingAttachmentLocationsArgs *>(cmd.parameters);
+                PrintCmdSetRenderingAttachmentLocationsArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetRenderingInputAttachmentIndices:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetRenderingInputAttachmentIndicesArgs *>(cmd.parameters);
+                PrintCmdSetRenderingInputAttachmentIndicesArgs(os, *args);
             }
             break;
 
@@ -5398,6 +5447,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdCopyMemoryToImageIndirectKHRArgs *>(cmd.parameters);
                 PrintCmdCopyMemoryToImageIndirectKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndRendering2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndRendering2KHRArgs *>(cmd.parameters);
+                PrintCmdEndRendering2KHRArgs(os, *args);
             }
             break;
 
@@ -6328,6 +6384,20 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+        case Command::Type::kCmdDecompressMemoryEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDecompressMemoryEXTArgs *>(cmd.parameters);
+                PrintCmdDecompressMemoryEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDecompressMemoryIndirectCountEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDecompressMemoryIndirectCountEXTArgs *>(cmd.parameters);
+                PrintCmdDecompressMemoryIndirectCountEXTArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdBuildClusterAccelerationStructureIndirectNV:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdBuildClusterAccelerationStructureIndirectNVArgs *>(cmd.parameters);
@@ -6360,6 +6430,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdEndRendering2EXTArgs *>(cmd.parameters);
                 PrintCmdEndRendering2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginCustomResolveEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginCustomResolveEXTArgs *>(cmd.parameters);
+                PrintCmdBeginCustomResolveEXTArgs(os, *args);
             }
             break;
 

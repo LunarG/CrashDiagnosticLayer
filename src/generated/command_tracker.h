@@ -46,7 +46,74 @@ class CommandTracker {
 
     void ResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags);
 
+    void CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount,
+                       const VkBufferCopy* pRegions);
+
+    void CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage,
+                      VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions);
+
+    void CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
+                              VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions);
+
+    void CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                              VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions);
+
+    void CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                         VkDeviceSize dataSize, const void* pData);
+
+    void CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size,
+                       uint32_t data);
+
+    void CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
+                            VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
+                            uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                            uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                            uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
+
+    void CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags);
+
+    void CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query);
+
+    void CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                           uint32_t queryCount);
+
+    void CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool,
+                           uint32_t query);
+
+    void CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                 uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride,
+                                 VkQueryResultFlags flags);
+
+    void CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
+                            const VkCommandBuffer* pCommandBuffers);
+
     void CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline);
+
+    void CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                               VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
+                               const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
+                               const uint32_t* pDynamicOffsets);
+
+    void CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
+                            const VkClearColorValue* pColor, uint32_t rangeCount,
+                            const VkImageSubresourceRange* pRanges);
+
+    void CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
+
+    void CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset);
+
+    void CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask);
+
+    void CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask);
+
+    void CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                       VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+                       uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                       uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                       uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
+
+    void CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags,
+                          uint32_t offset, uint32_t size, const void* pValues);
 
     void CmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
                         const VkViewport* pViewports);
@@ -69,11 +136,6 @@ class CommandTracker {
 
     void CmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference);
 
-    void CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                               VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
-                               const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
-                               const uint32_t* pDynamicOffsets);
-
     void CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType);
 
     void CmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
@@ -91,34 +153,8 @@ class CommandTracker {
     void CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount,
                                 uint32_t stride);
 
-    void CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
-
-    void CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset);
-
-    void CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount,
-                       const VkBufferCopy* pRegions);
-
-    void CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage,
-                      VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions);
-
     void CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage,
                       VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter);
-
-    void CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
-                              VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions);
-
-    void CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                              VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions);
-
-    void CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                         VkDeviceSize dataSize, const void* pData);
-
-    void CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size,
-                       uint32_t data);
-
-    void CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
-                            const VkClearColorValue* pColor, uint32_t rangeCount,
-                            const VkImageSubresourceRange* pRanges);
 
     void CmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
                                    const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount,
@@ -131,48 +167,12 @@ class CommandTracker {
                          VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                          const VkImageResolve* pRegions);
 
-    void CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask);
-
-    void CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask);
-
-    void CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                       VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-                       uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                       uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                       uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
-
-    void CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
-                            VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
-                            uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                            uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                            uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
-
-    void CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags);
-
-    void CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query);
-
-    void CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                           uint32_t queryCount);
-
-    void CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool,
-                           uint32_t query);
-
-    void CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                 uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride,
-                                 VkQueryResultFlags flags);
-
-    void CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags,
-                          uint32_t offset, uint32_t size, const void* pValues);
-
     void CmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin,
                             VkSubpassContents contents);
 
     void CmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents);
 
     void CmdEndRenderPass(VkCommandBuffer commandBuffer);
-
-    void CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                            const VkCommandBuffer* pCommandBuffers);
 
     void CmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask);
 
@@ -194,13 +194,6 @@ class CommandTracker {
 
     void CmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo);
 
-    void CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo);
-
-    void CmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask);
-
-    void CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                        const VkDependencyInfo* pDependencyInfos);
-
     void CmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo);
 
     void CmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool,
@@ -213,6 +206,13 @@ class CommandTracker {
     void CmdCopyBufferToImage2(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo);
 
     void CmdCopyImageToBuffer2(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
+    void CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo);
+
+    void CmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask);
+
+    void CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                        const VkDependencyInfo* pDependencyInfos);
 
     void CmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo);
 
@@ -255,11 +255,6 @@ class CommandTracker {
 
     void CmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable);
 
-    void CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
-
-    void CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,
-                             VkIndexType indexType);
-
     void CmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                               VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
                               const VkWriteDescriptorSet* pDescriptorWrites);
@@ -267,12 +262,6 @@ class CommandTracker {
     void CmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
                                           VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
                                           uint32_t set, const void* pData);
-
-    void CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
-                                            const VkRenderingAttachmentLocationInfo* pLocationInfo);
-
-    void CmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer,
-                                               const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
 
     void CmdBindDescriptorSets2(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
 
@@ -282,6 +271,17 @@ class CommandTracker {
 
     void CmdPushDescriptorSetWithTemplate2(
         VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
+
+    void CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern);
+
+    void CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,
+                             VkIndexType indexType);
+
+    void CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                            const VkRenderingAttachmentLocationInfo* pLocationInfo);
+
+    void CmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer,
+                                               const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
 
     void CmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoBeginCodingInfoKHR* pBeginInfo);
 
@@ -390,6 +390,8 @@ class CommandTracker {
 
     void CmdCopyMemoryToImageIndirectKHR(VkCommandBuffer commandBuffer,
                                          const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+
+    void CmdEndRendering2KHR(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo);
 
     void CmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
 
@@ -754,6 +756,15 @@ class CommandTracker {
 
     void CmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer, const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo);
 
+    void CmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT);
+
+    void CmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                             VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+                                             VkDeviceAddress indirectCommandsAddress,
+                                             VkDeviceAddress indirectCommandsCountAddress,
+                                             uint32_t maxDecompressionCount, uint32_t stride);
+
     void CmdBuildClusterAccelerationStructureIndirectNV(
         VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos);
 
@@ -767,7 +778,10 @@ class CommandTracker {
     void CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
                                         const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
-    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoEXT* pRenderingEndInfo);
+    void CmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo);
+
+    void CmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
+                                  const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo);
 
     void CmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                            const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
