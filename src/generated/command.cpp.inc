@@ -25,6 +25,155 @@
 
 // NOLINTBEGIN
 
+void CommandBuffer::PreCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
+                                     uint32_t regionCount, const VkBufferCopy* pRegions) {
+    tracker_.CmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
+                                      uint32_t regionCount, const VkBufferCopy* pRegions) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                                    VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
+                                    const VkImageCopy* pRegions) {
+    tracker_.CmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                                     VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
+                                     const VkImageCopy* pRegions) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
+                                            VkImageLayout dstImageLayout, uint32_t regionCount,
+                                            const VkBufferImageCopy* pRegions) {
+    tracker_.CmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
+                                             VkImageLayout dstImageLayout, uint32_t regionCount,
+                                             const VkBufferImageCopy* pRegions) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                            VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount,
+                                            const VkBufferImageCopy* pRegions) {
+    tracker_.CmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                             VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount,
+                                             const VkBufferImageCopy* pRegions) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                       VkDeviceSize dataSize, const void* pData) {
+    tracker_.CmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                        VkDeviceSize dataSize, const void* pData) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                     VkDeviceSize size, uint32_t data) {
+    tracker_.CmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                      VkDeviceSize size, uint32_t data) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
+                                          VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
+                                          uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                          uint32_t bufferMemoryBarrierCount,
+                                          const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                          uint32_t imageMemoryBarrierCount,
+                                          const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    tracker_.CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
+                                pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
+                                imageMemoryBarrierCount, pImageMemoryBarriers);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
+                                           VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
+                                           uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                           uint32_t bufferMemoryBarrierCount,
+                                           const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                           uint32_t imageMemoryBarrierCount,
+                                           const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
+                                     VkQueryControlFlags flags) {
+    tracker_.CmdBeginQuery(commandBuffer, queryPool, query, flags);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
+                                      VkQueryControlFlags flags) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
+    tracker_.CmdEndQuery(commandBuffer, queryPool, query);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                         uint32_t queryCount) {
+    tracker_.CmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                          uint32_t queryCount) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
+                                         VkQueryPool queryPool, uint32_t query) {
+    tracker_.CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
+                                          VkQueryPool queryPool, uint32_t query) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                               uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer,
+                                               VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags) {
+    tracker_.CmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride,
+                                     flags);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer,
+                                                VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
+                                          const VkCommandBuffer* pCommandBuffers) {
+    tracker_.CmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
+                                           const VkCommandBuffer* pCommandBuffers) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                        VkPipeline pipeline) {
     tracker_.CmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
@@ -33,6 +182,101 @@ void CommandBuffer::PreCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipeline
 void CommandBuffer::PostCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                         VkPipeline pipeline) {
     WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                             VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
+                                             const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
+                                             const uint32_t* pDynamicOffsets) {
+    tracker_.CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
+                                   pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                              VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
+                                              const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
+                                              const uint32_t* pDynamicOffsets) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
+                                          const VkClearColorValue* pColor, uint32_t rangeCount,
+                                          const VkImageSubresourceRange* pRanges) {
+    tracker_.CmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
+                                           const VkClearColorValue* pColor, uint32_t rangeCount,
+                                           const VkImageSubresourceRange* pRanges) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
+                                   uint32_t groupCountZ) {
+    tracker_.CmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
+                                    uint32_t groupCountZ) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
+    tracker_.CmdDispatchIndirect(commandBuffer, buffer, offset);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    tracker_.CmdSetEvent(commandBuffer, event, stageMask);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    tracker_.CmdResetEvent(commandBuffer, event, stageMask);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                     VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+                                     uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                     uint32_t bufferMemoryBarrierCount,
+                                     const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                     uint32_t imageMemoryBarrierCount,
+                                     const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    tracker_.CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
+                           pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount,
+                           pImageMemoryBarriers);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                      VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+                                      uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                      uint32_t bufferMemoryBarrierCount,
+                                      const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                      uint32_t imageMemoryBarrierCount,
+                                      const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
+                                        VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
+                                        const void* pValues) {
+    tracker_.CmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
+                                         VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
+                                         const void* pValues) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount,
@@ -119,21 +363,6 @@ void CommandBuffer::PostCmdSetStencilReference(VkCommandBuffer commandBuffer, Vk
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                             VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
-                                             const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
-                                             const uint32_t* pDynamicOffsets) {
-    tracker_.CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
-                                   pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                              VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
-                                              const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
-                                              const uint32_t* pDynamicOffsets) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                           VkIndexType indexType) {
     tracker_.CmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
@@ -195,46 +424,6 @@ void CommandBuffer::PostCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, Vk
     WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                                   uint32_t groupCountZ) {
-    tracker_.CmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                                    uint32_t groupCountZ) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    tracker_.CmdDispatchIndirect(commandBuffer, buffer, offset);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                                     uint32_t regionCount, const VkBufferCopy* pRegions) {
-    tracker_.CmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                                      uint32_t regionCount, const VkBufferCopy* pRegions) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                                    VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
-                                    const VkImageCopy* pRegions) {
-    tracker_.CmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                                     VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
-                                     const VkImageCopy* pRegions) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                                     VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                                     const VkImageBlit* pRegions, VkFilter filter) {
@@ -245,62 +434,6 @@ void CommandBuffer::PreCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcIm
 void CommandBuffer::PostCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                                      VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                                      const VkImageBlit* pRegions, VkFilter filter) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
-                                            VkImageLayout dstImageLayout, uint32_t regionCount,
-                                            const VkBufferImageCopy* pRegions) {
-    tracker_.CmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
-                                             VkImageLayout dstImageLayout, uint32_t regionCount,
-                                             const VkBufferImageCopy* pRegions) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                            VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount,
-                                            const VkBufferImageCopy* pRegions) {
-    tracker_.CmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                             VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount,
-                                             const VkBufferImageCopy* pRegions) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                       VkDeviceSize dataSize, const void* pData) {
-    tracker_.CmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                        VkDeviceSize dataSize, const void* pData) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                     VkDeviceSize size, uint32_t data) {
-    tracker_.CmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                      VkDeviceSize size, uint32_t data) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
-                                          const VkClearColorValue* pColor, uint32_t rangeCount,
-                                          const VkImageSubresourceRange* pRanges) {
-    tracker_.CmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
-                                           const VkClearColorValue* pColor, uint32_t rangeCount,
-                                           const VkImageSubresourceRange* pRanges) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
@@ -342,129 +475,6 @@ void CommandBuffer::PostCmdResolveImage(VkCommandBuffer commandBuffer, VkImage s
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    tracker_.CmdSetEvent(commandBuffer, event, stageMask);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    tracker_.CmdResetEvent(commandBuffer, event, stageMask);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                     VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-                                     uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                     uint32_t bufferMemoryBarrierCount,
-                                     const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                     uint32_t imageMemoryBarrierCount,
-                                     const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    tracker_.CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount,
-                           pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount,
-                           pImageMemoryBarriers);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                      VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-                                      uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                      uint32_t bufferMemoryBarrierCount,
-                                      const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                      uint32_t imageMemoryBarrierCount,
-                                      const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
-                                          VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
-                                          uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                          uint32_t bufferMemoryBarrierCount,
-                                          const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                          uint32_t imageMemoryBarrierCount,
-                                          const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    tracker_.CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
-                                pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers,
-                                imageMemoryBarrierCount, pImageMemoryBarriers);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
-                                           VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
-                                           uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                           uint32_t bufferMemoryBarrierCount,
-                                           const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                           uint32_t imageMemoryBarrierCount,
-                                           const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                                     VkQueryControlFlags flags) {
-    tracker_.CmdBeginQuery(commandBuffer, queryPool, query, flags);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                                      VkQueryControlFlags flags) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
-    tracker_.CmdEndQuery(commandBuffer, queryPool, query);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                         uint32_t queryCount) {
-    tracker_.CmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                          uint32_t queryCount) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                         VkQueryPool queryPool, uint32_t query) {
-    tracker_.CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                          VkQueryPool queryPool, uint32_t query) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                               uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer,
-                                               VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags) {
-    tracker_.CmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride,
-                                     flags);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer,
-                                                VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
-                                        VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
-                                        const void* pValues) {
-    tracker_.CmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
-                                         VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
-                                         const void* pValues) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin,
                                           VkSubpassContents contents) {
     tracker_.CmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
@@ -489,16 +499,6 @@ void CommandBuffer::PreCmdEndRenderPass(VkCommandBuffer commandBuffer) {
 }
 void CommandBuffer::PostCmdEndRenderPass(VkCommandBuffer commandBuffer) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                                          const VkCommandBuffer* pCommandBuffers) {
-    tracker_.CmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                                           const VkCommandBuffer* pCommandBuffers) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
@@ -575,34 +575,6 @@ void CommandBuffer::PostCmdEndRenderPass2(VkCommandBuffer commandBuffer, const V
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                    const VkDependencyInfo* pDependencyInfo) {
-    tracker_.CmdSetEvent2(commandBuffer, event, pDependencyInfo);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                     const VkDependencyInfo* pDependencyInfo) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    tracker_.CmdResetEvent2(commandBuffer, event, stageMask);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                      const VkDependencyInfo* pDependencyInfos) {
-    tracker_.CmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                       const VkDependencyInfo* pDependencyInfos) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo) {
     tracker_.CmdPipelineBarrier2(commandBuffer, pDependencyInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
@@ -654,6 +626,34 @@ void CommandBuffer::PreCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
 }
 void CommandBuffer::PostCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
                                               const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                    const VkDependencyInfo* pDependencyInfo) {
+    tracker_.CmdSetEvent2(commandBuffer, event, pDependencyInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                     const VkDependencyInfo* pDependencyInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
+    tracker_.CmdResetEvent2(commandBuffer, event, stageMask);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                      const VkDependencyInfo* pDependencyInfos) {
+    tracker_.CmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                       const VkDependencyInfo* pDependencyInfos) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
@@ -805,26 +805,6 @@ void CommandBuffer::PostCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuff
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                         uint16_t lineStipplePattern) {
-    tracker_.CmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                          uint16_t lineStipplePattern) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                           VkDeviceSize size, VkIndexType indexType) {
-    tracker_.CmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                            VkDeviceSize size, VkIndexType indexType) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                             VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
                                             const VkWriteDescriptorSet* pDescriptorWrites) {
@@ -847,26 +827,6 @@ void CommandBuffer::PreCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandB
 void CommandBuffer::PostCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer,
                                                          VkDescriptorUpdateTemplate descriptorUpdateTemplate,
                                                          VkPipelineLayout layout, uint32_t set, const void* pData) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
-                                                          const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    tracker_.CmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
-                                                           const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdSetRenderingInputAttachmentIndices(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    tracker_.CmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdSetRenderingInputAttachmentIndices(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
@@ -906,6 +866,46 @@ void CommandBuffer::PreCmdPushDescriptorSetWithTemplate2(
 }
 void CommandBuffer::PostCmdPushDescriptorSetWithTemplate2(
     VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                         uint16_t lineStipplePattern) {
+    tracker_.CmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                          uint16_t lineStipplePattern) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
+                                           VkDeviceSize size, VkIndexType indexType) {
+    tracker_.CmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
+                                            VkDeviceSize size, VkIndexType indexType) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                                          const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    tracker_.CmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                                           const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
+    tracker_.CmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
@@ -1314,6 +1314,16 @@ void CommandBuffer::PreCmdCopyMemoryToImageIndirectKHR(
 }
 void CommandBuffer::PostCmdCopyMemoryToImageIndirectKHR(
     VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdEndRendering2KHR(VkCommandBuffer commandBuffer,
+                                           const VkRenderingEndInfoKHR* pRenderingEndInfo) {
+    tracker_.CmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdEndRendering2KHR(VkCommandBuffer commandBuffer,
+                                            const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
@@ -2694,6 +2704,33 @@ void CommandBuffer::PostCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                              const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT) {
+    tracker_.CmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                               const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                                           VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+                                                           VkDeviceAddress indirectCommandsAddress,
+                                                           VkDeviceAddress indirectCommandsCountAddress,
+                                                           uint32_t maxDecompressionCount, uint32_t stride) {
+    tracker_.CmdDecompressMemoryIndirectCountEXT(commandBuffer, decompressionMethod, indirectCommandsAddress,
+                                                 indirectCommandsCountAddress, maxDecompressionCount, stride);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                                            VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+                                                            VkDeviceAddress indirectCommandsAddress,
+                                                            VkDeviceAddress indirectCommandsCountAddress,
+                                                            uint32_t maxDecompressionCount, uint32_t stride) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
     tracker_.CmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
@@ -2737,12 +2774,22 @@ void CommandBuffer::PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBu
 }
 
 void CommandBuffer::PreCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
-                                           const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+                                           const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     tracker_.CmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
-                                            const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+                                            const VkRenderingEndInfoKHR* pRenderingEndInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
+                                                const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
+    tracker_.CmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
+                                                 const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 

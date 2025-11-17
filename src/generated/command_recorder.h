@@ -43,8 +43,86 @@ class CommandRecorder {
 
     ResetCommandBufferArgs* RecordResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags);
 
+    CmdCopyBufferArgs* RecordCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
+                                           uint32_t regionCount, const VkBufferCopy* pRegions);
+
+    CmdCopyImageArgs* RecordCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                                         VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
+                                         const VkImageCopy* pRegions);
+
+    CmdCopyBufferToImageArgs* RecordCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
+                                                         VkImage dstImage, VkImageLayout dstImageLayout,
+                                                         uint32_t regionCount, const VkBufferImageCopy* pRegions);
+
+    CmdCopyImageToBufferArgs* RecordCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
+                                                         VkImageLayout srcImageLayout, VkBuffer dstBuffer,
+                                                         uint32_t regionCount, const VkBufferImageCopy* pRegions);
+
+    CmdUpdateBufferArgs* RecordCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
+                                               VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData);
+
+    CmdFillBufferArgs* RecordCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                           VkDeviceSize size, uint32_t data);
+
+    CmdPipelineBarrierArgs* RecordCmdPipelineBarrier(
+        VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+        VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+        uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+        uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
+
+    CmdBeginQueryArgs* RecordCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
+                                           VkQueryControlFlags flags);
+
+    CmdEndQueryArgs* RecordCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query);
+
+    CmdResetQueryPoolArgs* RecordCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                   uint32_t firstQuery, uint32_t queryCount);
+
+    CmdWriteTimestampArgs* RecordCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
+                                                   VkQueryPool queryPool, uint32_t query);
+
+    CmdCopyQueryPoolResultsArgs* RecordCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                               uint32_t firstQuery, uint32_t queryCount,
+                                                               VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                                               VkDeviceSize stride, VkQueryResultFlags flags);
+
+    CmdExecuteCommandsArgs* RecordCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
+                                                     const VkCommandBuffer* pCommandBuffers);
+
     CmdBindPipelineArgs* RecordCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                                VkPipeline pipeline);
+
+    CmdBindDescriptorSetsArgs* RecordCmdBindDescriptorSets(
+        VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout,
+        uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets,
+        uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets);
+
+    CmdClearColorImageArgs* RecordCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image,
+                                                     VkImageLayout imageLayout, const VkClearColorValue* pColor,
+                                                     uint32_t rangeCount, const VkImageSubresourceRange* pRanges);
+
+    CmdDispatchArgs* RecordCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
+                                       uint32_t groupCountZ);
+
+    CmdDispatchIndirectArgs* RecordCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                       VkDeviceSize offset);
+
+    CmdSetEventArgs* RecordCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask);
+
+    CmdResetEventArgs* RecordCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event,
+                                           VkPipelineStageFlags stageMask);
+
+    CmdWaitEventsArgs* RecordCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                           VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+                                           uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                           uint32_t bufferMemoryBarrierCount,
+                                           const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                           uint32_t imageMemoryBarrierCount,
+                                           const VkImageMemoryBarrier* pImageMemoryBarriers);
+
+    CmdPushConstantsArgs* RecordCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
+                                                 VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
+                                                 const void* pValues);
 
     CmdSetViewportArgs* RecordCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport,
                                              uint32_t viewportCount, const VkViewport* pViewports);
@@ -71,11 +149,6 @@ class CommandRecorder {
     CmdSetStencilReferenceArgs* RecordCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask,
                                                              uint32_t reference);
 
-    CmdBindDescriptorSetsArgs* RecordCmdBindDescriptorSets(
-        VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout,
-        uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets,
-        uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets);
-
     CmdBindIndexBufferArgs* RecordCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                      VkDeviceSize offset, VkIndexType indexType);
 
@@ -95,40 +168,9 @@ class CommandRecorder {
     CmdDrawIndexedIndirectArgs* RecordCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                              VkDeviceSize offset, uint32_t drawCount, uint32_t stride);
 
-    CmdDispatchArgs* RecordCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                                       uint32_t groupCountZ);
-
-    CmdDispatchIndirectArgs* RecordCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                       VkDeviceSize offset);
-
-    CmdCopyBufferArgs* RecordCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                                           uint32_t regionCount, const VkBufferCopy* pRegions);
-
-    CmdCopyImageArgs* RecordCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                                         VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
-                                         const VkImageCopy* pRegions);
-
     CmdBlitImageArgs* RecordCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                                          VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                                          const VkImageBlit* pRegions, VkFilter filter);
-
-    CmdCopyBufferToImageArgs* RecordCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
-                                                         VkImage dstImage, VkImageLayout dstImageLayout,
-                                                         uint32_t regionCount, const VkBufferImageCopy* pRegions);
-
-    CmdCopyImageToBufferArgs* RecordCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage,
-                                                         VkImageLayout srcImageLayout, VkBuffer dstBuffer,
-                                                         uint32_t regionCount, const VkBufferImageCopy* pRegions);
-
-    CmdUpdateBufferArgs* RecordCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer,
-                                               VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData);
-
-    CmdFillBufferArgs* RecordCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                           VkDeviceSize size, uint32_t data);
-
-    CmdClearColorImageArgs* RecordCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image,
-                                                     VkImageLayout imageLayout, const VkClearColorValue* pColor,
-                                                     uint32_t rangeCount, const VkImageSubresourceRange* pRanges);
 
     CmdClearDepthStencilImageArgs* RecordCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image,
                                                                    VkImageLayout imageLayout,
@@ -145,45 +187,6 @@ class CommandRecorder {
                                                VkImageLayout dstImageLayout, uint32_t regionCount,
                                                const VkImageResolve* pRegions);
 
-    CmdSetEventArgs* RecordCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask);
-
-    CmdResetEventArgs* RecordCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event,
-                                           VkPipelineStageFlags stageMask);
-
-    CmdWaitEventsArgs* RecordCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                           VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-                                           uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                           uint32_t bufferMemoryBarrierCount,
-                                           const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                           uint32_t imageMemoryBarrierCount,
-                                           const VkImageMemoryBarrier* pImageMemoryBarriers);
-
-    CmdPipelineBarrierArgs* RecordCmdPipelineBarrier(
-        VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-        VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-        uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-        uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
-
-    CmdBeginQueryArgs* RecordCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                                           VkQueryControlFlags flags);
-
-    CmdEndQueryArgs* RecordCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query);
-
-    CmdResetQueryPoolArgs* RecordCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                   uint32_t firstQuery, uint32_t queryCount);
-
-    CmdWriteTimestampArgs* RecordCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                                   VkQueryPool queryPool, uint32_t query);
-
-    CmdCopyQueryPoolResultsArgs* RecordCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
-                                                               uint32_t firstQuery, uint32_t queryCount,
-                                                               VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                                               VkDeviceSize stride, VkQueryResultFlags flags);
-
-    CmdPushConstantsArgs* RecordCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
-                                                 VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
-                                                 const void* pValues);
-
     CmdBeginRenderPassArgs* RecordCmdBeginRenderPass(VkCommandBuffer commandBuffer,
                                                      const VkRenderPassBeginInfo* pRenderPassBegin,
                                                      VkSubpassContents contents);
@@ -191,9 +194,6 @@ class CommandRecorder {
     CmdNextSubpassArgs* RecordCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents);
 
     CmdEndRenderPassArgs* RecordCmdEndRenderPass(VkCommandBuffer commandBuffer);
-
-    CmdExecuteCommandsArgs* RecordCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                                                     const VkCommandBuffer* pCommandBuffers);
 
     CmdSetDeviceMaskArgs* RecordCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask);
 
@@ -222,15 +222,6 @@ class CommandRecorder {
     CmdEndRenderPass2Args* RecordCmdEndRenderPass2(VkCommandBuffer commandBuffer,
                                                    const VkSubpassEndInfo* pSubpassEndInfo);
 
-    CmdSetEvent2Args* RecordCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                         const VkDependencyInfo* pDependencyInfo);
-
-    CmdResetEvent2Args* RecordCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                             VkPipelineStageFlags2 stageMask);
-
-    CmdWaitEvents2Args* RecordCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                             const VkDependencyInfo* pDependencyInfos);
-
     CmdPipelineBarrier2Args* RecordCmdPipelineBarrier2(VkCommandBuffer commandBuffer,
                                                        const VkDependencyInfo* pDependencyInfo);
 
@@ -246,6 +237,15 @@ class CommandRecorder {
 
     CmdCopyImageToBuffer2Args* RecordCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
                                                            const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo);
+
+    CmdSetEvent2Args* RecordCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                         const VkDependencyInfo* pDependencyInfo);
+
+    CmdResetEvent2Args* RecordCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                             VkPipelineStageFlags2 stageMask);
+
+    CmdWaitEvents2Args* RecordCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                             const VkDependencyInfo* pDependencyInfos);
 
     CmdBlitImage2Args* RecordCmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo);
 
@@ -299,12 +299,6 @@ class CommandRecorder {
     CmdSetPrimitiveRestartEnableArgs* RecordCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer,
                                                                          VkBool32 primitiveRestartEnable);
 
-    CmdSetLineStippleArgs* RecordCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                                   uint16_t lineStipplePattern);
-
-    CmdBindIndexBuffer2Args* RecordCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer,
-                                                       VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType);
-
     CmdPushDescriptorSetArgs* RecordCmdPushDescriptorSet(VkCommandBuffer commandBuffer,
                                                          VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout,
                                                          uint32_t set, uint32_t descriptorWriteCount,
@@ -313,12 +307,6 @@ class CommandRecorder {
     CmdPushDescriptorSetWithTemplateArgs* RecordCmdPushDescriptorSetWithTemplate(
         VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout,
         uint32_t set, const void* pData);
-
-    CmdSetRenderingAttachmentLocationsArgs* RecordCmdSetRenderingAttachmentLocations(
-        VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo);
-
-    CmdSetRenderingInputAttachmentIndicesArgs* RecordCmdSetRenderingInputAttachmentIndices(
-        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
 
     CmdBindDescriptorSets2Args* RecordCmdBindDescriptorSets2(VkCommandBuffer commandBuffer,
                                                              const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo);
@@ -331,6 +319,18 @@ class CommandRecorder {
 
     CmdPushDescriptorSetWithTemplate2Args* RecordCmdPushDescriptorSetWithTemplate2(
         VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo);
+
+    CmdSetLineStippleArgs* RecordCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                                   uint16_t lineStipplePattern);
+
+    CmdBindIndexBuffer2Args* RecordCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                                                       VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType);
+
+    CmdSetRenderingAttachmentLocationsArgs* RecordCmdSetRenderingAttachmentLocations(
+        VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo);
+
+    CmdSetRenderingInputAttachmentIndicesArgs* RecordCmdSetRenderingInputAttachmentIndices(
+        VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo);
 
     CmdBeginVideoCodingKHRArgs* RecordCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer,
                                                              const VkVideoBeginCodingInfoKHR* pBeginInfo);
@@ -465,6 +465,9 @@ class CommandRecorder {
 
     CmdCopyMemoryToImageIndirectKHRArgs* RecordCmdCopyMemoryToImageIndirectKHR(
         VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+
+    CmdEndRendering2KHRArgs* RecordCmdEndRendering2KHR(VkCommandBuffer commandBuffer,
+                                                       const VkRenderingEndInfoKHR* pRenderingEndInfo);
 
     CmdDebugMarkerBeginEXTArgs* RecordCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
                                                              const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
@@ -937,6 +940,14 @@ class CommandRecorder {
     CmdBindTileMemoryQCOMArgs* RecordCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
                                                            const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo);
 
+    CmdDecompressMemoryEXTArgs* RecordCmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                                             const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT);
+
+    CmdDecompressMemoryIndirectCountEXTArgs* RecordCmdDecompressMemoryIndirectCountEXT(
+        VkCommandBuffer commandBuffer, VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+        VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress,
+        uint32_t maxDecompressionCount, uint32_t stride);
+
     CmdBuildClusterAccelerationStructureIndirectNVArgs* RecordCmdBuildClusterAccelerationStructureIndirectNV(
         VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos);
 
@@ -952,7 +963,10 @@ class CommandRecorder {
         const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
     CmdEndRendering2EXTArgs* RecordCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
-                                                       const VkRenderingEndInfoEXT* pRenderingEndInfo);
+                                                       const VkRenderingEndInfoKHR* pRenderingEndInfo);
+
+    CmdBeginCustomResolveEXTArgs* RecordCmdBeginCustomResolveEXT(
+        VkCommandBuffer commandBuffer, const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo);
 
     CmdBuildAccelerationStructuresKHRArgs* RecordCmdBuildAccelerationStructuresKHR(
         VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,

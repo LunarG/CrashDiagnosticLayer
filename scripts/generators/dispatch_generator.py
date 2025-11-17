@@ -16,7 +16,7 @@
 
 import os
 import sys
-from vulkan_object import (Queues, CommandScope)
+from vulkan_object import (CommandScope)
 from generators.cdl_base_generator import CdlBaseOutputGenerator
 #
 # DispatchOutputGenerator - Generate the dispatch tables

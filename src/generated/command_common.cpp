@@ -41,8 +41,50 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkEndCommandBuffer";
         case Command::Type::kResetCommandBuffer:
             return "vkResetCommandBuffer";
+        case Command::Type::kCmdCopyBuffer:
+            return "vkCmdCopyBuffer";
+        case Command::Type::kCmdCopyImage:
+            return "vkCmdCopyImage";
+        case Command::Type::kCmdCopyBufferToImage:
+            return "vkCmdCopyBufferToImage";
+        case Command::Type::kCmdCopyImageToBuffer:
+            return "vkCmdCopyImageToBuffer";
+        case Command::Type::kCmdUpdateBuffer:
+            return "vkCmdUpdateBuffer";
+        case Command::Type::kCmdFillBuffer:
+            return "vkCmdFillBuffer";
+        case Command::Type::kCmdPipelineBarrier:
+            return "vkCmdPipelineBarrier";
+        case Command::Type::kCmdBeginQuery:
+            return "vkCmdBeginQuery";
+        case Command::Type::kCmdEndQuery:
+            return "vkCmdEndQuery";
+        case Command::Type::kCmdResetQueryPool:
+            return "vkCmdResetQueryPool";
+        case Command::Type::kCmdWriteTimestamp:
+            return "vkCmdWriteTimestamp";
+        case Command::Type::kCmdCopyQueryPoolResults:
+            return "vkCmdCopyQueryPoolResults";
+        case Command::Type::kCmdExecuteCommands:
+            return "vkCmdExecuteCommands";
         case Command::Type::kCmdBindPipeline:
             return "vkCmdBindPipeline";
+        case Command::Type::kCmdBindDescriptorSets:
+            return "vkCmdBindDescriptorSets";
+        case Command::Type::kCmdClearColorImage:
+            return "vkCmdClearColorImage";
+        case Command::Type::kCmdDispatch:
+            return "vkCmdDispatch";
+        case Command::Type::kCmdDispatchIndirect:
+            return "vkCmdDispatchIndirect";
+        case Command::Type::kCmdSetEvent:
+            return "vkCmdSetEvent";
+        case Command::Type::kCmdResetEvent:
+            return "vkCmdResetEvent";
+        case Command::Type::kCmdWaitEvents:
+            return "vkCmdWaitEvents";
+        case Command::Type::kCmdPushConstants:
+            return "vkCmdPushConstants";
         case Command::Type::kCmdSetViewport:
             return "vkCmdSetViewport";
         case Command::Type::kCmdSetScissor:
@@ -61,8 +103,6 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdSetStencilWriteMask";
         case Command::Type::kCmdSetStencilReference:
             return "vkCmdSetStencilReference";
-        case Command::Type::kCmdBindDescriptorSets:
-            return "vkCmdBindDescriptorSets";
         case Command::Type::kCmdBindIndexBuffer:
             return "vkCmdBindIndexBuffer";
         case Command::Type::kCmdBindVertexBuffers:
@@ -75,60 +115,20 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdDrawIndirect";
         case Command::Type::kCmdDrawIndexedIndirect:
             return "vkCmdDrawIndexedIndirect";
-        case Command::Type::kCmdDispatch:
-            return "vkCmdDispatch";
-        case Command::Type::kCmdDispatchIndirect:
-            return "vkCmdDispatchIndirect";
-        case Command::Type::kCmdCopyBuffer:
-            return "vkCmdCopyBuffer";
-        case Command::Type::kCmdCopyImage:
-            return "vkCmdCopyImage";
         case Command::Type::kCmdBlitImage:
             return "vkCmdBlitImage";
-        case Command::Type::kCmdCopyBufferToImage:
-            return "vkCmdCopyBufferToImage";
-        case Command::Type::kCmdCopyImageToBuffer:
-            return "vkCmdCopyImageToBuffer";
-        case Command::Type::kCmdUpdateBuffer:
-            return "vkCmdUpdateBuffer";
-        case Command::Type::kCmdFillBuffer:
-            return "vkCmdFillBuffer";
-        case Command::Type::kCmdClearColorImage:
-            return "vkCmdClearColorImage";
         case Command::Type::kCmdClearDepthStencilImage:
             return "vkCmdClearDepthStencilImage";
         case Command::Type::kCmdClearAttachments:
             return "vkCmdClearAttachments";
         case Command::Type::kCmdResolveImage:
             return "vkCmdResolveImage";
-        case Command::Type::kCmdSetEvent:
-            return "vkCmdSetEvent";
-        case Command::Type::kCmdResetEvent:
-            return "vkCmdResetEvent";
-        case Command::Type::kCmdWaitEvents:
-            return "vkCmdWaitEvents";
-        case Command::Type::kCmdPipelineBarrier:
-            return "vkCmdPipelineBarrier";
-        case Command::Type::kCmdBeginQuery:
-            return "vkCmdBeginQuery";
-        case Command::Type::kCmdEndQuery:
-            return "vkCmdEndQuery";
-        case Command::Type::kCmdResetQueryPool:
-            return "vkCmdResetQueryPool";
-        case Command::Type::kCmdWriteTimestamp:
-            return "vkCmdWriteTimestamp";
-        case Command::Type::kCmdCopyQueryPoolResults:
-            return "vkCmdCopyQueryPoolResults";
-        case Command::Type::kCmdPushConstants:
-            return "vkCmdPushConstants";
         case Command::Type::kCmdBeginRenderPass:
             return "vkCmdBeginRenderPass";
         case Command::Type::kCmdNextSubpass:
             return "vkCmdNextSubpass";
         case Command::Type::kCmdEndRenderPass:
             return "vkCmdEndRenderPass";
-        case Command::Type::kCmdExecuteCommands:
-            return "vkCmdExecuteCommands";
         case Command::Type::kCmdSetDeviceMask:
             return "vkCmdSetDeviceMask";
         case Command::Type::kCmdDispatchBase:
@@ -143,12 +143,6 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdNextSubpass2";
         case Command::Type::kCmdEndRenderPass2:
             return "vkCmdEndRenderPass2";
-        case Command::Type::kCmdSetEvent2:
-            return "vkCmdSetEvent2";
-        case Command::Type::kCmdResetEvent2:
-            return "vkCmdResetEvent2";
-        case Command::Type::kCmdWaitEvents2:
-            return "vkCmdWaitEvents2";
         case Command::Type::kCmdPipelineBarrier2:
             return "vkCmdPipelineBarrier2";
         case Command::Type::kCmdWriteTimestamp2:
@@ -161,6 +155,12 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdCopyBufferToImage2";
         case Command::Type::kCmdCopyImageToBuffer2:
             return "vkCmdCopyImageToBuffer2";
+        case Command::Type::kCmdSetEvent2:
+            return "vkCmdSetEvent2";
+        case Command::Type::kCmdResetEvent2:
+            return "vkCmdResetEvent2";
+        case Command::Type::kCmdWaitEvents2:
+            return "vkCmdWaitEvents2";
         case Command::Type::kCmdBlitImage2:
             return "vkCmdBlitImage2";
         case Command::Type::kCmdResolveImage2:
@@ -199,18 +199,10 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdSetDepthBiasEnable";
         case Command::Type::kCmdSetPrimitiveRestartEnable:
             return "vkCmdSetPrimitiveRestartEnable";
-        case Command::Type::kCmdSetLineStipple:
-            return "vkCmdSetLineStipple";
-        case Command::Type::kCmdBindIndexBuffer2:
-            return "vkCmdBindIndexBuffer2";
         case Command::Type::kCmdPushDescriptorSet:
             return "vkCmdPushDescriptorSet";
         case Command::Type::kCmdPushDescriptorSetWithTemplate:
             return "vkCmdPushDescriptorSetWithTemplate";
-        case Command::Type::kCmdSetRenderingAttachmentLocations:
-            return "vkCmdSetRenderingAttachmentLocations";
-        case Command::Type::kCmdSetRenderingInputAttachmentIndices:
-            return "vkCmdSetRenderingInputAttachmentIndices";
         case Command::Type::kCmdBindDescriptorSets2:
             return "vkCmdBindDescriptorSets2";
         case Command::Type::kCmdPushConstants2:
@@ -219,6 +211,14 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdPushDescriptorSet2";
         case Command::Type::kCmdPushDescriptorSetWithTemplate2:
             return "vkCmdPushDescriptorSetWithTemplate2";
+        case Command::Type::kCmdSetLineStipple:
+            return "vkCmdSetLineStipple";
+        case Command::Type::kCmdBindIndexBuffer2:
+            return "vkCmdBindIndexBuffer2";
+        case Command::Type::kCmdSetRenderingAttachmentLocations:
+            return "vkCmdSetRenderingAttachmentLocations";
+        case Command::Type::kCmdSetRenderingInputAttachmentIndices:
+            return "vkCmdSetRenderingInputAttachmentIndices";
         case Command::Type::kCmdBeginVideoCodingKHR:
             return "vkCmdBeginVideoCodingKHR";
         case Command::Type::kCmdEndVideoCodingKHR:
@@ -301,6 +301,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdCopyMemoryIndirectKHR";
         case Command::Type::kCmdCopyMemoryToImageIndirectKHR:
             return "vkCmdCopyMemoryToImageIndirectKHR";
+        case Command::Type::kCmdEndRendering2KHR:
+            return "vkCmdEndRendering2KHR";
         case Command::Type::kCmdDebugMarkerBeginEXT:
             return "vkCmdDebugMarkerBeginEXT";
         case Command::Type::kCmdDebugMarkerEndEXT:
@@ -573,6 +575,10 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdSetAttachmentFeedbackLoopEnableEXT";
         case Command::Type::kCmdBindTileMemoryQCOM:
             return "vkCmdBindTileMemoryQCOM";
+        case Command::Type::kCmdDecompressMemoryEXT:
+            return "vkCmdDecompressMemoryEXT";
+        case Command::Type::kCmdDecompressMemoryIndirectCountEXT:
+            return "vkCmdDecompressMemoryIndirectCountEXT";
         case Command::Type::kCmdBuildClusterAccelerationStructureIndirectNV:
             return "vkCmdBuildClusterAccelerationStructureIndirectNV";
         case Command::Type::kCmdBuildPartitionedAccelerationStructuresNV:
@@ -583,6 +589,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdExecuteGeneratedCommandsEXT";
         case Command::Type::kCmdEndRendering2EXT:
             return "vkCmdEndRendering2EXT";
+        case Command::Type::kCmdBeginCustomResolveEXT:
+            return "vkCmdBeginCustomResolveEXT";
         case Command::Type::kCmdBuildAccelerationStructuresKHR:
             return "vkCmdBuildAccelerationStructuresKHR";
         case Command::Type::kCmdBuildAccelerationStructuresIndirectKHR:

@@ -62,6 +62,149 @@ void CommandTracker::ResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
+                                   uint32_t regionCount, const VkBufferCopy* pRegions) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyBuffer;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                                  VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
+                                  const VkImageCopy* pRegions) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyImage;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
+                                                  regionCount, pRegions);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
+                                          VkImageLayout dstImageLayout, uint32_t regionCount,
+                                          const VkBufferImageCopy* pRegions) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyBufferToImage;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
+                                          VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyImageToBuffer;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                     VkDeviceSize dataSize, const void* pData) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdUpdateBuffer;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                   VkDeviceSize size, uint32_t data) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdFillBuffer;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
+                                        VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
+                                        uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                        uint32_t bufferMemoryBarrierCount,
+                                        const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                                        uint32_t imageMemoryBarrierCount,
+                                        const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPipelineBarrier;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdPipelineBarrier(
+        commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
+        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
+                                   VkQueryControlFlags flags) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBeginQuery;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBeginQuery(commandBuffer, queryPool, query, flags);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdEndQuery;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdEndQuery(commandBuffer, queryPool, query);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                       uint32_t queryCount) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdResetQueryPool;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
+                                       VkQueryPool queryPool, uint32_t query) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdWriteTimestamp;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                             uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset,
+                                             VkDeviceSize stride, VkQueryResultFlags flags) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyQueryPoolResults;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount,
+                                                             dstBuffer, dstOffset, stride, flags);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
+                                        const VkCommandBuffer* pCommandBuffers) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdExecuteCommands;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                      VkPipeline pipeline) {
     Command cmd{};
@@ -69,6 +212,95 @@ void CommandTracker::CmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBi
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
+                                           VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
+                                           const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
+                                           const uint32_t* pDynamicOffsets) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindDescriptorSets;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
+                                              pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
+                                        const VkClearColorValue* pColor, uint32_t rangeCount,
+                                        const VkImageSubresourceRange* pRanges) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdClearColorImage;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
+                                 uint32_t groupCountZ) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDispatch;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDispatchIndirect;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDispatchIndirect(commandBuffer, buffer, offset);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetEvent;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetEvent(commandBuffer, event, stageMask);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdResetEvent;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdResetEvent(commandBuffer, event, stageMask);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                   VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+                                   uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
+                                   uint32_t bufferMemoryBarrierCount,
+                                   const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount,
+                                   const VkImageMemoryBarrier* pImageMemoryBarriers) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdWaitEvents;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdWaitEvents(
+        commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers,
+        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
+                                      VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
+                                      const void* pValues) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPushConstants;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
     commands_.push_back(cmd);
 }
 
@@ -160,20 +392,6 @@ void CommandTracker::CmdSetStencilReference(VkCommandBuffer commandBuffer, VkSte
     commands_.push_back(cmd);
 }
 
-void CommandTracker::CmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
-                                           VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount,
-                                           const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount,
-                                           const uint32_t* pDynamicOffsets) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdBindDescriptorSets;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters =
-        recorder_.RecordCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount,
-                                              pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-    commands_.push_back(cmd);
-}
-
 void CommandTracker::CmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                         VkIndexType indexType) {
     Command cmd{};
@@ -236,47 +454,6 @@ void CommandTracker::CmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuf
     commands_.push_back(cmd);
 }
 
-void CommandTracker::CmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY,
-                                 uint32_t groupCountZ) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdDispatch;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdDispatchIndirect;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdDispatchIndirect(commandBuffer, buffer, offset);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                                   uint32_t regionCount, const VkBufferCopy* pRegions) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdCopyBuffer;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                                  VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
-                                  const VkImageCopy* pRegions) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdCopyImage;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
-                                                  regionCount, pRegions);
-    commands_.push_back(cmd);
-}
-
 void CommandTracker::CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
                                   VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount,
                                   const VkImageBlit* pRegions, VkFilter filter) {
@@ -286,60 +463,6 @@ void CommandTracker::CmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImag
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout,
                                                   regionCount, pRegions, filter);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage,
-                                          VkImageLayout dstImageLayout, uint32_t regionCount,
-                                          const VkBufferImageCopy* pRegions) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdCopyBufferToImage;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters =
-        recorder_.RecordCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout,
-                                          VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdCopyImageToBuffer;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters =
-        recorder_.RecordCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                     VkDeviceSize dataSize, const void* pData) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdUpdateBuffer;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                   VkDeviceSize size, uint32_t data) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdFillBuffer;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout,
-                                        const VkClearColorValue* pColor, uint32_t rangeCount,
-                                        const VkImageSubresourceRange* pRanges) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdClearColorImage;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
     commands_.push_back(cmd);
 }
 
@@ -379,119 +502,6 @@ void CommandTracker::CmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcI
     commands_.push_back(cmd);
 }
 
-void CommandTracker::CmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdSetEvent;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdSetEvent(commandBuffer, event, stageMask);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdResetEvent;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdResetEvent(commandBuffer, event, stageMask);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                   VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
-                                   uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                   uint32_t bufferMemoryBarrierCount,
-                                   const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount,
-                                   const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdWaitEvents;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdWaitEvents(
-        commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers,
-        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask,
-                                        VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags,
-                                        uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers,
-                                        uint32_t bufferMemoryBarrierCount,
-                                        const VkBufferMemoryBarrier* pBufferMemoryBarriers,
-                                        uint32_t imageMemoryBarrierCount,
-                                        const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdPipelineBarrier;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdPipelineBarrier(
-        commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers,
-        bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query,
-                                   VkQueryControlFlags flags) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdBeginQuery;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdBeginQuery(commandBuffer, queryPool, query, flags);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdEndQuery;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdEndQuery(commandBuffer, queryPool, query);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                       uint32_t queryCount) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdResetQueryPool;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage,
-                                       VkQueryPool queryPool, uint32_t query) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdWriteTimestamp;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
-                                             uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset,
-                                             VkDeviceSize stride, VkQueryResultFlags flags) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdCopyQueryPoolResults;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount,
-                                                             dstBuffer, dstOffset, stride, flags);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout,
-                                      VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size,
-                                      const void* pValues) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdPushConstants;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-    commands_.push_back(cmd);
-}
-
 void CommandTracker::CmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin,
                                         VkSubpassContents contents) {
     Command cmd{};
@@ -517,16 +527,6 @@ void CommandTracker::CmdEndRenderPass(VkCommandBuffer commandBuffer) {
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndRenderPass(commandBuffer);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount,
-                                        const VkCommandBuffer* pCommandBuffers) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdExecuteCommands;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
     commands_.push_back(cmd);
 }
 
@@ -604,35 +604,6 @@ void CommandTracker::CmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSu
     commands_.push_back(cmd);
 }
 
-void CommandTracker::CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
-                                  const VkDependencyInfo* pDependencyInfo) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdSetEvent2;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdSetEvent2(commandBuffer, event, pDependencyInfo);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdResetEvent2;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdResetEvent2(commandBuffer, event, stageMask);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
-                                    const VkDependencyInfo* pDependencyInfos) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdWaitEvents2;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
-    commands_.push_back(cmd);
-}
-
 void CommandTracker::CmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdPipelineBarrier2;
@@ -687,6 +658,35 @@ void CommandTracker::CmdCopyImageToBuffer2(VkCommandBuffer commandBuffer,
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event,
+                                  const VkDependencyInfo* pDependencyInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetEvent2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetEvent2(commandBuffer, event, pDependencyInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdResetEvent2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdResetEvent2(commandBuffer, event, stageMask);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents,
+                                    const VkDependencyInfo* pDependencyInfos) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdWaitEvents2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
     commands_.push_back(cmd);
 }
 
@@ -867,26 +867,6 @@ void CommandTracker::CmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer,
     commands_.push_back(cmd);
 }
 
-void CommandTracker::CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
-                                       uint16_t lineStipplePattern) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdSetLineStipple;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
-                                         VkDeviceSize size, VkIndexType indexType) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdBindIndexBuffer2;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
-    commands_.push_back(cmd);
-}
-
 void CommandTracker::CmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                           VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount,
                                           const VkWriteDescriptorSet* pDescriptorWrites) {
@@ -908,26 +888,6 @@ void CommandTracker::CmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuf
     cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
-                                                        const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdSetRenderingAttachmentLocations;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
-    commands_.push_back(cmd);
-}
-
-void CommandTracker::CmdSetRenderingInputAttachmentIndices(
-    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    Command cmd{};
-    cmd.type = Command::Type::kCmdSetRenderingInputAttachmentIndices;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
     commands_.push_back(cmd);
 }
 
@@ -968,6 +928,46 @@ void CommandTracker::CmdPushDescriptorSetWithTemplate2(
     cmd.labels = labels_;
     cmd.parameters =
         recorder_.RecordCmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor,
+                                       uint16_t lineStipplePattern) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetLineStipple;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
+                                         VkDeviceSize size, VkIndexType indexType) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindIndexBuffer2;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer,
+                                                        const VkRenderingAttachmentLocationInfo* pLocationInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetRenderingAttachmentLocations;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetRenderingInputAttachmentIndices;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
     commands_.push_back(cmd);
 }
 
@@ -1379,6 +1379,16 @@ void CommandTracker::CmdCopyMemoryToImageIndirectKHR(
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdEndRendering2KHR(VkCommandBuffer commandBuffer,
+                                         const VkRenderingEndInfoKHR* pRenderingEndInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdEndRendering2KHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
     commands_.push_back(cmd);
 }
 
@@ -2756,6 +2766,31 @@ void CommandTracker::CmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer,
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdDecompressMemoryEXT(VkCommandBuffer commandBuffer,
+                                            const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDecompressMemoryEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer,
+                                                         VkMemoryDecompressionMethodFlagsEXT decompressionMethod,
+                                                         VkDeviceAddress indirectCommandsAddress,
+                                                         VkDeviceAddress indirectCommandsCountAddress,
+                                                         uint32_t maxDecompressionCount, uint32_t stride) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDecompressMemoryIndirectCountEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDecompressMemoryIndirectCountEXT(
+        commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress,
+        maxDecompressionCount, stride);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdBuildClusterAccelerationStructureIndirectNV(
     VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
     Command cmd{};
@@ -2800,12 +2835,22 @@ void CommandTracker::CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffe
 }
 
 void CommandTracker::CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
-                                         const VkRenderingEndInfoEXT* pRenderingEndInfo) {
+                                         const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdEndRendering2EXT;
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
+                                              const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBeginCustomResolveEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
     commands_.push_back(cmd);
 }
 

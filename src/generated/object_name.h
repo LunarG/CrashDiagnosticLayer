@@ -34,14 +34,20 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkFence";
         case VK_OBJECT_TYPE_DEVICE_MEMORY:
             return "VkDeviceMemory";
-        case VK_OBJECT_TYPE_EVENT:
-            return "VkEvent";
         case VK_OBJECT_TYPE_QUERY_POOL:
             return "VkQueryPool";
-        case VK_OBJECT_TYPE_BUFFER_VIEW:
-            return "VkBufferView";
         case VK_OBJECT_TYPE_IMAGE_VIEW:
             return "VkImageView";
+        case VK_OBJECT_TYPE_COMMAND_POOL:
+            return "VkCommandPool";
+        case VK_OBJECT_TYPE_RENDER_PASS:
+            return "VkRenderPass";
+        case VK_OBJECT_TYPE_FRAMEBUFFER:
+            return "VkFramebuffer";
+        case VK_OBJECT_TYPE_EVENT:
+            return "VkEvent";
+        case VK_OBJECT_TYPE_BUFFER_VIEW:
+            return "VkBufferView";
         case VK_OBJECT_TYPE_SHADER_MODULE:
             return "VkShaderModule";
         case VK_OBJECT_TYPE_PIPELINE_CACHE:
@@ -50,8 +56,6 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkPipelineLayout";
         case VK_OBJECT_TYPE_PIPELINE:
             return "VkPipeline";
-        case VK_OBJECT_TYPE_RENDER_PASS:
-            return "VkRenderPass";
         case VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT:
             return "VkDescriptorSetLayout";
         case VK_OBJECT_TYPE_SAMPLER:
@@ -60,14 +64,10 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkDescriptorSet";
         case VK_OBJECT_TYPE_DESCRIPTOR_POOL:
             return "VkDescriptorPool";
-        case VK_OBJECT_TYPE_FRAMEBUFFER:
-            return "VkFramebuffer";
-        case VK_OBJECT_TYPE_COMMAND_POOL:
-            return "VkCommandPool";
-        case VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION:
-            return "VkSamplerYcbcrConversion";
         case VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE:
             return "VkDescriptorUpdateTemplate";
+        case VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION:
+            return "VkSamplerYcbcrConversion";
         case VK_OBJECT_TYPE_PRIVATE_DATA_SLOT:
             return "VkPrivateDataSlot";
         case VK_OBJECT_TYPE_SURFACE_KHR:
