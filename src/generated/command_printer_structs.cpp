@@ -29787,7 +29787,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInv
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT &t) {
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
     // sType -> Field -> VkStructureType
@@ -33033,6 +33033,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInv
     os << YAML::Key << "maxShaderBindingTableRecordIndex";
     // maxShaderBindingTableRecordIndex -> Field -> uint32_t
     os << YAML::Value << t.maxShaderBindingTableRecordIndex;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "rayTracingInvocationReorder";
+    // rayTracingInvocationReorder -> Field -> VkBool32
+    os << YAML::Value << t.rayTracingInvocationReorder;
     os << YAML::EndMap;
     return os;
 }
@@ -37826,8 +37843,8 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceRayTracingInvocationReorderPropertiesNV *>(pStruct);
             break;
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT:
-            os << *reinterpret_cast<const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT *>(pStruct);
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_PROPERTIES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceCooperativeVectorPropertiesNV *>(pStruct);
@@ -38177,6 +38194,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceDepthClampControlFeaturesEXT *>(pStruct);

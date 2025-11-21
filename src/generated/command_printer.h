@@ -1718,7 +1718,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceAmigoProfilin
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAmigoProfilingSubmitInfoSEC &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMultiviewPerViewViewportsFeaturesQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderPropertiesNV &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeVectorPropertiesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeVectorFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeVectorPropertiesNV &t);
@@ -1870,6 +1870,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageAlignmen
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageAlignmentControlPropertiesMESA &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageAlignmentControlCreateInfoMESA &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampControlFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClampControlCreateInfoEXT &t);
 #ifdef VK_USE_PLATFORM_OHOS
