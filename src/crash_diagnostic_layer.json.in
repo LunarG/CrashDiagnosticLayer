@@ -269,8 +269,9 @@
                         {
                             "key": "log_file",
                             "env": "CDL_LOG_FILE",
-                            "label": "Log file name",
+                            "label": "Log Filename",
                             "description": "none = no logging, stderr or stdout = to the console, otherwise an absolute or relative path.",
+                            "filter": "*.txt",
                             "type": "SAVE_FILE",
                             "default": "stderr",
                             "platforms": [
