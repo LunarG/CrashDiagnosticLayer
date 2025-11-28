@@ -1270,6 +1270,17 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyCheckpointProper
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCheckpointDataNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyCheckpointProperties2NV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCheckpointData2NV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentTimingFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentTimingSurfaceCapabilitiesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainCalibratedTimestampInfoEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainTimingPropertiesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainTimeDomainPropertiesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPastPresentationTimingInfoEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentStageTimeEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPastPresentationTimingEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPastPresentationTimingPropertiesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentTimingInfoEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentTimingsInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceValueDataINTEL &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceValueINTEL &t);

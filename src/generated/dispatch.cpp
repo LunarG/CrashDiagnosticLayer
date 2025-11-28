@@ -829,6 +829,13 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CmdSetCheckpointNV = (PFN_vkCmdSetCheckpointNV)pa(device, "vkCmdSetCheckpointNV");
     dt->GetQueueCheckpointDataNV = (PFN_vkGetQueueCheckpointDataNV)pa(device, "vkGetQueueCheckpointDataNV");
     dt->GetQueueCheckpointData2NV = (PFN_vkGetQueueCheckpointData2NV)pa(device, "vkGetQueueCheckpointData2NV");
+    dt->SetSwapchainPresentTimingQueueSizeEXT =
+        (PFN_vkSetSwapchainPresentTimingQueueSizeEXT)pa(device, "vkSetSwapchainPresentTimingQueueSizeEXT");
+    dt->GetSwapchainTimingPropertiesEXT =
+        (PFN_vkGetSwapchainTimingPropertiesEXT)pa(device, "vkGetSwapchainTimingPropertiesEXT");
+    dt->GetSwapchainTimeDomainPropertiesEXT =
+        (PFN_vkGetSwapchainTimeDomainPropertiesEXT)pa(device, "vkGetSwapchainTimeDomainPropertiesEXT");
+    dt->GetPastPresentationTimingEXT = (PFN_vkGetPastPresentationTimingEXT)pa(device, "vkGetPastPresentationTimingEXT");
     dt->InitializePerformanceApiINTEL =
         (PFN_vkInitializePerformanceApiINTEL)pa(device, "vkInitializePerformanceApiINTEL");
     dt->UninitializePerformanceApiINTEL =
