@@ -21439,6 +21439,323 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCheckpointData2NV &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentTimingFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "presentTiming";
+    // presentTiming -> Field -> VkBool32
+    os << YAML::Value << t.presentTiming;
+    os << YAML::Key << "presentAtAbsoluteTime";
+    // presentAtAbsoluteTime -> Field -> VkBool32
+    os << YAML::Value << t.presentAtAbsoluteTime;
+    os << YAML::Key << "presentAtRelativeTime";
+    // presentAtRelativeTime -> Field -> VkBool32
+    os << YAML::Value << t.presentAtRelativeTime;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentTimingSurfaceCapabilitiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "presentTimingSupported";
+    // presentTimingSupported -> Field -> VkBool32
+    os << YAML::Value << t.presentTimingSupported;
+    os << YAML::Key << "presentAtAbsoluteTimeSupported";
+    // presentAtAbsoluteTimeSupported -> Field -> VkBool32
+    os << YAML::Value << t.presentAtAbsoluteTimeSupported;
+    os << YAML::Key << "presentAtRelativeTimeSupported";
+    // presentAtRelativeTimeSupported -> Field -> VkBool32
+    os << YAML::Value << t.presentAtRelativeTimeSupported;
+    os << YAML::Key << "presentStageQueries";
+    // presentStageQueries -> Field -> VkPresentStageFlagsEXT
+    os << YAML::Value << t.presentStageQueries;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainCalibratedTimestampInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "swapchain";
+    // swapchain -> Field -> VkSwapchainKHR
+    os << YAML::Value << t.swapchain;
+    os << YAML::Key << "presentStage";
+    // presentStage -> Field -> VkPresentStageFlagsEXT
+    os << YAML::Value << t.presentStage;
+    os << YAML::Key << "timeDomainId";
+    // timeDomainId -> Field -> uint64_t
+    os << YAML::Value << t.timeDomainId;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainTimingPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "refreshDuration";
+    // refreshDuration -> Field -> uint64_t
+    os << YAML::Value << t.refreshDuration;
+    os << YAML::Key << "refreshInterval";
+    // refreshInterval -> Field -> uint64_t
+    os << YAML::Value << t.refreshInterval;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainTimeDomainPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "timeDomainCount";
+    // timeDomainCount -> Field -> uint32_t
+    os << YAML::Value << t.timeDomainCount;
+    os << YAML::Key << "pTimeDomains";
+    // pTimeDomains -> Field -> DynamicArray(VkTimeDomainKHR)
+    if (t.timeDomainCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkTimeDomainKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.timeDomainCount); ++i) {
+                os << t.pTimeDomains[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "pTimeDomainIds";
+    // pTimeDomainIds -> Field -> DynamicArray(uint64_t)
+    if (t.timeDomainCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("uint64_t");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.timeDomainCount); ++i) {
+                os << t.pTimeDomainIds[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPastPresentationTimingInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkPastPresentationTimingFlagsEXT
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "swapchain";
+    // swapchain -> Field -> VkSwapchainKHR
+    os << YAML::Value << t.swapchain;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentStageTimeEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "stage";
+    // stage -> Field -> VkPresentStageFlagsEXT
+    os << YAML::Value << t.stage;
+    os << YAML::Key << "time";
+    // time -> Field -> uint64_t
+    os << YAML::Value << t.time;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPastPresentationTimingEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "presentId";
+    // presentId -> Field -> uint64_t
+    os << YAML::Value << t.presentId;
+    os << YAML::Key << "targetTime";
+    // targetTime -> Field -> uint64_t
+    os << YAML::Value << t.targetTime;
+    os << YAML::Key << "presentStageCount";
+    // presentStageCount -> Field -> uint32_t
+    os << YAML::Value << t.presentStageCount;
+    os << YAML::Key << "pPresentStages";
+    // pPresentStages -> Field -> DynamicArray(VkPresentStageTimeEXT)
+    if (t.presentStageCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPresentStageTimeEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.presentStageCount); ++i) {
+                os << t.pPresentStages[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "timeDomain";
+    // timeDomain -> Field -> VkTimeDomainKHR
+    os << YAML::Value << t.timeDomain;
+    os << YAML::Key << "timeDomainId";
+    // timeDomainId -> Field -> uint64_t
+    os << YAML::Value << t.timeDomainId;
+    os << YAML::Key << "reportComplete";
+    // reportComplete -> Field -> VkBool32
+    os << YAML::Value << t.reportComplete;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPastPresentationTimingPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "timingPropertiesCounter";
+    // timingPropertiesCounter -> Field -> uint64_t
+    os << YAML::Value << t.timingPropertiesCounter;
+    os << YAML::Key << "timeDomainsCounter";
+    // timeDomainsCounter -> Field -> uint64_t
+    os << YAML::Value << t.timeDomainsCounter;
+    os << YAML::Key << "presentationTimingCount";
+    // presentationTimingCount -> Field -> uint32_t
+    os << YAML::Value << t.presentationTimingCount;
+    os << YAML::Key << "pPresentationTimings";
+    // pPresentationTimings -> Field -> DynamicArray(VkPastPresentationTimingEXT)
+    if (t.presentationTimingCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPastPresentationTimingEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.presentationTimingCount); ++i) {
+                os << t.pPresentationTimings[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentTimingInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkPresentTimingInfoFlagsEXT
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "targetTime";
+    // targetTime -> Field -> uint64_t
+    os << YAML::Value << t.targetTime;
+    os << YAML::Key << "timeDomainId";
+    // timeDomainId -> Field -> uint64_t
+    os << YAML::Value << t.timeDomainId;
+    os << YAML::Key << "presentStageQueries";
+    // presentStageQueries -> Field -> VkPresentStageFlagsEXT
+    os << YAML::Value << t.presentStageQueries;
+    os << YAML::Key << "targetTimeDomainPresentStage";
+    // targetTimeDomainPresentStage -> Field -> VkPresentStageFlagsEXT
+    os << YAML::Value << t.targetTimeDomainPresentStage;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPresentTimingsInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "swapchainCount";
+    // swapchainCount -> Field -> uint32_t
+    os << YAML::Value << t.swapchainCount;
+    os << YAML::Key << "pTimingInfos";
+    // pTimingInfos -> Field -> ConstDynamicArray(VkPresentTimingInfoEXT)
+    if (t.swapchainCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkPresentTimingInfoEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.swapchainCount); ++i) {
+                os << t.pTimingInfos[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -36800,6 +37117,36 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV:
             os << *reinterpret_cast<const VkCheckpointData2NV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_TIMING_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDevicePresentTimingFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT:
+            os << *reinterpret_cast<const VkPresentTimingSurfaceCapabilitiesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SWAPCHAIN_CALIBRATED_TIMESTAMP_INFO_EXT:
+            os << *reinterpret_cast<const VkSwapchainCalibratedTimestampInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SWAPCHAIN_TIMING_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkSwapchainTimingPropertiesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SWAPCHAIN_TIME_DOMAIN_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkSwapchainTimeDomainPropertiesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_INFO_EXT:
+            os << *reinterpret_cast<const VkPastPresentationTimingInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_EXT:
+            os << *reinterpret_cast<const VkPastPresentationTimingEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkPastPresentationTimingPropertiesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PRESENT_TIMING_INFO_EXT:
+            os << *reinterpret_cast<const VkPresentTimingInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PRESENT_TIMINGS_INFO_EXT:
+            os << *reinterpret_cast<const VkPresentTimingsInfoEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL *>(pStruct);
