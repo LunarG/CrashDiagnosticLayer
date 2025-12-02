@@ -328,7 +328,7 @@
                                     "description": "Report informational messages."
                                 },
                                 {
-                                    "key": "debug",
+                                    "key": "verbose",
                                     "label": "Debug",
                                     "description": "For layer development. Report messages for debugging layer behavior.",
                                     "view": "DEBUG"
