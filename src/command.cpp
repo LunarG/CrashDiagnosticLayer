@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -88,7 +88,10 @@ void CommandBuffer::WriteCommandEndCheckpoint(uint32_t command_id) {
     if (sync_after_commands_) {
         bool stopped_rendering = false;
         if (rendering_active_) {
-            device_.Dispatch().CmdEndRendering(vk_command_buffer_);
+            if (device_.Dispatch().CmdEndRendering)
+                device_.Dispatch().CmdEndRendering(vk_command_buffer_);
+            else
+                device_.Dispatch().CmdEndRenderingKHR(vk_command_buffer_);
             rendering_active_ = false;
             stopped_rendering = true;
         }
@@ -101,7 +104,10 @@ void CommandBuffer::WriteCommandEndCheckpoint(uint32_t command_id) {
                                               VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 1, &memory_barrier, 0, nullptr, 0,
                                               nullptr);
         if (stopped_rendering) {
-            device_.Dispatch().CmdBeginRendering(vk_command_buffer_, current_rendering_info_->ptr());
+            if (device_.Dispatch().CmdBeginRendering)
+                device_.Dispatch().CmdBeginRendering(vk_command_buffer_, current_rendering_info_->ptr());
+            else
+                device_.Dispatch().CmdBeginRenderingKHR(vk_command_buffer_, current_rendering_info_->ptr());
             rendering_active_ = true;
         }
     }
