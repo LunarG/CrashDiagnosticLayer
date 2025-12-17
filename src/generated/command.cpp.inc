@@ -947,22 +947,6 @@ void CommandBuffer::PostCmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const V
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
-void CommandBuffer::PreCmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    tracker_.CmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
-void CommandBuffer::PreCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
-    tracker_.CmdEndRenderingKHR(commandBuffer);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
-}
-void CommandBuffer::PostCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-}
-
 void CommandBuffer::PreCmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
     tracker_.CmdSetDeviceMaskKHR(commandBuffer, deviceMask);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);

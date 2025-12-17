@@ -415,12 +415,6 @@ void PostCmdControlVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoCo
 void PreCmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoDecodeInfoKHR* pDecodeInfo);
 void PostCmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoDecodeInfoKHR* pDecodeInfo);
 
-void PreCmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo);
-void PostCmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo);
-
-void PreCmdEndRenderingKHR(VkCommandBuffer commandBuffer);
-void PostCmdEndRenderingKHR(VkCommandBuffer commandBuffer);
-
 void PreCmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t deviceMask);
 void PostCmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t deviceMask);
 

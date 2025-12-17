@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright (c) 2023-2024 LunarG, Inc.
+ Copyright (c) 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -122,12 +122,24 @@ class CommandBuffer {
     VkResult PostResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags, VkResult result);
 
     void PreCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo);
+    void PreCmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
+        PreCmdBeginRendering(commandBuffer, pRenderingInfo);
+    }
 
     void PostCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo);
+    void PostCmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
+        PostCmdBeginRendering(commandBuffer, pRenderingInfo);
+    }
 
     void PreCmdEndRendering(VkCommandBuffer commandBuffer);
+    void PreCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
+        PreCmdEndRendering(commandBuffer);
+    }
 
     void PostCmdEndRendering(VkCommandBuffer commandBuffer);
+    void PostCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
+        PostCmdEndRendering(commandBuffer);
+    }
 
     CommandBuffer& operator=(const CommandBuffer&) = delete;
     CommandBuffer(const CommandBuffer&) = delete;
