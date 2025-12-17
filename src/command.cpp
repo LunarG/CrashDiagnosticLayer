@@ -64,15 +64,29 @@ void CommandBuffer::WriteBeginCheckpoint() {
     // - vkEndCommandBuffer: n+2
     if (checkpoint_) {
         checkpoint_->WriteTop(vk_command_buffer_, begin_value_ + 1);
-        checkpoint_->WriteBottom(vk_command_buffer_, begin_value_ + 1);
+        //checkpoint_->WriteBottom(vk_command_buffer_, begin_value_ + 1);
     }
+    auto memory_barrier = vku::InitStruct<VkMemoryBarrier>();
+    memory_barrier.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
+    memory_barrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+
+    device_.Dispatch().CmdPipelineBarrier(vk_command_buffer_, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                          VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 1, &memory_barrier, 0, nullptr, 0,
+                                          nullptr);
 }
 
 void CommandBuffer::WriteEndCheckpoint() {
     if (checkpoint_) {
-        checkpoint_->WriteTop(vk_command_buffer_, end_value_);
+        //checkpoint_->WriteTop(vk_command_buffer_, end_value_);
         checkpoint_->WriteBottom(vk_command_buffer_, end_value_);
     }
+    auto memory_barrier = vku::InitStruct<VkMemoryBarrier>();
+    memory_barrier.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
+    memory_barrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+
+    device_.Dispatch().CmdPipelineBarrier(vk_command_buffer_, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                          VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 1, &memory_barrier, 0, nullptr, 0,
+                                          nullptr);
 }
 
 void CommandBuffer::WriteCommandBeginCheckpoint(uint32_t command_id) {
@@ -618,11 +632,18 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
 
 void CommandBuffer::PreCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
     tracker_.CmdBeginRendering(commandBuffer, pRenderingInfo);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    auto memory_barrier = vku::InitStruct<VkMemoryBarrier>();
+    memory_barrier.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
+    memory_barrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+
+    device_.Dispatch().CmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                          VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 1, &memory_barrier, 0, nullptr, 0,
+                                          nullptr);
 }
 
 void CommandBuffer::PostCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 
     if (sync_after_commands_) {
         current_rendering_info_.emplace(pRenderingInfo);
@@ -648,11 +669,18 @@ void CommandBuffer::PreCmdEndRendering(VkCommandBuffer commandBuffer) {
         rendering_active_ = false;
     }
     tracker_.CmdEndRendering(commandBuffer);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PostCmdEndRendering(VkCommandBuffer commandBuffer) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    auto memory_barrier = vku::InitStruct<VkMemoryBarrier>();
+    memory_barrier.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
+    memory_barrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+
+    device_.Dispatch().CmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                          VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 1, &memory_barrier, 0, nullptr, 0,
+                                          nullptr);
 }
 
 // =============================================================================

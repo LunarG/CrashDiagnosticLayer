@@ -177,11 +177,11 @@ void CommandBuffer::PostCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32
 void CommandBuffer::PreCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                        VkPipeline pipeline) {
     tracker_.CmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                         VkPipeline pipeline) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
@@ -1314,29 +1314,29 @@ void CommandBuffer::PostCmdEndRendering2KHR(VkCommandBuffer commandBuffer,
 void CommandBuffer::PreCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
                                               const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     tracker_.CmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer,
                                                const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
     tracker_.CmdDebugMarkerEndEXT(commandBuffer);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer,
                                                const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     tracker_.CmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer,
                                                 const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandBuffer, uint32_t firstBinding,
@@ -1510,29 +1510,29 @@ void CommandBuffer::PostCmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuf
 void CommandBuffer::PreCmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
                                                   const VkDebugUtilsLabelEXT* pLabelInfo) {
     tracker_.CmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
                                                    const VkDebugUtilsLabelEXT* pLabelInfo) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
     tracker_.CmdEndDebugUtilsLabelEXT(commandBuffer);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PreCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
                                                    const VkDebugUtilsLabelEXT* pLabelInfo) {
     tracker_.CmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
-    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 void CommandBuffer::PostCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
                                                     const VkDebugUtilsLabelEXT* pLabelInfo) {
-    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS

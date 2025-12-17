@@ -100,7 +100,8 @@ VkResult BufferMarkerMgr::CreateHostBuffer(VkDeviceSize buffer_size, VkBuffer* p
 
     if (marker_buffers_heap_ == VK_NULL_HANDLE) {
         VkMemoryPropertyFlags mem_flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
-                                          VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD;
+                                          VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD |
+                                          VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD;
 
         uint32_t memory_type_index = UINT32_MAX;
         bool found_memory = FindMemoryType(&memory_properties_, mem_reqs.memoryTypeBits, mem_flags, &memory_type_index);

@@ -57,13 +57,13 @@ TEST_F(Sync, HostWaitWrongSem) {
     vk::TimelineSemaphoreSubmitInfo timeline_info(1, &gpu_wait_value);
     vk::SubmitInfo submit_info(*host_signalled, wait_mask, *cmd_buff_, {}, &timeline_info);
 
-    queue_.submit(submit_info);
-
-    vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
-    device_.signalSemaphore(signal_info);
-
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
+        queue_.submit(submit_info);
+
+        vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
+        device_.signalSemaphore(signal_info);
+
         // wait on the wrong semaphore
         vk::SemaphoreWaitInfo wait_info({}, *never_signalled, gpu_wait_value);
         // could be success or timeout
@@ -101,20 +101,20 @@ TEST_F(Sync, GpuWaitWrongSem) {
     vk::raii::Semaphore never_signalled(device_, sem_ci);
     SetObjectName(device_, never_signalled, "never_signalled");
 
-    uint64_t gpu_wait_value = 123;
-    vk::PipelineStageFlags wait_mask = vk::PipelineStageFlagBits::eBottomOfPipe;
-    vk::TimelineSemaphoreSubmitInfo signal_timeline_info(0, nullptr, 1, &gpu_wait_value);
-    vk::SubmitInfo signal_submit({}, {}, {}, *gpu_signalled, &signal_timeline_info);
-
-    queue_.submit(signal_submit);
-
-    vk::TimelineSemaphoreSubmitInfo wait_timeline_info(1, &gpu_wait_value);
-    vk::SubmitInfo wait_submit(*never_signalled, wait_mask, {}, {}, &wait_timeline_info);
-
-    queue_.submit(wait_submit);
-
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
+        uint64_t gpu_wait_value = 123;
+        vk::PipelineStageFlags wait_mask = vk::PipelineStageFlagBits::eBottomOfPipe;
+        vk::TimelineSemaphoreSubmitInfo signal_timeline_info(0, nullptr, 1, &gpu_wait_value);
+        vk::SubmitInfo signal_submit({}, {}, {}, *gpu_signalled, &signal_timeline_info);
+
+        queue_.submit(signal_submit);
+
+        vk::TimelineSemaphoreSubmitInfo wait_timeline_info(1, &gpu_wait_value);
+        vk::SubmitInfo wait_submit(*never_signalled, wait_mask, {}, {}, &wait_timeline_info);
+
+        queue_.submit(wait_submit);
+
         queue_.waitIdle();
     } catch (vk::SystemError &) {
     }
@@ -230,19 +230,19 @@ TEST_F(Sync, HostWaitHang) {
     vk::raii::Semaphore gpu_signalled(device_, sem_ci);
     SetObjectName(device_, gpu_signalled, "gpu_signalled");
 
-    uint64_t gpu_wait_value = 123;
-    uint64_t gpu_signal_value = 456;
-    vk::PipelineStageFlags wait_mask = vk::PipelineStageFlagBits::eBottomOfPipe;
-    vk::TimelineSemaphoreSubmitInfo timeline_info(1, &gpu_wait_value, 1, &gpu_signal_value);
-    vk::SubmitInfo submit_info(*host_signalled, wait_mask, *cmd_buff_, *gpu_signalled, &timeline_info);
-
-    queue_.submit(submit_info);
-
-    vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
-    device_.signalSemaphore(signal_info);
-
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
+        uint64_t gpu_wait_value = 123;
+        uint64_t gpu_signal_value = 456;
+        vk::PipelineStageFlags wait_mask = vk::PipelineStageFlagBits::eBottomOfPipe;
+        vk::TimelineSemaphoreSubmitInfo timeline_info(1, &gpu_wait_value, 1, &gpu_signal_value);
+        vk::SubmitInfo submit_info(*host_signalled, wait_mask, *cmd_buff_, *gpu_signalled, &timeline_info);
+
+        queue_.submit(submit_info);
+
+        vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
+        device_.signalSemaphore(signal_info);
+
         // wait on the wrong semaphore
         vk::SemaphoreWaitInfo wait_info({}, *gpu_signalled, gpu_signal_value);
         (void)device_.waitSemaphores(wait_info, kWaitTimeout);
@@ -285,20 +285,20 @@ TEST_F(Sync, HostWaitHangSubmit2) {
     vk::raii::Semaphore gpu_signalled(device_, sem_ci);
     SetObjectName(device_, gpu_signalled, "gpu_signalled");
 
-    uint64_t gpu_wait_value = 123;
-    uint64_t gpu_signal_value = 456;
-    vk::SemaphoreSubmitInfo wait_sem(*host_signalled, gpu_wait_value, vk::PipelineStageFlagBits2::eBottomOfPipe);
-    vk::SemaphoreSubmitInfo signal_sem(*gpu_signalled, gpu_signal_value, vk::PipelineStageFlagBits2::eBottomOfPipe);
-    vk::CommandBufferSubmitInfo cb_info(*cmd_buff_);
-    vk::SubmitInfo2 submit_info({}, wait_sem, cb_info, signal_sem);
-
-    queue_.submit2(submit_info);
-
-    vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
-    device_.signalSemaphore(signal_info);
-
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
+        uint64_t gpu_wait_value = 123;
+        uint64_t gpu_signal_value = 456;
+        vk::SemaphoreSubmitInfo wait_sem(*host_signalled, gpu_wait_value, vk::PipelineStageFlagBits2::eBottomOfPipe);
+        vk::SemaphoreSubmitInfo signal_sem(*gpu_signalled, gpu_signal_value, vk::PipelineStageFlagBits2::eBottomOfPipe);
+        vk::CommandBufferSubmitInfo cb_info(*cmd_buff_);
+        vk::SubmitInfo2 submit_info({}, wait_sem, cb_info, signal_sem);
+
+        queue_.submit2(submit_info);
+
+        vk::SemaphoreSignalInfo signal_info(*host_signalled, gpu_wait_value);
+        device_.signalSemaphore(signal_info);
+
         // wait on the wrong semaphore
         vk::SemaphoreWaitInfo wait_info({}, *gpu_signalled, gpu_signal_value);
         // could be success or timeout
@@ -376,10 +376,10 @@ TEST_F(Sync, DeviceWaitHang) {
 
     vk::SubmitInfo submit_info({}, {}, *cmd_buff_);
 
-    queue_.submit(submit_info);
-
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
+        queue_.submit(submit_info);
+
         // could be success or timeout
         (void)device_.waitIdle();
     } catch (vk::SystemError &) {
