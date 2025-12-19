@@ -707,40 +707,6 @@ std::ofstream Context::OpenDumpFile() {
 // Define pre / post intercepted commands
 // =============================================================================
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL MessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-                                                        VkDebugUtilsMessageTypeFlagsEXT types,
-                                                        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                        void* pUserData) {
-    if (nullptr == pCallbackData || nullptr == pUserData) {
-        return VK_FALSE;
-    }
-    Context* context = reinterpret_cast<Context*>(pUserData);
-    const auto* mem_info = vku::FindStructInPNextChain<VkDeviceAddressBindingCallbackDataEXT>(pCallbackData->pNext);
-    if (!mem_info) {
-        return VK_FALSE;
-    }
-    context->MemoryBindEvent(*mem_info, *pCallbackData->pObjects);
-    return VK_FALSE;
-}
-
-void Context::MemoryBindEvent(const VkDeviceAddressBindingCallbackDataEXT& mem_info,
-                              const VkDebugUtilsObjectNameInfoEXT& object) {
-    DeviceAddressRecord rec{mem_info.baseAddress,
-                            mem_info.size,
-                            mem_info.flags,
-                            mem_info.bindingType,
-                            object.objectType,
-                            object.objectHandle,
-                            object.pObjectName ? object.pObjectName : "",
-                            std::chrono::high_resolution_clock::now()};
-    auto devs = GetAllDevices();
-
-    bool multi_device = devs.size() > 1;
-    for (auto& dev : devs) {
-        dev->MemoryBindEvent(rec, multi_device);
-    }
-}
-
 VkResult Context::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                                      VkInstance* pInstance, VkResult result) {
     vk_instance_ = *pInstance;
@@ -759,29 +725,7 @@ VkResult Context::PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, co
         application_info_->engineVersion = pCreateInfo->pApplicationInfo->engineVersion;
         application_info_->apiVersion = pCreateInfo->pApplicationInfo->apiVersion;
     }
-    // This messenger is for messages we recieve from the ICD for device address binding events.
-    if (VK_NULL_HANDLE == utils_messenger_ && instance_dispatch_table_.CreateDebugUtilsMessengerEXT) {
-        VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = {
-            VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-            nullptr,
-            0,
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
-            VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT,
-            &MessengerCallback,
-            this,
-        };
-        instance_dispatch_table_.CreateDebugUtilsMessengerEXT(vk_instance_, &messenger_create_info, nullptr,
-                                                              &utils_messenger_);
-    }
     return result;
-}
-
-void Context::PreDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) {
-    if (VK_NULL_HANDLE != utils_messenger_) {
-        instance_dispatch_table_.DestroyDebugUtilsMessengerEXT(vk_instance_, utils_messenger_, nullptr);
-        utils_messenger_ = VK_NULL_HANDLE;
-    }
 }
 
 VkResult Context::PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,

@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -29,6 +29,32 @@
 #include "util.h"
 
 namespace crash_diagnostic_layer {
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL MessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+                                                        VkDebugUtilsMessageTypeFlagsEXT types,
+                                                        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                        void* pUserData) {
+    if (nullptr == pCallbackData || nullptr == pUserData) {
+        return VK_FALSE;
+    }
+    Device* dev = reinterpret_cast<Device*>(pUserData);
+    const auto* mem_info = vku::FindStructInPNextChain<VkDeviceAddressBindingCallbackDataEXT>(pCallbackData->pNext);
+    if (!mem_info) {
+        return VK_FALSE;
+    }
+    const auto& object = *pCallbackData->pObjects;
+    DeviceAddressRecord rec{mem_info->baseAddress,
+                            mem_info->size,
+                            mem_info->flags,
+                            mem_info->bindingType,
+                            object.objectType,
+                            object.objectHandle,
+                            object.pObjectName ? object.pObjectName : "",
+                            std::chrono::high_resolution_clock::now()};
+    dev->MemoryBindEvent(rec, false);
+
+    return VK_FALSE;
+}
 
 Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, DeviceExtensionsPresent& extensions_present,
                std::unique_ptr<DeviceCreateInfo> device_create_info)
@@ -62,9 +88,28 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
     if (context_.GetSettings().watchdog_timer_ms > 0) {
         watchdog_.Start();
     }
+    // This messenger is for messages we recieve from the ICD for device address binding events.
+    if (extensions_present_.ext_device_address_binding_report && context.Dispatch().CreateDebugUtilsMessengerEXT) {
+        VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = {
+            VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+            nullptr,
+            0,
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
+            VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT,
+            &MessengerCallback,
+            this,
+        };
+        context.Dispatch().CreateDebugUtilsMessengerEXT(context.GetInstance(), &messenger_create_info, nullptr,
+                                                        &utils_messenger_);
+    }
 }
 
 void Device::Destroy() {
+    if (VK_NULL_HANDLE != utils_messenger_) {
+        context_.Dispatch().DestroyDebugUtilsMessengerEXT(context_.GetInstance(), utils_messenger_, nullptr);
+        utils_messenger_ = VK_NULL_HANDLE;
+    }
     for (auto& item : queues_) {
         item.second->Destroy();
     }
