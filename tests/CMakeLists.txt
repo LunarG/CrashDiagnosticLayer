@@ -1,6 +1,6 @@
 # ~~~
-# Copyright (c) 2014-2024 Valve Corporation
-# Copyright (c) 2014-2024 LunarG, Inc.
+# Copyright (c) 2014-2025 Valve Corporation
+# Copyright (c) 2014-2025 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ target_sources(cdl_tests PRIVATE
     unit/sync.cpp
     unit/settings.cpp
     unit/watchdog.cpp
+    unit/tooling.cpp
 )
 
 get_target_property(TEST_SOURCES cdl_tests SOURCES)
