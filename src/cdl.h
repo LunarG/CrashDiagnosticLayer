@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright (c) 2023-2024 LunarG, Inc.
+ Copyright (c) 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -170,8 +170,6 @@ class Context : public Interceptor {
     VkResult PostCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                                 VkInstance* pInstance, VkResult result) override;
 
-    void PreDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) override;
-
     VkResult PostCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice, VkResult result) override;
 
@@ -340,8 +338,6 @@ class Context : public Interceptor {
     };
 
     std::unique_ptr<ApplicationInfo> application_info_;
-
-    VkDebugUtilsMessengerEXT utils_messenger_ = VK_NULL_HANDLE;
 
     mutable std::mutex devices_mutex_;
     std::unordered_map<VkDevice, DevicePtr> devices_;

@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -202,6 +202,8 @@ class Device {
     vku::sparse::range_map<VkDeviceAddress, DeviceAddressRecord> address_map_;
 
     std::unique_ptr<CheckpointMgr> checkpoints_;
+
+    VkDebugUtilsMessengerEXT utils_messenger_ = VK_NULL_HANDLE;
 };
 
 }  // namespace crash_diagnostic_layer
