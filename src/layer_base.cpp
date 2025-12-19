@@ -41,10 +41,10 @@ constexpr VkLayerProperties kLayerProperties{"VK_LAYER_LUNARG_crash_diagnostic",
 constexpr VkPhysicalDeviceToolPropertiesEXT kToolProperties{
     VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES_EXT,
     nullptr,
-    "VK_LAYER_LUNARG_crash_diagnostic",
+    "LunarG Crash Diagnostic Layer",
     "1",
     VK_TOOL_PURPOSE_TRACING_BIT_EXT | VK_TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT | VK_TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT,
-    "Crash Diagnostic Layer is a crash/hang debugging tool that helps determines GPU progress in a Vulkan application.",
+    "LunarG Crash Diagnostic Layer",
     "VK_LAYER_LUNARG_crash_diagnostic",
 };
 
@@ -354,6 +354,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetPhysicalDeviceToolProperties(
         result =
             instance_data->dispatch_table.GetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties);
     }
+    *pToolCount += 1;
     return result;
 }
 
@@ -373,6 +374,7 @@ VKAPI_ATTR VkResult VKAPI_CALL InterceptGetPhysicalDeviceToolPropertiesEXT(
         result = instance_data->dispatch_table.GetPhysicalDeviceToolPropertiesEXT(physicalDevice, pToolCount,
                                                                                   pToolProperties);
     }
+    *pToolCount += 1;
     return result;
 }
 

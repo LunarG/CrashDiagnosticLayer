@@ -4006,12 +4006,6 @@ static VKAPI_ATTR void VKAPI_CALL CmdEndRenderPass2(VkCommandBuffer commandBuffe
     cb->Tracker().CmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice,
-                                                                      uint32_t* pToolCount,
-                                                                      VkPhysicalDeviceToolProperties* pToolProperties) {
-    return VK_SUCCESS;
-}
-
 static VKAPI_ATTR VkResult VKAPI_CALL CreatePrivateDataSlot(VkDevice device,
                                                             const VkPrivateDataSlotCreateInfo* pCreateInfo,
                                                             const VkAllocationCallbacks* pAllocator,
@@ -5844,11 +5838,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateMetalSurfaceEXT(VkInstance instance,
 static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddressEXT(VkDevice device,
                                                                        const VkBufferDeviceAddressInfo* pInfo) {
     return GetBufferDeviceAddress(device, pInfo);
-}
-
-static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceToolPropertiesEXT(
-    VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) {
-    return GetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixPropertiesNV(

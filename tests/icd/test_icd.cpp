@@ -923,6 +923,18 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceExternalBufferProperties(
     }
 }
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice,
+                                                                      uint32_t* pToolCount,
+                                                                      VkPhysicalDeviceToolProperties* pToolProperties) {
+    *pToolCount = 0;
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceToolPropertiesEXT(
+    VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) {
+    return GetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties);
+}
+
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceExternalFenceProperties(
     VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo,
     VkExternalFenceProperties* pExternalFenceProperties) {
