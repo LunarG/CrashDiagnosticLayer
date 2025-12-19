@@ -618,12 +618,10 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
 
 void CommandBuffer::PreCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
     tracker_.CmdBeginRendering(commandBuffer, pRenderingInfo);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PostCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
-
     if (sync_after_commands_) {
         current_rendering_info_.emplace(pRenderingInfo);
         rendering_active_ = true;
@@ -640,19 +638,25 @@ void CommandBuffer::PostCmdBeginRendering(VkCommandBuffer commandBuffer, const V
             current_rendering_info_->pStencilAttachment->storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         }
     }
+    // NOTE: we don't call WriteCommandEndCheckpoint() here because if sync_after_commands_ is true
+    // we would have to do an immediate vkCmdEndRendering() and then another vkCmdBeginRendering()
+    // and that is pointless
+    if (checkpoint_) {
+        checkpoint_->WriteBottom(vk_command_buffer_, begin_value_ + tracker_.GetCommands().back().id);
+    }
 }
 
 void CommandBuffer::PreCmdEndRendering(VkCommandBuffer commandBuffer) {
+    WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
     if (sync_after_commands_) {
         current_rendering_info_.reset();
         rendering_active_ = false;
     }
     tracker_.CmdEndRendering(commandBuffer);
-    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
 }
 
 void CommandBuffer::PostCmdEndRendering(VkCommandBuffer commandBuffer) {
-    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+    WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
 // =============================================================================
