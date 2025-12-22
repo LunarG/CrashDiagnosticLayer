@@ -199,6 +199,7 @@ class Device {
     mutable std::mutex queues_mutex_;
     std::unordered_map<VkQueue, QueuePtr> queues_;
 
+    mutable std::mutex address_mutex_;
     vku::sparse::range_map<VkDeviceAddress, DeviceAddressRecord> address_map_;
 
     std::unique_ptr<CheckpointMgr> checkpoints_;

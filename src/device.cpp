@@ -624,24 +624,26 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
             os << YAML::Key << "type" << YAML::Value << address_fault_strings[info.addressType];
             os << YAML::Key << "begin" << YAML::Value << Uint64ToStr(range.begin);
             os << YAML::Key << "end" << YAML::Value << Uint64ToStr(range.end);
-
-            auto lower = address_map_.lower_bound(range);
-            auto upper = address_map_.upper_bound(range);
-            if (lower != upper) {
-                os << YAML::Key << "matchingAddressRecords" << YAML::Value << YAML::BeginSeq;
-                for (auto iter = lower; iter != upper; ++iter) {
-                    DumpAddressRecord(os, iter->first, iter->second);
+            {
+                std::lock_guard<std::mutex> lock(address_mutex_);
+                auto lower = address_map_.lower_bound(range);
+                auto upper = address_map_.upper_bound(range);
+                if (lower != upper) {
+                    os << YAML::Key << "matchingAddressRecords" << YAML::Value << YAML::BeginSeq;
+                    for (auto iter = lower; iter != upper; ++iter) {
+                        DumpAddressRecord(os, iter->first, iter->second);
+                    }
+                    os << YAML::EndSeq;
                 }
-                os << YAML::EndSeq;
-            }
-            if (lower != address_map_.begin()) {
-                --lower;
-                os << YAML::Key << "priorAddressRecord" << YAML::Value;
-                DumpAddressRecord(os, lower->first, lower->second);
-            }
-            if (upper != address_map_.end()) {
-                os << YAML::Key << "nextAddressRecord" << YAML::Value;
-                DumpAddressRecord(os, upper->first, upper->second);
+                if (lower != address_map_.begin()) {
+                    --lower;
+                    os << YAML::Key << "priorAddressRecord" << YAML::Value;
+                    DumpAddressRecord(os, lower->first, lower->second);
+                }
+                if (upper != address_map_.end()) {
+                    os << YAML::Key << "nextAddressRecord" << YAML::Value;
+                    DumpAddressRecord(os, upper->first, upper->second);
+                }
             }
             os << YAML::EndMap;
         }
@@ -678,6 +680,7 @@ void Device::MemoryBindEvent(const DeviceAddressRecord& rec, bool multi_device) 
     // up the vulkan handle. This will be slow.
     assert(!multi_device);
 
+    std::lock_guard<std::mutex> lock(address_mutex_);
     vku::sparse::range<VkDeviceAddress> range(rec.base, rec.base + rec.size);
     address_map_.overwrite_range(std::make_pair(range, rec));
 }
