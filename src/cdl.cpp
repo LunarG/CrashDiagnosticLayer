@@ -441,6 +441,16 @@ static DeviceExtensionsPresent DecodeExtensionStrings(uint32_t count, const char
     }
     return extensions;
 }
+template <typename T>
+void Context::QueryFeature(VkPhysicalDevice physicalDevice, T *feature) {
+    auto features2 = vku::InitStruct<VkPhysicalDeviceFeatures2>(feature);
+    if (modified_create_info_.pApplicationInfo &&
+        modified_create_info_.pApplicationInfo->apiVersion >= VK_API_VERSION_1_1) {
+        Dispatch().GetPhysicalDeviceFeatures2(physicalDevice, &features2);
+    } else {
+        Dispatch().GetPhysicalDeviceFeatures2KHR(physicalDevice, &features2);
+    }
+}
 
 const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                                const VkDeviceCreateInfo* pCreateInfo) {
@@ -464,6 +474,10 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
     device_ci->original.initialize(pCreateInfo);
     device_ci->modified = device_ci->original;
 
+    const uint32_t api_version = modified_create_info_.pApplicationInfo
+                                     ? modified_create_info_.pApplicationInfo->apiVersion
+                                     : VK_API_VERSION_1_0;
+
     // If an important extension is not enabled by default, try to enable it if it is present
     if (extensions_present.nv_device_diagnostic_checkpoints) {
         if (!extensions_enabled.nv_device_diagnostic_checkpoints) {
@@ -479,11 +493,18 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             vku::AddExtension(device_ci->modified, VK_AMD_BUFFER_MARKER_EXTENSION_NAME);
         }
         if (extensions_present.amd_coherent_memory) {
-            if (!extensions_enabled.amd_coherent_memory) {
-                extensions_enabled.amd_coherent_memory = true;
-                auto amd_device_coherent = vku::InitStruct<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(nullptr, VK_TRUE);
-                vku::AddToPnext(device_ci->modified, amd_device_coherent);
-                vku::AddExtension(device_ci->modified, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
+            auto amd_device_coherent = vku::InitStruct<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(nullptr);
+            QueryFeature(physicalDevice, &amd_device_coherent);
+            if (amd_device_coherent.deviceCoherentMemory) {
+                auto *existing = vku::FindStructInPNextChain<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(&device_ci->modified);
+                if (existing) {
+                    existing->deviceCoherentMemory = amd_device_coherent.deviceCoherentMemory;
+                } else {
+                    vku::AddToPnext(device_ci->modified, amd_device_coherent);
+                    if (!extensions_enabled.amd_coherent_memory) {
+                        vku::AddExtension(device_ci->modified, VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME);
+                    }
+                }
             }
         } else {
             Log().Warning("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
@@ -498,47 +519,58 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
     }
     if (extensions_present.ext_device_fault) {
         if (!extensions_enabled.ext_device_fault) {
-            extensions_enabled.ext_device_fault = true;
-            // Query the feature so that we know if vendor data is supported
             auto ext_device_fault = vku::InitStruct<VkPhysicalDeviceFaultFeaturesEXT>(nullptr);
-            auto features2 = vku::InitStruct<VkPhysicalDeviceFeatures2>(&ext_device_fault);
-            if (modified_create_info_.pApplicationInfo &&
-                modified_create_info_.pApplicationInfo->apiVersion >= VK_API_VERSION_1_1) {
-                Dispatch().GetPhysicalDeviceFeatures2(physicalDevice, &features2);
-            } else {
-                Dispatch().GetPhysicalDeviceFeatures2KHR(physicalDevice, &features2);
+            QueryFeature(physicalDevice, &ext_device_fault);
+            if (ext_device_fault.deviceFault) {
+                auto *existing = vku::FindStructInPNextChain<VkPhysicalDeviceFaultFeaturesEXT>(&device_ci->modified);
+                if (existing) {
+                    existing->deviceFault = ext_device_fault.deviceFault;
+                    existing->deviceFaultVendorBinary = ext_device_fault.deviceFaultVendorBinary;
+                } else {
+                    vku::AddToPnext(device_ci->modified, ext_device_fault);
+                    if (!extensions_enabled.ext_device_fault) {
+                        vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_FAULT_EXTENSION_NAME);
+                    }
+                }
             }
-
-            vku::AddToPnext(device_ci->modified, ext_device_fault);
-            vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_FAULT_EXTENSION_NAME);
         }
     } else {
         Log().Warning("No VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
     }
     if (extensions_present.ext_device_address_binding_report) {
-        if (!extensions_enabled.ext_device_address_binding_report) {
-            extensions_enabled.ext_device_address_binding_report = true;
-            auto ext_device_address_binding_report =
-                vku::InitStruct<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(nullptr, VK_TRUE);
-            vku::AddToPnext(device_ci->modified, ext_device_address_binding_report);
-            vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_ADDRESS_BINDING_REPORT_EXTENSION_NAME);
+        auto ext_dbar = vku::InitStruct<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(nullptr);
+        QueryFeature(physicalDevice, &ext_dbar);
+        if (ext_dbar.reportAddressBinding) {
+            auto *existing = vku::FindStructInPNextChain<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(&device_ci->modified);
+            if (existing) {
+                existing->reportAddressBinding = ext_dbar.reportAddressBinding;
+            } else {
+                vku::AddToPnext(device_ci->modified, ext_dbar);
+                if (!extensions_enabled.ext_device_address_binding_report) {
+                    vku::AddExtension(device_ci->modified, VK_EXT_DEVICE_ADDRESS_BINDING_REPORT_EXTENSION_NAME);
+                }
+            }
         }
     } else {
         Log().Warning(
             "No VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
     }
     if (extensions_present.khr_timeline_semaphore) {
-        if (!extensions_enabled.khr_timeline_semaphore) {
-            extensions_enabled.khr_timeline_semaphore = true;
-            auto* vulkan12_features =
-                vku::FindStructInPNextChain<VkPhysicalDeviceVulkan12Features>(&device_ci->modified);
+        auto khr_timeline_semaphore = vku::InitStruct<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(nullptr);
+        QueryFeature(physicalDevice, &khr_timeline_semaphore);
+
+        if (khr_timeline_semaphore.timelineSemaphore) {
+            auto* vulkan12_features = vku::FindStructInPNextChain<VkPhysicalDeviceVulkan12Features>(&device_ci->modified);
+            auto* existing = vku::FindStructInPNextChain<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(&device_ci->modified);
             if (vulkan12_features) {
                 vulkan12_features->timelineSemaphore = VK_TRUE;
+            } else if (existing) {
+                existing->timelineSemaphore = VK_TRUE;
             } else {
-                auto khr_timeline_semaphore =
-                    vku::InitStruct<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(nullptr, VK_TRUE);
                 vku::AddToPnext(device_ci->modified, khr_timeline_semaphore);
-                vku::AddExtension(device_ci->modified, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+                if (api_version < VK_API_VERSION_1_2 && !extensions_enabled.khr_timeline_semaphore) {
+                    vku::AddExtension(device_ci->modified, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+                }
             }
         }
     } else {

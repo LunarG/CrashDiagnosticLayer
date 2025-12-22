@@ -309,6 +309,9 @@ class Context : public Interceptor {
                                           const VkAllocationCallbacks* pAllocator) override;
 
    private:
+    template <typename T>
+    void QueryFeature(VkPhysicalDevice physicalDevice, T* feature);
+
     std::optional<Settings> settings_;
 
     TimePoint start_time_;
