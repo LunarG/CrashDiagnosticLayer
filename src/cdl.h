@@ -142,9 +142,6 @@ class Context : public Interceptor {
 
     const Settings& GetSettings() const { return settings_.value(); }
 
-    void MemoryBindEvent(const VkDeviceAddressBindingCallbackDataEXT& mem_info,
-                         const VkDebugUtilsObjectNameInfoEXT& object);
-
     void DumpAllDevicesExecutionState(CrashSource crash_source);
     void DumpDeviceExecutionState(Device& device, CrashSource crash_source = kDeviceLostError);
     void DumpDeviceExecutionState(Device& device, const std::string& error_report, bool dump_prologue,
