@@ -215,7 +215,11 @@ uint32_t CommandBuffer::GetLastStartedCommand() const {
     if (!checkpoint_) {
         return 0;
     }
-    return checkpoint_->ReadTop() - begin_value_;
+    uint32_t marker = checkpoint_->ReadTop();
+    if (marker == 0) {
+        return begin_value_;
+    }
+    return marker - begin_value_;
 }
 
 uint32_t CommandBuffer::GetLastCompleteCommand() const {
@@ -225,6 +229,8 @@ uint32_t CommandBuffer::GetLastCompleteCommand() const {
     uint32_t marker = checkpoint_->ReadBottom();
     if (marker == end_value_) {
         return tracker_.GetCommands().back().id;
+    } else if (marker == 0) {
+        return begin_value_;
     }
     return marker - begin_value_;
 }
