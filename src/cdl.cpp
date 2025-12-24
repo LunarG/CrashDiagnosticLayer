@@ -1276,8 +1276,11 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
 
 VkResult Context::PostGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue,
                                                VkResult result) {
+    auto device_state = GetDevice(device);
+    if (!device_state->UpdateIdleState()) {
+        result = VK_ERROR_DEVICE_LOST;
+    }
     if (IsVkError(result)) {
-        auto device_state = GetDevice(device);
         device_state->DeviceFault();
     }
     return result;
