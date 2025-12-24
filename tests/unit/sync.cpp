@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2025 The Khronos Group Inc.
+ * Copyright (c) 2025 Valve Corporation
+ * Copyright (c) 2025 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@
 #include "shaders.h"
 
 #include <vulkan/vulkan_raii.hpp>
+
+#include <thread>
 
 class Sync : public CDLTestBase {};
 
@@ -195,6 +197,48 @@ TEST_F(Sync, GpuWaitTimelinePositive) {
     vk::SubmitInfo wait_submit(*tl_sem, wait_mask, cbs, {}, &wait_tl_info);
 
     queue_.submit(wait_submit);
+
+    queue_.waitIdle();
+}
+
+TEST_F(Sync, TimelineCounterPositive) {
+    // test for https://github.com/LunarG/CrashDiagnosticLayer/issues/173
+    using namespace std::chrono_literals;
+
+    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    InitInstance();
+    InitDevice();
+
+    ComputeIOTest state(physical_device_, device_, kReadWriteComp);
+    state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
+    state.output.Set(0.0f, ComputeIOTest::kNumElems);
+
+    vk::CommandBufferBeginInfo begin_info;
+    cmd_buff_.begin(begin_info);
+    cmd_buff_.bindPipeline(vk::PipelineBindPoint::eCompute, state.pipeline.Pipeline());
+    cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eCompute, state.pipeline.PipelineLayout(), 0,
+                                 state.pipeline.DescriptorSet().Set(), {});
+    cmd_buff_.dispatch(1, 1, 1);
+    cmd_buff_.end();
+
+    std::array<vk::CommandBuffer, 2> cbs = {*cmd_buff_, *cmd_buff_};
+
+    vk::SemaphoreTypeCreateInfo sem_type_ci(vk::SemaphoreType::eTimeline, 100);
+    vk::SemaphoreCreateInfo sem_ci({}, &sem_type_ci);
+
+    vk::raii::Semaphore tl_sem(device_, sem_ci);
+    SetObjectName(device_, tl_sem, "tl_sem");
+
+    uint64_t sem_value = 123;
+    vk::TimelineSemaphoreSubmitInfo signal_tl_info(0, nullptr, 1, &sem_value);
+    vk::SubmitInfo signal_submit({}, {}, cbs, *tl_sem, &signal_tl_info);
+
+    queue_.submit(signal_submit);
+
+    while (tl_sem.getCounterValue() < sem_value) {
+        std::this_thread::sleep_for(1ms);
+    }
+    cmd_buff_.reset();
 
     queue_.waitIdle();
 }
