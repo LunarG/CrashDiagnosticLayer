@@ -1,6 +1,6 @@
 /*
  Copyright 2020 Google Inc.
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2025 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -819,7 +819,27 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
             vku::FreePnextChain(bind_info.pNext);
         }
         if (result == VK_SUCCESS) {
-            result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &pBindInfos[i], VK_NULL_HANDLE);
+            uint64_t bind_seq = ++submit_seq_;
+            void* p_next = MakeMiddleSubmissionPnext(pBindInfos[i].pNext);
+
+            auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
+            timeline_values.signalSemaphoreValueCount = 1;
+            timeline_values.pSignalSemaphoreValues = &bind_seq;
+            timeline_values.pNext = p_next;
+
+            auto bind_info = vku::InitStruct<VkBindSparseInfo>(&timeline_values);
+            bind_info.signalSemaphoreCount = 1;
+            bind_info.pSignalSemaphores = &submit_sem_;
+
+            bind_info.bufferBindCount = pBindInfos[i].bufferBindCount;
+            bind_info.pBufferBinds = pBindInfos[i].pBufferBinds;
+            bind_info.imageOpaqueBindCount = pBindInfos[i].imageOpaqueBindCount;
+            bind_info.pImageOpaqueBinds = pBindInfos[i].pImageOpaqueBinds;
+            bind_info.imageBindCount = pBindInfos[i].imageBindCount;
+            bind_info.pImageBinds = pBindInfos[i].pImageBinds;
+
+            result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &bind_info, VK_NULL_HANDLE);
+            vku::FreePnextChain(p_next);
         }
         if (pBindInfos[i].signalSemaphoreCount > 0) {
             auto bind_info = vku::InitStruct<VkBindSparseInfo>();
