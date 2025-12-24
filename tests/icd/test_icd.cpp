@@ -1642,28 +1642,40 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2(VkPhysicalDevice ph
     GetPhysicalDeviceFeatures(physicalDevice, &pFeatures->features);
     uint32_t num_bools = 0;  // Count number of VkBool32s in extension structs
     VkBool32* feat_bools = nullptr;
-    auto vk_1_1_features = vku::FindStructInPNextChain<VkPhysicalDeviceVulkan11Features>(pFeatures->pNext);
+    auto* vk_1_1_features = vku::FindStructInPNextChain<VkPhysicalDeviceVulkan11Features>(pFeatures->pNext);
     if (vk_1_1_features) {
         vk_1_1_features->protectedMemory = VK_TRUE;
     }
-    auto vk_1_3_features = vku::FindStructInPNextChain<VkPhysicalDeviceVulkan13Features>(pFeatures->pNext);
-    if (vk_1_3_features) {
-        vk_1_3_features->synchronization2 = VK_TRUE;
-    }
-    auto prot_features = vku::FindStructInPNextChain<VkPhysicalDeviceProtectedMemoryFeatures>(pFeatures->pNext);
+    auto* prot_features = vku::FindStructInPNextChain<VkPhysicalDeviceProtectedMemoryFeatures>(pFeatures->pNext);
     if (prot_features) {
         prot_features->protectedMemory = VK_TRUE;
     }
-    auto sync2_features = vku::FindStructInPNextChain<VkPhysicalDeviceSynchronization2FeaturesKHR>(pFeatures->pNext);
+
+    auto* vk_1_2_features = vku::FindStructInPNextChain<VkPhysicalDeviceVulkan12Features>(pFeatures->pNext);
+    if (vk_1_2_features) {
+        vk_1_2_features->timelineSemaphore = VK_TRUE;
+    }
+    auto* khr_timeline_sem =
+        vku::FindStructInPNextChain<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(pFeatures->pNext);
+    if (khr_timeline_sem) {
+        khr_timeline_sem->timelineSemaphore = VK_TRUE;
+    }
+
+    auto* vk_1_3_features = vku::FindStructInPNextChain<VkPhysicalDeviceVulkan13Features>(pFeatures->pNext);
+    if (vk_1_3_features) {
+        vk_1_3_features->synchronization2 = VK_TRUE;
+    }
+    auto* sync2_features = vku::FindStructInPNextChain<VkPhysicalDeviceSynchronization2FeaturesKHR>(pFeatures->pNext);
     if (sync2_features) {
         sync2_features->synchronization2 = VK_TRUE;
     }
-    auto video_maintenance1_features =
+
+    auto* video_maintenance1_features =
         vku::FindStructInPNextChain<VkPhysicalDeviceVideoMaintenance1FeaturesKHR>(pFeatures->pNext);
     if (video_maintenance1_features) {
         video_maintenance1_features->videoMaintenance1 = VK_TRUE;
     }
-    const auto* desc_idx_features =
+    auto* desc_idx_features =
         vku::FindStructInPNextChain<VkPhysicalDeviceDescriptorIndexingFeaturesEXT>(pFeatures->pNext);
     if (desc_idx_features) {
         const auto bool_size =
@@ -1673,7 +1685,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2(VkPhysicalDevice ph
         feat_bools = (VkBool32*)&desc_idx_features->shaderInputAttachmentArrayDynamicIndexing;
         SetBoolArrayTrue(feat_bools, num_bools);
     }
-    const auto* blendop_features =
+    auto* blendop_features =
         vku::FindStructInPNextChain<VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT>(pFeatures->pNext);
     if (blendop_features) {
         const auto bool_size =
@@ -1683,11 +1695,25 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2(VkPhysicalDevice ph
         feat_bools = (VkBool32*)&blendop_features->advancedBlendCoherentOperations;
         SetBoolArrayTrue(feat_bools, num_bools);
     }
-    const auto* host_image_copy_features =
+    auto* host_image_copy_features =
         vku::FindStructInPNextChain<VkPhysicalDeviceHostImageCopyFeaturesEXT>(pFeatures->pNext);
     if (host_image_copy_features) {
         feat_bools = (VkBool32*)&host_image_copy_features->hostImageCopy;
         SetBoolArrayTrue(feat_bools, 1);
+    }
+    auto* amd_coherent_memory =
+        vku::FindStructInPNextChain<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(pFeatures->pNext);
+    if (amd_coherent_memory) {
+        amd_coherent_memory->deviceCoherentMemory = VK_TRUE;
+    }
+    auto* ext_device_fault = vku::FindStructInPNextChain<VkPhysicalDeviceFaultFeaturesEXT>(pFeatures->pNext);
+    if (ext_device_fault) {
+        ext_device_fault->deviceFault = VK_TRUE;
+        ext_device_fault->deviceFaultVendorBinary = VK_TRUE;
+    }
+    auto* ext_dbar = vku::FindStructInPNextChain<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(pFeatures->pNext);
+    if (ext_dbar) {
+        ext_dbar->reportAddressBinding = VK_TRUE;
     }
 }
 
