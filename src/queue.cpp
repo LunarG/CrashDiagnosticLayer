@@ -650,17 +650,6 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
             }
             vku::FreePnextChain(p_next);
         }
-        if (NeedSignalSubmission(pSubmits[i])) {
-            auto submit = vku::InitStruct<VkSubmitInfo>();
-            submit.pNext = MakeSignalSubmissionPnext(pSubmits[i].pNext);
-            submit.signalSemaphoreCount = pSubmits[i].signalSemaphoreCount;
-            submit.pSignalSemaphores = pSubmits[i].pSignalSemaphores;
-            if (result == VK_SUCCESS) {
-                result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
-            }
-            vku::FreePnextChain(submit.pNext);
-        }
-
         submit_info.end_seq = ++submit_seq_;
         {
             auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
@@ -673,6 +662,17 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
                 result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             }
         }
+        if (NeedSignalSubmission(pSubmits[i])) {
+            auto submit = vku::InitStruct<VkSubmitInfo>();
+            submit.pNext = MakeSignalSubmissionPnext(pSubmits[i].pNext);
+            submit.signalSemaphoreCount = pSubmits[i].signalSemaphoreCount;
+            submit.pSignalSemaphores = pSubmits[i].pSignalSemaphores;
+            if (result == VK_SUCCESS) {
+                result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            }
+            vku::FreePnextChain(submit.pNext);
+        }
+
         if (trace_all_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
@@ -746,15 +746,6 @@ VkResult Queue::Submit2(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkF
                 result = QueueSubmit2(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             }
         }
-        if (pSubmits[i].signalSemaphoreInfoCount > 0) {
-            auto submit = vku::InitStruct<VkSubmitInfo2>();
-            submit.signalSemaphoreInfoCount = pSubmits[i].signalSemaphoreInfoCount;
-            submit.pSignalSemaphoreInfos = pSubmits[i].pSignalSemaphoreInfos;
-            if (result == VK_SUCCESS) {
-                result = QueueSubmit2(vk_queue_, 1, &submit, VK_NULL_HANDLE);
-            }
-        }
-
         submit_info.end_seq = ++submit_seq_;
         {
             auto signal_info = vku::InitStruct<VkSemaphoreSubmitInfo>();
@@ -770,6 +761,15 @@ VkResult Queue::Submit2(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkF
                 break;
             }
         }
+        if (pSubmits[i].signalSemaphoreInfoCount > 0) {
+            auto submit = vku::InitStruct<VkSubmitInfo2>();
+            submit.signalSemaphoreInfoCount = pSubmits[i].signalSemaphoreInfoCount;
+            submit.pSignalSemaphoreInfos = pSubmits[i].pSignalSemaphoreInfos;
+            if (result == VK_SUCCESS) {
+                result = QueueSubmit2(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            }
+        }
+
         if (trace_all_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
@@ -841,16 +841,6 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
             result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &bind_info, VK_NULL_HANDLE);
             vku::FreePnextChain(p_next);
         }
-        if (pBindInfos[i].signalSemaphoreCount > 0) {
-            auto bind_info = vku::InitStruct<VkBindSparseInfo>();
-            bind_info.pNext = MakeSignalSubmissionPnext(pBindInfos[i].pNext);
-            bind_info.signalSemaphoreCount = pBindInfos[i].signalSemaphoreCount;
-            bind_info.pSignalSemaphores = pBindInfos[i].pSignalSemaphores;
-            if (result == VK_SUCCESS) {
-                result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &bind_info, VK_NULL_HANDLE);
-            }
-            vku::FreePnextChain(bind_info.pNext);
-        }
         submit_info.end_seq = ++submit_seq_;
         {
             auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
@@ -862,6 +852,16 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
             if (result == VK_SUCCESS) {
                 result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             }
+        }
+        if (pBindInfos[i].signalSemaphoreCount > 0) {
+            auto bind_info = vku::InitStruct<VkBindSparseInfo>();
+            bind_info.pNext = MakeSignalSubmissionPnext(pBindInfos[i].pNext);
+            bind_info.signalSemaphoreCount = pBindInfos[i].signalSemaphoreCount;
+            bind_info.pSignalSemaphores = pBindInfos[i].pSignalSemaphores;
+            if (result == VK_SUCCESS) {
+                result = device_.Dispatch().QueueBindSparse(vk_queue_, 1, &bind_info, VK_NULL_HANDLE);
+            }
+            vku::FreePnextChain(bind_info.pNext);
         }
         if (trace_all_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
