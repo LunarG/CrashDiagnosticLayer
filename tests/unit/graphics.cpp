@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024, 2026 The Khronos Group Inc.
+ * Copyright (c) 2024, 2026 Valve Corporation
+ * Copyright (c) 2024, 2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,8 @@ TEST_F(Graphics, InfiniteLoop) {
     auto &dynamic_rendering = chain.get<vk::PhysicalDeviceDynamicRenderingFeatures>();
     dynamic_rendering.dynamicRendering = vk::True;
 
-    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    features2.features.vertexPipelineStoresAndAtomics = VK_TRUE;
 
     InitDevice({}, &features2);
 
@@ -103,6 +104,12 @@ TEST_F(Graphics, InfiniteLoop) {
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline.PipelineLayout(), 0,
                                  pipeline.DescriptorSet().Set(), {});
 
+    vk::ImageMemoryBarrier img_barrier(vk::AccessFlagBits::eMemoryWrite, vk::AccessFlagBits::eMemoryRead,
+                                       vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal, {}, {},
+                                       image.image,  view_create_info.subresourceRange);
+    cmd_buff_.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eAllGraphics, {}, {},
+                              {}, img_barrier);
+
     vk::RenderingAttachmentInfo attachment(*view, vk::ImageLayout::eColorAttachmentOptimal);
     vk::RenderingInfo rendering_info({}, {{0, 0}, {256, 256}}, 1, {}, attachment);
 
@@ -146,7 +153,8 @@ TEST_F(Graphics, MultiDrawNoCrash) {
     auto &dynamic_rendering = chain.get<vk::PhysicalDeviceDynamicRenderingFeatures>();
     dynamic_rendering.dynamicRendering = vk::True;
 
-    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    features2.features.vertexPipelineStoresAndAtomics = VK_TRUE;
 
     InitDevice({}, &features2);
 
@@ -212,6 +220,13 @@ TEST_F(Graphics, MultiDrawNoCrash) {
 
     vk::CommandBufferBeginInfo begin_info;
     cmd_buff_.begin(begin_info);
+
+    vk::ImageMemoryBarrier img_barrier(vk::AccessFlagBits::eMemoryWrite, vk::AccessFlagBits::eMemoryRead,
+                                       vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal, {}, {},
+                                       image.image,  view_create_info.subresourceRange);
+    cmd_buff_.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eAllGraphics, {}, {},
+                              {}, img_barrier);
+
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.Pipeline());
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline.PipelineLayout(), 0,
                                  pipeline.DescriptorSet().Set(), {});
@@ -246,7 +261,8 @@ TEST_F(Graphics, MultiDrawInfiniteLoop) {
     auto &dynamic_rendering = chain.get<vk::PhysicalDeviceDynamicRenderingFeatures>();
     dynamic_rendering.dynamicRendering = vk::True;
 
-    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    features2.features.vertexPipelineStoresAndAtomics = VK_TRUE;
 
     InitDevice({}, &features2);
 
@@ -315,6 +331,13 @@ TEST_F(Graphics, MultiDrawInfiniteLoop) {
     cmd_buff_.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.Pipeline());
     cmd_buff_.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline.PipelineLayout(), 0,
                                  pipeline.DescriptorSet().Set(), {});
+
+    vk::ImageMemoryBarrier img_barrier(vk::AccessFlagBits::eMemoryWrite, vk::AccessFlagBits::eMemoryRead,
+                                       vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal, {}, {},
+                                       image.image,  view_create_info.subresourceRange);
+    cmd_buff_.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eAllGraphics, {}, {},
+                              {}, img_barrier);
+
 
     vk::RenderingAttachmentInfo attachment(*view, vk::ImageLayout::eColorAttachmentOptimal);
     vk::RenderingInfo rendering_info({}, {{0, 0}, {256, 256}}, 1, {}, attachment);

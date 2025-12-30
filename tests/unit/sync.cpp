@@ -32,7 +32,14 @@ static constexpr uint64_t kWatchdogTimeout{7000};
 TEST_F(Sync, HostWaitWrongSem) {
     layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
-    InitDevice();
+
+    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
+
+    auto &timeline_features = chain.get<vk::PhysicalDeviceTimelineSemaphoreFeatures>();
+    timeline_features.timelineSemaphore = VK_TRUE;
+
+    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    InitDevice({}, &features2);
 
     ComputeIOTest state(physical_device_, device_, kReadWriteComp);
     state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
@@ -81,7 +88,14 @@ TEST_F(Sync, HostWaitWrongSem) {
 TEST_F(Sync, GpuWaitWrongSem) {
     layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
-    InitDevice();
+
+    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
+
+    auto &timeline_features = chain.get<vk::PhysicalDeviceTimelineSemaphoreFeatures>();
+    timeline_features.timelineSemaphore = VK_TRUE;
+
+    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    InitDevice({}, &features2);
 
     ComputeIOTest state(physical_device_, device_, kReadWriteComp);
     state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
@@ -164,7 +178,14 @@ TEST_F(Sync, GpuWaitBinaryPositive) {
 TEST_F(Sync, GpuWaitTimelinePositive) {
     layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
-    InitDevice();
+
+    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
+
+    auto &timeline_features = chain.get<vk::PhysicalDeviceTimelineSemaphoreFeatures>();
+    timeline_features.timelineSemaphore = VK_TRUE;
+
+    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    InitDevice({}, &features2);
 
     ComputeIOTest state(physical_device_, device_, kReadWriteComp);
     state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
@@ -177,8 +198,6 @@ TEST_F(Sync, GpuWaitTimelinePositive) {
                                  state.pipeline.DescriptorSet().Set(), {});
     cmd_buff_.dispatch(1, 1, 1);
     cmd_buff_.end();
-
-    std::array<vk::CommandBuffer, 2> cbs = {*cmd_buff_, *cmd_buff_};
 
     vk::SemaphoreTypeCreateInfo sem_type_ci(vk::SemaphoreType::eTimeline, 100);
     vk::SemaphoreCreateInfo sem_ci({}, &sem_type_ci);
@@ -194,7 +213,7 @@ TEST_F(Sync, GpuWaitTimelinePositive) {
     queue_.submit(signal_submit);
 
     vk::TimelineSemaphoreSubmitInfo wait_tl_info(1, &sem_value);
-    vk::SubmitInfo wait_submit(*tl_sem, wait_mask, cbs, {}, &wait_tl_info);
+    vk::SubmitInfo wait_submit(*tl_sem, wait_mask, *cmd_buff_, {}, &wait_tl_info);
 
     queue_.submit(wait_submit);
 
@@ -207,7 +226,14 @@ TEST_F(Sync, TimelineCounterPositive) {
 
     layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
-    InitDevice();
+
+    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
+
+    auto &timeline_features = chain.get<vk::PhysicalDeviceTimelineSemaphoreFeatures>();
+    timeline_features.timelineSemaphore = VK_TRUE;
+
+    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    InitDevice({}, &features2);
 
     ComputeIOTest state(physical_device_, device_, kReadWriteComp);
     state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
@@ -221,8 +247,6 @@ TEST_F(Sync, TimelineCounterPositive) {
     cmd_buff_.dispatch(1, 1, 1);
     cmd_buff_.end();
 
-    std::array<vk::CommandBuffer, 2> cbs = {*cmd_buff_, *cmd_buff_};
-
     vk::SemaphoreTypeCreateInfo sem_type_ci(vk::SemaphoreType::eTimeline, 100);
     vk::SemaphoreCreateInfo sem_ci({}, &sem_type_ci);
 
@@ -231,7 +255,7 @@ TEST_F(Sync, TimelineCounterPositive) {
 
     uint64_t sem_value = 123;
     vk::TimelineSemaphoreSubmitInfo signal_tl_info(0, nullptr, 1, &sem_value);
-    vk::SubmitInfo signal_submit({}, {}, cbs, *tl_sem, &signal_tl_info);
+    vk::SubmitInfo signal_submit({}, {}, *cmd_buff_, *tl_sem, &signal_tl_info);
 
     queue_.submit(signal_submit);
 
@@ -246,7 +270,14 @@ TEST_F(Sync, TimelineCounterPositive) {
 TEST_F(Sync, HostWaitHang) {
     layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
-    InitDevice();
+
+    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
+
+    auto &timeline_features = chain.get<vk::PhysicalDeviceTimelineSemaphoreFeatures>();
+    timeline_features.timelineSemaphore = VK_TRUE;
+
+    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    InitDevice({}, &features2);
 
     ComputeIOTest state(physical_device_, device_, kInfiniteLoopComp);
     state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
@@ -301,7 +332,18 @@ TEST_F(Sync, HostWaitHang) {
 TEST_F(Sync, HostWaitHangSubmit2) {
     layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
-    InitDevice();
+
+    vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceSynchronization2Features,
+    vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
+
+    auto &sync2_features = chain.get<vk::PhysicalDeviceSynchronization2Features>();
+    sync2_features.synchronization2 = VK_TRUE;
+
+    auto &timeline_features = chain.get<vk::PhysicalDeviceTimelineSemaphoreFeatures>();
+    timeline_features.timelineSemaphore = VK_TRUE;
+
+    const auto &features2 = chain.get<vk::PhysicalDeviceFeatures2>();
+    InitDevice({}, &features2);
 
     ComputeIOTest state(physical_device_, device_, kInfiniteLoopComp);
     state.input.Set(uint32_t(65535), ComputeIOTest::kNumElems);
