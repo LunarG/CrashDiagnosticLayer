@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024, 2026 The Khronos Group Inc.
+ * Copyright (c) 2024, 2026 Valve Corporation
+ * Copyright (c) 2024, 2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ void CDLTestBase::InitDevice(std::vector<const char*> extensions, const vk::Phys
 
     queue_ = device_.getQueue(qfi_, 0);
 
-    vk::CommandPoolCreateInfo cmd_pool_ci({}, qfi_);
+    vk::CommandPoolCreateInfo cmd_pool_ci(vk::CommandPoolCreateFlagBits::eResetCommandBuffer, qfi_);
     cmd_pool_ = device_.createCommandPool(cmd_pool_ci);
 
     vk::CommandBufferAllocateInfo cmd_alloc_info(cmd_pool_, vk::CommandBufferLevel::ePrimary, 1);
