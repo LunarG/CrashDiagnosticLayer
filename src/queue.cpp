@@ -198,12 +198,10 @@ bool Queue::UpdateIdleState() {
                 submit_info.state = kRunning;
                 for (auto& cb : submit_info.command_buffers) {
                     auto cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
-                    if (!cmd) {
-                        continue;
-                    } else if (completed_seq >= cmd->GetQueueSeq()) {
+                    if (cmd && completed_seq >= cmd->GetQueueSeq()) {
+                        Log().Verbose("%s cb completed: %lld queue_seq: %lld",
+                                      device_.GetObjectInfo((uint64_t)cb).c_str(), completed_seq, cmd->GetQueueSeq());
                         cmd->SetCompleted();
-                    } else {
-                        break;
                     }
                 }
                 break;
@@ -391,6 +389,7 @@ void Queue::Print(YAML::Emitter& os) {
                     value << device_.GetObjectInfo((uint64_t)cb);
                     auto cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
                     if (cmd) {
+                        cmd->UpdateStateFromCheckpoints();
                         value << " " << cmd->PrintCommandBufferState() << " " << cmd->GetQueueSeq();
                     }
                     os << value.str();
