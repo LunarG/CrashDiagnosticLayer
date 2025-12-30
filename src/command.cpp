@@ -113,24 +113,10 @@ void CommandBuffer::WriteCommandEndCheckpoint(uint32_t command_id) {
     }
 }
 
-bool CommandBuffer::WasSubmittedToQueue() const { return buffer_state_ == CommandBufferState::kPending; }
-
-bool CommandBuffer::StartedExecution() const {
-    if (!checkpoint_) {
-        return false;
-    }
-    return (checkpoint_->ReadTop() > begin_value_);
-}
-
-bool CommandBuffer::CompletedExecution() const {
-    if (!checkpoint_) {
-        return false;
-    }
-    return (checkpoint_->ReadBottom() >= end_value_);
-}
+bool CommandBuffer::WasSubmittedToQueue() const { return buffer_state_ >= CommandBufferState::kSubmitted; }
 
 void CommandBuffer::Reset() {
-    buffer_state_ = CommandBufferState::kInitialReset;
+    buffer_state_ = CommandBufferState::kReset;
 
     // Reset marker state.
     if (checkpoint_) {
@@ -150,7 +136,7 @@ void CommandBuffer::Reset() {
 }
 
 void CommandBuffer::QueueSubmit(VkQueue queue, uint64_t queue_seq, VkFence fence) {
-    buffer_state_ = CommandBufferState::kPending;
+    buffer_state_ = CommandBufferState::kSubmitted;
     submitted_queue_ = queue;
     submitted_queue_seq_ = queue_seq;
     submitted_fence_ = fence;
@@ -168,7 +154,7 @@ VkResult CommandBuffer::PreBeginCommandBuffer(VkCommandBuffer commandBuffer,
 VkResult CommandBuffer::PostBeginCommandBuffer(VkCommandBuffer commandBuffer,
                                                const VkCommandBufferBeginInfo* pBeginInfo, VkResult result) {
     // Begin recording commands.
-    buffer_state_ = CommandBufferState::kRecording;
+    buffer_state_ = CommandBufferState::kBeginCalled;
 
     if (pBeginInfo->flags & VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT) {
         cb_simultaneous_use_ = true;
@@ -196,7 +182,7 @@ VkResult CommandBuffer::PreEndCommandBuffer(VkCommandBuffer commandBuffer) {
 }
 
 VkResult CommandBuffer::PostEndCommandBuffer(VkCommandBuffer commandBuffer, VkResult result) {
-    buffer_state_ = CommandBufferState::kExecutable;
+    buffer_state_ = CommandBufferState::kEndCalled;
 
     return result;
 }
@@ -237,110 +223,125 @@ uint32_t CommandBuffer::GetLastCompleteCommand() const {
     return marker - begin_value_;
 }
 
-CommandBufferState CommandBuffer::GetCommandBufferState() const {
-    if (!checkpoint_ || (IsPrimaryCommandBuffer() && !WasSubmittedToQueue())) {
-        return buffer_state_;
+void CommandBuffer::UpdateStateFromCheckpoints() {
+    assert(WasSubmittedToQueue());
+    if (!HasCheckpoints()) {
+        return;
     }
+    // If the queue timeline semaphore has already signaled, don't
+    // look at the checkpoints
+    if (buffer_state_ == CommandBufferState::kCompleted) {
+        return;
+    }
+    auto top = checkpoint_->ReadTop();
+    auto bottom = checkpoint_->ReadBottom();
+    auto prev_state = buffer_state_;
+
     // If the command buffer is submitted and markers can be used, determine the
     // execution state of the command buffer.
-    if (!StartedExecution()) {
-        return CommandBufferState::kSubmittedExecutionNotStarted;
+    if (top < begin_value_) {
+        buffer_state_ = CommandBufferState::kNotStarted;
+    } else if (bottom < end_value_) {
+        buffer_state_ = CommandBufferState::kIncomplete;
+    } else {
+        buffer_state_ = CommandBufferState::kMaybeComplete;
     }
-    if (!CompletedExecution()) {
-        return CommandBufferState::kSubmittedExecutionIncomplete;
-    }
-    return CommandBufferState::kSubmittedExecutionCompleted;
+
+    device_.Log().Verbose("%s seq: %lld top: %d bottom: %d prev_state: %s state: %s",
+                          device_.GetObjectName((uint64_t)vk_command_buffer_).c_str(), submitted_queue_seq_, top,
+                          bottom, PrintCommandBufferState(prev_state), PrintCommandBufferState(buffer_state_));
 }
 
-CommandBufferState CommandBuffer::GetSecondaryCommandBufferState(
-    CommandState vkcmd_execute_commands_command_state) const {
-    assert(vkcmd_execute_commands_command_state != CommandState::kInvalidState);
-    if (vkcmd_execute_commands_command_state == CommandState::kCommandNotSubmitted) {
-        return CommandBufferState::kNotSubmitted;
+void CommandBuffer::UpdateSecondaryState(CommandState exec_cmds_state) {
+    if (exec_cmds_state == CommandState::kNotSubmitted ||
+        exec_cmds_state == CommandState::kInvalidState) {
+        return;
     }
-    if (vkcmd_execute_commands_command_state == CommandState::kCommandNotStarted) {
-        return CommandBufferState::kSubmittedExecutionNotStarted;
-    }
-    if (vkcmd_execute_commands_command_state == CommandState::kCommandCompleted) {
-        return CommandBufferState::kSubmittedExecutionCompleted;
-    }
-    return GetCommandBufferState();
+    buffer_state_ = CommandBufferState::kSubmitted;
+    UpdateStateFromCheckpoints();
 }
 
-std::string CommandBuffer::PrintCommandBufferState(CommandBufferState cb_state) const {
+CommandBufferState CommandBuffer::GetCommandBufferState() const {
+    return buffer_state_;
+}
+
+const char* CommandBuffer::PrintCommandBufferState(CommandBufferState cb_state) const {
     switch (cb_state) {
-        case CommandBufferState::kInitial:
+        case CommandBufferState::kCreated:
             return "CREATED";
-        case CommandBufferState::kRecording:
+        case CommandBufferState::kBeginCalled:
             return "BEGIN_CALLED";
-        case CommandBufferState::kExecutable:
+        case CommandBufferState::kEndCalled:
             return "END_CALLED";
-        case CommandBufferState::kPending:
+        case CommandBufferState::kSubmitted:
             return "SUBMITTED";
         case CommandBufferState::kInvalid:
             return "INVALID";
-        case CommandBufferState::kInitialReset:
+        case CommandBufferState::kReset:
             return "RESET";
-        case CommandBufferState::kSubmittedExecutionNotStarted:
+        case CommandBufferState::kNotStarted:
             return "NOT_STARTED";
-        case CommandBufferState::kSubmittedExecutionIncomplete:
+        case CommandBufferState::kIncomplete:
             return "INCOMPLETE";
-        case CommandBufferState::kSubmittedExecutionCompleted:
+        case CommandBufferState::kMaybeComplete:
             return "MAYBE_COMPLETE";
-        case CommandBufferState::kQueueCompleted:
+        case CommandBufferState::kCompleted:
             return "COMPLETED";
-        case CommandBufferState::kNotSubmitted:
-            return "NOT_SUBMITTED";
-        default:
-            assert(true);
-            return "UNKNOWN";
     }
+    assert(false);
+    return "UNKNOWN";
 }
 
-CommandState CommandBuffer::GetCommandState(CommandBufferState cb_state, const Command& command) const {
-    if (IsPrimaryCommandBuffer() && !WasSubmittedToQueue()) {
-        return CommandState::kCommandNotSubmitted;
+static CommandState GetCommandState(CommandBufferState cb_state, const Command& command, uint32_t last_started,
+                                    uint32_t last_completed) {
+    switch (cb_state) {
+        case CommandBufferState::kCreated:
+        case CommandBufferState::kBeginCalled:
+        case CommandBufferState::kEndCalled:
+        case CommandBufferState::kReset:
+            return CommandState::kNotSubmitted;
+
+        case CommandBufferState::kSubmitted:
+            return CommandState::kSubmitted;
+
+        case CommandBufferState::kNotStarted:
+            return CommandState::kNotStarted;
+
+        case CommandBufferState::kIncomplete:
+        case CommandBufferState::kMaybeComplete:
+            if (command.id > last_started) {
+                return CommandState::kNotStarted;
+            } else if (command.id <= last_completed) {
+                return CommandState::kCompleted;
+            }
+            return CommandState::kIncomplete;
+
+        case CommandBufferState::kCompleted:
+            return CommandState::kCompleted;
+
+        case CommandBufferState::kInvalid:
+            return CommandState::kInvalidState;
     }
-    if (!checkpoint_) {
-        return CommandState::kCommandPending;
-    }
-    if (!IsPrimaryCommandBuffer()) {
-        if (cb_state == CommandBufferState::kNotSubmitted) {
-            return CommandState::kCommandNotSubmitted;
-        }
-        if (cb_state == CommandBufferState::kSubmittedExecutionNotStarted) {
-            return CommandState::kCommandNotStarted;
-        }
-        if (cb_state == CommandBufferState::kSubmittedExecutionCompleted) {
-            return CommandState::kCommandCompleted;
-        }
-        assert(cb_state == CommandBufferState::kSubmittedExecutionIncomplete);
-    }
-    if (command.id > GetLastStartedCommand()) {
-        return CommandState::kCommandNotStarted;
-    }
-    if (command.id <= GetLastCompleteCommand()) {
-        return CommandState::kCommandCompleted;
-    }
-    return CommandState::kCommandIncomplete;
+    return CommandState::kInvalidState;
 }
 
-std::string CommandBuffer::PrintCommandState(CommandState cm_state) const {
+const char* CommandBuffer::PrintCommandState(CommandState cm_state) const {
     switch (cm_state) {
-        case CommandState::kCommandNotSubmitted:
+        case CommandState::kNotSubmitted:
             return "NOT_SUBMITTED";
-        case CommandState::kCommandPending:
+        case CommandState::kSubmitted:
             return "SUBMITTED";
-        case CommandState::kCommandNotStarted:
+        case CommandState::kNotStarted:
             return "NOT_STARTED";
-        case CommandState::kCommandIncomplete:
+        case CommandState::kIncomplete:
             return "INCOMPLETE";
-        case CommandState::kCommandCompleted:
+        case CommandState::kCompleted:
             return "COMPLETED";
-        default:
-            assert(true);
-            return "UNKNOWN";
+        case CommandState::kInvalidState:
+            return "INVALID";
     }
+    assert(false);
+    return "UNKNOWN";
 }
 
 bool CommandBuffer::DumpCommand(const Command& command, YAML::Emitter& os) {
@@ -360,7 +361,8 @@ bool CommandBuffer::DumpCmdExecuteCommands(const Command& command, CommandState 
         for (uint32_t i = 0; i < args->commandBufferCount; i++) {
             auto secondary_command_buffer = crash_diagnostic_layer::GetCommandBuffer(args->pCommandBuffers[i]);
             if (secondary_command_buffer) {
-                secondary_command_buffer->DumpContents(os, settings, submitted_queue_seq_, command_state);
+                secondary_command_buffer->UpdateSecondaryState(command_state);
+                secondary_command_buffer->DumpContents(os, settings, submitted_queue_seq_);
             }
         }
     }
@@ -494,18 +496,13 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
     if (vk_command_buffer_ == VK_NULL_HANDLE) {
         return;
     }
-    CommandBufferState cb_state;
-    if (IsPrimaryCommandBuffer()) {
-        cb_state = GetCommandBufferState();
-    } else {
-        cb_state = GetSecondaryCommandBufferState(vkcmd_execute_commands_command_state);
-    }
+    CommandBufferState cb_state = GetCommandBufferState();
     auto dump_cbs = settings.dump_command_buffers;
     switch (cb_state) {
-        case CommandBufferState::kSubmittedExecutionIncomplete:
-        case CommandBufferState::kSubmittedExecutionCompleted:
+        case CommandBufferState::kIncomplete:
+        case CommandBufferState::kMaybeComplete:
             break;
-        case CommandBufferState::kSubmittedExecutionNotStarted:
+        case CommandBufferState::kNotStarted:
             if (dump_cbs == DumpCommands::kRunning) {
                 return;
             }
@@ -523,7 +520,7 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
 
     os << YAML::Key << "handle" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_command_buffer_);
     os << YAML::Key << "commandPool" << YAML::Value << device_.GetObjectInfo((uint64_t)vk_command_pool_);
-    if (buffer_state_ == CommandBufferState::kPending) {
+    if (WasSubmittedToQueue()) {
         os << YAML::Key << "queue" << device_.GetObjectInfo((uint64_t)submitted_queue_);
         os << YAML::Key << "fence" << device_.GetObjectInfo((uint64_t)submitted_fence_);
     }
@@ -556,9 +553,10 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
     // If the markers indicated we are complete but the queue semaphore thinks
     // we aren't completed, dump everything. We don't know which command in the
     // command buffer is the problem.
-    if (cb_state == CommandBufferState::kSubmittedExecutionCompleted) {
-        last_completed = 1;
+    if (cb_state == CommandBufferState::kMaybeComplete) {
+        last_completed = 0;
     }
+
     os << YAML::Key << "lastStartedCommand" << YAML::Value << last_started;
     os << YAML::Key << "lastCompletedCommand" << YAML::Value << last_completed;
 
@@ -569,7 +567,7 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
     os << YAML::Key << "Commands" << YAML::Value << YAML::BeginSeq;
     for (const auto& command : tracker_.GetCommands()) {
         auto command_name = Command::GetCommandName(command);
-        auto command_state = GetCommandState(cb_state, command);
+        auto command_state = GetCommandState(cb_state, command, last_started, last_completed);
 
         if (dump_cmds == DumpCommands::kRunning) {
             if (command.id < last_completed || command.id > last_started) {
@@ -608,13 +606,13 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
         }
         os << YAML::EndMap;
         state.Print(command, os, device_.GetObjectInfoDB());
-        if (command_state == CommandState::kCommandIncomplete) {
+        if (command_state == CommandState::kIncomplete) {
             HandleIncompleteCommand(command, state);
         }
 
         // To make this message more visible, we put it in a special
         // Command entry.
-        if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete) {
+        if (cb_state == CommandBufferState::kIncomplete) {
             if (command.id == GetLastCompleteCommand()) {
                 os << YAML::Key << "message" << YAML::Value << "'>>>>>>>>>>>>>> LAST COMPLETE COMMAND <<<<<<<<<<<<<<'";
             } else if (command.id == GetLastStartedCommand()) {

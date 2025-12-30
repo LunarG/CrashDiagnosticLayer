@@ -156,12 +156,11 @@ void Device::DumpCommandBuffers(YAML::Emitter& os) const {
                     dump_this_cb = true;
                     break;
                 case DumpCommands::kRunning:
-                    dump_this_cb = cb_state == CommandBufferState::kSubmittedExecutionIncomplete
-                                   || cb_state == CommandBufferState::kSubmittedExecutionCompleted;
+                    dump_this_cb = cb_state == CommandBufferState::kIncomplete
+                                   || cb_state == CommandBufferState::kMaybeComplete;
                     break;
                 case DumpCommands::kPending:
-                    dump_this_cb = p_cmd->WasSubmittedToQueue() &&
-                                   p_cmd->GetCommandBufferState() != CommandBufferState::kSubmittedExecutionNotStarted;
+                    dump_this_cb = p_cmd->WasSubmittedToQueue();
                     break;
             }
             if (dump_this_cb) {
@@ -245,7 +244,10 @@ void Device::DumpCommandBufferStateOnScreen(CommandBuffer* p_cmd, YAML::Emitter&
 bool Device::ValidateCommandBufferNotInUse(CommandBuffer* p_cmd, YAML::Emitter& os) {
     assert(p_cmd);
     if (!HangDetected()) {
-        if (p_cmd->HasCheckpoints() && p_cmd->WasSubmittedToQueue() && !p_cmd->CompletedExecution()) {
+        auto cb_state = p_cmd->GetCommandBufferState();
+        if (cb_state == CommandBufferState::kSubmitted ||
+            cb_state == CommandBufferState::kNotStarted ||
+            cb_state == CommandBufferState::kIncomplete) {
             DumpCommandBufferStateOnScreen(p_cmd, os);
             return false;
         }

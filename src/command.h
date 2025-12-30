@@ -44,33 +44,29 @@ class Device;
 struct Settings;
 
 enum class CommandState {
-    kCommandNotSubmitted,  // not submitted
-    kCommandPending,       // submitted, no more information available
-    kCommandNotStarted,    // submitted, not started
-    kCommandIncomplete,    // submitted, started, not finished
-    kCommandCompleted,     // submitted and executed
+    kNotSubmitted,  // not submitted
+    kSubmitted,     // submitted, no more information available
+    kNotStarted,    // submitted, not started
+    kIncomplete,    // submitted, started, not finished
+    kCompleted,     // submitted and executed
     kInvalidState,
 };
 
 enum class CommandBufferState {
     // Vulkan CommandBuffer states from the spec
     // 5.1, Figure 1. Lifecycle of a command buffer
-    kInitial,     // created (we have a separate state for reset)
-    kRecording,   // begin called
-    kExecutable,  // end called
-    kPending,     // submitted
-    kInvalid,     // invalid
-    // Additional state since we know if a command buffer is reset
-    kInitialReset,  // reset
-    // The following are extensions of kPending and only can be verified when
-    // a hang or crash is detected and checkpoint values are read.
-    kSubmittedExecutionNotStarted,  // submitted but not started
-    kSubmittedExecutionIncomplete,  // submitted and started, but not finished
-    kSubmittedExecutionCompleted,   // submitted and finished (according to markers)
-    kQueueCompleted,                // submitted and finished (according to queue timeline semaphore)
-    // The following is used for secondary command buffers when the command
-    // vkCmdExecuteCommands is not submitted.
-    kNotSubmitted,
+    kCreated,
+    kBeginCalled,
+    kEndCalled,
+    kSubmitted,
+    kInvalid,
+    kReset,
+    // The following are extensions of kSubmitted and only can be verified when
+    // a hang or crash is detected and queue semaphore or checkpoint values are read.
+    kNotStarted,  // submitted but not started
+    kIncomplete,  // submitted and started, but not finished
+    kMaybeComplete,     // submitted and finished (according to markers)
+    kCompleted,         // submitted and finished (according to queue timeline semaphore)
 };
 
 // =================================================================================================
@@ -91,7 +87,9 @@ class CommandBuffer {
     CommandBufferState GetCommandBufferState() const;
     std::string PrintCommandBufferState() const { return PrintCommandBufferState(GetCommandBufferState()); }
 
-    void SetCompleted() { buffer_state_ = CommandBufferState::kQueueCompleted; }
+    void SetCompleted() { buffer_state_ = CommandBufferState::kCompleted; }
+    void UpdateStateFromCheckpoints();
+    void UpdateSecondaryState(CommandState exec_cmd_state);
     bool IsPrimaryCommandBuffer() const { return cb_level_ == VK_COMMAND_BUFFER_LEVEL_PRIMARY; }
     bool HasCheckpoints() const { return checkpoint_ != nullptr; }
 
@@ -99,8 +97,6 @@ class CommandBuffer {
     void SetInstrumentAllCommands(bool all) { instrument_all_commands_ = all; }
 
     bool WasSubmittedToQueue() const;
-    bool StartedExecution() const;
-    bool CompletedExecution() const;
 
     void Reset();
     void QueueSubmit(VkQueue queue, uint64_t queue_seq, VkFence fence);
@@ -153,10 +149,8 @@ class CommandBuffer {
    private:
     const char* GetCommandName(const Command& command);
 
-    std::string PrintCommandBufferState(CommandBufferState cb_state) const;
-    CommandBufferState GetSecondaryCommandBufferState(CommandState vkcmd_execute_commands_command_state) const;
-    CommandState GetCommandState(CommandBufferState cb_state, const Command& command) const;
-    std::string PrintCommandState(CommandState cm_state) const;
+    const char* PrintCommandBufferState(CommandBufferState cb_state) const;
+    const char* PrintCommandState(CommandState cm_state) const;
 
     bool DumpCmdExecuteCommands(const Command& command, CommandState command_state, YAML::Emitter& os,
                                 const Settings& settings);
@@ -185,7 +179,7 @@ class CommandBuffer {
     uint32_t begin_value_;
     uint32_t end_value_;
 
-    CommandBufferState buffer_state_ = CommandBufferState::kInitial;
+    CommandBufferState buffer_state_ = CommandBufferState::kCreated;
     VkQueue submitted_queue_ = VK_NULL_HANDLE;
     uint64_t submitted_queue_seq_ = 0;
     VkFence submitted_fence_ = VK_NULL_HANDLE;
