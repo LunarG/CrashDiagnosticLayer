@@ -196,16 +196,14 @@ bool Queue::UpdateIdleState() {
                               device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), submit_info.start_seq,
                               submit_info.end_seq);
                 submit_info.state = kRunning;
-                bool found_running_cb = false;
-                for (auto pos = submit_info.command_buffers.rbegin(); pos != submit_info.command_buffers.rend();
-                     ++pos) {
-                    auto cmd = crash_diagnostic_layer::GetCommandBuffer(*pos);
-                    if (cmd) {
-                        if (found_running_cb) {
-                            cmd->SetCompleted();
-                        } else if (cmd->GetCommandBufferState() == CommandBufferState::kSubmittedExecutionIncomplete) {
-                            found_running_cb = true;
-                        }
+                for (auto& cb : submit_info.command_buffers) {
+                    auto cmd = crash_diagnostic_layer::GetCommandBuffer(cb);
+                    if (!cmd) {
+                        continue;
+                    } else if (completed_seq >= cmd->GetQueueSeq()) {
+                        cmd->SetCompleted();
+                    } else {
+                        break;
                     }
                 }
                 break;
