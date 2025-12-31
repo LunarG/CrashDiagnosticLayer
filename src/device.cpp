@@ -150,12 +150,14 @@ void Device::DumpCommandBuffers(YAML::Emitter& os) const {
         auto p_cmd = GetCommandBuffer(cb);
         if (p_cmd && p_cmd->IsPrimaryCommandBuffer()) {
             bool dump_this_cb = false;
+            auto cb_state = p_cmd->GetCommandBufferState();
             switch (dump_cbs) {
                 case DumpCommands::kAll:
                     dump_this_cb = true;
                     break;
                 case DumpCommands::kRunning:
-                    dump_this_cb = p_cmd->GetCommandBufferState() == CommandBufferState::kSubmittedExecutionIncomplete;
+                    dump_this_cb = cb_state == CommandBufferState::kSubmittedExecutionIncomplete
+                                   || cb_state == CommandBufferState::kSubmittedExecutionCompleted;
                     break;
                 case DumpCommands::kPending:
                     dump_this_cb = p_cmd->WasSubmittedToQueue() &&

@@ -216,7 +216,9 @@ uint32_t CommandBuffer::GetLastStartedCommand() const {
         return 0;
     }
     uint32_t marker = checkpoint_->ReadTop();
-    if (marker == 0) {
+    if (marker == end_value_) {
+        return tracker_.GetCommands().back().id;
+    } else if (marker == 0) {
         return begin_value_;
     }
     return marker - begin_value_;
@@ -284,6 +286,8 @@ std::string CommandBuffer::PrintCommandBufferState(CommandBufferState cb_state) 
         case CommandBufferState::kSubmittedExecutionIncomplete:
             return "INCOMPLETE";
         case CommandBufferState::kSubmittedExecutionCompleted:
+            return "MAYBE_COMPLETE";
+        case CommandBufferState::kQueueCompleted:
             return "COMPLETED";
         case CommandBufferState::kNotSubmitted:
             return "NOT_SUBMITTED";
@@ -499,6 +503,7 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
     auto dump_cbs = settings.dump_command_buffers;
     switch (cb_state) {
         case CommandBufferState::kSubmittedExecutionIncomplete:
+        case CommandBufferState::kSubmittedExecutionCompleted:
             break;
         case CommandBufferState::kSubmittedExecutionNotStarted:
             if (dump_cbs == DumpCommands::kRunning) {
@@ -548,11 +553,15 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
     }
     auto last_started = GetLastStartedCommand();
     auto last_completed = GetLastCompleteCommand();
-
-    if (cb_state == CommandBufferState::kSubmittedExecutionIncomplete) {
-        os << YAML::Key << "lastStartedCommand" << YAML::Value << GetLastStartedCommand();
-        os << YAML::Key << "lastCompletedCommand" << YAML::Value << GetLastCompleteCommand();
+    // If the markers indicated we are complete but the queue semaphore thinks
+    // we aren't completed, dump everything. We don't know which command in the
+    // command buffer is the problem.
+    if (cb_state == CommandBufferState::kSubmittedExecutionCompleted) {
+        last_completed = 1;
     }
+    os << YAML::Key << "lastStartedCommand" << YAML::Value << last_started;
+    os << YAML::Key << "lastCompletedCommand" << YAML::Value << last_completed;
+
     // Internal command buffer state that needs to be tracked.
     CommandBufferInternalState state(device_);
 
