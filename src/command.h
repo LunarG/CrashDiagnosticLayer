@@ -66,7 +66,8 @@ enum class CommandBufferState {
     // a hang or crash is detected and checkpoint values are read.
     kSubmittedExecutionNotStarted,  // submitted but not started
     kSubmittedExecutionIncomplete,  // submitted and started, but not finished
-    kSubmittedExecutionCompleted,   // submitted and finished
+    kSubmittedExecutionCompleted,   // submitted and finished (according to markers)
+    kQueueCompleted,                // submitted and finished (according to queue timeline semaphore)
     // The following is used for secondary command buffers when the command
     // vkCmdExecuteCommands is not submitted.
     kNotSubmitted,
@@ -90,7 +91,7 @@ class CommandBuffer {
     CommandBufferState GetCommandBufferState() const;
     std::string PrintCommandBufferState() const { return PrintCommandBufferState(GetCommandBufferState()); }
 
-    void SetCompleted() { buffer_state_ = CommandBufferState::kSubmittedExecutionCompleted; }
+    void SetCompleted() { buffer_state_ = CommandBufferState::kQueueCompleted; }
     bool IsPrimaryCommandBuffer() const { return cb_level_ == VK_COMMAND_BUFFER_LEVEL_PRIMARY; }
     bool HasCheckpoints() const { return checkpoint_ != nullptr; }
 
