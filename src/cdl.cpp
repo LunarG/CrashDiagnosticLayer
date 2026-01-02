@@ -73,6 +73,7 @@ static const std::unordered_map<std::string, DumpCommands> kDumpCommandsValues{
     {"pending", DumpCommands::kPending},
     {"all", DumpCommands::kAll},
 };
+const char* kDumpQueueSubmitWait = "dump_queue_submits";
 
 const char* kDumpShaders = "dump_shaders";
 static const std::unordered_map<std::string, DumpShaders> kDumpShadersValues{
@@ -124,6 +125,7 @@ Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
     GetEnvVal<bool>(layer_settings, settings::kTraceOn, trace_all);
     GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpQueueSubmits, dump_queue_submits,
                              settings::kDumpCommandsValues);
+    GetEnvVal<bool>(layer_settings, settings::kDumpQueueSubmitWait, dump_queue_submits_wait);
     GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommandBuffers, dump_command_buffers,
                              settings::kDumpCommandsValues);
     GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommands, dump_commands,

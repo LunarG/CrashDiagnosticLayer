@@ -175,6 +175,15 @@
                                     "label": "Pending",
                                     "description": "Submissions executing or pending at the time of the dump."
                                 }
+                            ],
+                            "settings": [
+                                {
+                                    "key": "dump_queue_submits_wait",
+                                    "label": "Single Queue Submit at a time",
+                                    "description": "Wait for a the queue submit to complete before start the next one",
+                                    "type": "BOOL",
+                                    "default": false
+                                },
                             ]
                         },
                         {
