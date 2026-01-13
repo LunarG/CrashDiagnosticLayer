@@ -1,8 +1,8 @@
 #!/usr/bin/python3 -i
 #
-# Copyright 2023-2025 The Khronos Group Inc.
-# Copyright 2023-2025 Valve Corporation
-# Copyright 2023-2025 LunarG, Inc.
+# Copyright 2023-2026 The Khronos Group Inc.
+# Copyright 2023-2026 Valve Corporation
+# Copyright 2023-2026 LunarG, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 
@@ -18,9 +18,9 @@ class ObjectNameGenerator(BaseGenerator):
         out = []
         out.append(f'''// *** THIS FILE IS GENERATED - DO NOT EDIT ***
 // See {os.path.basename(__file__)} for modifications
-// Copyright 2023-2025 The Khronos Group Inc.
-// Copyright 2023-2025 Valve Corporation
-// Copyright 2023-2025 LunarG, Inc.
+// Copyright 2023-2026 The Khronos Group Inc.
+// Copyright 2023-2026 Valve Corporation
+// Copyright 2023-2026 LunarG, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 ''')

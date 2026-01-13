@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1367,6 +1367,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceDeviceMemoryReportCre
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerCustomBorderColorCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCustomBorderColorPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCustomBorderColorFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentBarrierFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCapabilitiesPresentBarrierNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainPresentBarrierCreateInfoNV &t);
@@ -1887,15 +1888,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportDepthClampC
 #ifdef VK_USE_PLATFORM_OHOS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCreateInfoOHOS &t);
 #endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkNativeBufferOHOS &t);
-#endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainImageCreateInfoOHOS &t);
-#endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentationPropertiesOHOS &t);
-#endif  // VK_USE_PLATFORM_OHOS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHdrVividFeaturesHUAWEI &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrVividDynamicMetadataHUAWEI &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixFlexibleDimensionsPropertiesNV &t);
@@ -1935,8 +1927,12 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCustomResolveCreateInfoEXT 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCacheHeaderVersionDataGraphQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineBuiltinModelCreateInfoQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphModelFeaturesQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderLongVectorFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderLongVectorPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkComputeOccupancyPriorityParametersNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
@@ -2283,6 +2279,7 @@ class CommandPrinter {
     void PrintCmdExecuteGeneratedCommandsEXTArgs(YAML::Emitter &os, const CmdExecuteGeneratedCommandsEXTArgs &args);
     void PrintCmdEndRendering2EXTArgs(YAML::Emitter &os, const CmdEndRendering2EXTArgs &args);
     void PrintCmdBeginCustomResolveEXTArgs(YAML::Emitter &os, const CmdBeginCustomResolveEXTArgs &args);
+    void PrintCmdSetComputeOccupancyPriorityNVArgs(YAML::Emitter &os, const CmdSetComputeOccupancyPriorityNVArgs &args);
     void PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
                                                     const CmdBuildAccelerationStructuresKHRArgs &args);
     void PrintCmdBuildAccelerationStructuresIndirectKHRArgs(YAML::Emitter &os,

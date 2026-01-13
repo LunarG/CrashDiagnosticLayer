@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 # Copyright 2017 The Glslang Authors. All rights reserved.
-# Copyright (c) 2018-2025 Valve Corporation
-# Copyright (c) 2018-2025 LunarG, Inc.
+# Copyright (c) 2018-2026 Valve Corporation
+# Copyright (c) 2018-2026 LunarG, Inc.
 # Copyright (c) 2023-2023 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

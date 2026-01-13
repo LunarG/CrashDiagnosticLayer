@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1917,6 +1917,12 @@ virtual void PreCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
 
 virtual void PostCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
                                           const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {}
+
+virtual void PreCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
+                                                 const VkComputeOccupancyPriorityParametersNV* pParameters) {}
+
+virtual void PostCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
+                                                  const VkComputeOccupancyPriorityParametersNV* pParameters) {}
 
 virtual void PreCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,

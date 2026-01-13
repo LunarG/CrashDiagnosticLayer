@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4213,6 +4213,17 @@ void CommandPrinter::PrintCmdBeginCustomResolveEXTArgs(YAML::Emitter &os, const 
     }
 }
 
+void CommandPrinter::PrintCmdSetComputeOccupancyPriorityNVArgs(YAML::Emitter &os,
+                                                               const CmdSetComputeOccupancyPriorityNVArgs &args) {
+    os << YAML::Key << "pParameters";
+    // pointer
+    if (args.pParameters != nullptr) {
+        os << YAML::Value << *args.pParameters;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
                                                                 const CmdBuildAccelerationStructuresKHRArgs &args) {
     os << YAML::Key << "infoCount";
@@ -6437,6 +6448,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdBeginCustomResolveEXTArgs *>(cmd.parameters);
                 PrintCmdBeginCustomResolveEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetComputeOccupancyPriorityNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetComputeOccupancyPriorityNVArgs *>(cmd.parameters);
+                PrintCmdSetComputeOccupancyPriorityNVArgs(os, *args);
             }
             break;
 
