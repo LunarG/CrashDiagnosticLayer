@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2851,6 +2851,16 @@ void CommandTracker::CmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
+                                                      const VkComputeOccupancyPriorityParametersNV* pParameters) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetComputeOccupancyPriorityNV;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
     commands_.push_back(cmd);
 }
 

@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4414,6 +4414,19 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdBeginCustomResolveEXT(
     layer_data->interceptor->PostCmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetComputeOccupancyPriorityNV(
+    VkCommandBuffer commandBuffer, const VkComputeOccupancyPriorityParametersNV* pParameters) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
+
+    PFN_vkCmdSetComputeOccupancyPriorityNV pfn = layer_data->dispatch_table.CmdSetComputeOccupancyPriorityNV;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pParameters);
+    }
+
+    layer_data->interceptor->PostCmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
+}
+
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
     const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
@@ -4962,6 +4975,7 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdExecuteGeneratedCommandsEXT", {kFuncTypeDev, (void*)InterceptCmdExecuteGeneratedCommandsEXT}},
         {"vkCmdEndRendering2EXT", {kFuncTypeDev, (void*)InterceptCmdEndRendering2EXT}},
         {"vkCmdBeginCustomResolveEXT", {kFuncTypeDev, (void*)InterceptCmdBeginCustomResolveEXT}},
+        {"vkCmdSetComputeOccupancyPriorityNV", {kFuncTypeDev, (void*)InterceptCmdSetComputeOccupancyPriorityNV}},
         {"vkCmdBuildAccelerationStructuresKHR", {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructuresKHR}},
         {"vkCmdBuildAccelerationStructuresIndirectKHR",
          {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructuresIndirectKHR}},

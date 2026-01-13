@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -591,6 +591,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdEndRendering2EXT";
         case Command::Type::kCmdBeginCustomResolveEXT:
             return "vkCmdBeginCustomResolveEXT";
+        case Command::Type::kCmdSetComputeOccupancyPriorityNV:
+            return "vkCmdSetComputeOccupancyPriorityNV";
         case Command::Type::kCmdBuildAccelerationStructuresKHR:
             return "vkCmdBuildAccelerationStructuresKHR";
         case Command::Type::kCmdBuildAccelerationStructuresIndirectKHR:

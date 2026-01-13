@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -393,6 +393,9 @@ VkGeneratedCommandsInfoEXT* CommandRecorder::CopyArray<VkGeneratedCommandsInfoEX
 template <>
 VkBeginCustomResolveInfoEXT* CommandRecorder::CopyArray<VkBeginCustomResolveInfoEXT>(
     const VkBeginCustomResolveInfoEXT* src, size_t start_index, size_t count);
+template <>
+VkComputeOccupancyPriorityParametersNV* CommandRecorder::CopyArray<VkComputeOccupancyPriorityParametersNV>(
+    const VkComputeOccupancyPriorityParametersNV* src, size_t start_index, size_t count);
 template <>
 VkAccelerationStructureBuildRangeInfoKHR* CommandRecorder::CopyArray<VkAccelerationStructureBuildRangeInfoKHR>(
     const VkAccelerationStructureBuildRangeInfoKHR* src, size_t start_index, size_t count);
@@ -2406,6 +2409,20 @@ VkBeginCustomResolveInfoEXT* CommandRecorder::CopyArray<VkBeginCustomResolveInfo
     for (uint64_t i = 0; i < count; ++i) {
         ptr[i].sType = src[start_index + i].sType;
         ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+    }
+    return ptr;
+}
+
+template <>
+VkComputeOccupancyPriorityParametersNV* CommandRecorder::CopyArray<VkComputeOccupancyPriorityParametersNV>(
+    const VkComputeOccupancyPriorityParametersNV* src, size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkComputeOccupancyPriorityParametersNV*>(
+        m_allocator.Alloc(sizeof(VkComputeOccupancyPriorityParametersNV) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].occupancyPriority = src[start_index + i].occupancyPriority;
+        ptr[i].occupancyThrottling = src[start_index + i].occupancyThrottling;
     }
     return ptr;
 }
@@ -5605,6 +5622,16 @@ CmdBeginCustomResolveEXTArgs* CommandRecorder::RecordCmdBeginCustomResolveEXT(
     if (pBeginCustomResolveInfo) {
         args->pBeginCustomResolveInfo =
             CopyArray(pBeginCustomResolveInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdSetComputeOccupancyPriorityNVArgs* CommandRecorder::RecordCmdSetComputeOccupancyPriorityNV(
+    VkCommandBuffer commandBuffer, const VkComputeOccupancyPriorityParametersNV* pParameters) {
+    auto* args = Alloc<CmdSetComputeOccupancyPriorityNVArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pParameters) {
+        args->pParameters = CopyArray(pParameters, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
     return args;
 }

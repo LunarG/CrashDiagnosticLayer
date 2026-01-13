@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2774,6 +2774,16 @@ void CommandBuffer::PreCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
 }
 void CommandBuffer::PostCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
                                                  const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
+                                                        const VkComputeOccupancyPriorityParametersNV* pParameters) {
+    tracker_.CmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
+                                                         const VkComputeOccupancyPriorityParametersNV* pParameters) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 

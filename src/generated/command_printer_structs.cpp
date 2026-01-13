@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23563,6 +23563,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCustomBorderC
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "textureCompressionASTC_3D";
+    // textureCompressionASTC_3D -> Field -> VkBool32
+    os << YAML::Value << t.textureCompressionASTC_3D;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentBarrierFeaturesNV &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -33438,67 +33455,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCreateInfoOHOS &t) {
 }
 #endif  // VK_USE_PLATFORM_OHOS
 
-#ifdef VK_USE_PLATFORM_OHOS
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkNativeBufferOHOS &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "handle";
-    // pointer
-    if (t.handle != nullptr) {
-        os << YAML::Value << *t.handle;
-    } else {
-        os << YAML::Value << "nullptr";
-    }
-    os << YAML::EndMap;
-    return os;
-}
-#endif  // VK_USE_PLATFORM_OHOS
-
-#ifdef VK_USE_PLATFORM_OHOS
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainImageCreateInfoOHOS &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "usage";
-    // usage -> Field -> VkSwapchainImageUsageFlagsOHOS
-    os << YAML::Value << t.usage;
-    os << YAML::EndMap;
-    return os;
-}
-#endif  // VK_USE_PLATFORM_OHOS
-
-#ifdef VK_USE_PLATFORM_OHOS
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentationPropertiesOHOS &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "sharedImage";
-    // sharedImage -> Field -> VkBool32
-    os << YAML::Value << t.sharedImage;
-    os << YAML::EndMap;
-    return os;
-}
-#endif  // VK_USE_PLATFORM_OHOS
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHdrVividFeaturesHUAWEI &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -34149,6 +34105,40 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphMode
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderLongVectorFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "longVector";
+    // longVector -> Field -> VkBool32
+    os << YAML::Value << t.longVector;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderLongVectorPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxVectorComponents";
+    // maxVectorComponents -> Field -> uint32_t
+    os << YAML::Value << t.maxVectorComponents;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -34179,6 +34169,43 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderUniform
     os << YAML::Key << "shaderUniformBufferUnsizedArray";
     // shaderUniformBufferUnsizedArray -> Field -> VkBool32
     os << YAML::Value << t.shaderUniformBufferUnsizedArray;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkComputeOccupancyPriorityParametersNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "occupancyPriority";
+    // occupancyPriority -> Field -> float
+    os << YAML::Value << t.occupancyPriority;
+    os << YAML::Key << "occupancyThrottling";
+    // occupancyThrottling -> Field -> float
+    os << YAML::Value << t.occupancyThrottling;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "computeOccupancyPriority";
+    // computeOccupancyPriority -> Field -> VkBool32
+    os << YAML::Value << t.computeOccupancyPriority;
     os << YAML::EndMap;
     return os;
 }
@@ -37365,6 +37392,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceCustomBorderColorFeaturesEXT *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_3D_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_BARRIER_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDevicePresentBarrierFeaturesNV *>(pStruct);
             break;
@@ -38556,21 +38586,6 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkSurfaceCreateInfoOHOS *>(pStruct);
             break;
 #endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-        case VK_STRUCTURE_TYPE_NATIVE_BUFFER_OHOS:
-            os << *reinterpret_cast<const VkNativeBufferOHOS *>(pStruct);
-            break;
-#endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-        case VK_STRUCTURE_TYPE_SWAPCHAIN_IMAGE_CREATE_INFO_OHOS:
-            os << *reinterpret_cast<const VkSwapchainImageCreateInfoOHOS *>(pStruct);
-            break;
-#endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENTATION_PROPERTIES_OHOS:
-            os << *reinterpret_cast<const VkPhysicalDevicePresentationPropertiesOHOS *>(pStruct);
-            break;
-#endif  // VK_USE_PLATFORM_OHOS
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI:
             os << *reinterpret_cast<const VkPhysicalDeviceHdrVividFeaturesHUAWEI *>(pStruct);
             break;
@@ -38665,11 +38680,23 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_MODEL_FEATURES_QCOM:
             os << *reinterpret_cast<const VkPhysicalDeviceDataGraphModelFeaturesQCOM *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderLongVectorFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderLongVectorPropertiesEXT *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CACHE_INCREMENTAL_MODE_FEATURES_SEC:
             os << *reinterpret_cast<const VkPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_COMPUTE_OCCUPANCY_PRIORITY_PARAMETERS_NV:
+            os << *reinterpret_cast<const VkComputeOccupancyPriorityParametersNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);

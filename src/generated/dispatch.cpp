@@ -2,7 +2,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2025 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1192,15 +1192,6 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
         (PFN_vkUpdateIndirectExecutionSetPipelineEXT)pa(device, "vkUpdateIndirectExecutionSetPipelineEXT");
     dt->UpdateIndirectExecutionSetShaderEXT =
         (PFN_vkUpdateIndirectExecutionSetShaderEXT)pa(device, "vkUpdateIndirectExecutionSetShaderEXT");
-#ifdef VK_USE_PLATFORM_OHOS
-    dt->GetSwapchainGrallocUsageOHOS = (PFN_vkGetSwapchainGrallocUsageOHOS)pa(device, "vkGetSwapchainGrallocUsageOHOS");
-#endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-    dt->AcquireImageOHOS = (PFN_vkAcquireImageOHOS)pa(device, "vkAcquireImageOHOS");
-#endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-    dt->QueueSignalReleaseImageOHOS = (PFN_vkQueueSignalReleaseImageOHOS)pa(device, "vkQueueSignalReleaseImageOHOS");
-#endif  // VK_USE_PLATFORM_OHOS
 #ifdef VK_USE_PLATFORM_METAL_EXT
     dt->GetMemoryMetalHandleEXT = (PFN_vkGetMemoryMetalHandleEXT)pa(device, "vkGetMemoryMetalHandleEXT");
 #endif  // VK_USE_PLATFORM_METAL_EXT
@@ -1210,6 +1201,8 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
 #endif  // VK_USE_PLATFORM_METAL_EXT
     dt->CmdEndRendering2EXT = (PFN_vkCmdEndRendering2EXT)pa(device, "vkCmdEndRendering2EXT");
     dt->CmdBeginCustomResolveEXT = (PFN_vkCmdBeginCustomResolveEXT)pa(device, "vkCmdBeginCustomResolveEXT");
+    dt->CmdSetComputeOccupancyPriorityNV =
+        (PFN_vkCmdSetComputeOccupancyPriorityNV)pa(device, "vkCmdSetComputeOccupancyPriorityNV");
     dt->CreateAccelerationStructureKHR =
         (PFN_vkCreateAccelerationStructureKHR)pa(device, "vkCreateAccelerationStructureKHR");
     dt->DestroyAccelerationStructureKHR =
