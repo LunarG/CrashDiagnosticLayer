@@ -108,6 +108,8 @@ struct Settings {
     bool trace_all_semaphores{false};
     bool trace_all{false};
     bool sync_after_commands{false};
+    bool trigger_timeline_semaphore{true};
+    bool trigger_watchdog_timeout{true};
     uint64_t watchdog_timer_ms{0};
 };
 
