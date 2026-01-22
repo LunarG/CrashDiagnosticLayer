@@ -574,8 +574,9 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             }
         }
     } else {
-        Log().Warning(
-            "No VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
+        Log().Error(
+            "No VK_KHR_timeline_semaphore extension, Vulkan 1.2 or VK_KHR_timeline_semaphore are quired to track queue "
+            "progress, enabling early device lost detection.");
     }
 
     // save the raw ptr before std::move of the std::unique_ptr
