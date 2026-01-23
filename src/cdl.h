@@ -108,7 +108,8 @@ struct Settings {
     bool trace_all_semaphores{false};
     bool trace_all{false};
     bool sync_after_commands{false};
-    uint64_t watchdog_timer_ms{0};
+    bool trigger_watchdog_timer{true};
+    uint64_t watchdog_timer_ms{30000};
 };
 
 class Context : public Interceptor {

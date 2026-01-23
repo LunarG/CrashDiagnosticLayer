@@ -51,6 +51,45 @@
         "features": {
             "settings": [
                 {
+                    "key": "triggers",
+                    "label": "Crash Dump Triggers",
+                    "description": "Additional crash detection methods beyond a VK_ERROR_DEVICE_LOST error returned by the Vulkan driver.",
+                    "type": "GROUP",
+                    "expanded": true,
+                    "settings": [
+                        {
+                            "key": "trigger_watchdog_timeout",
+                            "env": "CDL_TRIGGER_WATCHDOG_TIMEOUT",
+                            "label": "Watchdog Timer",
+                            "description": "If the application fails to submit new commands within a set time, a crash dump will be created as if the a lost device error was encountered.",
+                            "type": "BOOL",
+                            "default": true,
+                            "settings": [
+                                {
+                                    "key": "watchdog_timeout_ms",
+                                    "env": "CDL_WATCHDOG_TIMEOUT_MS",
+                                    "label": "Watchdog Timeout (ms)",
+                                    "description": "Time in milliseconds the application has to submit a new command before creating a crash dump.",
+                                    "type": "INT",
+                                    "default": 30000,
+                                    "range": {
+                                        "min": 1
+                                    },
+                                    "dependence": {
+                                        "mode": "ALL",
+                                        "settings": [
+                                            {
+                                                "key": "trigger_watchdog_timeout",
+                                                "value": true
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
                     "key": "state",
                     "label": "State Tracking",
                     "description": "Control of state tracking.",
@@ -127,18 +166,6 @@
                             "detailed": "VK_AMD_buffer_marker is required for this feature",
                             "type": "BOOL",
                             "default": true
-                        },
-                        {
-                            "key": "watchdog_timeout_ms",
-                            "env": "CDL_WATCHDOG_TIMEOUT_MS",
-                            "label": "Watchdog timeout (ms)",
-                            "description": "If set to a non-zero number, a watchdog thread will be created.",
-                            "detailed": "This will trigger if the application fails to submit new commands within a set time (in milliseconds) and a log will be created as if the a lost device error was encountered.",
-                            "type": "INT",
-                            "default": 30000,
-                            "range": {
-                                "min": 1
-                            }
                         }
                     ]
                 },

@@ -82,6 +82,7 @@ static const std::unordered_map<std::string, DumpShaders> kDumpShadersValues{
     {"all", DumpShaders::kAll},
 };
 
+const char* kTriggerWatchdogTimeout = "trigger_watchdog_timeout";
 const char* kWatchdogTimeout = "watchdog_timeout_ms";
 const char* kDumpAllCommandBuffers = "dump_all_command_buffers";
 const char* kTrackSemaphores = "track_semaphores";
@@ -166,6 +167,7 @@ void Settings::Print(YAML::Emitter& os) const {
     os << YAML::Key << settings::kDumpCommandBuffers << YAML::Value << dump_command_buffers;
     os << YAML::Key << settings::kDumpCommands << YAML::Value << dump_commands;
     os << YAML::Key << settings::kDumpShaders << YAML::Value << dump_shaders;
+    os << YAML::Key << settings::kTriggerWatchdogTimeout << YAML::Value << trigger_watchdog_timer;
     os << YAML::Key << settings::kWatchdogTimeout << YAML::Value << watchdog_timer_ms;
     os << YAML::Key << settings::kTrackSemaphores << YAML::Value << track_semaphores;
     os << YAML::Key << settings::kTraceAllSemaphores << YAML::Value << trace_all_semaphores;
