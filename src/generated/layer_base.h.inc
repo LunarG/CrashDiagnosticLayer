@@ -1228,6 +1228,18 @@ virtual void PostCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer
                                                    VkDeviceSize scratchSize, VkDeviceAddress countInfo) {}
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+virtual void PreCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {}
+
+virtual void PostCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {}
+
+virtual void PreCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {}
+
+virtual void PostCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {}
+
+virtual void PreCmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo) {}
+
+virtual void PostCmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo) {}
+
 virtual void PreCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
                                          const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {}
 

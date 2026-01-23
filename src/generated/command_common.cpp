@@ -361,6 +361,12 @@ const char *Command::GetCommandName(const Command &cmd) {
         case Command::Type::kCmdDispatchGraphIndirectCountAMDX:
             return "vkCmdDispatchGraphIndirectCountAMDX";
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+        case Command::Type::kCmdBindSamplerHeapEXT:
+            return "vkCmdBindSamplerHeapEXT";
+        case Command::Type::kCmdBindResourceHeapEXT:
+            return "vkCmdBindResourceHeapEXT";
+        case Command::Type::kCmdPushDataEXT:
+            return "vkCmdPushDataEXT";
         case Command::Type::kCmdSetSampleLocationsEXT:
             return "vkCmdSetSampleLocationsEXT";
         case Command::Type::kCmdBindShadingRateImageNV:

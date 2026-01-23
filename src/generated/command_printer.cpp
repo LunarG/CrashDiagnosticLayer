@@ -2557,6 +2557,36 @@ void CommandPrinter::PrintCmdDispatchGraphIndirectCountAMDXArgs(YAML::Emitter &o
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+void CommandPrinter::PrintCmdBindSamplerHeapEXTArgs(YAML::Emitter &os, const CmdBindSamplerHeapEXTArgs &args) {
+    os << YAML::Key << "pBindInfo";
+    // pointer
+    if (args.pBindInfo != nullptr) {
+        os << YAML::Value << *args.pBindInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdBindResourceHeapEXTArgs(YAML::Emitter &os, const CmdBindResourceHeapEXTArgs &args) {
+    os << YAML::Key << "pBindInfo";
+    // pointer
+    if (args.pBindInfo != nullptr) {
+        os << YAML::Value << *args.pBindInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdPushDataEXTArgs(YAML::Emitter &os, const CmdPushDataEXTArgs &args) {
+    os << YAML::Key << "pPushDataInfo";
+    // pointer
+    if (args.pPushDataInfo != nullptr) {
+        os << YAML::Value << *args.pPushDataInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdSetSampleLocationsEXTArgs(YAML::Emitter &os, const CmdSetSampleLocationsEXTArgs &args) {
     os << YAML::Key << "pSampleLocationsInfo";
     // pointer
@@ -5650,6 +5680,27 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+
+        case Command::Type::kCmdBindSamplerHeapEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindSamplerHeapEXTArgs *>(cmd.parameters);
+                PrintCmdBindSamplerHeapEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindResourceHeapEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindResourceHeapEXTArgs *>(cmd.parameters);
+                PrintCmdBindResourceHeapEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdPushDataEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdPushDataEXTArgs *>(cmd.parameters);
+                PrintCmdPushDataEXTArgs(os, *args);
+            }
+            break;
 
         case Command::Type::kCmdSetSampleLocationsEXT:
             if (cmd.parameters) {

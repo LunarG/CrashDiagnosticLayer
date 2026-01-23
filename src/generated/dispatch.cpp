@@ -225,6 +225,8 @@ void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa
     dt->DestroyDebugUtilsMessengerEXT =
         (PFN_vkDestroyDebugUtilsMessengerEXT)pa(instance, "vkDestroyDebugUtilsMessengerEXT");
     dt->SubmitDebugUtilsMessageEXT = (PFN_vkSubmitDebugUtilsMessageEXT)pa(instance, "vkSubmitDebugUtilsMessageEXT");
+    dt->GetPhysicalDeviceDescriptorSizeEXT =
+        (PFN_vkGetPhysicalDeviceDescriptorSizeEXT)pa(instance, "vkGetPhysicalDeviceDescriptorSizeEXT");
     dt->GetPhysicalDeviceMultisamplePropertiesEXT =
         (PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT)pa(instance, "vkGetPhysicalDeviceMultisamplePropertiesEXT");
     dt->GetPhysicalDeviceCalibrateableTimeDomainsEXT = (PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT)pa(
@@ -711,6 +713,8 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->GetImageViewHandleNVX = (PFN_vkGetImageViewHandleNVX)pa(device, "vkGetImageViewHandleNVX");
     dt->GetImageViewHandle64NVX = (PFN_vkGetImageViewHandle64NVX)pa(device, "vkGetImageViewHandle64NVX");
     dt->GetImageViewAddressNVX = (PFN_vkGetImageViewAddressNVX)pa(device, "vkGetImageViewAddressNVX");
+    dt->GetDeviceCombinedImageSamplerIndexNVX =
+        (PFN_vkGetDeviceCombinedImageSamplerIndexNVX)pa(device, "vkGetDeviceCombinedImageSamplerIndexNVX");
     dt->CmdDrawIndirectCountAMD = (PFN_vkCmdDrawIndirectCountAMD)pa(device, "vkCmdDrawIndirectCountAMD");
     dt->CmdDrawIndexedIndirectCountAMD =
         (PFN_vkCmdDrawIndexedIndirectCountAMD)pa(device, "vkCmdDrawIndexedIndirectCountAMD");
@@ -780,6 +784,17 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CmdDispatchGraphIndirectCountAMDX =
         (PFN_vkCmdDispatchGraphIndirectCountAMDX)pa(device, "vkCmdDispatchGraphIndirectCountAMDX");
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+    dt->WriteSamplerDescriptorsEXT = (PFN_vkWriteSamplerDescriptorsEXT)pa(device, "vkWriteSamplerDescriptorsEXT");
+    dt->WriteResourceDescriptorsEXT = (PFN_vkWriteResourceDescriptorsEXT)pa(device, "vkWriteResourceDescriptorsEXT");
+    dt->CmdBindSamplerHeapEXT = (PFN_vkCmdBindSamplerHeapEXT)pa(device, "vkCmdBindSamplerHeapEXT");
+    dt->CmdBindResourceHeapEXT = (PFN_vkCmdBindResourceHeapEXT)pa(device, "vkCmdBindResourceHeapEXT");
+    dt->CmdPushDataEXT = (PFN_vkCmdPushDataEXT)pa(device, "vkCmdPushDataEXT");
+    dt->GetImageOpaqueCaptureDataEXT = (PFN_vkGetImageOpaqueCaptureDataEXT)pa(device, "vkGetImageOpaqueCaptureDataEXT");
+    dt->RegisterCustomBorderColorEXT = (PFN_vkRegisterCustomBorderColorEXT)pa(device, "vkRegisterCustomBorderColorEXT");
+    dt->UnregisterCustomBorderColorEXT =
+        (PFN_vkUnregisterCustomBorderColorEXT)pa(device, "vkUnregisterCustomBorderColorEXT");
+    dt->GetTensorOpaqueCaptureDataARM =
+        (PFN_vkGetTensorOpaqueCaptureDataARM)pa(device, "vkGetTensorOpaqueCaptureDataARM");
     dt->CmdSetSampleLocationsEXT = (PFN_vkCmdSetSampleLocationsEXT)pa(device, "vkCmdSetSampleLocationsEXT");
     dt->GetImageDrmFormatModifierPropertiesEXT =
         (PFN_vkGetImageDrmFormatModifierPropertiesEXT)pa(device, "vkGetImageDrmFormatModifierPropertiesEXT");

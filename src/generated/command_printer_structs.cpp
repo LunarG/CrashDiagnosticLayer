@@ -15641,6 +15641,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkReleaseSwapchainImagesInfoK
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "internallySynchronizedQueues";
+    // internallySynchronizedQueues -> Field -> VkBool32
+    os << YAML::Value << t.internallySynchronizedQueues;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixPropertiesKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -19622,6 +19639,781 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineShaderStageNodeCrea
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkHostAddressRangeEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "address";
+    if (t.size == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value << YAML::BeginSeq;
+        {
+            const uint8_t *p = (const uint8_t *)t.address;
+            for (uint64_t i = 0; i < t.size; ++i) {
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
+            }
+        }
+        os << YAML::EndSeq;
+    }
+    os << YAML::Key << "size";
+    // size -> Field -> size_t
+    os << YAML::Value << t.size;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkHostAddressRangeConstEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "address";
+    if (t.size == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value << YAML::BeginSeq;
+        {
+            const uint8_t *p = (const uint8_t *)t.address;
+            for (uint64_t i = 0; i < t.size; ++i) {
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
+            }
+        }
+        os << YAML::EndSeq;
+    }
+    os << YAML::Key << "size";
+    // size -> Field -> size_t
+    os << YAML::Value << t.size;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceAddressRangeEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "address";
+    // address -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.address);
+    os << YAML::Key << "size";
+    // size -> Field -> VkDeviceSize
+    os << YAML::Value << t.size;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTexelBufferDescriptorInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "format";
+    // format -> Field -> VkFormat
+    os << YAML::Value << t.format;
+    os << YAML::Key << "addressRange";
+    // addressRange -> Field -> VkDeviceAddressRangeEXT
+    os << YAML::Value << t.addressRange;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageDescriptorInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pView";
+    // pointer
+    if (t.pView != nullptr) {
+        os << YAML::Value << *t.pView;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "layout";
+    // layout -> Field -> VkImageLayout
+    os << YAML::Value << t.layout;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorViewCreateInfoARM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkTensorViewCreateFlagsARM
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "tensor";
+    // tensor -> Field -> VkTensorARM
+    os << YAML::Value << t.tensor;
+    os << YAML::Key << "format";
+    // format -> Field -> VkFormat
+    os << YAML::Value << t.format;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkResourceDescriptorDataEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "pImage";
+    // pointer
+    if (t.pImage != nullptr) {
+        os << YAML::Value << *t.pImage;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pTexelBuffer";
+    // pointer
+    if (t.pTexelBuffer != nullptr) {
+        os << YAML::Value << *t.pTexelBuffer;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pAddressRange";
+    // pointer
+    if (t.pAddressRange != nullptr) {
+        os << YAML::Value << *t.pAddressRange;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pTensorARM";
+    // pointer
+    if (t.pTensorARM != nullptr) {
+        os << YAML::Value << *t.pTensorARM;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkResourceDescriptorInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "type";
+    // type -> Field -> VkDescriptorType
+    os << YAML::Value << t.type;
+    os << YAML::Key << "data";
+    // data -> Field -> VkResourceDescriptorDataEXT
+    os << YAML::Value << t.data;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindHeapInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "heapRange";
+    // heapRange -> Field -> VkDeviceAddressRangeEXT
+    os << YAML::Value << t.heapRange;
+    os << YAML::Key << "reservedRangeOffset";
+    // reservedRangeOffset -> Field -> VkDeviceSize
+    os << YAML::Value << t.reservedRangeOffset;
+    os << YAML::Key << "reservedRangeSize";
+    // reservedRangeSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.reservedRangeSize;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPushDataInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "offset";
+    // offset -> Field -> uint32_t
+    os << YAML::Value << t.offset;
+    os << YAML::Key << "data";
+    // data -> Field -> VkHostAddressRangeConstEXT
+    os << YAML::Value << t.data;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourceConstantOffsetEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "heapOffset";
+    // heapOffset -> Field -> uint32_t
+    os << YAML::Value << t.heapOffset;
+    os << YAML::Key << "heapArrayStride";
+    // heapArrayStride -> Field -> uint32_t
+    os << YAML::Value << t.heapArrayStride;
+    os << YAML::Key << "pEmbeddedSampler";
+    // pointer
+    if (t.pEmbeddedSampler != nullptr) {
+        os << YAML::Value << *t.pEmbeddedSampler;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "samplerHeapOffset";
+    // samplerHeapOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapOffset;
+    os << YAML::Key << "samplerHeapArrayStride";
+    // samplerHeapArrayStride -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapArrayStride;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourcePushIndexEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "heapOffset";
+    // heapOffset -> Field -> uint32_t
+    os << YAML::Value << t.heapOffset;
+    os << YAML::Key << "pushOffset";
+    // pushOffset -> Field -> uint32_t
+    os << YAML::Value << t.pushOffset;
+    os << YAML::Key << "heapIndexStride";
+    // heapIndexStride -> Field -> uint32_t
+    os << YAML::Value << t.heapIndexStride;
+    os << YAML::Key << "heapArrayStride";
+    // heapArrayStride -> Field -> uint32_t
+    os << YAML::Value << t.heapArrayStride;
+    os << YAML::Key << "pEmbeddedSampler";
+    // pointer
+    if (t.pEmbeddedSampler != nullptr) {
+        os << YAML::Value << *t.pEmbeddedSampler;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "useCombinedImageSamplerIndex";
+    // useCombinedImageSamplerIndex -> Field -> VkBool32
+    os << YAML::Value << t.useCombinedImageSamplerIndex;
+    os << YAML::Key << "samplerHeapOffset";
+    // samplerHeapOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapOffset;
+    os << YAML::Key << "samplerPushOffset";
+    // samplerPushOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerPushOffset;
+    os << YAML::Key << "samplerHeapIndexStride";
+    // samplerHeapIndexStride -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapIndexStride;
+    os << YAML::Key << "samplerHeapArrayStride";
+    // samplerHeapArrayStride -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapArrayStride;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourceIndirectIndexEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "heapOffset";
+    // heapOffset -> Field -> uint32_t
+    os << YAML::Value << t.heapOffset;
+    os << YAML::Key << "pushOffset";
+    // pushOffset -> Field -> uint32_t
+    os << YAML::Value << t.pushOffset;
+    os << YAML::Key << "addressOffset";
+    // addressOffset -> Field -> uint32_t
+    os << YAML::Value << t.addressOffset;
+    os << YAML::Key << "heapIndexStride";
+    // heapIndexStride -> Field -> uint32_t
+    os << YAML::Value << t.heapIndexStride;
+    os << YAML::Key << "heapArrayStride";
+    // heapArrayStride -> Field -> uint32_t
+    os << YAML::Value << t.heapArrayStride;
+    os << YAML::Key << "pEmbeddedSampler";
+    // pointer
+    if (t.pEmbeddedSampler != nullptr) {
+        os << YAML::Value << *t.pEmbeddedSampler;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "useCombinedImageSamplerIndex";
+    // useCombinedImageSamplerIndex -> Field -> VkBool32
+    os << YAML::Value << t.useCombinedImageSamplerIndex;
+    os << YAML::Key << "samplerHeapOffset";
+    // samplerHeapOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapOffset;
+    os << YAML::Key << "samplerPushOffset";
+    // samplerPushOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerPushOffset;
+    os << YAML::Key << "samplerAddressOffset";
+    // samplerAddressOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerAddressOffset;
+    os << YAML::Key << "samplerHeapIndexStride";
+    // samplerHeapIndexStride -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapIndexStride;
+    os << YAML::Key << "samplerHeapArrayStride";
+    // samplerHeapArrayStride -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapArrayStride;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourceHeapDataEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "heapOffset";
+    // heapOffset -> Field -> uint32_t
+    os << YAML::Value << t.heapOffset;
+    os << YAML::Key << "pushOffset";
+    // pushOffset -> Field -> uint32_t
+    os << YAML::Value << t.pushOffset;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourceIndirectAddressEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "pushOffset";
+    // pushOffset -> Field -> uint32_t
+    os << YAML::Value << t.pushOffset;
+    os << YAML::Key << "addressOffset";
+    // addressOffset -> Field -> uint32_t
+    os << YAML::Value << t.addressOffset;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourceShaderRecordIndexEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "heapOffset";
+    // heapOffset -> Field -> uint32_t
+    os << YAML::Value << t.heapOffset;
+    os << YAML::Key << "shaderRecordOffset";
+    // shaderRecordOffset -> Field -> uint32_t
+    os << YAML::Value << t.shaderRecordOffset;
+    os << YAML::Key << "heapIndexStride";
+    // heapIndexStride -> Field -> uint32_t
+    os << YAML::Value << t.heapIndexStride;
+    os << YAML::Key << "heapArrayStride";
+    // heapArrayStride -> Field -> uint32_t
+    os << YAML::Value << t.heapArrayStride;
+    os << YAML::Key << "pEmbeddedSampler";
+    // pointer
+    if (t.pEmbeddedSampler != nullptr) {
+        os << YAML::Value << *t.pEmbeddedSampler;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "useCombinedImageSamplerIndex";
+    // useCombinedImageSamplerIndex -> Field -> VkBool32
+    os << YAML::Value << t.useCombinedImageSamplerIndex;
+    os << YAML::Key << "samplerHeapOffset";
+    // samplerHeapOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapOffset;
+    os << YAML::Key << "samplerShaderRecordOffset";
+    // samplerShaderRecordOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerShaderRecordOffset;
+    os << YAML::Key << "samplerHeapIndexStride";
+    // samplerHeapIndexStride -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapIndexStride;
+    os << YAML::Key << "samplerHeapArrayStride";
+    // samplerHeapArrayStride -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapArrayStride;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourceIndirectIndexArrayEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "heapOffset";
+    // heapOffset -> Field -> uint32_t
+    os << YAML::Value << t.heapOffset;
+    os << YAML::Key << "pushOffset";
+    // pushOffset -> Field -> uint32_t
+    os << YAML::Value << t.pushOffset;
+    os << YAML::Key << "addressOffset";
+    // addressOffset -> Field -> uint32_t
+    os << YAML::Value << t.addressOffset;
+    os << YAML::Key << "heapIndexStride";
+    // heapIndexStride -> Field -> uint32_t
+    os << YAML::Value << t.heapIndexStride;
+    os << YAML::Key << "pEmbeddedSampler";
+    // pointer
+    if (t.pEmbeddedSampler != nullptr) {
+        os << YAML::Value << *t.pEmbeddedSampler;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "useCombinedImageSamplerIndex";
+    // useCombinedImageSamplerIndex -> Field -> VkBool32
+    os << YAML::Value << t.useCombinedImageSamplerIndex;
+    os << YAML::Key << "samplerHeapOffset";
+    // samplerHeapOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapOffset;
+    os << YAML::Key << "samplerPushOffset";
+    // samplerPushOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerPushOffset;
+    os << YAML::Key << "samplerAddressOffset";
+    // samplerAddressOffset -> Field -> uint32_t
+    os << YAML::Value << t.samplerAddressOffset;
+    os << YAML::Key << "samplerHeapIndexStride";
+    // samplerHeapIndexStride -> Field -> uint32_t
+    os << YAML::Value << t.samplerHeapIndexStride;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourceDataEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "constantOffset";
+    // constantOffset -> Field -> VkDescriptorMappingSourceConstantOffsetEXT
+    os << YAML::Value << t.constantOffset;
+    os << YAML::Key << "pushIndex";
+    // pushIndex -> Field -> VkDescriptorMappingSourcePushIndexEXT
+    os << YAML::Value << t.pushIndex;
+    os << YAML::Key << "indirectIndex";
+    // indirectIndex -> Field -> VkDescriptorMappingSourceIndirectIndexEXT
+    os << YAML::Value << t.indirectIndex;
+    os << YAML::Key << "indirectIndexArray";
+    // indirectIndexArray -> Field -> VkDescriptorMappingSourceIndirectIndexArrayEXT
+    os << YAML::Value << t.indirectIndexArray;
+    os << YAML::Key << "heapData";
+    // heapData -> Field -> VkDescriptorMappingSourceHeapDataEXT
+    os << YAML::Value << t.heapData;
+    os << YAML::Key << "pushDataOffset";
+    // pushDataOffset -> Field -> uint32_t
+    os << YAML::Value << t.pushDataOffset;
+    os << YAML::Key << "pushAddressOffset";
+    // pushAddressOffset -> Field -> uint32_t
+    os << YAML::Value << t.pushAddressOffset;
+    os << YAML::Key << "indirectAddress";
+    // indirectAddress -> Field -> VkDescriptorMappingSourceIndirectAddressEXT
+    os << YAML::Value << t.indirectAddress;
+    os << YAML::Key << "shaderRecordIndex";
+    // shaderRecordIndex -> Field -> VkDescriptorMappingSourceShaderRecordIndexEXT
+    os << YAML::Value << t.shaderRecordIndex;
+    os << YAML::Key << "shaderRecordDataOffset";
+    // shaderRecordDataOffset -> Field -> uint32_t
+    os << YAML::Value << t.shaderRecordDataOffset;
+    os << YAML::Key << "shaderRecordAddressOffset";
+    // shaderRecordAddressOffset -> Field -> uint32_t
+    os << YAML::Value << t.shaderRecordAddressOffset;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorSetAndBindingMappingEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "descriptorSet";
+    // descriptorSet -> Field -> uint32_t
+    os << YAML::Value << t.descriptorSet;
+    os << YAML::Key << "firstBinding";
+    // firstBinding -> Field -> uint32_t
+    os << YAML::Value << t.firstBinding;
+    os << YAML::Key << "bindingCount";
+    // bindingCount -> Field -> uint32_t
+    os << YAML::Value << t.bindingCount;
+    os << YAML::Key << "resourceMask";
+    // resourceMask -> Field -> VkSpirvResourceTypeFlagsEXT
+    os << YAML::Value << t.resourceMask;
+    os << YAML::Key << "source";
+    // source -> Field -> VkDescriptorMappingSourceEXT
+    os << YAML::Value << t.source;
+    os << YAML::Key << "sourceData";
+    // sourceData -> Field -> VkDescriptorMappingSourceDataEXT
+    os << YAML::Value << t.sourceData;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderDescriptorSetAndBindingMappingInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "mappingCount";
+    // mappingCount -> Field -> uint32_t
+    os << YAML::Value << t.mappingCount;
+    os << YAML::Key << "pMappings";
+    // pMappings -> Field -> ConstDynamicArray(VkDescriptorSetAndBindingMappingEXT)
+    if (t.mappingCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkDescriptorSetAndBindingMappingEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.mappingCount); ++i) {
+                os << t.pMappings[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpaqueCaptureDataCreateInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pData";
+    // pointer
+    if (t.pData != nullptr) {
+        os << YAML::Value << *t.pData;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorHeapFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "descriptorHeap";
+    // descriptorHeap -> Field -> VkBool32
+    os << YAML::Value << t.descriptorHeap;
+    os << YAML::Key << "descriptorHeapCaptureReplay";
+    // descriptorHeapCaptureReplay -> Field -> VkBool32
+    os << YAML::Value << t.descriptorHeapCaptureReplay;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorHeapPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "samplerHeapAlignment";
+    // samplerHeapAlignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.samplerHeapAlignment;
+    os << YAML::Key << "resourceHeapAlignment";
+    // resourceHeapAlignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.resourceHeapAlignment;
+    os << YAML::Key << "maxSamplerHeapSize";
+    // maxSamplerHeapSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.maxSamplerHeapSize;
+    os << YAML::Key << "maxResourceHeapSize";
+    // maxResourceHeapSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.maxResourceHeapSize;
+    os << YAML::Key << "minSamplerHeapReservedRange";
+    // minSamplerHeapReservedRange -> Field -> VkDeviceSize
+    os << YAML::Value << t.minSamplerHeapReservedRange;
+    os << YAML::Key << "minSamplerHeapReservedRangeWithEmbedded";
+    // minSamplerHeapReservedRangeWithEmbedded -> Field -> VkDeviceSize
+    os << YAML::Value << t.minSamplerHeapReservedRangeWithEmbedded;
+    os << YAML::Key << "minResourceHeapReservedRange";
+    // minResourceHeapReservedRange -> Field -> VkDeviceSize
+    os << YAML::Value << t.minResourceHeapReservedRange;
+    os << YAML::Key << "samplerDescriptorSize";
+    // samplerDescriptorSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.samplerDescriptorSize;
+    os << YAML::Key << "imageDescriptorSize";
+    // imageDescriptorSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.imageDescriptorSize;
+    os << YAML::Key << "bufferDescriptorSize";
+    // bufferDescriptorSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.bufferDescriptorSize;
+    os << YAML::Key << "samplerDescriptorAlignment";
+    // samplerDescriptorAlignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.samplerDescriptorAlignment;
+    os << YAML::Key << "imageDescriptorAlignment";
+    // imageDescriptorAlignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.imageDescriptorAlignment;
+    os << YAML::Key << "bufferDescriptorAlignment";
+    // bufferDescriptorAlignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.bufferDescriptorAlignment;
+    os << YAML::Key << "maxPushDataSize";
+    // maxPushDataSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.maxPushDataSize;
+    os << YAML::Key << "imageCaptureReplayOpaqueDataSize";
+    // imageCaptureReplayOpaqueDataSize -> Field -> size_t
+    os << YAML::Value << t.imageCaptureReplayOpaqueDataSize;
+    os << YAML::Key << "maxDescriptorHeapEmbeddedSamplers";
+    // maxDescriptorHeapEmbeddedSamplers -> Field -> uint32_t
+    os << YAML::Value << t.maxDescriptorHeapEmbeddedSamplers;
+    os << YAML::Key << "samplerYcbcrConversionCount";
+    // samplerYcbcrConversionCount -> Field -> uint32_t
+    os << YAML::Value << t.samplerYcbcrConversionCount;
+    os << YAML::Key << "sparseDescriptorHeaps";
+    // sparseDescriptorHeaps -> Field -> VkBool32
+    os << YAML::Value << t.sparseDescriptorHeaps;
+    os << YAML::Key << "protectedDescriptorHeaps";
+    // protectedDescriptorHeaps -> Field -> VkBool32
+    os << YAML::Value << t.protectedDescriptorHeaps;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCommandBufferInheritanceDescriptorHeapInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pSamplerHeapBindInfo";
+    // pointer
+    if (t.pSamplerHeapBindInfo != nullptr) {
+        os << YAML::Value << *t.pSamplerHeapBindInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pResourceHeapBindInfo";
+    // pointer
+    if (t.pResourceHeapBindInfo != nullptr) {
+        os << YAML::Value << *t.pResourceHeapBindInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerCustomBorderColorIndexCreateInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "index";
+    // index -> Field -> uint32_t
+    os << YAML::Value << t.index;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerCustomBorderColorCreateInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "customBorderColor";
+    // customBorderColor -> Field -> VkClearColorValue
+    os << YAML::Value << t.customBorderColor;
+    os << YAML::Key << "format";
+    // format -> Field -> VkFormat
+    os << YAML::Value << t.format;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutPushDataTokenNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pushDataOffset";
+    // pushDataOffset -> Field -> uint32_t
+    os << YAML::Value << t.pushDataOffset;
+    os << YAML::Key << "pushDataSize";
+    // pushDataSize -> Field -> uint32_t
+    os << YAML::Value << t.pushDataSize;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubsampledImageFormatPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "subsampledImageDescriptorCount";
+    // subsampledImageDescriptorCount -> Field -> uint32_t
+    os << YAML::Value << t.subsampledImageDescriptorCount;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorHeapTensorPropertiesARM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "tensorDescriptorSize";
+    // tensorDescriptorSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.tensorDescriptorSize;
+    os << YAML::Key << "tensorDescriptorAlignment";
+    // tensorDescriptorAlignment -> Field -> VkDeviceSize
+    os << YAML::Value << t.tensorDescriptorAlignment;
+    os << YAML::Key << "tensorCaptureReplayOpaqueDataSize";
+    // tensorCaptureReplayOpaqueDataSize -> Field -> size_t
+    os << YAML::Value << t.tensorCaptureReplayOpaqueDataSize;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentSampleCountInfoAMD &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -23502,26 +24294,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceDeviceMemoryReportCre
     os << YAML::Key << "pUserData";
     // void
     os << YAML::Value << "NOT_AVAILABLE";
-    os << YAML::EndMap;
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerCustomBorderColorCreateInfoEXT &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "customBorderColor";
-    // customBorderColor -> Field -> VkClearColorValue
-    os << YAML::Value << t.customBorderColor;
-    os << YAML::Key << "format";
-    // format -> Field -> VkFormat
-    os << YAML::Value << t.format;
     os << YAML::EndMap;
     return os;
 }
@@ -28777,29 +29549,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorCreateInfoARM &t) {
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorViewCreateInfoARM &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "sType";
-    // sType -> Field -> VkStructureType
-    os << YAML::Value << t.sType;
-    os << YAML::Key << "pNext";
-    // pNext -> Field -> ConstNextPtr(void)
-    os << YAML::Value << YAML::BeginSeq;
-    PrintNextPtr(os, t.pNext);
-    os << YAML::EndSeq;
-    os << YAML::Key << "flags";
-    // flags -> Field -> VkTensorViewCreateFlagsARM
-    os << YAML::Value << t.flags;
-    os << YAML::Key << "tensor";
-    // tensor -> Field -> VkTensorARM
-    os << YAML::Value << t.tensor;
-    os << YAML::Key << "format";
-    // format -> Field -> VkFormat
-    os << YAML::Value << t.format;
-    os << YAML::EndMap;
-    return os;
-}
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorMemoryRequirementsInfoARM &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -33351,6 +34100,66 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageAlignmentControlCreate
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPushConstantBankInfoNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "bank";
+    // bank -> Field -> uint32_t
+    os << YAML::Value << t.bank;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePushConstantBankFeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "pushConstantBank";
+    // pushConstantBank -> Field -> VkBool32
+    os << YAML::Value << t.pushConstantBank;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePushConstantBankPropertiesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxGraphicsPushConstantBanks";
+    // maxGraphicsPushConstantBanks -> Field -> uint32_t
+    os << YAML::Value << t.maxGraphicsPushConstantBanks;
+    os << YAML::Key << "maxComputePushConstantBanks";
+    // maxComputePushConstantBanks -> Field -> uint32_t
+    os << YAML::Value << t.maxComputePushConstantBanks;
+    os << YAML::Key << "maxGraphicsPushDataBanks";
+    // maxGraphicsPushDataBanks -> Field -> uint32_t
+    os << YAML::Value << t.maxGraphicsPushDataBanks;
+    os << YAML::Key << "maxComputePushDataBanks";
+    // maxComputePushDataBanks -> Field -> uint32_t
+    os << YAML::Value << t.maxComputePushDataBanks;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -34206,6 +35015,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeOccupa
     os << YAML::Key << "computeOccupancyPriority";
     // computeOccupancyPriority -> Field -> VkBool32
     os << YAML::Value << t.computeOccupancyPriority;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderSubgroupPartitioned";
+    // shaderSubgroupPartitioned -> Field -> VkBool32
+    os << YAML::Value << t.shaderSubgroupPartitioned;
     os << YAML::EndMap;
     return os;
 }
@@ -36499,6 +37325,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_RELEASE_SWAPCHAIN_IMAGES_INFO_KHR:
             os << *reinterpret_cast<const VkReleaseSwapchainImagesInfoKHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INTERNALLY_SYNCHRONIZED_QUEUES_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_KHR:
             os << *reinterpret_cast<const VkCooperativeMatrixPropertiesKHR *>(pStruct);
             break;
@@ -36972,6 +37801,57 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkPipelineShaderStageNodeCreateInfoAMDX *>(pStruct);
             break;
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+        case VK_STRUCTURE_TYPE_TEXEL_BUFFER_DESCRIPTOR_INFO_EXT:
+            os << *reinterpret_cast<const VkTexelBufferDescriptorInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_IMAGE_DESCRIPTOR_INFO_EXT:
+            os << *reinterpret_cast<const VkImageDescriptorInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_TENSOR_VIEW_CREATE_INFO_ARM:
+            os << *reinterpret_cast<const VkTensorViewCreateInfoARM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_RESOURCE_DESCRIPTOR_INFO_EXT:
+            os << *reinterpret_cast<const VkResourceDescriptorInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_BIND_HEAP_INFO_EXT:
+            os << *reinterpret_cast<const VkBindHeapInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PUSH_DATA_INFO_EXT:
+            os << *reinterpret_cast<const VkPushDataInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_DESCRIPTOR_SET_AND_BINDING_MAPPING_EXT:
+            os << *reinterpret_cast<const VkDescriptorSetAndBindingMappingEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SHADER_DESCRIPTOR_SET_AND_BINDING_MAPPING_INFO_EXT:
+            os << *reinterpret_cast<const VkShaderDescriptorSetAndBindingMappingInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DATA_CREATE_INFO_EXT:
+            os << *reinterpret_cast<const VkOpaqueCaptureDataCreateInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceDescriptorHeapFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceDescriptorHeapPropertiesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_DESCRIPTOR_HEAP_INFO_EXT:
+            os << *reinterpret_cast<const VkCommandBufferInheritanceDescriptorHeapInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_INDEX_CREATE_INFO_EXT:
+            os << *reinterpret_cast<const VkSamplerCustomBorderColorIndexCreateInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT:
+            os << *reinterpret_cast<const VkSamplerCustomBorderColorCreateInfoEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_PUSH_DATA_TOKEN_NV:
+            os << *reinterpret_cast<const VkIndirectCommandsLayoutPushDataTokenNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SUBSAMPLED_IMAGE_FORMAT_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkSubsampledImageFormatPropertiesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_TENSOR_PROPERTIES_ARM:
+            os << *reinterpret_cast<const VkPhysicalDeviceDescriptorHeapTensorPropertiesARM *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD:
             os << *reinterpret_cast<const VkAttachmentSampleCountInfoAMD *>(pStruct);
             break;
@@ -37382,9 +38262,6 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_DEVICE_DEVICE_MEMORY_REPORT_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkDeviceDeviceMemoryReportCreateInfoEXT *>(pStruct);
-            break;
-        case VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT:
-            os << *reinterpret_cast<const VkSamplerCustomBorderColorCreateInfoEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceCustomBorderColorPropertiesEXT *>(pStruct);
@@ -38057,9 +38934,6 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_TENSOR_CREATE_INFO_ARM:
             os << *reinterpret_cast<const VkTensorCreateInfoARM *>(pStruct);
             break;
-        case VK_STRUCTURE_TYPE_TENSOR_VIEW_CREATE_INFO_ARM:
-            os << *reinterpret_cast<const VkTensorViewCreateInfoARM *>(pStruct);
-            break;
         case VK_STRUCTURE_TYPE_TENSOR_MEMORY_REQUIREMENTS_INFO_ARM:
             os << *reinterpret_cast<const VkTensorMemoryRequirementsInfoARM *>(pStruct);
             break;
@@ -38569,6 +39443,15 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA:
             os << *reinterpret_cast<const VkImageAlignmentControlCreateInfoMESA *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PUSH_CONSTANT_BANK_INFO_NV:
+            os << *reinterpret_cast<const VkPushConstantBankInfoNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_CONSTANT_BANK_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDevicePushConstantBankFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_CONSTANT_BANK_PROPERTIES_NV:
+            os << *reinterpret_cast<const VkPhysicalDevicePushConstantBankPropertiesNV *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT *>(pStruct);
             break;
@@ -38697,6 +39580,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);
