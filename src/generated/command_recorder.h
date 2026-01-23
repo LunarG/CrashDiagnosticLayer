@@ -574,6 +574,14 @@ class CommandRecorder {
                                                                                    VkDeviceAddress countInfo);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+    CmdBindSamplerHeapEXTArgs* RecordCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer,
+                                                           const VkBindHeapInfoEXT* pBindInfo);
+
+    CmdBindResourceHeapEXTArgs* RecordCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer,
+                                                             const VkBindHeapInfoEXT* pBindInfo);
+
+    CmdPushDataEXTArgs* RecordCmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo);
+
     CmdSetSampleLocationsEXTArgs* RecordCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
                                                                  const VkSampleLocationsInfoEXT* pSampleLocationsInfo);
 

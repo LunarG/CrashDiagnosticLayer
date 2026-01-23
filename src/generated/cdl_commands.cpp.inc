@@ -1768,6 +1768,33 @@ void Context::PostCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffe
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+void Context::PreCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBindSamplerHeapEXT(commandBuffer, pBindInfo);
+}
+void Context::PostCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBindSamplerHeapEXT(commandBuffer, pBindInfo);
+}
+
+void Context::PreCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdBindResourceHeapEXT(commandBuffer, pBindInfo);
+}
+void Context::PostCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdBindResourceHeapEXT(commandBuffer, pBindInfo);
+}
+
+void Context::PreCmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdPushDataEXT(commandBuffer, pPushDataInfo);
+}
+void Context::PostCmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdPushDataEXT(commandBuffer, pPushDataInfo);
+}
+
 void Context::PreCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
                                           const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);

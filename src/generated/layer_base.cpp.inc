@@ -2789,6 +2789,45 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdDispatchGraphIndirectCountAMDX(VkC
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer,
+                                                                 const VkBindHeapInfoEXT* pBindInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBindSamplerHeapEXT(commandBuffer, pBindInfo);
+
+    PFN_vkCmdBindSamplerHeapEXT pfn = layer_data->dispatch_table.CmdBindSamplerHeapEXT;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pBindInfo);
+    }
+
+    layer_data->interceptor->PostCmdBindSamplerHeapEXT(commandBuffer, pBindInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer,
+                                                                  const VkBindHeapInfoEXT* pBindInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBindResourceHeapEXT(commandBuffer, pBindInfo);
+
+    PFN_vkCmdBindResourceHeapEXT pfn = layer_data->dispatch_table.CmdBindResourceHeapEXT;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pBindInfo);
+    }
+
+    layer_data->interceptor->PostCmdBindResourceHeapEXT(commandBuffer, pBindInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdPushDataEXT(VkCommandBuffer commandBuffer,
+                                                          const VkPushDataInfoEXT* pPushDataInfo) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdPushDataEXT(commandBuffer, pPushDataInfo);
+
+    PFN_vkCmdPushDataEXT pfn = layer_data->dispatch_table.CmdPushDataEXT;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pPushDataInfo);
+    }
+
+    layer_data->interceptor->PostCmdPushDataEXT(commandBuffer, pPushDataInfo);
+}
+
 static VKAPI_ATTR void VKAPI_CALL
 InterceptCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -4849,6 +4888,9 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         {"vkCmdDispatchGraphIndirectCountAMDX", {kFuncTypeDev, (void*)InterceptCmdDispatchGraphIndirectCountAMDX}},
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+        {"vkCmdBindSamplerHeapEXT", {kFuncTypeDev, (void*)InterceptCmdBindSamplerHeapEXT}},
+        {"vkCmdBindResourceHeapEXT", {kFuncTypeDev, (void*)InterceptCmdBindResourceHeapEXT}},
+        {"vkCmdPushDataEXT", {kFuncTypeDev, (void*)InterceptCmdPushDataEXT}},
         {"vkCmdSetSampleLocationsEXT", {kFuncTypeDev, (void*)InterceptCmdSetSampleLocationsEXT}},
         {"vkCmdBindShadingRateImageNV", {kFuncTypeDev, (void*)InterceptCmdBindShadingRateImageNV}},
         {"vkCmdSetViewportShadingRatePaletteNV", {kFuncTypeDev, (void*)InterceptCmdSetViewportShadingRatePaletteNV}},

@@ -205,6 +205,9 @@ struct Command {
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         kCmdDispatchGraphIndirectCountAMDX,
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+        kCmdBindSamplerHeapEXT,
+        kCmdBindResourceHeapEXT,
+        kCmdPushDataEXT,
         kCmdSetSampleLocationsEXT,
         kCmdBindShadingRateImageNV,
         kCmdSetViewportShadingRatePaletteNV,
@@ -1384,6 +1387,21 @@ struct CmdDispatchGraphIndirectCountAMDXArgs {
     VkDeviceAddress countInfo;
 };
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+
+struct CmdBindSamplerHeapEXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkBindHeapInfoEXT* pBindInfo;
+};
+
+struct CmdBindResourceHeapEXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkBindHeapInfoEXT* pBindInfo;
+};
+
+struct CmdPushDataEXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkPushDataInfoEXT* pPushDataInfo;
+};
 
 struct CmdSetSampleLocationsEXTArgs {
     VkCommandBuffer commandBuffer;

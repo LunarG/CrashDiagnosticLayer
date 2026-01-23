@@ -94,6 +94,8 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkCuFunctionNVX";
         case VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT:
             return "VkDebugUtilsMessengerEXT";
+        case VK_OBJECT_TYPE_TENSOR_ARM:
+            return "VkTensorARM";
         case VK_OBJECT_TYPE_VALIDATION_CACHE_EXT:
             return "VkValidationCacheEXT";
         case VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV:
@@ -116,8 +118,6 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
 #endif  // VK_USE_PLATFORM_FUCHSIA
         case VK_OBJECT_TYPE_MICROMAP_EXT:
             return "VkMicromapEXT";
-        case VK_OBJECT_TYPE_TENSOR_ARM:
-            return "VkTensorARM";
         case VK_OBJECT_TYPE_TENSOR_VIEW_ARM:
             return "VkTensorViewARM";
         case VK_OBJECT_TYPE_OPTICAL_FLOW_SESSION_NV:

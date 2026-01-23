@@ -247,6 +247,18 @@ VkDispatchGraphCountInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphCountInf
     const VkDispatchGraphCountInfoAMDX* src, size_t start_index, size_t count);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 template <>
+VkHostAddressRangeConstEXT* CommandRecorder::CopyArray<VkHostAddressRangeConstEXT>(
+    const VkHostAddressRangeConstEXT* src, size_t start_index, size_t count);
+template <>
+VkDeviceAddressRangeEXT* CommandRecorder::CopyArray<VkDeviceAddressRangeEXT>(const VkDeviceAddressRangeEXT* src,
+                                                                             size_t start_index, size_t count);
+template <>
+VkBindHeapInfoEXT* CommandRecorder::CopyArray<VkBindHeapInfoEXT>(const VkBindHeapInfoEXT* src, size_t start_index,
+                                                                 size_t count);
+template <>
+VkPushDataInfoEXT* CommandRecorder::CopyArray<VkPushDataInfoEXT>(const VkPushDataInfoEXT* src, size_t start_index,
+                                                                 size_t count);
+template <>
 VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSampleLocationEXT* src, size_t start_index,
                                                                      size_t count);
 template <>
@@ -1646,6 +1658,57 @@ VkDispatchGraphCountInfoAMDX* CommandRecorder::CopyArray<VkDispatchGraphCountInf
     return ptr;
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+
+template <>
+VkHostAddressRangeConstEXT* CommandRecorder::CopyArray<VkHostAddressRangeConstEXT>(
+    const VkHostAddressRangeConstEXT* src, size_t start_index, size_t count) {
+    auto ptr =
+        reinterpret_cast<VkHostAddressRangeConstEXT*>(m_allocator.Alloc(sizeof(VkHostAddressRangeConstEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].address = reinterpret_cast<const void*>(
+            CopyArray(reinterpret_cast<const uint8_t*>(src[start_index + i].address), 0U, src[start_index + i].size));
+        ptr[i].size = src[start_index + i].size;
+    }
+    return ptr;
+}
+
+template <>
+VkDeviceAddressRangeEXT* CommandRecorder::CopyArray<VkDeviceAddressRangeEXT>(const VkDeviceAddressRangeEXT* src,
+                                                                             size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkDeviceAddressRangeEXT*>(m_allocator.Alloc(sizeof(VkDeviceAddressRangeEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].address = src[start_index + i].address;
+        ptr[i].size = src[start_index + i].size;
+    }
+    return ptr;
+}
+
+template <>
+VkBindHeapInfoEXT* CommandRecorder::CopyArray<VkBindHeapInfoEXT>(const VkBindHeapInfoEXT* src, size_t start_index,
+                                                                 size_t count) {
+    auto ptr = reinterpret_cast<VkBindHeapInfoEXT*>(m_allocator.Alloc(sizeof(VkBindHeapInfoEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].heapRange = src[start_index + i].heapRange;
+        ptr[i].reservedRangeOffset = src[start_index + i].reservedRangeOffset;
+        ptr[i].reservedRangeSize = src[start_index + i].reservedRangeSize;
+    }
+    return ptr;
+}
+
+template <>
+VkPushDataInfoEXT* CommandRecorder::CopyArray<VkPushDataInfoEXT>(const VkPushDataInfoEXT* src, size_t start_index,
+                                                                 size_t count) {
+    auto ptr = reinterpret_cast<VkPushDataInfoEXT*>(m_allocator.Alloc(sizeof(VkPushDataInfoEXT) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].offset = src[start_index + i].offset;
+        ptr[i].data = src[start_index + i].data;
+    }
+    return ptr;
+}
 
 template <>
 VkSampleLocationEXT* CommandRecorder::CopyArray<VkSampleLocationEXT>(const VkSampleLocationEXT* src, size_t start_index,
@@ -4381,6 +4444,36 @@ CmdDispatchGraphIndirectCountAMDXArgs* CommandRecorder::RecordCmdDispatchGraphIn
     return args;
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
+
+CmdBindSamplerHeapEXTArgs* CommandRecorder::RecordCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer,
+                                                                        const VkBindHeapInfoEXT* pBindInfo) {
+    auto* args = Alloc<CmdBindSamplerHeapEXTArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pBindInfo) {
+        args->pBindInfo = CopyArray(pBindInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdBindResourceHeapEXTArgs* CommandRecorder::RecordCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer,
+                                                                          const VkBindHeapInfoEXT* pBindInfo) {
+    auto* args = Alloc<CmdBindResourceHeapEXTArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pBindInfo) {
+        args->pBindInfo = CopyArray(pBindInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdPushDataEXTArgs* CommandRecorder::RecordCmdPushDataEXT(VkCommandBuffer commandBuffer,
+                                                          const VkPushDataInfoEXT* pPushDataInfo) {
+    auto* args = Alloc<CmdPushDataEXTArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pPushDataInfo) {
+        args->pPushDataInfo = CopyArray(pPushDataInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
 
 CmdSetSampleLocationsEXTArgs* CommandRecorder::RecordCmdSetSampleLocationsEXT(
     VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {

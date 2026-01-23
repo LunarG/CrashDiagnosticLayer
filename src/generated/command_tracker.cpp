@@ -1671,6 +1671,33 @@ void CommandTracker::CmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBu
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
+void CommandTracker::CmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindSamplerHeapEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBindSamplerHeapEXT(commandBuffer, pBindInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBindResourceHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindResourceHeapEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBindResourceHeapEXT(commandBuffer, pBindInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdPushDataEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdPushDataEXT(commandBuffer, pPushDataInfo);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
                                               const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
     Command cmd{};

@@ -344,6 +344,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugUtilsMessengerEXT &a) 
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorARM &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkValidationCacheEXT &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
@@ -415,14 +423,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferCollectionFUCHSIA &a)
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapEXT &a) {
-    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
-    return os;
-}
-#endif  // VK_USE_64_BIT_PTR_DEFINES
-
-#if VK_USE_64_BIT_PTR_DEFINES
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorARM &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
 }
@@ -865,6 +865,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDiscardRectangleModeEXT &t)
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkConservativeRasterizationModeEXT &t) {
     os << string_VkConservativeRasterizationModeEXT(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorMappingSourceEXT &t) {
+    os << string_VkDescriptorMappingSourceEXT(t);
     return os;
 }
 
