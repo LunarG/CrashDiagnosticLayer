@@ -85,7 +85,7 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
     if (context_.GetSettings().track_semaphores) {
         semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this);
     }
-    if (context_.GetSettings().watchdog_timer_ms > 0) {
+    if (context_.GetSettings().trigger_watchdog_timer) {
         watchdog_.Start();
     }
     // This messenger is for messages we recieve from the ICD for device address binding events.
