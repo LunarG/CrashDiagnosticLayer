@@ -51,45 +51,6 @@
         "features": {
             "settings": [
                 {
-                    "key": "triggers",
-                    "label": "Crash Dump Triggers",
-                    "description": "Additional crash detection methods beyond a VK_ERROR_DEVICE_LOST error returned by the Vulkan driver.",
-                    "type": "GROUP",
-                    "expanded": true,
-                    "settings": [
-                        {
-                            "key": "trigger_watchdog_timeout",
-                            "env": "CDL_TRIGGER_WATCHDOG_TIMEOUT",
-                            "label": "Watchdog Timer",
-                            "description": "If the application fails to submit new commands within a set time, a crash dump will be created as if the a lost device error was encountered.",
-                            "type": "BOOL",
-                            "default": true,
-                            "settings": [
-                                {
-                                    "key": "watchdog_timeout_ms",
-                                    "env": "CDL_WATCHDOG_TIMEOUT_MS",
-                                    "label": "Watchdog Timeout (ms)",
-                                    "description": "Time in milliseconds the application has to submit a new command before creating a crash dump.",
-                                    "type": "INT",
-                                    "default": 30000,
-                                    "range": {
-                                        "min": 1
-                                    },
-                                    "dependence": {
-                                        "mode": "ALL",
-                                        "settings": [
-                                            {
-                                                "key": "trigger_watchdog_timeout",
-                                                "value": true
-                                            }
-                                        ]
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
                     "key": "state",
                     "label": "State Tracking",
                     "description": "Control of state tracking.",
@@ -104,7 +65,6 @@
                             "detailed": "VK_KHR_dynamic_rendering usage is required for this feature otherwise Validation layer errors will be generated.",
                             "type": "BOOL",
                             "default": false,
-                            "status": "STABLE",
                             "messages": [
                                 {
                                     "key": "sync_after_commands_msg0",
@@ -157,21 +117,12 @@
                             "detailed": "This may allow more accuratute fault locations at the expense of larger command buffers and reduced performance",
                             "type": "BOOL",
                             "default": false
-                        },
-                        {
-                            "key": "track_semaphores",
-                            "env": "CDL_TRACK_SEMAPHORES",
-                            "label": "Track semaphores",
-                            "description": "Include semaphore state reporting in runtime logging and dump files",
-                            "detailed": "VK_AMD_buffer_marker is required for this feature",
-                            "type": "BOOL",
-                            "default": true
                         }
                     ]
                 },
                 {
                     "key": "dump",
-                    "label": "Dump files",
+                    "label": "Crash dump file",
                     "description": "Control of dump files",
                     "type": "GROUP",
                     "expanded": true,
@@ -183,6 +134,53 @@
                             "description": "The directory where dump files and shader binaries are written.",
                             "type": "SAVE_FOLDER",
                             "default": ""
+                        },
+                        {
+                            "key": "triggers",
+                            "label": "Crash Dump Triggers",
+                            "description": "Additional crash detection methods beyond a VK_ERROR_DEVICE_LOST error returned by the Vulkan driver.",
+                            "type": "GROUP",
+                            "expanded": true,
+                            "settings": [
+                                {
+                                    "key": "trigger_watchdog_timeout",
+                                    "env": "CDL_TRIGGER_WATCHDOG_TIMEOUT",
+                                    "label": "Watchdog Timer",
+                                    "description": "If the application fails to submit new commands within a set time, a crash dump will be created as if the a lost device error was encountered.",
+                                    "type": "BOOL",
+                                    "default": true,
+                                    "settings": [
+                                        {
+                                            "key": "watchdog_timeout_ms",
+                                            "env": "CDL_WATCHDOG_TIMEOUT_MS",
+                                            "label": "Watchdog Timeout (ms)",
+                                            "description": "Time in milliseconds the application has to submit a new command before creating a crash dump.",
+                                            "type": "INT",
+                                            "default": 30000,
+                                            "range": {
+                                                "min": 1
+                                            },
+                                            "dependence": {
+                                                "mode": "ALL",
+                                                "settings": [
+                                                    {
+                                                        "key": "trigger_watchdog_timeout",
+                                                        "value": true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "key": "track_semaphores",
+                            "env": "CDL_TRACK_SEMAPHORES",
+                            "label": "Dump semaphores",
+                            "description": "Include semaphore state reporting in runtime logging and crash dump files",
+                            "type": "BOOL",
+                            "default": false
                         },
                         {
                             "key": "dump_queue_submits",
@@ -289,7 +287,7 @@
                 {
                     "key": "logging",
                     "label": "Logging",
-                    "description": "Control of logging.",
+                    "description": "Control of logging",
                     "type": "GROUP",
                     "expanded": true,
                     "settings": [
@@ -309,7 +307,7 @@
                         },
                         {
                             "key": "message_group",
-                            "label": "Message Area",
+                            "label": "Log Message Areas",
                             "description": "",
                             "type": "GROUP",
                             "expanded": true,
@@ -329,7 +327,59 @@
                                     "label": "Log Vulkan commands that use semaphores",
                                     "description": "Add logging messages about every vulkan command that uses semaphores",
                                     "type": "BOOL",
-                                    "default": false
+                                    "default": false,
+                                    "dependence": {
+                                        "mode": "ALL",
+                                        "settings": [
+                                            {
+                                                "key": "track_semaphores",
+                                                "value": true
+                                            }
+                                        ]
+                                    },
+                                    "messages": [
+                                        {
+                                            "key": "trace_all_semaphores_msg0",
+                                            "title": "'Log Vulkan commands that use semaphores' requires 'Track semaphores' to be enabled",
+                                            "version": 1,
+                                            "description": "'Log Vulkan commands that use semaphores' requires 'Track semaphores' to be enabled",
+                                            "informative": "Are you sure you want to enable 'Log Vulkan commands that use semaphores'?",
+                                            "severity": "INFO",
+                                            "conditions": [
+                                                {
+                                                    "setting": {
+                                                        "key": "track_semaphores",
+                                                        "value": false
+                                                    }
+                                                }
+                                            ],
+                                            "actions": {
+                                                "default": "BUTTON0",
+                                                "BUTTON0": {
+                                                    "type": "OK",
+                                                    "changes": [
+                                                        {
+                                                            "setting": {
+                                                                "key": "track_semaphores",
+                                                                "value": true
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                "BUTTON1": {
+                                                    "type": "CANCEL",
+                                                    "changes": [
+                                                        {
+                                                            "setting": {
+                                                                "key": "track_semaphores",
+                                                                "value": false
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ]
                                 }
                             ]
                         },
