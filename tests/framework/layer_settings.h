@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 The Khronos Group Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,8 @@ class LayerSettings {
     vk::Bool32 trace_all_semaphores{false};
 
     // hang detection section
-    uint64_t watchdog_timeout_ms{20000};
+    bool trigger_watchdog_timer{true};
+    uint64_t watchdog_timeout_ms{30000};
 
    private:
     // these member names must match the setting name exactly.
