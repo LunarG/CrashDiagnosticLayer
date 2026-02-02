@@ -569,6 +569,8 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
         auto command_name = Command::GetCommandName(command);
         auto command_state = GetCommandState(cb_state, command, last_started, last_completed);
 
+        state.Mutate(command);
+
         if (dump_cmds == DumpCommands::kRunning) {
             if (command.id < last_completed || command.id > last_started) {
                 continue;
@@ -594,7 +596,6 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
             os << YAML::EndSeq;
         }
 
-        state.Mutate(command);
         // For vkCmdExecuteCommands, CDL prints all the information about the
         // recorded command buffers. For every other command, CDL prints the
         // arguments without going deep into printing objects themselves.
