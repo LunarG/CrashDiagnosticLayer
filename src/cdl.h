@@ -227,6 +227,18 @@ class Context : public Interceptor {
 
     void PostDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) override;
 
+    VkResult PostCreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo,
+                                   const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer) override;
+
+    VkResult PostCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo,
+                                  const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) override;
+
+    VkResult PostCreateRenderPass2(VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo,
+                                   const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) override;
+
+    VkResult PostCreateRenderPass2KHR(VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo,
+                                      const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) override;
+
     VkResult PreCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
                                   const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) override;
     VkResult PostCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
