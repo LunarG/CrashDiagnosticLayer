@@ -1715,6 +1715,14 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2(VkPhysicalDevice ph
     if (ext_dbar) {
         ext_dbar->reportAddressBinding = VK_TRUE;
     }
+    auto* ext_dynamic_rendering = vku::FindStructInPNextChain<VkPhysicalDeviceDynamicRenderingFeaturesKHR>(pFeatures->pNext);
+    if (ext_dynamic_rendering) {
+        ext_dynamic_rendering->dynamicRendering = VK_TRUE;
+    }
+    auto* ext_timeline_semaphore = vku::FindStructInPNextChain<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(pFeatures->pNext);
+    if (ext_timeline_semaphore) {
+        ext_timeline_semaphore->timelineSemaphore = VK_TRUE;
+    }
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice,
