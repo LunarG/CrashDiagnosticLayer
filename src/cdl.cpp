@@ -430,6 +430,8 @@ static void DecodeExtensionString(DeviceExtensionsPresent& extensions, const cha
         extensions.ext_device_address_binding_report = true;
     } else if (!strcmp(name, VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME)) {
         extensions.nv_device_diagnostic_checkpoints = true;
+    } else if (!strcmp(name, VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME)) {
+        extensions.khr_dynamic_rendering = true;
     } else if (!strcmp(name, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)) {
         extensions.khr_timeline_semaphore = true;
     }
@@ -480,6 +482,8 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
                                      ? modified_create_info_.pApplicationInfo->apiVersion
                                      : VK_API_VERSION_1_0;
 
+    Log().Verbose("The Vulkan application is using Vulkan %d.%d", VK_API_VERSION_MAJOR(api_version), VK_API_VERSION_MINOR(api_version));
+
     // If an important extension is not enabled by default, try to enable it if it is present
     if (extensions_present.nv_device_diagnostic_checkpoints) {
         if (!extensions_enabled.nv_device_diagnostic_checkpoints) {
@@ -509,14 +513,14 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
                 }
             }
         } else {
-            Log().Warning("No VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
+            Log().Warning("No device support for VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
         }
     } else {
-        Log().Warning("No VK_AMD_buffer_marker extension, semaphore tracking will be disabled.");
+        Log().Warning("No device support for VK_AMD_buffer_marker extension, semaphore tracking will be disabled.");
     }
     if (!extensions_present.nv_device_diagnostic_checkpoints && !extensions_present.amd_buffer_marker) {
         Log().Warning(
-            "No VK_NV_device_diagnostic_checkpoints or VK_AMD_buffer_marker extension, progression tracking will be "
+            "No device support for VK_NV_device_diagnostic_checkpoints or VK_AMD_buffer_marker extension, progression tracking will be "
             "disabled.");
     }
     if (extensions_present.ext_device_fault) {
@@ -537,7 +541,7 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             }
         }
     } else {
-        Log().Warning("No VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
+        Log().Warning("No device support for VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
     }
     if (extensions_present.ext_device_address_binding_report) {
         auto ext_dbar = vku::InitStruct<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(nullptr);
@@ -555,8 +559,32 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
         }
     } else {
         Log().Warning(
-            "No VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
+            "No device support for VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
     }
+
+    bool device_has_dynamic_rendering = true;
+
+    if (extensions_present.khr_dynamic_rendering) {
+        auto khr_dynamic_rendering = vku::InitStruct<VkPhysicalDeviceDynamicRenderingFeaturesKHR>(nullptr);
+        QueryFeature(physicalDevice, &khr_dynamic_rendering);
+
+        if (!khr_dynamic_rendering.dynamicRendering) {
+            device_has_dynamic_rendering = false;
+        }
+    } else {
+        device_has_dynamic_rendering = false;
+    }
+
+    if (!device_has_dynamic_rendering) {
+        Log().Error(
+            "No device support for VK_KHR_dynamic_rendering extension, Vulkan 1.3 or VK_KHR_dynamic_rendering are required by the Crash Diagnostic layer.");
+    }
+
+    if (!extensions_enabled.khr_dynamic_rendering && api_version < VK_API_VERSION_1_3) {
+        Log().Error(
+            "The Vulkan application did not enabled the VK_KHR_dynamic_rendering extension or Vulkan 1.3. To use the Crash Diagnostics layer, the application must use Dynamic Rendering only instead of RenderPass which is a Vulkan Legacy feature not supported by the Crash Diagnostic layer.");
+    }
+
     if (extensions_present.khr_timeline_semaphore) {
         auto khr_timeline_semaphore = vku::InitStruct<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(nullptr);
         QueryFeature(physicalDevice, &khr_timeline_semaphore);
@@ -577,7 +605,7 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
         }
     } else {
         Log().Error(
-            "No VK_KHR_timeline_semaphore extension, Vulkan 1.2 or VK_KHR_timeline_semaphore are quired to track queue "
+            "No device support for VK_KHR_timeline_semaphore extension, Vulkan 1.2 or VK_KHR_timeline_semaphore are required to track queue "
             "progress, enabling early device lost detection.");
     }
 

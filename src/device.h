@@ -56,6 +56,7 @@ struct DeviceExtensionsPresent {
     bool ext_device_fault{false};
     bool ext_device_address_binding_report{false};
     bool nv_device_diagnostic_checkpoints{false};
+    bool khr_dynamic_rendering{false};
     bool khr_timeline_semaphore{false};
 };
 
