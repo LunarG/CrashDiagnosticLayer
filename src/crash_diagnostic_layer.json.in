@@ -51,12 +51,69 @@
         "features": {
             "settings": [
                 {
+                    "key": "triggers",
+                    "label": "Crash Dump Triggers",
+                    "description": "Additional crash detection methods beyond a VK_ERROR_DEVICE_LOST error",
+                    "type": "GROUP",
+                    "expanded": true,
+                    "settings": [
+                        {
+                            "key": "trigger_timeline_semaphore",
+                            "env": "CDL_TRIGGER_TIMELINE_SEMAPHORE",
+                            "label": "Timeline Semaphore",
+                            "description": "Using timeline semaphore to detect device lost before entering into a host wait that might never finishes.",
+                            "detailed": "This feature is requiring Vulkan timeline semaphore, either Vulkan 1.2 or VK_KHR_timeline_semaphore support. Due to VK_EXT_device_fault specification, using this feature will generate a VUID-vkGetDeviceFaultInfoEXT-device-07336 errors on a crash.",
+                            "type": "BOOL",
+                            "default": true
+                        },
+                        {
+                            "key": "trigger_watchdog_timeout",
+                            "env": "CDL_TRIGGER_WATCHDOG_TIMEOUT",
+                            "label": "Watchdog Timer",
+                            "description": "If the application fails to submit new commands within a set time, a crash dump will be created as if the a lost device error was encountered.",
+                            "type": "BOOL",
+                            "default": true,
+                            "settings": [
+                                {
+                                    "key": "watchdog_timeout_ms",
+                                    "env": "CDL_WATCHDOG_TIMEOUT_MS",
+                                    "label": "Watchdog Timeout (ms)",
+                                    "description": "Time in milliseconds the application has to submit a new command before creating a crash dump.",
+                                    "type": "INT",
+                                    "default": 30000,
+                                    "range": {
+                                        "min": 1
+                                    },
+                                    "dependence": {
+                                        "mode": "ALL",
+                                        "settings": [
+                                            {
+                                                "key": "trigger_watchdog_timeout",
+                                                "value": true
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
                     "key": "state",
                     "label": "State Tracking",
                     "description": "Control of state tracking.",
                     "type": "GROUP",
                     "expanded": true,
                     "settings": [
+                        {
+                            "key": "track_semaphores",
+                            "env": "CDL_TRACK_SEMAPHORES",
+                            "label": "Track semaphores",
+                            "description": "Include semaphore state reporting in runtime logging and dump files",
+                            "detailed": "VK_AMD_buffer_marker is required for this feature",
+                            "type": "BOOL",
+                            "default": true
+                        },
                         {
                             "key": "sync_after_commands",
                             "env": "CDL_SYNC_AFTER_COMMANDS",

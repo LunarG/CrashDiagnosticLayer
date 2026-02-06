@@ -476,11 +476,15 @@ std::string Device::GetObjectInfo(uint64_t handle) const { return object_info_db
 
 bool Device::UpdateIdleState() {
     bool result = true;
-    auto queues = GetAllQueues();
-    for (auto& q : queues) {
-        bool q_result = q->UpdateIdleState();
-        result &= q_result;
+
+    if (extensions_present_.khr_timeline_semaphore && context_.GetSettings().trigger_timeline_semaphore) {
+        auto queues = GetAllQueues();
+        for (auto& q : queues) {
+            bool q_result = q->UpdateIdleState();
+            result &= q_result;
+        }
     }
+
     return result;
 }
 
@@ -586,7 +590,7 @@ void Device::DumpDeviceFaultInfo(YAML::Emitter& os) const {
         return;
     }
     auto fault_counts = vku::InitStruct<VkDeviceFaultCountsEXT>();
-    VkResult result = Dispatch().GetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);
+    VkResult result = Dispatch().GetDeviceFaultInfoEXT(vk_device_, &fault_counts, nullptr);   
     if (result != VK_SUCCESS) {
         // TODO: log
         return;
