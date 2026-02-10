@@ -297,12 +297,140 @@
                             "label": "Log Filename",
                             "description": "none = no logging, stderr or stdout = to the console, otherwise an absolute or relative path.",
                             "filter": "*.txt",
+                            "status": "DEPRECATED",
+                            "view": "HIDDEN",
                             "type": "SAVE_FILE",
                             "default": "stderr",
                             "platforms": [
                                 "WINDOWS",
                                 "LINUX",
                                 "MACOS"
+                            ]
+                        },
+                        {
+                            "key": "debug_action",
+                            "label": "Debug Action",
+                            "description": "Specifies what action is to be taken when a layer reports log messages",
+                            "platforms": [ "WINDOWS", "LINUX", "MACOS", "ANDROID" ],
+                            "type": "FLAGS",
+                            "flags": [
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_LOG_MSG",
+                                    "label": "Log Messages to a File",
+                                    "description": "Log messages to a log file.",
+                                    "settings": [
+                                        {
+                                            "key": "log_filename",
+                                            "label": "Log Filename",
+                                            "description": "Specifies the output filename",
+                                            "type": "SAVE_FILE",
+                                            "default": "cdl_log.txt",
+                                            "dependence": {
+                                                "mode": "ALL",
+                                                "settings": [
+                                                    { "key": "debug_action", "value": [ "VK_DBG_LAYER_ACTION_LOG_MSG" ] }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_LOG_STD",
+                                    "label": "Log Messages to the Standard Output",
+                                    "description": "Log messages to stdout."
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_DEBUG_OUTPUT",
+                                    "label": "Debug Output",
+                                    "description": "Log a txt message using the Windows OutputDebugString function.",
+                                    "platforms": [ "WINDOWS" ]
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_CALLBACK",
+                                    "label": "Callback",
+                                    "description": "Call user defined callback function(s) that have been registered via the VK_EXT_debug_report extension. Since application must register callback, this is a NOOP for the settings file.",
+                                    "view": "HIDDEN"
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_BREAK",
+                                    "label": "Break",
+                                    "description": "Trigger a breakpoint if a debugger is in use."
+                                }
+                            ],
+                            "default": [
+                                "VK_DBG_LAYER_ACTION_LOG_MSG", "VK_DBG_LAYER_ACTION_DEBUG_OUTPUT"
+                            ]
+                        },
+                        {
+                            "key": "report_flags",
+                            "label": "Message Severity",
+                            "description": "Comma-delineated list of options specifying the types of messages to be reported",
+                            "platforms": [ "WINDOWS", "LINUX", "MACOS", "ANDROID" ],
+                            "type": "FLAGS",
+                            "flags": [
+                                {
+                                    "key": "info",
+                                    "label": "Info",
+                                    "description": "Report informational messages."
+                                },
+                                {
+                                    "key": "warn",
+                                    "label": "Warning",
+                                    "description": "Report warnings from using the API in a manner which may lead to undefined behavior or to warn the user of common trouble spots. A warning does NOT necessarily signify illegal application behavior."
+                                },
+                                {
+                                    "key": "perf",
+                                    "label": "Performance",
+                                    "description": "Report usage of the API that may cause suboptimal performance."
+                                },
+                                {
+                                    "key": "error",
+                                    "label": "Error",
+                                    "description": "Report errors in API usage."
+                                },
+                                {
+                                    "key": "debug",
+                                    "label": "Debug",
+                                    "description": "For layer development. Report messages for debugging layer behavior.",
+                                    "view": "DEBUG"
+                                }
+                            ],
+                            "default": [
+                                "error"
+                            ]
+                        },
+                        {
+                            "key": "message_severity",
+                            "label": "Message Severity",
+                            "description": "Comma-delineated list of options specifying the types of log messages to be reported.",
+                            "type": "FLAGS",
+                            "status": "DEPRECATED",
+                            "view": "HIDDEN",
+                            "flags": [
+                                {
+                                    "key": "error",
+                                    "label": "Error",
+                                    "description": "Report errors such as device lost or setup problems in the layer."
+                                },
+                                {
+                                    "key": "warn",
+                                    "label": "Warning",
+                                    "description": "Report non-fatal problems that may interfere with operation of the layer"
+                                },
+                                {
+                                    "key": "info",
+                                    "label": "Info",
+                                    "description": "Report informational messages."
+                                },
+                                {
+                                    "key": "verbose",
+                                    "label": "Debug",
+                                    "description": "For layer development. Report messages for debugging layer behavior.",
+                                    "view": "DEBUG"
+                                }
+                            ],
+                            "default": [
+                                "error"
                             ]
                         },
                         {
@@ -381,38 +509,6 @@
                                         }
                                     ]
                                 }
-                            ]
-                        },
-                        {
-                            "key": "message_severity",
-                            "label": "Message Severity",
-                            "description": "Comma-delineated list of options specifying the types of log messages to be reported.",
-                            "type": "FLAGS",
-                            "flags": [
-                                {
-                                    "key": "error",
-                                    "label": "Error",
-                                    "description": "Report errors such as device lost or setup problems in the layer."
-                                },
-                                {
-                                    "key": "warn",
-                                    "label": "Warning",
-                                    "description": "Report non-fatal problems that may interfere with operation of the layer"
-                                },
-                                {
-                                    "key": "info",
-                                    "label": "Info",
-                                    "description": "Report informational messages."
-                                },
-                                {
-                                    "key": "verbose",
-                                    "label": "Debug",
-                                    "description": "For layer development. Report messages for debugging layer behavior.",
-                                    "view": "DEBUG"
-                                }
-                            ],
-                            "default": [
-                                "error"
                             ]
                         }
                     ]
