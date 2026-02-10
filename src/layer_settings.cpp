@@ -60,7 +60,14 @@ enum AreaFields {
     AREA_SHADERS_BIT = (1 << AREA_SHADERS)
 };
 
-std::string GetSettingKey();
+std::string GetSettingKey(SettingId id) {
+    static std::string TABLE[] = {
+        "sync_after_commands", // 
+    };
+
+    return TABLE[id];
+}
+
 SettingId GetSettingId(const std::string& setting_key);
 
 bool IsDeprecated(SettingId setting_id);
