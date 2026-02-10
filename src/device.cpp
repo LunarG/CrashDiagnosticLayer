@@ -82,7 +82,7 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
         checkpoints_ = std::make_unique<BufferMarkerCheckpointMgr>(*this);
     }
     // Create a semaphore tracker
-    if (context_.GetSettings().track_semaphores) {
+    if (context_.GetSettings().dump_semaphores != DumpSemaphores::kOff) {
         semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this);
     }
     if (context_.GetSettings().trigger_watchdog_timer) {

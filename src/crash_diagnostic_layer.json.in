@@ -175,30 +175,42 @@
                             ]
                         },
                         {
-                            "key": "track_semaphores",
+                            "key": "dump_semaphores",
                             "env": "CDL_TRACK_SEMAPHORES",
                             "label": "Dump semaphores",
-                            "description": "Include semaphore state reporting in runtime logging and crash dump files",
-                            "type": "BOOL",
-                            "default": false
+                            "description": "Control Vulkan semaphores reporting in the crash dump.",
+                            "type": "ENUM",
+                            "default": "off",
+                            "flags": [
+                                {
+                                    "key": "off",
+                                    "label": "Off",
+                                    "description": "Never dump semaphore."
+                                },
+                                {
+                                    "key": "on_crash",
+                                    "label": "On Crash",
+                                    "description": "Dump Vulkan semaphores after a crash is detected."
+                                }
+                            ]
                         },
                         {
                             "key": "dump_queue_submits",
                             "env": "CDL_DUMP_QUEUE_SUBMITS",
                             "label": "Dump queue submissions",
-                            "description": "Control which queue submissions are included in the dump.",
+                            "description": "Control which queue submissions are included in the crash dump.",
                             "type": "ENUM",
                             "default": "running",
                             "flags": [
                                 {
                                     "key": "running",
                                     "label": "Running",
-                                    "description": "Submissions that were executing at the time of the dump."
+                                    "description": "Submissions that were executing at the time of the crash dump."
                                 },
                                 {
                                     "key": "pending",
                                     "label": "Pending",
-                                    "description": "Submissions executing or pending at the time of the dump."
+                                    "description": "Submissions executing or pending at the time of the crash dump."
                                 }
                             ]
                         },
@@ -206,19 +218,19 @@
                             "key": "dump_command_buffers",
                             "env": "CDL_DUMP_COMMAND_BUFFERS",
                             "label": "Dump command buffers",
-                            "description": "Control which command buffers are included in the dump.",
+                            "description": "Control which command buffers are included in the crash crashdump.",
                             "type": "ENUM",
                             "default": "running",
                             "flags": [
                                 {
                                     "key": "running",
                                     "label": "Running",
-                                    "description": "Command Buffers that were executing at the time of the dump."
+                                    "description": "Command Buffers that were executing at the time of the crash dump."
                                 },
                                 {
                                     "key": "pending",
                                     "label": "Pending",
-                                    "description": "Command Buffers executing or pending at the time of the dump."
+                                    "description": "Command Buffers executing or pending at the time of the crash dump."
                                 },
                                 {
                                     "key": "all",
@@ -231,19 +243,19 @@
                             "key": "dump_commands",
                             "env": "CDL_DUMP_COMMANDS",
                             "label": "Dump commands",
-                            "description": "Control which commands are included in the dump.",
+                            "description": "Control which commands are included in the crash dump.",
                             "type": "ENUM",
                             "default": "running",
                             "flags": [
                                 {
                                     "key": "running",
                                     "label": "Running",
-                                    "description": "Command Buffers that were executing at the time of the dump."
+                                    "description": "Command Buffers that were executing at the time of the crash dump."
                                 },
                                 {
                                     "key": "pending",
                                     "label": "Pending",
-                                    "description": "Commands executing or pending at the time of the dump."
+                                    "description": "Commands executing or pending at the time of the crash dump."
                                 },
                                 {
                                     "key": "all",
@@ -400,41 +412,7 @@
                             ]
                         },
                         {
-                            "key": "message_severity",
-                            "label": "Message Severity",
-                            "description": "Comma-delineated list of options specifying the types of log messages to be reported.",
-                            "type": "FLAGS",
-                            "status": "DEPRECATED",
-                            "view": "HIDDEN",
-                            "flags": [
-                                {
-                                    "key": "error",
-                                    "label": "Error",
-                                    "description": "Report errors such as device lost or setup problems in the layer."
-                                },
-                                {
-                                    "key": "warn",
-                                    "label": "Warning",
-                                    "description": "Report non-fatal problems that may interfere with operation of the layer"
-                                },
-                                {
-                                    "key": "info",
-                                    "label": "Info",
-                                    "description": "Report informational messages."
-                                },
-                                {
-                                    "key": "verbose",
-                                    "label": "Debug",
-                                    "description": "For layer development. Report messages for debugging layer behavior.",
-                                    "view": "DEBUG"
-                                }
-                            ],
-                            "default": [
-                                "error"
-                            ]
-                        },
-                        {
-                            "key": "message_group",
+                            "key": "message_areas",
                             "label": "Log Message Areas",
                             "description": "",
                             "type": "GROUP",
