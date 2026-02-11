@@ -18,13 +18,11 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include <vulkan/layer/vk_layer_settings.hpp>
 #include <vulkan/utility/vk_struct_helper.hpp>
 #include <vulkan/utility/vk_safe_struct.hpp>
 
 #include <atomic>
 #include <cassert>
-#include <chrono>
 #include <filesystem>
 #include <map>
 #include <memory>
@@ -36,6 +34,7 @@
 #include <vector>
 #include <yaml-cpp/emitter.h>
 
+#include "layer_settings.h"
 #include "command.h"
 #include "command_buffer_tracker.h"
 #include "device.h"
@@ -60,20 +59,6 @@ enum CrashSource {
     kWatchdogTimer,
 };
 
-// Used for command buffers, commands and queue submisions
-enum class DumpCommands {
-    kRunning = 0,
-    kPending,
-    kAll,
-};
-
-enum class DumpShaders {
-    kOff = 0,
-    kOnCrash,
-    kOnBind,
-    kAll,
-};
-
 static inline void NewHandler() {
     std::cout << "CDL: Memory allocation failed!" << std::endl;
     std::cerr << "CDL: Memory allocation failed!" << std::endl;
@@ -91,26 +76,6 @@ T* NewArray(size_t size) {
     std::set_new_handler(NewHandler);
     return new T[size];
 }
-
-struct Settings {
-    Settings();
-    Settings(VkuLayerSettingSet settings, Logger& log);
-    ~Settings() {}
-    void Print(YAML::Emitter& os) const;
-
-    DumpCommands dump_queue_submits{DumpCommands::kRunning};
-    DumpCommands dump_command_buffers{DumpCommands::kRunning};
-    DumpCommands dump_commands{DumpCommands::kRunning};
-    DumpShaders dump_shaders{DumpShaders::kOff};
-    std::string output_path;
-    bool instrument_all_commands{false};
-    bool track_semaphores{false};
-    bool trace_all_semaphores{false};
-    bool trace_all{false};
-    bool sync_after_commands{false};
-    bool trigger_watchdog_timer{true};
-    uint64_t watchdog_timer_ms{30000};
-};
 
 class Context : public Interceptor {
    public:
@@ -315,7 +280,6 @@ class Context : public Interceptor {
 
     std::optional<Settings> settings_;
 
-    TimePoint start_time_;
     Logger logger_;
     System system_;
 
@@ -352,8 +316,6 @@ class Context : public Interceptor {
 
     int shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
 
-    std::filesystem::path base_output_path_;
-    std::filesystem::path output_path_;
     int total_logs_ = 0;
 };
 

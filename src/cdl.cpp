@@ -17,7 +17,6 @@
 
 #include "cdl.h"
 #include "util.h"
-#include <regex>
 
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 // For OutputDebugString
@@ -34,266 +33,19 @@
 #include <memory>
 #include <sstream>
 
-#include <vulkan/utility/vk_struct_helper.hpp>
+//#include <vulkan/utility/vk_struct_helper.hpp>
 #include <vulkan/vk_enum_string_helper.h>
 
 #include <yaml-cpp/emitter.h>
 
 namespace crash_diagnostic_layer {
 
-const std::string kCdlVersion = std::to_string(VK_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE)) + "." +
-                                std::to_string(VK_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE)) + "." +
-                                std::to_string(VK_VERSION_PATCH(VK_HEADER_VERSION_COMPLETE));
-namespace settings {
-const char* kOutputPath = "output_path";
-const char* kTraceOn = "trace_on";
-const char* kLogFile = "log_file";
-enum LogOutputs {
-    kNone,
-    kStderr,
-    kStdout,
-};
-static const std::unordered_map<std::string, LogOutputs> kLogFileValues{
-    {"none", LogOutputs::kNone},
-    {"stderr", LogOutputs::kStderr},
-    {"stdout", LogOutputs::kStdout},
-};
-const char* kMessageSeverity = "message_severity";
-static const std::unordered_map<std::string, VkDebugUtilsMessageSeverityFlagBitsEXT> kSeverityValues{
-    {"error", VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT},
-    {"warn", VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT},
-    {"info", VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
-    {"verbose", VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
-};
-const char* kDumpCommands = "dump_commands";
-const char* kDumpCommandBuffers = "dump_command_buffers";
-const char* kDumpQueueSubmits = "dump_queue_submits";
-static const std::unordered_map<std::string, DumpCommands> kDumpCommandsValues{
-    {"running", DumpCommands::kRunning},
-    {"pending", DumpCommands::kPending},
-    {"all", DumpCommands::kAll},
-};
-
-const char* kDumpShaders = "dump_shaders";
-static const std::unordered_map<std::string, DumpShaders> kDumpShadersValues{
-    {"off", DumpShaders::kOff},
-    {"on_crash", DumpShaders::kOnCrash},
-    {"on_bind", DumpShaders::kOnBind},
-    {"all", DumpShaders::kAll},
-};
-
-const char* kTriggerWatchdogTimeout = "trigger_watchdog_timeout";
-const char* kWatchdogTimeout = "watchdog_timeout_ms";
-const char* kDumpAllCommandBuffers = "dump_all_command_buffers";
-const char* kTrackSemaphores = "track_semaphores";
-const char* kTraceAllSemaphores = "trace_all_semaphores";
-const char* kInstrumentAllCommands = "instrument_all_commands";
-const char* kSyncAfterCommands = "sync_after_commands";
-}  // namespace settings
-
-const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
-
-template <class T>
-bool GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value) {
-    if (vkuHasLayerSetting(settings, name)) {
-        vkuGetLayerSettingValue(settings, name, value);
-        return true;
-    }
-    return false;
-}
-
-template <class T>
-bool GetEnumVal(Logger& log, VkuLayerSettingSet settings, const char* name, T& value,
-                const std::unordered_map<std::string, T>& value_map) {
-    std::string value_string;
-    if (!GetEnvVal<std::string>(settings, name, value_string)) {
-        return false;
-    }
-    if (!value_string.empty()) {
-        auto iter = value_map.find(value_string);
-        if (iter != value_map.end()) {
-            value = iter->second;
-        } else {
-            log.Error("Bad value for %s setting: \"%s\"", name, value_string.c_str());
-        }
-    }
-    return true;
-}
-
-Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
-    GetEnvVal<std::string>(layer_settings, settings::kOutputPath, output_path);
-    GetEnvVal<bool>(layer_settings, settings::kTraceOn, trace_all);
-    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpQueueSubmits, dump_queue_submits,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommandBuffers, dump_command_buffers,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommands, dump_commands,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpShaders>(log, layer_settings, settings::kDumpShaders, dump_shaders, settings::kDumpShadersValues);
-    GetEnvVal<uint64_t>(layer_settings, settings::kWatchdogTimeout, watchdog_timer_ms);
-    GetEnvVal<bool>(layer_settings, settings::kTrackSemaphores, track_semaphores);
-    GetEnvVal<bool>(layer_settings, settings::kTraceAllSemaphores, trace_all_semaphores);
-    GetEnvVal<bool>(layer_settings, settings::kInstrumentAllCommands, instrument_all_commands);
-    GetEnvVal<bool>(layer_settings, settings::kSyncAfterCommands, sync_after_commands);
-}
-
-YAML::Emitter& operator<<(YAML::Emitter& os, DumpCommands value) {
-    for (auto& entry : settings::kDumpCommandsValues) {
-        if (value == entry.second) {
-            os << entry.first;
-            return os;
-        }
-    }
-    os << "unknown";
-    return os;
-}
-
-YAML::Emitter& operator<<(YAML::Emitter& os, DumpShaders value) {
-    for (auto& entry : settings::kDumpShadersValues) {
-        if (value == entry.second) {
-            os << entry.first;
-            return os;
-        }
-    }
-    os << "unknown";
-    return os;
-}
-
-void Settings::Print(YAML::Emitter& os) const {
-    os << YAML::BeginMap;
-    os << YAML::Key << settings::kOutputPath << YAML::Value << output_path;
-    os << YAML::Key << settings::kTraceOn << YAML::Value << trace_all;
-    os << YAML::Key << settings::kDumpQueueSubmits << YAML::Value << dump_queue_submits;
-    os << YAML::Key << settings::kDumpCommandBuffers << YAML::Value << dump_command_buffers;
-    os << YAML::Key << settings::kDumpCommands << YAML::Value << dump_commands;
-    os << YAML::Key << settings::kDumpShaders << YAML::Value << dump_shaders;
-    os << YAML::Key << settings::kTriggerWatchdogTimeout << YAML::Value << trigger_watchdog_timer;
-    os << YAML::Key << settings::kWatchdogTimeout << YAML::Value << watchdog_timer_ms;
-    os << YAML::Key << settings::kTrackSemaphores << YAML::Value << track_semaphores;
-    os << YAML::Key << settings::kTraceAllSemaphores << YAML::Value << trace_all_semaphores;
-    os << YAML::Key << settings::kInstrumentAllCommands << YAML::Value << instrument_all_commands;
-    os << YAML::Key << settings::kSyncAfterCommands << YAML::Value << sync_after_commands;
-    os << YAML::EndMap;
-}
-
 // =============================================================================
 // Context
 // =============================================================================
 Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator)
-    : start_time_(std::chrono::system_clock::now()), logger_(start_time_), system_(*this) {
-    // Possibly create messengers for the application to recieve messages from us.
-    // Note that since there aren't real handles for these messengers, we're using the create info pointers
-    // as fake handles so that they can go into the logger callback map.
-    auto* pnext = pCreateInfo->pNext;
-    while (auto* utils_ci = vku::FindStructInPNextChain<VkDebugUtilsMessengerCreateInfoEXT>(pnext)) {
-        logger_.AddLogCallback(utils_ci, *utils_ci);
-        pnext = utils_ci->pNext;
-    }
-    pnext = pCreateInfo->pNext;
-    while (auto* report_ci = vku::FindStructInPNextChain<VkDebugReportCallbackCreateInfoEXT>(pnext)) {
-        logger_.AddLogCallback(report_ci, *report_ci);
-        pnext = report_ci->pNext;
-    }
-
-    const std::time_t in_time_t = std::chrono::system_clock::to_time_t(start_time_);
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&in_time_t), kLogTimeTag);
-    std::string start_time_str(ss.str());
-
-    const auto* settings_ci = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
-
-    VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
-    VkResult result =
-        vkuCreateLayerSettingSet("lunarg_crash_diagnostic", settings_ci, pAllocator, nullptr, &layer_setting_set);
-    if (result != VK_SUCCESS) {
-        Log().Error("vkuCreateLayerSettingSet failed with error %d", result);
-        return;
-    }
-    settings_.emplace(layer_setting_set, logger_);
-
-    // output path
-    std::filesystem::path default_output_path = System::GetOutputBasePath();
-    default_output_path /= "cdl";
-    {
-        if (!settings_->output_path.empty()) {
-            output_path_ = settings_->output_path;
-        } else {
-            output_path_ = default_output_path;
-        }
-
-        base_output_path_ = output_path_;
-        output_path_ /= start_time_str;
-        default_output_path /= start_time_str;
-    }
-    // logging
-    {
-        std::string severity;
-        if (GetEnvVal<std::string>(layer_setting_set, settings::kMessageSeverity, severity)) {
-            VkDebugUtilsMessageSeverityFlagsEXT mask{0};
-            bool bad_value = false;
-            if (!severity.empty()) {
-                std::regex re("[\\s,]+");
-                std::sregex_token_iterator re_iter(severity.begin(), severity.end(), re, -1);
-                std::sregex_token_iterator re_end;
-                for (; re_iter != re_end; ++re_iter) {
-                    auto iter = settings::kSeverityValues.find(*re_iter);
-                    if (iter != settings::kSeverityValues.end()) {
-                        mask |= iter->second;
-                    } else {
-                        bad_value = true;
-                        std::string value = *re_iter;
-                        Log().Error("Bad value for message_severity setting: \"%s\"", value.c_str());
-                    }
-                }
-            }
-            if (!bad_value) {
-                logger_.SetSeverity(mask);
-            }
-        }
-
-        std::string log_file;
-        if (GetEnvVal<std::string>(layer_setting_set, settings::kLogFile, log_file)) {
-            auto iter = settings::kLogFileValues.find(log_file);
-            if (iter != settings::kLogFileValues.end()) {
-                switch (iter->second) {
-                    case settings::LogOutputs::kNone:
-                        logger_.CloseLogFile();
-                        break;
-                    case settings::LogOutputs::kStderr:
-                        logger_.LogToStderr();
-                        break;
-                    case settings::LogOutputs::kStdout:
-                        logger_.LogToStdout();
-                        break;
-                }
-            } else {
-                std::filesystem::path path(log_file);
-                if (!path.has_root_directory()) {
-                    // "./" or ".\\" should be relative to the apps cwd, otherwise
-                    // make it relative to the dump file location.
-                    if (log_file[0] != '.') {
-                        path = output_path_ / log_file;
-                    }
-                }
-
-                if (path.has_parent_path()) {
-                    try {
-                        // On Windows, if the path include an invalid drive, then filesystem crash...
-                        // We need to use an exception to capture this problem
-                        std::filesystem::create_directories(path.parent_path());
-                    } catch (std::exception& e) {
-                        std::cerr << "Failed to open log file: " << path << " - " << e.what() << std::endl;
-                        // We fallback using the default path
-                        output_path_ = default_output_path;
-                        path = default_output_path / log_file;
-                    }
-                }
-
-                logger_.OpenLogFile(path);
-            }
-        }
-    }
-    Log().Info("Version %s enabled. Start time tag: %s", kCdlVersion.c_str(), start_time_str.c_str());
+    : logger_(std::chrono::system_clock::now()), system_(*this) {
+    settings_.emplace(pCreateInfo, pAllocator, logger_);
 
     // trace mode
     {
@@ -311,8 +63,6 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
                 break;
         }
     }
-
-    vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
 }
 
 Context::~Context() { logger_.CloseLogFile(); }
@@ -652,14 +402,14 @@ void Context::DumpDeviceExecutionStateValidationFailed(Device& device, YAML::Emi
 }
 
 void Context::DumpReportPrologue(YAML::Emitter& os) {
-    auto elapsed = std::chrono::system_clock::now() - start_time_;
+    auto elapsed = std::chrono::system_clock::now() - this->settings_->start_time;
     os << YAML::Comment("----------------------------------------------------------------") << YAML::Newline;
     os << YAML::Comment("-                    CRASH DIAGNOSTIC LAYER                    -") << YAML::Newline;
     os << YAML::Comment("----------------------------------------------------------------") << YAML::Newline;
     os << YAML::BeginMap;
     os << YAML::Key << "version" << YAML::Value << kCdlVersion;
     std::stringstream timestr;
-    auto in_time_t = std::chrono::system_clock::to_time_t(start_time_);
+    auto in_time_t = std::chrono::system_clock::to_time_t(this->settings_->start_time);
     timestr << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
     os << YAML::Key << "startTime" << YAML::Value << timestr.str();
     os << YAML::Key << "timeSinceStart" << YAML::Value << DurationToStr(elapsed);
@@ -715,10 +465,10 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
 
 std::ofstream Context::OpenDumpFile() {
     // Make sure our output directory exists.
-    std::filesystem::create_directories(output_path_);
+    std::filesystem::create_directories(settings_->output_path);
 
     // now write our log.
-    std::filesystem::path dump_file_path(output_path_);
+    std::filesystem::path dump_file_path(settings_->output_path);
 
     // Keep the first log as cdl_dump.yaml then add a number if more than one log is
     // generated. Multiple logs are a new feature and we want to keep backward
@@ -732,26 +482,33 @@ std::ofstream Context::OpenDumpFile() {
     dump_file_path /= ss_name.str();
     total_logs_++;
 
-    // Create a symlink from the generated log file.
-#if !defined(VK_USE_PLATFORM_WIN32_KHR)
-    std::filesystem::path symlink_path(base_output_path_);
-    symlink_path /= "cdl_dump.yaml.symlink";
-    try {
-        std::filesystem::remove(symlink_path);
-        std::filesystem::create_symlink(dump_file_path, symlink_path);
-    } catch (std::filesystem::filesystem_error& err) {
-        Log().Warning("symlink %s -> %s failed: %s", dump_file_path.string().c_str(), symlink_path.string().c_str(),
-                      err.what());
-    }
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    bool use_platform_win32 = true;
+#else
+    bool use_platform_win32 = false;
 #endif
+
+    // Create a symlink from the generated log file.
+    std::filesystem::path symlink_path(settings_->base_output_path);
+    if (!use_platform_win32) {
+        symlink_path /= "cdl_dump.yaml.symlink";
+        try {
+            std::filesystem::remove(symlink_path);
+            std::filesystem::create_symlink(dump_file_path, symlink_path);
+        } catch (std::filesystem::filesystem_error& err) {
+            Log().Warning("symlink %s -> %s failed: %s", dump_file_path.string().c_str(), symlink_path.string().c_str(),
+                          err.what());
+        }
+    }
 
     std::stringstream ss;
     ss << "Device error encountered and log being recorded" << std::endl;
     ;
     ss << "\tOutput written to: " << dump_file_path << std::endl;
-#if !defined(VK_USE_PLATFORM_WIN32_KHR)
-    ss << "\tSymlink to output: " << symlink_path << std::endl;
-#endif
+    if (!use_platform_win32) {
+        ss << "\tSymlink to output: " << symlink_path << std::endl;
+    }
+
     ss << "----------------------------------------------------------------" << std::endl;
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     OutputDebugString(ss.str().c_str());
@@ -1317,7 +1074,7 @@ VkResult Context::PostGetSemaphoreCounterValue(VkDevice device, VkSemaphore sema
     return result;
 }
 
-const std::filesystem::path& Context::GetOutputPath() const { return output_path_; }
+const std::filesystem::path& Context::GetOutputPath() const { return this->settings_->output_path; }
 
 VkResult Context::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
     auto device_state = GetDevice(device);
