@@ -30,6 +30,11 @@ namespace crash_diagnostic_layer {
 
 class Logger;
 
+enum class DumpSemaphores {
+    kOff = 0,
+    kOnCrash,
+};
+
 // Used for command buffers, commands and queue submisions
 enum class DumpCommands {
     kRunning = 0,
@@ -44,26 +49,49 @@ enum class DumpShaders {
     kAll,
 };
 
+// Definitions for Debug Actions
+enum VkLayerDbgActionBits {
+    VK_DBG_LAYER_ACTION_IGNORE = 0x00000000,
+    VK_DBG_LAYER_ACTION_CALLBACK = 0x00000001,
+    VK_DBG_LAYER_ACTION_LOG_MSG = 0x00000002,
+    VK_DBG_LAYER_ACTION_BREAK = 0x00000004,
+    VK_DBG_LAYER_ACTION_DEBUG_OUTPUT = 0x00000008,
+    VK_DBG_LAYER_ACTION_LOG_STDOUT = 0x00000010,
+    VK_DBG_LAYER_ACTION_LOG_STDERR = 0x00000020,
+    VK_DBG_LAYER_ACTION_DEFAULT = 0x40000000,
+};
+using VkLayerDbgActionFlags = VkFlags;
+
+// Definitions for Message Areas
+enum MessageAreaBits {
+    MESSAGE_AREA_COMMON_BIT = 0x00000001,
+    MESSAGE_AREA_SEMAPHORE_BIT = 0x00000002,
+    MESSAGE_AREA_PERF_BIT = 0x00000004,
+};
+using MessageAreaFlags = VkFlags;
+
 struct Settings {
     using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
 
-    Settings();
     Settings(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, Logger& log);
     ~Settings() {}
     void Print(YAML::Emitter& os) const;
 
-    DumpCommands dump_queue_submits{DumpCommands::kRunning};
-    DumpCommands dump_command_buffers{DumpCommands::kRunning};
-    DumpCommands dump_commands{DumpCommands::kRunning};
-    DumpShaders dump_shaders{DumpShaders::kOff};
+    DumpSemaphores dump_semaphores = DumpSemaphores::kOff;
+    DumpCommands dump_queue_submits = DumpCommands::kRunning;
+    DumpCommands dump_command_buffers = DumpCommands::kRunning;
+    DumpCommands dump_commands = DumpCommands::kRunning;
+    DumpShaders dump_shaders = DumpShaders::kOff;
+     
+    bool sync_after_commands = false;
+    bool instrument_all_commands = false;
 
-    bool instrument_all_commands{false};
-    bool track_semaphores{false};
-    bool trace_all_semaphores{false};
-    bool trace_all{false};
-    bool sync_after_commands{false};
-    bool trigger_watchdog_timer{true};
-    uint64_t watchdog_timer_ms{30000};
+    VkLayerDbgActionFlags debug_action = VK_DBG_LAYER_ACTION_LOG_MSG | VK_DBG_LAYER_ACTION_DEBUG_OUTPUT;
+    VkDebugUtilsMessageSeverityFlagsEXT log_message_severity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    MessageAreaFlags log_message_areas = 0;
+
+    bool trigger_watchdog_timer = true;
+    uint64_t watchdog_timer_ms = 30000;
 
     TimePoint start_time;
     std::filesystem::path base_output_path;

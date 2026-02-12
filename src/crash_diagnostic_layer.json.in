@@ -323,7 +323,6 @@
                             "key": "debug_action",
                             "label": "Debug Action",
                             "description": "Specifies what action is to be taken when a layer reports log messages",
-                            "platforms": [ "WINDOWS", "LINUX", "MACOS", "ANDROID" ],
                             "type": "FLAGS",
                             "flags": [
                                 {
@@ -340,16 +339,24 @@
                                             "dependence": {
                                                 "mode": "ALL",
                                                 "settings": [
-                                                    { "key": "debug_action", "value": [ "VK_DBG_LAYER_ACTION_LOG_MSG" ] }
+                                                    {
+                                                        "key": "debug_action",
+                                                        "value": [ "VK_DBG_LAYER_ACTION_LOG_MSG" ]
+                                                    }
                                                 ]
                                             }
                                         }
                                     ]
                                 },
                                 {
-                                    "key": "VK_DBG_LAYER_ACTION_LOG_STD",
-                                    "label": "Log Messages to the Standard Output",
+                                    "key": "VK_DBG_LAYER_ACTION_LOG_STDOUT",
+                                    "label": "Log Messages to the Standard Output stream",
                                     "description": "Log messages to stdout."
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_LOG_STDERR",
+                                    "label": "Log Messages to the Standard Error stream",
+                                    "description": "Log messages to stderr."
                                 },
                                 {
                                     "key": "VK_DBG_LAYER_ACTION_DEBUG_OUTPUT",
@@ -374,12 +381,17 @@
                             ]
                         },
                         {
-                            "key": "report_flags",
-                            "label": "Message Severity",
+                            "key": "message_severity",
+                            "label": "Log Message Severity",
                             "description": "Comma-delineated list of options specifying the types of messages to be reported",
-                            "platforms": [ "WINDOWS", "LINUX", "MACOS", "ANDROID" ],
                             "type": "FLAGS",
                             "flags": [
+                                {
+                                    "key": "verbose",
+                                    "label": "Debug",
+                                    "description": "For layer development. Report messages for debugging layer behavior.",
+                                    "view": "DEBUG"
+                                },
                                 {
                                     "key": "info",
                                     "label": "Info",
@@ -391,20 +403,9 @@
                                     "description": "Report warnings from using the API in a manner which may lead to undefined behavior or to warn the user of common trouble spots. A warning does NOT necessarily signify illegal application behavior."
                                 },
                                 {
-                                    "key": "perf",
-                                    "label": "Performance",
-                                    "description": "Report usage of the API that may cause suboptimal performance."
-                                },
-                                {
                                     "key": "error",
                                     "label": "Error",
                                     "description": "Report errors in API usage."
-                                },
-                                {
-                                    "key": "debug",
-                                    "label": "Debug",
-                                    "description": "For layer development. Report messages for debugging layer behavior.",
-                                    "view": "DEBUG"
                                 }
                             ],
                             "default": [
@@ -415,79 +416,28 @@
                             "key": "message_areas",
                             "label": "Log Message Areas",
                             "description": "",
-                            "type": "GROUP",
-                            "expanded": true,
-                            "settings": [
+                            "type": "FLAGS",
+                            "flags": [
                                 {
-                                    "key": "trace_on",
-                                    "env": "CDL_TRACE_ON",
-                                    "label": "Log main submission and synchronization Vulkan commands",
+                                    "key": "common",
+                                    "label": "Trace Submission and synchronization Vulkan commands",
                                     "description": "Add Vulkan API calls intercepted by the layer will be logged to the console.",
-                                    "detailed": "This includes: vkDeviceWaitIdle, vkQueueWaitIdle, vkQueuePresentKHR, vkWaitForFences, vkGetFenceStatus, vkAcquireNextImageKHR, vkCreateCommandPool, vkDestroyCommandPool, vkResetCommandPool, vkAllocateCommandBuffers, vkFreeCommandBuffers, vkQueueSubmit, vkQueueSubmit2, vkQueueSubmit2KHR and vkQueueBindSparse",
-                                    "type": "BOOL",
-                                    "default": false
+                                    "detailed": "This includes: vkDeviceWaitIdle, vkQueueWaitIdle, vkQueuePresentKHR, vkWaitForFences, vkGetFenceStatus, vkAcquireNextImageKHR, vkCreateCommandPool, vkDestroyCommandPool, vkResetCommandPool, vkAllocateCommandBuffers, vkFreeCommandBuffers, vkQueueSubmit, vkQueueSubmit2, vkQueueSubmit2KHR and vkQueueBindSparse"
                                 },
                                 {
-                                    "key": "trace_all_semaphores",
-                                    "env": "CDL_TRACE_ALL_SEMAPHORES",
-                                    "label": "Log Vulkan commands that use semaphores",
-                                    "description": "Add logging messages about every vulkan command that uses semaphores",
-                                    "type": "BOOL",
-                                    "default": false,
-                                    "dependence": {
-                                        "mode": "ALL",
-                                        "settings": [
-                                            {
-                                                "key": "track_semaphores",
-                                                "value": true
-                                            }
-                                        ]
-                                    },
-                                    "messages": [
-                                        {
-                                            "key": "trace_all_semaphores_msg0",
-                                            "title": "'Log Vulkan commands that use semaphores' requires 'Track semaphores' to be enabled",
-                                            "version": 1,
-                                            "description": "'Log Vulkan commands that use semaphores' requires 'Track semaphores' to be enabled",
-                                            "informative": "Are you sure you want to enable 'Log Vulkan commands that use semaphores'?",
-                                            "severity": "INFO",
-                                            "conditions": [
-                                                {
-                                                    "setting": {
-                                                        "key": "track_semaphores",
-                                                        "value": false
-                                                    }
-                                                }
-                                            ],
-                                            "actions": {
-                                                "default": "BUTTON0",
-                                                "BUTTON0": {
-                                                    "type": "OK",
-                                                    "changes": [
-                                                        {
-                                                            "setting": {
-                                                                "key": "track_semaphores",
-                                                                "value": true
-                                                            }
-                                                        }
-                                                    ]
-                                                },
-                                                "BUTTON1": {
-                                                    "type": "CANCEL",
-                                                    "changes": [
-                                                        {
-                                                            "setting": {
-                                                                "key": "track_semaphores",
-                                                                "value": false
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        }
-                                    ]
+                                    "key": "semaphores",
+                                    "label": "Trace Semaphores",
+                                    "description": "Add logging messages about every vulkan command that uses semaphores.",
+                                    "detailed": "This includes: TODO"
+                                },
+                                {
+                                    "key": "perf",
+                                    "label": "Performance",
+                                    "description": "TODO.",
+                                    "detailed": "This includes: TODO"
                                 }
-                            ]
+                            ],
+                            "default": []
                         }
                     ]
                 }

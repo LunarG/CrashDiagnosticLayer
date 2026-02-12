@@ -36,7 +36,7 @@ Queue::Queue(Device& device, VkQueue queue, uint32_t family_index, uint32_t inde
       queue_family_index_(family_index),
       queue_index_(index),
       queue_family_properties_(props),
-      trace_all_semaphores_(device_.GetContext().GetSettings().trace_all_semaphores) {
+      trace_semaphores_(device_.GetContext().GetSettings().log_message_areas & MESSAGE_AREA_SEMAPHORE_BIT) {
     auto type_ci = vku::InitStruct<VkSemaphoreTypeCreateInfo>();
     type_ci.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE;
     type_ci.initialValue = submit_seq_;
@@ -670,7 +670,7 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
             vku::FreePnextChain(submit.pNext);
         }
 
-        if (trace_all_semaphores_) {
+        if (trace_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
         submission.submit_infos.emplace_back(std::move(submit_info));
@@ -767,7 +767,7 @@ VkResult Queue::Submit2(uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkF
             }
         }
 
-        if (trace_all_semaphores_) {
+        if (trace_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
         submission.submit_infos.emplace_back(std::move(submit_info));
@@ -860,7 +860,7 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
             }
             vku::FreePnextChain(bind_info.pNext);
         }
-        if (trace_all_semaphores_) {
+        if (trace_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
         submission.submit_infos.emplace_back(std::move(submit_info));
@@ -880,7 +880,7 @@ VkResult Queue::BindSparse(uint32_t bindInfoCount, const VkBindSparseInfo* pBind
 }
 
 void Queue::LogSubmitInfoSemaphores(const SubmitInfo& submit_info) {
-    assert(trace_all_semaphores_ == true);
+    assert(trace_semaphores_ == true);
     if (SubmitInfoHasSemaphores(submit_info)) {
         std::string semaphore_log = GetSubmitInfoSemaphoresLog(submit_info);
         Log().Info(semaphore_log);

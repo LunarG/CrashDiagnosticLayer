@@ -36,52 +36,78 @@ const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
 
 namespace crash_diagnostic_layer {
 
-namespace settings {
-const char* kOutputPath = "output_path";
-const char* kTraceOn = "trace_on";
-const char* kLogFile = "log_file";
 enum LogOutputs {
     kNone,
     kStderr,
     kStdout,
 };
+
+const char* kOutputPath = "output_path";
+const char* kLogFile = "log_file";
+
+const char* SETTING_DUMP_SEMAPHORES = "dump_semaphores";
+const char* SETTING_DUMP_QUEUE_SUBMITS = "dump_queue_submits";
+const char* SETTING_DUMP_COMMAND_BUFFERS = "dump_command_buffers";
+const char* SETTING_DUMP_COMMANDS = "dump_commands";
+const char* SETTING_DUMP_SHADERS = "dump_shaders";
+
+const char* kTriggerWatchdogTimeout = "trigger_watchdog_timeout";
+const char* kWatchdogTimeout = "watchdog_timeout_ms";
+
+const char* kInstrumentAllCommands = "instrument_all_commands";
+const char* kSyncAfterCommands = "sync_after_commands";
+const char *SETTING_LOG_FILENAME = "log_filename";
+const char *SETTING_DEBUG_ACTION = "debug_action";
+const char *SETTING_MESSAGE_SEVERITY = "message_severity";
+const char *SETTING_MESSAGE_AREAS = "message_areas";
+
 static const std::unordered_map<std::string, LogOutputs> kLogFileValues{
     {"none", LogOutputs::kNone},
     {"stderr", LogOutputs::kStderr},
     {"stdout", LogOutputs::kStdout},
 };
-const char* kMessageSeverity = "message_severity";
-static const std::unordered_map<std::string, VkDebugUtilsMessageSeverityFlagBitsEXT> kSeverityValues{
+
+static const std::unordered_map<std::string, VkFlags> kDebugActionValues = {
+    {"VK_DBG_LAYER_ACTION_IGNORE", VK_DBG_LAYER_ACTION_IGNORE},
+    {"VK_DBG_LAYER_ACTION_CALLBACK", VK_DBG_LAYER_ACTION_CALLBACK},
+    {"VK_DBG_LAYER_ACTION_LOG_MSG", VK_DBG_LAYER_ACTION_LOG_MSG},
+    {"VK_DBG_LAYER_ACTION_BREAK", VK_DBG_LAYER_ACTION_BREAK},
+    {"VK_DBG_LAYER_ACTION_DEBUG_OUTPUT", VK_DBG_LAYER_ACTION_DEBUG_OUTPUT},
+    {"VK_DBG_LAYER_ACTION_LOG_STDOUT", VK_DBG_LAYER_ACTION_LOG_STDOUT},
+    {"VK_DBG_LAYER_ACTION_LOG_STDERR", VK_DBG_LAYER_ACTION_LOG_STDERR},
+    {"VK_DBG_LAYER_ACTION_DEFAULT", VK_DBG_LAYER_ACTION_DEFAULT}
+};
+
+static const std::unordered_map<std::string, VkDebugUtilsMessageSeverityFlagBitsEXT> kMessageSeverityValues{
     {"error", VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT},
     {"warn", VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT},
     {"info", VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
     {"verbose", VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
 };
-const char* kDumpCommands = "dump_commands";
-const char* kDumpCommandBuffers = "dump_command_buffers";
-const char* kDumpQueueSubmits = "dump_queue_submits";
+
+static const std::unordered_map<std::string, MessageAreaBits> kMessageAreaValues{
+    {"common", MESSAGE_AREA_COMMON_BIT},
+    {"semaphore", MESSAGE_AREA_SEMAPHORE_BIT},
+    {"perf", MESSAGE_AREA_PERF_BIT},
+};
+
+static const std::unordered_map<std::string, DumpSemaphores> kDumpSemaphoresValues{
+    {"off", DumpSemaphores::kOff},
+    {"on_crash", DumpSemaphores::kOnCrash},
+};
+
 static const std::unordered_map<std::string, DumpCommands> kDumpCommandsValues{
     {"running", DumpCommands::kRunning},
     {"pending", DumpCommands::kPending},
     {"all", DumpCommands::kAll},
 };
 
-const char* kDumpShaders = "dump_shaders";
 static const std::unordered_map<std::string, DumpShaders> kDumpShadersValues{
     {"off", DumpShaders::kOff},
     {"on_crash", DumpShaders::kOnCrash},
     {"on_bind", DumpShaders::kOnBind},
     {"all", DumpShaders::kAll},
 };
-
-const char* kTriggerWatchdogTimeout = "trigger_watchdog_timeout";
-const char* kWatchdogTimeout = "watchdog_timeout_ms";
-const char* kDumpAllCommandBuffers = "dump_all_command_buffers";
-const char* kTrackSemaphores = "track_semaphores";
-const char* kTraceAllSemaphores = "trace_all_semaphores";
-const char* kInstrumentAllCommands = "instrument_all_commands";
-const char* kSyncAfterCommands = "sync_after_commands";
-}  // namespace settings
 
 template <class T>
 bool GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value) {
@@ -141,24 +167,16 @@ Settings::Settings(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCa
         return;
     }
 
-    std::string output_path_string;
-    GetEnvVal<std::string>(layer_setting_set, settings::kOutputPath, output_path_string);
-    this->output_path = output_path_string;
-    GetEnvVal<bool>(layer_setting_set, settings::kTraceOn, trace_all);
-    GetEnumVal<DumpCommands>(log, layer_setting_set, settings::kDumpQueueSubmits, dump_queue_submits,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpCommands>(log, layer_setting_set, settings::kDumpCommandBuffers, dump_command_buffers,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpCommands>(log, layer_setting_set, settings::kDumpCommands, dump_commands,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpShaders>(log, layer_setting_set, settings::kDumpShaders, dump_shaders, settings::kDumpShadersValues);
-    GetEnvVal<uint64_t>(layer_setting_set, settings::kWatchdogTimeout, watchdog_timer_ms);
-    GetEnvVal<bool>(layer_setting_set, settings::kTrackSemaphores, track_semaphores);
-    GetEnvVal<bool>(layer_setting_set, settings::kTraceAllSemaphores, trace_all_semaphores);
-    GetEnvVal<bool>(layer_setting_set, settings::kInstrumentAllCommands, instrument_all_commands);
-    GetEnvVal<bool>(layer_setting_set, settings::kSyncAfterCommands, sync_after_commands);
+    GetEnvVal<bool>(layer_setting_set, kSyncAfterCommands, sync_after_commands);
+    GetEnvVal<bool>(layer_setting_set, kInstrumentAllCommands, instrument_all_commands);
 
     // output path
+    if (vkuHasLayerSetting(layer_setting_set, kOutputPath)) {
+        std::string output_path_string;
+        vkuGetLayerSettingValue(layer_setting_set, kOutputPath, output_path_string);
+        this->output_path = output_path_string;
+    }
+
     std::filesystem::path default_output_path = System::GetOutputBasePath();
     default_output_path /= "cdl";
     {
@@ -166,48 +184,60 @@ Settings::Settings(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCa
             this->output_path = default_output_path;
         }
 
-        this->base_output_path = output_path;
+        this->base_output_path = this->output_path;
         this->output_path /= start_time_str;
         default_output_path /= start_time_str;
     }
-    // logging
-    {
-        std::string severity;
-        if (GetEnvVal<std::string>(layer_setting_set, settings::kMessageSeverity, severity)) {
-            VkDebugUtilsMessageSeverityFlagsEXT mask{0};
-            bool bad_value = false;
-            if (!severity.empty()) {
-                std::regex re("[\\s,]+");
-                std::sregex_token_iterator re_iter(severity.begin(), severity.end(), re, -1);
-                std::sregex_token_iterator re_end;
-                for (; re_iter != re_end; ++re_iter) {
-                    auto iter = settings::kSeverityValues.find(*re_iter);
-                    if (iter != settings::kSeverityValues.end()) {
-                        mask |= iter->second;
-                    } else {
-                        bad_value = true;
-                        std::string value = *re_iter;
-                        log.Error("Bad value for message_severity setting: \"%s\"", value.c_str());
-                    }
+
+    GetEnvVal<bool>(layer_setting_set, kTriggerWatchdogTimeout, this->trigger_watchdog_timer);
+    GetEnvVal<uint64_t>(layer_setting_set, kWatchdogTimeout, this->watchdog_timer_ms);
+
+    GetEnumVal<DumpSemaphores>(log, layer_setting_set, SETTING_DUMP_SEMAPHORES, this->dump_semaphores, kDumpSemaphoresValues);
+    GetEnumVal<DumpCommands>(log, layer_setting_set, SETTING_DUMP_QUEUE_SUBMITS, this->dump_queue_submits, kDumpCommandsValues);
+    GetEnumVal<DumpCommands>(log, layer_setting_set, SETTING_DUMP_COMMAND_BUFFERS, this->dump_command_buffers, kDumpCommandsValues);
+    GetEnumVal<DumpCommands>(log, layer_setting_set, SETTING_DUMP_COMMANDS, this->dump_commands, kDumpCommandsValues);
+    GetEnumVal<DumpShaders>(log, layer_setting_set, SETTING_DUMP_SHADERS, this->dump_shaders, kDumpShadersValues);
+
+    if (vkuHasLayerSetting(layer_setting_set, SETTING_DEBUG_ACTION)) {
+        std::vector<std::string> debug_actions_list;
+        vkuGetLayerSettingValues(layer_setting_set, SETTING_DEBUG_ACTION, debug_actions_list);
+
+        this->debug_action = 0;
+        for (const auto &element : debug_actions_list) {
+            auto enum_value = kDebugActionValues.find(element);
+            if (enum_value != kDebugActionValues.end()) {
+                this->debug_action |= enum_value->second;
+            } else {
+                if (element.find(',') != std::string::npos) {
+                    log.Warning(
+                        "\"" + element + "\" is not a valid value for `debug_action` (ignoring).\n"
+                        "If using `VkLayerSettings`, each string needs to be its own `VkLayerSettingEXT::pValues`.");
+                } else {
+                    log.Warning(
+                        "\"" + element + "\" is not a valid value for `debug_action` (ignoring).\n"
+                        "Valid values are [VK_DBG_LAYER_ACTION_IGNORE, VK_DBG_LAYER_ACTION_CALLBACK, "
+                        "VK_DBG_LAYER_ACTION_LOG_MSG, VK_DBG_LAYER_ACTION_LOG_STDOUT, VK_DBG_LAYER_ACTION_LOG_STDERR, "
+                        "VK_DBG_LAYER_ACTION_BREAK, VK_DBG_LAYER_ACTION_DEBUG_OUTPUT, VK_DBG_LAYER_ACTION_DEFAULT]");
                 }
-            }
-            if (!bad_value) {
-                log.SetSeverity(mask);
             }
         }
 
+    }
+
+    // logging
+    {
         std::string log_file;
-        if (GetEnvVal<std::string>(layer_setting_set, settings::kLogFile, log_file)) {
-            auto iter = settings::kLogFileValues.find(log_file);
-            if (iter != settings::kLogFileValues.end()) {
+        if (GetEnvVal<std::string>(layer_setting_set, kLogFile, log_file)) {
+            auto iter = kLogFileValues.find(log_file);
+            if (iter != kLogFileValues.end()) {
                 switch (iter->second) {
-                    case settings::LogOutputs::kNone:
+                    case LogOutputs::kNone:
                         log.CloseLogFile();
                         break;
-                    case settings::LogOutputs::kStderr:
+                    case LogOutputs::kStderr:
                         log.LogToStderr();
                         break;
-                    case settings::LogOutputs::kStdout:
+                    case LogOutputs::kStdout:
                         log.LogToStdout();
                         break;
                 }
@@ -237,6 +267,54 @@ Settings::Settings(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCa
                 log.OpenLogFile(path);
             }
         }
+
+        std::string message_severity;
+        if (GetEnvVal<std::string>(layer_setting_set, SETTING_MESSAGE_SEVERITY, message_severity)) {
+            VkDebugUtilsMessageSeverityFlagsEXT mask{0};
+            bool bad_value = false;
+            if (!message_severity.empty()) {
+                std::regex re("[\\s,]+");
+                std::sregex_token_iterator re_iter(message_severity.begin(), message_severity.end(), re, -1);
+                std::sregex_token_iterator re_end;
+                for (; re_iter != re_end; ++re_iter) {
+                    auto iter = kMessageSeverityValues.find(*re_iter);
+                    if (iter != kMessageSeverityValues.end()) {
+                        mask |= iter->second;
+                    } else {
+                        bad_value = true;
+                        std::string value = *re_iter;
+                        log.Error("Bad value for `message_severity` setting: \"%s\"", value.c_str());
+                    }
+                }
+            }
+            if (!bad_value) {
+                log.SetSeverity(mask);
+            }
+        }
+
+        std::string message_areas;
+        if (GetEnvVal<std::string>(layer_setting_set, SETTING_MESSAGE_AREAS, message_areas)) {
+            MessageAreaFlags mask{0};
+            bool bad_value = false;
+            if (!message_areas.empty()) {
+                std::regex re("[\\s,]+");
+                std::sregex_token_iterator re_iter(message_areas.begin(), message_areas.end(), re, -1);
+                std::sregex_token_iterator re_end;
+                for (; re_iter != re_end; ++re_iter) {
+                    auto iter = kMessageAreaValues.find(*re_iter);
+                    if (iter != kMessageAreaValues.end()) {
+                        mask |= iter->second;
+                    } else {
+                        bad_value = true;
+                        std::string value = *re_iter;
+                        log.Error("Bad value for `message_areas` setting: \"%s\"", value.c_str());
+                    }
+                }
+            }
+            if (!bad_value) {
+                log.SetAreas(mask);
+            }
+        }
     }
 
     vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
@@ -244,8 +322,19 @@ Settings::Settings(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCa
     log.Info("Version %s enabled. Start time tag: %s", kCdlVersion.c_str(), start_time_str.c_str());
 }
 
+YAML::Emitter& operator<<(YAML::Emitter& os, DumpSemaphores value) {
+    for (auto& entry : kDumpSemaphoresValues) {
+        if (value == entry.second) {
+            os << entry.first;
+            return os;
+        }
+    }
+    os << "unknown";
+    return os;
+}
+
 YAML::Emitter& operator<<(YAML::Emitter& os, DumpCommands value) {
-    for (auto& entry : settings::kDumpCommandsValues) {
+    for (auto& entry : kDumpCommandsValues) {
         if (value == entry.second) {
             os << entry.first;
             return os;
@@ -256,7 +345,7 @@ YAML::Emitter& operator<<(YAML::Emitter& os, DumpCommands value) {
 }
 
 YAML::Emitter& operator<<(YAML::Emitter& os, DumpShaders value) {
-    for (auto& entry : settings::kDumpShadersValues) {
+    for (auto& entry : kDumpShadersValues) {
         if (value == entry.second) {
             os << entry.first;
             return os;
@@ -268,18 +357,28 @@ YAML::Emitter& operator<<(YAML::Emitter& os, DumpShaders value) {
 
 void Settings::Print(YAML::Emitter& os) const {
     os << YAML::BeginMap;
-    os << YAML::Key << settings::kOutputPath << YAML::Value << output_path.c_str();
-    os << YAML::Key << settings::kTraceOn << YAML::Value << trace_all;
-    os << YAML::Key << settings::kDumpQueueSubmits << YAML::Value << dump_queue_submits;
-    os << YAML::Key << settings::kDumpCommandBuffers << YAML::Value << dump_command_buffers;
-    os << YAML::Key << settings::kDumpCommands << YAML::Value << dump_commands;
-    os << YAML::Key << settings::kDumpShaders << YAML::Value << dump_shaders;
-    os << YAML::Key << settings::kTriggerWatchdogTimeout << YAML::Value << trigger_watchdog_timer;
-    os << YAML::Key << settings::kWatchdogTimeout << YAML::Value << watchdog_timer_ms;
-    os << YAML::Key << settings::kTrackSemaphores << YAML::Value << track_semaphores;
-    os << YAML::Key << settings::kTraceAllSemaphores << YAML::Value << trace_all_semaphores;
-    os << YAML::Key << settings::kInstrumentAllCommands << YAML::Value << instrument_all_commands;
-    os << YAML::Key << settings::kSyncAfterCommands << YAML::Value << sync_after_commands;
+    os << YAML::Key << kOutputPath << YAML::Value << output_path.c_str();
+    os << YAML::Key << kInstrumentAllCommands << YAML::Value << instrument_all_commands;
+    os << YAML::Key << kSyncAfterCommands << YAML::Value << sync_after_commands;
+
+
+    os << YAML::Key << kTriggerWatchdogTimeout << YAML::Value << trigger_watchdog_timer;
+    os << YAML::Key << kWatchdogTimeout << YAML::Value << watchdog_timer_ms;
+
+    os << YAML::Key << SETTING_DUMP_SEMAPHORES << YAML::Value << this->dump_semaphores;
+    os << YAML::Key << SETTING_DUMP_QUEUE_SUBMITS << YAML::Value << this->dump_queue_submits;
+    os << YAML::Key << SETTING_DUMP_COMMAND_BUFFERS << YAML::Value << this->dump_command_buffers;
+    os << YAML::Key << SETTING_DUMP_COMMANDS << YAML::Value << this->dump_commands;
+    os << YAML::Key << SETTING_DUMP_SHADERS << YAML::Value << this->dump_shaders;
+
+    //TODO
+    //os << YAML::Key << kLogFile << YAML::Value << this-> output_path.c_str();
+    //os << YAML::Key << SETTING_DEBUG_ACTION << YAML::Value << this->debug_action;
+    //os << YAML::Key << SETTING_LOG_FILENAME << YAML::Value << this->log_filename;
+
+    //os << YAML::Key << SETTING_MESSAGE_SEVERITY << YAML::Value << this->message_severity;
+    //os << YAML::Key << SETTING_MESSAGE_AREAS << YAML::Value << this->message_areas;
+
     os << YAML::EndMap;
 }
 
@@ -344,7 +443,6 @@ const char* kDumpQueueSubmits = "dump_queue_submits";
 const char* kDumpShaders = "dump_shaders";
 const char* kTriggerWatchdogTimeout = "trigger_watchdog_timeout";
 const char* kWatchdogTimeout = "watchdog_timeout_ms";
-const char* kDumpAllCommandBuffers = "dump_all_command_buffers";
 const char* kTrackSemaphores = "track_semaphores";
 const char* kTraceAllSemaphores = "trace_all_semaphores";
 const char* kInstrumentAllCommands = "instrument_all_commands";

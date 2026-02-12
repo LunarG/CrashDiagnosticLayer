@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023-2024 LunarG, Inc.
+ Copyright (c) 2023-2026 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 */
 
 #pragma once
+
+#include "layer_settings.h"
 
 #include <chrono>
 #include <filesystem>
@@ -63,6 +65,7 @@ class Logger {
     const Timepoint& StartTime() const { return start_time_; }
 
     void SetSeverity(VkDebugUtilsMessageSeverityFlagsEXT mask);
+    void SetAreas(MessageAreaFlags mask);
 
     void Error(const char* format, ...) const;
     void Error(const std::string& message) const;
@@ -109,6 +112,7 @@ class Logger {
     VkDebugUtilsMessageSeverityFlagsEXT severity_mask_{VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
                                                        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
                                                        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT};
+    MessageAreaFlags area_mask_{};
 
     // default logging state
     LogCallback default_cb_;

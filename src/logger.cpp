@@ -165,6 +165,11 @@ void Logger::SetSeverity(VkDebugUtilsMessageSeverityFlagsEXT mask) {
     UpdateSeverityMask();
 }
 
+void Logger::SetAreas(MessageAreaFlags mask) {
+    std::lock_guard<std::mutex> lock(file_access_mutex_);
+    this->area_mask_ = mask; // TODO
+}
+
 void Logger::Error(const char* format, ...) const {
     va_list argptr;
     va_start(argptr, format);

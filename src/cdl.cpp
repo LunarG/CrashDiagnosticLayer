@@ -26,14 +26,12 @@
 #endif
 
 #include <algorithm>
-#include <chrono>
 #include <fstream>
 #include <inttypes.h>
 #include <iostream>
 #include <memory>
 #include <sstream>
 
-//#include <vulkan/utility/vk_struct_helper.hpp>
 #include <vulkan/vk_enum_string_helper.h>
 
 #include <yaml-cpp/emitter.h>
@@ -130,19 +128,19 @@ Context::ConstDevicePtr Context::GetQueueDevice(VkQueue queue) const {
 }
 
 void Context::PreApiFunction(const char* api_name) {
-    if (settings_->trace_all) {
+    if (settings_->log_message_areas & MESSAGE_AREA_COMMON_BIT) {
         Log().Info("{ %s", api_name);
     }
 }
 
 void Context::PostApiFunction(const char* api_name) {
-    if (settings_->trace_all) {
+    if (settings_->log_message_areas & MESSAGE_AREA_COMMON_BIT) {
         Log().Info("} %s", api_name);
     }
 }
 
 void Context::PostApiFunction(const char* api_name, VkResult result) {
-    if (settings_->trace_all) {
+    if (settings_->log_message_areas & MESSAGE_AREA_COMMON_BIT) {
         Log().Info("} %s (%s)", api_name, string_VkResult(result));
     }
 }
@@ -909,7 +907,7 @@ void Context::PostFreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
 VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore,
                                       VkResult result) {
-    if (settings_->track_semaphores && result == VK_SUCCESS) {
+    if (result == VK_SUCCESS) {
         uint64_t s_value = 0;
         VkSemaphoreTypeKHR s_type = VK_SEMAPHORE_TYPE_BINARY_KHR;
 
@@ -921,67 +919,76 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
         auto device_state = GetDevice(device);
         assert(device_state);
 
-        device_state->GetSemaphoreTracker()->RegisterSemaphore(*pSemaphore, s_type, s_value);
+        if (device_state->GetSemaphoreTracker() != nullptr) {
+            device_state->GetSemaphoreTracker()->RegisterSemaphore(*pSemaphore, s_type, s_value);
 
-        if (settings_->trace_all_semaphores) {
-            std::stringstream log;
-            log << "Semaphore created. VkDevice:" << device_state->GetObjectName((uint64_t)device)
-                << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(*pSemaphore));
-            if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
-                log << ", Type: Binary";
-            } else {
-                log << ", Type: Timeline, Initial value: " << s_value;
+            if ((settings_->log_message_areas & MESSAGE_AREA_SEMAPHORE_BIT)) {
+                std::stringstream log;
+                log << "Semaphore created. VkDevice:" << device_state->GetObjectName((uint64_t)device)
+                    << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(*pSemaphore));
+                if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
+                    log << ", Type: Binary";
+                } else {
+                    log << ", Type: Timeline, Initial value: " << s_value;
+                }
+                Log().Info(log.str());
             }
-            Log().Info(log.str());
         }
     }
     return result;
 }
 
 void Context::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
-    if (settings_->track_semaphores && settings_->trace_all_semaphores) {
+    if ((settings_->log_message_areas & MESSAGE_AREA_SEMAPHORE_BIT)) {
         auto device_state = GetDevice(device);
         assert(device_state);
 
         auto semaphore_tracker = device_state->GetSemaphoreTracker();
-
-        std::stringstream log;
-        log << "Semaphore destroyed. VkDevice:" << device_state->GetObjectName((uint64_t)device)
-            << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(semaphore));
-        if (semaphore_tracker->GetSemaphoreType(semaphore) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
-            log << ", Type: Binary, ";
-        } else {
-            log << ", Type: Timeline, ";
+        if (semaphore_tracker != nullptr) {
+            std::stringstream log;
+            log << "Semaphore destroyed. VkDevice:" << device_state->GetObjectName((uint64_t)device)
+                << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(semaphore));
+            if (semaphore_tracker->GetSemaphoreType(semaphore) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
+                log << ", Type: Binary, ";
+            } else {
+                log << ", Type: Timeline, ";
+            }
+            uint64_t semaphore_value;
+            if (semaphore_tracker->GetSemaphoreValue(semaphore, semaphore_value)) {
+                log << "Latest value: " << semaphore_value;
+            } else {
+                log << "Latest value: Unknown";
+            }
+            Log().Info(log.str());
         }
-        uint64_t semaphore_value;
-        if (semaphore_tracker->GetSemaphoreValue(semaphore, semaphore_value)) {
-            log << "Latest value: " << semaphore_value;
-        } else {
-            log << "Latest value: Unknown";
-        }
-        Log().Info(log.str());
     }
 }
 
 void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
-    if (settings_->track_semaphores) {
-        auto device_state = GetDevice(device);
-        auto semaphore_tracker = device_state->GetSemaphoreTracker();
+    auto device_state = GetDevice(device);
+    auto semaphore_tracker = device_state->GetSemaphoreTracker();
+    if (semaphore_tracker != nullptr) {
         semaphore_tracker->EraseSemaphore(semaphore);
     }
 }
 
 VkResult Context::PostSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo, VkResult result) {
-    if (settings_->track_semaphores && result == VK_SUCCESS) {
+    if (result == VK_SUCCESS) {
         auto device_state = GetDevice(device);
-        device_state->GetSemaphoreTracker()->SignalSemaphore(pSignalInfo->semaphore, pSignalInfo->value,
-                                                             {SemaphoreModifierType::kModifierHost});
-        if (settings_->trace_all_semaphores) {
-            std::string timeline_message = "Timeline semaphore signaled from host. VkDevice: ";
-            timeline_message += device_state->GetObjectName((uint64_t)device) +
-                                ", VkSemaphore: " + device_state->GetObjectName((uint64_t)(pSignalInfo->semaphore)) +
-                                ", Signal value: " + std::to_string(pSignalInfo->value);
-            Log().Info(timeline_message.c_str());
+        assert(device_state);
+
+        auto semaphore_tracker = device_state->GetSemaphoreTracker();
+
+        if (semaphore_tracker != nullptr) {
+            semaphore_tracker->SignalSemaphore(pSignalInfo->semaphore, pSignalInfo->value,
+                                                                 {SemaphoreModifierType::kModifierHost});
+            if ((settings_->log_message_areas & MESSAGE_AREA_SEMAPHORE_BIT)) {
+                std::string timeline_message = "Timeline semaphore signaled from host. VkDevice: ";
+                timeline_message += device_state->GetObjectName((uint64_t)device) +
+                                    ", VkSemaphore: " + device_state->GetObjectName((uint64_t)(pSignalInfo->semaphore)) +
+                                    ", Signal value: " + std::to_string(pSignalInfo->value);
+                Log().Info(timeline_message.c_str());
+            }
         }
     }
     return result;
@@ -993,13 +1000,16 @@ VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKH
     if (!device_state->UpdateIdleState()) {
         result = VK_ERROR_DEVICE_LOST;
     }
-    if (settings_->track_semaphores) {
+
+    auto semaphore_tracker = device_state->GetSemaphoreTracker();
+
+    if (semaphore_tracker != nullptr) {
         auto tid = System::GetTid();
         auto pid = System::GetPid();
 
-        device_state->GetSemaphoreTracker()->BeginWaitOnSemaphores(pid, tid, pWaitInfo);
+        semaphore_tracker->BeginWaitOnSemaphores(pid, tid, pWaitInfo);
 
-        if (settings_->trace_all_semaphores) {
+        if ((settings_->log_message_areas & MESSAGE_AREA_SEMAPHORE_BIT)) {
             std::stringstream log;
             log << "Waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
                 << ", VkDevice: " << device_state->GetObjectName((uint64_t)device) << std::endl;
@@ -1023,7 +1033,9 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
         device_state->DeviceFault();
         return result;
     }
-    if (settings_->track_semaphores && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
+
+    auto semaphore_tracker = device_state->GetSemaphoreTracker();
+    if (semaphore_tracker != nullptr && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
         auto tid = System::GetTid();
         auto pid = System::GetPid();
         {
@@ -1031,7 +1043,7 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
             uint64_t semaphore_value;
             auto dispatch_table =
                 crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(device))->dispatch_table;
-            auto semaphore_tracker = device_state->GetSemaphoreTracker();
+
             for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
                 VkResult res;
                 if (dispatch_table.GetSemaphoreCounterValue) {
@@ -1048,7 +1060,7 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
             semaphore_tracker->EndWaitOnSemaphores(pid, tid, pWaitInfo);
         }
 
-        if (settings_->trace_all_semaphores) {
+        if ((settings_->log_message_areas & MESSAGE_AREA_SEMAPHORE_BIT)) {
             std::stringstream log;
             log << "Finished waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
                 << ", VkDevice: " << device_state->GetObjectName((uint64_t)device) << std::endl;
