@@ -80,6 +80,7 @@ target_sources(crash_diagnostic PRIVATE
     system.h
     system.cpp
     util.h
+    util.cpp
     watchdog.cpp
     watchdog.h
 )

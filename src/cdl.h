@@ -40,7 +40,6 @@
 #include "device.h"
 #include "layer_base.h"
 #include "logger.h"
-#include "system.h"
 
 namespace crash_diagnostic_layer {
 
@@ -106,7 +105,7 @@ class Context : public Interceptor {
     DevicePtr GetQueueDevice(VkQueue);
     ConstDevicePtr GetQueueDevice(VkQueue) const;
 
-    const Settings& GetSettings() const { return settings_.value(); }
+    const Settings& GetSettings() const { return this->settings_; }
 
     void DumpAllDevicesExecutionState(CrashSource crash_source);
     void DumpDeviceExecutionState(Device& device, CrashSource crash_source = kDeviceLostError);
@@ -120,10 +119,6 @@ class Context : public Interceptor {
     void ValidateCommandBufferNotInUse(CommandBuffer* commandBuffer);
 
    public:
-    void PreApiFunction(const char* api_name);
-    void PostApiFunction(const char* api_name);
-    void PostApiFunction(const char* api_name, VkResult result);
-
     const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) override;
     const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                           const VkDeviceCreateInfo* pCreateInfo) override;
@@ -278,10 +273,14 @@ class Context : public Interceptor {
     template <typename T>
     void QueryFeature(VkPhysicalDevice physicalDevice, T* feature);
 
-    std::optional<Settings> settings_;
+    const Timepoint start_time;
 
+    Settings settings_;
     Logger logger_;
     System system_;
+
+    std::filesystem::path base_output_dir;
+    std::filesystem::path timed_crash_dump_output_dir;
 
     VkInstance vk_instance_ = VK_NULL_HANDLE;
     vku::safe_VkInstanceCreateInfo original_create_info_;

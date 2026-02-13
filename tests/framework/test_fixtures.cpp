@@ -61,6 +61,7 @@ CDLTestBase::CDLTestBase()
       queue_(VK_NULL_HANDLE),
       cmd_pool_(VK_NULL_HANDLE),
       cmd_buff_(VK_NULL_HANDLE) {
+
     const auto* test_info = testing::UnitTest::GetInstance()->current_test_info();
 
     // Set default settings here rather than InitInstance(). This allows tests cases
@@ -69,15 +70,12 @@ CDLTestBase::CDLTestBase()
     output_path_ /= test_info->test_suite_name();
     output_path_ /= test_info->name();
 
-    layer_settings_.SetOutputPath(output_path_.string().c_str());
-
-    layer_settings_.SetDumpShaders("off");
+    layer_settings_.output_path = output_path_.string();
+    layer_settings_.dump_shaders = "off";
 
     if (print_all_) {
-        layer_settings_.SetLogFile("stderr");
-        layer_settings_.SetMessageSeverity("error, warn, info, verbose");
-    } else {
-        layer_settings_.SetLogFile("none");
+        layer_settings_.debug_action = {"VK_DBG_LAYER_ACTION_LOG_STDERR"};
+        layer_settings_.message_severity = {"error", "warn", "info", "verbose"};
     }
 }
 
@@ -88,7 +86,7 @@ void CDLTestBase::InitInstance() {
     std::vector<const char*> layers{"VK_LAYER_LUNARG_crash_diagnostic"};
     std::vector<const char*> instance_extensions{"VK_EXT_debug_utils", "VK_EXT_layer_settings"};
 
-    vk::InstanceCreateInfo ci({}, &app_info, layers, instance_extensions, layer_settings_.GetCreateInfo());
+    vk::InstanceCreateInfo ci({}, &app_info, layers, instance_extensions, this->layer_settings_.BuildCreateInfo());
 
     instance_ = vk::raii::Instance(context_, ci);
 

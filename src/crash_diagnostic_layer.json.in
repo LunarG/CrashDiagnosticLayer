@@ -130,7 +130,7 @@
                         {
                             "key": "output_path",
                             "env": "CDL_OUTPUT_PATH",
-                            "label": "Output Path",
+                            "label": "Crash Dump Output Directory",
                             "description": "The directory where dump files and shader binaries are written.",
                             "type": "SAVE_FOLDER",
                             "default": ""
@@ -304,22 +304,6 @@
                     "expanded": true,
                     "settings": [
                         {
-                            "key": "log_file",
-                            "env": "CDL_LOG_FILE",
-                            "label": "Log Filename",
-                            "description": "none = no logging, stderr or stdout = to the console, otherwise an absolute or relative path.",
-                            "filter": "*.txt",
-                            "status": "DEPRECATED",
-                            "view": "HIDDEN",
-                            "type": "SAVE_FILE",
-                            "default": "stderr",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS"
-                            ]
-                        },
-                        {
                             "key": "debug_action",
                             "label": "Debug Action",
                             "description": "Specifies what action is to be taken when a layer reports log messages",
@@ -331,7 +315,7 @@
                                     "description": "Log messages to a log file.",
                                     "settings": [
                                         {
-                                            "key": "log_filename",
+                                            "key": "log_file",
                                             "label": "Log Filename",
                                             "description": "Specifies the output filename",
                                             "type": "SAVE_FILE",
@@ -377,7 +361,7 @@
                                 }
                             ],
                             "default": [
-                                "VK_DBG_LAYER_ACTION_LOG_MSG", "VK_DBG_LAYER_ACTION_DEBUG_OUTPUT"
+                                "VK_DBG_LAYER_ACTION_LOG_STDOUT", "VK_DBG_LAYER_ACTION_DEBUG_OUTPUT"
                             ]
                         },
                         {
@@ -395,7 +379,39 @@
                                 {
                                     "key": "info",
                                     "label": "Info",
-                                    "description": "Report informational messages."
+                                    "description": "Report informational messages.",
+                                    "settings": [
+                                        {
+                                            "key": "message_api_trace",
+                                            "label": "Log API trace",
+                                            "description": "",
+                                            "type": "FLAGS",
+                                            "flags": [
+                                                {
+                                                    "key": "common",
+                                                    "label": "Trace Submission and synchronization Vulkan commands",
+                                                    "description": "Add Vulkan API calls intercepted by the layer will be logged to the console.",
+                                                    "detailed": "This includes: vkDeviceWaitIdle, vkQueueWaitIdle, vkQueuePresentKHR, vkWaitForFences, vkGetFenceStatus, vkAcquireNextImageKHR, vkCreateCommandPool, vkDestroyCommandPool, vkResetCommandPool, vkAllocateCommandBuffers, vkFreeCommandBuffers, vkQueueSubmit, vkQueueSubmit2, vkQueueSubmit2KHR and vkQueueBindSparse"
+                                                },
+                                                {
+                                                    "key": "semaphores",
+                                                    "label": "Trace Semaphores",
+                                                    "description": "Add logging messages about every vulkan command that uses semaphores.",
+                                                    "detailed": "This includes: TODO"
+                                                }
+                                            ],
+                                            "default": [],
+                                            "dependence": {
+                                                "mode": "ALL",
+                                                "settings": [
+                                                    {
+                                                        "key": "message_severity",
+                                                        "value": [ "info" ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
                                 },
                                 {
                                     "key": "warn",
@@ -411,33 +427,6 @@
                             "default": [
                                 "error"
                             ]
-                        },
-                        {
-                            "key": "message_areas",
-                            "label": "Log Message Areas",
-                            "description": "",
-                            "type": "FLAGS",
-                            "flags": [
-                                {
-                                    "key": "common",
-                                    "label": "Trace Submission and synchronization Vulkan commands",
-                                    "description": "Add Vulkan API calls intercepted by the layer will be logged to the console.",
-                                    "detailed": "This includes: vkDeviceWaitIdle, vkQueueWaitIdle, vkQueuePresentKHR, vkWaitForFences, vkGetFenceStatus, vkAcquireNextImageKHR, vkCreateCommandPool, vkDestroyCommandPool, vkResetCommandPool, vkAllocateCommandBuffers, vkFreeCommandBuffers, vkQueueSubmit, vkQueueSubmit2, vkQueueSubmit2KHR and vkQueueBindSparse"
-                                },
-                                {
-                                    "key": "semaphores",
-                                    "label": "Trace Semaphores",
-                                    "description": "Add logging messages about every vulkan command that uses semaphores.",
-                                    "detailed": "This includes: TODO"
-                                },
-                                {
-                                    "key": "perf",
-                                    "label": "Performance",
-                                    "description": "TODO.",
-                                    "detailed": "This includes: TODO"
-                                }
-                            ],
-                            "default": []
                         }
                     ]
                 }
