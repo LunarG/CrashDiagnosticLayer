@@ -82,6 +82,7 @@ static const std::unordered_map<std::string, DumpShaders> kDumpShadersValues{
     {"all", DumpShaders::kAll},
 };
 
+const char* kTriggerTimelineSemaphore = "trigger_timeline_semaphore";
 const char* kTriggerWatchdogTimeout = "trigger_watchdog_timeout";
 const char* kWatchdogTimeout = "watchdog_timeout_ms";
 const char* kDumpAllCommandBuffers = "dump_all_command_buffers";
@@ -130,6 +131,8 @@ Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
     GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommands, dump_commands,
                              settings::kDumpCommandsValues);
     GetEnumVal<DumpShaders>(log, layer_settings, settings::kDumpShaders, dump_shaders, settings::kDumpShadersValues);
+    GetEnvVal<bool>(layer_settings, settings::kTriggerTimelineSemaphore, trigger_timeline_semaphore);
+    GetEnvVal<bool>(layer_settings, settings::kTriggerWatchdogTimeout, trigger_watchdog_timer);
     GetEnvVal<uint64_t>(layer_settings, settings::kWatchdogTimeout, watchdog_timer_ms);
     GetEnvVal<bool>(layer_settings, settings::kTrackSemaphores, track_semaphores);
     GetEnvVal<bool>(layer_settings, settings::kTraceAllSemaphores, trace_all_semaphores);
@@ -167,6 +170,7 @@ void Settings::Print(YAML::Emitter& os) const {
     os << YAML::Key << settings::kDumpCommandBuffers << YAML::Value << dump_command_buffers;
     os << YAML::Key << settings::kDumpCommands << YAML::Value << dump_commands;
     os << YAML::Key << settings::kDumpShaders << YAML::Value << dump_shaders;
+    os << YAML::Key << settings::kTriggerTimelineSemaphore << YAML::Value << trigger_timeline_semaphore;
     os << YAML::Key << settings::kTriggerWatchdogTimeout << YAML::Value << trigger_watchdog_timer;
     os << YAML::Key << settings::kWatchdogTimeout << YAML::Value << watchdog_timer_ms;
     os << YAML::Key << settings::kTrackSemaphores << YAML::Value << track_semaphores;
@@ -594,12 +598,16 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             auto* existing = vku::FindStructInPNextChain<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(&device_ci->modified);
             if (vulkan12_features) {
                 vulkan12_features->timelineSemaphore = VK_TRUE;
+                Log().Info("Modify VkPhysicalDeviceVulkan12Features struct to enable timeline semaphore at device creation.");
             } else if (existing) {
                 existing->timelineSemaphore = VK_TRUE;
+                Log().Info("Modify VkPhysicalDeviceTimelineSemaphoreFeaturesKHR struct to enable timeline semaphore at device creation.");
             } else {
                 vku::AddToPnext(device_ci->modified, khr_timeline_semaphore);
+                Log().Info("Insert VkPhysicalDeviceTimelineSemaphoreFeaturesKHR struct to create info at device creation.");
                 if (api_version < VK_API_VERSION_1_2 && !extensions_enabled.khr_timeline_semaphore) {
                     vku::AddExtension(device_ci->modified, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+                    Log().Info("Insert VK_KHR_timeline_semaphore extension at device creation.");
                 }
             }
         }
@@ -607,6 +615,8 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
         Log().Error(
             "No device support for VK_KHR_timeline_semaphore extension, Vulkan 1.2 or VK_KHR_timeline_semaphore are required to track queue "
             "progress, enabling early device lost detection.");
+//        Log().Warning(
+//            "No VK_KHR_timeline_semaphore extension, no tracking of queue semaphore progress is possible, preventing early device lost detection.");
     }
 
     // save the raw ptr before std::move of the std::unique_ptr
@@ -1277,6 +1287,7 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
             auto semaphore_tracker = device_state->GetSemaphoreTracker();
             for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
                 VkResult res;
+
                 if (dispatch_table.GetSemaphoreCounterValue) {
                     res = dispatch_table.GetSemaphoreCounterValue(device, pWaitInfo->pSemaphores[i], &semaphore_value);
                 } else {
