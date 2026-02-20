@@ -129,7 +129,7 @@ TEST_F(RayTracing, BuildPositive) {
 }
 
 TEST_F(RayTracing, BuildCrash) {
-    layer_settings_.dump_commands = "all";
+    this->layer_settings.crash_diagnostic.dump_commands = "all";
 
     InitInstance();
 
@@ -245,7 +245,7 @@ TEST_F(RayTracing, BuildCrash) {
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(RayTracing, TraceRaysPositive) {
@@ -429,5 +429,5 @@ void main() {}
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }

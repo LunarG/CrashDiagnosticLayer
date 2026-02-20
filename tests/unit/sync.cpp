@@ -30,7 +30,7 @@ static constexpr uint64_t kWaitTimeout{10000000000};  // 10 seconds in ns
 static constexpr uint64_t kWatchdogTimeout{7000};
 
 TEST_F(Sync, HostWaitWrongSem) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
 
     vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
@@ -82,11 +82,11 @@ TEST_F(Sync, HostWaitWrongSem) {
     monitor_.VerifyFound();
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(Sync, GpuWaitWrongSem) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
 
     vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
@@ -137,11 +137,11 @@ TEST_F(Sync, GpuWaitWrongSem) {
     monitor_.VerifyFound();
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(Sync, GpuWaitBinaryPositive) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -176,7 +176,7 @@ TEST_F(Sync, GpuWaitBinaryPositive) {
 }
 
 TEST_F(Sync, GpuWaitTimelinePositive) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
 
     vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
@@ -224,7 +224,7 @@ TEST_F(Sync, TimelineCounterPositive) {
     // test for https://github.com/LunarG/CrashDiagnosticLayer/issues/173
     using namespace std::chrono_literals;
 
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
 
     vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
@@ -268,7 +268,7 @@ TEST_F(Sync, TimelineCounterPositive) {
 }
 
 TEST_F(Sync, HostWaitHang) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
 
     vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
@@ -326,11 +326,11 @@ TEST_F(Sync, HostWaitHang) {
     monitor_.VerifyFound();
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(Sync, HostWaitHangSubmit2) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
 
     vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceSynchronization2Features,
@@ -394,12 +394,12 @@ TEST_F(Sync, HostWaitHangSubmit2) {
     monitor_.VerifyFound();
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, layer_settings.crash_diagnostic.output_path);
 }
 
 // TODO: Never finishes in Internal CI on 64,Debug,Windows11-rolling
 TEST_F(Sync, DISABLED_FenceWaitHang) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -435,11 +435,11 @@ TEST_F(Sync, DISABLED_FenceWaitHang) {
     monitor_.VerifyFound();
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(Sync, DeviceWaitHang) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -473,5 +473,5 @@ TEST_F(Sync, DeviceWaitHang) {
     monitor_.VerifyFound();
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, layer_settings.crash_diagnostic.output_path);
 }

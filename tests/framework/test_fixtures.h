@@ -50,13 +50,11 @@ class CDLTestBase : public ::testing::Test {
 
     vk::raii::Context context_;
     ErrorMonitor monitor_;
-    // LayerSettings settings_;
     vk::raii::Instance instance_;
 
     vk::raii::PhysicalDevice physical_device_;
     vk::raii::Device device_;
-    std::filesystem::path output_path_;
-    LayerSettings layer_settings_;
+    LayerSettings layer_settings;
 
     uint32_t qfi_{~0u};
     vk::raii::Queue queue_;

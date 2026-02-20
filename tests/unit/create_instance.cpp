@@ -114,6 +114,13 @@ TEST(CreateInstance, AllLayerSettings) {
 
     LayerSettings layer_settings;
 
-    vk::InstanceCreateInfo ci({}, nullptr, layers, instance_extensions, layer_settings.BuildCreateInfo());
+    const std::vector<vk::LayerSettingEXT>& layer_settings_data = layer_settings.info();
+    const vk::LayerSettingEXT* pSettings = &layer_settings_data[0];
+
+    vk::LayerSettingsCreateInfoEXT layer_settings_create_info(
+        static_cast<uint32_t>(layer_settings_data.size()), pSettings,
+        nullptr);
+
+    vk::InstanceCreateInfo ci({}, nullptr, layers, instance_extensions, &layer_settings_create_info);
     vk::raii::Instance instance(context, ci);
 }
