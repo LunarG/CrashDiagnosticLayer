@@ -20,6 +20,8 @@
 #include <string>
 #include <vector>
 
+#include "layer_settings_generated.h"
+/*
 // The members of this struct should be kept in sync with
 // the setting found in the layer json file.
 // The values in here should be the defaults we want to use
@@ -66,3 +68,4 @@ class LayerSettings {
     const void* pnext = nullptr;
     vk::LayerSettingsCreateInfoEXT create_info_;
 };
+*/

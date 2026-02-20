@@ -144,7 +144,7 @@ TEST_F(Graphics, InfiniteLoop) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(Graphics, MultiDrawNoCrash) {
@@ -390,5 +390,5 @@ TEST_F(Graphics, MultiDrawInfiniteLoop) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }

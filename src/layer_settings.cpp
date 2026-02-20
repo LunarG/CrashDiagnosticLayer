@@ -118,7 +118,7 @@ void Settings::Init(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationC
     const auto* settings_ci = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pnext);
 
     VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
-    VkResult result = vkuCreateLayerSettingSet("lunarg_crash_diagnostic", settings_ci, pAllocator, nullptr, &layer_setting_set);
+    VkResult result = vkuCreateLayerSettingSet("VK_LAYER_LUNARG_crash_diagnostic", settings_ci, pAllocator, nullptr, &layer_setting_set);
     if (result != VK_SUCCESS) {
         this->init_failed = true;
         return;

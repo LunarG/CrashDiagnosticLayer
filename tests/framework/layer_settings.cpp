@@ -19,7 +19,7 @@
 #include "layer_settings.h"
 #include "config.h"
 #include <cstring>
-
+/*
 const vk::LayerSettingsCreateInfoEXT* LayerSettings::BuildCreateInfo() {
     this->output_path_info = this->output_path.c_str();
 
@@ -68,4 +68,4 @@ const vk::LayerSettingsCreateInfoEXT* LayerSettings::BuildCreateInfo() {
     this->create_info_ = vk::LayerSettingsCreateInfoEXT(this->settings_, this->pnext);
     return &this->create_info_;
 }
-
+*/

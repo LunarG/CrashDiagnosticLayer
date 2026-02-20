@@ -89,7 +89,7 @@ struct Settings {
 
     std::filesystem::path crash_dump_output_dir = std::filesystem::path(System::GetOutputBasePath()) / "cdl";
     bool trigger_watchdog_timer = true;
-    uint64_t watchdog_timer_ms = 30000;
+    int64_t watchdog_timer_ms = 30000;
 
     DumpSemaphores dump_semaphores = SETTING_DUMP_SEMAPHORES_OFF;
     DumpCommands dump_queue_submits = SETTING_DUMP_COMMANDS_RUNNING;

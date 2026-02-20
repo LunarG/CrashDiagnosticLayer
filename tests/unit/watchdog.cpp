@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,10 @@
 class Watchdog : public CDLTestBase {};
 
 constexpr uint64_t kWatchdogTimeout = 3000;
+
 TEST_F(Watchdog, NoTimeout) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.trigger_watchdog_timeout = false;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -45,7 +47,8 @@ TEST_F(Watchdog, NoTimeout) {
 }
 
 TEST_F(Watchdog, Timeout) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.trigger_watchdog_timeout = true;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
