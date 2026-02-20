@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +129,8 @@ TEST_F(RayTracing, BuildPositive) {
 }
 
 TEST_F(RayTracing, BuildCrash) {
-    layer_settings_.SetDumpCommands("all");
+    this->layer_settings.crash_diagnostic.dump_commands = "all";
+
     InitInstance();
 
     vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceBufferDeviceAddressFeatures,
@@ -244,7 +245,7 @@ TEST_F(RayTracing, BuildCrash) {
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(RayTracing, TraceRaysPositive) {
@@ -428,5 +429,5 @@ void main() {}
     monitor_.VerifyFound();
     ASSERT_TRUE(hang_detected);
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }

@@ -20,50 +20,52 @@
 #include <string>
 #include <vector>
 
+#include "layer_settings_generated.h"
+/*
 // The members of this struct should be kept in sync with
 // the setting found in the layer json file.
 // The values in here should be the defaults we want to use
 // for testing.
 class LayerSettings {
    public:
-    LayerSettings(const void* pnext = nullptr);
-    ~LayerSettings();
+    LayerSettings(const void* pnext = nullptr) : pnext(pnext) {}
+    ~LayerSettings() {}
 
-    const vk::LayerSettingsCreateInfoEXT* GetCreateInfo() { return &create_info_; }
+    const vk::LayerSettingsCreateInfoEXT* BuildCreateInfo();
 
-    void SetOutputPath(const char*);
-    void SetLogFile(const char*);
-    void SetMessageSeverity(const char*);
-    void SetDumpShaders(const char*);
-    void SetDumpQueueSubmits(const char*);
-    void SetDumpCommandBuffers(const char*);
-    void SetDumpCommands(const char*);
-
-    // logging section
-    vk::Bool32 trace_on{false};
-
-    // commands section
-    vk::Bool32 instrument_all_commands{false};
     vk::Bool32 sync_after_commands{false};
+    vk::Bool32 instrument_all_commands{false};
 
-    // semaphores section
-    vk::Bool32 track_semaphores{true};
-    vk::Bool32 trace_all_semaphores{false};
-
-    // hang detection section
+    std::string output_path = "";
     bool trigger_watchdog_timer{true};
     uint64_t watchdog_timeout_ms{30000};
 
+    std::string dump_semaphores = "off";
+    std::string dump_queue_submits = "running";
+    std::string dump_command_buffers = "running";
+    std::string dump_commands = "running";
+    std::string dump_shaders = "off";
+    std::vector<std::string> debug_action;
+    std::vector<std::string> message_severity = {"error"};
+    std::string log_file = "cdl_log.txt";
+    std::vector<std::string> message_api_trace;
+
    private:
-    // these member names must match the setting name exactly.
-    char* output_path{nullptr};
-    char* log_file{nullptr};
-    char* message_severity{nullptr};
-    char* dump_shaders{nullptr};
-    char* dump_queue_submits{nullptr};
-    char* dump_command_buffers{nullptr};
-    char* dump_commands{nullptr};
+    const char* output_path_info = nullptr;
+
+    const char* dump_semaphores_info = nullptr;
+    const char* dump_queue_submits_info = nullptr;
+    const char* dump_command_buffers_info = nullptr;
+    const char* dump_commands_info = nullptr;
+    const char* dump_shaders_info = nullptr;
+
+    std::vector<const char*> debug_action_info;
+    std::vector<const char*> message_severity_info;
+    const char* log_file_info = nullptr;
+    std::vector<const char*> message_api_trace_info;
 
     std::vector<vk::LayerSettingEXT> settings_;
+    const void* pnext = nullptr;
     vk::LayerSettingsCreateInfoEXT create_info_;
 };
+*/

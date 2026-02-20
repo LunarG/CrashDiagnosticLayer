@@ -1,6 +1,6 @@
 /*
  Copyright 2020 Google Inc.
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2026 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -117,18 +117,18 @@ class Queue {
     bool UpdateSeq();
 
     Device& device_;
-    VkQueue vk_queue_{VK_NULL_HANDLE};
+    VkQueue vk_queue_ = VK_NULL_HANDLE;
     const uint32_t queue_family_index_;
     const uint32_t queue_index_;
     const VkQueueFamilyProperties queue_family_properties_;
-    bool trace_all_semaphores_{false};
+    bool trace_semaphores_ = false;
 
     mutable std::mutex queue_submits_mutex_;
     std::list<Submission> queue_submits_;
 
-    VkSemaphore submit_sem_{VK_NULL_HANDLE};
-    std::atomic<uint64_t> submit_seq_{0};
-    std::atomic<uint64_t> complete_seq_{0};
+    VkSemaphore submit_sem_ = VK_NULL_HANDLE;
+    std::atomic<uint64_t> submit_seq_ = 0;
+    std::atomic<uint64_t> complete_seq_ = 0;
 };
 
 }  // namespace crash_diagnostic_layer

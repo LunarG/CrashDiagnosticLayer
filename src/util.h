@@ -1,6 +1,6 @@
 /*
  Copyright 2018 Google Inc.
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2026 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -17,44 +17,18 @@
 
 #pragma once
 
-#include <algorithm>
 #include <chrono>
 #include <cstdint>
-#include <iomanip>
-#include <sstream>
 #include <string>
+#include <vector>
 
 namespace crash_diagnostic_layer {
 
-inline void ToUpper(std::string& s) { std::transform(std::begin(s), std::end(s), std::begin(s), ::toupper); }
+void ToUpper(std::string& s);
 
-inline std::string Uint8ToStr(uint8_t value) {
-    std::stringstream ss;
-    // cast to uint32_t to avoid 'char' output
-    ss << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(value);
-    std::string s = ss.str();
-    ToUpper(s);
-    s = "0x" + s;
-    return s;
-}
-
-inline std::string Uint32ToStr(uint32_t value) {
-    std::stringstream ss;
-    ss << std::setw(8) << std::setfill('0') << std::hex << value;
-    std::string s = ss.str();
-    ToUpper(s);
-    s = "0x" + s;
-    return s;
-}
-
-inline std::string Uint64ToStr(uint64_t value) {
-    std::stringstream ss;
-    ss << std::setw(16) << std::setfill('0') << std::hex << value;
-    std::string s = ss.str();
-    ToUpper(s);
-    s = "0x" + s;
-    return s;
-}
+std::string Uint8ToStr(uint8_t value);
+std::string Uint32ToStr(uint32_t value);
+std::string Uint64ToStr(uint64_t value);
 
 template <typename T>
 std::string PtrToStr(const T* ptr) {
@@ -63,23 +37,14 @@ std::string PtrToStr(const T* ptr) {
 }
 
 // specialization for non-dispatchable handles in 32 bit builds
-static inline std::string PtrToStr(uint64_t value) { return Uint64ToStr(value); }
+std::string PtrToStr(uint64_t value);
 
-static inline std::string DurationToStr(std::chrono::system_clock::duration elapsed) {
-    using namespace std::chrono;
-    using namespace std::literals::chrono_literals;
+std::string DurationToStr(std::chrono::system_clock::duration elapsed);
 
-    auto h = duration_cast<hours>(elapsed);
-    elapsed -= h;
-    auto m = duration_cast<minutes>(elapsed);
-    elapsed -= m;
-    auto s = duration_cast<seconds>(elapsed);
-    elapsed -= s;
-    auto ms = duration_cast<milliseconds>(elapsed);
+std::string Merge(const std::vector<std::string>& value, const std::string& delimiter);
 
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(2) << (h / 1h) << ":" << std::setw(2) << (m / 1min) << ":" << std::setw(2)
-       << (s / 1s) << "." << std::setw(3) << (ms / 1ms);
-    return ss.str();
-}
+using Timepoint = std::chrono::time_point<std::chrono::system_clock>;
+
+std::string ToString(const Timepoint& timespoint);
+
 }  // namespace crash_diagnostic_layer

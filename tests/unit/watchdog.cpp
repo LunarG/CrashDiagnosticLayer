@@ -27,7 +27,7 @@ class Watchdog : public CDLTestBase {};
 
 constexpr uint64_t kWatchdogTimeout = 3000;
 TEST_F(Watchdog, NoTimeout) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 
@@ -45,7 +45,7 @@ TEST_F(Watchdog, NoTimeout) {
 }
 
 TEST_F(Watchdog, Timeout) {
-    layer_settings_.watchdog_timeout_ms = kWatchdogTimeout;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = kWatchdogTimeout;
     InitInstance();
     InitDevice();
 

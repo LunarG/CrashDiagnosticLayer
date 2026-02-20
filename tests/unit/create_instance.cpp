@@ -1,6 +1,7 @@
-/* * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+/*
+ * Copyright (c) 2024 The Khronos Group Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,6 +114,13 @@ TEST(CreateInstance, AllLayerSettings) {
 
     LayerSettings layer_settings;
 
-    vk::InstanceCreateInfo ci({}, nullptr, layers, instance_extensions, layer_settings.GetCreateInfo());
+    const std::vector<vk::LayerSettingEXT>& layer_settings_data = layer_settings.info();
+    const vk::LayerSettingEXT* pSettings = &layer_settings_data[0];
+
+    vk::LayerSettingsCreateInfoEXT layer_settings_create_info(
+        static_cast<uint32_t>(layer_settings_data.size()), pSettings,
+        nullptr);
+
+    vk::InstanceCreateInfo ci({}, nullptr, layers, instance_extensions, &layer_settings_create_info);
     vk::raii::Instance instance(context, ci);
 }

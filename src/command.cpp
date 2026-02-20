@@ -416,7 +416,7 @@ int GetCommandPipelineType(const Command& command) {
 void CommandBuffer::HandleIncompleteCommand(const Command& command, const CommandBufferInternalState& state) const {
     // Should we write our shaders on crash?
     auto& context = device_.GetContext();
-    if (context.GetSettings().dump_shaders != DumpShaders::kOnCrash) {
+    if (context.GetSettings().dump_shaders != SETTING_DUMP_SHADERS_ON_CRASH) {
         return;
     }
 
@@ -503,12 +503,12 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
         case CommandBufferState::kMaybeComplete:
             break;
         case CommandBufferState::kNotStarted:
-            if (dump_cbs == DumpCommands::kRunning) {
+            if (dump_cbs == SETTING_DUMP_COMMANDS_RUNNING) {
                 return;
             }
             break;
         default:
-            if (dump_cbs != DumpCommands::kAll) {
+            if (dump_cbs != SETTING_DUMP_COMMANDS_ALL) {
                 return;
             }
             break;
@@ -571,11 +571,11 @@ void CommandBuffer::DumpContents(YAML::Emitter& os, const Settings& settings, ui
 
         state.Mutate(command);
 
-        if (dump_cmds == DumpCommands::kRunning) {
+        if (dump_cmds == SETTING_DUMP_COMMANDS_RUNNING) {
             if (command.id < last_completed || command.id > last_started) {
                 continue;
             }
-        } else if (dump_cmds == DumpCommands::kPending) {
+        } else if (dump_cmds == SETTING_DUMP_COMMANDS_PENDING) {
             if (command.id < last_completed) {
                 continue;
             }

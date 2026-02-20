@@ -25,6 +25,7 @@
 #include <android/log.h>
 #endif
 
+#include <vulkan/vk_enum_string_helper.h>
 #include <vulkan/utility/vk_struct_helper.hpp>
 
 namespace crash_diagnostic_layer {
@@ -106,13 +107,31 @@ void LogCallback::Log(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUt
     }
 }
 
-Logger::Logger(const Logger::Timepoint& start_time)
-    : start_time_(start_time),
-      default_cb_(vku::InitStruct<VkDebugUtilsMessengerCreateInfoEXT>(
+Logger::Logger()
+    : default_cb_(vku::InitStruct<VkDebugUtilsMessengerCreateInfoEXT>(
           nullptr, 0, severity_mask_, VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT, DefaultLogCallback, this)),
-      log_stream_(&std::cerr) {}
+      log_stream_(&std::cerr) {
+}
 
-Logger::~Logger() { CloseLogFile(); }
+Logger::~Logger() { this->CloseLogFile(); }
+
+void Logger::Init(const VkInstanceCreateInfo* pCreateInfo, const Timepoint& start_time, const Settings& settings) {
+    this->start_time_ = start_time;
+
+    // Possibly create messengers for the application to recieve messages from us.
+    // Note that since there aren't real handles for these messengers, we're using the create info pointers
+    // as fake handles so that they can go into the logger callback map.
+    auto* pnext = pCreateInfo->pNext;
+    while (auto* utils_ci = vku::FindStructInPNextChain<VkDebugUtilsMessengerCreateInfoEXT>(pnext)) {
+        this->AddLogCallback(utils_ci, *utils_ci);
+        pnext = utils_ci->pNext;
+    }
+    pnext = pCreateInfo->pNext;
+    while (auto* report_ci = vku::FindStructInPNextChain<VkDebugReportCallbackCreateInfoEXT>(pnext)) {
+        this->AddLogCallback(report_ci, *report_ci);
+        pnext = report_ci->pNext;
+    }
+}
 
 void Logger::LogToStderr() {
     CloseLogFile();
@@ -165,6 +184,11 @@ void Logger::SetSeverity(VkDebugUtilsMessageSeverityFlagsEXT mask) {
     UpdateSeverityMask();
 }
 
+void Logger::SetApiTrace(MessageApiTraceFlags mask) {
+    std::lock_guard<std::mutex> lock(file_access_mutex_);
+    this->log_api_trace_mask_ = mask; // TODO
+}
+
 void Logger::Error(const char* format, ...) const {
     va_list argptr;
     va_start(argptr, format);
@@ -200,6 +224,24 @@ void Logger::Verbose(const char* format, ...) const {
 }
 
 void Logger::Verbose(const std::string& msg) const { Log(VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT, msg); }
+
+void Logger::InfoPreApiFunction(const char* api_name) const {
+    if (this->log_api_trace_mask_ & MESSAGE_API_TRACE_COMMON_BIT) {
+        this->Info("{ %s", api_name);
+    }
+}
+
+void Logger::InfoPostApiFunction(const char* api_name) const {
+    if (this->log_api_trace_mask_ & MESSAGE_API_TRACE_COMMON_BIT) {
+        this->Info("} %s", api_name);
+    }
+}
+
+void Logger::InfoPostApiFunction(const char* api_name, VkResult result) const {
+    if (this->log_api_trace_mask_ & MESSAGE_API_TRACE_COMMON_BIT) {
+        this->Info("} %s (%s)", api_name, string_VkResult(result));
+    }
+}
 
 void Logger::Log(VkDebugUtilsMessageSeverityFlagBitsEXT severity, const char* format, va_list argptr) const {
     {
