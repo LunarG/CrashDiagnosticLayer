@@ -130,7 +130,7 @@
                         {
                             "key": "output_path",
                             "env": "CDL_OUTPUT_PATH",
-                            "label": "Output Path",
+                            "label": "Crash Dump Output Directory",
                             "description": "The directory where dump files and shader binaries are written.",
                             "type": "SAVE_FOLDER",
                             "default": ""
@@ -175,30 +175,42 @@
                             ]
                         },
                         {
-                            "key": "track_semaphores",
+                            "key": "dump_semaphores",
                             "env": "CDL_TRACK_SEMAPHORES",
                             "label": "Dump semaphores",
-                            "description": "Include semaphore state reporting in runtime logging and crash dump files",
-                            "type": "BOOL",
-                            "default": false
+                            "description": "Control Vulkan semaphores reporting in the crash dump.",
+                            "type": "ENUM",
+                            "default": "off",
+                            "flags": [
+                                {
+                                    "key": "off",
+                                    "label": "Off",
+                                    "description": "Never dump semaphore."
+                                },
+                                {
+                                    "key": "on_crash",
+                                    "label": "On Crash",
+                                    "description": "Dump Vulkan semaphores after a crash is detected."
+                                }
+                            ]
                         },
                         {
                             "key": "dump_queue_submits",
                             "env": "CDL_DUMP_QUEUE_SUBMITS",
                             "label": "Dump queue submissions",
-                            "description": "Control which queue submissions are included in the dump.",
+                            "description": "Control which queue submissions are included in the crash dump.",
                             "type": "ENUM",
                             "default": "running",
                             "flags": [
                                 {
                                     "key": "running",
                                     "label": "Running",
-                                    "description": "Submissions that were executing at the time of the dump."
+                                    "description": "Submissions that were executing at the time of the crash dump."
                                 },
                                 {
                                     "key": "pending",
                                     "label": "Pending",
-                                    "description": "Submissions executing or pending at the time of the dump."
+                                    "description": "Submissions executing or pending at the time of the crash dump."
                                 }
                             ]
                         },
@@ -206,19 +218,19 @@
                             "key": "dump_command_buffers",
                             "env": "CDL_DUMP_COMMAND_BUFFERS",
                             "label": "Dump command buffers",
-                            "description": "Control which command buffers are included in the dump.",
+                            "description": "Control which command buffers are included in the crash crashdump.",
                             "type": "ENUM",
                             "default": "running",
                             "flags": [
                                 {
                                     "key": "running",
                                     "label": "Running",
-                                    "description": "Command Buffers that were executing at the time of the dump."
+                                    "description": "Command Buffers that were executing at the time of the crash dump."
                                 },
                                 {
                                     "key": "pending",
                                     "label": "Pending",
-                                    "description": "Command Buffers executing or pending at the time of the dump."
+                                    "description": "Command Buffers executing or pending at the time of the crash dump."
                                 },
                                 {
                                     "key": "all",
@@ -231,19 +243,19 @@
                             "key": "dump_commands",
                             "env": "CDL_DUMP_COMMANDS",
                             "label": "Dump commands",
-                            "description": "Control which commands are included in the dump.",
+                            "description": "Control which commands are included in the crash dump.",
                             "type": "ENUM",
                             "default": "running",
                             "flags": [
                                 {
                                     "key": "running",
                                     "label": "Running",
-                                    "description": "Command Buffers that were executing at the time of the dump."
+                                    "description": "Command Buffers that were executing at the time of the crash dump."
                                 },
                                 {
                                     "key": "pending",
                                     "label": "Pending",
-                                    "description": "Commands executing or pending at the time of the dump."
+                                    "description": "Commands executing or pending at the time of the crash dump."
                                 },
                                 {
                                     "key": "all",
@@ -292,123 +304,124 @@
                     "expanded": true,
                     "settings": [
                         {
-                            "key": "log_file",
-                            "env": "CDL_LOG_FILE",
-                            "label": "Log Filename",
-                            "description": "none = no logging, stderr or stdout = to the console, otherwise an absolute or relative path.",
-                            "filter": "*.txt",
-                            "type": "SAVE_FILE",
-                            "default": "stderr",
-                            "platforms": [
-                                "WINDOWS",
-                                "LINUX",
-                                "MACOS"
-                            ]
-                        },
-                        {
-                            "key": "message_group",
-                            "label": "Log Message Areas",
-                            "description": "",
-                            "type": "GROUP",
-                            "expanded": true,
-                            "settings": [
+                            "key": "debug_action",
+                            "label": "Debug Action",
+                            "description": "Specifies what action is to be taken when a layer reports log messages",
+                            "type": "FLAGS",
+                            "flags": [
                                 {
-                                    "key": "trace_on",
-                                    "env": "CDL_TRACE_ON",
-                                    "label": "Log main submission and synchronization Vulkan commands",
-                                    "description": "Add Vulkan API calls intercepted by the layer will be logged to the console.",
-                                    "detailed": "This includes: vkDeviceWaitIdle, vkQueueWaitIdle, vkQueuePresentKHR, vkWaitForFences, vkGetFenceStatus, vkAcquireNextImageKHR, vkCreateCommandPool, vkDestroyCommandPool, vkResetCommandPool, vkAllocateCommandBuffers, vkFreeCommandBuffers, vkQueueSubmit, vkQueueSubmit2, vkQueueSubmit2KHR and vkQueueBindSparse",
-                                    "type": "BOOL",
-                                    "default": false
-                                },
-                                {
-                                    "key": "trace_all_semaphores",
-                                    "env": "CDL_TRACE_ALL_SEMAPHORES",
-                                    "label": "Log Vulkan commands that use semaphores",
-                                    "description": "Add logging messages about every vulkan command that uses semaphores",
-                                    "type": "BOOL",
-                                    "default": false,
-                                    "dependence": {
-                                        "mode": "ALL",
-                                        "settings": [
-                                            {
-                                                "key": "track_semaphores",
-                                                "value": true
-                                            }
-                                        ]
-                                    },
-                                    "messages": [
+                                    "key": "VK_DBG_LAYER_ACTION_LOG_MSG",
+                                    "label": "Log Messages to a File",
+                                    "description": "Log messages to a log file.",
+                                    "settings": [
                                         {
-                                            "key": "trace_all_semaphores_msg0",
-                                            "title": "'Log Vulkan commands that use semaphores' requires 'Track semaphores' to be enabled",
-                                            "version": 1,
-                                            "description": "'Log Vulkan commands that use semaphores' requires 'Track semaphores' to be enabled",
-                                            "informative": "Are you sure you want to enable 'Log Vulkan commands that use semaphores'?",
-                                            "severity": "INFO",
-                                            "conditions": [
-                                                {
-                                                    "setting": {
-                                                        "key": "track_semaphores",
-                                                        "value": false
+                                            "key": "log_file",
+                                            "label": "Log Filename",
+                                            "description": "Specifies the output filename",
+                                            "type": "SAVE_FILE",
+                                            "default": "cdl_log.txt",
+                                            "dependence": {
+                                                "mode": "ALL",
+                                                "settings": [
+                                                    {
+                                                        "key": "debug_action",
+                                                        "value": [ "VK_DBG_LAYER_ACTION_LOG_MSG" ]
                                                     }
-                                                }
-                                            ],
-                                            "actions": {
-                                                "default": "BUTTON0",
-                                                "BUTTON0": {
-                                                    "type": "OK",
-                                                    "changes": [
-                                                        {
-                                                            "setting": {
-                                                                "key": "track_semaphores",
-                                                                "value": true
-                                                            }
-                                                        }
-                                                    ]
-                                                },
-                                                "BUTTON1": {
-                                                    "type": "CANCEL",
-                                                    "changes": [
-                                                        {
-                                                            "setting": {
-                                                                "key": "track_semaphores",
-                                                                "value": false
-                                                            }
-                                                        }
-                                                    ]
-                                                }
+                                                ]
                                             }
                                         }
                                     ]
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_LOG_STDOUT",
+                                    "label": "Log Messages to the Standard Output stream",
+                                    "description": "Log messages to stdout."
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_LOG_STDERR",
+                                    "label": "Log Messages to the Standard Error stream",
+                                    "description": "Log messages to stderr."
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_DEBUG_OUTPUT",
+                                    "label": "Debug Output",
+                                    "description": "Log a txt message using the Windows OutputDebugString function.",
+                                    "platforms": [ "WINDOWS" ]
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_CALLBACK",
+                                    "label": "Callback",
+                                    "description": "Call user defined callback function(s) that have been registered via the VK_EXT_debug_report extension. Since application must register callback, this is a NOOP for the settings file.",
+                                    "view": "HIDDEN"
+                                },
+                                {
+                                    "key": "VK_DBG_LAYER_ACTION_BREAK",
+                                    "label": "Break",
+                                    "description": "Trigger a breakpoint if a debugger is in use."
                                 }
+                            ],
+                            "default": [
+                                "VK_DBG_LAYER_ACTION_LOG_STDOUT", "VK_DBG_LAYER_ACTION_DEBUG_OUTPUT"
                             ]
                         },
                         {
                             "key": "message_severity",
-                            "label": "Message Severity",
-                            "description": "Comma-delineated list of options specifying the types of log messages to be reported.",
+                            "label": "Log Message Severity",
+                            "description": "Comma-delineated list of options specifying the types of messages to be reported",
                             "type": "FLAGS",
                             "flags": [
-                                {
-                                    "key": "error",
-                                    "label": "Error",
-                                    "description": "Report errors such as device lost or setup problems in the layer."
-                                },
-                                {
-                                    "key": "warn",
-                                    "label": "Warning",
-                                    "description": "Report non-fatal problems that may interfere with operation of the layer"
-                                },
-                                {
-                                    "key": "info",
-                                    "label": "Info",
-                                    "description": "Report informational messages."
-                                },
                                 {
                                     "key": "verbose",
                                     "label": "Debug",
                                     "description": "For layer development. Report messages for debugging layer behavior.",
                                     "view": "DEBUG"
+                                },
+                                {
+                                    "key": "info",
+                                    "label": "Info",
+                                    "description": "Report informational messages.",
+                                    "settings": [
+                                        {
+                                            "key": "message_api_trace",
+                                            "label": "Log API trace",
+                                            "description": "",
+                                            "type": "FLAGS",
+                                            "flags": [
+                                                {
+                                                    "key": "common",
+                                                    "label": "Trace Submission and synchronization Vulkan commands",
+                                                    "description": "Add Vulkan API calls intercepted by the layer will be logged to the console.",
+                                                    "detailed": "This includes: vkDeviceWaitIdle, vkQueueWaitIdle, vkQueuePresentKHR, vkWaitForFences, vkGetFenceStatus, vkAcquireNextImageKHR, vkCreateCommandPool, vkDestroyCommandPool, vkResetCommandPool, vkAllocateCommandBuffers, vkFreeCommandBuffers, vkQueueSubmit, vkQueueSubmit2, vkQueueSubmit2KHR and vkQueueBindSparse"
+                                                },
+                                                {
+                                                    "key": "semaphores",
+                                                    "label": "Trace Semaphores",
+                                                    "description": "Add logging messages about every vulkan command that uses semaphores.",
+                                                    "detailed": "This includes: TODO"
+                                                }
+                                            ],
+                                            "default": [],
+                                            "dependence": {
+                                                "mode": "ALL",
+                                                "settings": [
+                                                    {
+                                                        "key": "message_severity",
+                                                        "value": [ "info" ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "key": "warn",
+                                    "label": "Warning",
+                                    "description": "Report warnings from using the API in a manner which may lead to undefined behavior or to warn the user of common trouble spots. A warning does NOT necessarily signify illegal application behavior."
+                                },
+                                {
+                                    "key": "error",
+                                    "label": "Error",
+                                    "description": "Report errors in API usage."
                                 }
                             ],
                             "default": [

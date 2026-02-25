@@ -15,91 +15,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "layer_settings.h"
 #include "config.h"
 #include <cstring>
+/*
+const vk::LayerSettingsCreateInfoEXT* LayerSettings::BuildCreateInfo() {
+    this->output_path_info = this->output_path.c_str();
 
-#define MakeStringSetting(_name) \
-    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eString, 1, &_name)
+    this->dump_semaphores_info = this->dump_semaphores.c_str();
+    this->dump_queue_submits_info = this->dump_queue_submits.c_str();
+    this->dump_command_buffers_info = this->dump_command_buffers.c_str();
+    this->dump_commands_info = this->dump_commands.c_str();
+    this->dump_shaders_info = this->dump_shaders.c_str();
 
-#define MakeBoolSetting(_name) \
-    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eBool32, 1, &_name)
+    this->debug_action_info.resize(this->debug_action.size());
+    for (std::size_t i = 0, n = debug_action.size(); i < n; ++i) {
+        this->debug_action_info[i] = this->debug_action[i].c_str();
+    }
 
-#define MakeUint64Setting(_name) \
-    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eUint64, 1, &_name)
+    this->message_severity_info.resize(this->message_severity.size());
+    for (std::size_t i = 0, n = message_severity.size(); i < n; ++i) {
+        this->message_severity_info[i] = this->message_severity[i].c_str();
+    }
 
-LayerSettings::LayerSettings(const void* pnext)
-    : settings_{
-        MakeStringSetting(output_path),
-        MakeBoolSetting(trace_on),
-        MakeStringSetting(message_severity),
-        MakeStringSetting(log_file),
+    this->log_file_info = this->log_file.c_str();
 
-        MakeBoolSetting(instrument_all_commands),
-        MakeBoolSetting(sync_after_commands),
+    this->message_api_trace_info.resize(this->message_api_trace.size());
+    for (std::size_t i = 0, n = message_api_trace.size(); i < n; ++i) {
+        this->message_api_trace_info[i] = this->message_api_trace[i].c_str();
+    }
 
-        MakeBoolSetting(track_semaphores),
-        MakeBoolSetting(trace_all_semaphores),
+    std::vector<vk::LayerSettingEXT> init{
+        {kLayerSettingsName, "instrument_all_commands", vk::LayerSettingTypeEXT::eBool32, 1, &this->instrument_all_commands},
+        {kLayerSettingsName, "sync_after_commands", vk::LayerSettingTypeEXT::eBool32, 1, &this->sync_after_commands},
+        {kLayerSettingsName, "trigger_watchdog_timer", vk::LayerSettingTypeEXT::eBool32, 1, &this->trigger_watchdog_timer},
+        {kLayerSettingsName, "watchdog_timeout_ms", vk::LayerSettingTypeEXT::eUint64, 1, &this->watchdog_timeout_ms},
+        {kLayerSettingsName, "output_path", vk::LayerSettingTypeEXT::eString, 1, &this->output_path_info},
+        {kLayerSettingsName, "dump_semaphores", vk::LayerSettingTypeEXT::eString, 1, &this->dump_semaphores_info},
+        {kLayerSettingsName, "dump_queue_submits", vk::LayerSettingTypeEXT::eString, 1, &this->dump_queue_submits_info},
+        {kLayerSettingsName, "dump_command_buffers", vk::LayerSettingTypeEXT::eString, 1, &this->dump_command_buffers_info},
+        {kLayerSettingsName, "dump_commands", vk::LayerSettingTypeEXT::eString, 1, &this->dump_commands_info},
+        {kLayerSettingsName, "dump_shaders", vk::LayerSettingTypeEXT::eString, 1, &this->dump_shaders_info},
+        {kLayerSettingsName, "debug_action", vk::LayerSettingTypeEXT::eString, static_cast<uint32_t>(this->debug_action_info.size()), this->debug_action_info.empty() ? nullptr : &this->debug_action_info[0]},
+        {kLayerSettingsName, "message_severity", vk::LayerSettingTypeEXT::eString, static_cast<uint32_t>(this->message_severity_info.size()), this->message_severity_info.empty() ? nullptr : &this->message_severity_info[0]},
+        {kLayerSettingsName, "log_file", vk::LayerSettingTypeEXT::eString, 1, &this->log_file_info},
+        {kLayerSettingsName, "message_api_trace", vk::LayerSettingTypeEXT::eString, static_cast<uint32_t>(this->message_api_trace_info.size()), this->message_api_trace_info.empty() ? nullptr : &this->message_api_trace_info[0]},
+    };
 
-        MakeStringSetting(dump_queue_submits),
-        MakeStringSetting(dump_command_buffers),
-        MakeStringSetting(dump_commands),
-        MakeStringSetting(dump_shaders),
+    this->settings_ = init;
 
-        MakeBoolSetting(trigger_watchdog_timer),
-        MakeUint64Setting(watchdog_timeout_ms),
-    },
-    create_info_(settings_, pnext) {
-    SetOutputPath("");
-    SetMessageSeverity("");
-    SetLogFile("");
-    SetDumpQueueSubmits("");
-    SetDumpCommandBuffers("");
-    SetDumpCommands("");
-    SetDumpShaders("");
+    this->create_info_ = vk::LayerSettingsCreateInfoEXT(this->settings_, this->pnext);
+    return &this->create_info_;
 }
-
-LayerSettings::~LayerSettings() {
-    free(output_path);
-    free(message_severity);
-    free(log_file);
-    free(dump_shaders);
-    free(dump_commands);
-    free(dump_command_buffers);
-    free(dump_queue_submits);
-}
-
-void LayerSettings::SetOutputPath(const char* s) {
-    free(output_path);
-    output_path = strdup(s);
-}
-
-void LayerSettings::SetMessageSeverity(const char* s) {
-    free(message_severity);
-    message_severity = strdup(s);
-}
-
-void LayerSettings::SetLogFile(const char* s) {
-    free(log_file);
-    log_file = strdup(s);
-}
-
-void LayerSettings::SetDumpQueueSubmits(const char* s) {
-    free(dump_queue_submits);
-    dump_queue_submits = strdup(s);
-}
-
-void LayerSettings::SetDumpCommandBuffers(const char* s) {
-    free(dump_command_buffers);
-    dump_command_buffers = strdup(s);
-}
-
-void LayerSettings::SetDumpCommands(const char* s) {
-    free(dump_commands);
-    dump_commands = strdup(s);
-}
-
-void LayerSettings::SetDumpShaders(const char* s) {
-    free(dump_shaders);
-    dump_shaders = strdup(s);
-}
+*/

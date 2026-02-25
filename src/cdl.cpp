@@ -17,7 +17,6 @@
 
 #include "cdl.h"
 #include "util.h"
-#include <regex>
 
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 // For OutputDebugString
@@ -27,14 +26,12 @@
 #endif
 
 #include <algorithm>
-#include <chrono>
 #include <fstream>
 #include <inttypes.h>
 #include <iostream>
 #include <memory>
 #include <sstream>
 
-#include <vulkan/utility/vk_struct_helper.hpp>
 #include <vulkan/vk_enum_string_helper.h>
 
 #include <yaml-cpp/emitter.h>
@@ -44,278 +41,96 @@ namespace crash_diagnostic_layer {
 const std::string kCdlVersion = std::to_string(VK_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE)) + "." +
                                 std::to_string(VK_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE)) + "." +
                                 std::to_string(VK_VERSION_PATCH(VK_HEADER_VERSION_COMPLETE));
-namespace settings {
-const char* kOutputPath = "output_path";
-const char* kTraceOn = "trace_on";
-const char* kLogFile = "log_file";
-enum LogOutputs {
-    kNone,
-    kStderr,
-    kStdout,
-};
-static const std::unordered_map<std::string, LogOutputs> kLogFileValues{
-    {"none", LogOutputs::kNone},
-    {"stderr", LogOutputs::kStderr},
-    {"stdout", LogOutputs::kStdout},
-};
-const char* kMessageSeverity = "message_severity";
-static const std::unordered_map<std::string, VkDebugUtilsMessageSeverityFlagBitsEXT> kSeverityValues{
-    {"error", VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT},
-    {"warn", VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT},
-    {"info", VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
-    {"verbose", VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
-};
-const char* kDumpCommands = "dump_commands";
-const char* kDumpCommandBuffers = "dump_command_buffers";
-const char* kDumpQueueSubmits = "dump_queue_submits";
-static const std::unordered_map<std::string, DumpCommands> kDumpCommandsValues{
-    {"running", DumpCommands::kRunning},
-    {"pending", DumpCommands::kPending},
-    {"all", DumpCommands::kAll},
-};
 
-const char* kDumpShaders = "dump_shaders";
-static const std::unordered_map<std::string, DumpShaders> kDumpShadersValues{
-    {"off", DumpShaders::kOff},
-    {"on_crash", DumpShaders::kOnCrash},
-    {"on_bind", DumpShaders::kOnBind},
-    {"all", DumpShaders::kAll},
-};
-
-const char* kTriggerWatchdogTimeout = "trigger_watchdog_timeout";
-const char* kWatchdogTimeout = "watchdog_timeout_ms";
-const char* kDumpAllCommandBuffers = "dump_all_command_buffers";
-const char* kTrackSemaphores = "track_semaphores";
-const char* kTraceAllSemaphores = "trace_all_semaphores";
-const char* kInstrumentAllCommands = "instrument_all_commands";
-const char* kSyncAfterCommands = "sync_after_commands";
-}  // namespace settings
-
-const char* kLogTimeTag = "%Y-%m-%d-%H%M%S";
-
-template <class T>
-bool GetEnvVal(VkuLayerSettingSet settings, const char* name, T& value) {
-    if (vkuHasLayerSetting(settings, name)) {
-        vkuGetLayerSettingValue(settings, name, value);
-        return true;
-    }
-    return false;
-}
-
-template <class T>
-bool GetEnumVal(Logger& log, VkuLayerSettingSet settings, const char* name, T& value,
-                const std::unordered_map<std::string, T>& value_map) {
-    std::string value_string;
-    if (!GetEnvVal<std::string>(settings, name, value_string)) {
-        return false;
-    }
-    if (!value_string.empty()) {
-        auto iter = value_map.find(value_string);
-        if (iter != value_map.end()) {
-            value = iter->second;
-        } else {
-            log.Error("Bad value for %s setting: \"%s\"", name, value_string.c_str());
-        }
-    }
-    return true;
-}
-
-Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
-    GetEnvVal<std::string>(layer_settings, settings::kOutputPath, output_path);
-    GetEnvVal<bool>(layer_settings, settings::kTraceOn, trace_all);
-    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpQueueSubmits, dump_queue_submits,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommandBuffers, dump_command_buffers,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpCommands>(log, layer_settings, settings::kDumpCommands, dump_commands,
-                             settings::kDumpCommandsValues);
-    GetEnumVal<DumpShaders>(log, layer_settings, settings::kDumpShaders, dump_shaders, settings::kDumpShadersValues);
-    GetEnvVal<uint64_t>(layer_settings, settings::kWatchdogTimeout, watchdog_timer_ms);
-    GetEnvVal<bool>(layer_settings, settings::kTrackSemaphores, track_semaphores);
-    GetEnvVal<bool>(layer_settings, settings::kTraceAllSemaphores, trace_all_semaphores);
-    GetEnvVal<bool>(layer_settings, settings::kInstrumentAllCommands, instrument_all_commands);
-    GetEnvVal<bool>(layer_settings, settings::kSyncAfterCommands, sync_after_commands);
-}
-
-YAML::Emitter& operator<<(YAML::Emitter& os, DumpCommands value) {
-    for (auto& entry : settings::kDumpCommandsValues) {
-        if (value == entry.second) {
-            os << entry.first;
-            return os;
-        }
-    }
-    os << "unknown";
-    return os;
-}
-
-YAML::Emitter& operator<<(YAML::Emitter& os, DumpShaders value) {
-    for (auto& entry : settings::kDumpShadersValues) {
-        if (value == entry.second) {
-            os << entry.first;
-            return os;
-        }
-    }
-    os << "unknown";
-    return os;
-}
-
-void Settings::Print(YAML::Emitter& os) const {
-    os << YAML::BeginMap;
-    os << YAML::Key << settings::kOutputPath << YAML::Value << output_path;
-    os << YAML::Key << settings::kTraceOn << YAML::Value << trace_all;
-    os << YAML::Key << settings::kDumpQueueSubmits << YAML::Value << dump_queue_submits;
-    os << YAML::Key << settings::kDumpCommandBuffers << YAML::Value << dump_command_buffers;
-    os << YAML::Key << settings::kDumpCommands << YAML::Value << dump_commands;
-    os << YAML::Key << settings::kDumpShaders << YAML::Value << dump_shaders;
-    os << YAML::Key << settings::kTriggerWatchdogTimeout << YAML::Value << trigger_watchdog_timer;
-    os << YAML::Key << settings::kWatchdogTimeout << YAML::Value << watchdog_timer_ms;
-    os << YAML::Key << settings::kTrackSemaphores << YAML::Value << track_semaphores;
-    os << YAML::Key << settings::kTraceAllSemaphores << YAML::Value << trace_all_semaphores;
-    os << YAML::Key << settings::kInstrumentAllCommands << YAML::Value << instrument_all_commands;
-    os << YAML::Key << settings::kSyncAfterCommands << YAML::Value << sync_after_commands;
-    os << YAML::EndMap;
-}
 
 // =============================================================================
 // Context
 // =============================================================================
 Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator)
-    : start_time_(std::chrono::system_clock::now()), logger_(start_time_), system_(*this) {
-    // Possibly create messengers for the application to recieve messages from us.
-    // Note that since there aren't real handles for these messengers, we're using the create info pointers
-    // as fake handles so that they can go into the logger callback map.
-    auto* pnext = pCreateInfo->pNext;
-    while (auto* utils_ci = vku::FindStructInPNextChain<VkDebugUtilsMessengerCreateInfoEXT>(pnext)) {
-        logger_.AddLogCallback(utils_ci, *utils_ci);
-        pnext = utils_ci->pNext;
-    }
-    pnext = pCreateInfo->pNext;
-    while (auto* report_ci = vku::FindStructInPNextChain<VkDebugReportCallbackCreateInfoEXT>(pnext)) {
-        logger_.AddLogCallback(report_ci, *report_ci);
-        pnext = report_ci->pNext;
-    }
+    : start_time(std::chrono::system_clock::now()), logger_(), system_(*this) {
+    this->settings_.Init(pCreateInfo, pAllocator);
+    this->logger_.Init(pCreateInfo, start_time, this->settings_);
 
-    const std::time_t in_time_t = std::chrono::system_clock::to_time_t(start_time_);
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&in_time_t), kLogTimeTag);
-    std::string start_time_str(ss.str());
+    this->logger_.SetSeverity(this->settings_.log_message_severity);
+    this->logger_.SetApiTrace(this->settings_.log_message_api_trace);
 
-    const auto* settings_ci = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
+    const std::string start_time_str = ToString(start_time);
 
-    VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
-    VkResult result =
-        vkuCreateLayerSettingSet("lunarg_crash_diagnostic", settings_ci, pAllocator, nullptr, &layer_setting_set);
-    if (result != VK_SUCCESS) {
-        Log().Error("vkuCreateLayerSettingSet failed with error %d", result);
-        return;
-    }
-    settings_.emplace(layer_setting_set, logger_);
+    this->timed_crash_dump_output_dir = settings_.crash_dump_output_dir / start_time_str;
 
-    // output path
-    std::filesystem::path default_output_path = System::GetOutputBasePath();
-    default_output_path /= "cdl";
     {
-        if (!settings_->output_path.empty()) {
-            output_path_ = settings_->output_path;
+        enum LogOutputs {
+            kStderr,
+            kStdout,
+        };
+
+        static const std::unordered_map<std::string, LogOutputs> kLogFileValues{
+            {"stderr", LogOutputs::kStderr},
+            {"stdout", LogOutputs::kStdout},
+        };
+
+        auto iter = kLogFileValues.find(this->settings_.log_file.generic_string());
+        if (iter != kLogFileValues.end()) {
+            switch (iter->second) {
+                case LogOutputs::kStderr:
+                    this->logger_.LogToStderr();
+                    break;
+                case LogOutputs::kStdout:
+                    this->logger_.LogToStdout();
+                    break;
+            }
         } else {
-            output_path_ = default_output_path;
-        }
-
-        base_output_path_ = output_path_;
-        output_path_ /= start_time_str;
-        default_output_path /= start_time_str;
-    }
-    // logging
-    {
-        std::string severity;
-        if (GetEnvVal<std::string>(layer_setting_set, settings::kMessageSeverity, severity)) {
-            VkDebugUtilsMessageSeverityFlagsEXT mask{0};
-            bool bad_value = false;
-            if (!severity.empty()) {
-                std::regex re("[\\s,]+");
-                std::sregex_token_iterator re_iter(severity.begin(), severity.end(), re, -1);
-                std::sregex_token_iterator re_end;
-                for (; re_iter != re_end; ++re_iter) {
-                    auto iter = settings::kSeverityValues.find(*re_iter);
-                    if (iter != settings::kSeverityValues.end()) {
-                        mask |= iter->second;
-                    } else {
-                        bad_value = true;
-                        std::string value = *re_iter;
-                        Log().Error("Bad value for message_severity setting: \"%s\"", value.c_str());
-                    }
+            std::filesystem::path path(this->settings_.log_file);
+            if (!path.has_root_directory()) {
+                // "./" or ".\\" should be relative to the apps cwd, otherwise
+                // make it relative to the dump file location.
+                if (this->settings_.log_file.c_str()[0] != '.') {
+                    path = this->timed_crash_dump_output_dir / this->settings_.log_file;
                 }
             }
-            if (!bad_value) {
-                logger_.SetSeverity(mask);
+
+            if (path.has_parent_path()) {
+                try {
+                    // On Windows, if the path include an invalid drive, then filesystem crash...
+                    // We need to use an exception to capture this problem
+                    std::filesystem::create_directories(path.parent_path());
+                } catch (std::exception& e) {
+                    std::cerr << "Failed to open log file: " << path << " - " << e.what() << std::endl;
+                    // We fallback using the default path
+                    this->timed_crash_dump_output_dir = std::filesystem::path(System::GetOutputBasePath()) / "cdl" / start_time_str;
+                    path = this->timed_crash_dump_output_dir / this->settings_.log_file;
+                }
             }
-        }
 
-        std::string log_file;
-        if (GetEnvVal<std::string>(layer_setting_set, settings::kLogFile, log_file)) {
-            auto iter = settings::kLogFileValues.find(log_file);
-            if (iter != settings::kLogFileValues.end()) {
-                switch (iter->second) {
-                    case settings::LogOutputs::kNone:
-                        logger_.CloseLogFile();
-                        break;
-                    case settings::LogOutputs::kStderr:
-                        logger_.LogToStderr();
-                        break;
-                    case settings::LogOutputs::kStdout:
-                        logger_.LogToStdout();
-                        break;
-                }
-            } else {
-                std::filesystem::path path(log_file);
-                if (!path.has_root_directory()) {
-                    // "./" or ".\\" should be relative to the apps cwd, otherwise
-                    // make it relative to the dump file location.
-                    if (log_file[0] != '.') {
-                        path = output_path_ / log_file;
-                    }
-                }
-
-                if (path.has_parent_path()) {
-                    try {
-                        // On Windows, if the path include an invalid drive, then filesystem crash...
-                        // We need to use an exception to capture this problem
-                        std::filesystem::create_directories(path.parent_path());
-                    } catch (std::exception& e) {
-                        std::cerr << "Failed to open log file: " << path << " - " << e.what() << std::endl;
-                        // We fallback using the default path
-                        output_path_ = default_output_path;
-                        path = default_output_path / log_file;
-                    }
-                }
-
-                logger_.OpenLogFile(path);
-            }
+            this->logger_.OpenLogFile(path);
         }
     }
-    Log().Info("Version %s enabled. Start time tag: %s", kCdlVersion.c_str(), start_time_str.c_str());
+
+    // Point in the execution where we can print log messages
+
+    this->logger_.Info("Version %s enabled. Start time tag: %s", kCdlVersion.c_str(), start_time_str.c_str());
+    this->settings_.Print(this->logger_);
 
     // trace mode
     {
         // setup shader loading modes
         shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
-        switch (settings_->dump_shaders) {
-            case DumpShaders::kAll:
+        switch (settings_.dump_shaders) {
+            case SETTING_DUMP_SHADERS_ALL:
                 shader_module_load_options_ |= ShaderModule::LoadOptions::kDumpOnCreate;
                 break;
-            case DumpShaders::kOnCrash:
-            case DumpShaders::kOnBind:
+            case SETTING_DUMP_SHADERS_ON_CRASH:
+            case SETTING_DUMP_SHADERS_ON_BIND:
                 shader_module_load_options_ |= ShaderModule::LoadOptions::kKeepInMemory;
                 break;
+            case SETTING_DUMP_OFF:
             default:
                 break;
         }
     }
-
-    vkuDestroyLayerSettingSet(layer_setting_set, nullptr);
 }
 
-Context::~Context() { logger_.CloseLogFile(); }
+Context::~Context() { this->logger_.CloseLogFile(); }
 
 Context::DevicePtr Context::GetDevice(VkDevice device) {
     std::lock_guard<std::mutex> lock(devices_mutex_);
@@ -377,24 +192,6 @@ Context::ConstDevicePtr Context::GetQueueDevice(VkQueue queue) const {
     std::lock_guard<std::mutex> lock(devices_mutex_);
     auto iter = devices_.find(device);
     return iter != devices_.end() ? iter->second : nullptr;
-}
-
-void Context::PreApiFunction(const char* api_name) {
-    if (settings_->trace_all) {
-        Log().Info("{ %s", api_name);
-    }
-}
-
-void Context::PostApiFunction(const char* api_name) {
-    if (settings_->trace_all) {
-        Log().Info("} %s", api_name);
-    }
-}
-
-void Context::PostApiFunction(const char* api_name, VkResult result) {
-    if (settings_->trace_all) {
-        Log().Info("} %s (%s)", api_name, string_VkResult(result));
-    }
 }
 
 struct RequiredExtension {
@@ -652,20 +449,20 @@ void Context::DumpDeviceExecutionStateValidationFailed(Device& device, YAML::Emi
 }
 
 void Context::DumpReportPrologue(YAML::Emitter& os) {
-    auto elapsed = std::chrono::system_clock::now() - start_time_;
+    auto elapsed = std::chrono::system_clock::now() - this->start_time;
     os << YAML::Comment("----------------------------------------------------------------") << YAML::Newline;
     os << YAML::Comment("-                    CRASH DIAGNOSTIC LAYER                    -") << YAML::Newline;
     os << YAML::Comment("----------------------------------------------------------------") << YAML::Newline;
     os << YAML::BeginMap;
     os << YAML::Key << "version" << YAML::Value << kCdlVersion;
     std::stringstream timestr;
-    auto in_time_t = std::chrono::system_clock::to_time_t(start_time_);
-    timestr << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+    auto in_time = std::chrono::system_clock::to_time_t(this->start_time);
+    timestr << std::put_time(std::localtime(&in_time), "%Y-%m-%d %X");
     os << YAML::Key << "startTime" << YAML::Value << timestr.str();
     os << YAML::Key << "timeSinceStart" << YAML::Value << DurationToStr(elapsed);
 
     os << YAML::Key << "Settings" << YAML::Value;
-    settings_->Print(os);
+    settings_.Print(os);
 
     os << YAML::Key << "SystemInfo" << YAML::Value << YAML::BeginMap;
     os << YAML::Key << "osName" << YAML::Value << system_.GetOsName();
@@ -715,10 +512,10 @@ void Context::DumpReportPrologue(YAML::Emitter& os) {
 
 std::ofstream Context::OpenDumpFile() {
     // Make sure our output directory exists.
-    std::filesystem::create_directories(output_path_);
+    std::filesystem::create_directories(this->timed_crash_dump_output_dir);
 
     // now write our log.
-    std::filesystem::path dump_file_path(output_path_);
+    std::filesystem::path dump_file_path(this->timed_crash_dump_output_dir);
 
     // Keep the first log as cdl_dump.yaml then add a number if more than one log is
     // generated. Multiple logs are a new feature and we want to keep backward
@@ -732,35 +529,42 @@ std::ofstream Context::OpenDumpFile() {
     dump_file_path /= ss_name.str();
     total_logs_++;
 
-    // Create a symlink from the generated log file.
-#if !defined(VK_USE_PLATFORM_WIN32_KHR)
-    std::filesystem::path symlink_path(base_output_path_);
-    symlink_path /= "cdl_dump.yaml.symlink";
-    try {
-        std::filesystem::remove(symlink_path);
-        std::filesystem::create_symlink(dump_file_path, symlink_path);
-    } catch (std::filesystem::filesystem_error& err) {
-        Log().Warning("symlink %s -> %s failed: %s", dump_file_path.string().c_str(), symlink_path.string().c_str(),
-                      err.what());
-    }
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    bool use_platform_win32 = true;
+#else
+    bool use_platform_win32 = false;
 #endif
+
+    // Create a symlink from the generated log file.
+    std::filesystem::path symlink_path(this->settings_.crash_dump_output_dir);
+    if (!use_platform_win32) {
+        symlink_path /= "cdl_dump.yaml.symlink";
+        try {
+            std::filesystem::remove(symlink_path);
+            std::filesystem::create_symlink(dump_file_path, symlink_path);
+        } catch (std::filesystem::filesystem_error& err) {
+            logger_.Warning("symlink %s -> %s failed: %s", dump_file_path.string().c_str(), symlink_path.string().c_str(),
+                          err.what());
+        }
+    }
 
     std::stringstream ss;
     ss << "Device error encountered and log being recorded" << std::endl;
     ;
     ss << "\tOutput written to: " << dump_file_path << std::endl;
-#if !defined(VK_USE_PLATFORM_WIN32_KHR)
-    ss << "\tSymlink to output: " << symlink_path << std::endl;
-#endif
+    if (!use_platform_win32) {
+        ss << "\tSymlink to output: " << symlink_path << std::endl;
+    }
+
     ss << "----------------------------------------------------------------" << std::endl;
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     OutputDebugString(ss.str().c_str());
 #endif
-    Log().Error(ss.str());
+    logger_.Error(ss.str());
 
     std::ofstream fs(dump_file_path);
     if (!fs.is_open()) {
-        Log().Error("UNABLE TO OPEN LOG FILE");
+        logger_.Error("UNABLE TO OPEN LOG FILE");
     }
     fs << std::unitbuf;
     return fs;
@@ -850,7 +654,8 @@ void Context::PostGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQu
 
 VkResult Context::PreDeviceWaitIdle(VkDevice device) {
     (void)device;
-    PreApiFunction("vkDeviceWaitIdle");
+    this->logger_.InfoPreApiFunction("vkDeviceWaitIdle");
+
     auto device_state = GetDevice(device);
     if (!device_state->UpdateIdleState()) {
         device_state->DeviceFault();
@@ -859,7 +664,7 @@ VkResult Context::PreDeviceWaitIdle(VkDevice device) {
     return VK_SUCCESS;
 }
 VkResult Context::PostDeviceWaitIdle(VkDevice device, VkResult result) {
-    PostApiFunction("vkDeviceWaitIdle", result);
+    this->logger_.InfoPostApiFunction("vkDeviceWaitIdle", result);
 
     auto device_state = GetDevice(device);
     if (!device_state->UpdateIdleState()) {
@@ -877,7 +682,8 @@ VkResult Context::PostDeviceWaitIdle(VkDevice device, VkResult result) {
 
 VkResult Context::PreQueueWaitIdle(VkQueue queue) {
     (void)queue;
-    PreApiFunction("vkQueueWaitIdle");
+    this->logger_.InfoPreApiFunction("vkQueueWaitIdle");
+
     auto device_state = GetQueueDevice(queue);
     if (!device_state->UpdateIdleState()) {
         device_state->DeviceFault();
@@ -886,7 +692,7 @@ VkResult Context::PreQueueWaitIdle(VkQueue queue) {
     return VK_SUCCESS;
 }
 VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
-    PostApiFunction("vkQueueWaitIdle", result);
+    this->logger_.InfoPostApiFunction("vkQueueWaitIdle", result);
 
     auto device_state = GetQueueDevice(queue);
     if (!device_state->UpdateIdleState()) {
@@ -903,14 +709,15 @@ VkResult Context::PostQueueWaitIdle(VkQueue queue, VkResult result) {
 }
 
 VkResult Context::PreQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo) {
-    PreApiFunction("vkQueuePresentKHR");
+    this->logger_.InfoPreApiFunction("vkQueuePresentKHR");
+
     auto device_state = GetQueueDevice(queue);
     device_state->UpdateWatchdog();
     device_state->UpdateIdleState();
     return VK_SUCCESS;
 }
 VkResult Context::PostQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPresentInfo, VkResult result) {
-    PostApiFunction("vkQueuePresentKHR", result);
+    this->logger_.InfoPostApiFunction("vkQueuePresentKHR", result);
 
     auto device_state = GetQueueDevice(queue);
     if (!device_state->UpdateIdleState()) {
@@ -925,7 +732,8 @@ VkResult Context::PostQueuePresentKHR(VkQueue queue, VkPresentInfoKHR const* pPr
 
 VkResult Context::PreWaitForFences(VkDevice device, uint32_t fenceCount, VkFence const* pFences, VkBool32 waitAll,
                                    uint64_t timeout) {
-    PreApiFunction("vkWaitForFences");
+    this->logger_.InfoPreApiFunction("vkWaitForFences");
+
     auto device_state = GetDevice(device);
     if (!device_state->UpdateIdleState()) {
         device_state->DeviceFault();
@@ -935,7 +743,7 @@ VkResult Context::PreWaitForFences(VkDevice device, uint32_t fenceCount, VkFence
 }
 VkResult Context::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkFence const* pFences, VkBool32 waitAll,
                                     uint64_t timeout, VkResult result) {
-    PostApiFunction("vkWaitForFences", result);
+    this->logger_.InfoPostApiFunction("vkWaitForFences", result);
 
     auto device_state = GetDevice(device);
     if (!device_state->UpdateIdleState()) {
@@ -951,11 +759,12 @@ VkResult Context::PostWaitForFences(VkDevice device, uint32_t fenceCount, VkFenc
 }
 
 VkResult Context::PreGetFenceStatus(VkDevice device, VkFence fence) {
-    PreApiFunction("vkGetFenceStatus");
+    this->logger_.InfoPreApiFunction("vkGetFenceStatus");
+
     return VK_SUCCESS;
 }
 VkResult Context::PostGetFenceStatus(VkDevice device, VkFence fence, VkResult result) {
-    PostApiFunction("vkGetFenceStatus", result);
+    this->logger_.InfoPostApiFunction("vkGetFenceStatus", result);
 
     auto device_state = GetDevice(device);
     if (!device_state->UpdateIdleState()) {
@@ -971,13 +780,13 @@ VkResult Context::PostGetFenceStatus(VkDevice device, VkFence fence, VkResult re
 VkResult Context::PreGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
                                          uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride,
                                          VkQueryResultFlags flags) {
-    PostApiFunction("vkGetQueryPoolResults");
+    this->logger_.InfoPostApiFunction("vkGetQueryPoolResults");
     return VK_SUCCESS;
 }
 VkResult Context::PostGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery,
                                           uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride,
                                           VkQueryResultFlags flags, VkResult result) {
-    PostApiFunction("vkGetQueryPoolResults", result);
+    this->logger_.InfoPostApiFunction("vkGetQueryPoolResults", result);
 
     if (IsVkError(result)) {
         auto device_state = GetDevice(device);
@@ -989,13 +798,14 @@ VkResult Context::PostGetQueryPoolResults(VkDevice device, VkQueryPool queryPool
 
 VkResult Context::PreAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
                                          VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) {
-    PreApiFunction("vkAcquireNextImageKHR");
+    this->logger_.InfoPreApiFunction("vkAcquireNextImageKHR");
+
     return VK_SUCCESS;
 }
 VkResult Context::PostAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout,
                                           VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex,
                                           VkResult result) {
-    PostApiFunction("vkAcquireNextImageKHR", result);
+    this->logger_.InfoPostApiFunction("vkAcquireNextImageKHR", result);
 
     if (IsVkError(result)) {
         auto device_state = GetDevice(device);
@@ -1050,14 +860,14 @@ void Context::PostDestroyPipeline(VkDevice device, VkPipeline pipeline, const Vk
 
 VkResult Context::PreCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
                                        const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) {
-    PreApiFunction("vkCreateCommandPool");
+    this->logger_.InfoPreApiFunction("vkCreateCommandPool");
     return VK_SUCCESS;
 }
 VkResult Context::PostCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo,
                                         const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool,
                                         VkResult callResult) {
     if (callResult == VK_SUCCESS) {
-        PostApiFunction("vkCreateCommandPool");
+        this->logger_.InfoPostApiFunction("vkCreateCommandPool");
         auto device_state = GetDevice(device);
         CommandPoolPtr pool = std::make_unique<CommandPool>(*pCommandPool, pCreateInfo);
         device_state->SetCommandPool(*pCommandPool, std::move(pool));
@@ -1067,7 +877,7 @@ VkResult Context::PostCreateCommandPool(VkDevice device, const VkCommandPoolCrea
 
 void Context::PreDestroyCommandPool(VkDevice device, VkCommandPool commandPool,
                                     const VkAllocationCallbacks* pAllocator) {
-    PreApiFunction("vkDestroyCommandPool");
+    this->logger_.InfoPreApiFunction("vkDestroyCommandPool");
 
     auto device_state = GetDevice(device);
     YAML::Emitter os;
@@ -1079,14 +889,14 @@ void Context::PreDestroyCommandPool(VkDevice device, VkCommandPool commandPool,
 
 void Context::PostDestroyCommandPool(VkDevice device, VkCommandPool commandPool,
                                      const VkAllocationCallbacks* pAllocator) {
-    PostApiFunction("vkDestroyCommandPool");
+    this->logger_.InfoPostApiFunction("vkDestroyCommandPool");
 
     auto device_state = GetDevice(device);
     device_state->DeleteCommandPool(commandPool);
 }
 
 VkResult Context::PreResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags) {
-    PreApiFunction("vkResetCommandPool");
+    this->logger_.InfoPreApiFunction("vkResetCommandPool");
 
     auto device_state = GetDevice(device);
     YAML::Emitter os;
@@ -1099,7 +909,7 @@ VkResult Context::PreResetCommandPool(VkDevice device, VkCommandPool commandPool
 
 VkResult Context::PostResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags,
                                        VkResult callResult) {
-    PostApiFunction("vkResetCommandPool");
+    this->logger_.InfoPostApiFunction("vkResetCommandPool");
 
     auto device_state = GetDevice(device);
     device_state->ResetCommandPool(commandPool);
@@ -1109,14 +919,14 @@ VkResult Context::PostResetCommandPool(VkDevice device, VkCommandPool commandPoo
 
 VkResult Context::PreAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo,
                                             VkCommandBuffer* pCommandBuffers) {
-    PreApiFunction("vkAllocateCommandBuffers");
+    this->logger_.InfoPreApiFunction("vkAllocateCommandBuffers");
     return VK_SUCCESS;
 }
 
 VkResult Context::PostAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo,
                                              VkCommandBuffer* pCommandBuffers, VkResult callResult) {
     if (callResult == VK_SUCCESS) {
-        PostApiFunction("vkAllocateCommandBuffers");
+        this->logger_.InfoPostApiFunction("vkAllocateCommandBuffers");
 
         auto device_state = GetDevice(device);
 
@@ -1128,11 +938,11 @@ VkResult Context::PostAllocateCommandBuffers(VkDevice device, const VkCommandBuf
 
 void Context::PreFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
                                     const VkCommandBuffer* pCommandBuffers) {
-    PreApiFunction("vkFreeCommandBuffers");
+    this->logger_.InfoPreApiFunction("vkFreeCommandBuffers");
 }
 void Context::PostFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount,
                                      const VkCommandBuffer* pCommandBuffers) {
-    PostApiFunction("vkFreeCommandBuffers");
+    this->logger_.InfoPostApiFunction("vkFreeCommandBuffers");
 
     auto device_state = GetDevice(device);
     if (!device_state->HangDetected()) {
@@ -1152,7 +962,7 @@ void Context::PostFreeCommandBuffers(VkDevice device, VkCommandPool commandPool,
 VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo const* pCreateInfo,
                                       const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore,
                                       VkResult result) {
-    if (settings_->track_semaphores && result == VK_SUCCESS) {
+    if (result == VK_SUCCESS) {
         uint64_t s_value = 0;
         VkSemaphoreTypeKHR s_type = VK_SEMAPHORE_TYPE_BINARY_KHR;
 
@@ -1164,67 +974,76 @@ VkResult Context::PostCreateSemaphore(VkDevice device, VkSemaphoreCreateInfo con
         auto device_state = GetDevice(device);
         assert(device_state);
 
-        device_state->GetSemaphoreTracker()->RegisterSemaphore(*pSemaphore, s_type, s_value);
+        if (device_state->GetSemaphoreTracker() != nullptr) {
+            device_state->GetSemaphoreTracker()->RegisterSemaphore(*pSemaphore, s_type, s_value);
 
-        if (settings_->trace_all_semaphores) {
-            std::stringstream log;
-            log << "Semaphore created. VkDevice:" << device_state->GetObjectName((uint64_t)device)
-                << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(*pSemaphore));
-            if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
-                log << ", Type: Binary";
-            } else {
-                log << ", Type: Timeline, Initial value: " << s_value;
+            if ((settings_.log_message_api_trace & MESSAGE_API_TRACE_SEMAPHORE_BIT)) {
+                std::stringstream log;
+                log << "Semaphore created. VkDevice:" << device_state->GetObjectName((uint64_t)device)
+                    << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(*pSemaphore));
+                if (s_type == VK_SEMAPHORE_TYPE_BINARY_KHR) {
+                    log << ", Type: Binary";
+                } else {
+                    log << ", Type: Timeline, Initial value: " << s_value;
+                }
+                this->logger_.Info(log.str());
             }
-            Log().Info(log.str());
         }
     }
     return result;
 }
 
 void Context::PreDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
-    if (settings_->track_semaphores && settings_->trace_all_semaphores) {
+    if ((this->settings_.log_message_api_trace & MESSAGE_API_TRACE_SEMAPHORE_BIT)) {
         auto device_state = GetDevice(device);
         assert(device_state);
 
         auto semaphore_tracker = device_state->GetSemaphoreTracker();
-
-        std::stringstream log;
-        log << "Semaphore destroyed. VkDevice:" << device_state->GetObjectName((uint64_t)device)
-            << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(semaphore));
-        if (semaphore_tracker->GetSemaphoreType(semaphore) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
-            log << ", Type: Binary, ";
-        } else {
-            log << ", Type: Timeline, ";
+        if (semaphore_tracker != nullptr) {
+            std::stringstream log;
+            log << "Semaphore destroyed. VkDevice:" << device_state->GetObjectName((uint64_t)device)
+                << ", VkSemaphore: " << device_state->GetObjectName((uint64_t)(semaphore));
+            if (semaphore_tracker->GetSemaphoreType(semaphore) == VK_SEMAPHORE_TYPE_BINARY_KHR) {
+                log << ", Type: Binary, ";
+            } else {
+                log << ", Type: Timeline, ";
+            }
+            uint64_t semaphore_value;
+            if (semaphore_tracker->GetSemaphoreValue(semaphore, semaphore_value)) {
+                log << "Latest value: " << semaphore_value;
+            } else {
+                log << "Latest value: Unknown";
+            }
+            Log().Info(log.str());
         }
-        uint64_t semaphore_value;
-        if (semaphore_tracker->GetSemaphoreValue(semaphore, semaphore_value)) {
-            log << "Latest value: " << semaphore_value;
-        } else {
-            log << "Latest value: Unknown";
-        }
-        Log().Info(log.str());
     }
 }
 
 void Context::PostDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
-    if (settings_->track_semaphores) {
-        auto device_state = GetDevice(device);
-        auto semaphore_tracker = device_state->GetSemaphoreTracker();
+    auto device_state = GetDevice(device);
+    auto semaphore_tracker = device_state->GetSemaphoreTracker();
+    if (semaphore_tracker != nullptr) {
         semaphore_tracker->EraseSemaphore(semaphore);
     }
 }
 
 VkResult Context::PostSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfoKHR* pSignalInfo, VkResult result) {
-    if (settings_->track_semaphores && result == VK_SUCCESS) {
+    if (result == VK_SUCCESS) {
         auto device_state = GetDevice(device);
-        device_state->GetSemaphoreTracker()->SignalSemaphore(pSignalInfo->semaphore, pSignalInfo->value,
-                                                             {SemaphoreModifierType::kModifierHost});
-        if (settings_->trace_all_semaphores) {
-            std::string timeline_message = "Timeline semaphore signaled from host. VkDevice: ";
-            timeline_message += device_state->GetObjectName((uint64_t)device) +
-                                ", VkSemaphore: " + device_state->GetObjectName((uint64_t)(pSignalInfo->semaphore)) +
-                                ", Signal value: " + std::to_string(pSignalInfo->value);
-            Log().Info(timeline_message.c_str());
+        assert(device_state);
+
+        auto semaphore_tracker = device_state->GetSemaphoreTracker();
+
+        if (semaphore_tracker != nullptr) {
+            semaphore_tracker->SignalSemaphore(pSignalInfo->semaphore, pSignalInfo->value,
+                                                                 {SemaphoreModifierType::kModifierHost});
+            if ((settings_.log_message_api_trace & MESSAGE_API_TRACE_SEMAPHORE_BIT)) {
+                std::string timeline_message = "Timeline semaphore signaled from host. VkDevice: ";
+                timeline_message += device_state->GetObjectName((uint64_t)device) +
+                                    ", VkSemaphore: " + device_state->GetObjectName((uint64_t)(pSignalInfo->semaphore)) +
+                                    ", Signal value: " + std::to_string(pSignalInfo->value);
+                Log().Info(timeline_message.c_str());
+            }
         }
     }
     return result;
@@ -1236,13 +1055,16 @@ VkResult Context::PreWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoKH
     if (!device_state->UpdateIdleState()) {
         result = VK_ERROR_DEVICE_LOST;
     }
-    if (settings_->track_semaphores) {
+
+    auto semaphore_tracker = device_state->GetSemaphoreTracker();
+
+    if (semaphore_tracker != nullptr) {
         auto tid = System::GetTid();
         auto pid = System::GetPid();
 
-        device_state->GetSemaphoreTracker()->BeginWaitOnSemaphores(pid, tid, pWaitInfo);
+        semaphore_tracker->BeginWaitOnSemaphores(pid, tid, pWaitInfo);
 
-        if (settings_->trace_all_semaphores) {
+        if ((settings_.log_message_api_trace & MESSAGE_API_TRACE_SEMAPHORE_BIT)) {
             std::stringstream log;
             log << "Waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
                 << ", VkDevice: " << device_state->GetObjectName((uint64_t)device) << std::endl;
@@ -1266,7 +1088,9 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
         device_state->DeviceFault();
         return result;
     }
-    if (settings_->track_semaphores && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
+
+    auto semaphore_tracker = device_state->GetSemaphoreTracker();
+    if (semaphore_tracker != nullptr && (result == VK_SUCCESS || result == VK_TIMEOUT)) {
         auto tid = System::GetTid();
         auto pid = System::GetPid();
         {
@@ -1274,7 +1098,7 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
             uint64_t semaphore_value;
             auto dispatch_table =
                 crash_diagnostic_layer::GetDeviceLayerData(crash_diagnostic_layer::DataKey(device))->dispatch_table;
-            auto semaphore_tracker = device_state->GetSemaphoreTracker();
+
             for (uint32_t i = 0; i < pWaitInfo->semaphoreCount; i++) {
                 VkResult res;
                 if (dispatch_table.GetSemaphoreCounterValue) {
@@ -1291,7 +1115,7 @@ VkResult Context::PostWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfoK
             semaphore_tracker->EndWaitOnSemaphores(pid, tid, pWaitInfo);
         }
 
-        if (settings_->trace_all_semaphores) {
+        if ((settings_.log_message_api_trace & MESSAGE_API_TRACE_SEMAPHORE_BIT)) {
             std::stringstream log;
             log << "Finished waiting for timeline semaphores on host. PID: " << pid << ", TID: " << tid
                 << ", VkDevice: " << device_state->GetObjectName((uint64_t)device) << std::endl;
@@ -1317,7 +1141,7 @@ VkResult Context::PostGetSemaphoreCounterValue(VkDevice device, VkSemaphore sema
     return result;
 }
 
-const std::filesystem::path& Context::GetOutputPath() const { return output_path_; }
+const std::filesystem::path& Context::GetOutputPath() const { return this->timed_crash_dump_output_dir; }
 
 VkResult Context::PreDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
     auto device_state = GetDevice(device);
@@ -1343,7 +1167,7 @@ VkResult Context::PreSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUt
 void Context::PreCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint,
                                  VkPipeline pipeline) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
-    if (settings_->dump_shaders == DumpShaders::kOnBind) {
+    if (settings_.dump_shaders == SETTING_DUMP_SHADERS_ON_BIND) {
         p_cmd->GetDevice().DumpShaderFromPipeline(pipeline);
     }
 
@@ -1377,12 +1201,15 @@ VkResult Context::PreResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommand
 }
 
 VkResult Context::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
-    PreApiFunction("vkQueueSubmit");
+    this->logger_.InfoPreApiFunction("vkQueueSubmit");
+
     auto device_state = GetQueueDevice(queue);
     device_state->UpdateWatchdog();
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit(submitCount, pSubmits, fence);
-    PostApiFunction("vkQueueSubmit", result);
+
+    this->logger_.InfoPostApiFunction("vkQueueSubmit", result);
+
     if (IsVkError(result)) {
         device_state->DeviceFault();
     }
@@ -1390,12 +1217,15 @@ VkResult Context::QueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmi
 }
 
 VkResult Context::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    PreApiFunction("vkQueueSubmit2");
+    this->logger_.InfoPreApiFunction("vkQueueSubmit2");
+
     auto device_state = GetQueueDevice(queue);
     device_state->UpdateWatchdog();
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit2(submitCount, pSubmits, fence);
-    PostApiFunction("vkQueueSubmit2", result);
+
+    this->logger_.InfoPostApiFunction("vkQueueSubmit2", result);
+
     if (IsVkError(result)) {
         device_state->DeviceFault();
     }
@@ -1403,12 +1233,15 @@ VkResult Context::QueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubm
 }
 
 VkResult Context::QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    PreApiFunction("vkQueueSubmit2KHR");
+    this->logger_.InfoPreApiFunction("vkQueueSubmit2KHR");
+
     auto device_state = GetQueueDevice(queue);
     device_state->UpdateWatchdog();
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->Submit2(submitCount, pSubmits, fence);
-    PostApiFunction("vkQueueSubmit2KHR", result);
+
+    this->logger_.InfoPostApiFunction("vkQueueSubmit2KHR", result);
+
     if (IsVkError(result)) {
         device_state->DeviceFault();
     }
@@ -1417,12 +1250,15 @@ VkResult Context::QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkS
 
 VkResult Context::QueueBindSparse(VkQueue queue, uint32_t bindInfoCount, VkBindSparseInfo const* pBindInfo,
                                   VkFence fence) {
-    PreApiFunction("vkQueueBindSparse");
+    this->logger_.InfoPreApiFunction("vkQueueBindSparse");
+
     auto device_state = GetQueueDevice(queue);
     device_state->UpdateWatchdog();
     auto queue_state = device_state->GetQueue(queue);
     auto result = queue_state->BindSparse(bindInfoCount, pBindInfo, fence);
-    PostApiFunction("vkQueueBindSparse", result);
+
+    this->logger_.InfoPostApiFunction("vkQueueBindSparse", result);
+
     if (IsVkError(result)) {
         device_state->DeviceFault();
     }
@@ -1434,14 +1270,14 @@ VkResult Context::PostCreateDebugUtilsMessengerEXT(VkInstance instance,
                                                    const VkAllocationCallbacks* pAllocator,
                                                    VkDebugUtilsMessengerEXT* pMessenger, VkResult result) {
     if (result == VK_SUCCESS) {
-        logger_.AddLogCallback(*pMessenger, *pCreateInfo);
+        this->logger_.AddLogCallback(*pMessenger, *pCreateInfo);
     }
     return result;
 }
 
 void Context::PreDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
                                                const VkAllocationCallbacks* pAllocator) {
-    logger_.RemoveLogCallback(messenger);
+    this->logger_.RemoveLogCallback(messenger);
 }
 
 VkResult Context::PostCreateDebugReportCallbackEXT(VkInstance instance,
@@ -1449,14 +1285,14 @@ VkResult Context::PostCreateDebugReportCallbackEXT(VkInstance instance,
                                                    const VkAllocationCallbacks* pAllocator,
                                                    VkDebugReportCallbackEXT* pCallback, VkResult result) {
     if (result == VK_SUCCESS) {
-        logger_.AddLogCallback(*pCallback, *pCreateInfo);
+        this->logger_.AddLogCallback(*pCallback, *pCreateInfo);
     }
     return result;
 }
 
 void Context::PreDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
                                                const VkAllocationCallbacks* pAllocator) {
-    logger_.RemoveLogCallback(callback);
+    this->logger_.RemoveLogCallback(callback);
 }
 
 VkResult CreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,

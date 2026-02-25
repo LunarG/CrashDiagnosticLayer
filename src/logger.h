@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2023-2024 LunarG, Inc.
+ Copyright (c) 2023-2026 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,16 +16,20 @@
 
 #pragma once
 
-#include <chrono>
+#include "layer_settings.h"
+
+#include <vulkan/vulkan_core.h>
+
 #include <filesystem>
 #include <fstream>
 #include <map>
 #include <mutex>
 #include <string>
 #include <shared_mutex>
-#include <vulkan/vulkan_core.h>
 
 namespace crash_diagnostic_layer {
+
+class Settings;
 
 class LogCallback {
    public:
@@ -48,13 +52,14 @@ class LogCallback {
 };
 
 class Logger {
-   public:
-    using Timepoint = std::chrono::time_point<std::chrono::system_clock>;
-
-    Logger(const Timepoint& start_time);
     Logger(Logger&) = delete;
     Logger& operator=(Logger&) = delete;
+
+   public:
+    Logger();
     ~Logger();
+
+    void Init(const VkInstanceCreateInfo* pCreateInfo, const Timepoint& start_time, const Settings& settings);
 
     void LogToStdout();
     void LogToStderr();
@@ -63,6 +68,7 @@ class Logger {
     const Timepoint& StartTime() const { return start_time_; }
 
     void SetSeverity(VkDebugUtilsMessageSeverityFlagsEXT mask);
+    void SetApiTrace(MessageApiTraceFlags mask);
 
     void Error(const char* format, ...) const;
     void Error(const std::string& message) const;
@@ -75,6 +81,10 @@ class Logger {
 
     void Verbose(const char* format, ...) const;
     void Verbose(const std::string& message) const;
+
+    void InfoPreApiFunction(const char* api_name) const;
+    void InfoPostApiFunction(const char* api_name) const;
+    void InfoPostApiFunction(const char* api_name, VkResult result) const;
 
     template <typename Handle, typename CreateInfo>
     void AddLogCallback(Handle handle, const CreateInfo& create_info) {
@@ -102,17 +112,18 @@ class Logger {
                                                              void* pUserData);
     void UpdateSeverityMask();
 
-    const Timepoint start_time_;
+    Timepoint start_time_;
 
     mutable std::shared_mutex log_cb_mutex_;
     std::map<uint64_t, LogCallback> log_cbs_;
     VkDebugUtilsMessageSeverityFlagsEXT severity_mask_{VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
                                                        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
                                                        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT};
+    MessageApiTraceFlags log_api_trace_mask_ = 0;
 
     // default logging state
     LogCallback default_cb_;
-    mutable std::ostream *log_stream_{nullptr};
+    mutable std::ostream *log_stream_ = nullptr;
     mutable std::ofstream log_file_;
     mutable std::mutex file_access_mutex_;
 };

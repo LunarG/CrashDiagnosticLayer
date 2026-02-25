@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ TEST_F(GpuCrash, CopyCrash) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(GpuCrash, ShaderCrash) {
@@ -131,7 +131,7 @@ TEST_F(GpuCrash, ShaderCrash) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(GpuCrash, InfiniteLoop) {
@@ -172,7 +172,7 @@ TEST_F(GpuCrash, InfiniteLoop) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(GpuCrash, InfiniteLoopSubmit2) {
@@ -222,7 +222,7 @@ TEST_F(GpuCrash, InfiniteLoopSubmit2) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(GpuCrash, HangHostEvent) {
@@ -267,7 +267,7 @@ TEST_F(GpuCrash, HangHostEvent) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 }
 
 TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
@@ -347,7 +347,7 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 
     ASSERT_EQ(dump_file.devices.size(), 1);
     if (fault_ext_supported) {
@@ -428,7 +428,7 @@ TEST_F(GpuCrash, VendorInfo) {
     ASSERT_TRUE(hang_detected);
 
     dump::File dump_file;
-    dump::Parse(dump_file, output_path_);
+    dump::Parse(dump_file, this->layer_settings.crash_diagnostic.output_path);
 
     ASSERT_EQ(dump_file.devices[0].fault_info->vendor_infos.size(), 3);
     for (uint32_t i = 0; i < vendor_infos.size(); i++) {

@@ -94,6 +94,7 @@ class Device {
     VkPhysicalDevice GetVkGpu() const;
     VkDevice GetVkDevice() const;
 
+    // The Semaphore Tracker is created only if the settings require it, for performance reason
     SemaphoreTracker* GetSemaphoreTracker() const { return semaphore_tracker_.get(); }
 
     void AddObjectInfo(uint64_t handle, VkObjectType type, const char* name);

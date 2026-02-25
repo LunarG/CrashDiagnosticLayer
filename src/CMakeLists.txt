@@ -59,6 +59,8 @@ target_sources(crash_diagnostic PRIVATE
     checkpoint.cpp
     layer_base.h
     layer_base.cpp
+    layer_settings.h
+    layer_settings.cpp
     linear_allocator.h
     logger.h
     logger.cpp
@@ -78,6 +80,7 @@ target_sources(crash_diagnostic PRIVATE
     system.h
     system.cpp
     util.h
+    util.cpp
     watchdog.cpp
     watchdog.h
 )

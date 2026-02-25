@@ -57,27 +57,25 @@ CDLTestBase::CDLTestBase()
       instance_(VK_NULL_HANDLE),
       physical_device_(VK_NULL_HANDLE),
       device_(VK_NULL_HANDLE),
-      layer_settings_(monitor_.GetDebugCreateInfo()),
+      layer_settings(),
       queue_(VK_NULL_HANDLE),
       cmd_pool_(VK_NULL_HANDLE),
       cmd_buff_(VK_NULL_HANDLE) {
+
     const auto* test_info = testing::UnitTest::GetInstance()->current_test_info();
 
     // Set default settings here rather than InitInstance(). This allows tests cases
     // to change them before calling it.
-    output_path_ = kTestOutputBaseDir;
-    output_path_ /= test_info->test_suite_name();
-    output_path_ /= test_info->name();
+    std::filesystem::path output_path = kTestOutputBaseDir;
+    output_path /= test_info->test_suite_name();
+    output_path /= test_info->name();
 
-    layer_settings_.SetOutputPath(output_path_.string().c_str());
-
-    layer_settings_.SetDumpShaders("off");
+    this->layer_settings.crash_diagnostic.output_path = output_path.string();
+    this->layer_settings.crash_diagnostic.dump_shaders = "off";
 
     if (print_all_) {
-        layer_settings_.SetLogFile("stderr");
-        layer_settings_.SetMessageSeverity("error, warn, info, verbose");
-    } else {
-        layer_settings_.SetLogFile("none");
+        this->layer_settings.crash_diagnostic.debug_action = {"VK_DBG_LAYER_ACTION_LOG_STDERR"};
+        this->layer_settings.crash_diagnostic.message_severity = {"error", "warn", "info", "verbose"};
     }
 }
 
@@ -88,7 +86,11 @@ void CDLTestBase::InitInstance() {
     std::vector<const char*> layers{"VK_LAYER_LUNARG_crash_diagnostic"};
     std::vector<const char*> instance_extensions{"VK_EXT_debug_utils", "VK_EXT_layer_settings"};
 
-    vk::InstanceCreateInfo ci({}, &app_info, layers, instance_extensions, layer_settings_.GetCreateInfo());
+    std::vector<vk::LayerSettingEXT> layer_settings_data = layer_settings.info();
+
+    vk::LayerSettingsCreateInfoEXT layer_settings_create_info(layer_settings_data, monitor_.GetDebugCreateInfo());
+
+    vk::InstanceCreateInfo ci({}, &app_info, layers, instance_extensions, &layer_settings_create_info);
 
     instance_ = vk::raii::Instance(context_, ci);
 

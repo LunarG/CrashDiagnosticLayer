@@ -82,7 +82,7 @@ Device::Device(Context& context, VkPhysicalDevice vk_gpu, VkDevice device, Devic
         checkpoints_ = std::make_unique<BufferMarkerCheckpointMgr>(*this);
     }
     // Create a semaphore tracker
-    if (context_.GetSettings().track_semaphores) {
+    if ((context_.GetSettings().log_message_api_trace & MESSAGE_API_TRACE_SEMAPHORE_BIT) || context_.GetSettings().dump_semaphores != SETTING_DUMP_SEMAPHORES_OFF) {
         semaphore_tracker_ = std::make_unique<SemaphoreTracker>(*this);
     }
     if (context_.GetSettings().trigger_watchdog_timer) {
@@ -152,14 +152,14 @@ void Device::DumpCommandBuffers(YAML::Emitter& os) const {
             bool dump_this_cb = false;
             auto cb_state = p_cmd->GetCommandBufferState();
             switch (dump_cbs) {
-                case DumpCommands::kAll:
+                case SETTING_DUMP_COMMANDS_ALL:
                     dump_this_cb = true;
                     break;
-                case DumpCommands::kRunning:
+                case SETTING_DUMP_COMMANDS_RUNNING:
                     dump_this_cb = cb_state == CommandBufferState::kIncomplete
                                    || cb_state == CommandBufferState::kMaybeComplete;
                     break;
-                case DumpCommands::kPending:
+                case SETTING_DUMP_COMMANDS_PENDING:
                     dump_this_cb = p_cmd->WasSubmittedToQueue();
                     break;
             }

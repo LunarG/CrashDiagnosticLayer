@@ -18,13 +18,11 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include <vulkan/layer/vk_layer_settings.hpp>
 #include <vulkan/utility/vk_struct_helper.hpp>
 #include <vulkan/utility/vk_safe_struct.hpp>
 
 #include <atomic>
 #include <cassert>
-#include <chrono>
 #include <filesystem>
 #include <map>
 #include <memory>
@@ -36,12 +34,12 @@
 #include <vector>
 #include <yaml-cpp/emitter.h>
 
+#include "layer_settings.h"
 #include "command.h"
 #include "command_buffer_tracker.h"
 #include "device.h"
 #include "layer_base.h"
 #include "logger.h"
-#include "system.h"
 
 namespace crash_diagnostic_layer {
 
@@ -58,20 +56,6 @@ struct DeviceCreateInfo {
 enum CrashSource {
     kDeviceLostError,
     kWatchdogTimer,
-};
-
-// Used for command buffers, commands and queue submisions
-enum class DumpCommands {
-    kRunning = 0,
-    kPending,
-    kAll,
-};
-
-enum class DumpShaders {
-    kOff = 0,
-    kOnCrash,
-    kOnBind,
-    kAll,
 };
 
 static inline void NewHandler() {
@@ -91,26 +75,6 @@ T* NewArray(size_t size) {
     std::set_new_handler(NewHandler);
     return new T[size];
 }
-
-struct Settings {
-    Settings();
-    Settings(VkuLayerSettingSet settings, Logger& log);
-    ~Settings() {}
-    void Print(YAML::Emitter& os) const;
-
-    DumpCommands dump_queue_submits{DumpCommands::kRunning};
-    DumpCommands dump_command_buffers{DumpCommands::kRunning};
-    DumpCommands dump_commands{DumpCommands::kRunning};
-    DumpShaders dump_shaders{DumpShaders::kOff};
-    std::string output_path;
-    bool instrument_all_commands{false};
-    bool track_semaphores{false};
-    bool trace_all_semaphores{false};
-    bool trace_all{false};
-    bool sync_after_commands{false};
-    bool trigger_watchdog_timer{true};
-    uint64_t watchdog_timer_ms{30000};
-};
 
 class Context : public Interceptor {
    public:
@@ -141,7 +105,7 @@ class Context : public Interceptor {
     DevicePtr GetQueueDevice(VkQueue);
     ConstDevicePtr GetQueueDevice(VkQueue) const;
 
-    const Settings& GetSettings() const { return settings_.value(); }
+    const Settings& GetSettings() const { return this->settings_; }
 
     void DumpAllDevicesExecutionState(CrashSource crash_source);
     void DumpDeviceExecutionState(Device& device, CrashSource crash_source = kDeviceLostError);
@@ -155,10 +119,6 @@ class Context : public Interceptor {
     void ValidateCommandBufferNotInUse(CommandBuffer* commandBuffer);
 
    public:
-    void PreApiFunction(const char* api_name);
-    void PostApiFunction(const char* api_name);
-    void PostApiFunction(const char* api_name, VkResult result);
-
     const VkInstanceCreateInfo* GetModifiedInstanceCreateInfo(const VkInstanceCreateInfo* pCreateInfo) override;
     const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice physicalDevice,
                                                           const VkDeviceCreateInfo* pCreateInfo) override;
@@ -313,11 +273,14 @@ class Context : public Interceptor {
     template <typename T>
     void QueryFeature(VkPhysicalDevice physicalDevice, T* feature);
 
-    std::optional<Settings> settings_;
+    const Timepoint start_time;
 
-    TimePoint start_time_;
+    Settings settings_;
     Logger logger_;
     System system_;
+
+    std::filesystem::path base_output_dir;
+    std::filesystem::path timed_crash_dump_output_dir;
 
     VkInstance vk_instance_ = VK_NULL_HANDLE;
     vku::safe_VkInstanceCreateInfo original_create_info_;
@@ -352,8 +315,6 @@ class Context : public Interceptor {
 
     int shader_module_load_options_ = ShaderModule::LoadOptions::kNone;
 
-    std::filesystem::path base_output_path_;
-    std::filesystem::path output_path_;
     int total_logs_ = 0;
 };
 

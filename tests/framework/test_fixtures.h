@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,13 +50,11 @@ class CDLTestBase : public ::testing::Test {
 
     vk::raii::Context context_;
     ErrorMonitor monitor_;
-    // LayerSettings settings_;
     vk::raii::Instance instance_;
 
     vk::raii::PhysicalDevice physical_device_;
     vk::raii::Device device_;
-    std::filesystem::path output_path_;
-    LayerSettings layer_settings_;
+    LayerSettings layer_settings;
 
     uint32_t qfi_{~0u};
     vk::raii::Queue queue_;

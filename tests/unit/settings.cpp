@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,12 @@
 class Settings : public CDLTestBase {};
 
 TEST_F(Settings, WatchdogTimeout) {
-    layer_settings_.watchdog_timeout_ms = 123456u;
+    this->layer_settings.crash_diagnostic.watchdog_timeout_ms = 123456u;
+    this->layer_settings.crash_diagnostic.message_severity = {"info"};
 
-    layer_settings_.SetMessageSeverity("info");
     monitor_.SetAllowedFailureMsg("Version");
+    monitor_.SetAllowedFailureMsg("Using layer settings:");
+    monitor_.SetAllowedFailureMsg(" - ");
     monitor_.SetDesiredFailureMsg(ErrorMonitor::SeverityBits::eInfo, "Begin Watchdog: 123456ms");
     InitDevice();
     monitor_.VerifyFound();
@@ -34,18 +36,18 @@ TEST_F(Settings, WatchdogTimeout) {
 TEST_F(Settings, LogFilePath) {
     // The test framework writes sets the output path to ./cdl_output/<test-suite-name>/<test-name>/
     const char* kLogFileName = "cdl_log.txt";
-    layer_settings_.SetLogFile(kLogFileName);
+    this->layer_settings.crash_diagnostic.log_file = kLogFileName;
     // make sure something gets logged.
-    layer_settings_.SetMessageSeverity("error,warn,info,verbose");
+    this->layer_settings.crash_diagnostic.message_severity = {"error", "warn", "info", "verbose"};
     InitInstance();
     // There should now be a log file under that directory with a timestamped directory after it.
-    std::filesystem::directory_iterator output_iter(output_path_);
+    std::filesystem::directory_iterator output_iter(this->layer_settings.crash_diagnostic.output_path);
     std::filesystem::directory_iterator end;
 
     ASSERT_FALSE(output_iter == end);
     ASSERT_TRUE(output_iter->is_directory());
 
-    auto rel = std::filesystem::relative(output_iter->path(), output_path_).string();
+    auto rel = std::filesystem::relative(output_iter->path(), this->layer_settings.crash_diagnostic.output_path).string();
     // should look like yyyy-mm-dd-hhmmss
     std::regex dir_re("\\d{4}-\\d{2}-\\d{2}-\\d{6}");
     std::smatch m;
@@ -80,9 +82,9 @@ TEST_F(Settings, LogFileLeadingDot) {
     log_file += "-cdl_log.txt";
 
     std::string s = log_file.string();
-    layer_settings_.SetLogFile(s.c_str());
+    this->layer_settings.crash_diagnostic.log_file = s.c_str();
     // make sure something gets logged.
-    layer_settings_.SetMessageSeverity("error,warn,info,verbose");
+    this->layer_settings.crash_diagnostic.message_severity = {"error", "warn", "info", "verbose"};
     InitInstance();
     ASSERT_TRUE(std::filesystem::exists(log_file));
 }
