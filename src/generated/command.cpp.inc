@@ -1137,6 +1137,228 @@ void CommandBuffer::PostCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkP
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo) {
+    tracker_.CmdBindIndexBuffer3KHR(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                uint32_t bindingCount,
+                                                const VkBindVertexBuffer3InfoKHR* pBindingInfos) {
+    tracker_.CmdBindVertexBuffers3KHR(commandBuffer, firstBinding, bindingCount, pBindingInfos);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                 uint32_t bindingCount,
+                                                 const VkBindVertexBuffer3InfoKHR* pBindingInfos) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDrawIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    tracker_.CmdDrawIndirect2KHR(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDrawIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    tracker_.CmdDrawIndexedIndirect2KHR(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer, const VkDispatchIndirect2InfoKHR* pInfo) {
+    tracker_.CmdDispatchIndirect2KHR(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer,
+                                                const VkDispatchIndirect2InfoKHR* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyMemoryKHR(VkCommandBuffer commandBuffer,
+                                        const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo) {
+    tracker_.CmdCopyMemoryKHR(commandBuffer, pCopyMemoryInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyMemoryKHR(VkCommandBuffer commandBuffer,
+                                         const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer,
+                                               const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {
+    tracker_.CmdCopyMemoryToImageKHR(commandBuffer, pCopyMemoryInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer,
+                                                const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer,
+                                               const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {
+    tracker_.CmdCopyImageToMemoryKHR(commandBuffer, pCopyMemoryInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer,
+                                                const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdUpdateMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                          VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData) {
+    tracker_.CmdUpdateMemoryKHR(commandBuffer, pDstRange, dstFlags, dataSize, pData);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdUpdateMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                           VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize,
+                                           const void* pData) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdFillMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                        VkAddressCommandFlagsKHR dstFlags, uint32_t data) {
+    tracker_.CmdFillMemoryKHR(commandBuffer, pDstRange, dstFlags, data);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdFillMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                         VkAddressCommandFlagsKHR dstFlags, uint32_t data) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdCopyQueryPoolResultsToMemoryKHR(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                          uint32_t firstQuery, uint32_t queryCount,
+                                                          const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                                          VkAddressCommandFlagsKHR dstFlags,
+                                                          VkQueryResultFlags queryResultFlags) {
+    tracker_.CmdCopyQueryPoolResultsToMemoryKHR(commandBuffer, queryPool, firstQuery, queryCount, pDstRange, dstFlags,
+                                                queryResultFlags);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdCopyQueryPoolResultsToMemoryKHR(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                           uint32_t firstQuery, uint32_t queryCount,
+                                                           const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                                           VkAddressCommandFlagsKHR dstFlags,
+                                                           VkQueryResultFlags queryResultFlags) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                const VkDrawIndirectCount2InfoKHR* pInfo) {
+    tracker_.CmdDrawIndirectCount2KHR(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                 const VkDrawIndirectCount2InfoKHR* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDrawIndexedIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                       const VkDrawIndirectCount2InfoKHR* pInfo) {
+    tracker_.CmdDrawIndexedIndirectCount2KHR(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDrawIndexedIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                        const VkDrawIndirectCount2InfoKHR* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBeginConditionalRendering2EXT(
+    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin) {
+    tracker_.CmdBeginConditionalRendering2EXT(commandBuffer, pConditionalRenderingBegin);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBeginConditionalRendering2EXT(
+    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBindTransformFeedbackBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                           uint32_t bindingCount,
+                                                           const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos) {
+    tracker_.CmdBindTransformFeedbackBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBindingInfos);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBindTransformFeedbackBuffers2EXT(
+    VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
+    const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdBeginTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                                     uint32_t counterRangeCount,
+                                                     const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {
+    tracker_.CmdBeginTransformFeedback2EXT(commandBuffer, firstCounterRange, counterRangeCount, pCounterInfos);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBeginTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                                      uint32_t counterRangeCount,
+                                                      const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdEndTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                                   uint32_t counterRangeCount,
+                                                   const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {
+    tracker_.CmdEndTransformFeedback2EXT(commandBuffer, firstCounterRange, counterRangeCount, pCounterInfos);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdEndTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                                    uint32_t counterRangeCount,
+                                                    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDrawIndirectByteCount2EXT(VkCommandBuffer commandBuffer, uint32_t instanceCount,
+                                                    uint32_t firstInstance,
+                                                    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+                                                    uint32_t counterOffset, uint32_t vertexStride) {
+    tracker_.CmdDrawIndirectByteCount2EXT(commandBuffer, instanceCount, firstInstance, pCounterInfo, counterOffset,
+                                          vertexStride);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDrawIndirectByteCount2EXT(VkCommandBuffer commandBuffer, uint32_t instanceCount,
+                                                     uint32_t firstInstance,
+                                                     const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+                                                     uint32_t counterOffset, uint32_t vertexStride) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer,
+                                                    const VkDrawIndirect2InfoKHR* pInfo) {
+    tracker_.CmdDrawMeshTasksIndirect2EXT(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer,
+                                                     const VkDrawIndirect2InfoKHR* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdDrawMeshTasksIndirectCount2EXT(VkCommandBuffer commandBuffer,
+                                                         const VkDrawIndirectCount2InfoKHR* pInfo) {
+    tracker_.CmdDrawMeshTasksIndirectCount2EXT(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdDrawMeshTasksIndirectCount2EXT(VkCommandBuffer commandBuffer,
+                                                          const VkDrawIndirectCount2InfoKHR* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo) {
+    tracker_.CmdWriteMarkerToMemoryAMD(commandBuffer, pInfo);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
     tracker_.CmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
     if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
@@ -2282,6 +2504,16 @@ void CommandBuffer::PostCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuff
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdSetDispatchParametersARM(VkCommandBuffer commandBuffer,
+                                                   const VkDispatchParametersARM* pDispatchParameters) {
+    tracker_.CmdSetDispatchParametersARM(commandBuffer, pDispatchParameters);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetDispatchParametersARM(VkCommandBuffer commandBuffer,
+                                                    const VkDispatchParametersARM* pDispatchParameters) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress,
                                                uint32_t copyCount, uint32_t stride) {
     tracker_.CmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
@@ -2781,6 +3013,24 @@ void CommandBuffer::PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBu
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 
+void CommandBuffer::PreCmdBeginShaderInstrumentationARM(VkCommandBuffer commandBuffer,
+                                                        VkShaderInstrumentationARM instrumentation) {
+    tracker_.CmdBeginShaderInstrumentationARM(commandBuffer, instrumentation);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdBeginShaderInstrumentationARM(VkCommandBuffer commandBuffer,
+                                                         VkShaderInstrumentationARM instrumentation) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdEndShaderInstrumentationARM(VkCommandBuffer commandBuffer) {
+    tracker_.CmdEndShaderInstrumentationARM(commandBuffer);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdEndShaderInstrumentationARM(VkCommandBuffer commandBuffer) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
 void CommandBuffer::PreCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
                                            const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     tracker_.CmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
@@ -2808,6 +3058,14 @@ void CommandBuffer::PreCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandB
 }
 void CommandBuffer::PostCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                                          const VkComputeOccupancyPriorityParametersNV* pParameters) {
+    if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
+}
+
+void CommandBuffer::PreCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {
+    tracker_.CmdSetPrimitiveRestartIndexEXT(commandBuffer, primitiveRestartIndex);
+    if (instrument_all_commands_) WriteCommandBeginCheckpoint(tracker_.GetCommands().back().id);
+}
+void CommandBuffer::PostCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {
     if (instrument_all_commands_) WriteCommandEndCheckpoint(tracker_.GetCommands().back().id);
 }
 

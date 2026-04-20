@@ -267,6 +267,48 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdPipelineBarrier2KHR";
         case Command::Type::kCmdWriteTimestamp2KHR:
             return "vkCmdWriteTimestamp2KHR";
+        case Command::Type::kCmdBindIndexBuffer3KHR:
+            return "vkCmdBindIndexBuffer3KHR";
+        case Command::Type::kCmdBindVertexBuffers3KHR:
+            return "vkCmdBindVertexBuffers3KHR";
+        case Command::Type::kCmdDrawIndirect2KHR:
+            return "vkCmdDrawIndirect2KHR";
+        case Command::Type::kCmdDrawIndexedIndirect2KHR:
+            return "vkCmdDrawIndexedIndirect2KHR";
+        case Command::Type::kCmdDispatchIndirect2KHR:
+            return "vkCmdDispatchIndirect2KHR";
+        case Command::Type::kCmdCopyMemoryKHR:
+            return "vkCmdCopyMemoryKHR";
+        case Command::Type::kCmdCopyMemoryToImageKHR:
+            return "vkCmdCopyMemoryToImageKHR";
+        case Command::Type::kCmdCopyImageToMemoryKHR:
+            return "vkCmdCopyImageToMemoryKHR";
+        case Command::Type::kCmdUpdateMemoryKHR:
+            return "vkCmdUpdateMemoryKHR";
+        case Command::Type::kCmdFillMemoryKHR:
+            return "vkCmdFillMemoryKHR";
+        case Command::Type::kCmdCopyQueryPoolResultsToMemoryKHR:
+            return "vkCmdCopyQueryPoolResultsToMemoryKHR";
+        case Command::Type::kCmdDrawIndirectCount2KHR:
+            return "vkCmdDrawIndirectCount2KHR";
+        case Command::Type::kCmdDrawIndexedIndirectCount2KHR:
+            return "vkCmdDrawIndexedIndirectCount2KHR";
+        case Command::Type::kCmdBeginConditionalRendering2EXT:
+            return "vkCmdBeginConditionalRendering2EXT";
+        case Command::Type::kCmdBindTransformFeedbackBuffers2EXT:
+            return "vkCmdBindTransformFeedbackBuffers2EXT";
+        case Command::Type::kCmdBeginTransformFeedback2EXT:
+            return "vkCmdBeginTransformFeedback2EXT";
+        case Command::Type::kCmdEndTransformFeedback2EXT:
+            return "vkCmdEndTransformFeedback2EXT";
+        case Command::Type::kCmdDrawIndirectByteCount2EXT:
+            return "vkCmdDrawIndirectByteCount2EXT";
+        case Command::Type::kCmdDrawMeshTasksIndirect2EXT:
+            return "vkCmdDrawMeshTasksIndirect2EXT";
+        case Command::Type::kCmdDrawMeshTasksIndirectCount2EXT:
+            return "vkCmdDrawMeshTasksIndirectCount2EXT";
+        case Command::Type::kCmdWriteMarkerToMemoryAMD:
+            return "vkCmdWriteMarkerToMemoryAMD";
         case Command::Type::kCmdCopyBuffer2KHR:
             return "vkCmdCopyBuffer2KHR";
         case Command::Type::kCmdCopyImage2KHR:
@@ -493,6 +535,8 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdDrawClusterHUAWEI";
         case Command::Type::kCmdDrawClusterIndirectHUAWEI:
             return "vkCmdDrawClusterIndirectHUAWEI";
+        case Command::Type::kCmdSetDispatchParametersARM:
+            return "vkCmdSetDispatchParametersARM";
         case Command::Type::kCmdCopyMemoryIndirectNV:
             return "vkCmdCopyMemoryIndirectNV";
         case Command::Type::kCmdCopyMemoryToImageIndirectNV:
@@ -593,12 +637,18 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdPreprocessGeneratedCommandsEXT";
         case Command::Type::kCmdExecuteGeneratedCommandsEXT:
             return "vkCmdExecuteGeneratedCommandsEXT";
+        case Command::Type::kCmdBeginShaderInstrumentationARM:
+            return "vkCmdBeginShaderInstrumentationARM";
+        case Command::Type::kCmdEndShaderInstrumentationARM:
+            return "vkCmdEndShaderInstrumentationARM";
         case Command::Type::kCmdEndRendering2EXT:
             return "vkCmdEndRendering2EXT";
         case Command::Type::kCmdBeginCustomResolveEXT:
             return "vkCmdBeginCustomResolveEXT";
         case Command::Type::kCmdSetComputeOccupancyPriorityNV:
             return "vkCmdSetComputeOccupancyPriorityNV";
+        case Command::Type::kCmdSetPrimitiveRestartIndexEXT:
+            return "vkCmdSetPrimitiveRestartIndexEXT";
         case Command::Type::kCmdBuildAccelerationStructuresKHR:
             return "vkCmdBuildAccelerationStructuresKHR";
         case Command::Type::kCmdBuildAccelerationStructuresIndirectKHR:

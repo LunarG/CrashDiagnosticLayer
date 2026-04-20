@@ -284,6 +284,9 @@ void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa
     dt->GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM =
         (PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM)pa(
             instance, "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM");
+    dt->GetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM =
+        (PFN_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM)pa(
+            instance, "vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM");
 #ifdef VK_USE_PLATFORM_OHOS
     dt->CreateSurfaceOHOS = (PFN_vkCreateSurfaceOHOS)pa(instance, "vkCreateSurfaceOHOS");
 #endif  // VK_USE_PLATFORM_OHOS
@@ -293,6 +296,19 @@ void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa
     dt->EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM =
         (PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM)pa(
             instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM");
+    dt->EnumeratePhysicalDeviceShaderInstrumentationMetricsARM =
+        (PFN_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM)pa(
+            instance, "vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM");
+    dt->GetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM =
+        (PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM)pa(
+            instance, "vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM");
+#ifdef VK_USE_PLATFORM_UBM_SEC
+    dt->CreateUbmSurfaceSEC = (PFN_vkCreateUbmSurfaceSEC)pa(instance, "vkCreateUbmSurfaceSEC");
+#endif  // VK_USE_PLATFORM_UBM_SEC
+#ifdef VK_USE_PLATFORM_UBM_SEC
+    dt->GetPhysicalDeviceUbmPresentationSupportSEC =
+        (PFN_vkGetPhysicalDeviceUbmPresentationSupportSEC)pa(instance, "vkGetPhysicalDeviceUbmPresentationSupportSEC");
+#endif  // VK_USE_PLATFORM_UBM_SEC
 };
 
 void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, DeviceDispatchTable *dt) {
@@ -650,6 +666,35 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CmdPipelineBarrier2KHR = (PFN_vkCmdPipelineBarrier2KHR)pa(device, "vkCmdPipelineBarrier2KHR");
     dt->CmdWriteTimestamp2KHR = (PFN_vkCmdWriteTimestamp2KHR)pa(device, "vkCmdWriteTimestamp2KHR");
     dt->QueueSubmit2KHR = (PFN_vkQueueSubmit2KHR)pa(device, "vkQueueSubmit2KHR");
+    dt->CmdBindIndexBuffer3KHR = (PFN_vkCmdBindIndexBuffer3KHR)pa(device, "vkCmdBindIndexBuffer3KHR");
+    dt->CmdBindVertexBuffers3KHR = (PFN_vkCmdBindVertexBuffers3KHR)pa(device, "vkCmdBindVertexBuffers3KHR");
+    dt->CmdDrawIndirect2KHR = (PFN_vkCmdDrawIndirect2KHR)pa(device, "vkCmdDrawIndirect2KHR");
+    dt->CmdDrawIndexedIndirect2KHR = (PFN_vkCmdDrawIndexedIndirect2KHR)pa(device, "vkCmdDrawIndexedIndirect2KHR");
+    dt->CmdDispatchIndirect2KHR = (PFN_vkCmdDispatchIndirect2KHR)pa(device, "vkCmdDispatchIndirect2KHR");
+    dt->CmdCopyMemoryKHR = (PFN_vkCmdCopyMemoryKHR)pa(device, "vkCmdCopyMemoryKHR");
+    dt->CmdCopyMemoryToImageKHR = (PFN_vkCmdCopyMemoryToImageKHR)pa(device, "vkCmdCopyMemoryToImageKHR");
+    dt->CmdCopyImageToMemoryKHR = (PFN_vkCmdCopyImageToMemoryKHR)pa(device, "vkCmdCopyImageToMemoryKHR");
+    dt->CmdUpdateMemoryKHR = (PFN_vkCmdUpdateMemoryKHR)pa(device, "vkCmdUpdateMemoryKHR");
+    dt->CmdFillMemoryKHR = (PFN_vkCmdFillMemoryKHR)pa(device, "vkCmdFillMemoryKHR");
+    dt->CmdCopyQueryPoolResultsToMemoryKHR =
+        (PFN_vkCmdCopyQueryPoolResultsToMemoryKHR)pa(device, "vkCmdCopyQueryPoolResultsToMemoryKHR");
+    dt->CmdDrawIndirectCount2KHR = (PFN_vkCmdDrawIndirectCount2KHR)pa(device, "vkCmdDrawIndirectCount2KHR");
+    dt->CmdDrawIndexedIndirectCount2KHR =
+        (PFN_vkCmdDrawIndexedIndirectCount2KHR)pa(device, "vkCmdDrawIndexedIndirectCount2KHR");
+    dt->CmdBeginConditionalRendering2EXT =
+        (PFN_vkCmdBeginConditionalRendering2EXT)pa(device, "vkCmdBeginConditionalRendering2EXT");
+    dt->CmdBindTransformFeedbackBuffers2EXT =
+        (PFN_vkCmdBindTransformFeedbackBuffers2EXT)pa(device, "vkCmdBindTransformFeedbackBuffers2EXT");
+    dt->CmdBeginTransformFeedback2EXT =
+        (PFN_vkCmdBeginTransformFeedback2EXT)pa(device, "vkCmdBeginTransformFeedback2EXT");
+    dt->CmdEndTransformFeedback2EXT = (PFN_vkCmdEndTransformFeedback2EXT)pa(device, "vkCmdEndTransformFeedback2EXT");
+    dt->CmdDrawIndirectByteCount2EXT = (PFN_vkCmdDrawIndirectByteCount2EXT)pa(device, "vkCmdDrawIndirectByteCount2EXT");
+    dt->CmdDrawMeshTasksIndirect2EXT = (PFN_vkCmdDrawMeshTasksIndirect2EXT)pa(device, "vkCmdDrawMeshTasksIndirect2EXT");
+    dt->CmdDrawMeshTasksIndirectCount2EXT =
+        (PFN_vkCmdDrawMeshTasksIndirectCount2EXT)pa(device, "vkCmdDrawMeshTasksIndirectCount2EXT");
+    dt->CmdWriteMarkerToMemoryAMD = (PFN_vkCmdWriteMarkerToMemoryAMD)pa(device, "vkCmdWriteMarkerToMemoryAMD");
+    dt->CreateAccelerationStructure2KHR =
+        (PFN_vkCreateAccelerationStructure2KHR)pa(device, "vkCreateAccelerationStructure2KHR");
     dt->CmdCopyBuffer2KHR = (PFN_vkCmdCopyBuffer2KHR)pa(device, "vkCmdCopyBuffer2KHR");
     dt->CmdCopyImage2KHR = (PFN_vkCmdCopyImage2KHR)pa(device, "vkCmdCopyImage2KHR");
     dt->CmdCopyBufferToImage2KHR = (PFN_vkCmdCopyBufferToImage2KHR)pa(device, "vkCmdCopyBufferToImage2KHR");
@@ -692,6 +737,8 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CmdCopyMemoryIndirectKHR = (PFN_vkCmdCopyMemoryIndirectKHR)pa(device, "vkCmdCopyMemoryIndirectKHR");
     dt->CmdCopyMemoryToImageIndirectKHR =
         (PFN_vkCmdCopyMemoryToImageIndirectKHR)pa(device, "vkCmdCopyMemoryToImageIndirectKHR");
+    dt->GetDeviceFaultReportsKHR = (PFN_vkGetDeviceFaultReportsKHR)pa(device, "vkGetDeviceFaultReportsKHR");
+    dt->GetDeviceFaultDebugInfoKHR = (PFN_vkGetDeviceFaultDebugInfoKHR)pa(device, "vkGetDeviceFaultDebugInfoKHR");
     dt->CmdEndRendering2KHR = (PFN_vkCmdEndRendering2KHR)pa(device, "vkCmdEndRendering2KHR");
     dt->DebugMarkerSetObjectTagEXT = (PFN_vkDebugMarkerSetObjectTagEXT)pa(device, "vkDebugMarkerSetObjectTagEXT");
     dt->DebugMarkerSetObjectNameEXT = (PFN_vkDebugMarkerSetObjectNameEXT)pa(device, "vkDebugMarkerSetObjectNameEXT");
@@ -919,6 +966,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->DestroyPrivateDataSlotEXT = (PFN_vkDestroyPrivateDataSlotEXT)pa(device, "vkDestroyPrivateDataSlotEXT");
     dt->SetPrivateDataEXT = (PFN_vkSetPrivateDataEXT)pa(device, "vkSetPrivateDataEXT");
     dt->GetPrivateDataEXT = (PFN_vkGetPrivateDataEXT)pa(device, "vkGetPrivateDataEXT");
+    dt->QueueSetPerfHintQCOM = (PFN_vkQueueSetPerfHintQCOM)pa(device, "vkQueueSetPerfHintQCOM");
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->CreateCudaModuleNV = (PFN_vkCreateCudaModuleNV)pa(device, "vkCreateCudaModuleNV");
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -1038,6 +1086,7 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CmdDrawClusterHUAWEI = (PFN_vkCmdDrawClusterHUAWEI)pa(device, "vkCmdDrawClusterHUAWEI");
     dt->CmdDrawClusterIndirectHUAWEI = (PFN_vkCmdDrawClusterIndirectHUAWEI)pa(device, "vkCmdDrawClusterIndirectHUAWEI");
     dt->SetDeviceMemoryPriorityEXT = (PFN_vkSetDeviceMemoryPriorityEXT)pa(device, "vkSetDeviceMemoryPriorityEXT");
+    dt->CmdSetDispatchParametersARM = (PFN_vkCmdSetDispatchParametersARM)pa(device, "vkCmdSetDispatchParametersARM");
     dt->GetDescriptorSetLayoutHostMappingInfoVALVE =
         (PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE)pa(device, "vkGetDescriptorSetLayoutHostMappingInfoVALVE");
     dt->GetDescriptorSetHostMappingVALVE =
@@ -1214,10 +1263,24 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->GetMemoryMetalHandlePropertiesEXT =
         (PFN_vkGetMemoryMetalHandlePropertiesEXT)pa(device, "vkGetMemoryMetalHandlePropertiesEXT");
 #endif  // VK_USE_PLATFORM_METAL_EXT
+    dt->CreateShaderInstrumentationARM =
+        (PFN_vkCreateShaderInstrumentationARM)pa(device, "vkCreateShaderInstrumentationARM");
+    dt->DestroyShaderInstrumentationARM =
+        (PFN_vkDestroyShaderInstrumentationARM)pa(device, "vkDestroyShaderInstrumentationARM");
+    dt->CmdBeginShaderInstrumentationARM =
+        (PFN_vkCmdBeginShaderInstrumentationARM)pa(device, "vkCmdBeginShaderInstrumentationARM");
+    dt->CmdEndShaderInstrumentationARM =
+        (PFN_vkCmdEndShaderInstrumentationARM)pa(device, "vkCmdEndShaderInstrumentationARM");
+    dt->GetShaderInstrumentationValuesARM =
+        (PFN_vkGetShaderInstrumentationValuesARM)pa(device, "vkGetShaderInstrumentationValuesARM");
+    dt->ClearShaderInstrumentationMetricsARM =
+        (PFN_vkClearShaderInstrumentationMetricsARM)pa(device, "vkClearShaderInstrumentationMetricsARM");
     dt->CmdEndRendering2EXT = (PFN_vkCmdEndRendering2EXT)pa(device, "vkCmdEndRendering2EXT");
     dt->CmdBeginCustomResolveEXT = (PFN_vkCmdBeginCustomResolveEXT)pa(device, "vkCmdBeginCustomResolveEXT");
     dt->CmdSetComputeOccupancyPriorityNV =
         (PFN_vkCmdSetComputeOccupancyPriorityNV)pa(device, "vkCmdSetComputeOccupancyPriorityNV");
+    dt->CmdSetPrimitiveRestartIndexEXT =
+        (PFN_vkCmdSetPrimitiveRestartIndexEXT)pa(device, "vkCmdSetPrimitiveRestartIndexEXT");
     dt->CreateAccelerationStructureKHR =
         (PFN_vkCreateAccelerationStructureKHR)pa(device, "vkCreateAccelerationStructureKHR");
     dt->DestroyAccelerationStructureKHR =

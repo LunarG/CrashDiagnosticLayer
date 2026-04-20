@@ -1947,6 +1947,334 @@ void CommandPrinter::PrintCmdWriteTimestamp2KHRArgs(YAML::Emitter &os, const Cmd
     os << YAML::Value << args.query;
 }
 
+void CommandPrinter::PrintCmdBindIndexBuffer3KHRArgs(YAML::Emitter &os, const CmdBindIndexBuffer3KHRArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdBindVertexBuffers3KHRArgs(YAML::Emitter &os, const CmdBindVertexBuffers3KHRArgs &args) {
+    os << YAML::Key << "firstBinding";
+    // firstBinding -> Field -> uint32_t
+    os << YAML::Value << args.firstBinding;
+    os << YAML::Key << "bindingCount";
+    // bindingCount -> Field -> uint32_t
+    os << YAML::Value << args.bindingCount;
+    os << YAML::Key << "pBindingInfos";
+    // pBindingInfos -> Field -> ConstDynamicArray(VkBindVertexBuffer3InfoKHR)
+    if (args.bindingCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkBindVertexBuffer3InfoKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
+                os << args.pBindingInfos[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdDrawIndirect2KHRArgs(YAML::Emitter &os, const CmdDrawIndirect2KHRArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdDrawIndexedIndirect2KHRArgs(YAML::Emitter &os,
+                                                         const CmdDrawIndexedIndirect2KHRArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdDispatchIndirect2KHRArgs(YAML::Emitter &os, const CmdDispatchIndirect2KHRArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdCopyMemoryKHRArgs(YAML::Emitter &os, const CmdCopyMemoryKHRArgs &args) {
+    os << YAML::Key << "pCopyMemoryInfo";
+    // pointer
+    if (args.pCopyMemoryInfo != nullptr) {
+        os << YAML::Value << *args.pCopyMemoryInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdCopyMemoryToImageKHRArgs(YAML::Emitter &os, const CmdCopyMemoryToImageKHRArgs &args) {
+    os << YAML::Key << "pCopyMemoryInfo";
+    // pointer
+    if (args.pCopyMemoryInfo != nullptr) {
+        os << YAML::Value << *args.pCopyMemoryInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdCopyImageToMemoryKHRArgs(YAML::Emitter &os, const CmdCopyImageToMemoryKHRArgs &args) {
+    os << YAML::Key << "pCopyMemoryInfo";
+    // pointer
+    if (args.pCopyMemoryInfo != nullptr) {
+        os << YAML::Value << *args.pCopyMemoryInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdUpdateMemoryKHRArgs(YAML::Emitter &os, const CmdUpdateMemoryKHRArgs &args) {
+    os << YAML::Key << "pDstRange";
+    // pointer
+    if (args.pDstRange != nullptr) {
+        os << YAML::Value << *args.pDstRange;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "dstFlags";
+    // dstFlags -> Field -> VkAddressCommandFlagsKHR
+    os << YAML::Value << args.dstFlags;
+    os << YAML::Key << "dataSize";
+    // dataSize -> Field -> VkDeviceSize
+    os << YAML::Value << args.dataSize;
+    os << YAML::Key << "pData";
+    if (args.dataSize == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value << YAML::BeginSeq;
+        {
+            const uint8_t *p = (const uint8_t *)args.pData;
+            for (uint64_t i = 0; i < args.dataSize; ++i) {
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
+            }
+        }
+        os << YAML::EndSeq;
+    }
+}
+
+void CommandPrinter::PrintCmdFillMemoryKHRArgs(YAML::Emitter &os, const CmdFillMemoryKHRArgs &args) {
+    os << YAML::Key << "pDstRange";
+    // pointer
+    if (args.pDstRange != nullptr) {
+        os << YAML::Value << *args.pDstRange;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "dstFlags";
+    // dstFlags -> Field -> VkAddressCommandFlagsKHR
+    os << YAML::Value << args.dstFlags;
+    os << YAML::Key << "data";
+    // data -> Field -> uint32_t
+    os << YAML::Value << args.data;
+}
+
+void CommandPrinter::PrintCmdCopyQueryPoolResultsToMemoryKHRArgs(YAML::Emitter &os,
+                                                                 const CmdCopyQueryPoolResultsToMemoryKHRArgs &args) {
+    os << YAML::Key << "queryPool";
+    // queryPool -> Field -> VkQueryPool
+    os << YAML::Value << args.queryPool;
+    os << YAML::Key << "firstQuery";
+    // firstQuery -> Field -> uint32_t
+    os << YAML::Value << args.firstQuery;
+    os << YAML::Key << "queryCount";
+    // queryCount -> Field -> uint32_t
+    os << YAML::Value << args.queryCount;
+    os << YAML::Key << "pDstRange";
+    // pointer
+    if (args.pDstRange != nullptr) {
+        os << YAML::Value << *args.pDstRange;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "dstFlags";
+    // dstFlags -> Field -> VkAddressCommandFlagsKHR
+    os << YAML::Value << args.dstFlags;
+    os << YAML::Key << "queryResultFlags";
+    // queryResultFlags -> Field -> VkQueryResultFlags
+    os << YAML::Value << args.queryResultFlags;
+}
+
+void CommandPrinter::PrintCmdDrawIndirectCount2KHRArgs(YAML::Emitter &os, const CmdDrawIndirectCount2KHRArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdDrawIndexedIndirectCount2KHRArgs(YAML::Emitter &os,
+                                                              const CmdDrawIndexedIndirectCount2KHRArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdBeginConditionalRendering2EXTArgs(YAML::Emitter &os,
+                                                               const CmdBeginConditionalRendering2EXTArgs &args) {
+    os << YAML::Key << "pConditionalRenderingBegin";
+    // pointer
+    if (args.pConditionalRenderingBegin != nullptr) {
+        os << YAML::Value << *args.pConditionalRenderingBegin;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdBindTransformFeedbackBuffers2EXTArgs(YAML::Emitter &os,
+                                                                  const CmdBindTransformFeedbackBuffers2EXTArgs &args) {
+    os << YAML::Key << "firstBinding";
+    // firstBinding -> Field -> uint32_t
+    os << YAML::Value << args.firstBinding;
+    os << YAML::Key << "bindingCount";
+    // bindingCount -> Field -> uint32_t
+    os << YAML::Value << args.bindingCount;
+    os << YAML::Key << "pBindingInfos";
+    // pBindingInfos -> Field -> ConstDynamicArray(VkBindTransformFeedbackBuffer2InfoEXT)
+    if (args.bindingCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkBindTransformFeedbackBuffer2InfoEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.bindingCount); ++i) {
+                os << args.pBindingInfos[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdBeginTransformFeedback2EXTArgs(YAML::Emitter &os,
+                                                            const CmdBeginTransformFeedback2EXTArgs &args) {
+    os << YAML::Key << "firstCounterRange";
+    // firstCounterRange -> Field -> uint32_t
+    os << YAML::Value << args.firstCounterRange;
+    os << YAML::Key << "counterRangeCount";
+    // counterRangeCount -> Field -> uint32_t
+    os << YAML::Value << args.counterRangeCount;
+    os << YAML::Key << "pCounterInfos";
+    // pCounterInfos -> Field -> ConstDynamicArray(VkBindTransformFeedbackBuffer2InfoEXT)
+    if (args.counterRangeCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkBindTransformFeedbackBuffer2InfoEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.counterRangeCount); ++i) {
+                os << args.pCounterInfos[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdEndTransformFeedback2EXTArgs(YAML::Emitter &os,
+                                                          const CmdEndTransformFeedback2EXTArgs &args) {
+    os << YAML::Key << "firstCounterRange";
+    // firstCounterRange -> Field -> uint32_t
+    os << YAML::Value << args.firstCounterRange;
+    os << YAML::Key << "counterRangeCount";
+    // counterRangeCount -> Field -> uint32_t
+    os << YAML::Value << args.counterRangeCount;
+    os << YAML::Key << "pCounterInfos";
+    // pCounterInfos -> Field -> ConstDynamicArray(VkBindTransformFeedbackBuffer2InfoEXT)
+    if (args.counterRangeCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkBindTransformFeedbackBuffer2InfoEXT");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(args.counterRangeCount); ++i) {
+                os << args.pCounterInfos[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+}
+
+void CommandPrinter::PrintCmdDrawIndirectByteCount2EXTArgs(YAML::Emitter &os,
+                                                           const CmdDrawIndirectByteCount2EXTArgs &args) {
+    os << YAML::Key << "instanceCount";
+    // instanceCount -> Field -> uint32_t
+    os << YAML::Value << args.instanceCount;
+    os << YAML::Key << "firstInstance";
+    // firstInstance -> Field -> uint32_t
+    os << YAML::Value << args.firstInstance;
+    os << YAML::Key << "pCounterInfo";
+    // pointer
+    if (args.pCounterInfo != nullptr) {
+        os << YAML::Value << *args.pCounterInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "counterOffset";
+    // counterOffset -> Field -> uint32_t
+    os << YAML::Value << args.counterOffset;
+    os << YAML::Key << "vertexStride";
+    // vertexStride -> Field -> uint32_t
+    os << YAML::Value << args.vertexStride;
+}
+
+void CommandPrinter::PrintCmdDrawMeshTasksIndirect2EXTArgs(YAML::Emitter &os,
+                                                           const CmdDrawMeshTasksIndirect2EXTArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdDrawMeshTasksIndirectCount2EXTArgs(YAML::Emitter &os,
+                                                                const CmdDrawMeshTasksIndirectCount2EXTArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdWriteMarkerToMemoryAMDArgs(YAML::Emitter &os, const CmdWriteMarkerToMemoryAMDArgs &args) {
+    os << YAML::Key << "pInfo";
+    // pointer
+    if (args.pInfo != nullptr) {
+        os << YAML::Value << *args.pInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdCopyBuffer2KHRArgs(YAML::Emitter &os, const CmdCopyBuffer2KHRArgs &args) {
     os << YAML::Key << "pCopyBufferInfo";
     // pointer
@@ -3602,6 +3930,17 @@ void CommandPrinter::PrintCmdDrawClusterIndirectHUAWEIArgs(YAML::Emitter &os,
     os << YAML::Value << args.offset;
 }
 
+void CommandPrinter::PrintCmdSetDispatchParametersARMArgs(YAML::Emitter &os,
+                                                          const CmdSetDispatchParametersARMArgs &args) {
+    os << YAML::Key << "pDispatchParameters";
+    // pointer
+    if (args.pDispatchParameters != nullptr) {
+        os << YAML::Value << *args.pDispatchParameters;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdCopyMemoryIndirectNVArgs(YAML::Emitter &os, const CmdCopyMemoryIndirectNVArgs &args) {
     os << YAML::Key << "copyBufferAddress";
     // copyBufferAddress -> Field -> VkDeviceAddress
@@ -4223,6 +4562,16 @@ void CommandPrinter::PrintCmdExecuteGeneratedCommandsEXTArgs(YAML::Emitter &os,
     }
 }
 
+void CommandPrinter::PrintCmdBeginShaderInstrumentationARMArgs(YAML::Emitter &os,
+                                                               const CmdBeginShaderInstrumentationARMArgs &args) {
+    os << YAML::Key << "instrumentation";
+    // instrumentation -> Field -> VkShaderInstrumentationARM
+    os << YAML::Value << args.instrumentation;
+}
+
+void CommandPrinter::PrintCmdEndShaderInstrumentationARMArgs(YAML::Emitter &os,
+                                                             const CmdEndShaderInstrumentationARMArgs &args) {}
+
 void CommandPrinter::PrintCmdEndRendering2EXTArgs(YAML::Emitter &os, const CmdEndRendering2EXTArgs &args) {
     os << YAML::Key << "pRenderingEndInfo";
     // pointer
@@ -4252,6 +4601,13 @@ void CommandPrinter::PrintCmdSetComputeOccupancyPriorityNVArgs(YAML::Emitter &os
     } else {
         os << YAML::Value << "nullptr";
     }
+}
+
+void CommandPrinter::PrintCmdSetPrimitiveRestartIndexEXTArgs(YAML::Emitter &os,
+                                                             const CmdSetPrimitiveRestartIndexEXTArgs &args) {
+    os << YAML::Key << "primitiveRestartIndex";
+    // primitiveRestartIndex -> Field -> uint32_t
+    os << YAML::Value << args.primitiveRestartIndex;
 }
 
 void CommandPrinter::PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
@@ -5372,6 +5728,153 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+        case Command::Type::kCmdBindIndexBuffer3KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindIndexBuffer3KHRArgs *>(cmd.parameters);
+                PrintCmdBindIndexBuffer3KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindVertexBuffers3KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindVertexBuffers3KHRArgs *>(cmd.parameters);
+                PrintCmdBindVertexBuffers3KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndirect2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndirect2KHRArgs *>(cmd.parameters);
+                PrintCmdDrawIndirect2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndexedIndirect2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndexedIndirect2KHRArgs *>(cmd.parameters);
+                PrintCmdDrawIndexedIndirect2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDispatchIndirect2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDispatchIndirect2KHRArgs *>(cmd.parameters);
+                PrintCmdDispatchIndirect2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMemoryKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMemoryKHRArgs *>(cmd.parameters);
+                PrintCmdCopyMemoryKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyMemoryToImageKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyMemoryToImageKHRArgs *>(cmd.parameters);
+                PrintCmdCopyMemoryToImageKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyImageToMemoryKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyImageToMemoryKHRArgs *>(cmd.parameters);
+                PrintCmdCopyImageToMemoryKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdUpdateMemoryKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdUpdateMemoryKHRArgs *>(cmd.parameters);
+                PrintCmdUpdateMemoryKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdFillMemoryKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdFillMemoryKHRArgs *>(cmd.parameters);
+                PrintCmdFillMemoryKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyQueryPoolResultsToMemoryKHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyQueryPoolResultsToMemoryKHRArgs *>(cmd.parameters);
+                PrintCmdCopyQueryPoolResultsToMemoryKHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndirectCount2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndirectCount2KHRArgs *>(cmd.parameters);
+                PrintCmdDrawIndirectCount2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndexedIndirectCount2KHR:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndexedIndirectCount2KHRArgs *>(cmd.parameters);
+                PrintCmdDrawIndexedIndirectCount2KHRArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginConditionalRendering2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginConditionalRendering2EXTArgs *>(cmd.parameters);
+                PrintCmdBeginConditionalRendering2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBindTransformFeedbackBuffers2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBindTransformFeedbackBuffers2EXTArgs *>(cmd.parameters);
+                PrintCmdBindTransformFeedbackBuffers2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginTransformFeedback2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginTransformFeedback2EXTArgs *>(cmd.parameters);
+                PrintCmdBeginTransformFeedback2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndTransformFeedback2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndTransformFeedback2EXTArgs *>(cmd.parameters);
+                PrintCmdEndTransformFeedback2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawIndirectByteCount2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawIndirectByteCount2EXTArgs *>(cmd.parameters);
+                PrintCmdDrawIndirectByteCount2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMeshTasksIndirect2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMeshTasksIndirect2EXTArgs *>(cmd.parameters);
+                PrintCmdDrawMeshTasksIndirect2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdDrawMeshTasksIndirectCount2EXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdDrawMeshTasksIndirectCount2EXTArgs *>(cmd.parameters);
+                PrintCmdDrawMeshTasksIndirectCount2EXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdWriteMarkerToMemoryAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdWriteMarkerToMemoryAMDArgs *>(cmd.parameters);
+                PrintCmdWriteMarkerToMemoryAMDArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdCopyBuffer2KHR:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdCopyBuffer2KHRArgs *>(cmd.parameters);
@@ -6138,6 +6641,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+        case Command::Type::kCmdSetDispatchParametersARM:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetDispatchParametersARMArgs *>(cmd.parameters);
+                PrintCmdSetDispatchParametersARMArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdCopyMemoryIndirectNV:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdCopyMemoryIndirectNVArgs *>(cmd.parameters);
@@ -6488,6 +6998,20 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             }
             break;
 
+        case Command::Type::kCmdBeginShaderInstrumentationARM:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginShaderInstrumentationARMArgs *>(cmd.parameters);
+                PrintCmdBeginShaderInstrumentationARMArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndShaderInstrumentationARM:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndShaderInstrumentationARMArgs *>(cmd.parameters);
+                PrintCmdEndShaderInstrumentationARMArgs(os, *args);
+            }
+            break;
+
         case Command::Type::kCmdEndRendering2EXT:
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdEndRendering2EXTArgs *>(cmd.parameters);
@@ -6506,6 +7030,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdSetComputeOccupancyPriorityNVArgs *>(cmd.parameters);
                 PrintCmdSetComputeOccupancyPriorityNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdSetPrimitiveRestartIndexEXT:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdSetPrimitiveRestartIndexEXTArgs *>(cmd.parameters);
+                PrintCmdSetPrimitiveRestartIndexEXTArgs(os, *args);
             }
             break;
 

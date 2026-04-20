@@ -14,10 +14,6 @@
 #include <vulkan/vulkan.h>
 static inline const char* string_ObjectName(VkObjectType input_value) {
     switch (input_value) {
-        case VK_OBJECT_TYPE_BUFFER:
-            return "VkBuffer";
-        case VK_OBJECT_TYPE_IMAGE:
-            return "VkImage";
         case VK_OBJECT_TYPE_INSTANCE:
             return "VkInstance";
         case VK_OBJECT_TYPE_PHYSICAL_DEVICE:
@@ -34,6 +30,10 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkFence";
         case VK_OBJECT_TYPE_DEVICE_MEMORY:
             return "VkDeviceMemory";
+        case VK_OBJECT_TYPE_BUFFER:
+            return "VkBuffer";
+        case VK_OBJECT_TYPE_IMAGE:
+            return "VkImage";
         case VK_OBJECT_TYPE_QUERY_POOL:
             return "VkQueryPool";
         case VK_OBJECT_TYPE_IMAGE_VIEW:
@@ -52,10 +52,10 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkShaderModule";
         case VK_OBJECT_TYPE_PIPELINE_CACHE:
             return "VkPipelineCache";
-        case VK_OBJECT_TYPE_PIPELINE_LAYOUT:
-            return "VkPipelineLayout";
         case VK_OBJECT_TYPE_PIPELINE:
             return "VkPipeline";
+        case VK_OBJECT_TYPE_PIPELINE_LAYOUT:
+            return "VkPipelineLayout";
         case VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT:
             return "VkDescriptorSetLayout";
         case VK_OBJECT_TYPE_SAMPLER:
@@ -84,6 +84,8 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkVideoSessionParametersKHR";
         case VK_OBJECT_TYPE_DEFERRED_OPERATION_KHR:
             return "VkDeferredOperationKHR";
+        case VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_KHR:
+            return "VkAccelerationStructureKHR";
         case VK_OBJECT_TYPE_PIPELINE_BINARY_KHR:
             return "VkPipelineBinaryKHR";
         case VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT:
@@ -110,8 +112,6 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
         case VK_OBJECT_TYPE_CUDA_FUNCTION_NV:
             return "VkCudaFunctionNV";
 #endif  // VK_ENABLE_BETA_EXTENSIONS
-        case VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_KHR:
-            return "VkAccelerationStructureKHR";
 #ifdef VK_USE_PLATFORM_FUCHSIA
         case VK_OBJECT_TYPE_BUFFER_COLLECTION_FUCHSIA:
             return "VkBufferCollectionFUCHSIA";
@@ -132,6 +132,8 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkIndirectExecutionSetEXT";
         case VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_EXT:
             return "VkIndirectCommandsLayoutEXT";
+        case VK_OBJECT_TYPE_SHADER_INSTRUMENTATION_ARM:
+            return "VkShaderInstrumentationARM";
         default:
             return "UNKNOWN";
     }
