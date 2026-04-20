@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2026 Valve Corporation
+ * Copyright (c) 2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -395,9 +395,12 @@ TEST_F(GpuCrash, VendorInfo) {
                                  state.pipeline.DescriptorSet().Set(), {});
 
     std::array<VkDeviceFaultVendorInfoEXT, 3> vendor_infos;
-    vendor_infos[0] = vk::DeviceFaultVendorInfoEXT("out of tacos", 1, 42);
-    vendor_infos[1] = vk::DeviceFaultVendorInfoEXT("too tired", 2, 8675309);
-    vendor_infos[2] = vk::DeviceFaultVendorInfoEXT("my hovercraft is full of eels", 66536, 0);
+    vendor_infos[0] = vk::DeviceFaultVendorInfoEXT({}, 1, 42);
+    vendor_infos[1] = vk::DeviceFaultVendorInfoEXT({}, 2, 8675309);
+    vendor_infos[2] = vk::DeviceFaultVendorInfoEXT({}, 66536, 0);
+    strncpy(vendor_infos[0].description, "out of tacos", 13);
+    strncpy(vendor_infos[1].description, "too tired", 10);
+    strncpy(vendor_infos[2].description, "my hovercraft is full of eels", 30);
 
     const char *vendor_binary = "Do not taunt happy fun ball.";
 

@@ -37,22 +37,6 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) { global
 
 // Handle stream operators
 
-#if VK_USE_64_BIT_PTR_DEFINES
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuffer &a) {
-    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
-    return os;
-}
-#endif  // VK_USE_64_BIT_PTR_DEFINES
-
-#if VK_USE_64_BIT_PTR_DEFINES
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkImage &a) {
-    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
-    return os;
-}
-#endif  // VK_USE_64_BIT_PTR_DEFINES
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkInstance &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
@@ -97,6 +81,22 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFence &a) {
 #if VK_USE_64_BIT_PTR_DEFINES
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceMemory &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuffer &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImage &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
 }
@@ -176,7 +176,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCache &a) {
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineLayout &a) {
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipeline &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
 }
@@ -184,7 +184,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineLayout &a) {
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipeline &a) {
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineLayout &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
 }
@@ -304,6 +304,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeferredOperationKHR &a) {
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureKHR &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryKHR &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
@@ -402,14 +410,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaFunctionNV &a) {
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-#if VK_USE_64_BIT_PTR_DEFINES
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureKHR &a) {
-    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
-    return os;
-}
-#endif  // VK_USE_64_BIT_PTR_DEFINES
-
 #ifdef VK_USE_PLATFORM_FUCHSIA
 #if VK_USE_64_BIT_PTR_DEFINES
 
@@ -481,6 +481,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsLayoutEXT &
 }
 #endif  // VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderInstrumentationARM &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
 // Define stream operators for enums.
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkResult &t) {
@@ -490,11 +498,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkResult &t) {
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkStructureType &t) {
     os << string_VkStructureType(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageLayout &t) {
-    os << string_VkImageLayout(t);
     return os;
 }
 
@@ -548,6 +551,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSharingMode &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageLayout &t) {
+    os << string_VkImageLayout(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComponentSwizzle &t) {
     os << string_VkComponentSwizzle(t);
     return os;
@@ -588,13 +596,13 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerAddressMode &t) {
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerMipmapMode &t) {
-    os << string_VkSamplerMipmapMode(t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCompareOp &t) {
+    os << string_VkCompareOp(t);
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkCompareOp &t) {
-    os << string_VkCompareOp(t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerMipmapMode &t) {
+    os << string_VkSamplerMipmapMode(t);
     return os;
 }
 
@@ -628,6 +636,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFrontFace &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkLogicOp &t) {
+    os << string_VkLogicOp(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkStencilOp &t) {
+    os << string_VkStencilOp(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVertexInputRate &t) {
     os << string_VkVertexInputRate(t);
     return os;
@@ -643,16 +661,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPolygonMode &t) {
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkStencilOp &t) {
-    os << string_VkStencilOp(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkLogicOp &t) {
-    os << string_VkLogicOp(t);
-    return os;
-}
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentLoadOp &t) {
     os << string_VkAttachmentLoadOp(t);
     return os;
@@ -665,6 +673,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentStoreOp &t) {
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassContents &t) {
     os << string_VkSubpassContents(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPointClippingBehavior &t) {
+    os << string_VkPointClippingBehavior(t);
     return os;
 }
 
@@ -685,11 +698,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerYcbcrRange &t) {
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkChromaLocation &t) {
     os << string_VkChromaLocation(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPointClippingBehavior &t) {
-    os << string_VkPointClippingBehavior(t);
     return os;
 }
 
@@ -783,6 +791,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeTuningModeKHR &t
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTypeKHR &t) {
+    os << string_VkAccelerationStructureTypeKHR(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComponentTypeKHR &t) {
     os << string_VkComponentTypeKHR(t);
     return os;
@@ -810,6 +823,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkTimeDomainKHR &t) {
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiKHR &t) {
     os << string_VkPhysicalDeviceLayeredApiKHR(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultAddressTypeKHR &t) {
+    os << string_VkDeviceFaultAddressTypeKHR(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorBinaryHeaderVersionKHR &t) {
+    os << string_VkDeviceFaultVendorBinaryHeaderVersionKHR(t);
     return os;
 }
 
@@ -908,11 +931,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkGeometryTypeKHR &t) {
     return os;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTypeKHR &t) {
-    os << string_VkAccelerationStructureTypeKHR(t);
-    return os;
-}
-
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyAccelerationStructureModeKHR &t) {
     os << string_VkCopyAccelerationStructureModeKHR(t);
     return os;
@@ -995,6 +1013,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceMemoryReportEventType
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerfHintTypeQCOM &t) {
+    os << string_VkPerfHintTypeQCOM(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFragmentShadingRateTypeNV &t) {
     os << string_VkFragmentShadingRateTypeNV(t);
     return os;
@@ -1007,16 +1030,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFragmentShadingRateNV &t) {
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureMotionInstanceTypeNV &t) {
     os << string_VkAccelerationStructureMotionInstanceTypeNV(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultAddressTypeEXT &t) {
-    os << string_VkDeviceFaultAddressTypeEXT(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorBinaryHeaderVersionEXT &t) {
-    os << string_VkDeviceFaultVendorBinaryHeaderVersionEXT(t);
     return os;
 }
 
@@ -1179,6 +1192,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphOper
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphTOSALevelARM &t) {
+    os << string_VkDataGraphTOSALevelARM(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBlockMatchWindowCompareModeQCOM &t) {
     os << string_VkBlockMatchWindowCompareModeQCOM(t);
     return os;
@@ -1231,6 +1249,21 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsTokenTypeEX
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphModelCacheTypeQCOM &t) {
     os << string_VkDataGraphModelCacheTypeQCOM(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphOpticalFlowPerformanceLevelARM &t) {
+    os << string_VkDataGraphOpticalFlowPerformanceLevelARM(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeTypeARM &t) {
+    os << string_VkDataGraphPipelineNodeTypeARM(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeConnectionTypeARM &t) {
+    os << string_VkDataGraphPipelineNodeConnectionTypeARM(t);
     return os;
 }
 

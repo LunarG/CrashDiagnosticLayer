@@ -415,6 +415,79 @@ class CommandRecorder {
     CmdWriteTimestamp2KHRArgs* RecordCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage,
                                                            VkQueryPool queryPool, uint32_t query);
 
+    CmdBindIndexBuffer3KHRArgs* RecordCmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer,
+                                                             const VkBindIndexBuffer3InfoKHR* pInfo);
+
+    CmdBindVertexBuffers3KHRArgs* RecordCmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                                 uint32_t bindingCount,
+                                                                 const VkBindVertexBuffer3InfoKHR* pBindingInfos);
+
+    CmdDrawIndirect2KHRArgs* RecordCmdDrawIndirect2KHR(VkCommandBuffer commandBuffer,
+                                                       const VkDrawIndirect2InfoKHR* pInfo);
+
+    CmdDrawIndexedIndirect2KHRArgs* RecordCmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer,
+                                                                     const VkDrawIndirect2InfoKHR* pInfo);
+
+    CmdDispatchIndirect2KHRArgs* RecordCmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer,
+                                                               const VkDispatchIndirect2InfoKHR* pInfo);
+
+    CmdCopyMemoryKHRArgs* RecordCmdCopyMemoryKHR(VkCommandBuffer commandBuffer,
+                                                 const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo);
+
+    CmdCopyMemoryToImageKHRArgs* RecordCmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer,
+                                                               const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+    CmdCopyImageToMemoryKHRArgs* RecordCmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer,
+                                                               const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+    CmdUpdateMemoryKHRArgs* RecordCmdUpdateMemoryKHR(VkCommandBuffer commandBuffer,
+                                                     const VkDeviceAddressRangeKHR* pDstRange,
+                                                     VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize,
+                                                     const void* pData);
+
+    CmdFillMemoryKHRArgs* RecordCmdFillMemoryKHR(VkCommandBuffer commandBuffer,
+                                                 const VkDeviceAddressRangeKHR* pDstRange,
+                                                 VkAddressCommandFlagsKHR dstFlags, uint32_t data);
+
+    CmdCopyQueryPoolResultsToMemoryKHRArgs* RecordCmdCopyQueryPoolResultsToMemoryKHR(
+        VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount,
+        const VkStridedDeviceAddressRangeKHR* pDstRange, VkAddressCommandFlagsKHR dstFlags,
+        VkQueryResultFlags queryResultFlags);
+
+    CmdDrawIndirectCount2KHRArgs* RecordCmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                                 const VkDrawIndirectCount2InfoKHR* pInfo);
+
+    CmdDrawIndexedIndirectCount2KHRArgs* RecordCmdDrawIndexedIndirectCount2KHR(
+        VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo);
+
+    CmdBeginConditionalRendering2EXTArgs* RecordCmdBeginConditionalRendering2EXT(
+        VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin);
+
+    CmdBindTransformFeedbackBuffers2EXTArgs* RecordCmdBindTransformFeedbackBuffers2EXT(
+        VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
+        const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos);
+
+    CmdBeginTransformFeedback2EXTArgs* RecordCmdBeginTransformFeedback2EXT(
+        VkCommandBuffer commandBuffer, uint32_t firstCounterRange, uint32_t counterRangeCount,
+        const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos);
+
+    CmdEndTransformFeedback2EXTArgs* RecordCmdEndTransformFeedback2EXT(
+        VkCommandBuffer commandBuffer, uint32_t firstCounterRange, uint32_t counterRangeCount,
+        const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos);
+
+    CmdDrawIndirectByteCount2EXTArgs* RecordCmdDrawIndirectByteCount2EXT(
+        VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance,
+        const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo, uint32_t counterOffset, uint32_t vertexStride);
+
+    CmdDrawMeshTasksIndirect2EXTArgs* RecordCmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer,
+                                                                         const VkDrawIndirect2InfoKHR* pInfo);
+
+    CmdDrawMeshTasksIndirectCount2EXTArgs* RecordCmdDrawMeshTasksIndirectCount2EXT(
+        VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo);
+
+    CmdWriteMarkerToMemoryAMDArgs* RecordCmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer,
+                                                                   const VkMemoryMarkerInfoAMD* pInfo);
+
     CmdCopyBuffer2KHRArgs* RecordCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer,
                                                    const VkCopyBufferInfo2* pCopyBufferInfo);
 
@@ -805,6 +878,9 @@ class CommandRecorder {
     CmdDrawClusterIndirectHUAWEIArgs* RecordCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer,
                                                                          VkDeviceSize offset);
 
+    CmdSetDispatchParametersARMArgs* RecordCmdSetDispatchParametersARM(
+        VkCommandBuffer commandBuffer, const VkDispatchParametersARM* pDispatchParameters);
+
     CmdCopyMemoryIndirectNVArgs* RecordCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer,
                                                                VkDeviceAddress copyBufferAddress, uint32_t copyCount,
                                                                uint32_t stride);
@@ -970,6 +1046,11 @@ class CommandRecorder {
         VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
         const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
+    CmdBeginShaderInstrumentationARMArgs* RecordCmdBeginShaderInstrumentationARM(
+        VkCommandBuffer commandBuffer, VkShaderInstrumentationARM instrumentation);
+
+    CmdEndShaderInstrumentationARMArgs* RecordCmdEndShaderInstrumentationARM(VkCommandBuffer commandBuffer);
+
     CmdEndRendering2EXTArgs* RecordCmdEndRendering2EXT(VkCommandBuffer commandBuffer,
                                                        const VkRenderingEndInfoKHR* pRenderingEndInfo);
 
@@ -978,6 +1059,9 @@ class CommandRecorder {
 
     CmdSetComputeOccupancyPriorityNVArgs* RecordCmdSetComputeOccupancyPriorityNV(
         VkCommandBuffer commandBuffer, const VkComputeOccupancyPriorityParametersNV* pParameters);
+
+    CmdSetPrimitiveRestartIndexEXTArgs* RecordCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer,
+                                                                             uint32_t primitiveRestartIndex);
 
     CmdBuildAccelerationStructuresKHRArgs* RecordCmdBuildAccelerationStructuresKHR(
         VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,

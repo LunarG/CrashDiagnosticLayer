@@ -908,6 +908,132 @@ virtual void PostCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipeline
 
 virtual VkResult QueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) = 0;
 
+virtual void PreCmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo) {}
+
+virtual void PostCmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo) {}
+
+virtual void PreCmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
+                                         const VkBindVertexBuffer3InfoKHR* pBindingInfos) {}
+
+virtual void PostCmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
+                                          const VkBindVertexBuffer3InfoKHR* pBindingInfos) {}
+
+virtual void PreCmdDrawIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {}
+
+virtual void PostCmdDrawIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {}
+
+virtual void PreCmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {}
+
+virtual void PostCmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {}
+
+virtual void PreCmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer, const VkDispatchIndirect2InfoKHR* pInfo) {}
+
+virtual void PostCmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer, const VkDispatchIndirect2InfoKHR* pInfo) {}
+
+virtual void PreCmdCopyMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo) {}
+
+virtual void PostCmdCopyMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo) {}
+
+virtual void PreCmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer,
+                                        const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {}
+
+virtual void PostCmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer,
+                                         const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {}
+
+virtual void PreCmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer,
+                                        const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {}
+
+virtual void PostCmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer,
+                                         const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {}
+
+virtual void PreCmdUpdateMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                   VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData) {}
+
+virtual void PostCmdUpdateMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                    VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData) {}
+
+virtual void PreCmdFillMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                 VkAddressCommandFlagsKHR dstFlags, uint32_t data) {}
+
+virtual void PostCmdFillMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                  VkAddressCommandFlagsKHR dstFlags, uint32_t data) {}
+
+virtual void PreCmdCopyQueryPoolResultsToMemoryKHR(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                   uint32_t firstQuery, uint32_t queryCount,
+                                                   const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                                   VkAddressCommandFlagsKHR dstFlags,
+                                                   VkQueryResultFlags queryResultFlags) {}
+
+virtual void PostCmdCopyQueryPoolResultsToMemoryKHR(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                    uint32_t firstQuery, uint32_t queryCount,
+                                                    const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                                    VkAddressCommandFlagsKHR dstFlags,
+                                                    VkQueryResultFlags queryResultFlags) {}
+
+virtual void PreCmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo) {}
+
+virtual void PostCmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo) {}
+
+virtual void PreCmdDrawIndexedIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                const VkDrawIndirectCount2InfoKHR* pInfo) {}
+
+virtual void PostCmdDrawIndexedIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                 const VkDrawIndirectCount2InfoKHR* pInfo) {}
+
+virtual void PreCmdBeginConditionalRendering2EXT(
+    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin) {}
+
+virtual void PostCmdBeginConditionalRendering2EXT(
+    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin) {}
+
+virtual void PreCmdBindTransformFeedbackBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                    uint32_t bindingCount,
+                                                    const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos) {}
+
+virtual void PostCmdBindTransformFeedbackBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                     uint32_t bindingCount,
+                                                     const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos) {}
+
+virtual void PreCmdBeginTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                              uint32_t counterRangeCount,
+                                              const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {}
+
+virtual void PostCmdBeginTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                               uint32_t counterRangeCount,
+                                               const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {}
+
+virtual void PreCmdEndTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                            uint32_t counterRangeCount,
+                                            const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {}
+
+virtual void PostCmdEndTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                             uint32_t counterRangeCount,
+                                             const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {}
+
+virtual void PreCmdDrawIndirectByteCount2EXT(VkCommandBuffer commandBuffer, uint32_t instanceCount,
+                                             uint32_t firstInstance,
+                                             const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+                                             uint32_t counterOffset, uint32_t vertexStride) {}
+
+virtual void PostCmdDrawIndirectByteCount2EXT(VkCommandBuffer commandBuffer, uint32_t instanceCount,
+                                              uint32_t firstInstance,
+                                              const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+                                              uint32_t counterOffset, uint32_t vertexStride) {}
+
+virtual void PreCmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {}
+
+virtual void PostCmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {}
+
+virtual void PreCmdDrawMeshTasksIndirectCount2EXT(VkCommandBuffer commandBuffer,
+                                                  const VkDrawIndirectCount2InfoKHR* pInfo) {}
+
+virtual void PostCmdDrawMeshTasksIndirectCount2EXT(VkCommandBuffer commandBuffer,
+                                                   const VkDrawIndirectCount2InfoKHR* pInfo) {}
+
+virtual void PreCmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo) {}
+
+virtual void PostCmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo) {}
+
 virtual void PreCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {}
 
 virtual void PostCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {}
@@ -1634,6 +1760,12 @@ virtual void PreCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBu
 
 virtual void PostCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {}
 
+virtual void PreCmdSetDispatchParametersARM(VkCommandBuffer commandBuffer,
+                                            const VkDispatchParametersARM* pDispatchParameters) {}
+
+virtual void PostCmdSetDispatchParametersARM(VkCommandBuffer commandBuffer,
+                                             const VkDispatchParametersARM* pDispatchParameters) {}
+
 virtual void PreCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress,
                                         uint32_t copyCount, uint32_t stride) {}
 
@@ -1920,6 +2052,16 @@ virtual void PreCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, Vk
 virtual void PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
                                                 const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {}
 
+virtual void PreCmdBeginShaderInstrumentationARM(VkCommandBuffer commandBuffer,
+                                                 VkShaderInstrumentationARM instrumentation) {}
+
+virtual void PostCmdBeginShaderInstrumentationARM(VkCommandBuffer commandBuffer,
+                                                  VkShaderInstrumentationARM instrumentation) {}
+
+virtual void PreCmdEndShaderInstrumentationARM(VkCommandBuffer commandBuffer) {}
+
+virtual void PostCmdEndShaderInstrumentationARM(VkCommandBuffer commandBuffer) {}
+
 virtual void PreCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {}
 
 virtual void PostCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {}
@@ -1935,6 +2077,10 @@ virtual void PreCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
 
 virtual void PostCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                                   const VkComputeOccupancyPriorityParametersNV* pParameters) {}
+
+virtual void PreCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {}
+
+virtual void PostCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {}
 
 virtual void PreCmdBuildAccelerationStructuresKHR(
     VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,

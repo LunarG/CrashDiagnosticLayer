@@ -46,15 +46,7 @@ YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext);
 
 // Declare Handle stream operators
 
-#if VK_USE_64_BIT_PTR_DEFINES
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuffer &a);
-#endif //VK_USE_64_BIT_PTR_DEFINES
-
-#if VK_USE_64_BIT_PTR_DEFINES
-YAML::Emitter &operator<<(YAML::Emitter& os, const VkImage &a);
-#endif //VK_USE_64_BIT_PTR_DEFINES
-
-YAML::Emitter &operator<<(YAML::Emitter& os, const VkInstance &a);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkInstance &a);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevice &a);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDevice &a);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueue &a);
@@ -69,6 +61,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFence &a);
 
 #if VK_USE_64_BIT_PTR_DEFINES
 YAML::Emitter &operator<<(YAML::Emitter& os, const VkDeviceMemory &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkBuffer &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkImage &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
@@ -108,11 +108,11 @@ YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipelineCache &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
-YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipelineLayout &a);
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipeline &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
-YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipeline &a);
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipelineLayout &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
@@ -172,6 +172,10 @@ YAML::Emitter &operator<<(YAML::Emitter& os, const VkDeferredOperationKHR &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
 #if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkAccelerationStructureKHR &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
 YAML::Emitter &operator<<(YAML::Emitter& os, const VkPipelineBinaryKHR &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
@@ -223,10 +227,6 @@ YAML::Emitter &operator<<(YAML::Emitter& os, const VkCudaFunctionNV &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
-#if VK_USE_64_BIT_PTR_DEFINES
-YAML::Emitter &operator<<(YAML::Emitter& os, const VkAccelerationStructureKHR &a);
-#endif //VK_USE_64_BIT_PTR_DEFINES
-
 #ifdef VK_USE_PLATFORM_FUCHSIA
 #if VK_USE_64_BIT_PTR_DEFINES
 YAML::Emitter &operator<<(YAML::Emitter& os, const VkBufferCollectionFUCHSIA &a);
@@ -262,13 +262,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetEXT &a)
 YAML::Emitter &operator<<(YAML::Emitter& os, const VkIndirectCommandsLayoutEXT &a);
 #endif //VK_USE_64_BIT_PTR_DEFINES
 
+#if VK_USE_64_BIT_PTR_DEFINES
+YAML::Emitter &operator<<(YAML::Emitter& os, const VkShaderInstrumentationARM &a);
+#endif //VK_USE_64_BIT_PTR_DEFINES
+
 
 
 // Declare stream operators for enums.
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkResult &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkStructureType &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageLayout &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkObjectType &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVendorId &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSystemAllocationScope &t);
@@ -279,6 +282,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageType &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceType &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueryType &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSharingMode &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageLayout &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComponentSwizzle &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewType &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCommandBufferLevel &t);
@@ -287,27 +291,27 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCacheHeaderVersion 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBorderColor &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFilter &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerAddressMode &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerMipmapMode &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCompareOp &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerMipmapMode &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorType &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBindPoint &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBlendFactor &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBlendOp &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDynamicState &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFrontFace &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkLogicOp &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkStencilOp &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVertexInputRate &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPrimitiveTopology &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPolygonMode &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkStencilOp &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkLogicOp &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentLoadOp &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentStoreOp &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassContents &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPointClippingBehavior &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorUpdateTemplateType &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerYcbcrModelConversion &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerYcbcrRange &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkChromaLocation &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPointClippingBehavior &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTessellationDomainOrigin &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDriverId &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderFloatControlsIndependence &t);
@@ -326,12 +330,15 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceCounterStorageKH
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFragmentShadingRateCombinerOpKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineExecutableStatisticFormatKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeTuningModeKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTypeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComponentTypeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkScopeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1PredictionModeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeAV1RateControlGroupKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTimeDomainKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultAddressTypeKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorBinaryHeaderVersionKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDefaultVertexAttributeValueKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportObjectTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRasterizationOrderAMD &t);
@@ -351,7 +358,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkShadingRatePaletteEntryNV &
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCoarseSampleOrderTypeNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRayTracingShaderGroupTypeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkGeometryTypeKHR &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTypeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyAccelerationStructureModeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureMemoryRequirementsTypeNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryOverallocationBehaviorAMD &t);
@@ -370,11 +376,10 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkFullScreenExclusiveEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsTokenTypeNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDepthBiasRepresentationEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceMemoryReportEventTypeEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerfHintTypeQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFragmentShadingRateTypeNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFragmentShadingRateNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureMotionInstanceTypeNV &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultAddressTypeEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorBinaryHeaderVersionEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceAddressBindingTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildMicromapModeEXT &t);
@@ -410,6 +415,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSessionBin
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelinePropertyARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphProcessingEngineTypeARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphOperationTypeARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphTOSALevelARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBlockMatchWindowCompareModeQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCubicFilterWeightsQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayeredDriverUnderlyingApiMSFT &t);
@@ -421,6 +427,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPartitionedAccelerationStru
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectExecutionSetInfoTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkIndirectCommandsTokenTypeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphModelCacheTypeQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphOpticalFlowPerformanceLevelARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeTypeARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeConnectionTypeARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildAccelerationStructureModeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderGroupShaderKHR &t);
 
@@ -433,10 +442,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkOffset3D &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRect2D &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBaseInStructure &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBaseOutStructure &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferMemoryBarrier &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageSubresourceRange &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageMemoryBarrier &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrier &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAllocationCallbacks &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkApplicationInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFormatProperties &t);
@@ -458,15 +463,15 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubmitInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMappedMemoryRange &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryAllocateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryRequirements &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageSubresource &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageFormatProperties &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageMemoryBind &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageMemoryBindInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageMemoryRequirements &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseMemoryBind &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseBufferMemoryBindInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageOpaqueMemoryBindInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageSubresource &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageMemoryBind &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageMemoryBindInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindSparseInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageFormatProperties &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSparseImageMemoryRequirements &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFenceCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSemaphoreCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueryPoolCreateInfo &t);
@@ -474,6 +479,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubresourceLayout &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComponentMapping &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageSubresourceRange &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCommandPoolCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCommandBufferAllocateInfo &t);
@@ -483,6 +489,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferCopy &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageSubresourceLayers &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferImageCopy &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageCopy &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferMemoryBarrier &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageMemoryBarrier &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrier &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDispatchIndirectCommand &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCacheHeaderVersionOne &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkEventCreateInfo &t);
@@ -508,31 +517,31 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkWriteDescriptorSet &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearColorValue &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrawIndexedIndirectCommand &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrawIndirectCommand &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkVertexInputBindingDescription &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkVertexInputAttributeDescription &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineVertexInputStateCreateInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineInputAssemblyStateCreateInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineTessellationStateCreateInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkViewport &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportStateCreateInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRasterizationStateCreateInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineMultisampleStateCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkStencilOpState &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineDepthStencilStateCreateInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVertexInputAttributeDescription &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVertexInputBindingDescription &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkViewport &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineColorBlendAttachmentState &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineColorBlendStateCreateInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineDepthStencilStateCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineDynamicStateCreateInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineInputAssemblyStateCreateInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineMultisampleStateCreateInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRasterizationStateCreateInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineTessellationStateCreateInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineVertexInputStateCreateInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineViewportStateCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkGraphicsPipelineCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentDescription &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentReference &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFramebufferCreateInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDependency &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearDepthStencilValue &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearRect &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearValue &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearAttachment &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkClearRect &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageBlit &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageResolve &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassBeginInfo &t);
@@ -604,13 +613,13 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassMultiviewCreateIn
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMultiviewFeatures &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMultiviewProperties &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderDrawParametersFeatures &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkConformanceVersion &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDriverProperties &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVulkan11Features &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVulkan11Properties &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVulkan12Features &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkConformanceVersion &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVulkan12Properties &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageFormatListCreateInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDriverProperties &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVulkanMemoryModelFeatures &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHostQueryResetFeatures &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceTimelineSemaphoreFeatures &t);
@@ -642,16 +651,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentDescription2 &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentReference2 &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescription2 &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDependency2 &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo2 &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassBeginInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassEndInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassCreateInfo2 &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubpassDescriptionDepthStencilResolve &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthStencilResolveProperties &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageStencilUsageCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImagelessFramebufferFeatures &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFramebufferAttachmentImageInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkFramebufferAttachmentsCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassAttachmentBeginInfo &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkFramebufferAttachmentsCreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentReferenceStencilLayout &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentDescriptionStencilLayout &t);
@@ -718,9 +727,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryMapInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryUnmapInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance5Features &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance5Properties &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubresourceLayout2 &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageSubresource2 &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceImageSubresourceInfo &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkSubresourceLayout2 &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferUsageFlags2CreateInfo &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance6Features &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance6Properties &t);
@@ -933,6 +942,10 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentShadi
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentShadingRatePropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentShadingRateKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingFragmentShadingRateAttachmentInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderConstantDataFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderAbortFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultShaderAbortMessageInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderAbortPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderQuadControlFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceProtectedCapabilitiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentWaitFeaturesKHR &t);
@@ -957,6 +970,24 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeQualityLevelProp
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeQualityLevelInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeSessionParametersGetInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeSessionParametersFeedbackInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceAddressRangeKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkStridedDeviceAddressRangeKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceMemoryCopyKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyDeviceMemoryInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceMemoryImageCopyKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyDeviceMemoryImageInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryRangeBarrierKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryRangeBarriersInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindIndexBuffer3InfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindVertexBuffer3InfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrawIndirect2InfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDrawIndirectCount2InfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDispatchIndirect2InfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkConditionalRenderingBeginInfo2EXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindTransformFeedbackBuffer2InfoEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryMarkerInfoAMD &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureCreateInfo2KHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR &t);
@@ -1028,7 +1059,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAttachmentFeedbackLoopInfoE
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCalibratedTimestampInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetDescriptorBufferOffsetsInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBindDescriptorBufferEmbeddedSamplersInfoEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkStridedDeviceAddressRangeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectCommandKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryIndirectInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMemoryToImageIndirectCommandKHR &t);
@@ -1056,6 +1086,13 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance7P
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiPropertiesListKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceLayeredApiVulkanPropertiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFaultFeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFaultPropertiesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultAddressInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultDebugInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorBinaryHeaderVersionOneKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryBarrierAccessFlags3KHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance8FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderFmaFeaturesKHR &t);
@@ -1202,7 +1239,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineShaderStageNodeCrea
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkHostAddressRangeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkHostAddressRangeConstEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceAddressRangeEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTexelBufferDescriptorInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageDescriptorInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorViewCreateInfoARM &t);
@@ -1281,6 +1317,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRepresentativ
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRepresentativeFragmentTestStateCreateInfoNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageViewImageFormatInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFilterCubicImageViewImageFormatPropertiesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImportMemoryHostPointerInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMemoryHostPointerPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExternalMemoryHostPropertiesEXT &t);
@@ -1403,6 +1440,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCapabilitiesPresentB
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainPresentBarrierCreateInfoNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDiagnosticsConfigFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceDiagnosticsConfigCreateInfoNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerfHintInfoQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceQueuePerfHintFeaturesQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceQueuePerfHintPropertiesQCOM &t);
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCudaModuleCreateInfoNV &t);
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -1462,7 +1502,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkExportMetalSharedEventInfoE
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImportMetalSharedEventInfoEXT &t);
 #endif  // VK_USE_PLATFORM_METAL_EXT
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorBufferPropertiesEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorBufferFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorAddressInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDescriptorBufferBindingInfoEXT &t);
@@ -1475,6 +1514,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewCaptureDescriptorD
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSamplerCaptureDescriptorDataInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpaqueCaptureDescriptorDataCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureCaptureDescriptorDataInfoEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkGraphicsPipelineLibraryCreateInfoEXT &t);
@@ -1502,10 +1542,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceAttachmentFee
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevice4444FormatsFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFaultFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultCountsEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultAddressInfoEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultInfoEXT &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceFaultVendorBinaryHeaderVersionOneEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT &t);
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
@@ -1633,6 +1670,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderCorePro
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceQueueShaderCoreControlCreateInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceSchedulingControlsFeaturesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceSchedulingControlsPropertiesARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDispatchParametersARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os,
+                          const VkPhysicalDeviceSchedulingControlsDispatchParametersPropertiesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewSlicedCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE &t);
@@ -1805,6 +1845,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphProcessingEngineCr
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyDataGraphProcessingEnginePropertiesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphTOSANameQualityARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyDataGraphTOSAPropertiesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePerStageDescriptorSetFeaturesNV &t);
@@ -1940,17 +1982,18 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePerformanceCo
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceCounterARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPerformanceCounterDescriptionARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderPassPerformanceCountersByRegionBeginInfoARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderInstrumentationFeaturesARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderInstrumentationPropertiesARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderInstrumentationCreateInfoARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderInstrumentationMetricDescriptionARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderInstrumentationMetricDataHeaderARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFormatPackFeaturesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineFragmentDensityMapLayeredCreateInfoVALVE &t);
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSetPresentConfigNV &t);
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentMeteringFeaturesNV &t);
-#endif  // VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShader64BitIndexingFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCustomResolveFeaturesEXT &t);
@@ -1959,6 +2002,15 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkCustomResolveCreateInfoEXT 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineCacheHeaderVersionDataGraphQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineBuiltinModelCreateInfoQCOM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphModelFeaturesQCOM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphOpticalFlowFeaturesARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyDataGraphOpticalFlowPropertiesARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineOpticalFlowCreateInfoARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphOpticalFlowImageFormatPropertiesARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphOpticalFlowImageFormatInfoARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineOpticalFlowDispatchInfoARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineResourceInfoImageLayoutARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSingleNodeConnectionARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSingleNodeCreateInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderLongVectorFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderLongVectorPropertiesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC &t);
@@ -1966,6 +2018,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderUniform
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComputeOccupancyPriorityParametersNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT &t);
+#ifdef VK_USE_PLATFORM_UBM_SEC
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkUbmSurfaceCreateInfoSEC &t);
+#endif  // VK_USE_PLATFORM_UBM_SEC
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
@@ -2121,6 +2178,30 @@ class CommandPrinter {
     void PrintCmdWaitEvents2KHRArgs(YAML::Emitter &os, const CmdWaitEvents2KHRArgs &args);
     void PrintCmdPipelineBarrier2KHRArgs(YAML::Emitter &os, const CmdPipelineBarrier2KHRArgs &args);
     void PrintCmdWriteTimestamp2KHRArgs(YAML::Emitter &os, const CmdWriteTimestamp2KHRArgs &args);
+    void PrintCmdBindIndexBuffer3KHRArgs(YAML::Emitter &os, const CmdBindIndexBuffer3KHRArgs &args);
+    void PrintCmdBindVertexBuffers3KHRArgs(YAML::Emitter &os, const CmdBindVertexBuffers3KHRArgs &args);
+    void PrintCmdDrawIndirect2KHRArgs(YAML::Emitter &os, const CmdDrawIndirect2KHRArgs &args);
+    void PrintCmdDrawIndexedIndirect2KHRArgs(YAML::Emitter &os, const CmdDrawIndexedIndirect2KHRArgs &args);
+    void PrintCmdDispatchIndirect2KHRArgs(YAML::Emitter &os, const CmdDispatchIndirect2KHRArgs &args);
+    void PrintCmdCopyMemoryKHRArgs(YAML::Emitter &os, const CmdCopyMemoryKHRArgs &args);
+    void PrintCmdCopyMemoryToImageKHRArgs(YAML::Emitter &os, const CmdCopyMemoryToImageKHRArgs &args);
+    void PrintCmdCopyImageToMemoryKHRArgs(YAML::Emitter &os, const CmdCopyImageToMemoryKHRArgs &args);
+    void PrintCmdUpdateMemoryKHRArgs(YAML::Emitter &os, const CmdUpdateMemoryKHRArgs &args);
+    void PrintCmdFillMemoryKHRArgs(YAML::Emitter &os, const CmdFillMemoryKHRArgs &args);
+    void PrintCmdCopyQueryPoolResultsToMemoryKHRArgs(YAML::Emitter &os,
+                                                     const CmdCopyQueryPoolResultsToMemoryKHRArgs &args);
+    void PrintCmdDrawIndirectCount2KHRArgs(YAML::Emitter &os, const CmdDrawIndirectCount2KHRArgs &args);
+    void PrintCmdDrawIndexedIndirectCount2KHRArgs(YAML::Emitter &os, const CmdDrawIndexedIndirectCount2KHRArgs &args);
+    void PrintCmdBeginConditionalRendering2EXTArgs(YAML::Emitter &os, const CmdBeginConditionalRendering2EXTArgs &args);
+    void PrintCmdBindTransformFeedbackBuffers2EXTArgs(YAML::Emitter &os,
+                                                      const CmdBindTransformFeedbackBuffers2EXTArgs &args);
+    void PrintCmdBeginTransformFeedback2EXTArgs(YAML::Emitter &os, const CmdBeginTransformFeedback2EXTArgs &args);
+    void PrintCmdEndTransformFeedback2EXTArgs(YAML::Emitter &os, const CmdEndTransformFeedback2EXTArgs &args);
+    void PrintCmdDrawIndirectByteCount2EXTArgs(YAML::Emitter &os, const CmdDrawIndirectByteCount2EXTArgs &args);
+    void PrintCmdDrawMeshTasksIndirect2EXTArgs(YAML::Emitter &os, const CmdDrawMeshTasksIndirect2EXTArgs &args);
+    void PrintCmdDrawMeshTasksIndirectCount2EXTArgs(YAML::Emitter &os,
+                                                    const CmdDrawMeshTasksIndirectCount2EXTArgs &args);
+    void PrintCmdWriteMarkerToMemoryAMDArgs(YAML::Emitter &os, const CmdWriteMarkerToMemoryAMDArgs &args);
     void PrintCmdCopyBuffer2KHRArgs(YAML::Emitter &os, const CmdCopyBuffer2KHRArgs &args);
     void PrintCmdCopyImage2KHRArgs(YAML::Emitter &os, const CmdCopyImage2KHRArgs &args);
     void PrintCmdCopyBufferToImage2KHRArgs(YAML::Emitter &os, const CmdCopyBufferToImage2KHRArgs &args);
@@ -2249,6 +2330,7 @@ class CommandPrinter {
     void PrintCmdWriteMicromapsPropertiesEXTArgs(YAML::Emitter &os, const CmdWriteMicromapsPropertiesEXTArgs &args);
     void PrintCmdDrawClusterHUAWEIArgs(YAML::Emitter &os, const CmdDrawClusterHUAWEIArgs &args);
     void PrintCmdDrawClusterIndirectHUAWEIArgs(YAML::Emitter &os, const CmdDrawClusterIndirectHUAWEIArgs &args);
+    void PrintCmdSetDispatchParametersARMArgs(YAML::Emitter &os, const CmdSetDispatchParametersARMArgs &args);
     void PrintCmdCopyMemoryIndirectNVArgs(YAML::Emitter &os, const CmdCopyMemoryIndirectNVArgs &args);
     void PrintCmdCopyMemoryToImageIndirectNVArgs(YAML::Emitter &os, const CmdCopyMemoryToImageIndirectNVArgs &args);
     void PrintCmdDecompressMemoryNVArgs(YAML::Emitter &os, const CmdDecompressMemoryNVArgs &args);
@@ -2313,9 +2395,12 @@ class CommandPrinter {
     void PrintCmdPreprocessGeneratedCommandsEXTArgs(YAML::Emitter &os,
                                                     const CmdPreprocessGeneratedCommandsEXTArgs &args);
     void PrintCmdExecuteGeneratedCommandsEXTArgs(YAML::Emitter &os, const CmdExecuteGeneratedCommandsEXTArgs &args);
+    void PrintCmdBeginShaderInstrumentationARMArgs(YAML::Emitter &os, const CmdBeginShaderInstrumentationARMArgs &args);
+    void PrintCmdEndShaderInstrumentationARMArgs(YAML::Emitter &os, const CmdEndShaderInstrumentationARMArgs &args);
     void PrintCmdEndRendering2EXTArgs(YAML::Emitter &os, const CmdEndRendering2EXTArgs &args);
     void PrintCmdBeginCustomResolveEXTArgs(YAML::Emitter &os, const CmdBeginCustomResolveEXTArgs &args);
     void PrintCmdSetComputeOccupancyPriorityNVArgs(YAML::Emitter &os, const CmdSetComputeOccupancyPriorityNVArgs &args);
+    void PrintCmdSetPrimitiveRestartIndexEXTArgs(YAML::Emitter &os, const CmdSetPrimitiveRestartIndexEXTArgs &args);
     void PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
                                                     const CmdBuildAccelerationStructuresKHRArgs &args);
     void PrintCmdBuildAccelerationStructuresIndirectKHRArgs(YAML::Emitter &os,

@@ -501,6 +501,96 @@ void PreCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlag
 void PostCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool,
                                uint32_t query);
 
+void PreCmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo);
+void PostCmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo);
+
+void PreCmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
+                                 const VkBindVertexBuffer3InfoKHR* pBindingInfos);
+void PostCmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
+                                  const VkBindVertexBuffer3InfoKHR* pBindingInfos);
+
+void PreCmdDrawIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo);
+void PostCmdDrawIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo);
+
+void PreCmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo);
+void PostCmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo);
+
+void PreCmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer, const VkDispatchIndirect2InfoKHR* pInfo);
+void PostCmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer, const VkDispatchIndirect2InfoKHR* pInfo);
+
+void PreCmdCopyMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo);
+void PostCmdCopyMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo);
+
+void PreCmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+void PostCmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+void PreCmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+void PostCmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo);
+
+void PreCmdUpdateMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                           VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData);
+void PostCmdUpdateMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                            VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData);
+
+void PreCmdFillMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                         VkAddressCommandFlagsKHR dstFlags, uint32_t data);
+void PostCmdFillMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                          VkAddressCommandFlagsKHR dstFlags, uint32_t data);
+
+void PreCmdCopyQueryPoolResultsToMemoryKHR(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                           uint32_t queryCount, const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                           VkAddressCommandFlagsKHR dstFlags, VkQueryResultFlags queryResultFlags);
+void PostCmdCopyQueryPoolResultsToMemoryKHR(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery,
+                                            uint32_t queryCount, const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                            VkAddressCommandFlagsKHR dstFlags, VkQueryResultFlags queryResultFlags);
+
+void PreCmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo);
+void PostCmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo);
+
+void PreCmdDrawIndexedIndirectCount2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo);
+void PostCmdDrawIndexedIndirectCount2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo);
+
+void PreCmdBeginConditionalRendering2EXT(VkCommandBuffer commandBuffer,
+                                         const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin);
+void PostCmdBeginConditionalRendering2EXT(VkCommandBuffer commandBuffer,
+                                          const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin);
+
+void PreCmdBindTransformFeedbackBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount,
+                                            const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos);
+void PostCmdBindTransformFeedbackBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                             uint32_t bindingCount,
+                                             const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos);
+
+void PreCmdBeginTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                      uint32_t counterRangeCount,
+                                      const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos);
+void PostCmdBeginTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                       uint32_t counterRangeCount,
+                                       const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos);
+
+void PreCmdEndTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                    uint32_t counterRangeCount,
+                                    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos);
+void PostCmdEndTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                     uint32_t counterRangeCount,
+                                     const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos);
+
+void PreCmdDrawIndirectByteCount2EXT(VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance,
+                                     const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo, uint32_t counterOffset,
+                                     uint32_t vertexStride);
+void PostCmdDrawIndirectByteCount2EXT(VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance,
+                                      const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo, uint32_t counterOffset,
+                                      uint32_t vertexStride);
+
+void PreCmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo);
+void PostCmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo);
+
+void PreCmdDrawMeshTasksIndirectCount2EXT(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo);
+void PostCmdDrawMeshTasksIndirectCount2EXT(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo);
+
+void PreCmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo);
+void PostCmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo);
+
 void PreCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo);
 void PostCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo);
 
@@ -987,6 +1077,9 @@ void PostCmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t groupCount
 void PreCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset);
 void PostCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset);
 
+void PreCmdSetDispatchParametersARM(VkCommandBuffer commandBuffer, const VkDispatchParametersARM* pDispatchParameters);
+void PostCmdSetDispatchParametersARM(VkCommandBuffer commandBuffer, const VkDispatchParametersARM* pDispatchParameters);
+
 void PreCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount,
                                 uint32_t stride);
 void PostCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount,
@@ -1204,6 +1297,12 @@ void PreCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 i
 void PostCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed,
                                         const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo);
 
+void PreCmdBeginShaderInstrumentationARM(VkCommandBuffer commandBuffer, VkShaderInstrumentationARM instrumentation);
+void PostCmdBeginShaderInstrumentationARM(VkCommandBuffer commandBuffer, VkShaderInstrumentationARM instrumentation);
+
+void PreCmdEndShaderInstrumentationARM(VkCommandBuffer commandBuffer);
+void PostCmdEndShaderInstrumentationARM(VkCommandBuffer commandBuffer);
+
 void PreCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo);
 void PostCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo);
 
@@ -1216,6 +1315,9 @@ void PreCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                          const VkComputeOccupancyPriorityParametersNV* pParameters);
 void PostCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                           const VkComputeOccupancyPriorityParametersNV* pParameters);
+
+void PreCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex);
+void PostCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex);
 
 void PreCmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount,
                                           const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,

@@ -154,6 +154,27 @@ struct Command {
         kCmdWaitEvents2KHR,
         kCmdPipelineBarrier2KHR,
         kCmdWriteTimestamp2KHR,
+        kCmdBindIndexBuffer3KHR,
+        kCmdBindVertexBuffers3KHR,
+        kCmdDrawIndirect2KHR,
+        kCmdDrawIndexedIndirect2KHR,
+        kCmdDispatchIndirect2KHR,
+        kCmdCopyMemoryKHR,
+        kCmdCopyMemoryToImageKHR,
+        kCmdCopyImageToMemoryKHR,
+        kCmdUpdateMemoryKHR,
+        kCmdFillMemoryKHR,
+        kCmdCopyQueryPoolResultsToMemoryKHR,
+        kCmdDrawIndirectCount2KHR,
+        kCmdDrawIndexedIndirectCount2KHR,
+        kCmdBeginConditionalRendering2EXT,
+        kCmdBindTransformFeedbackBuffers2EXT,
+        kCmdBeginTransformFeedback2EXT,
+        kCmdEndTransformFeedback2EXT,
+        kCmdDrawIndirectByteCount2EXT,
+        kCmdDrawMeshTasksIndirect2EXT,
+        kCmdDrawMeshTasksIndirectCount2EXT,
+        kCmdWriteMarkerToMemoryAMD,
         kCmdCopyBuffer2KHR,
         kCmdCopyImage2KHR,
         kCmdCopyBufferToImage2KHR,
@@ -272,6 +293,7 @@ struct Command {
         kCmdWriteMicromapsPropertiesEXT,
         kCmdDrawClusterHUAWEI,
         kCmdDrawClusterIndirectHUAWEI,
+        kCmdSetDispatchParametersARM,
         kCmdCopyMemoryIndirectNV,
         kCmdCopyMemoryToImageIndirectNV,
         kCmdDecompressMemoryNV,
@@ -322,9 +344,12 @@ struct Command {
         kCmdBuildPartitionedAccelerationStructuresNV,
         kCmdPreprocessGeneratedCommandsEXT,
         kCmdExecuteGeneratedCommandsEXT,
+        kCmdBeginShaderInstrumentationARM,
+        kCmdEndShaderInstrumentationARM,
         kCmdEndRendering2EXT,
         kCmdBeginCustomResolveEXT,
         kCmdSetComputeOccupancyPriorityNV,
+        kCmdSetPrimitiveRestartIndexEXT,
         kCmdBuildAccelerationStructuresKHR,
         kCmdBuildAccelerationStructuresIndirectKHR,
         kCmdCopyAccelerationStructureKHR,
@@ -1122,6 +1147,133 @@ struct CmdWriteTimestamp2KHRArgs {
     uint32_t query;
 };
 
+struct CmdBindIndexBuffer3KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkBindIndexBuffer3InfoKHR* pInfo;
+};
+
+struct CmdBindVertexBuffers3KHRArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t firstBinding;
+    uint32_t bindingCount;
+    const VkBindVertexBuffer3InfoKHR* pBindingInfos;
+};
+
+struct CmdDrawIndirect2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDrawIndirect2InfoKHR* pInfo;
+};
+
+struct CmdDrawIndexedIndirect2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDrawIndirect2InfoKHR* pInfo;
+};
+
+struct CmdDispatchIndirect2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDispatchIndirect2InfoKHR* pInfo;
+};
+
+struct CmdCopyMemoryKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo;
+};
+
+struct CmdCopyMemoryToImageKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo;
+};
+
+struct CmdCopyImageToMemoryKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo;
+};
+
+struct CmdUpdateMemoryKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDeviceAddressRangeKHR* pDstRange;
+    VkAddressCommandFlagsKHR dstFlags;
+    VkDeviceSize dataSize;
+    const void* pData;
+};
+
+struct CmdFillMemoryKHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDeviceAddressRangeKHR* pDstRange;
+    VkAddressCommandFlagsKHR dstFlags;
+    uint32_t data;
+};
+
+struct CmdCopyQueryPoolResultsToMemoryKHRArgs {
+    VkCommandBuffer commandBuffer;
+    VkQueryPool queryPool;
+    uint32_t firstQuery;
+    uint32_t queryCount;
+    const VkStridedDeviceAddressRangeKHR* pDstRange;
+    VkAddressCommandFlagsKHR dstFlags;
+    VkQueryResultFlags queryResultFlags;
+};
+
+struct CmdDrawIndirectCount2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDrawIndirectCount2InfoKHR* pInfo;
+};
+
+struct CmdDrawIndexedIndirectCount2KHRArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDrawIndirectCount2InfoKHR* pInfo;
+};
+
+struct CmdBeginConditionalRendering2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin;
+};
+
+struct CmdBindTransformFeedbackBuffers2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t firstBinding;
+    uint32_t bindingCount;
+    const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos;
+};
+
+struct CmdBeginTransformFeedback2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t firstCounterRange;
+    uint32_t counterRangeCount;
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos;
+};
+
+struct CmdEndTransformFeedback2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t firstCounterRange;
+    uint32_t counterRangeCount;
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos;
+};
+
+struct CmdDrawIndirectByteCount2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t instanceCount;
+    uint32_t firstInstance;
+    const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo;
+    uint32_t counterOffset;
+    uint32_t vertexStride;
+};
+
+struct CmdDrawMeshTasksIndirect2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDrawIndirect2InfoKHR* pInfo;
+};
+
+struct CmdDrawMeshTasksIndirectCount2EXTArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDrawIndirectCount2InfoKHR* pInfo;
+};
+
+struct CmdWriteMarkerToMemoryAMDArgs {
+    VkCommandBuffer commandBuffer;
+    const VkMemoryMarkerInfoAMD* pInfo;
+};
+
 struct CmdCopyBuffer2KHRArgs {
     VkCommandBuffer commandBuffer;
     const VkCopyBufferInfo2* pCopyBufferInfo;
@@ -1810,6 +1962,11 @@ struct CmdDrawClusterIndirectHUAWEIArgs {
     VkDeviceSize offset;
 };
 
+struct CmdSetDispatchParametersARMArgs {
+    VkCommandBuffer commandBuffer;
+    const VkDispatchParametersARM* pDispatchParameters;
+};
+
 struct CmdCopyMemoryIndirectNVArgs {
     VkCommandBuffer commandBuffer;
     VkDeviceAddress copyBufferAddress;
@@ -2095,6 +2252,15 @@ struct CmdExecuteGeneratedCommandsEXTArgs {
     const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo;
 };
 
+struct CmdBeginShaderInstrumentationARMArgs {
+    VkCommandBuffer commandBuffer;
+    VkShaderInstrumentationARM instrumentation;
+};
+
+struct CmdEndShaderInstrumentationARMArgs {
+    VkCommandBuffer commandBuffer;
+};
+
 struct CmdEndRendering2EXTArgs {
     VkCommandBuffer commandBuffer;
     const VkRenderingEndInfoKHR* pRenderingEndInfo;
@@ -2108,6 +2274,11 @@ struct CmdBeginCustomResolveEXTArgs {
 struct CmdSetComputeOccupancyPriorityNVArgs {
     VkCommandBuffer commandBuffer;
     const VkComputeOccupancyPriorityParametersNV* pParameters;
+};
+
+struct CmdSetPrimitiveRestartIndexEXTArgs {
+    VkCommandBuffer commandBuffer;
+    uint32_t primitiveRestartIndex;
 };
 
 struct CmdBuildAccelerationStructuresKHRArgs {

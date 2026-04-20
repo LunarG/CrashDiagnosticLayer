@@ -1214,6 +1214,221 @@ void CommandTracker::CmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipe
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindIndexBuffer3KHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBindIndexBuffer3KHR(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                              uint32_t bindingCount, const VkBindVertexBuffer3InfoKHR* pBindingInfos) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindVertexBuffers3KHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBindVertexBuffers3KHR(commandBuffer, firstBinding, bindingCount, pBindingInfos);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDrawIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDrawIndirect2KHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDrawIndirect2KHR(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDrawIndexedIndirect2KHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDrawIndexedIndirect2KHR(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer, const VkDispatchIndirect2InfoKHR* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDispatchIndirect2KHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDispatchIndirect2KHR(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyMemoryKHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyMemoryKHR(commandBuffer, pCopyMemoryInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer,
+                                             const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyMemoryToImageKHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyMemoryToImageKHR(commandBuffer, pCopyMemoryInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer,
+                                             const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyImageToMemoryKHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyImageToMemoryKHR(commandBuffer, pCopyMemoryInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdUpdateMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                        VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdUpdateMemoryKHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdUpdateMemoryKHR(commandBuffer, pDstRange, dstFlags, dataSize, pData);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdFillMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                      VkAddressCommandFlagsKHR dstFlags, uint32_t data) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdFillMemoryKHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdFillMemoryKHR(commandBuffer, pDstRange, dstFlags, data);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyQueryPoolResultsToMemoryKHR(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                        uint32_t firstQuery, uint32_t queryCount,
+                                                        const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                                        VkAddressCommandFlagsKHR dstFlags,
+                                                        VkQueryResultFlags queryResultFlags) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyQueryPoolResultsToMemoryKHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyQueryPoolResultsToMemoryKHR(
+        commandBuffer, queryPool, firstQuery, queryCount, pDstRange, dstFlags, queryResultFlags);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirectCount2InfoKHR* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDrawIndirectCount2KHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDrawIndirectCount2KHR(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDrawIndexedIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                     const VkDrawIndirectCount2InfoKHR* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDrawIndexedIndirectCount2KHR;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDrawIndexedIndirectCount2KHR(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBeginConditionalRendering2EXT(
+    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBeginConditionalRendering2EXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBeginConditionalRendering2EXT(commandBuffer, pConditionalRenderingBegin);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBindTransformFeedbackBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                         uint32_t bindingCount,
+                                                         const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBindTransformFeedbackBuffers2EXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdBindTransformFeedbackBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBindingInfos);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBeginTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                                   uint32_t counterRangeCount,
+                                                   const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBeginTransformFeedback2EXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBeginTransformFeedback2EXT(commandBuffer, firstCounterRange, counterRangeCount,
+                                                                   pCounterInfos);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdEndTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                                 uint32_t counterRangeCount,
+                                                 const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdEndTransformFeedback2EXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters =
+        recorder_.RecordCmdEndTransformFeedback2EXT(commandBuffer, firstCounterRange, counterRangeCount, pCounterInfos);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDrawIndirectByteCount2EXT(VkCommandBuffer commandBuffer, uint32_t instanceCount,
+                                                  uint32_t firstInstance,
+                                                  const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+                                                  uint32_t counterOffset, uint32_t vertexStride) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDrawIndirectByteCount2EXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDrawIndirectByteCount2EXT(commandBuffer, instanceCount, firstInstance,
+                                                                  pCounterInfo, counterOffset, vertexStride);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDrawMeshTasksIndirect2EXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDrawMeshTasksIndirect2EXT(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdDrawMeshTasksIndirectCount2EXT(VkCommandBuffer commandBuffer,
+                                                       const VkDrawIndirectCount2InfoKHR* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdDrawMeshTasksIndirectCount2EXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdDrawMeshTasksIndirectCount2EXT(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdWriteMarkerToMemoryAMD;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdWriteMarkerToMemoryAMD(commandBuffer, pInfo);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
     Command cmd{};
     cmd.type = Command::Type::kCmdCopyBuffer2KHR;
@@ -2349,6 +2564,16 @@ void CommandTracker::CmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer,
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdSetDispatchParametersARM(VkCommandBuffer commandBuffer,
+                                                 const VkDispatchParametersARM* pDispatchParameters) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetDispatchParametersARM;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetDispatchParametersARM(commandBuffer, pDispatchParameters);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress,
                                              uint32_t copyCount, uint32_t stride) {
     Command cmd{};
@@ -2861,6 +3086,25 @@ void CommandTracker::CmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffe
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdBeginShaderInstrumentationARM(VkCommandBuffer commandBuffer,
+                                                      VkShaderInstrumentationARM instrumentation) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBeginShaderInstrumentationARM;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBeginShaderInstrumentationARM(commandBuffer, instrumentation);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdEndShaderInstrumentationARM(VkCommandBuffer commandBuffer) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdEndShaderInstrumentationARM;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdEndShaderInstrumentationARM(commandBuffer);
+    commands_.push_back(cmd);
+}
+
 void CommandTracker::CmdEndRendering2EXT(VkCommandBuffer commandBuffer,
                                          const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     Command cmd{};
@@ -2888,6 +3132,15 @@ void CommandTracker::CmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuf
     cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
     cmd.labels = labels_;
     cmd.parameters = recorder_.RecordCmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdSetPrimitiveRestartIndexEXT;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdSetPrimitiveRestartIndexEXT(commandBuffer, primitiveRestartIndex);
     commands_.push_back(cmd);
 }
 
