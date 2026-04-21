@@ -1,6 +1,6 @@
 /*
  Copyright 2020 Google Inc.
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2026 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -122,9 +122,10 @@ void SemaphoreTracker::EndWaitOnSemaphores(int pid, int tid, const VkSemaphoreWa
 
 bool SemaphoreTracker::GetSemaphoreValue(VkSemaphore vk_semaphore, uint64_t& value) const {
     std::lock_guard<std::mutex> slock(semaphores_mutex_);
-    if (semaphores_.find(vk_semaphore) == semaphores_.end()) return false;
-    auto& semaphore_info = semaphores_.find(vk_semaphore)->second;
-    return semaphore_info.marker->Read();
+    auto iter = semaphores_.find(vk_semaphore);
+    if (iter == semaphores_.end()) return false;
+    value = iter->second.marker->Read();
+    return true;
 }
 
 VkSemaphoreTypeKHR SemaphoreTracker::GetSemaphoreType(VkSemaphore vk_semaphore) const {
