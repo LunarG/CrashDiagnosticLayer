@@ -203,8 +203,8 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
     const auto* settings_ci = vku::FindStructInPNextChain<VkLayerSettingsCreateInfoEXT>(pCreateInfo);
 
     VkuLayerSettingSet layer_setting_set = VK_NULL_HANDLE;
-    VkResult result =
-        vkuCreateLayerSettingSet("lunarg_crash_diagnostic", settings_ci, pAllocator, nullptr, &layer_setting_set);
+    VkResult result = vkuCreateLayerSettingSet("VK_LAYER_LUNARG_crash_diagnostic", settings_ci, pAllocator, nullptr,
+                                               &layer_setting_set);
     if (result != VK_SUCCESS) {
         Log().Error("vkuCreateLayerSettingSet failed with error %d", result);
         return;

@@ -20,13 +20,13 @@
 #include <cstring>
 
 #define MakeStringSetting(_name) \
-    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eString, 1, &_name)
+    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eString, 1, &_name)
 
 #define MakeBoolSetting(_name) \
-    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eBool32, 1, &_name)
+    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eBool32, 1, &_name)
 
 #define MakeUint64Setting(_name) \
-    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eUint64, 1, &_name)
+    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eUint64, 1, &_name)
 
 LayerSettings::LayerSettings(const void* pnext)
     : settings_{
