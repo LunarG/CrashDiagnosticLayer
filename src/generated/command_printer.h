@@ -430,6 +430,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphModelCacheTypeQCOM
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphOpticalFlowPerformanceLevelARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeTypeARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeConnectionTypeARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkThrottleHintTypeSEC &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkNeuralAcceleratorStatisticsModeARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildAccelerationStructureModeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderGroupShaderKHR &t);
 
@@ -1112,6 +1114,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance10
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingEndInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingAttachmentFlagsInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkResolveImageModeInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance11FeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRasterizationStateRasterizationOrderAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugMarkerObjectNameInfoEXT &t);
@@ -2022,6 +2026,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSubgrou
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkUbmSurfaceCreateInfoSEC &t);
 #endif  // VK_USE_PLATFORM_UBM_SEC
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkThrottleHintSubmitInfoSEC &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceThrottleHintFeaturesSEC &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNeuralStatisticsCreateInfoARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
