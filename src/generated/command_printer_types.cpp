@@ -1267,6 +1267,16 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeConnec
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkThrottleHintTypeSEC &t) {
+    os << string_VkThrottleHintTypeSEC(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkNeuralAcceleratorStatisticsModeARM &t) {
+    os << string_VkNeuralAcceleratorStatisticsModeARM(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildAccelerationStructureModeKHR &t) {
     os << string_VkBuildAccelerationStructureModeKHR(t);
     return os;

@@ -1060,7 +1060,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDeviceCreateInfo &t) {
     // enabledLayerCount -> Field -> uint32_t
     os << YAML::Value << t.enabledLayerCount;
     os << YAML::Key << "ppEnabledLayerNames";
-    // ppEnabledLayerNames -> Field -> string
+    // ppEnabledLayerNames -> Field -> ConstDynamicArray(char)
     os << YAML::Value << t.ppEnabledLayerNames;
     os << YAML::Key << "enabledExtensionCount";
     // enabledExtensionCount -> Field -> uint32_t
@@ -18238,6 +18238,40 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkResolveImageModeInfoKHR &t)
     os << YAML::Key << "stencilResolveMode";
     // stencilResolveMode -> Field -> VkResolveModeFlagBits
     os << YAML::Value << t.stencilResolveMode;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance11FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maintenance11";
+    // maintenance11 -> Field -> VkBool32
+    os << YAML::Value << t.maintenance11;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "optimalImageTransferGranularity";
+    // optimalImageTransferGranularity -> Field -> VkExtent3D
+    os << YAML::Value << t.optimalImageTransferGranularity;
     os << YAML::EndMap;
     return os;
 }
@@ -36229,6 +36263,91 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMixedFl
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkThrottleHintSubmitInfoSEC &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "throttleHint";
+    // throttleHint -> Field -> VkThrottleHintTypeSEC
+    os << YAML::Value << t.throttleHint;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceThrottleHintFeaturesSEC &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "throttleHint";
+    // throttleHint -> Field -> VkBool32
+    os << YAML::Value << t.throttleHint;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "dataGraphNeuralAcceleratorStatistics";
+    // dataGraphNeuralAcceleratorStatistics -> Field -> VkBool32
+    os << YAML::Value << t.dataGraphNeuralAcceleratorStatistics;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNeuralStatisticsCreateInfoARM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "allowNeuralStatistics";
+    // allowNeuralStatistics -> Field -> VkBool32
+    os << YAML::Value << t.allowNeuralStatistics;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "mode";
+    // mode -> Field -> VkNeuralAcceleratorStatisticsModeARM
+    os << YAML::Value << t.mode;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -38838,6 +38957,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_RESOLVE_IMAGE_MODE_INFO_KHR:
             os << *reinterpret_cast<const VkResolveImageModeInfoKHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceMaintenance11FeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkDebugReportCallbackCreateInfoEXT *>(pStruct);
             break;
@@ -40929,6 +41054,21 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
 #endif  // VK_USE_PLATFORM_UBM_SEC
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MIXED_FLOAT_DOT_PRODUCT_FEATURES_VALVE:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_THROTTLE_HINT_SUBMIT_INFO_SEC:
+            os << *reinterpret_cast<const VkThrottleHintSubmitInfoSEC *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_THROTTLE_HINT_FEATURES_SEC:
+            os << *reinterpret_cast<const VkPhysicalDeviceThrottleHintFeaturesSEC *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_FEATURES_ARM:
+            os << *reinterpret_cast<const VkPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_NEURAL_STATISTICS_CREATE_INFO_ARM:
+            os << *reinterpret_cast<const VkDataGraphPipelineNeuralStatisticsCreateInfoARM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_NEURAL_STATISTICS_CREATE_INFO_ARM:
+            os << *reinterpret_cast<const VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT *>(pStruct);
