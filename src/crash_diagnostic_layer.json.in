@@ -348,7 +348,7 @@
                                             "version": 1,
                                             "description": "'Log Vulkan commands that use semaphores' requires 'Track semaphores' to be enabled",
                                             "informative": "Are you sure you want to enable 'Log Vulkan commands that use semaphores'?",
-                                            "severity": "INFO",
+                                            "severity": "INFORMATION",
                                             "conditions": [
                                                 {
                                                     "setting": {
