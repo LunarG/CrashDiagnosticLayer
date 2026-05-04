@@ -32,7 +32,7 @@
             "sub_dir": "SPIRV-Headers",
             "build_dir": "SPIRV-Headers/build",
             "install_dir": "SPIRV-Headers/build/install",
-            "commit": "04f10f650d514df88b76d25e83db360142c7b174"
+            "commit": "ad9184e76a66b1001c29db9b0a3e87f646c64de0"
         },
         {
             "name": "yaml-cpp",
@@ -64,7 +64,7 @@
             "sub_dir": "glslang",
             "build_dir": "glslang/build",
             "install_dir": "glslang/build/install",
-            "commit": "f0bd0257c308b9a26562c1a30c4748a0219cc951",
+            "commit": "275822a6261ee689aadb1da5f09a0ec2f058685c",
             "cmake_options": [
                 "-DENABLE_OPT=OFF"
             ],
