@@ -352,6 +352,14 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugUtilsMessengerEXT &a) 
 
 #if VK_USE_64_BIT_PTR_DEFINES
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaSessionAMD &a) {
+    os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
+    return os;
+}
+#endif  // VK_USE_64_BIT_PTR_DEFINES
+
+#if VK_USE_64_BIT_PTR_DEFINES
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorARM &a) {
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
@@ -841,6 +849,21 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDefaultVertexAttributeValue
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpacityMicromapFormatKHR &t) {
+    os << string_VkOpacityMicromapFormatKHR(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpacityMicromapSpecialIndexKHR &t) {
+    os << string_VkOpacityMicromapSpecialIndexKHR(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureSerializedBlockTypeKHR &t) {
+    os << string_VkAccelerationStructureSerializedBlockTypeKHR(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportObjectTypeEXT &t) {
     os << string_VkDebugReportObjectTypeEXT(t);
     return os;
@@ -888,6 +911,21 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDiscardRectangleModeEXT &t)
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkConservativeRasterizationModeEXT &t) {
     os << string_VkConservativeRasterizationModeEXT(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaPerfBlockAMD &t) {
+    os << string_VkGpaPerfBlockAMD(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaSampleTypeAMD &t) {
+    os << string_VkGpaSampleTypeAMD(t);
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaDeviceClockModeAMD &t) {
+    os << string_VkGpaDeviceClockModeAMD(t);
     return os;
 }
 
@@ -1050,16 +1088,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildMicromapModeEXT &t) {
 
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCopyMicromapModeEXT &t) {
     os << string_VkCopyMicromapModeEXT(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpacityMicromapFormatEXT &t) {
-    os << string_VkOpacityMicromapFormatEXT(t);
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkOpacityMicromapSpecialIndexEXT &t) {
-    os << string_VkOpacityMicromapSpecialIndexEXT(t);
     return os;
 }
 

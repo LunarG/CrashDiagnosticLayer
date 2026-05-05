@@ -1836,6 +1836,52 @@ void CommandTracker::CmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
     commands_.push_back(cmd);
 }
 
+void CommandTracker::CmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBeginGpaSessionAMD;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBeginGpaSessionAMD(commandBuffer, gpaSession);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdEndGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdEndGpaSessionAMD;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdEndGpaSessionAMD(commandBuffer, gpaSession);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdBeginGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                          const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo, uint32_t* pSampleID) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdBeginGpaSampleAMD;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdBeginGpaSampleAMD(commandBuffer, gpaSession, pGpaSampleBeginInfo, pSampleID);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdEndGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, uint32_t sampleID) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdEndGpaSampleAMD;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdEndGpaSampleAMD(commandBuffer, gpaSession, sampleID);
+    commands_.push_back(cmd);
+}
+
+void CommandTracker::CmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    Command cmd{};
+    cmd.type = Command::Type::kCmdCopyGpaSessionResultsAMD;
+    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
+    cmd.labels = labels_;
+    cmd.parameters = recorder_.RecordCmdCopyGpaSessionResultsAMD(commandBuffer, gpaSession);
+    commands_.push_back(cmd);
+}
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandTracker::CmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
                                                          VkDeviceAddress scratch, VkDeviceSize scratchSize) {

@@ -1312,6 +1312,41 @@ virtual void PreDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsM
 virtual void PostDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
                                                const VkAllocationCallbacks* pAllocator) {}
 
+virtual VkResult PreCmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    return VK_SUCCESS;
+}
+
+virtual VkResult PostCmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, VkResult result) {
+    return result;
+}
+
+virtual VkResult PreCmdEndGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    return VK_SUCCESS;
+}
+
+virtual VkResult PostCmdEndGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, VkResult result) {
+    return result;
+}
+
+virtual VkResult PreCmdBeginGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                         const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo, uint32_t* pSampleID) {
+    return VK_SUCCESS;
+}
+
+virtual VkResult PostCmdBeginGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                          const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo, uint32_t* pSampleID,
+                                          VkResult result) {
+    return result;
+}
+
+virtual void PreCmdEndGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, uint32_t sampleID) {}
+
+virtual void PostCmdEndGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, uint32_t sampleID) {}
+
+virtual void PreCmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {}
+
+virtual void PostCmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {}
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 virtual void PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
                                                     VkDeviceAddress scratch, VkDeviceSize scratchSize) {}

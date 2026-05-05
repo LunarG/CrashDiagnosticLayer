@@ -1949,6 +1949,55 @@ void Context::PostCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, con
     p_cmd->PostCmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 
+VkResult Context::PreCmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    return p_cmd->PreCmdBeginGpaSessionAMD(commandBuffer, gpaSession);
+}
+VkResult Context::PostCmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                            VkResult result) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    return p_cmd->PostCmdBeginGpaSessionAMD(commandBuffer, gpaSession, result);
+}
+
+VkResult Context::PreCmdEndGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    return p_cmd->PreCmdEndGpaSessionAMD(commandBuffer, gpaSession);
+}
+VkResult Context::PostCmdEndGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, VkResult result) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    return p_cmd->PostCmdEndGpaSessionAMD(commandBuffer, gpaSession, result);
+}
+
+VkResult Context::PreCmdBeginGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                          const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo, uint32_t* pSampleID) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    return p_cmd->PreCmdBeginGpaSampleAMD(commandBuffer, gpaSession, pGpaSampleBeginInfo, pSampleID);
+}
+VkResult Context::PostCmdBeginGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                           const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo, uint32_t* pSampleID,
+                                           VkResult result) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    return p_cmd->PostCmdBeginGpaSampleAMD(commandBuffer, gpaSession, pGpaSampleBeginInfo, pSampleID, result);
+}
+
+void Context::PreCmdEndGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, uint32_t sampleID) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdEndGpaSampleAMD(commandBuffer, gpaSession, sampleID);
+}
+void Context::PostCmdEndGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, uint32_t sampleID) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdEndGpaSampleAMD(commandBuffer, gpaSession, sampleID);
+}
+
+void Context::PreCmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreCmdCopyGpaSessionResultsAMD(commandBuffer, gpaSession);
+}
+void Context::PostCmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostCmdCopyGpaSessionResultsAMD(commandBuffer, gpaSession);
+}
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void Context::PreCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph,
                                                      VkDeviceAddress scratch, VkDeviceSize scratchSize) {

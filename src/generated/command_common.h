@@ -214,6 +214,11 @@ struct Command {
         kCmdBeginDebugUtilsLabelEXT,
         kCmdEndDebugUtilsLabelEXT,
         kCmdInsertDebugUtilsLabelEXT,
+        kCmdBeginGpaSessionAMD,
+        kCmdEndGpaSessionAMD,
+        kCmdBeginGpaSampleAMD,
+        kCmdEndGpaSampleAMD,
+        kCmdCopyGpaSessionResultsAMD,
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         kCmdInitializeGraphScratchMemoryAMDX,
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -1502,6 +1507,34 @@ struct CmdEndDebugUtilsLabelEXTArgs {
 struct CmdInsertDebugUtilsLabelEXTArgs {
     VkCommandBuffer commandBuffer;
     const VkDebugUtilsLabelEXT* pLabelInfo;
+};
+
+struct CmdBeginGpaSessionAMDArgs {
+    VkCommandBuffer commandBuffer;
+    VkGpaSessionAMD gpaSession;
+};
+
+struct CmdEndGpaSessionAMDArgs {
+    VkCommandBuffer commandBuffer;
+    VkGpaSessionAMD gpaSession;
+};
+
+struct CmdBeginGpaSampleAMDArgs {
+    VkCommandBuffer commandBuffer;
+    VkGpaSessionAMD gpaSession;
+    const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo;
+    uint32_t* pSampleID;
+};
+
+struct CmdEndGpaSampleAMDArgs {
+    VkCommandBuffer commandBuffer;
+    VkGpaSessionAMD gpaSession;
+    uint32_t sampleID;
+};
+
+struct CmdCopyGpaSessionResultsAMDArgs {
+    VkCommandBuffer commandBuffer;
+    VkGpaSessionAMD gpaSession;
 };
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS

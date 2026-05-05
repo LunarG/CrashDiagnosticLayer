@@ -621,6 +621,20 @@ class CommandRecorder {
     CmdInsertDebugUtilsLabelEXTArgs* RecordCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer,
                                                                        const VkDebugUtilsLabelEXT* pLabelInfo);
 
+    CmdBeginGpaSessionAMDArgs* RecordCmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession);
+
+    CmdEndGpaSessionAMDArgs* RecordCmdEndGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession);
+
+    CmdBeginGpaSampleAMDArgs* RecordCmdBeginGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                                         const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo,
+                                                         uint32_t* pSampleID);
+
+    CmdEndGpaSampleAMDArgs* RecordCmdEndGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                                     uint32_t sampleID);
+
+    CmdCopyGpaSessionResultsAMDArgs* RecordCmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer,
+                                                                       VkGpaSessionAMD gpaSession);
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     CmdInitializeGraphScratchMemoryAMDXArgs* RecordCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
                                                                                        VkPipeline executionGraph,

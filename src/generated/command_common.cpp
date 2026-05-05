@@ -387,6 +387,16 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdEndDebugUtilsLabelEXT";
         case Command::Type::kCmdInsertDebugUtilsLabelEXT:
             return "vkCmdInsertDebugUtilsLabelEXT";
+        case Command::Type::kCmdBeginGpaSessionAMD:
+            return "vkCmdBeginGpaSessionAMD";
+        case Command::Type::kCmdEndGpaSessionAMD:
+            return "vkCmdEndGpaSessionAMD";
+        case Command::Type::kCmdBeginGpaSampleAMD:
+            return "vkCmdBeginGpaSampleAMD";
+        case Command::Type::kCmdEndGpaSampleAMD:
+            return "vkCmdEndGpaSampleAMD";
+        case Command::Type::kCmdCopyGpaSessionResultsAMD:
+            return "vkCmdCopyGpaSessionResultsAMD";
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         case Command::Type::kCmdInitializeGraphScratchMemoryAMDX:
             return "vkCmdInitializeGraphScratchMemoryAMDX";
