@@ -577,12 +577,15 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
 
     if (!device_has_dynamic_rendering) {
         Log().Error(
-            "No device support for VK_KHR_dynamic_rendering extension, Vulkan 1.3 or VK_KHR_dynamic_rendering are required by the Crash Diagnostic layer.");
+            "No device support for VK_KHR_dynamic_rendering extension, Vulkan 1.3 or VK_KHR_dynamic_rendering are "
+            "required by the Crash Diagnostic layer.");
     }
 
     if (!extensions_enabled.khr_dynamic_rendering && api_version < VK_API_VERSION_1_3) {
         Log().Error(
-            "The Vulkan application did not enabled the VK_KHR_dynamic_rendering extension or Vulkan 1.3. To use the Crash Diagnostics layer, the application must use Dynamic Rendering only instead of RenderPass which is a Vulkan Legacy feature not supported by the Crash Diagnostic layer.");
+            "The Vulkan application did not enable the VK_KHR_dynamic_rendering extension or Vulkan 1.3. To use the "
+            "Crash Diagnostics layer, the application must use Dynamic Rendering only instead of RenderPass which is a "
+            "Vulkan Legacy feature not supported by the Crash Diagnostic layer.");
     }
 
     if (extensions_present.khr_timeline_semaphore) {
