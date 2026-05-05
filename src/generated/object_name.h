@@ -96,6 +96,8 @@ static inline const char* string_ObjectName(VkObjectType input_value) {
             return "VkCuFunctionNVX";
         case VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT:
             return "VkDebugUtilsMessengerEXT";
+        case VK_OBJECT_TYPE_GPA_SESSION_AMD:
+            return "VkGpaSessionAMD";
         case VK_OBJECT_TYPE_TENSOR_ARM:
             return "VkTensorARM";
         case VK_OBJECT_TYPE_VALIDATION_CACHE_EXT:

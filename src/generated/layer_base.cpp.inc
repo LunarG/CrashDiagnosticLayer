@@ -3014,6 +3014,83 @@ static VKAPI_ATTR void VKAPI_CALL InterceptDestroyDebugUtilsMessengerEXT(VkInsta
     layer_data->interceptor->PostDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 }
 
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer,
+                                                                     VkGpaSessionAMD gpaSession) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBeginGpaSessionAMD(commandBuffer, gpaSession);
+
+    PFN_vkCmdBeginGpaSessionAMD pfn = layer_data->dispatch_table.CmdBeginGpaSessionAMD;
+    if (pfn != nullptr) {
+        result = pfn(commandBuffer, gpaSession);
+    }
+
+    result = layer_data->interceptor->PostCmdBeginGpaSessionAMD(commandBuffer, gpaSession, result);
+    return result;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdEndGpaSessionAMD(VkCommandBuffer commandBuffer,
+                                                                   VkGpaSessionAMD gpaSession) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdEndGpaSessionAMD(commandBuffer, gpaSession);
+
+    PFN_vkCmdEndGpaSessionAMD pfn = layer_data->dispatch_table.CmdEndGpaSessionAMD;
+    if (pfn != nullptr) {
+        result = pfn(commandBuffer, gpaSession);
+    }
+
+    result = layer_data->interceptor->PostCmdEndGpaSessionAMD(commandBuffer, gpaSession, result);
+    return result;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL InterceptCmdBeginGpaSampleAMD(VkCommandBuffer commandBuffer,
+                                                                    VkGpaSessionAMD gpaSession,
+                                                                    const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo,
+                                                                    uint32_t* pSampleID) {
+    VkResult result = VK_SUCCESS;
+
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdBeginGpaSampleAMD(commandBuffer, gpaSession, pGpaSampleBeginInfo, pSampleID);
+
+    PFN_vkCmdBeginGpaSampleAMD pfn = layer_data->dispatch_table.CmdBeginGpaSampleAMD;
+    if (pfn != nullptr) {
+        result = pfn(commandBuffer, gpaSession, pGpaSampleBeginInfo, pSampleID);
+    }
+
+    result = layer_data->interceptor->PostCmdBeginGpaSampleAMD(commandBuffer, gpaSession, pGpaSampleBeginInfo,
+                                                               pSampleID, result);
+    return result;
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdEndGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                                              uint32_t sampleID) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdEndGpaSampleAMD(commandBuffer, gpaSession, sampleID);
+
+    PFN_vkCmdEndGpaSampleAMD pfn = layer_data->dispatch_table.CmdEndGpaSampleAMD;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, gpaSession, sampleID);
+    }
+
+    layer_data->interceptor->PostCmdEndGpaSampleAMD(commandBuffer, gpaSession, sampleID);
+}
+
+static VKAPI_ATTR void VKAPI_CALL InterceptCmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer,
+                                                                       VkGpaSessionAMD gpaSession) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreCmdCopyGpaSessionResultsAMD(commandBuffer, gpaSession);
+
+    PFN_vkCmdCopyGpaSessionResultsAMD pfn = layer_data->dispatch_table.CmdCopyGpaSessionResultsAMD;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, gpaSession);
+    }
+
+    layer_data->interceptor->PostCmdCopyGpaSessionResultsAMD(commandBuffer, gpaSession);
+}
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer,
                                                                                VkPipeline executionGraph,
@@ -5241,6 +5318,11 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdInsertDebugUtilsLabelEXT", {kFuncTypeDev, (void*)InterceptCmdInsertDebugUtilsLabelEXT}},
         {"vkCreateDebugUtilsMessengerEXT", {kFuncTypeInst, (void*)InterceptCreateDebugUtilsMessengerEXT}},
         {"vkDestroyDebugUtilsMessengerEXT", {kFuncTypeInst, (void*)InterceptDestroyDebugUtilsMessengerEXT}},
+        {"vkCmdBeginGpaSessionAMD", {kFuncTypeDev, (void*)InterceptCmdBeginGpaSessionAMD}},
+        {"vkCmdEndGpaSessionAMD", {kFuncTypeDev, (void*)InterceptCmdEndGpaSessionAMD}},
+        {"vkCmdBeginGpaSampleAMD", {kFuncTypeDev, (void*)InterceptCmdBeginGpaSampleAMD}},
+        {"vkCmdEndGpaSampleAMD", {kFuncTypeDev, (void*)InterceptCmdEndGpaSampleAMD}},
+        {"vkCmdCopyGpaSessionResultsAMD", {kFuncTypeDev, (void*)InterceptCmdCopyGpaSessionResultsAMD}},
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         {"vkCmdInitializeGraphScratchMemoryAMDX", {kFuncTypeDev, (void*)InterceptCmdInitializeGraphScratchMemoryAMDX}},
 #endif  // VK_ENABLE_BETA_EXTENSIONS

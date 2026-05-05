@@ -805,6 +805,18 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->GetMemoryAndroidHardwareBufferANDROID =
         (PFN_vkGetMemoryAndroidHardwareBufferANDROID)pa(device, "vkGetMemoryAndroidHardwareBufferANDROID");
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
+    dt->CreateGpaSessionAMD = (PFN_vkCreateGpaSessionAMD)pa(device, "vkCreateGpaSessionAMD");
+    dt->DestroyGpaSessionAMD = (PFN_vkDestroyGpaSessionAMD)pa(device, "vkDestroyGpaSessionAMD");
+    dt->SetGpaDeviceClockModeAMD = (PFN_vkSetGpaDeviceClockModeAMD)pa(device, "vkSetGpaDeviceClockModeAMD");
+    dt->GetGpaDeviceClockInfoAMD = (PFN_vkGetGpaDeviceClockInfoAMD)pa(device, "vkGetGpaDeviceClockInfoAMD");
+    dt->CmdBeginGpaSessionAMD = (PFN_vkCmdBeginGpaSessionAMD)pa(device, "vkCmdBeginGpaSessionAMD");
+    dt->CmdEndGpaSessionAMD = (PFN_vkCmdEndGpaSessionAMD)pa(device, "vkCmdEndGpaSessionAMD");
+    dt->CmdBeginGpaSampleAMD = (PFN_vkCmdBeginGpaSampleAMD)pa(device, "vkCmdBeginGpaSampleAMD");
+    dt->CmdEndGpaSampleAMD = (PFN_vkCmdEndGpaSampleAMD)pa(device, "vkCmdEndGpaSampleAMD");
+    dt->GetGpaSessionStatusAMD = (PFN_vkGetGpaSessionStatusAMD)pa(device, "vkGetGpaSessionStatusAMD");
+    dt->GetGpaSessionResultsAMD = (PFN_vkGetGpaSessionResultsAMD)pa(device, "vkGetGpaSessionResultsAMD");
+    dt->ResetGpaSessionAMD = (PFN_vkResetGpaSessionAMD)pa(device, "vkResetGpaSessionAMD");
+    dt->CmdCopyGpaSessionResultsAMD = (PFN_vkCmdCopyGpaSessionResultsAMD)pa(device, "vkCmdCopyGpaSessionResultsAMD");
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     dt->CreateExecutionGraphPipelinesAMDX =
         (PFN_vkCreateExecutionGraphPipelinesAMDX)pa(device, "vkCreateExecutionGraphPipelinesAMDX");

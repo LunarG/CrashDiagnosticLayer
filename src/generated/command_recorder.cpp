@@ -275,6 +275,12 @@ VkViewportSwizzleNV* CommandRecorder::CopyArray<VkViewportSwizzleNV>(const VkVie
 template <>
 VkDebugUtilsLabelEXT* CommandRecorder::CopyArray<VkDebugUtilsLabelEXT>(const VkDebugUtilsLabelEXT* src,
                                                                        size_t start_index, size_t count);
+template <>
+VkGpaPerfCounterAMD* CommandRecorder::CopyArray<VkGpaPerfCounterAMD>(const VkGpaPerfCounterAMD* src, size_t start_index,
+                                                                     size_t count);
+template <>
+VkGpaSampleBeginInfoAMD* CommandRecorder::CopyArray<VkGpaSampleBeginInfoAMD>(const VkGpaSampleBeginInfoAMD* src,
+                                                                             size_t start_index, size_t count);
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 template <>
 VkDeviceOrHostAddressConstAMDX* CommandRecorder::CopyArray<VkDeviceOrHostAddressConstAMDX>(
@@ -1865,6 +1871,47 @@ VkDebugUtilsLabelEXT* CommandRecorder::CopyArray<VkDebugUtilsLabelEXT>(const VkD
         for (uint32_t j = 0; j < 4; ++j) {
             ptr[i].color[j] = src[start_index + i].color[j];
         }
+    }
+    return ptr;
+}
+
+template <>
+VkGpaPerfCounterAMD* CommandRecorder::CopyArray<VkGpaPerfCounterAMD>(const VkGpaPerfCounterAMD* src, size_t start_index,
+                                                                     size_t count) {
+    auto ptr = reinterpret_cast<VkGpaPerfCounterAMD*>(m_allocator.Alloc(sizeof(VkGpaPerfCounterAMD) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].blockType = src[start_index + i].blockType;
+        ptr[i].blockInstance = src[start_index + i].blockInstance;
+        ptr[i].eventID = src[start_index + i].eventID;
+    }
+    return ptr;
+}
+
+template <>
+VkGpaSampleBeginInfoAMD* CommandRecorder::CopyArray<VkGpaSampleBeginInfoAMD>(const VkGpaSampleBeginInfoAMD* src,
+                                                                             size_t start_index, size_t count) {
+    auto ptr = reinterpret_cast<VkGpaSampleBeginInfoAMD*>(m_allocator.Alloc(sizeof(VkGpaSampleBeginInfoAMD) * count));
+    for (uint64_t i = 0; i < count; ++i) {
+        ptr[i].sType = src[start_index + i].sType;
+        ptr[i].pNext = nullptr;  // pNext deep copy not implemented
+        ptr[i].sampleType = src[start_index + i].sampleType;
+        ptr[i].sampleInternalOperations = src[start_index + i].sampleInternalOperations;
+        ptr[i].cacheFlushOnCounterCollection = src[start_index + i].cacheFlushOnCounterCollection;
+        ptr[i].sqShaderMaskEnable = src[start_index + i].sqShaderMaskEnable;
+        ptr[i].sqShaderMask = src[start_index + i].sqShaderMask;
+        ptr[i].perfCounterCount = src[start_index + i].perfCounterCount;
+        ptr[i].pPerfCounters = nullptr;
+        if (src[start_index + i].pPerfCounters) {
+            ptr[i].pPerfCounters =
+                CopyArray(src[start_index + i].pPerfCounters, 0U, src[start_index + i].perfCounterCount);
+        }
+        ptr[i].streamingPerfTraceSampleInterval = src[start_index + i].streamingPerfTraceSampleInterval;
+        ptr[i].perfCounterDeviceMemoryLimit = src[start_index + i].perfCounterDeviceMemoryLimit;
+        ptr[i].sqThreadTraceEnable = src[start_index + i].sqThreadTraceEnable;
+        ptr[i].sqThreadTraceSuppressInstructionTokens = src[start_index + i].sqThreadTraceSuppressInstructionTokens;
+        ptr[i].sqThreadTraceDeviceMemoryLimit = src[start_index + i].sqThreadTraceDeviceMemoryLimit;
+        ptr[i].timingPreSample = src[start_index + i].timingPreSample;
+        ptr[i].timingPostSample = src[start_index + i].timingPostSample;
     }
     return ptr;
 }
@@ -4874,6 +4921,54 @@ CmdInsertDebugUtilsLabelEXTArgs* CommandRecorder::RecordCmdInsertDebugUtilsLabel
     if (pLabelInfo) {
         args->pLabelInfo = CopyArray(pLabelInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
     }
+    return args;
+}
+
+CmdBeginGpaSessionAMDArgs* CommandRecorder::RecordCmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer,
+                                                                        VkGpaSessionAMD gpaSession) {
+    auto* args = Alloc<CmdBeginGpaSessionAMDArgs>();
+    args->commandBuffer = commandBuffer;
+    args->gpaSession = gpaSession;
+    return args;
+}
+
+CmdEndGpaSessionAMDArgs* CommandRecorder::RecordCmdEndGpaSessionAMD(VkCommandBuffer commandBuffer,
+                                                                    VkGpaSessionAMD gpaSession) {
+    auto* args = Alloc<CmdEndGpaSessionAMDArgs>();
+    args->commandBuffer = commandBuffer;
+    args->gpaSession = gpaSession;
+    return args;
+}
+
+CmdBeginGpaSampleAMDArgs* CommandRecorder::RecordCmdBeginGpaSampleAMD(
+    VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo,
+    uint32_t* pSampleID) {
+    auto* args = Alloc<CmdBeginGpaSampleAMDArgs>();
+    args->commandBuffer = commandBuffer;
+    args->gpaSession = gpaSession;
+    if (pGpaSampleBeginInfo) {
+        args->pGpaSampleBeginInfo = CopyArray(pGpaSampleBeginInfo, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    if (pSampleID) {
+        args->pSampleID = CopyArray(pSampleID, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
+CmdEndGpaSampleAMDArgs* CommandRecorder::RecordCmdEndGpaSampleAMD(VkCommandBuffer commandBuffer,
+                                                                  VkGpaSessionAMD gpaSession, uint32_t sampleID) {
+    auto* args = Alloc<CmdEndGpaSampleAMDArgs>();
+    args->commandBuffer = commandBuffer;
+    args->gpaSession = gpaSession;
+    args->sampleID = sampleID;
+    return args;
+}
+
+CmdCopyGpaSessionResultsAMDArgs* CommandRecorder::RecordCmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer,
+                                                                                    VkGpaSessionAMD gpaSession) {
+    auto* args = Alloc<CmdCopyGpaSessionResultsAMDArgs>();
+    args->commandBuffer = commandBuffer;
+    args->gpaSession = gpaSession;
     return args;
 }
 

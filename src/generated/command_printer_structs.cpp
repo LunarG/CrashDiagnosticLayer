@@ -18071,6 +18071,63 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoDecodeAV1InlineSession
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "videoEncodeFeedback2";
+    // videoEncodeFeedback2 -> Field -> VkBool32
+    os << YAML::Value << t.videoEncodeFeedback2;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkVideoEncodeFeedback2CapabilitiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxPerPartitionFeedbackEntries";
+    // maxPerPartitionFeedbackEntries -> Field -> uint32_t
+    os << YAML::Value << t.maxPerPartitionFeedbackEntries;
+    os << YAML::Key << "supportedPerPartitionEncodeFeedbackFlags";
+    // supportedPerPartitionEncodeFeedbackFlags -> Field -> VkVideoEncodePerPartitionFeedbackFlagsKHR
+    os << YAML::Value << t.supportedPerPartitionEncodeFeedbackFlags;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueryPoolVideoEncodePerPartitionFeedbackCreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxPerPartitionFeedbackEntries";
+    // maxPerPartitionFeedbackEntries -> Field -> uint32_t
+    os << YAML::Value << t.maxPerPartitionFeedbackEntries;
+    os << YAML::Key << "perPartitionEncodeFeedbackFlags";
+    // perPartitionEncodeFeedbackFlags -> Field -> VkVideoEncodePerPartitionFeedbackFlagsKHR
+    os << YAML::Value << t.perPartitionEncodeFeedbackFlags;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -18144,6 +18201,164 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentModeFi
     os << YAML::Key << "presentModeFifoLatestReady";
     // presentModeFifoLatestReady -> Field -> VkBool32
     os << YAML::Value << t.presentModeFifoLatestReady;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapUsageKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "count";
+    // count -> Field -> uint32_t
+    os << YAML::Value << t.count;
+    os << YAML::Key << "subdivisionLevel";
+    // subdivisionLevel -> Field -> uint32_t
+    os << YAML::Value << t.subdivisionLevel;
+    os << YAML::Key << "format";
+    // format -> Field -> VkOpacityMicromapFormatKHR
+    os << YAML::Value << t.format;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryMicromapDataKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "usageCountsCount";
+    // usageCountsCount -> Field -> uint32_t
+    os << YAML::Value << t.usageCountsCount;
+    os << YAML::Key << "pUsageCounts";
+    // pUsageCounts -> Field -> ConstDynamicArray(VkMicromapUsageKHR)
+    if (t.usageCountsCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkMicromapUsageKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.usageCountsCount); ++i) {
+                os << t.pUsageCounts[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "ppUsageCounts";
+    // ppUsageCounts -> Field -> ConstDynamicArray(VkMicromapUsageKHR)
+    if (t.usageCountsCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkMicromapUsageKHR");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.usageCountsCount); ++i) {
+                os << *(t.ppUsageCounts)[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "data";
+    // data -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.data);
+    os << YAML::Key << "triangleArray";
+    // triangleArray -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.triangleArray);
+    os << YAML::Key << "triangleArrayStride";
+    // triangleArrayStride -> Field -> VkDeviceSize
+    os << YAML::Value << t.triangleArrayStride;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceOpacityMicromapFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "micromap";
+    // micromap -> Field -> VkBool32
+    os << YAML::Value << t.micromap;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceOpacityMicromapPropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxOpacity2StateSubdivisionLevel";
+    // maxOpacity2StateSubdivisionLevel -> Field -> uint32_t
+    os << YAML::Value << t.maxOpacity2StateSubdivisionLevel;
+    os << YAML::Key << "maxOpacity4StateSubdivisionLevel";
+    // maxOpacity4StateSubdivisionLevel -> Field -> uint32_t
+    os << YAML::Value << t.maxOpacity4StateSubdivisionLevel;
+    os << YAML::Key << "maxOpacityLossy4StateSubdivisionLevel";
+    // maxOpacityLossy4StateSubdivisionLevel -> Field -> uint32_t
+    os << YAML::Value << t.maxOpacityLossy4StateSubdivisionLevel;
+    os << YAML::Key << "maxMicromapTriangles";
+    // maxMicromapTriangles -> Field -> uint64_t
+    os << YAML::Value << t.maxMicromapTriangles;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapTriangleKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "dataOffset";
+    // dataOffset -> Field -> uint32_t
+    os << YAML::Value << t.dataOffset;
+    os << YAML::Key << "subdivisionLevel";
+    // subdivisionLevel -> Field -> uint16_t
+    os << YAML::Value << t.subdivisionLevel;
+    os << YAML::Key << "format";
+    // format -> Field -> uint16_t
+    os << YAML::Value << t.format;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTrianglesOpacityMicromapKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "indexType";
+    // indexType -> Field -> VkIndexType
+    os << YAML::Value << t.indexType;
+    os << YAML::Key << "indexBuffer";
+    // indexBuffer -> Field -> VkDeviceAddress
+    os << YAML::Value << crash_diagnostic_layer::Uint64ToStr(t.indexBuffer);
+    os << YAML::Key << "indexStride";
+    // indexStride -> Field -> VkDeviceSize
+    os << YAML::Value << t.indexStride;
+    os << YAML::Key << "baseTriangle";
+    // baseTriangle -> Field -> uint32_t
+    os << YAML::Value << t.baseTriangle;
+    os << YAML::Key << "micromap";
+    // micromap -> Field -> VkAccelerationStructureKHR
+    os << YAML::Value << t.micromap;
     os << YAML::EndMap;
     return os;
 }
@@ -18272,6 +18487,131 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyOptimalImageTran
     os << YAML::Key << "optimalImageTransferGranularity";
     // optimalImageTransferGranularity -> Field -> VkExtent3D
     os << YAML::Value << t.optimalImageTransferGranularity;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkFormatProperties4KHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "linearTilingFeatures";
+    // linearTilingFeatures -> Field -> VkFormatFeatureFlags4KHR
+    os << YAML::Value << t.linearTilingFeatures;
+    os << YAML::Key << "optimalTilingFeatures";
+    // optimalTilingFeatures -> Field -> VkFormatFeatureFlags4KHR
+    os << YAML::Value << t.optimalTilingFeatures;
+    os << YAML::Key << "bufferFeatures";
+    // bufferFeatures -> Field -> VkFormatFeatureFlags4KHR
+    os << YAML::Value << t.bufferFeatures;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageUsageFlags2CreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "usage";
+    // usage -> Field -> VkImageUsageFlags2KHR
+    os << YAML::Value << t.usage;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageCreateFlags2CreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkImageCreateFlags2KHR
+    os << YAML::Value << t.flags;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewUsage2CreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "usage";
+    // usage -> Field -> VkImageUsageFlags2KHR
+    os << YAML::Value << t.usage;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExtendedFlagsFeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "extendedFlags";
+    // extendedFlags -> Field -> VkBool32
+    os << YAML::Value << t.extendedFlags;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageStencilUsage2CreateInfoKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "stencilUsage";
+    // stencilUsage -> Field -> VkImageUsageFlags2KHR
+    os << YAML::Value << t.stencilUsage;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSharedPresentSurfaceCapabilities2KHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "sharedPresentSupportedUsageFlags";
+    // sharedPresentSupportedUsageFlags -> Field -> VkImageUsageFlags2KHR
+    os << YAML::Value << t.sharedPresentSupportedUsageFlags;
     os << YAML::EndMap;
     return os;
 }
@@ -20160,6 +20500,266 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAndroidHardwareBufferFormat
     return os;
 }
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaPerfBlockPropertiesAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "blockType";
+    // blockType -> Field -> VkGpaPerfBlockAMD
+    os << YAML::Value << t.blockType;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkGpaPerfBlockPropertiesFlagsAMD
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "instanceCount";
+    // instanceCount -> Field -> uint32_t
+    os << YAML::Value << t.instanceCount;
+    os << YAML::Key << "maxEventID";
+    // maxEventID -> Field -> uint32_t
+    os << YAML::Value << t.maxEventID;
+    os << YAML::Key << "maxGlobalOnlyCounters";
+    // maxGlobalOnlyCounters -> Field -> uint32_t
+    os << YAML::Value << t.maxGlobalOnlyCounters;
+    os << YAML::Key << "maxGlobalSharedCounters";
+    // maxGlobalSharedCounters -> Field -> uint32_t
+    os << YAML::Value << t.maxGlobalSharedCounters;
+    os << YAML::Key << "maxStreamingCounters";
+    // maxStreamingCounters -> Field -> uint32_t
+    os << YAML::Value << t.maxStreamingCounters;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceGpaFeaturesAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "perfCounters";
+    // perfCounters -> Field -> VkBool32
+    os << YAML::Value << t.perfCounters;
+    os << YAML::Key << "streamingPerfCounters";
+    // streamingPerfCounters -> Field -> VkBool32
+    os << YAML::Value << t.streamingPerfCounters;
+    os << YAML::Key << "sqThreadTracing";
+    // sqThreadTracing -> Field -> VkBool32
+    os << YAML::Value << t.sqThreadTracing;
+    os << YAML::Key << "clockModes";
+    // clockModes -> Field -> VkBool32
+    os << YAML::Value << t.clockModes;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceGpaPropertiesAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkPhysicalDeviceGpaPropertiesFlagsAMD
+    os << YAML::Value << t.flags;
+    os << YAML::Key << "maxSqttSeBufferSize";
+    // maxSqttSeBufferSize -> Field -> VkDeviceSize
+    os << YAML::Value << t.maxSqttSeBufferSize;
+    os << YAML::Key << "shaderEngineCount";
+    // shaderEngineCount -> Field -> uint32_t
+    os << YAML::Value << t.shaderEngineCount;
+    os << YAML::Key << "perfBlockCount";
+    // perfBlockCount -> Field -> uint32_t
+    os << YAML::Value << t.perfBlockCount;
+    os << YAML::Key << "pPerfBlocks";
+    // pPerfBlocks -> Field -> DynamicArray(VkGpaPerfBlockPropertiesAMD)
+    if (t.perfBlockCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkGpaPerfBlockPropertiesAMD");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.perfBlockCount); ++i) {
+                os << t.pPerfBlocks[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceGpaProperties2AMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "revisionId";
+    // revisionId -> Field -> uint32_t
+    os << YAML::Value << t.revisionId;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaPerfCounterAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "blockType";
+    // blockType -> Field -> VkGpaPerfBlockAMD
+    os << YAML::Value << t.blockType;
+    os << YAML::Key << "blockInstance";
+    // blockInstance -> Field -> uint32_t
+    os << YAML::Value << t.blockInstance;
+    os << YAML::Key << "eventID";
+    // eventID -> Field -> uint32_t
+    os << YAML::Value << t.eventID;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaSampleBeginInfoAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "sampleType";
+    // sampleType -> Field -> VkGpaSampleTypeAMD
+    os << YAML::Value << t.sampleType;
+    os << YAML::Key << "sampleInternalOperations";
+    // sampleInternalOperations -> Field -> VkBool32
+    os << YAML::Value << t.sampleInternalOperations;
+    os << YAML::Key << "cacheFlushOnCounterCollection";
+    // cacheFlushOnCounterCollection -> Field -> VkBool32
+    os << YAML::Value << t.cacheFlushOnCounterCollection;
+    os << YAML::Key << "sqShaderMaskEnable";
+    // sqShaderMaskEnable -> Field -> VkBool32
+    os << YAML::Value << t.sqShaderMaskEnable;
+    os << YAML::Key << "sqShaderMask";
+    // sqShaderMask -> Field -> VkGpaSqShaderStageFlagsAMD
+    os << YAML::Value << t.sqShaderMask;
+    os << YAML::Key << "perfCounterCount";
+    // perfCounterCount -> Field -> uint32_t
+    os << YAML::Value << t.perfCounterCount;
+    os << YAML::Key << "pPerfCounters";
+    // pPerfCounters -> Field -> ConstDynamicArray(VkGpaPerfCounterAMD)
+    if (t.perfCounterCount == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("VkGpaPerfCounterAMD");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(t.perfCounterCount); ++i) {
+                os << t.pPerfCounters[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::Key << "streamingPerfTraceSampleInterval";
+    // streamingPerfTraceSampleInterval -> Field -> uint32_t
+    os << YAML::Value << t.streamingPerfTraceSampleInterval;
+    os << YAML::Key << "perfCounterDeviceMemoryLimit";
+    // perfCounterDeviceMemoryLimit -> Field -> VkDeviceSize
+    os << YAML::Value << t.perfCounterDeviceMemoryLimit;
+    os << YAML::Key << "sqThreadTraceEnable";
+    // sqThreadTraceEnable -> Field -> VkBool32
+    os << YAML::Value << t.sqThreadTraceEnable;
+    os << YAML::Key << "sqThreadTraceSuppressInstructionTokens";
+    // sqThreadTraceSuppressInstructionTokens -> Field -> VkBool32
+    os << YAML::Value << t.sqThreadTraceSuppressInstructionTokens;
+    os << YAML::Key << "sqThreadTraceDeviceMemoryLimit";
+    // sqThreadTraceDeviceMemoryLimit -> Field -> VkDeviceSize
+    os << YAML::Value << t.sqThreadTraceDeviceMemoryLimit;
+    os << YAML::Key << "timingPreSample";
+    // timingPreSample -> Field -> VkPipelineStageFlags
+    os << YAML::Value << t.timingPreSample;
+    os << YAML::Key << "timingPostSample";
+    // timingPostSample -> Field -> VkPipelineStageFlags
+    os << YAML::Value << t.timingPostSample;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaDeviceClockModeInfoAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "clockMode";
+    // clockMode -> Field -> VkGpaDeviceClockModeAMD
+    os << YAML::Value << t.clockMode;
+    os << YAML::Key << "memoryClockRatioToPeak";
+    // memoryClockRatioToPeak -> Field -> float
+    os << YAML::Value << t.memoryClockRatioToPeak;
+    os << YAML::Key << "engineClockRatioToPeak";
+    // engineClockRatioToPeak -> Field -> float
+    os << YAML::Value << t.engineClockRatioToPeak;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaDeviceGetClockInfoAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "memoryClockRatioToPeak";
+    // memoryClockRatioToPeak -> Field -> float
+    os << YAML::Value << t.memoryClockRatioToPeak;
+    os << YAML::Key << "engineClockRatioToPeak";
+    // engineClockRatioToPeak -> Field -> float
+    os << YAML::Value << t.engineClockRatioToPeak;
+    os << YAML::Key << "memoryClockFrequency";
+    // memoryClockFrequency -> Field -> uint32_t
+    os << YAML::Value << t.memoryClockFrequency;
+    os << YAML::Key << "engineClockFrequency";
+    // engineClockFrequency -> Field -> uint32_t
+    os << YAML::Value << t.engineClockFrequency;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkGpaSessionCreateInfoAMD &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "secondaryCopySource";
+    // secondaryCopySource -> Field -> VkGpaSessionAMD
+    os << YAML::Value << t.secondaryCopySource;
+    os << YAML::EndMap;
+    return os;
+}
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderEnqueueFeaturesAMDX &t) {
@@ -22549,6 +23149,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMa
     os << YAML::Key << "cooperativeMatrixConversion";
     // cooperativeMatrixConversion -> Field -> VkBool32
     os << YAML::Value << t.cooperativeMatrixConversion;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceElapsedTimerQueryFeaturesQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "elapsedTimerQuery";
+    // elapsedTimerQuery -> Field -> VkBool32
+    os << YAML::Value << t.elapsedTimerQuery;
     os << YAML::EndMap;
     return os;
 }
@@ -25234,6 +25851,97 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceQueuePerfHint
     os << YAML::Key << "supportedQueues";
     // supportedQueues -> Field -> VkQueueFlags
     os << YAML::Value << t.supportedQueues;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageProcessing3FeaturesQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "imageGatherLinear";
+    // imageGatherLinear -> Field -> VkBool32
+    os << YAML::Value << t.imageGatherLinear;
+    os << YAML::Key << "imageGatherExtendedModes";
+    // imageGatherExtendedModes -> Field -> VkBool32
+    os << YAML::Value << t.imageGatherExtendedModes;
+    os << YAML::Key << "blockMatchExtendedClampToEdge";
+    // blockMatchExtendedClampToEdge -> Field -> VkBool32
+    os << YAML::Value << t.blockMatchExtendedClampToEdge;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderMultipleWaitQueues";
+    // shaderMultipleWaitQueues -> Field -> VkBool32
+    os << YAML::Value << t.shaderMultipleWaitQueues;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxShaderWaitQueues";
+    // maxShaderWaitQueues -> Field -> uint32_t
+    os << YAML::Value << t.maxShaderWaitQueues;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSplitBarrierFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderSplitBarrier";
+    // shaderSplitBarrier -> Field -> VkBool32
+    os << YAML::Value << t.shaderSplitBarrier;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSplitBarrierPropertiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "splitBarrierReservedSharedMemory";
+    // splitBarrierReservedSharedMemory -> Field -> uint32_t
+    os << YAML::Value << t.splitBarrierReservedSharedMemory;
     os << YAML::EndMap;
     return os;
 }
@@ -28625,21 +29333,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureTriang
     os << YAML::Key << "micromap";
     // micromap -> Field -> VkMicromapEXT
     os << YAML::Value << t.micromap;
-    os << YAML::EndMap;
-    return os;
-}
-
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkMicromapTriangleEXT &t) {
-    os << YAML::BeginMap;
-    os << YAML::Key << "dataOffset";
-    // dataOffset -> Field -> uint32_t
-    os << YAML::Value << t.dataOffset;
-    os << YAML::Key << "subdivisionLevel";
-    // subdivisionLevel -> Field -> uint16_t
-    os << YAML::Value << t.subdivisionLevel;
-    os << YAML::Key << "format";
-    // format -> Field -> uint16_t
-    os << YAML::Value << t.format;
     os << YAML::EndMap;
     return os;
 }
@@ -33556,6 +34249,62 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderReplica
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorRollingBackingCreateInfoARM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "wraps";
+    // wraps -> Field -> FixedArray(uint32_t)
+    {
+        os << YAML::Value;
+        {
+            os << YAML::Comment("uint32_t");
+            os << YAML::BeginSeq;
+            for (uint64_t i = 0; i < uint64_t(VK_MAX_TENSOR_CREATE_INFO_ROLLING_BACKING_WRAP_COUNT_ARM); ++i) {
+                os << t.wraps[i];
+            }  // for i
+            os << YAML::EndSeq;
+        }
+    }
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkTensorExplicitTilingFormatPropertiesARM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "brick16TilingTensorFeatures";
+    // brick16TilingTensorFeatures -> Field -> VkFormatFeatureFlags2
+    os << YAML::Value << t.brick16TilingTensorFeatures;
+    os << YAML::Key << "brick8TilingTensorFeatures";
+    // brick8TilingTensorFeatures -> Field -> VkFormatFeatureFlags2
+    os << YAML::Value << t.brick8TilingTensorFeatures;
+    os << YAML::Key << "brick4TilingTensorFeatures";
+    // brick4TilingTensorFeatures -> Field -> VkFormatFeatureFlags2
+    os << YAML::Value << t.brick4TilingTensorFeatures;
+    os << YAML::Key << "blockUTilingTensorFeatures";
+    // blockUTilingTensorFeatures -> Field -> VkFormatFeatureFlags2
+    os << YAML::Value << t.blockUTilingTensorFeatures;
+    os << YAML::Key << "blockU64kTilingTensorFeatures";
+    // blockU64kTilingTensorFeatures -> Field -> VkFormatFeatureFlags2
+    os << YAML::Value << t.blockU64kTilingTensorFeatures;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderFloat8FeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -35682,6 +36431,40 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePresentMeteri
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "multisampledRenderToSwapchain";
+    // multisampledRenderToSwapchain -> Field -> VkBool32
+    os << YAML::Value << t.multisampledRenderToSwapchain;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSwapchainFlagsSurfaceCapabilitiesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "swapchainSupportedFlags";
+    // swapchainSupportedFlags -> Field -> VkSwapchainCreateFlagsKHR
+    os << YAML::Value << t.swapchainSupportedFlags;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -36237,6 +37020,32 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkUbmSurfaceCreateInfoSEC &t)
 }
 #endif  // VK_USE_PLATFORM_UBM_SEC
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "shaderFloat4";
+    // shaderFloat4 -> Field -> VkBool32
+    os << YAML::Value << t.shaderFloat4;
+    os << YAML::Key << "shaderFloat6";
+    // shaderFloat6 -> Field -> VkBool32
+    os << YAML::Value << t.shaderFloat6;
+    os << YAML::Key << "shaderFloat8UnsignedE8M0";
+    // shaderFloat8UnsignedE8M0 -> Field -> VkBool32
+    os << YAML::Value << t.shaderFloat8UnsignedE8M0;
+    os << YAML::Key << "shaderMXInt8";
+    // shaderMXInt8 -> Field -> VkBool32
+    os << YAML::Value << t.shaderMXInt8;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -36361,6 +37170,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRest
     os << YAML::Key << "primitiveRestartIndex";
     // primitiveRestartIndex -> Field -> VkBool32
     os << YAML::Value << t.primitiveRestartIndex;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "cooperativeMatrixDecodeVector";
+    // cooperativeMatrixDecodeVector -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixDecodeVector;
     os << YAML::EndMap;
     return os;
 }
@@ -38930,6 +39756,15 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_INLINE_SESSION_PARAMETERS_INFO_KHR:
             os << *reinterpret_cast<const VkVideoDecodeAV1InlineSessionParametersInfoKHR *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_FEEDBACK_2_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR:
+            os << *reinterpret_cast<const VkVideoEncodeFeedback2CapabilitiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_QUERY_POOL_VIDEO_ENCODE_PER_PARTITION_FEEDBACK_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkQueryPoolVideoEncodePerPartitionFeedbackCreateInfoKHR *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR *>(pStruct);
             break;
@@ -38941,6 +39776,18 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_MODE_FIFO_LATEST_READY_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDevicePresentModeFifoLatestReadyFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_MICROMAP_DATA_KHR:
+            os << *reinterpret_cast<const VkAccelerationStructureGeometryMicromapDataKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceOpacityMicromapFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceOpacityMicromapPropertiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_TRIANGLES_OPACITY_MICROMAP_KHR:
+            os << *reinterpret_cast<const VkAccelerationStructureTrianglesOpacityMicromapKHR *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_FEATURES_KHR:
             os << *reinterpret_cast<const VkPhysicalDeviceMaintenance10FeaturesKHR *>(pStruct);
@@ -38962,6 +39809,27 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR:
             os << *reinterpret_cast<const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_4_KHR:
+            os << *reinterpret_cast<const VkFormatProperties4KHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkImageUsageFlags2CreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkImageCreateFlags2CreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_2_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkImageViewUsage2CreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_FLAGS_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceExtendedFlagsFeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_2_CREATE_INFO_KHR:
+            os << *reinterpret_cast<const VkImageStencilUsage2CreateInfoKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR:
+            os << *reinterpret_cast<const VkSharedPresentSurfaceCapabilities2KHR *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkDebugReportCallbackCreateInfoEXT *>(pStruct);
@@ -39183,6 +40051,27 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkAndroidHardwareBufferFormatProperties2ANDROID *>(pStruct);
             break;
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_FEATURES_AMD:
+            os << *reinterpret_cast<const VkPhysicalDeviceGpaFeaturesAMD *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_AMD:
+            os << *reinterpret_cast<const VkPhysicalDeviceGpaPropertiesAMD *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_2_AMD:
+            os << *reinterpret_cast<const VkPhysicalDeviceGpaProperties2AMD *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_GPA_SAMPLE_BEGIN_INFO_AMD:
+            os << *reinterpret_cast<const VkGpaSampleBeginInfoAMD *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_GPA_DEVICE_CLOCK_MODE_INFO_AMD:
+            os << *reinterpret_cast<const VkGpaDeviceClockModeInfoAMD *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_GPA_DEVICE_GET_CLOCK_INFO_AMD:
+            os << *reinterpret_cast<const VkGpaDeviceGetClockInfoAMD *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_GPA_SESSION_CREATE_INFO_AMD:
+            os << *reinterpret_cast<const VkGpaSessionCreateInfoAMD *>(pStruct);
+            break;
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_FEATURES_AMDX:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderEnqueueFeaturesAMDX *>(pStruct);
@@ -39381,6 +40270,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_CONVERSION_FEATURES_QCOM:
             os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ELAPSED_TIMER_QUERY_FEATURES_QCOM:
+            os << *reinterpret_cast<const VkPhysicalDeviceElapsedTimerQueryFeaturesQCOM *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT:
             os << *reinterpret_cast<const VkImportMemoryHostPointerInfoEXT *>(pStruct);
@@ -39705,6 +40597,21 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_PERF_HINT_PROPERTIES_QCOM:
             os << *reinterpret_cast<const VkPhysicalDeviceQueuePerfHintPropertiesQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_3_FEATURES_QCOM:
+            os << *reinterpret_cast<const VkPhysicalDeviceImageProcessing3FeaturesQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_FEATURES_QCOM:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_PROPERTIES_QCOM:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderSplitBarrierFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_PROPERTIES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderSplitBarrierPropertiesEXT *>(pStruct);
             break;
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_CUDA_MODULE_CREATE_INFO_NV:
@@ -40769,6 +41676,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_TENSOR_ROLLING_BACKING_CREATE_INFO_ARM:
+            os << *reinterpret_cast<const VkTensorRollingBackingCreateInfoARM *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_TENSOR_EXPLICIT_TILING_FORMAT_PROPERTIES_ARM:
+            os << *reinterpret_cast<const VkTensorExplicitTilingFormatPropertiesARM *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT8_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderFloat8FeaturesEXT *>(pStruct);
             break;
@@ -40978,6 +41891,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDevicePresentMeteringFeaturesNV *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SWAPCHAIN_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SWAPCHAIN_FLAGS_SURFACE_CAPABILITIES_EXT:
+            os << *reinterpret_cast<const VkSwapchainFlagsSurfaceCapabilitiesEXT *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_DEVICE_MEMORY_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT *>(pStruct);
             break;
@@ -41052,6 +41971,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkUbmSurfaceCreateInfoSEC *>(pStruct);
             break;
 #endif  // VK_USE_PLATFORM_UBM_SEC
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MIXED_FLOAT_DOT_PRODUCT_FEATURES_VALVE:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE *>(pStruct);
             break;
@@ -41072,6 +41994,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_DECODE_VECTOR_FEATURES_NV:
+            os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);

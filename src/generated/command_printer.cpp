@@ -2818,6 +2818,54 @@ void CommandPrinter::PrintCmdInsertDebugUtilsLabelEXTArgs(YAML::Emitter &os,
     }
 }
 
+void CommandPrinter::PrintCmdBeginGpaSessionAMDArgs(YAML::Emitter &os, const CmdBeginGpaSessionAMDArgs &args) {
+    os << YAML::Key << "gpaSession";
+    // gpaSession -> Field -> VkGpaSessionAMD
+    os << YAML::Value << args.gpaSession;
+}
+
+void CommandPrinter::PrintCmdEndGpaSessionAMDArgs(YAML::Emitter &os, const CmdEndGpaSessionAMDArgs &args) {
+    os << YAML::Key << "gpaSession";
+    // gpaSession -> Field -> VkGpaSessionAMD
+    os << YAML::Value << args.gpaSession;
+}
+
+void CommandPrinter::PrintCmdBeginGpaSampleAMDArgs(YAML::Emitter &os, const CmdBeginGpaSampleAMDArgs &args) {
+    os << YAML::Key << "gpaSession";
+    // gpaSession -> Field -> VkGpaSessionAMD
+    os << YAML::Value << args.gpaSession;
+    os << YAML::Key << "pGpaSampleBeginInfo";
+    // pointer
+    if (args.pGpaSampleBeginInfo != nullptr) {
+        os << YAML::Value << *args.pGpaSampleBeginInfo;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+    os << YAML::Key << "pSampleID";
+    // pointer
+    if (args.pSampleID != nullptr) {
+        os << YAML::Value << *args.pSampleID;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
+void CommandPrinter::PrintCmdEndGpaSampleAMDArgs(YAML::Emitter &os, const CmdEndGpaSampleAMDArgs &args) {
+    os << YAML::Key << "gpaSession";
+    // gpaSession -> Field -> VkGpaSessionAMD
+    os << YAML::Value << args.gpaSession;
+    os << YAML::Key << "sampleID";
+    // sampleID -> Field -> uint32_t
+    os << YAML::Value << args.sampleID;
+}
+
+void CommandPrinter::PrintCmdCopyGpaSessionResultsAMDArgs(YAML::Emitter &os,
+                                                          const CmdCopyGpaSessionResultsAMDArgs &args) {
+    os << YAML::Key << "gpaSession";
+    // gpaSession -> Field -> VkGpaSessionAMD
+    os << YAML::Value << args.gpaSession;
+}
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void CommandPrinter::PrintCmdInitializeGraphScratchMemoryAMDXArgs(YAML::Emitter &os,
                                                                   const CmdInitializeGraphScratchMemoryAMDXArgs &args) {
@@ -6145,6 +6193,41 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdInsertDebugUtilsLabelEXTArgs *>(cmd.parameters);
                 PrintCmdInsertDebugUtilsLabelEXTArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginGpaSessionAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginGpaSessionAMDArgs *>(cmd.parameters);
+                PrintCmdBeginGpaSessionAMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndGpaSessionAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndGpaSessionAMDArgs *>(cmd.parameters);
+                PrintCmdEndGpaSessionAMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdBeginGpaSampleAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdBeginGpaSampleAMDArgs *>(cmd.parameters);
+                PrintCmdBeginGpaSampleAMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdEndGpaSampleAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdEndGpaSampleAMDArgs *>(cmd.parameters);
+                PrintCmdEndGpaSampleAMDArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kCmdCopyGpaSessionResultsAMD:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<CmdCopyGpaSessionResultsAMDArgs *>(cmd.parameters);
+                PrintCmdCopyGpaSessionResultsAMDArgs(os, *args);
             }
             break;
 
