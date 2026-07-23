@@ -32,7 +32,7 @@
 // Debug info for a Vulkan object
 // -----------------------------------------------------------------------------
 struct ObjectInfo {
-    ObjectInfo(uint64_t o, VkObjectType t, const char* n) : object(o), type(t), name(n) {}
+    ObjectInfo(uint64_t o, VkObjectType t, const char* n) : object(o), type(t), name(n ? n : "") {}
     ObjectInfo() : object(0), type(VK_OBJECT_TYPE_UNKNOWN), name("") {}
 
     uint64_t object;
