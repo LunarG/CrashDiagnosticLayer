@@ -36,6 +36,15 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Remove when min is 3.26, see CMP0
 
 find_package(VulkanHeaders REQUIRED CONFIG QUIET)
 find_package(VulkanUtilityLibraries REQUIRED CONFIG QUIET)
+
+# Workaround AppleClang using the wrong headers when there are headers in /usr/local/include
+if (CMAKE_CXX_COMPILER_ID STREQUAL AppleClang AND TARGET Vulkan::Headers AND TARGET Vulkan::LayerSettings AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.25)
+    set_target_properties(Vulkan::Headers PROPERTIES SYSTEM OFF)
+    set_target_properties(Vulkan::LayerSettings PROPERTIES SYSTEM OFF)
+    set_target_properties(Vulkan::SafeStruct PROPERTIES SYSTEM OFF)
+    set_target_properties(Vulkan::UtilityHeaders PROPERTIES SYSTEM OFF)
+endif()
+
 find_package(yaml-cpp REQUIRED CONFIG QUIET)
 
 if(WIN32)
