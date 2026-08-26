@@ -210,6 +210,7 @@ struct InstanceDispatchTable {
     PFN_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM EnumeratePhysicalDeviceShaderInstrumentationMetricsARM;
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM
         GetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM;
+    PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT GetPhysicalDeviceCooperativeMatrixProperties2EXT;
 #ifdef VK_USE_PLATFORM_UBM_SEC
     PFN_vkCreateUbmSurfaceSEC CreateUbmSurfaceSEC;
 #endif  // VK_USE_PLATFORM_UBM_SEC

@@ -36970,6 +36970,96 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeOccupa
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixProperties2EXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "MGranularity";
+    // MGranularity -> Field -> uint32_t
+    os << YAML::Value << t.MGranularity;
+    os << YAML::Key << "NGranularity";
+    // NGranularity -> Field -> uint32_t
+    os << YAML::Value << t.NGranularity;
+    os << YAML::Key << "KGranularity";
+    // KGranularity -> Field -> uint32_t
+    os << YAML::Value << t.KGranularity;
+    os << YAML::Key << "AType";
+    // AType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.AType;
+    os << YAML::Key << "BType";
+    // BType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.BType;
+    os << YAML::Key << "CType";
+    // CType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.CType;
+    os << YAML::Key << "ResultType";
+    // ResultType -> Field -> VkComponentTypeKHR
+    os << YAML::Value << t.ResultType;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixInfo2EXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "scope";
+    // scope -> Field -> VkScopeKHR
+    os << YAML::Value << t.scope;
+    os << YAML::Key << "invocations";
+    // invocations -> Field -> uint32_t
+    os << YAML::Value << t.invocations;
+    os << YAML::Key << "subgroupSize";
+    // subgroupSize -> Field -> uint32_t
+    os << YAML::Value << t.subgroupSize;
+    os << YAML::Key << "flags";
+    // flags -> Field -> VkCooperativeMatrixFlagsEXT
+    os << YAML::Value << t.flags;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "cooperativeMatrixProperties2";
+    // cooperativeMatrixProperties2 -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixProperties2;
+    os << YAML::Key << "cooperativeMatrixReductions";
+    // cooperativeMatrixReductions -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixReductions;
+    os << YAML::Key << "cooperativeMatrixConversions";
+    // cooperativeMatrixConversions -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixConversions;
+    os << YAML::Key << "cooperativeMatrixPerElementOperations";
+    // cooperativeMatrixPerElementOperations -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixPerElementOperations;
+    os << YAML::Key << "cooperativeMatrixGetCoordinate";
+    // cooperativeMatrixGetCoordinate -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixGetCoordinate;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -37170,6 +37260,40 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRest
     os << YAML::Key << "primitiveRestartIndex";
     // primitiveRestartIndex -> Field -> VkBool32
     os << YAML::Value << t.primitiveRestartIndex;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageTilingControlFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "imageTilingControl";
+    // imageTilingControl -> Field -> VkBool32
+    os << YAML::Value << t.imageTilingControl;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlCreateInfoEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "tilingControl";
+    // tilingControl -> Field -> VkImageTilingControlEXT
+    os << YAML::Value << t.tilingControl;
     os << YAML::EndMap;
     return os;
 }
@@ -41963,6 +42087,15 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV *>(pStruct);
             break;
+        case VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT:
+            os << *reinterpret_cast<const VkCooperativeMatrixProperties2EXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrixInfo2EXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT *>(pStruct);
             break;
@@ -41994,6 +42127,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceImageTilingControlFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_IMAGE_TILING_CONTROL_CREATE_INFO_EXT:
+            os << *reinterpret_cast<const VkImageTilingControlCreateInfoEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_DECODE_VECTOR_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV *>(pStruct);

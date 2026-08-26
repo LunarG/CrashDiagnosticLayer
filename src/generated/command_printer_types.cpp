@@ -1305,6 +1305,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkNeuralAcceleratorStatistics
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlEXT &t) {
+    os << string_VkImageTilingControlEXT(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildAccelerationStructureModeKHR &t) {
     os << string_VkBuildAccelerationStructureModeKHR(t);
     return os;

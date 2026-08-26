@@ -302,6 +302,8 @@ void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa
     dt->GetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM =
         (PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM)pa(
             instance, "vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM");
+    dt->GetPhysicalDeviceCooperativeMatrixProperties2EXT = (PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT)pa(
+        instance, "vkGetPhysicalDeviceCooperativeMatrixProperties2EXT");
 #ifdef VK_USE_PLATFORM_UBM_SEC
     dt->CreateUbmSurfaceSEC = (PFN_vkCreateUbmSurfaceSEC)pa(instance, "vkCreateUbmSurfaceSEC");
 #endif  // VK_USE_PLATFORM_UBM_SEC
