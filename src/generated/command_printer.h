@@ -440,6 +440,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeTypeAR
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeConnectionTypeARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkThrottleHintTypeSEC &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkNeuralAcceleratorStatisticsModeARM &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildAccelerationStructureModeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderGroupShaderKHR &t);
 
@@ -2063,6 +2064,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineCache
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComputeOccupancyPriorityParametersNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixProperties2EXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixInfo2EXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT &t);
 #ifdef VK_USE_PLATFORM_UBM_SEC
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkUbmSurfaceCreateInfoSEC &t);
@@ -2075,6 +2079,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphNeur
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNeuralStatisticsCreateInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageTilingControlFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
