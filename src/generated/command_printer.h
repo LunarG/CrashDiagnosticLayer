@@ -2082,6 +2082,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRest
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageTilingControlFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrivateDataBaseHandleFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
