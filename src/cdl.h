@@ -18,7 +18,6 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include <vulkan/layer/vk_layer_settings.hpp>
 #include <vulkan/utility/vk_struct_helper.hpp>
 #include <vulkan/utility/vk_safe_struct.hpp>
 
@@ -41,6 +40,7 @@
 #include "device.h"
 #include "layer_base.h"
 #include "logger.h"
+#include "layer_settings.h"
 #include "system.h"
 
 namespace crash_diagnostic_layer {
@@ -53,25 +53,6 @@ constexpr bool IsVkError(VkResult result) {
 struct DeviceCreateInfo {
     vku::safe_VkDeviceCreateInfo original;
     vku::safe_VkDeviceCreateInfo modified;
-};
-
-enum CrashSource {
-    kDeviceLostError,
-    kWatchdogTimer,
-};
-
-// Used for command buffers, commands and queue submisions
-enum class DumpCommands {
-    kRunning = 0,
-    kPending,
-    kAll,
-};
-
-enum class DumpShaders {
-    kOff = 0,
-    kOnCrash,
-    kOnBind,
-    kAll,
 };
 
 static inline void NewHandler() {
@@ -91,26 +72,6 @@ T* NewArray(size_t size) {
     std::set_new_handler(NewHandler);
     return new T[size];
 }
-
-struct Settings {
-    Settings();
-    Settings(VkuLayerSettingSet settings, Logger& log);
-    ~Settings() {}
-    void Print(YAML::Emitter& os) const;
-
-    DumpCommands dump_queue_submits{DumpCommands::kRunning};
-    DumpCommands dump_command_buffers{DumpCommands::kRunning};
-    DumpCommands dump_commands{DumpCommands::kRunning};
-    DumpShaders dump_shaders{DumpShaders::kOff};
-    std::string output_path;
-    bool instrument_all_commands{false};
-    bool track_semaphores{false};
-    bool trace_all_semaphores{false};
-    bool trace_all{false};
-    bool sync_after_commands{false};
-    bool trigger_watchdog_timer{true};
-    uint64_t watchdog_timer_ms{30000};
-};
 
 class Context : public Interceptor {
    public:
@@ -141,7 +102,7 @@ class Context : public Interceptor {
     DevicePtr GetQueueDevice(VkQueue);
     ConstDevicePtr GetQueueDevice(VkQueue) const;
 
-    const Settings& GetSettings() const { return settings_.value(); }
+    const LayerSettings& GetSettings() const { return settings_.value(); }
 
     void DumpAllDevicesExecutionState(CrashSource crash_source);
     void DumpDeviceExecutionState(Device& device, CrashSource crash_source = kDeviceLostError);
@@ -313,7 +274,7 @@ class Context : public Interceptor {
     template <typename T>
     void QueryFeature(VkPhysicalDevice physicalDevice, T* feature);
 
-    std::optional<Settings> settings_;
+    std::optional<LayerSettings> settings_;
 
     TimePoint start_time_;
     Logger logger_;

@@ -60,7 +60,14 @@ enum AreaFields {
     AREA_SHADERS_BIT = (1 << AREA_SHADERS)
 };
 
-std::string GetSettingKey();
+std::string GetSettingKey(SettingId id) {
+    static std::string TABLE[] = {
+        "sync_after_commands", // 
+    };
+
+    return TABLE[id];
+}
+
 SettingId GetSettingId(const std::string& setting_key);
 
 bool IsDeprecated(SettingId setting_id);
@@ -118,13 +125,13 @@ static const std::unordered_map<std::string, DumpShaders> kDumpShadersValues{
 
 
 #define MakeStringSetting(_name) \
-    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eString, 1, &_name)
+    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eString, 1, &_name)
 
 #define MakeBoolSetting(_name) \
-    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eBool32, 1, &_name)
+    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eBool32, 1, &_name)
 
 #define MakeUint64Setting(_name) \
-    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eUint64, 1, &_name)
+    vk::LayerSettingEXT(kLayerSettingsName, #_name, vk::LayerSettingTypeEXT::eUint64, 1, &_name)
 
 Settings::Settings(VkuLayerSettingSet layer_settings, Logger& log) {
     GetEnvVal<std::string>(layer_settings, settings::kOutputPath, output_path);
