@@ -597,11 +597,18 @@ void* MakeSignalSubmissionPnext(const void* in_p_next) {
 VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
     UpdateSeq();
     VkResult result = VK_SUCCESS;
+    const bool wait_idle = device_.GetContext().GetSettings().dump_queue_submits_wait;
 
-    Submission submission(kQueueSubmit, ++submit_seq_);
+    std::unique_lock<std::mutex> lock(queue_submits_mutex_, std::try_to_lock);
+    Submission& submission = queue_submits_.emplace_back(kQueueSubmit, ++submit_seq_);
+    // Temporarily make the end sequence infinite in case we hang while processing in this function.
+    submission.end_seq = ~0ull;
+    lock.unlock();
 
     for (uint32_t i = 0; i < submitCount; i++) {
-        SubmitInfo submit_info(device_, pSubmits[i], submit_seq_++);
+        SubmitInfo& submit_info = submission.submit_infos.emplace_back(device_, pSubmits[i], submit_seq_++);
+        // Temporarily make the end sequence infinite in case we hang while processing in this function.
+        submit_info.end_seq = ~0ull;
         {
             auto timeline_values = vku::InitStruct<VkTimelineSemaphoreSubmitInfo>();
             timeline_values.signalSemaphoreValueCount = 1;
@@ -609,8 +616,18 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
             auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
             submit.signalSemaphoreCount = 1;
             submit.pSignalSemaphores = &submit_sem_;
-            if (result == VK_SUCCESS) {
-                result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            if (result != VK_SUCCESS) {
+                break;
+            }
+            if (wait_idle) {
+                result = device_.Dispatch().QueueWaitIdle(vk_queue_);
+                if (result != VK_SUCCESS) {
+                    break;
+                }
+                if (!UpdateIdleState()) {
+                    break;
+                }
             }
         }
         if (NeedWaitSubmission(pSubmits[i])) {
@@ -619,10 +636,20 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
             submit.waitSemaphoreCount = pSubmits[i].waitSemaphoreCount;
             submit.pWaitSemaphores = pSubmits[i].pWaitSemaphores;
             submit.pWaitDstStageMask = pSubmits[i].pWaitDstStageMask;
-            if (result == VK_SUCCESS) {
-                result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
-            }
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             vku::FreePnextChain(submit.pNext);
+            if (result != VK_SUCCESS) {
+                break;
+            }
+            if (wait_idle) {
+                result = device_.Dispatch().QueueWaitIdle(vk_queue_);
+                if (result != VK_SUCCESS) {
+                    break;
+                }
+                if (!UpdateIdleState()) {
+                    break;
+                }
+            }
         }
         {
             void* p_next = MakeMiddleSubmissionPnext(pSubmits[i].pNext);
@@ -641,11 +668,24 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
                 submit.pCommandBuffers = &cb;
                 submit.signalSemaphoreCount = 1;
                 submit.pSignalSemaphores = &submit_sem_;
-                if (result == VK_SUCCESS) {
-                    result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+                result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+                vku::FreePnextChain(p_next);
+                if (result != VK_SUCCESS) {
+                    break;
+                }
+                if (wait_idle) {
+                    result = device_.Dispatch().QueueWaitIdle(vk_queue_);
+                    if (result != VK_SUCCESS) {
+                        break;
+                    }
+                    if (!UpdateIdleState()) {
+                        break;
+                    }
                 }
             }
-            vku::FreePnextChain(p_next);
+            if (result != VK_SUCCESS) {
+                break;
+            }
         }
         submit_info.end_seq = ++submit_seq_;
         {
@@ -655,8 +695,18 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
             auto submit = vku::InitStruct<VkSubmitInfo>(&timeline_values);
             submit.signalSemaphoreCount = 1;
             submit.pSignalSemaphores = &submit_sem_;
-            if (result == VK_SUCCESS) {
-                result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
+            if (result != VK_SUCCESS) {
+                break;
+            }
+            if (wait_idle) {
+                result = device_.Dispatch().QueueWaitIdle(vk_queue_);
+                if (result != VK_SUCCESS) {
+                    break;
+                }
+                if (!UpdateIdleState()) {
+                    break;
+                }
             }
         }
         if (NeedSignalSubmission(pSubmits[i])) {
@@ -664,24 +714,29 @@ VkResult Queue::Submit(uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFen
             submit.pNext = MakeSignalSubmissionPnext(pSubmits[i].pNext);
             submit.signalSemaphoreCount = pSubmits[i].signalSemaphoreCount;
             submit.pSignalSemaphores = pSubmits[i].pSignalSemaphores;
-            if (result == VK_SUCCESS) {
-                result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
-            }
+            result = device_.Dispatch().QueueSubmit(vk_queue_, 1, &submit, VK_NULL_HANDLE);
             vku::FreePnextChain(submit.pNext);
+            if (result != VK_SUCCESS) {
+                break;
+            }
+            if (wait_idle) {
+                result = device_.Dispatch().QueueWaitIdle(vk_queue_);
+                if (result != VK_SUCCESS) {
+                    break;
+                }
+                if (!UpdateIdleState()) {
+                    break;
+                }
+            }
         }
 
         if (trace_all_semaphores_) {
             LogSubmitInfoSemaphores(submit_info);
         }
-        submission.submit_infos.emplace_back(std::move(submit_info));
     }
     submission.end_seq = submit_seq_;  // don't increment so that this is the same as submit_infos.back().end_seq;
     Log().Verbose("%s submit: %lld to %lld", device_.GetObjectInfo((uint64_t)vk_queue_).c_str(), submission.start_seq,
                   submission.end_seq);
-    {
-        std::lock_guard<std::mutex> lock(queue_submits_mutex_);
-        queue_submits_.emplace_back(std::move(submission));
-    }
     if (fence && result == VK_SUCCESS) {
         result = device_.Dispatch().QueueSubmit(vk_queue_, 0, nullptr, fence);
     }

@@ -99,6 +99,7 @@ struct Settings {
     void Print(YAML::Emitter& os) const;
 
     DumpCommands dump_queue_submits{DumpCommands::kRunning};
+    bool dump_queue_submits_wait{false};
     DumpCommands dump_command_buffers{DumpCommands::kRunning};
     DumpCommands dump_commands{DumpCommands::kRunning};
     DumpShaders dump_shaders{DumpShaders::kOff};
