@@ -142,6 +142,10 @@ Queue::SubmitInfo::SubmitInfo(Device& device, const VkBindSparseInfo& sparse_inf
 }
 
 bool Queue::UpdateSeq() {
+    if (!device_.GetContext().GetSettings().trigger_timeline_semaphore) {
+        return true;
+    }
+
     uint64_t value = 0;
     VkResult result;
     if (device_.Dispatch().GetSemaphoreCounterValue) {
