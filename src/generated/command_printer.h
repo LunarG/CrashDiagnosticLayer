@@ -1132,6 +1132,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance10
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingEndInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkRenderingAttachmentFlagsInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkResolveImageModeInfoKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance11FeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkFormatProperties4KHR &t);
@@ -1855,7 +1856,6 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLayerSettingsCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderCoreBuiltinsFeaturesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderCoreBuiltinsPropertiesARM &t);
-YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLatencySleepModeInfoNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkLatencySleepInfoNV &t);
@@ -2083,6 +2083,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageTilingCo
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrivateDataBaseHandleFeaturesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os,
+                          const VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os,
+                          const VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVALVE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferDeviceAddressAlignmentAllocateInfoVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);
