@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Copyright (c) 2020-2024 Valve Corporation
-# Copyright (c) 2020-2024 LunarG, Inc.
+# Copyright (c) 2020-2024, 2026 Valve Corporation
+# Copyright (c) 2020-2024, 2026 LunarG, Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,10 +53,10 @@ def VerifyClangFormatSource(commit, target_files):
     retval = 0
     good_file_pattern = re.compile('.*\\.(cpp|cc|c\+\+|cxx|c|h|hpp)$')
     diff_files_list = [item for item in target_files if good_file_pattern.search(item)]
-    diff_files = ' '.join([str(elem) for elem in diff_files_list])
     retval = 0
-    if diff_files != '':
-        git_diff = subprocess.Popen(('git', 'diff', '-U0', target_refspec, '--', diff_files), stdout=subprocess.PIPE)
+    if diff_files_list:
+        git_diff = subprocess.Popen(['git', 'diff', '-U0', target_refspec, '--'] + diff_files_list,
+                                    stdout=subprocess.PIPE)
         diff_files_data = subprocess.check_output(('python3', './scripts/clang-format-diff.py', '-p1', '-style=file'), stdin=git_diff.stdout)
         diff_files_data = diff_files_data.decode('utf-8')
         if diff_files_data != '':
@@ -189,10 +189,10 @@ def VerifyTypeAssign(commit, target_files):
     target_refspec = f'{commit}^...{commit}'
 
     test_files_list = [item for item in target_files if item.startswith('tests/')]
-    test_files = ' '.join([str(elem) for elem in test_files_list])
-    if not test_files:
+    if not test_files_list:
         return 0
-    test_diff = subprocess.Popen(('git', 'diff', '-U0', target_refspec, '--', test_files), stdout=subprocess.PIPE)
+    test_diff = subprocess.Popen(['git', 'diff', '-U0', target_refspec, '--'] + test_files_list,
+                                 stdout=subprocess.PIPE)
     stdout, stderr = test_diff.communicate()
     stdout = stdout.decode('utf-8')
     stype_regex = re.compile(r'\.sType\s*=')
