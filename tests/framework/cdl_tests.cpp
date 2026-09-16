@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2024 The Khronos Group Inc.
- * Copyright (c) 2015-2024 Valve Corporation
- * Copyright (c) 2015-2024 LunarG, Inc.
+ * Copyright (c) 2015-2024, 2026 The Khronos Group Inc.
+ * Copyright (c) 2015-2024, 2026 Valve Corporation
+ * Copyright (c) 2015-2024, 2026 LunarG, Inc.
  * Copyright (c) 2015-2023 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -122,7 +122,7 @@ static std::vector<std::string> GetVkEnvironmentVariable(const char *env_var) {
 }
 
 static void CheckAndSetEnvironmentVariables() {
-    if (!CDLTestBase::no_mock_icd_) {
+    if (kMockICDAvailable && !CDLTestBase::no_mock_icd_) {
         std::filesystem::path icd_path{kMockICDBuildPath};
         icd_path /= "CDL_Test_ICD.json";
         std::string path_str = icd_path.string();

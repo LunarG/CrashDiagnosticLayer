@@ -21,14 +21,15 @@ project(crash_diagnostic LANGUAGES CXX)
 # variant (e.g. Vulkan SC)
 set(API_TYPE "vulkan")
 
-add_subdirectory(scripts)
-
+# These must be set before add_subdirectory(scripts), which forwards them to the dependency builds.
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
 set(CMAKE_VISIBILITY_INLINES_HIDDEN "YES")
+
+add_subdirectory(scripts)
 
 include(GNUInstallDirs)
 
@@ -37,15 +38,27 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Remove when min is 3.26, see CMP0
 find_package(VulkanHeaders REQUIRED CONFIG QUIET)
 find_package(VulkanUtilityLibraries REQUIRED CONFIG QUIET)
 
-# Workaround AppleClang using the wrong headers when there are headers in /usr/local/include
-if (CMAKE_CXX_COMPILER_ID STREQUAL AppleClang AND TARGET Vulkan::Headers AND TARGET Vulkan::LayerSettings AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.25)
-    set_target_properties(Vulkan::Headers PROPERTIES SYSTEM OFF)
-    set_target_properties(Vulkan::LayerSettings PROPERTIES SYSTEM OFF)
-    set_target_properties(Vulkan::SafeStruct PROPERTIES SYSTEM OFF)
-    set_target_properties(Vulkan::UtilityHeaders PROPERTIES SYSTEM OFF)
-endif()
+# Workaround AppleClang using the wrong headers when there are headers in /usr/local/include.
+# CMake 3.25+ passes imported targets' includes with -isystem, which AppleClang searches *after*
+# its implicit /usr/local/include. A system installed copy of a dependency then wins over the one
+# we are actually linking against, which silently produces ABI mismatches as well as build errors.
+# Turning SYSTEM off puts the includes back on the -I path, ahead of /usr/local/include.
+function(cdl_no_system_includes)
+    if (NOT CMAKE_CXX_COMPILER_ID STREQUAL AppleClang OR CMAKE_VERSION VERSION_LESS 3.25)
+        return()
+    endif()
+    foreach (target IN LISTS ARGN)
+        if (TARGET ${target})
+            set_target_properties(${target} PROPERTIES SYSTEM OFF)
+        endif()
+    endforeach()
+endfunction()
+
+cdl_no_system_includes(Vulkan::Headers Vulkan::LayerSettings Vulkan::SafeStruct Vulkan::UtilityHeaders)
 
 find_package(yaml-cpp REQUIRED CONFIG QUIET)
+
+cdl_no_system_includes(yaml-cpp::yaml-cpp)
 
 if(WIN32)
     target_compile_definitions(Vulkan::Headers INTERFACE VK_USE_PLATFORM_WIN32_KHR)
