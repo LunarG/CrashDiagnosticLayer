@@ -1,6 +1,6 @@
 /*
  Copyright 2020 Google Inc.
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2024, 2026 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "marker.h"
+#include "system.h"
 
 namespace crash_diagnostic_layer {
 
@@ -77,8 +78,8 @@ class SemaphoreTracker {
     bool GetSemaphoreValue(VkSemaphore vk_semaphore, uint64_t& value) const;
     VkSemaphoreTypeKHR GetSemaphoreType(VkSemaphore vk_semaphore) const;
 
-    void BeginWaitOnSemaphores(int pid, int tid, const VkSemaphoreWaitInfoKHR* pWaitInfo);
-    void EndWaitOnSemaphores(int pid, int tid, const VkSemaphoreWaitInfoKHR* pWaitInfo);
+    void BeginWaitOnSemaphores(ProcessId pid, ThreadId tid, const VkSemaphoreWaitInfoKHR *pWaitInfo);
+    void EndWaitOnSemaphores(ProcessId pid, ThreadId tid, const VkSemaphoreWaitInfoKHR *pWaitInfo);
     void DumpWaitingThreads(YAML::Emitter& os) const;
 
     void WriteMarker(VkSemaphore vk_semaphore, VkCommandBuffer vk_command_buffer,
@@ -114,8 +115,8 @@ class SemaphoreTracker {
     };
 
     struct WaitingThreadInfo {
-        int pid = 0;
-        int tid = 0;
+        ProcessId pid = 0;
+        ThreadId tid = 0;
         SemaphoreWaitType wait_type;
         std::vector<VkSemaphore> semaphores;
         std::vector<uint64_t> wait_values;

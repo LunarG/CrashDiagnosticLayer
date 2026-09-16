@@ -1,5 +1,5 @@
 /*
- Copyright 2023-2024 LunarG, Inc.
+ Copyright 2023-2024, 2026 LunarG, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,17 +16,22 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <map>
 
 namespace crash_diagnostic_layer {
 
+// Thread ids do not necessarily fit in an int, e.g. the mach thread id on Apple is 64 bit.
+using ThreadId = int64_t;
+using ProcessId = int;
+
 class Context;
 
 class System {
    public:
-    static int GetTid();
-    static int GetPid();
+    static ThreadId GetTid();
+    static ProcessId GetPid();
     static std::string GetOutputBasePath();
 
     System(Context& context);

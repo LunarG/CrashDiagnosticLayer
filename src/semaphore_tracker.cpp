@@ -94,7 +94,7 @@ void SemaphoreTracker::EraseSemaphore(VkSemaphore vk_semaphore) {
     semaphores_.erase(vk_semaphore);
 }
 
-void SemaphoreTracker::BeginWaitOnSemaphores(int pid, int tid, const VkSemaphoreWaitInfoKHR* pWaitInfo) {
+void SemaphoreTracker::BeginWaitOnSemaphores(ProcessId pid, ThreadId tid, const VkSemaphoreWaitInfoKHR *pWaitInfo) {
     WaitingThreadInfo waiting_thread_info;
     waiting_thread_info.pid = pid;
     waiting_thread_info.tid = tid;
@@ -110,7 +110,7 @@ void SemaphoreTracker::BeginWaitOnSemaphores(int pid, int tid, const VkSemaphore
     waiting_threads_.push_back(waiting_thread_info);
 }
 
-void SemaphoreTracker::EndWaitOnSemaphores(int pid, int tid, const VkSemaphoreWaitInfoKHR* pWaitInfo) {
+void SemaphoreTracker::EndWaitOnSemaphores(ProcessId pid, ThreadId tid, const VkSemaphoreWaitInfoKHR *pWaitInfo) {
     std::lock_guard<std::mutex> lock(waiting_threads_mutex_);
     for (auto it = waiting_threads_.begin(); it != waiting_threads_.end(); it++) {
         if (it->pid == pid && it->tid == tid) {
