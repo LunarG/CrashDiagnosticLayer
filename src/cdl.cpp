@@ -252,7 +252,9 @@ Context::Context(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
         }
 
         std::string log_file;
-        if (GetEnvVal<std::string>(layer_setting_set, settings::kLogFile, log_file)) {
+        // An empty setting means "not set". Treating it as a filename makes std::ofstream fail and
+        // prints a spurious error on every run.
+        if (GetEnvVal<std::string>(layer_setting_set, settings::kLogFile, log_file) && !log_file.empty()) {
             auto iter = settings::kLogFileValues.find(log_file);
             if (iter != settings::kLogFileValues.end()) {
                 switch (iter->second) {
