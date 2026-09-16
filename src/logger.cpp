@@ -106,10 +106,10 @@ void LogCallback::Log(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUt
     }
 }
 
-Logger::Logger(const Logger::Timepoint& start_time)
+Logger::Logger(const Logger::Timepoint &start_time)
     : start_time_(start_time),
       default_cb_(vku::InitStruct<VkDebugUtilsMessengerCreateInfoEXT>(
-          nullptr, 0, severity_mask_, VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT, DefaultLogCallback, this)),
+          nullptr, 0u, severity_mask_, VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT, DefaultLogCallback, this)),
       log_stream_(&std::cerr) {}
 
 Logger::~Logger() { CloseLogFile(); }

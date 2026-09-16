@@ -116,7 +116,7 @@ TEST_F(Graphics, InfiniteLoop) {
     cmd_buff_.beginRendering(rendering_info);
 
     // using non-hpp types because those try to do memory management on pointers in the fault info struct.
-    auto counts = vku::InitStruct<VkDeviceFaultCountsEXT>(nullptr, 0, 0, 0);
+    auto counts = vku::InitStruct<VkDeviceFaultCountsEXT>(nullptr, 0u, 0u, 0ull);
     vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
     cmd_buff_.beginDebugUtilsLabelEXT(label);
 
@@ -354,7 +354,7 @@ TEST_F(Graphics, MultiDrawInfiniteLoop) {
     }
 
     // using non-hpp types because those try to do memory management on pointers in the fault info struct.
-    auto counts = vku::InitStruct<VkDeviceFaultCountsEXT>(nullptr, 0, 0, 0);
+    auto counts = vku::InitStruct<VkDeviceFaultCountsEXT>(nullptr, 0u, 0u, 0ull);
     vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
     cmd_buff_.beginDebugUtilsLabelEXT(label);
 
