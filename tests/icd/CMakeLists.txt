@@ -1,5 +1,5 @@
 # ~~~
-# Copyright (c) 2024 LunarG, Inc.
+# Copyright (c) 2024, 2026 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
 # ~~~
 
 if (MINGW)
-    return()
-elseif (APPLE)
     return()
 endif()
 
@@ -40,6 +38,8 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if(BUILD_WSI_WAYLAND_SUPPORT)
         add_definitions(-DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_WAYLAND_KHX)
     endif()
+elseif (APPLE)
+    # The test ICD implements no WSI, so no platform specific defines are needed.
 elseif (ANDROID)
     # TODO build icd on android for now even though it won't be used
 else()
@@ -119,7 +119,8 @@ endif()
 if (WIN32)
     set(JSON_LIBRARY_PATH ".\\\\${ICD_NAME}.dll")
 else()
-    set(JSON_LIBRARY_PATH "./lib${ICD_NAME}.so")
+    # Let CMake name the module, the suffix is platform dependent (e.g. .so on Linux, .dylib on Apple).
+    set(JSON_LIBRARY_PATH "./${CMAKE_SHARED_MODULE_PREFIX}${ICD_NAME}${CMAKE_SHARED_MODULE_SUFFIX}")
 endif()
 
 configure_file(${INPUT_FILE} ${INTERMEDIATE_FILE} @ONLY)

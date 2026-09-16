@@ -320,7 +320,7 @@ TEST_F(GpuCrash, ReadBeforePointerPushConstant) {
     strncpy(fault_info.description, "fault-description", sizeof(fault_info.description));
     fault_info.pAddressInfos = &address_info;
 
-    auto counts = vku::InitStruct<VkDeviceFaultCountsEXT>(&fault_info, 1, 0, 0);
+    auto counts = vku::InitStruct<VkDeviceFaultCountsEXT>(&fault_info, 1u, 0u, 0ull);
     vk::DebugUtilsLabelEXT label("hang-expected", {}, &counts);
     cmd_buff_.beginDebugUtilsLabelEXT(label);
 

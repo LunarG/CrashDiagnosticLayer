@@ -1,0 +1,3 @@
+_vkGetInstanceProcAddr
+_vkGetDeviceProcAddr
+_vkNegotiateLoaderLayerInterfaceVersion

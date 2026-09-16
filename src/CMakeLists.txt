@@ -112,6 +112,10 @@ elseif(MINGW)
 elseif(APPLE)
     message(STATUS "Functions are exported via CDL_EXPORT")
     set_target_properties(crash_diagnostic PROPERTIES SUFFIX ".dylib")
+    target_link_options(crash_diagnostic PRIVATE
+        LINKER:-exported_symbols_list,${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.exp)
+    set_property(TARGET crash_diagnostic APPEND PROPERTY LINK_DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}.exp)
 elseif(ANDROID)
     message(STATUS "Functions are exported via CDL_EXPORT")
     target_link_options(crash_diagnostic PRIVATE LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/${LAYER_NAME}-android.map,-Bsymbolic,--exclude-libs,ALL)

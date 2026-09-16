@@ -57,6 +57,12 @@ add_dependencies(cdl_tests crash_diagnostic)
 find_package(GTest CONFIG)
 find_package(glslang CONFIG)
 
+# A system installed glslang or gtest in /usr/local/include must not shadow the ones we link.
+cdl_no_system_includes(GTest::gtest
+                       glslang::glslang
+                       glslang::SPIRV
+                       glslang::glslang-default-resource-limits)
+
 target_link_libraries(cdl_tests PRIVATE
     Vulkan::Headers
     Vulkan::UtilityHeaders
@@ -72,12 +78,23 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     target_compile_definitions(cdl_tests PRIVATE VULKAN_HPP_TYPESAFE_CONVERSION=1)
 endif()
 
-# setup framework/config.h using framework/config.h.in as a source
-file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/config$<CONFIG>.h" INPUT "${CMAKE_CURRENT_SOURCE_DIR}/framework/config.h.in")
+# tests/icd skips MINGW, so the tests have to cope with there being no mock ICD to point at.
+add_subdirectory(icd)
+if (TARGET CDL_Test_ICD)
+    set(MOCK_ICD_AVAILABLE true)
+    set(MOCK_ICD_BUILD_PATH "$<TARGET_FILE_DIR:CDL_Test_ICD>")
+else()
+    set(MOCK_ICD_AVAILABLE false)
+    set(MOCK_ICD_BUILD_PATH "")
+endif()
+
+# setup framework/config.h using framework/config.h.in as a source.
+# configure_file() resolves the @VAR@ references, file(GENERATE) the generator expressions.
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/framework/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h.configured" @ONLY)
+file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/config$<CONFIG>.h" INPUT "${CMAKE_CURRENT_BINARY_DIR}/config.h.configured")
 
 # copy config$<CONFIG>.h to the build directory
 add_custom_command(
-    PRE_BUILD
     COMMAND ${CMAKE_COMMAND} "-E" "copy_if_different" "${CMAKE_CURRENT_BINARY_DIR}/config$<CONFIG>.h" "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     VERBATIM
     DEPENDS  "${CMAKE_CURRENT_BINARY_DIR}/config$<CONFIG>.h"
@@ -90,7 +107,6 @@ target_sources(cdl_tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 target_include_directories(cdl_tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_include_directories(cdl_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/framework)
 
-add_subdirectory(icd)
 
 if (ANDROID)
     add_subdirectory(android)

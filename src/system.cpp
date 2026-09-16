@@ -29,6 +29,9 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <dlfcn.h>
+#if defined(__APPLE__)
+#include <pthread.h>
+#endif
 #endif
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
@@ -40,19 +43,24 @@
 
 namespace crash_diagnostic_layer {
 
-int System::GetTid() {
+ThreadId System::GetTid() {
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-    return static_cast<int>(GetCurrentThreadId());
+    return static_cast<ThreadId>(GetCurrentThreadId());
+#elif defined(__APPLE__)
+    // Apple has no gettid(), the closest equivalent is the 64 bit mach thread id.
+    uint64_t tid = 0;
+    pthread_threadid_np(nullptr, &tid);
+    return static_cast<ThreadId>(tid);
 #else
-    return static_cast<int>(gettid());
+    return static_cast<ThreadId>(gettid());
 #endif
 }
 
-int System::GetPid() {
+ProcessId System::GetPid() {
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-    return static_cast<int>(_getpid());
+    return static_cast<ProcessId>(_getpid());
 #else
-    return static_cast<int>(getpid());
+    return static_cast<ProcessId>(getpid());
 #endif
 }
 
