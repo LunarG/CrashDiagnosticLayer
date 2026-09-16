@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024, 2026 The Khronos Group Inc.
+ * Copyright (c) 2024, 2026 Valve Corporation
+ * Copyright (c) 2024, 2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,4 +27,6 @@
 [[maybe_unused]] static const char* kMessagePrefix = "CDL";
 
 
-[[maybe_unused]] static const char *kMockICDBuildPath = "$<TARGET_FILE_DIR:CDL_Test_ICD>";
+// The mock ICD is not built on all platforms, tests must fall back to the real driver when it is absent.
+[[maybe_unused]] static const bool kMockICDAvailable = @MOCK_ICD_AVAILABLE@;
+[[maybe_unused]] static const char *kMockICDBuildPath = "@MOCK_ICD_BUILD_PATH@";

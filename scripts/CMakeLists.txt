@@ -1,5 +1,5 @@
 # ~~~
-# Copyright (c) 2023-2024 LunarG, Inc.
+# Copyright (c) 2023-2024, 2026 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,6 +64,10 @@ if (UPDATE_DEPS)
         list(APPEND update_dep_command "--skip-existing-install")
     endif()
 
+    # The dependencies MUST be built with the same C++ standard as this project. Mixing standards
+    # mixes incompatible instantiations of standard library templates in a single binary, which is an
+    # ODR violation the linker happily accepts and which corrupts memory at runtime.
+    list(APPEND cmake_vars "CMAKE_CXX_STANDARD" "CMAKE_CXX_STANDARD_REQUIRED" "CMAKE_CXX_EXTENSIONS")
     list(APPEND cmake_vars "CMAKE_TOOLCHAIN_FILE")
     if (NOT MSVC_IDE)
         list(APPEND cmake_vars "CMAKE_CXX_COMPILER" "CMAKE_C_COMPILER" "CMAKE_ASM_COMPILER")
