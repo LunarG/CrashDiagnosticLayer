@@ -15711,13 +15711,15 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineBinaryKeyKHR &t) {
     // keySize -> Field -> uint32_t
     os << YAML::Value << t.keySize;
     os << YAML::Key << "key";
-    // key -> Field -> FixedArray(uint8_t)
-    {
+    // key -> Field -> DynamicArray(uint8_t)
+    if (t.keySize == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
         os << YAML::Value;
         {
             os << YAML::Comment("uint8_t");
             os << YAML::BeginSeq;
-            for (uint64_t i = 0; i < uint64_t(VK_MAX_PIPELINE_BINARY_KEY_SIZE_KHR); ++i) {
+            for (uint64_t i = 0; i < uint64_t(t.keySize); ++i) {
                 os << t.key[i];
             }  // for i
             os << YAML::EndSeq;
@@ -37332,6 +37334,29 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrivateDataBa
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceInfoPropertiesINTEL &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "deviceIpVersionArch";
+    // deviceIpVersionArch -> Field -> uint32_t
+    os << YAML::Value << t.deviceIpVersionArch;
+    os << YAML::Key << "deviceIpVersionRelease";
+    // deviceIpVersionRelease -> Field -> uint32_t
+    os << YAML::Value << t.deviceIpVersionRelease;
+    os << YAML::Key << "deviceIpVersionRevision";
+    // deviceIpVersionRevision -> Field -> uint32_t
+    os << YAML::Value << t.deviceIpVersionRevision;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os,
                           const VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE &t) {
     os << YAML::BeginMap;
@@ -42209,6 +42234,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_BASE_HANDLE_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDevicePrivateDataBaseHandleFeaturesNV *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INFO_PROPERTIES_INTEL:
+            os << *reinterpret_cast<const VkPhysicalDeviceInfoPropertiesINTEL *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_FEATURES_VALVE:
             os << *reinterpret_cast<const VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE *>(

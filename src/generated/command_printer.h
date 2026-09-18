@@ -2083,6 +2083,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageTilingCo
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrivateDataBaseHandleFeaturesNV &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceInfoPropertiesINTEL &t);
 YAML::Emitter &operator<<(YAML::Emitter &os,
                           const VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os,
