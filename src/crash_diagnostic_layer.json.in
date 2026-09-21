@@ -14,12 +14,6 @@
             "ANDROID"
         ],
         "url": "https://vulkan.lunarg.com/doc/sdk/latest/windows/crash_diagnostic_layer.html",
-        "enable_environment": {
-            "VK_CRASH_DIAGNOSTIC_ENABLE": "1"
-        },
-        "disable_environment": {
-            "VK_CRASH_DIAGNOSTIC_DISABLE": "1"
-        },
         "instance_extensions": [
             {
                 "name": "VK_EXT_debug_report",

@@ -19,23 +19,9 @@ CDL uses the following extensions. If an extension is not present, some function
 
 ## Running
 
-CDL can be used as an explicit or implicit layer. The loader's documentation describes [the difference between implicit and explicit layers](https://github.com/KhronosGroup/Vulkan-Loader/blob/main/docs/LoaderApplicationInterface.md#implicit-vs-explicit-layers), but the relevant bit here is that implicit layers are meant to be available  to all applications on the system, even if the application doesn't explicitly enable the layer. On the other hand, explicit layers are easier to use when doing application development.
-
-### Explicit Layer
-
-To use CDL as an explicit layer, enable it with `vkconfig` or do the following:
-
+To use CDL, enable it with `vkconfig` or do the following:
 1. The directory containing the file `VkLayer_crash_diagnostic.json` is included in the layer search path, by including it in either the `VK_LAYER_PATH` or `VK_ADD_LAYER_PATH` environment variable or by using `vkconfig`.
 2. Include the layer name in the VK_INSTANCE_LAYERS environment variable or the ppEnabledLayerNames field of [VkInstanceCreateInfo](https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkInstanceCreateInfo.html).
-
-### Implicit Layer
-
-When using CDL as an implicit layer, it is disabled by default. To enable the layer's functionality, set the `CDL_ENABLE` environment variable to 1.
-
-
-#### Registering the Layer
-
-In order to be discovered by the Vulkan loader at runtime, implicit layers must be registered. The registration process is platform-specific and is discussed in detail in the [Vulkan-Loader documentation](https://github.com/KhronosGroup/Vulkan-Loader/blob/main/docs/LoaderLayerInterface.md#layer-discovery). In all cases, it is the layer manifest (the .json file) that is registered; the manifest contains a relative path to the layer library, which can be in a separate directory.
 
 ## Basic Usage
 
@@ -78,5 +64,5 @@ This layer implements the `VK_EXT_layer_settings` extension, so it can be config
   - `trace_all_semaphores` enables logging messages about every vulkan command that uses semaphores.
 - State tracking
   - `sync_after_commands` adds a pipeline barrier after every instrumented vulkan command. This will reduce performance and may cause some hangs to go away. This option currently only works when using `VK_KHR_dynamic_rendering`
-  - `instrument_all_commands` can be enabled to include completion markers around every vulkan command. This may allow more accuratute fault locations at the expense of larger command buffers and reduced performance. 
+  - `instrument_all_commands` can be enabled to include completion markers around every vulkan command. This may allow more accuratute fault locations at the expense of larger command buffers and reduced performance.
   - `track_semaphores` enables detailed semaphore state reporting in runtime logging and dump files. `VK_AMD_buffer_marker` is required for this feature.
