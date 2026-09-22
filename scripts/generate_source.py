@@ -254,13 +254,6 @@ def main(argv):
 
     # Need pass style file incase running with --verify and it can't find the file automatically in the temp directory
     styleFile = repo_relative('.clang-format')
-    if common_ci.IsGHA() and args.verify:
-        # Have found that sometimes (~5%) the 20.04 Ubuntu machines have clang-format v11 but we need v14 to
-        # use a dedicated styleFile location. For these case there we can survive just skipping the verify check
-        stdout = subprocess.check_output(['clang-format', '--version']).decode("utf-8")
-        version = stdout[stdout.index('version') + 8:][:2]
-        if int(version) < 14:
-            return 0 # Success
 
     # Update the api_version in the respective json files
     if args.generated_version:

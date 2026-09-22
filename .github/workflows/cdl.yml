@@ -37,6 +37,8 @@ permissions:
 jobs:
   code-format:
     runs-on: ubuntu-24.04
+    env:
+      CLANG_FORMAT_VERSION: 22.1.8
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,6 +46,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+      - name: Install the pinned clang-format
+        run: python3 -m pip install clang-format==${{ env.CLANG_FORMAT_VERSION }}
       - name: clang-format version
         run: clang-format --version
       - name: Execute Source Code Format Checking Script
@@ -147,13 +151,17 @@ jobs:
 
   check_cdl:
     needs: code-format
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    env:
+      CLANG_FORMAT_VERSION: 22.1.8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
       - run: python3 -m pip install pyparsing
+      - name: Install the pinned clang-format
+        run: python3 -m pip install clang-format==${{ env.CLANG_FORMAT_VERSION }}
       - name: clang-format version
         run: clang-format --version
       - run: scripts/update_deps.py --dir ext --no-build
