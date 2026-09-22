@@ -63,10 +63,10 @@ enum class CommandBufferState {
     kReset,
     // The following are extensions of kSubmitted and only can be verified when
     // a hang or crash is detected and queue semaphore or checkpoint values are read.
-    kNotStarted,  // submitted but not started
-    kIncomplete,  // submitted and started, but not finished
-    kMaybeComplete,     // submitted and finished (according to markers)
-    kCompleted,         // submitted and finished (according to queue timeline semaphore)
+    kNotStarted,     // submitted but not started
+    kIncomplete,     // submitted and started, but not finished
+    kMaybeComplete,  // submitted and finished (according to markers)
+    kCompleted,      // submitted and finished (according to queue timeline semaphore)
 };
 
 // =================================================================================================
@@ -129,14 +129,10 @@ class CommandBuffer {
     }
 
     void PreCmdEndRendering(VkCommandBuffer commandBuffer);
-    void PreCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
-        PreCmdEndRendering(commandBuffer);
-    }
+    void PreCmdEndRenderingKHR(VkCommandBuffer commandBuffer) { PreCmdEndRendering(commandBuffer); }
 
     void PostCmdEndRendering(VkCommandBuffer commandBuffer);
-    void PostCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
-        PostCmdEndRendering(commandBuffer);
-    }
+    void PostCmdEndRenderingKHR(VkCommandBuffer commandBuffer) { PostCmdEndRendering(commandBuffer); }
 
     CommandBuffer& operator=(const CommandBuffer&) = delete;
     CommandBuffer(const CommandBuffer&) = delete;

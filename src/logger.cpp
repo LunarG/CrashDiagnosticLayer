@@ -276,7 +276,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Logger::DefaultLogCallback(VkDebugUtilsMessageSev
     __android_log_write(prio, "CDL", cb_data->pMessage);
     return VK_FALSE;
 }
-#else   // !ANDROID
+#else  // !ANDROID
 VKAPI_ATTR VkBool32 VKAPI_CALL Logger::DefaultLogCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
                                                           VkDebugUtilsMessageTypeFlagsEXT types,
                                                           const VkDebugUtilsMessengerCallbackDataEXT* cb_data,

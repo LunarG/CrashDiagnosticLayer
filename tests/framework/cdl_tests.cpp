@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2024 The Khronos Group Inc.
- * Copyright (c) 2015-2024 Valve Corporation
- * Copyright (c) 2015-2024 LunarG, Inc.
+ * Copyright (c) 2015-2026 The Khronos Group Inc.
+ * Copyright (c) 2015-2026 Valve Corporation
+ * Copyright (c) 2015-2026 LunarG, Inc.
  * Copyright (c) 2015-2023 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,8 @@
 #include "test_fixtures.h"
 
 #if defined(__ANDROID__)
-static void PropCallback(void *cookie, [[maybe_unused]] const char *name, const char *value, [[maybe_unused]] uint32_t serial) {
+static void PropCallback(void *cookie, [[maybe_unused]] const char *name, const char *value,
+                         [[maybe_unused]] uint32_t serial) {
     std::string *property = static_cast<std::string *>(cookie);
     *property = value;
 }

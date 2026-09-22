@@ -1,7 +1,7 @@
 /***************************************************************************
  *
  * Copyright (C) 2021 Google Inc.
- * Copyright (c) 2023-2024 LunarG, Inc.
+ * Copyright (c) 2023-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,6 @@ class Interceptor {
     virtual const VkDeviceCreateInfo* GetModifiedDeviceCreateInfo(VkPhysicalDevice, const VkDeviceCreateInfo*) = 0;
 
 #include "layer_base.h.inc"
-
 };
 
 }  // namespace crash_diagnostic_layer
@@ -104,4 +103,3 @@ CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL
 CDL_NegotiateLoaderLayerInterfaceVersion(VkNegotiateLayerInterface* pVersionStruct);
 
 }  // extern "C"
-

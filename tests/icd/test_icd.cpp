@@ -1715,11 +1715,13 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2(VkPhysicalDevice ph
     if (ext_dbar) {
         ext_dbar->reportAddressBinding = VK_TRUE;
     }
-    auto* ext_dynamic_rendering = vku::FindStructInPNextChain<VkPhysicalDeviceDynamicRenderingFeaturesKHR>(pFeatures->pNext);
+    auto* ext_dynamic_rendering =
+        vku::FindStructInPNextChain<VkPhysicalDeviceDynamicRenderingFeaturesKHR>(pFeatures->pNext);
     if (ext_dynamic_rendering) {
         ext_dynamic_rendering->dynamicRendering = VK_TRUE;
     }
-    auto* ext_timeline_semaphore = vku::FindStructInPNextChain<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(pFeatures->pNext);
+    auto* ext_timeline_semaphore =
+        vku::FindStructInPNextChain<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(pFeatures->pNext);
     if (ext_timeline_semaphore) {
         ext_timeline_semaphore->timelineSemaphore = VK_TRUE;
     }
@@ -2369,7 +2371,8 @@ static VKAPI_ATTR void VKAPI_CALL CmdBeginDebugUtilsLabelEXT(VkCommandBuffer com
     cb->CmdBeginDebugUtilsLabel(pLabelInfo);
 }
 
-static VKAPI_ATTR VkResult VKAPI_CALL CreatePipelineBinariesKHR(VkDevice device, const VkPipelineBinaryCreateInfoKHR* pCreateInfo,
+static VKAPI_ATTR VkResult VKAPI_CALL CreatePipelineBinariesKHR(VkDevice device,
+                                                                const VkPipelineBinaryCreateInfoKHR* pCreateInfo,
                                                                 const VkAllocationCallbacks* pAllocator,
                                                                 VkPipelineBinaryHandlesInfoKHR* pBinaries) {
     unique_lock_t lock(global_lock);

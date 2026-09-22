@@ -77,8 +77,7 @@ TEST_F(Sync, HostWaitWrongSem) {
         vk::SemaphoreWaitInfo wait_info({}, *never_signalled, gpu_wait_value);
         // could be success or timeout
         (void)device_.waitSemaphores(wait_info, kWaitTimeout);
-    } catch (vk::SystemError &) {
-    }
+    } catch (vk::SystemError &) {}
     monitor_.VerifyFound();
 
     dump::File dump_file;
@@ -132,8 +131,7 @@ TEST_F(Sync, GpuWaitWrongSem) {
     monitor_.SetDesiredError("Device error encountered and log being recorded");
     try {
         queue_.waitIdle();
-    } catch (vk::SystemError &) {
-    }
+    } catch (vk::SystemError &) {}
     monitor_.VerifyFound();
 
     dump::File dump_file;
@@ -321,8 +319,7 @@ TEST_F(Sync, HostWaitHang) {
         // wait on the wrong semaphore
         vk::SemaphoreWaitInfo wait_info({}, *gpu_signalled, gpu_signal_value);
         (void)device_.waitSemaphores(wait_info, kWaitTimeout);
-    } catch (vk::SystemError &) {
-    }
+    } catch (vk::SystemError &) {}
     monitor_.VerifyFound();
 
     dump::File dump_file;
@@ -334,7 +331,8 @@ TEST_F(Sync, HostWaitHangSubmit2) {
     InitInstance();
 
     vk::StructureChain<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceSynchronization2Features,
-    vk::PhysicalDeviceTimelineSemaphoreFeatures> chain;
+                       vk::PhysicalDeviceTimelineSemaphoreFeatures>
+        chain;
 
     auto &sync2_features = chain.get<vk::PhysicalDeviceSynchronization2Features>();
     sync2_features.synchronization2 = VK_TRUE;
@@ -389,8 +387,7 @@ TEST_F(Sync, HostWaitHangSubmit2) {
         vk::SemaphoreWaitInfo wait_info({}, *gpu_signalled, gpu_signal_value);
         // could be success or timeout
         (void)device_.waitSemaphores(wait_info, kWaitTimeout);
-    } catch (vk::SystemError &) {
-    }
+    } catch (vk::SystemError &) {}
     monitor_.VerifyFound();
 
     dump::File dump_file;
@@ -430,8 +427,7 @@ TEST_F(Sync, DISABLED_FenceWaitHang) {
     try {
         // could be success or timeout
         (void)device_.waitForFences(*fence, vk::True, kWaitTimeout);
-    } catch (vk::SystemError &) {
-    }
+    } catch (vk::SystemError &) {}
     monitor_.VerifyFound();
 
     dump::File dump_file;
@@ -468,8 +464,7 @@ TEST_F(Sync, DeviceWaitHang) {
     try {
         // could be success or timeout
         (void)device_.waitIdle();
-    } catch (vk::SystemError &) {
-    }
+    } catch (vk::SystemError &) {}
     monitor_.VerifyFound();
 
     dump::File dump_file;

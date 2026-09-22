@@ -421,17 +421,19 @@ CDL_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice
 
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount,
-                                                                         VkLayerProperties* pProperties) {
+                                                                             VkLayerProperties* pProperties) {
     return crash_diagnostic_layer::InterceptEnumerateInstanceLayerProperties(pPropertyCount, pProperties);
 }
 
 CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(const char* pLayerName,
-                                                                        uint32_t* pPropertyCount,
-                                                                        VkExtensionProperties* pProperties) {
-    return crash_diagnostic_layer::InterceptEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties);
+                                                                                 uint32_t* pPropertyCount,
+                                                                                 VkExtensionProperties* pProperties) {
+    return crash_diagnostic_layer::InterceptEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount,
+                                                                                 pProperties);
 }
 
-CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t* pCount,
+CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
+                                                                           uint32_t* pCount,
                                                                            VkLayerProperties* pProperties) {
     return crash_diagnostic_layer::InterceptEnumerateDeviceLayerProperties(physicalDevice, pCount, pProperties);
 }
@@ -439,7 +441,8 @@ CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(VkPhy
 CDL_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
                                                                                const char* pLayerName, uint32_t* pCount,
                                                                                VkExtensionProperties* pProperties) {
-    return crash_diagnostic_layer::InterceptEnumerateDeviceExtensionProperties(VK_NULL_HANDLE, pLayerName, pCount, pProperties);
+    return crash_diagnostic_layer::InterceptEnumerateDeviceExtensionProperties(VK_NULL_HANDLE, pLayerName, pCount,
+                                                                               pProperties);
 }
 #endif
 

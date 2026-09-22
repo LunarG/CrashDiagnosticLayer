@@ -71,26 +71,27 @@ YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext);
             out.extend([f'#ifdef {vkhandle.protect}\n'] if vkhandle.protect else [])
             if not vkhandle.dispatchable:
                 out.append('#if VK_USE_64_BIT_PTR_DEFINES\n')
-            out.append(f'YAML::Emitter &operator<<(YAML::Emitter& os, const {vkhandle.name} &a);')
+            out.append(f'YAML::Emitter &operator<<(YAML::Emitter &os, const {vkhandle.name} &a);\n')
             if not vkhandle.dispatchable:
-                out.append('#endif //VK_USE_64_BIT_PTR_DEFINES\n')
-            out.extend([f'#endif //{vkhandle.protect}\n'] if vkhandle.protect else [])
-            out.append('\n')
+                out.append('#endif  // VK_USE_64_BIT_PTR_DEFINES\n')
+            out.extend([f'#endif  // {vkhandle.protect}\n'] if vkhandle.protect else [])
+            # We want an extra blank line after ifdef blocks
+            if vkhandle.protect or not vkhandle.dispatchable:
+                out.append('\n')
         self.write("".join(out))
-        self.write("\n// Declare stream operators for enums.\n")
+        self.write("// Declare stream operators for enums.\n")
         out = []
         for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
             out.extend([f'#ifdef {vkenum.protect}\n'] if vkenum.protect else [])
             out.append(f'YAML::Emitter &operator<<(YAML::Emitter &os, const {vkenum.name} &t);\n')
-            out.extend([f'#endif //{vkenum.protect}\n'] if vkenum.protect else [])
+            out.extend([f'#endif  // {vkenum.protect}\n'] if vkenum.protect else [])
         self.write("".join(out))
-
         self.write("\n// Declare all stream operators.\n")
         out = []
         for vkstruct in self.vk.structs.values():
             out.extend([f'#ifdef {vkstruct.protect}\n'] if vkstruct.protect else [])
             out.append(f'YAML::Emitter &operator<<(YAML::Emitter &os, const {vkstruct.name} &t);\n')
-            out.extend([f'#endif //{vkstruct.protect}\n'] if vkstruct.protect else [])
+            out.extend([f'#endif  // {vkstruct.protect}\n'] if vkstruct.protect else [])
         self.write("".join(out))
 
         out = []
@@ -105,7 +106,7 @@ class CommandPrinter {
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'  void Print{vkcommand.name[2:]}Args(YAML::Emitter &os, const {vkcommand.name[2:]}Args &args);\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+            out.extend([f'#endif  // {vkcommand.protect}\n'] if vkcommand.protect else [])
         out.append('};\n');
         self.write("".join(out))
 
@@ -311,14 +312,14 @@ void CommandPrinter::SetNameResolver(const ObjectInfoDB *name_resolver) {
             if not vkhandle.dispatchable:
                 out.append('#if VK_USE_64_BIT_PTR_DEFINES\n')
             out.append(f'''
-YAML::Emitter &operator<<(YAML::Emitter& os, const {vkhandle.name} &a) {{
+YAML::Emitter &operator<<(YAML::Emitter &os, const {vkhandle.name} &a) {{
     os << global_name_resolver->GetObjectInfo(reinterpret_cast<uint64_t>(a));
     return os;
 }}
 ''')
             if not vkhandle.dispatchable:
-                out.append('#endif //VK_USE_64_BIT_PTR_DEFINES\n')
-            out.extend([f'#endif //{vkhandle.protect}\n'] if vkhandle.protect else [])
+                out.append('#endif  // VK_USE_64_BIT_PTR_DEFINES\n')
+            out.extend([f'#endif  // {vkhandle.protect}\n'] if vkhandle.protect else [])
             out.append('\n')
         self.write("".join(out))
 
@@ -326,11 +327,11 @@ YAML::Emitter &operator<<(YAML::Emitter& os, const {vkhandle.name} &a) {{
         out = []
         for vkenum in [x for x in self.vk.enums.values() if len(x.fields) > 0]:
             out.extend([f'#ifdef {vkenum.protect}\n'] if vkenum.protect else [])
-            out.append(f'YAML::Emitter &operator<<(YAML::Emitter & os, const {vkenum.name} &t) {{\n')
+            out.append(f'YAML::Emitter &operator<<(YAML::Emitter &os, const {vkenum.name} &t) {{\n')
             out.append(f'  os << string_{vkenum.name}(t);\n')
             out.append('  return os;\n')
             out.append('}\n')
-            out.extend([f'#endif //{vkenum.protect}\n'] if vkenum.protect else [])
+            out.extend([f'#endif  // {vkenum.protect}\n'] if vkenum.protect else [])
             out.append('\n')
         self.write("".join(out))
 
@@ -364,14 +365,14 @@ YAML::Emitter &PrintNextPtr(YAML::Emitter &os, const void *pNext) {
             if vkstruct.name in manual_structs:
                 continue
             out.extend([f'#ifdef {vkstruct.protect}\n'] if vkstruct.protect else [])
-            out.append(f'YAML::Emitter &operator<<(YAML::Emitter & os, const {vkstruct.name} &t) {{\n')
+            out.append(f'YAML::Emitter &operator<<(YAML::Emitter &os, const {vkstruct.name} &t) {{\n')
             out.append('  os << YAML::BeginMap;\n')
             for member in vkstruct.members:
                 self.printMember(out, member, 't', False)
             out.append('  os << YAML::EndMap;\n')
             out.append('  return os;\n')
             out.append('}\n')
-            out.extend([f'#endif //{vkstruct.protect}\n'] if vkstruct.protect else [])
+            out.extend([f'#endif  // {vkstruct.protect}\n'] if vkstruct.protect else [])
             out.append('\n')
         self.write("".join(out))
 
@@ -507,7 +508,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildG
 
         out = []
         out.append('//  Print out a VkStruct\n')
-        out.append('YAML::Emitter & PrintVkStruct(YAML::Emitter & os, const VkStruct *pStruct) {\n')
+        out.append('YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {\n')
         out.append('  switch (pStruct->sType) {\n')
         for vkstruct in self.vk.structs.values():
             if vkstruct.sType is None:
@@ -516,7 +517,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildG
             out.append(f'  case {vkstruct.sType}:\n')
             out.append(f'    os << *reinterpret_cast<const {vkstruct.name} *>(pStruct);\n')
             out.append('    break;\n')
-            out.extend([f'#endif //{vkstruct.protect}\n'] if vkstruct.protect else [])
+            out.extend([f'#endif  // {vkstruct.protect}\n'] if vkstruct.protect else [])
 
         out.append('  default: break;\n')
         out.append('  }\n')
@@ -541,12 +542,12 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildG
         for vkcommand in filter(lambda x: self.CommandBufferCall(x), self.vk.commands.values()):
             out.extend([f'#ifdef {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append(f'void CommandPrinter::Print{vkcommand.name[2:]}Args(\n')
-            out.append(f'  YAML::Emitter & os, const {vkcommand.name[2:]}Args &args) {{\n')
+            out.append(f'  YAML::Emitter &os, const {vkcommand.name[2:]}Args &args) {{\n')
             for member in vkcommand.params:
                 if member.name != 'commandBuffer':
                     self.printMember(out, member, 'args', False)
             out.append('}\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+            out.extend([f'#endif  // {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
         out.append('''
 void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cmd)
@@ -567,7 +568,7 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             out.append(f'        Print{vkcommand.name[2:]}Args(os, *args);\n')
             out.append('      }\n')
             out.append('      break;\n')
-            out.extend([f'#endif //{vkcommand.protect}\n'] if vkcommand.protect else [])
+            out.extend([f'#endif  // {vkcommand.protect}\n'] if vkcommand.protect else [])
             out.append('\n')
         out.append('    } // switch (cmd.type)\n\n')
         out.append('} // CommandPrinter::PrintCommandParameters\n\n')

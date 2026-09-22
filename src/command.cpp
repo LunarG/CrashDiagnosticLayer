@@ -253,17 +253,14 @@ void CommandBuffer::UpdateStateFromCheckpoints() {
 }
 
 void CommandBuffer::UpdateSecondaryState(CommandState exec_cmds_state) {
-    if (exec_cmds_state == CommandState::kNotSubmitted ||
-        exec_cmds_state == CommandState::kInvalidState) {
+    if (exec_cmds_state == CommandState::kNotSubmitted || exec_cmds_state == CommandState::kInvalidState) {
         return;
     }
     buffer_state_ = CommandBufferState::kSubmitted;
     UpdateStateFromCheckpoints();
 }
 
-CommandBufferState CommandBuffer::GetCommandBufferState() const {
-    return buffer_state_;
-}
+CommandBufferState CommandBuffer::GetCommandBufferState() const { return buffer_state_; }
 
 const char* CommandBuffer::PrintCommandBufferState(CommandBufferState cb_state) const {
     switch (cb_state) {

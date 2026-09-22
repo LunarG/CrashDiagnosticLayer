@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2024 The Khronos Group Inc.
- * Copyright (c) 2015-2024 Valve Corporation
- * Copyright (c) 2015-2024 LunarG, Inc.
+ * Copyright (c) 2015-2026 The Khronos Group Inc.
+ * Copyright (c) 2015-2026 Valve Corporation
+ * Copyright (c) 2015-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,13 +36,11 @@ static VKAPI_ATTR vk::Bool32 VKAPI_CALL DebugCallback(vk::DebugUtilsMessageSever
 }
 
 ErrorMonitor::ErrorMonitor(const char *prefix, bool print_all_errors)
-    :
-      debug_create_info_({},
+    : debug_create_info_({},
                          SeverityBits::eError | SeverityBits::eWarning | SeverityBits::eInfo | SeverityBits::eVerbose,
                          vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral, DebugCallback, this),
       msg_prefix_(prefix),
-      print_all_errors_(print_all_errors) {
-}
+      print_all_errors_(print_all_errors) {}
 void ErrorMonitor::MonitorReset() {
     message_flags_ = SeverityBits::eError;
     bailout_ = nullptr;

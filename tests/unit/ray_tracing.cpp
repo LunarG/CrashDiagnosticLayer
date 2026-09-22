@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 The Khronos Group Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -271,7 +271,8 @@ TEST_F(RayTracing, TraceRaysPositive) {
 
     auto prop_chain =
         physical_device_
-            .getProperties2<vk::PhysicalDeviceProperties2, vk::PhysicalDeviceAccelerationStructurePropertiesKHR, vk::PhysicalDeviceRayTracingPipelinePropertiesKHR>();
+            .getProperties2<vk::PhysicalDeviceProperties2, vk::PhysicalDeviceAccelerationStructurePropertiesKHR,
+                            vk::PhysicalDeviceRayTracingPipelinePropertiesKHR>();
 
     auto &rt_props = prop_chain.get<vk::PhysicalDeviceRayTracingPipelinePropertiesKHR>();
 
@@ -297,8 +298,10 @@ void main() {}
     modules.emplace_back(CreateShaderModuleGLSL(device_, minimal, vk::ShaderStageFlagBits::eClosestHitKHR));
 
     std::vector<vk::PipelineShaderStageCreateInfo> stages;
-    stages.emplace_back(vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eRaygenKHR, *modules[0], "main"));
-    stages.emplace_back(vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eClosestHitKHR, *modules[1], "main"));
+    stages.emplace_back(
+        vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eRaygenKHR, *modules[0], "main"));
+    stages.emplace_back(
+        vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eClosestHitKHR, *modules[1], "main"));
 
     vk::RayTracingShaderGroupCreateInfoKHR group(vk::RayTracingShaderGroupTypeKHR::eGeneral);
 
@@ -353,7 +356,8 @@ TEST_F(RayTracing, TraceRaysCrash) {
 
     auto prop_chain =
         physical_device_
-            .getProperties2<vk::PhysicalDeviceProperties2, vk::PhysicalDeviceAccelerationStructurePropertiesKHR, vk::PhysicalDeviceRayTracingPipelinePropertiesKHR>();
+            .getProperties2<vk::PhysicalDeviceProperties2, vk::PhysicalDeviceAccelerationStructurePropertiesKHR,
+                            vk::PhysicalDeviceRayTracingPipelinePropertiesKHR>();
 
     auto &rt_props = prop_chain.get<vk::PhysicalDeviceRayTracingPipelinePropertiesKHR>();
 
@@ -379,8 +383,10 @@ void main() {}
     modules.emplace_back(CreateShaderModuleGLSL(device_, minimal, vk::ShaderStageFlagBits::eClosestHitKHR));
 
     std::vector<vk::PipelineShaderStageCreateInfo> stages;
-    stages.emplace_back(vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eRaygenKHR, *modules[0], "main"));
-    stages.emplace_back(vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eClosestHitKHR, *modules[1], "main"));
+    stages.emplace_back(
+        vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eRaygenKHR, *modules[0], "main"));
+    stages.emplace_back(
+        vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eClosestHitKHR, *modules[1], "main"));
 
     vk::RayTracingShaderGroupCreateInfoKHR group(vk::RayTracingShaderGroupTypeKHR::eGeneral);
 

@@ -19,15 +19,15 @@
 #include "config.h"
 #include <cstring>
 
-#define MakeStringSetting(_name) \
-    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eString, 1, &_name)
+#define MakeStringSetting(_name) vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eString, 1, &_name)
 
-#define MakeBoolSetting(_name) \
-    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eBool32, 1, &_name)
+#define MakeBoolSetting(_name) vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eBool32, 1, &_name)
 
-#define MakeUint64Setting(_name) \
-    vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eUint64, 1, &_name)
+#define MakeUint64Setting(_name) vk::LayerSettingEXT(kLayerName, #_name, vk::LayerSettingTypeEXT::eUint64, 1, &_name)
 
+// clang-format off
+// One setting per line, grouped by feature. clang-format 22 packs these two to a
+// line despite the trailing comma, so keep it away from the list.
 LayerSettings::LayerSettings(const void* pnext)
     : settings_{
         MakeStringSetting(output_path),
@@ -50,6 +50,7 @@ LayerSettings::LayerSettings(const void* pnext)
         MakeUint64Setting(watchdog_timeout_ms),
     },
     create_info_(settings_, pnext) {
+    // clang-format on
     SetOutputPath("");
     SetMessageSeverity("");
     SetLogFile("");

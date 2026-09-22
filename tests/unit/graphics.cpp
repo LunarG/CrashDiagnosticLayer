@@ -106,7 +106,7 @@ TEST_F(Graphics, InfiniteLoop) {
 
     vk::ImageMemoryBarrier img_barrier(vk::AccessFlagBits::eMemoryWrite, vk::AccessFlagBits::eMemoryRead,
                                        vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal, {}, {},
-                                       image.image,  view_create_info.subresourceRange);
+                                       image.image, view_create_info.subresourceRange);
     cmd_buff_.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eAllGraphics, {}, {},
                               {}, img_barrier);
 
@@ -223,7 +223,7 @@ TEST_F(Graphics, MultiDrawNoCrash) {
 
     vk::ImageMemoryBarrier img_barrier(vk::AccessFlagBits::eMemoryWrite, vk::AccessFlagBits::eMemoryRead,
                                        vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal, {}, {},
-                                       image.image,  view_create_info.subresourceRange);
+                                       image.image, view_create_info.subresourceRange);
     cmd_buff_.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eAllGraphics, {}, {},
                               {}, img_barrier);
 
@@ -253,7 +253,6 @@ TEST_F(Graphics, MultiDrawNoCrash) {
     queue_.submit(submit_info);
     queue_.waitIdle();
 }
-
 
 TEST_F(Graphics, MultiDrawInfiniteLoop) {
     InitInstance();
@@ -334,16 +333,14 @@ TEST_F(Graphics, MultiDrawInfiniteLoop) {
 
     vk::ImageMemoryBarrier img_barrier(vk::AccessFlagBits::eMemoryWrite, vk::AccessFlagBits::eMemoryRead,
                                        vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal, {}, {},
-                                       image.image,  view_create_info.subresourceRange);
+                                       image.image, view_create_info.subresourceRange);
     cmd_buff_.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eAllGraphics, {}, {},
                               {}, img_barrier);
-
 
     vk::RenderingAttachmentInfo attachment(*view, vk::ImageLayout::eColorAttachmentOptimal);
     vk::RenderingInfo rendering_info({}, {{0, 0}, {256, 256}}, 1, {}, attachment);
 
     cmd_buff_.beginRendering(rendering_info);
-
 
     push_constants[0] = 200;
     for (uint32_t i = 0; i < 4; i++) {
@@ -359,8 +356,7 @@ TEST_F(Graphics, MultiDrawInfiniteLoop) {
     cmd_buff_.beginDebugUtilsLabelEXT(label);
 
     push_constants[0] = 0xffffffff;
-    cmd_buff_.pushConstants<uint32_t>(pipeline.PipelineLayout(), vk::ShaderStageFlagBits::eVertex, 0u,
-                                      push_constants);
+    cmd_buff_.pushConstants<uint32_t>(pipeline.PipelineLayout(), vk::ShaderStageFlagBits::eVertex, 0u, push_constants);
     cmd_buff_.draw(3, 1, 0, 0);
     cmd_buff_.endDebugUtilsLabelEXT();
 

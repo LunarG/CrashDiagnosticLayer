@@ -17,12 +17,10 @@
 
 class Tooling : public CDLTestBase {};
 
-
 TEST_F(Tooling, InfoExt) {
-    //TEST_DESCRIPTION("Basic usage calling Tooling Extension and verify layer results.");
+    // TEST_DESCRIPTION("Basic usage calling Tooling Extension and verify layer results.");
     InitInstance();
 
-    
     auto tool_properties = physical_device_.getToolPropertiesEXT();
 
     bool found_cdl = false;
@@ -36,7 +34,7 @@ TEST_F(Tooling, InfoExt) {
 }
 
 TEST_F(Tooling, InfoCore) {
-    //TEST_DESCRIPTION("Basic usage calling Tooling Extension and verify layer results.");
+    // TEST_DESCRIPTION("Basic usage calling Tooling Extension and verify layer results.");
     InitInstance();
 
     auto tool_properties = physical_device_.getToolProperties();

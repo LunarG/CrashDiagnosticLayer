@@ -446,7 +446,7 @@ static DeviceExtensionsPresent DecodeExtensionStrings(uint32_t count, const char
     return extensions;
 }
 template <typename T>
-void Context::QueryFeature(VkPhysicalDevice physicalDevice, T *feature) {
+void Context::QueryFeature(VkPhysicalDevice physicalDevice, T* feature) {
     auto features2 = vku::InitStruct<VkPhysicalDeviceFeatures2>(feature);
     if (modified_create_info_.pApplicationInfo &&
         modified_create_info_.pApplicationInfo->apiVersion >= VK_API_VERSION_1_1) {
@@ -482,7 +482,8 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
                                      ? modified_create_info_.pApplicationInfo->apiVersion
                                      : VK_API_VERSION_1_0;
 
-    Log().Verbose("The Vulkan application is using Vulkan %d.%d", VK_API_VERSION_MAJOR(api_version), VK_API_VERSION_MINOR(api_version));
+    Log().Verbose("The Vulkan application is using Vulkan %d.%d", VK_API_VERSION_MAJOR(api_version),
+                  VK_API_VERSION_MINOR(api_version));
 
     // If an important extension is not enabled by default, try to enable it if it is present
     if (extensions_present.nv_device_diagnostic_checkpoints) {
@@ -502,7 +503,8 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             auto amd_device_coherent = vku::InitStruct<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(nullptr);
             QueryFeature(physicalDevice, &amd_device_coherent);
             if (amd_device_coherent.deviceCoherentMemory) {
-                auto *existing = vku::FindStructInPNextChain<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(&device_ci->modified);
+                auto* existing =
+                    vku::FindStructInPNextChain<VkPhysicalDeviceCoherentMemoryFeaturesAMD>(&device_ci->modified);
                 if (existing) {
                     existing->deviceCoherentMemory = amd_device_coherent.deviceCoherentMemory;
                 } else {
@@ -513,14 +515,17 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
                 }
             }
         } else {
-            Log().Warning("No device support for VK_AMD_device_coherent_memory extension, results may not be as accurate as possible.");
+            Log().Warning(
+                "No device support for VK_AMD_device_coherent_memory extension, results may not be as accurate as "
+                "possible.");
         }
     } else {
         Log().Warning("No device support for VK_AMD_buffer_marker extension, semaphore tracking will be disabled.");
     }
     if (!extensions_present.nv_device_diagnostic_checkpoints && !extensions_present.amd_buffer_marker) {
         Log().Warning(
-            "No device support for VK_NV_device_diagnostic_checkpoints or VK_AMD_buffer_marker extension, progression tracking will be "
+            "No device support for VK_NV_device_diagnostic_checkpoints or VK_AMD_buffer_marker extension, progression "
+            "tracking will be "
             "disabled.");
     }
     if (extensions_present.ext_device_fault) {
@@ -528,7 +533,7 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             auto ext_device_fault = vku::InitStruct<VkPhysicalDeviceFaultFeaturesEXT>(nullptr);
             QueryFeature(physicalDevice, &ext_device_fault);
             if (ext_device_fault.deviceFault) {
-                auto *existing = vku::FindStructInPNextChain<VkPhysicalDeviceFaultFeaturesEXT>(&device_ci->modified);
+                auto* existing = vku::FindStructInPNextChain<VkPhysicalDeviceFaultFeaturesEXT>(&device_ci->modified);
                 if (existing) {
                     existing->deviceFault = ext_device_fault.deviceFault;
                     existing->deviceFaultVendorBinary = ext_device_fault.deviceFaultVendorBinary;
@@ -541,13 +546,15 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
             }
         }
     } else {
-        Log().Warning("No device support for VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
+        Log().Warning(
+            "No device support for VK_EXT_device_fault extension, vendor-specific crash dumps will not be available.");
     }
     if (extensions_present.ext_device_address_binding_report) {
         auto ext_dbar = vku::InitStruct<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(nullptr);
         QueryFeature(physicalDevice, &ext_dbar);
         if (ext_dbar.reportAddressBinding) {
-            auto *existing = vku::FindStructInPNextChain<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(&device_ci->modified);
+            auto* existing =
+                vku::FindStructInPNextChain<VkPhysicalDeviceAddressBindingReportFeaturesEXT>(&device_ci->modified);
             if (existing) {
                 existing->reportAddressBinding = ext_dbar.reportAddressBinding;
             } else {
@@ -559,7 +566,8 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
         }
     } else {
         Log().Warning(
-            "No device support for VK_EXT_device_address_binding_report extension, DeviceAddress information will not be available.");
+            "No device support for VK_EXT_device_address_binding_report extension, DeviceAddress information will not "
+            "be available.");
     }
 
     bool device_has_dynamic_rendering = true;
@@ -593,8 +601,10 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
         QueryFeature(physicalDevice, &khr_timeline_semaphore);
 
         if (khr_timeline_semaphore.timelineSemaphore) {
-            auto* vulkan12_features = vku::FindStructInPNextChain<VkPhysicalDeviceVulkan12Features>(&device_ci->modified);
-            auto* existing = vku::FindStructInPNextChain<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(&device_ci->modified);
+            auto* vulkan12_features =
+                vku::FindStructInPNextChain<VkPhysicalDeviceVulkan12Features>(&device_ci->modified);
+            auto* existing =
+                vku::FindStructInPNextChain<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR>(&device_ci->modified);
             if (vulkan12_features) {
                 vulkan12_features->timelineSemaphore = VK_TRUE;
             } else if (existing) {
@@ -608,7 +618,8 @@ const VkDeviceCreateInfo* Context::GetModifiedDeviceCreateInfo(VkPhysicalDevice 
         }
     } else {
         Log().Error(
-            "No device support for VK_KHR_timeline_semaphore extension, Vulkan 1.2 or VK_KHR_timeline_semaphore are required to track queue "
+            "No device support for VK_KHR_timeline_semaphore extension, Vulkan 1.2 or VK_KHR_timeline_semaphore are "
+            "required to track queue "
             "progress, enabling early device lost detection.");
     }
 

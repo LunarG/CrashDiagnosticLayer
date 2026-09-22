@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 The Khronos Group Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -334,7 +334,7 @@ static void ParseFaultAddressRange(FaultAddressRange& range, const YAML::Node& i
         } else if (key == "matchingAddressRecords") {
             ASSERT_TRUE(range.matches.empty());
             ASSERT_TRUE(node.second.IsSequence());
-            for (const auto& addr_node: node.second) {
+            for (const auto& addr_node : node.second) {
                 AddressRecord rec;
                 ParseAddressRecord(rec, addr_node);
                 range.matches.push_back(rec);

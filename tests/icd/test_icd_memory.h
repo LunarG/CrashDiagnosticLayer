@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 The Khronos Group Inc.
- * Copyright (c) 2024 Valve Corporation
- * Copyright (c) 2024 LunarG, Inc.
+ * Copyright (c) 2024-2026 The Khronos Group Inc.
+ * Copyright (c) 2024-2026 Valve Corporation
+ * Copyright (c) 2024-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@
 namespace icd {
 struct DeviceMemory {
     DeviceMemory(const VkMemoryAllocateInfo& alloc_info)
-        : memory(new uint8_t[static_cast<size_t>(alloc_info.allocationSize)]), size(static_cast<size_t>(alloc_info.allocationSize)) {}
+        : memory(new uint8_t[static_cast<size_t>(alloc_info.allocationSize)]),
+          size(static_cast<size_t>(alloc_info.allocationSize)) {}
     ~DeviceMemory() { delete[] memory; }
 
     VkResult Map(VkDeviceSize offset, VkDeviceSize size_arg, VkMemoryMapFlags flags, void** ptr) {
