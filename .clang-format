@@ -5,4 +5,10 @@ IndentWidth: 4
 ColumnLimit: 120
 SortIncludes: false
 PointerAlignment: Right
+# Google style leaves this implicit and the default changed from true to
+# false in clang-format 21.
+DerivePointerAlignment: true
+# Google style says Never, but the tree is written with empty blocks kept
+# closed up, and 18 did not expand short bare blocks either.
+AllowShortBlocksOnASingleLine: Empty
 ...
