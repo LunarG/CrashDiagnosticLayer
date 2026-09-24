@@ -51,7 +51,7 @@ def CPrint(msg_type, msg_string):
 def VerifyClangFormatSource(commit, target_files):
     target_refspec = f'{commit}^...{commit}'
     retval = 0
-    good_file_pattern = re.compile('.*\\.(cpp|cc|c\+\+|cxx|c|h|hpp)$')
+    good_file_pattern = re.compile(r'.*\.(cpp|cc|c\+\+|cxx|c|h|hpp)$')
     diff_files_list = [item for item in target_files if good_file_pattern.search(item)]
     retval = 0
     if diff_files_list:
@@ -96,7 +96,7 @@ def VerifyCopyrights(commit, target_files):
             continue
         for company in ["LunarG", "Valve"]:
             # Capture the last year on the line as a separate match. It should be the highest (or only year of the range)
-            copyright_match = re.search('Copyright .*(\d{4}) ' + company, open(file, encoding="utf-8", errors='ignore').read(1024))
+            copyright_match = re.search(r'Copyright .*(\d{4}) ' + company, open(file, encoding="utf-8", errors='ignore').read(1024))
             if copyright_match:
                 copyright_year = copyright_match.group(1)
                 if int(commit_year) > int(copyright_year):
