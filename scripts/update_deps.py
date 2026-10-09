@@ -228,6 +228,12 @@ URL to a GitHub releases page for downloading precompiled binaries.
 If this field is present, the dependency will be downloaded as a binary
 instead of being built from source.
 
+- binary_sha256 (required with repo_binaries_url)
+
+The SHA-256 of each platform's binary archive, keyed by platform suffix
+(e.g. "windows-x86_64", "linux-x86_64"). A download, or a previously
+downloaded archive, that does not match is an error.
+
 Note
 ----
 
@@ -239,6 +245,7 @@ option can be a relative or absolute path.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import os.path
@@ -280,6 +287,13 @@ def on_rm_error( func, path, exc_info):
     """
     os.chmod( path, stat.S_IWRITE )
     os.unlink( path )
+
+def FileSha256(path):
+    sha256 = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for block in iter(lambda: f.read(1 << 20), b''):
+            sha256.update(block)
+    return sha256.hexdigest()
 
 def make_or_exist_dirs(path):
     "Wrapper for os.makedirs that tolerates the directory already existing"
@@ -350,6 +364,7 @@ class GoodRepo(object):
         # Check if this is a binary dependency
         # For binary dependencies, url and commit are optional
         self.repo_binaries_url = json.get('repo_binaries_url')
+        self.binary_sha256 = json.get('binary_sha256', {})
         self.is_binary_dependency = self.repo_binaries_url is not None
         if not self.is_binary_dependency:
             self.url = json['url']
@@ -512,6 +527,10 @@ class GoodRepo(object):
         else:
             version = self.repo_binaries_url.split('/')[-1].lstrip('v')
 
+        expected_sha256 = self.binary_sha256.get(platform_suffix)
+        if not expected_sha256:
+            raise RuntimeError(f"known_good.json has no binary_sha256 for {self.name} on {platform_suffix}")
+
         download_url = f"{self.repo_binaries_url.replace('/tag/', '/download/')}/{self.name}-{version}-{platform_suffix}.zip"
         make_or_exist_dirs(self.build_dir)
 
@@ -520,11 +539,18 @@ class GoodRepo(object):
         if not os.path.isfile(zip_path):
             if VERBOSE:
                 print(f"Downloading {self.name} from {download_url}")
+            # Download to a temporary name, so an interrupted download is not mistaken for the archive.
+            partial_path = zip_path + '.part'
             try:
-                urllib.request.urlretrieve(download_url, zip_path)
+                urllib.request.urlretrieve(download_url, partial_path)
             except Exception as e:
-                print(f"Failed to download {self.name}: {e}")
-                return False
+                raise RuntimeError(f"Failed to download {self.name} from {download_url}") from e
+            os.replace(partial_path, zip_path)
+
+        actual_sha256 = FileSha256(zip_path)
+        if actual_sha256 != expected_sha256.lower():
+            os.remove(zip_path)
+            raise RuntimeError(f"{zip_path} has SHA-256 {actual_sha256}, but known_good.json expects {expected_sha256}")
 
         make_or_exist_dirs(self.install_dir)
 
