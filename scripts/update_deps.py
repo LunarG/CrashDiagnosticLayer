@@ -256,6 +256,10 @@ import struct
 
 KNOWN_GOOD_FILE_NAME = 'known_good.json'
 
+# Written to a dependency's install directory once it is complete. It records the inputs that produced
+# the tree, so an interrupted build, or one made with other settings, is not mistaken for a usable one.
+STAMP_FILE_NAME = 'update_deps_stamp.json'
+
 CONFIG_MAP = {
     'debug': 'Debug',
     'release': 'Release',
@@ -529,6 +533,52 @@ class GoodRepo(object):
         
         return True
 
+    def BuildInputs(self):
+        """The settings that determine what this repo's install tree contains."""
+        return {
+            'url': self.url,
+            'commit': self._args.ref or self.commit,
+            'repo_binaries_url': self.repo_binaries_url,
+            'cmake_options': self.cmake_options,
+            'cmake_var': self._args.cmake_var,
+            'config': self._args.config,
+            'generator': self._args.generator,
+            'arch': self._args.arch,
+            'sanitize': sorted(self._args.sanitize),
+        }
+
+    def StampPath(self):
+        return os.path.join(self.install_dir, STAMP_FILE_NAME) if self.install_dir else None
+
+    def IsInstallCurrent(self):
+        """True when the install tree is complete and was built with the current settings."""
+        stamp_path = self.StampPath()
+        if not stamp_path:
+            return False
+        try:
+            with open(stamp_path) as stamp_file:
+                return json.load(stamp_file) == self.BuildInputs()
+        except (OSError, ValueError):
+            return False
+
+    def BeginInstall(self):
+        """Discard a tree built with other settings, and mark the tree incomplete until EndInstall."""
+        if not self.install_dir:
+            return
+        if not self.IsInstallCurrent():
+            for path in (self.build_dir, self.install_dir):
+                if path and path != self.repo_dir and os.path.isdir(path):
+                    shutil.rmtree(path, onerror=on_rm_error)
+        elif os.path.isfile(self.StampPath()):
+            os.remove(self.StampPath())
+
+    def EndInstall(self):
+        if not self.install_dir:
+            return
+        make_or_exist_dirs(self.install_dir)
+        with open(self.StampPath(), 'w') as stamp_file:
+            json.dump(self.BuildInputs(), stamp_file, indent=4)
+
     def CustomPreProcess(self, cmd_str, repo_dict):
         return cmd_str.format(repo_dict, self._args, CONFIG_MAP[self._args.config[0]])
 
@@ -650,11 +700,14 @@ class GoodRepo(object):
 
         start = time.time()
 
+        self.BeginInstall()
+
         # Run any prebuild commands
         self.PreBuild()
 
         if self.build_step == 'custom':
             self.CustomBuild(repo_dict)
+            self.EndInstall()
             return
 
         # Build and execute CMake command for creating build files
@@ -662,6 +715,8 @@ class GoodRepo(object):
 
         # Build and execute CMake command for the build
         self.CMakeBuild()
+
+        self.EndInstall()
 
         total_time = time.time() - start
 
@@ -676,9 +731,11 @@ class GoodRepo(object):
 
         start = time.time()
 
+        self.BeginInstall()
         success = self.DownloadAndExtractBinary()
         if not success:
             return
+        self.EndInstall()
 
         total_time = time.time() - start
 
@@ -845,7 +902,7 @@ def main():
         '--skip-existing-install',
         dest='skip_existing_install',
         action='store_true',
-        help="Skip build if install directory exists",
+        help="Skip build if the install directory is complete and was built with the same settings",
         default=False)
     parser.add_argument(
         '--arch',
@@ -943,12 +1000,11 @@ def main():
         if not repo.on_build_platform:
             continue
 
-        # Skip building the repo if its install directory already exists
-        # and requested via an option.  This is useful for cases where the
-        # install directory is restored from a cache that is known to be up
-        # to date.
-        if args.skip_existing_install and os.path.isdir(repo.install_dir):
-            print('Skipping build for repo {n} due to existing install directory'.format(n=repo.name))
+        # Skip building the repo if its install directory is complete and up
+        # to date, and requested via an option.  This is useful for cases where
+        # the install directory is restored from a cache.
+        if args.skip_existing_install and repo.IsInstallCurrent():
+            print('Skipping build for repo {n} due to an up to date install directory'.format(n=repo.name))
             continue
 
         # Skip test-only repos if the --tests option was not passed in
