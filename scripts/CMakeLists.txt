@@ -79,6 +79,11 @@ if (UPDATE_DEPS)
     # ODR violation the linker happily accepts and which corrupts memory at runtime.
     list(APPEND cmake_vars "CMAKE_CXX_STANDARD" "CMAKE_CXX_STANDARD_REQUIRED" "CMAKE_CXX_EXTENSIONS")
     list(APPEND cmake_vars "CMAKE_TOOLCHAIN_FILE")
+    # The static dependencies are linked into the shared layer.
+    list(APPEND cmake_vars "CMAKE_POSITION_INDEPENDENT_CODE")
+    if (APPLE)
+        list(APPEND cmake_vars "CMAKE_OSX_ARCHITECTURES" "CMAKE_OSX_DEPLOYMENT_TARGET" "CMAKE_OSX_SYSROOT")
+    endif()
     if (NOT MSVC_IDE)
         list(APPEND cmake_vars "CMAKE_CXX_COMPILER" "CMAKE_C_COMPILER" "CMAKE_ASM_COMPILER")
     endif()
@@ -89,8 +94,11 @@ if (UPDATE_DEPS)
     set(cmake_var)
     foreach(var IN LISTS cmake_vars)
         if (DEFINED ${var})
+            # Escape list separators, or a value like CMAKE_OSX_ARCHITECTURES=arm64;x86_64 is split into
+            # separate arguments.
+            string(REPLACE ";" "\\;" _value "${${var}}")
             list(APPEND update_dep_command "--cmake_var")
-            list(APPEND update_dep_command "${var}=${${var}}")
+            list(APPEND update_dep_command "${var}=${_value}")
         endif()
     endforeach()
 
