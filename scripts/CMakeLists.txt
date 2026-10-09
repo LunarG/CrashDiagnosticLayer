@@ -52,8 +52,8 @@ if (UPDATE_DEPS)
     list(APPEND update_dep_command "--dir" )
     list(APPEND update_dep_command "${UPDATE_DEPS_DIR}")
 
-    if (CDL_ENABLE_ASAN)
-        list(APPEND update_dep_command "--asan" )
+    if (SANITIZER_COMMA_LIST)
+        list(APPEND update_dep_command "--sanitize" "${SANITIZER_COMMA_LIST}")
     endif()
 
     if (NOT BUILD_TESTS)

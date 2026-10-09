@@ -589,19 +589,14 @@ class GoodRepo(object):
         # Set build config for single-configuration generators (this is a no-op on multi-config generators)
         cmake_cmd.append(f'-D CMAKE_BUILD_TYPE={CONFIG_MAP[self._args.config]}')
 
-        # Optionally build dependencies with ASAN enabled
-        if self._args.asan:
-            cmake_cmd.append(f'-D CMAKE_CXX_FLAGS=-fsanitize=address')
-            cmake_cmd.append(f'-D CMAKE_C_FLAGS=-fsanitize=address')
-            if platform.system() != 'Windows':
-                os.environ['LDFLAGS'] = '-fsanitize=address'
-
-        # Optionally build dependencies with UBSAN enabled
-        if self._args.ubsan:
-            cmake_cmd.append('-D CMAKE_CXX_FLAGS=-fsanitize=undefined -fno-sanitize=enum')
-            cmake_cmd.append('-D CMAKE_C_FLAGS=-fsanitize=undefined')
-            cmake_cmd.append('-D ENABLE_RTTI=ON')
-            os.environ['LDFLAGS'] = '-fsanitize=undefined'
+        # Sanitizer flags are added by a project include rather than CMAKE_<LANG>_FLAGS, which would
+        # replace the compiler's default flags and any CFLAGS/CXXFLAGS from the environment.
+        if self._args.sanitize:
+            cmake_cmd.append('-DCMAKE_PROJECT_INCLUDE=' + escape(self._args.sanitizer_include))
+            if 'undefined' in self._args.sanitize:
+                cmake_cmd.append('-D ENABLE_RTTI=ON')
+        else:
+            cmake_cmd.append('-UCMAKE_PROJECT_INCLUDE')
 
         # Use the CMake -A option to select the platform architecture
         # without needing a Visual Studio generator.
@@ -750,6 +745,25 @@ def CreateHelper(args, repos, filename):
                                       var=install_names[repo.name],
                                       dir=escape(repo.install_dir)))
 
+def WriteSanitizerInclude(sanitizers, filename):
+    """Write the CMAKE_PROJECT_INCLUDE file that adds the sanitizer flags to every dependency build."""
+    with open(filename, 'w') as include_file:
+        include_file.write(f'''# Written by update_deps.py.
+set(_update_deps_sanitizers "{';'.join(sorted(sanitizers))}")
+if (MSVC)
+    if ("address" IN_LIST _update_deps_sanitizers)
+        add_compile_options(/fsanitize=address)
+    endif()
+else()
+    if ("undefined" IN_LIST _update_deps_sanitizers)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-sanitize=enum>)
+    endif()
+    list(JOIN _update_deps_sanitizers "," _update_deps_sanitizers)
+    add_compile_options(-fsanitize=${{_update_deps_sanitizers}} -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=${{_update_deps_sanitizers}})
+endif()
+''')
+
 def GetDefaultArch():
     machine = platform.machine().lower()
     if  machine == "arm64" or machine == "aarch64":
@@ -854,14 +868,21 @@ def main():
         '--asan',
         dest='asan',
         action='store_true',
-        help="Build dependencies with ASAN enabled",
+        help="Build dependencies with ASAN enabled. Same as --sanitize=address",
         default=False)
     parser.add_argument(
         '--ubsan',
         dest='ubsan',
         action='store_true',
-        help="Build dependencies with UBSAN enabled",
+        help="Build dependencies with UBSAN enabled. Same as --sanitize=undefined",
         default=False)
+    parser.add_argument(
+        '--sanitize',
+        dest='sanitize',
+        type=lambda a: set(s for s in a.lower().split(',') if s),
+        help="Comma-separated list of sanitizers to build dependencies with, as passed to -fsanitize. "
+             "MSVC supports only 'address'",
+        default=set())
     parser.add_argument(
         '--pointer_size',
         type=int,
@@ -875,6 +896,14 @@ def main():
     # Create working "top" directory if needed
     make_or_exist_dirs(args.dir)
     abs_top_dir = os.path.abspath(args.dir)
+
+    if args.asan:
+        args.sanitize.add('address')
+    if args.ubsan:
+        args.sanitize.add('undefined')
+    args.sanitizer_include = os.path.join(abs_top_dir, 'sanitizers.cmake')
+    if args.sanitize:
+        WriteSanitizerInclude(args.sanitize, args.sanitizer_include)
 
     repos = GetGoodRepos(args)
     repo_dict = {}
