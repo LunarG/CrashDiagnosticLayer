@@ -545,6 +545,7 @@ class GoodRepo(object):
             'generator': self._args.generator,
             'arch': self._args.arch,
             'sanitize': sorted(self._args.sanitize),
+            'compiler_id': self._args.compiler_id,
         }
 
     def StampPath(self):
@@ -961,6 +962,12 @@ def main():
         help="Comma-separated list of sanitizers to build dependencies with, as passed to -fsanitize. "
              "MSVC supports only 'address'",
         default=set())
+    parser.add_argument(
+        '--compiler-id',
+        dest='compiler_id',
+        help="Identity of the compiler, such as its ID and version. A change rebuilds the dependencies from "
+             "scratch, since build systems do not rebuild objects when only the compiler changes",
+        default=None)
     parser.add_argument(
         '--pointer_size',
         type=int,

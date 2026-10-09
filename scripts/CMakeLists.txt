@@ -66,6 +66,9 @@ if (UPDATE_DEPS)
         list(APPEND update_dep_command "--sanitize" "${SANITIZER_COMMA_LIST}")
     endif()
 
+    # The rebuild hash below covers only this command line, which names the compiler but not its version.
+    list(APPEND update_dep_command "--compiler-id" "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+
     if (NOT BUILD_TESTS)
         list(APPEND update_dep_command "--optional=tests")
     endif()
