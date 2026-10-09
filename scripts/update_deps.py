@@ -187,11 +187,11 @@ build config is "Debug" or "Release").
 Keywords:
 {0} reference to a dictionary of repos and their attributes
 {1} reference to the command line arguments set before start
-{2} reference to the CONFIG_MAP value of config.
+{2} reference to the CONFIG_MAP value of the first config.
 
 Example:
 {2} returns the CONFIG_MAP value of config e.g. debug -> Debug
-{1}.config returns the config variable set when you ran update_dep.py
+{1}.config returns the list of configs set when you ran update_dep.py
 {0}[Vulkan-Headers][repo_root] returns the repo_root variable from
                                    the Vulkan-Headers GoodRepo object.
 
@@ -530,7 +530,7 @@ class GoodRepo(object):
         return True
 
     def CustomPreProcess(self, cmd_str, repo_dict):
-        return cmd_str.format(repo_dict, self._args, CONFIG_MAP[self._args.config])
+        return cmd_str.format(repo_dict, self._args, CONFIG_MAP[self._args.config[0]])
 
     def PreBuild(self):
         """Execute any prebuild steps from the repo root"""
@@ -587,7 +587,12 @@ class GoodRepo(object):
             cmake_cmd.append(escape(option.format(**self.__dict__)))
 
         # Set build config for single-configuration generators (this is a no-op on multi-config generators)
-        cmake_cmd.append(f'-D CMAKE_BUILD_TYPE={CONFIG_MAP[self._args.config]}')
+        cmake_cmd.append(f'-D CMAKE_BUILD_TYPE={CONFIG_MAP[self._args.config[0]]}')
+
+        # Several configurations share one install tree, so their library names must differ. Only some
+        # dependencies set a debug postfix themselves.
+        if len(self._args.config) > 1:
+            cmake_cmd.append('-DCMAKE_DEBUG_POSTFIX=d')
 
         # Sanitizer flags are added by a project include rather than CMAKE_<LANG>_FLAGS, which would
         # replace the compiler's default flags and any CFLAGS/CXXFLAGS from the environment.
@@ -600,7 +605,7 @@ class GoodRepo(object):
 
         # Use the CMake -A option to select the platform architecture
         # without needing a Visual Studio generator.
-        if platform.system() == 'Windows' and self._args.generator != "Ninja":
+        if platform.system() == 'Windows' and (self._args.generator is None or self._args.generator.startswith('Visual Studio')):
             cmake_cmd.append('-A')
             if self._args.arch.lower() == '64' or self._args.arch == 'x64' or self._args.arch == 'win64':
                 cmake_cmd.append('x64')
@@ -624,16 +629,17 @@ class GoodRepo(object):
 
     def CMakeBuild(self):
         """Build CMake command for the build phase and execute it"""
-        cmake_cmd = ['cmake', '--build', self.build_dir, '--target', 'install', '--config', CONFIG_MAP[self._args.config]]
-        if self._args.do_clean:
-            cmake_cmd.append('--clean-first')
+        for config in self._args.config:
+            cmake_cmd = ['cmake', '--build', self.build_dir, '--target', 'install', '--config', CONFIG_MAP[config]]
+            if self._args.do_clean:
+                cmake_cmd.append('--clean-first')
 
-        # Xcode / Ninja are parallel by default.
-        if self._args.generator != "Ninja" or self._args.generator != "Xcode":
-            cmake_cmd.append('--parallel')
-            cmake_cmd.append(format(multiprocessing.cpu_count()))
+            # Xcode / Ninja are parallel by default.
+            if self._args.generator != "Ninja" or self._args.generator != "Xcode":
+                cmake_cmd.append('--parallel')
+                cmake_cmd.append(format(multiprocessing.cpu_count()))
 
-        run_cmake_command(cmake_cmd)
+            run_cmake_command(cmake_cmd)
 
     def Build(self, repos, repo_dict):
         """Build the dependent repo and time how long it took"""
@@ -764,6 +770,21 @@ else()
 endif()
 ''')
 
+def IsMultiConfigGenerator(generator):
+    if generator is None:
+        # CMake's default generator is Visual Studio on Windows and Unix Makefiles elsewhere.
+        return platform.system() == 'Windows'
+    return generator.startswith('Visual Studio') or generator in ('Xcode', 'Ninja Multi-Config')
+
+def ParseConfigs(arg):
+    configs = [c for c in arg.lower().split(',') if c]
+    for c in configs:
+        if c not in CONFIG_MAP:
+            raise argparse.ArgumentTypeError(f"invalid config '{c}' (choose from {', '.join(CONFIG_MAP)})")
+    if not configs:
+        raise argparse.ArgumentTypeError('no config given')
+    return configs
+
 def GetDefaultArch():
     machine = platform.machine().lower()
     if  machine == "arm64" or machine == "aarch64":
@@ -836,10 +857,10 @@ def main():
     parser.add_argument(
         '--config',
         dest='config',
-        choices=['debug', 'release', 'relwithdebinfo', 'minsizerel'],
-        type=str.lower,
-        help="Set build files configuration",
-        default='debug')
+        type=ParseConfigs,
+        help="Set build files configuration: one of {0}. A multi-config generator accepts a comma-separated "
+             "list, and installs every configuration into the same directory".format(', '.join(CONFIG_MAP)),
+        default=['debug'])
     parser.add_argument(
         '--api',
         dest='api',
@@ -891,6 +912,8 @@ def main():
         default=8)
 
     args = parser.parse_args()
+    if len(args.config) > 1 and not IsMultiConfigGenerator(args.generator):
+        parser.error('--config lists more than one configuration, but the generator builds only one')
     save_cwd = os.getcwd()
 
     # Create working "top" directory if needed
