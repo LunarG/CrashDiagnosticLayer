@@ -427,13 +427,14 @@ class GoodRepo(object):
                 return
             except RuntimeError as e:
                 print("Error cloning on iteration {}/{}: {}".format(retry + 1, retries, e))
+                # A partial clone makes every later clone into the directory fail.
+                if os.path.isdir(self.repo_dir):
+                    print("Removing old tree {}".format(self.repo_dir))
+                    shutil.rmtree(self.repo_dir, onerror=on_rm_error)
                 if retry + 1 < retries:
                     if retry_seconds > 0:
                         print("Waiting {} seconds before trying again".format(retry_seconds))
                         time.sleep(retry_seconds)
-                    if os.path.isdir(self.repo_dir):
-                        print("Removing old tree {}".format(self.repo_dir))
-                        shutil.rmtree(self.repo_dir, onerror=on_rm_error)
                     continue
 
                 # If we get here, we've exhausted our retries.
@@ -475,10 +476,19 @@ class GoodRepo(object):
         if not os.path.exists(os.path.join(self.repo_dir, '.git')):
             self.Clone()
         self.Fetch()
-        if len(self._args.ref):
-            command_output(['git', 'checkout', self._args.ref], self.repo_dir)
+        ref = self._args.ref if len(self._args.ref) else self.commit
+        # Fetching does not move a local branch, so a branch name is resolved against origin first.
+        remote_branch = subprocess.run(['git', 'rev-parse', '--verify', '--quiet', f'refs/remotes/origin/{ref}^{{commit}}'],
+                                       cwd=self.repo_dir, capture_output=True, text=True)
+        if remote_branch.returncode == 0:
+            target = remote_branch.stdout.strip()
         else:
-            command_output(['git', 'checkout', self.commit], self.repo_dir)
+            target = command_output(['git', 'rev-parse', '--verify', f'{ref}^{{commit}}'], self.repo_dir).strip()
+        # --force discards local changes to tracked files, which would otherwise be built in.
+        command_output(['git', 'checkout', '--force', '--detach', target], self.repo_dir)
+        head = command_output(['git', 'rev-parse', 'HEAD'], self.repo_dir).strip()
+        if head != target:
+            raise RuntimeError(f'{self.name} is at {head} after checking out {ref} ({target})')
 
         if VERBOSE:
             print(command_output(['git', 'status'], self.repo_dir))
