@@ -37112,6 +37112,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkUbmSurfaceCreateInfoSEC &t)
 }
 #endif  // VK_USE_PLATFORM_UBM_SEC
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixLayoutsFeaturesARM &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "cooperativeMatrixArmLayouts";
+    // cooperativeMatrixArmLayouts -> Field -> VkBool32
+    os << YAML::Value << t.cooperativeMatrixArmLayouts;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -37406,6 +37423,73 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferDeviceAddressAlignmen
     os << YAML::Key << "alignment";
     // alignment -> Field -> uint32_t
     os << YAML::Value << t.alignment;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHdrSmpteSt209450FeaturesGOOGLE &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "hdrSmpteSt209450";
+    // hdrSmpteSt209450 -> Field -> VkBool32
+    os << YAML::Value << t.hdrSmpteSt209450;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrSmpteSt209450GOOGLE &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "metadataSize";
+    // metadataSize -> Field -> size_t
+    os << YAML::Value << t.metadataSize;
+    os << YAML::Key << "pMetadata";
+    if (t.metadataSize == 0) {
+        os << YAML::Value << "nullptr";
+    } else {
+        os << YAML::Value << YAML::BeginSeq;
+        {
+            const uint8_t *p = (const uint8_t *)t.pMetadata;
+            for (uint64_t i = 0; i < t.metadataSize; ++i) {
+                os << crash_diagnostic_layer::Uint8ToStr(p[i]);
+            }
+        }
+        os << YAML::EndSeq;
+    }
+    os << YAML::Key << "powerPreference";
+    // powerPreference -> Field -> VkHdrSmpteSt209450PowerPreferenceGOOGLE
+    os << YAML::Value << t.powerPreference;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCapabilitiesHdrSmpteSt209450GOOGLE &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "hdrSmpteSt209450Supported";
+    // hdrSmpteSt209450Supported -> Field -> VkBool32
+    os << YAML::Value << t.hdrSmpteSt209450Supported;
     os << YAML::EndMap;
     return os;
 }
@@ -42199,6 +42283,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             os << *reinterpret_cast<const VkUbmSurfaceCreateInfoSEC *>(pStruct);
             break;
 #endif  // VK_USE_PLATFORM_UBM_SEC
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_LAYOUTS_FEATURES_ARM:
+            os << *reinterpret_cast<const VkPhysicalDeviceCooperativeMatrixLayoutsFeaturesARM *>(pStruct);
+            break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT *>(pStruct);
             break;
@@ -42248,6 +42335,15 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_ALIGNMENT_ALLOCATE_INFO_VALVE:
             os << *reinterpret_cast<const VkBufferDeviceAddressAlignmentAllocateInfoVALVE *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_SMPTE_ST_209450_FEATURES_GOOGLE:
+            os << *reinterpret_cast<const VkPhysicalDeviceHdrSmpteSt209450FeaturesGOOGLE *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_HDR_SMPTE_ST_209450_GOOGLE:
+            os << *reinterpret_cast<const VkHdrSmpteSt209450GOOGLE *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_HDR_SMPTE_ST_209450_GOOGLE:
+            os << *reinterpret_cast<const VkSurfaceCapabilitiesHdrSmpteSt209450GOOGLE *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR:
             os << *reinterpret_cast<const VkAccelerationStructureGeometryTrianglesDataKHR *>(pStruct);

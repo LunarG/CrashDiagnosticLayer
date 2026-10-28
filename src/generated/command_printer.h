@@ -439,6 +439,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNodeConnec
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkThrottleHintTypeSEC &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkNeuralAcceleratorStatisticsModeARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrSmpteSt209450PowerPreferenceGOOGLE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildAccelerationStructureModeKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkShaderGroupShaderKHR &t);
 
@@ -2069,6 +2070,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderSubgrou
 #ifdef VK_USE_PLATFORM_UBM_SEC
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkUbmSurfaceCreateInfoSEC &t);
 #endif  // VK_USE_PLATFORM_UBM_SEC
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixLayoutsFeaturesARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkThrottleHintSubmitInfoSEC &t);
@@ -2087,6 +2089,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os,
 YAML::Emitter &operator<<(YAML::Emitter &os,
                           const VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVALVE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBufferDeviceAddressAlignmentAllocateInfoVALVE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceHdrSmpteSt209450FeaturesGOOGLE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrSmpteSt209450GOOGLE &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkSurfaceCapabilitiesHdrSmpteSt209450GOOGLE &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureBuildRangeInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryTrianglesDataKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkAccelerationStructureGeometryAabbsDataKHR &t);

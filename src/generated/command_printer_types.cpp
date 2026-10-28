@@ -1310,6 +1310,11 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlEXT &t) {
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkHdrSmpteSt209450PowerPreferenceGOOGLE &t) {
+    os << string_VkHdrSmpteSt209450PowerPreferenceGOOGLE(t);
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkBuildAccelerationStructureModeKHR &t) {
     os << string_VkBuildAccelerationStructureModeKHR(t);
     return os;
