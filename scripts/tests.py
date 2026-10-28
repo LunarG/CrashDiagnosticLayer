@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Copyright (c) 2020-2024 Valve Corporation
-# Copyright (c) 2020-2024 LunarG, Inc.
+# Copyright (c) 2020-2026 Valve Corporation
+# Copyright (c) 2020-2026 LunarG, Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,6 +25,12 @@ CI_BUILD_DIR = common_ci.RepoRelative('build-ci')
 # Where all dependencies will be installed under
 CI_EXTERNAL_DIR = f'{CI_BUILD_DIR}/external'
 
+# The project's option for each --sanitize value
+SANITIZER_OPTIONS = {
+    'CDL_ENABLE_SANITIZER_ADDRESS': 'address',
+    'CDL_ENABLE_SANITIZER_THREAD': 'thread',
+}
+
 # Prepare the layer for testing
 def BuildCDL(config, cmake_args, build_tests, sanitize):
     print("Log CMake version")
@@ -46,14 +52,11 @@ def BuildCDL(config, cmake_args, build_tests, sanitize):
          cmake_cmd += f' {cmake_args}'
 
 
-    if sanitize == 'none':
-        cmake_cmd += ' -D BUILD_WERROR=ON'
-    else:
-        os.environ['CFLAGS'] = f'-fsanitize={sanitize}'
-        os.environ['CXXFLAGS'] = f'-fsanitize={sanitize}'
-        os.environ['LDFLAGS'] = f'-fsanitize={sanitize}'
-        cmake_cmd += ' -D BUILD_WERROR=OFF'
-    print('env', os.environ)
+    # Set every option, so a sanitizer from an earlier run of the same build directory is turned off.
+    # The project forwards them to the dependency builds.
+    for option, value in SANITIZER_OPTIONS.items():
+        cmake_cmd += f' -D {option}={"ON" if sanitize == value else "OFF"}'
+    cmake_cmd += f' -D BUILD_WERROR={"ON" if sanitize == "none" else "OFF"}'
     print('cmake_cmd', cmake_cmd)
     common_ci.RunShellCmd(cmake_cmd)
 
@@ -114,7 +117,7 @@ if __name__ == '__main__':
     configs = ('release', 'debug')
     default_config = configs[0]
 
-    sanitize_opts = ('none', 'address', 'thread')
+    sanitize_opts = ('none',) + tuple(SANITIZER_OPTIONS.values())
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -127,7 +130,7 @@ if __name__ == '__main__':
         '-s', '--sanitize', dest='sanitize',
         metavar='SANITIZE', action='store',
         choices=sanitize_opts, default='none',
-        help='-fsanitize setting. Can be one of: {0}'.format(', '.join(sanitize_opts)))
+        help='Sanitizer to build with. Can be one of: {0}'.format(', '.join(sanitize_opts)))
     parser.add_argument(
         '--cmake', dest='cmake',
         metavar='CMAKE', type=str,

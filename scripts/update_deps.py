@@ -187,11 +187,11 @@ build config is "Debug" or "Release").
 Keywords:
 {0} reference to a dictionary of repos and their attributes
 {1} reference to the command line arguments set before start
-{2} reference to the CONFIG_MAP value of config.
+{2} reference to the CONFIG_MAP value of the first config.
 
 Example:
 {2} returns the CONFIG_MAP value of config e.g. debug -> Debug
-{1}.config returns the config variable set when you ran update_dep.py
+{1}.config returns the list of configs set when you ran update_dep.py
 {0}[Vulkan-Headers][repo_root] returns the repo_root variable from
                                    the Vulkan-Headers GoodRepo object.
 
@@ -228,6 +228,12 @@ URL to a GitHub releases page for downloading precompiled binaries.
 If this field is present, the dependency will be downloaded as a binary
 instead of being built from source.
 
+- binary_sha256 (required with repo_binaries_url)
+
+The SHA-256 of each platform's binary archive, keyed by platform suffix
+(e.g. "windows-x86_64", "linux-x86_64"). A download, or a previously
+downloaded archive, that does not match is an error.
+
 Note
 ----
 
@@ -239,6 +245,7 @@ option can be a relative or absolute path.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import os.path
@@ -255,6 +262,10 @@ import zipfile
 import struct
 
 KNOWN_GOOD_FILE_NAME = 'known_good.json'
+
+# Written to a dependency's install directory once it is complete. It records the inputs that produced
+# the tree, so an interrupted build, or one made with other settings, is not mistaken for a usable one.
+STAMP_FILE_NAME = 'update_deps_stamp.json'
 
 CONFIG_MAP = {
     'debug': 'Debug',
@@ -276,6 +287,13 @@ def on_rm_error( func, path, exc_info):
     """
     os.chmod( path, stat.S_IWRITE )
     os.unlink( path )
+
+def FileSha256(path):
+    sha256 = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for block in iter(lambda: f.read(1 << 20), b''):
+            sha256.update(block)
+    return sha256.hexdigest()
 
 def make_or_exist_dirs(path):
     "Wrapper for os.makedirs that tolerates the directory already existing"
@@ -346,6 +364,7 @@ class GoodRepo(object):
         # Check if this is a binary dependency
         # For binary dependencies, url and commit are optional
         self.repo_binaries_url = json.get('repo_binaries_url')
+        self.binary_sha256 = json.get('binary_sha256', {})
         self.is_binary_dependency = self.repo_binaries_url is not None
         if not self.is_binary_dependency:
             self.url = json['url']
@@ -408,13 +427,14 @@ class GoodRepo(object):
                 return
             except RuntimeError as e:
                 print("Error cloning on iteration {}/{}: {}".format(retry + 1, retries, e))
+                # A partial clone makes every later clone into the directory fail.
+                if os.path.isdir(self.repo_dir):
+                    print("Removing old tree {}".format(self.repo_dir))
+                    shutil.rmtree(self.repo_dir, onerror=on_rm_error)
                 if retry + 1 < retries:
                     if retry_seconds > 0:
                         print("Waiting {} seconds before trying again".format(retry_seconds))
                         time.sleep(retry_seconds)
-                    if os.path.isdir(self.repo_dir):
-                        print("Removing old tree {}".format(self.repo_dir))
-                        shutil.rmtree(self.repo_dir, onerror=on_rm_error)
                     continue
 
                 # If we get here, we've exhausted our retries.
@@ -456,10 +476,19 @@ class GoodRepo(object):
         if not os.path.exists(os.path.join(self.repo_dir, '.git')):
             self.Clone()
         self.Fetch()
-        if len(self._args.ref):
-            command_output(['git', 'checkout', self._args.ref], self.repo_dir)
+        ref = self._args.ref if len(self._args.ref) else self.commit
+        # Fetching does not move a local branch, so a branch name is resolved against origin first.
+        remote_branch = subprocess.run(['git', 'rev-parse', '--verify', '--quiet', f'refs/remotes/origin/{ref}^{{commit}}'],
+                                       cwd=self.repo_dir, capture_output=True, text=True)
+        if remote_branch.returncode == 0:
+            target = remote_branch.stdout.strip()
         else:
-            command_output(['git', 'checkout', self.commit], self.repo_dir)
+            target = command_output(['git', 'rev-parse', '--verify', f'{ref}^{{commit}}'], self.repo_dir).strip()
+        # --force discards local changes to tracked files, which would otherwise be built in.
+        command_output(['git', 'checkout', '--force', '--detach', target], self.repo_dir)
+        head = command_output(['git', 'rev-parse', 'HEAD'], self.repo_dir).strip()
+        if head != target:
+            raise RuntimeError(f'{self.name} is at {head} after checking out {ref} ({target})')
 
         if VERBOSE:
             print(command_output(['git', 'status'], self.repo_dir))
@@ -508,6 +537,10 @@ class GoodRepo(object):
         else:
             version = self.repo_binaries_url.split('/')[-1].lstrip('v')
 
+        expected_sha256 = self.binary_sha256.get(platform_suffix)
+        if not expected_sha256:
+            raise RuntimeError(f"known_good.json has no binary_sha256 for {self.name} on {platform_suffix}")
+
         download_url = f"{self.repo_binaries_url.replace('/tag/', '/download/')}/{self.name}-{version}-{platform_suffix}.zip"
         make_or_exist_dirs(self.build_dir)
 
@@ -516,11 +549,18 @@ class GoodRepo(object):
         if not os.path.isfile(zip_path):
             if VERBOSE:
                 print(f"Downloading {self.name} from {download_url}")
+            # Download to a temporary name, so an interrupted download is not mistaken for the archive.
+            partial_path = zip_path + '.part'
             try:
-                urllib.request.urlretrieve(download_url, zip_path)
+                urllib.request.urlretrieve(download_url, partial_path)
             except Exception as e:
-                print(f"Failed to download {self.name}: {e}")
-                return False
+                raise RuntimeError(f"Failed to download {self.name} from {download_url}") from e
+            os.replace(partial_path, zip_path)
+
+        actual_sha256 = FileSha256(zip_path)
+        if actual_sha256 != expected_sha256.lower():
+            os.remove(zip_path)
+            raise RuntimeError(f"{zip_path} has SHA-256 {actual_sha256}, but known_good.json expects {expected_sha256}")
 
         make_or_exist_dirs(self.install_dir)
 
@@ -529,8 +569,55 @@ class GoodRepo(object):
         
         return True
 
+    def BuildInputs(self):
+        """The settings that determine what this repo's install tree contains."""
+        return {
+            'url': self.url,
+            'commit': self._args.ref or self.commit,
+            'repo_binaries_url': self.repo_binaries_url,
+            'cmake_options': self.cmake_options,
+            'cmake_var': self._args.cmake_var,
+            'config': self._args.config,
+            'generator': self._args.generator,
+            'arch': self._args.arch,
+            'sanitize': sorted(self._args.sanitize),
+            'compiler_id': self._args.compiler_id,
+        }
+
+    def StampPath(self):
+        return os.path.join(self.install_dir, STAMP_FILE_NAME) if self.install_dir else None
+
+    def IsInstallCurrent(self):
+        """True when the install tree is complete and was built with the current settings."""
+        stamp_path = self.StampPath()
+        if not stamp_path:
+            return False
+        try:
+            with open(stamp_path) as stamp_file:
+                return json.load(stamp_file) == self.BuildInputs()
+        except (OSError, ValueError):
+            return False
+
+    def BeginInstall(self):
+        """Discard a tree built with other settings, and mark the tree incomplete until EndInstall."""
+        if not self.install_dir:
+            return
+        if not self.IsInstallCurrent():
+            for path in (self.build_dir, self.install_dir):
+                if path and path != self.repo_dir and os.path.isdir(path):
+                    shutil.rmtree(path, onerror=on_rm_error)
+        elif os.path.isfile(self.StampPath()):
+            os.remove(self.StampPath())
+
+    def EndInstall(self):
+        if not self.install_dir:
+            return
+        make_or_exist_dirs(self.install_dir)
+        with open(self.StampPath(), 'w') as stamp_file:
+            json.dump(self.BuildInputs(), stamp_file, indent=4)
+
     def CustomPreProcess(self, cmd_str, repo_dict):
-        return cmd_str.format(repo_dict, self._args, CONFIG_MAP[self._args.config])
+        return cmd_str.format(repo_dict, self._args, CONFIG_MAP[self._args.config[0]])
 
     def PreBuild(self):
         """Execute any prebuild steps from the repo root"""
@@ -587,25 +674,25 @@ class GoodRepo(object):
             cmake_cmd.append(escape(option.format(**self.__dict__)))
 
         # Set build config for single-configuration generators (this is a no-op on multi-config generators)
-        cmake_cmd.append(f'-D CMAKE_BUILD_TYPE={CONFIG_MAP[self._args.config]}')
+        cmake_cmd.append(f'-D CMAKE_BUILD_TYPE={CONFIG_MAP[self._args.config[0]]}')
 
-        # Optionally build dependencies with ASAN enabled
-        if self._args.asan:
-            cmake_cmd.append(f'-D CMAKE_CXX_FLAGS=-fsanitize=address')
-            cmake_cmd.append(f'-D CMAKE_C_FLAGS=-fsanitize=address')
-            if platform.system() != 'Windows':
-                os.environ['LDFLAGS'] = '-fsanitize=address'
+        # Several configurations share one install tree, so their library names must differ. Only some
+        # dependencies set a debug postfix themselves.
+        if len(self._args.config) > 1:
+            cmake_cmd.append('-DCMAKE_DEBUG_POSTFIX=d')
 
-        # Optionally build dependencies with UBSAN enabled
-        if self._args.ubsan:
-            cmake_cmd.append('-D CMAKE_CXX_FLAGS=-fsanitize=undefined -fno-sanitize=enum')
-            cmake_cmd.append('-D CMAKE_C_FLAGS=-fsanitize=undefined')
-            cmake_cmd.append('-D ENABLE_RTTI=ON')
-            os.environ['LDFLAGS'] = '-fsanitize=undefined'
+        # Sanitizer flags are added by a project include rather than CMAKE_<LANG>_FLAGS, which would
+        # replace the compiler's default flags and any CFLAGS/CXXFLAGS from the environment.
+        if self._args.sanitize:
+            cmake_cmd.append('-DCMAKE_PROJECT_INCLUDE=' + escape(self._args.sanitizer_include))
+            if 'undefined' in self._args.sanitize:
+                cmake_cmd.append('-D ENABLE_RTTI=ON')
+        else:
+            cmake_cmd.append('-UCMAKE_PROJECT_INCLUDE')
 
         # Use the CMake -A option to select the platform architecture
         # without needing a Visual Studio generator.
-        if platform.system() == 'Windows' and self._args.generator != "Ninja":
+        if platform.system() == 'Windows' and (self._args.generator is None or self._args.generator.startswith('Visual Studio')):
             cmake_cmd.append('-A')
             if self._args.arch.lower() == '64' or self._args.arch == 'x64' or self._args.arch == 'win64':
                 cmake_cmd.append('x64')
@@ -629,16 +716,17 @@ class GoodRepo(object):
 
     def CMakeBuild(self):
         """Build CMake command for the build phase and execute it"""
-        cmake_cmd = ['cmake', '--build', self.build_dir, '--target', 'install', '--config', CONFIG_MAP[self._args.config]]
-        if self._args.do_clean:
-            cmake_cmd.append('--clean-first')
+        for config in self._args.config:
+            cmake_cmd = ['cmake', '--build', self.build_dir, '--target', 'install', '--config', CONFIG_MAP[config]]
+            if self._args.do_clean:
+                cmake_cmd.append('--clean-first')
 
-        # Xcode / Ninja are parallel by default.
-        if self._args.generator != "Ninja" or self._args.generator != "Xcode":
-            cmake_cmd.append('--parallel')
-            cmake_cmd.append(format(multiprocessing.cpu_count()))
+            # Xcode / Ninja are parallel by default.
+            if self._args.generator != "Ninja" or self._args.generator != "Xcode":
+                cmake_cmd.append('--parallel')
+                cmake_cmd.append(format(multiprocessing.cpu_count()))
 
-        run_cmake_command(cmake_cmd)
+            run_cmake_command(cmake_cmd)
 
     def Build(self, repos, repo_dict):
         """Build the dependent repo and time how long it took"""
@@ -649,11 +737,14 @@ class GoodRepo(object):
 
         start = time.time()
 
+        self.BeginInstall()
+
         # Run any prebuild commands
         self.PreBuild()
 
         if self.build_step == 'custom':
             self.CustomBuild(repo_dict)
+            self.EndInstall()
             return
 
         # Build and execute CMake command for creating build files
@@ -661,6 +752,8 @@ class GoodRepo(object):
 
         # Build and execute CMake command for the build
         self.CMakeBuild()
+
+        self.EndInstall()
 
         total_time = time.time() - start
 
@@ -675,9 +768,11 @@ class GoodRepo(object):
 
         start = time.time()
 
+        self.BeginInstall()
         success = self.DownloadAndExtractBinary()
         if not success:
             return
+        self.EndInstall()
 
         total_time = time.time() - start
 
@@ -750,6 +845,40 @@ def CreateHelper(args, repos, filename):
                                       var=install_names[repo.name],
                                       dir=escape(repo.install_dir)))
 
+def WriteSanitizerInclude(sanitizers, filename):
+    """Write the CMAKE_PROJECT_INCLUDE file that adds the sanitizer flags to every dependency build."""
+    with open(filename, 'w') as include_file:
+        include_file.write(f'''# Written by update_deps.py.
+set(_update_deps_sanitizers "{';'.join(sorted(sanitizers))}")
+if (MSVC)
+    if ("address" IN_LIST _update_deps_sanitizers)
+        add_compile_options(/fsanitize=address)
+    endif()
+else()
+    if ("undefined" IN_LIST _update_deps_sanitizers)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-sanitize=enum>)
+    endif()
+    list(JOIN _update_deps_sanitizers "," _update_deps_sanitizers)
+    add_compile_options(-fsanitize=${{_update_deps_sanitizers}} -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=${{_update_deps_sanitizers}})
+endif()
+''')
+
+def IsMultiConfigGenerator(generator):
+    if generator is None:
+        # CMake's default generator is Visual Studio on Windows and Unix Makefiles elsewhere.
+        return platform.system() == 'Windows'
+    return generator.startswith('Visual Studio') or generator in ('Xcode', 'Ninja Multi-Config')
+
+def ParseConfigs(arg):
+    configs = [c for c in arg.lower().split(',') if c]
+    for c in configs:
+        if c not in CONFIG_MAP:
+            raise argparse.ArgumentTypeError(f"invalid config '{c}' (choose from {', '.join(CONFIG_MAP)})")
+    if not configs:
+        raise argparse.ArgumentTypeError('no config given')
+    return configs
+
 def GetDefaultArch():
     machine = platform.machine().lower()
     if  machine == "arm64" or machine == "aarch64":
@@ -810,7 +939,7 @@ def main():
         '--skip-existing-install',
         dest='skip_existing_install',
         action='store_true',
-        help="Skip build if install directory exists",
+        help="Skip build if the install directory is complete and was built with the same settings",
         default=False)
     parser.add_argument(
         '--arch',
@@ -822,10 +951,10 @@ def main():
     parser.add_argument(
         '--config',
         dest='config',
-        choices=['debug', 'release', 'relwithdebinfo', 'minsizerel'],
-        type=str.lower,
-        help="Set build files configuration",
-        default='debug')
+        type=ParseConfigs,
+        help="Set build files configuration: one of {0}. A multi-config generator accepts a comma-separated "
+             "list, and installs every configuration into the same directory".format(', '.join(CONFIG_MAP)),
+        default=['debug'])
     parser.add_argument(
         '--api',
         dest='api',
@@ -854,14 +983,27 @@ def main():
         '--asan',
         dest='asan',
         action='store_true',
-        help="Build dependencies with ASAN enabled",
+        help="Build dependencies with ASAN enabled. Same as --sanitize=address",
         default=False)
     parser.add_argument(
         '--ubsan',
         dest='ubsan',
         action='store_true',
-        help="Build dependencies with UBSAN enabled",
+        help="Build dependencies with UBSAN enabled. Same as --sanitize=undefined",
         default=False)
+    parser.add_argument(
+        '--sanitize',
+        dest='sanitize',
+        type=lambda a: set(s for s in a.lower().split(',') if s),
+        help="Comma-separated list of sanitizers to build dependencies with, as passed to -fsanitize. "
+             "MSVC supports only 'address'",
+        default=set())
+    parser.add_argument(
+        '--compiler-id',
+        dest='compiler_id',
+        help="Identity of the compiler, such as its ID and version. A change rebuilds the dependencies from "
+             "scratch, since build systems do not rebuild objects when only the compiler changes",
+        default=None)
     parser.add_argument(
         '--pointer_size',
         type=int,
@@ -870,11 +1012,21 @@ def main():
         default=8)
 
     args = parser.parse_args()
+    if len(args.config) > 1 and not IsMultiConfigGenerator(args.generator):
+        parser.error('--config lists more than one configuration, but the generator builds only one')
     save_cwd = os.getcwd()
 
     # Create working "top" directory if needed
     make_or_exist_dirs(args.dir)
     abs_top_dir = os.path.abspath(args.dir)
+
+    if args.asan:
+        args.sanitize.add('address')
+    if args.ubsan:
+        args.sanitize.add('undefined')
+    args.sanitizer_include = os.path.join(abs_top_dir, 'sanitizers.cmake')
+    if args.sanitize:
+        WriteSanitizerInclude(args.sanitize, args.sanitizer_include)
 
     repos = GetGoodRepos(args)
     repo_dict = {}
@@ -891,12 +1043,11 @@ def main():
         if not repo.on_build_platform:
             continue
 
-        # Skip building the repo if its install directory already exists
-        # and requested via an option.  This is useful for cases where the
-        # install directory is restored from a cache that is known to be up
-        # to date.
-        if args.skip_existing_install and os.path.isdir(repo.install_dir):
-            print('Skipping build for repo {n} due to existing install directory'.format(n=repo.name))
+        # Skip building the repo if its install directory is complete and up
+        # to date, and requested via an option.  This is useful for cases where
+        # the install directory is restored from a cache.
+        if args.skip_existing_install and repo.IsInstallCurrent():
+            print('Skipping build for repo {n} due to an up to date install directory'.format(n=repo.name))
             continue
 
         # Skip test-only repos if the --tests option was not passed in
