@@ -1141,6 +1141,8 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageViewUsage2CreateInfoKH
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceExtendedFlagsFeaturesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageStencilUsage2CreateInfoKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkSharedPresentSurfaceCapabilities2KHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance12FeaturesKHR &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance12PropertiesKHR &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPipelineRasterizationStateRasterizationOrderAMD &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugMarkerObjectNameInfoEXT &t);
