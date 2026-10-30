@@ -18635,6 +18635,40 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkSharedPresentSurfaceCapabil
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance12FeaturesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maintenance12";
+    // maintenance12 -> Field -> VkBool32
+    os << YAML::Value << t.maintenance12;
+    os << YAML::EndMap;
+    return os;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMaintenance12PropertiesKHR &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "maxInputAttachmentIndex";
+    // maxInputAttachmentIndex -> Field -> uint32_t
+    os << YAML::Value << t.maxInputAttachmentIndex;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDebugReportCallbackCreateInfoEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -40136,6 +40170,12 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR:
             os << *reinterpret_cast<const VkSharedPresentSurfaceCapabilities2KHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_FEATURES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceMaintenance12FeaturesKHR *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_PROPERTIES_KHR:
+            os << *reinterpret_cast<const VkPhysicalDeviceMaintenance12PropertiesKHR *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT:
             os << *reinterpret_cast<const VkDebugReportCallbackCreateInfoEXT *>(pStruct);
