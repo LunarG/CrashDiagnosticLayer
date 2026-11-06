@@ -2113,10 +2113,6 @@ virtual void PreCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
 virtual void PostCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                                   const VkComputeOccupancyPriorityParametersNV* pParameters) {}
 
-virtual void PreGetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) {}
-
-virtual void PostGetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) {}
-
 virtual void PreCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {}
 
 virtual void PostCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {}

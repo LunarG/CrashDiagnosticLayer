@@ -1460,9 +1460,6 @@ void PreCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
 void PostCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                           const VkComputeOccupancyPriorityParametersNV* pParameters) override;
 
-void PreGetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) override;
-void PostGetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) override;
-
 void PreCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) override;
 void PostCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) override;
 

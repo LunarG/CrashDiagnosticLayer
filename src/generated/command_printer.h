@@ -2477,7 +2477,6 @@ class CommandPrinter {
     void PrintCmdEndRendering2EXTArgs(YAML::Emitter &os, const CmdEndRendering2EXTArgs &args);
     void PrintCmdBeginCustomResolveEXTArgs(YAML::Emitter &os, const CmdBeginCustomResolveEXTArgs &args);
     void PrintCmdSetComputeOccupancyPriorityNVArgs(YAML::Emitter &os, const CmdSetComputeOccupancyPriorityNVArgs &args);
-    void PrintGetCommandBufferInternalHandleNVArgs(YAML::Emitter &os, const GetCommandBufferInternalHandleNVArgs &args);
     void PrintCmdSetPrimitiveRestartIndexEXTArgs(YAML::Emitter &os, const CmdSetPrimitiveRestartIndexEXTArgs &args);
     void PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
                                                     const CmdBuildAccelerationStructuresKHRArgs &args);

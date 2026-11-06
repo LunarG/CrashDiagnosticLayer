@@ -81,6 +81,11 @@ intercept_functions = {
         'vkWaitSemaphoresKHR': InterceptFlag.NORMAL,
 }
 
+# Non-vkCmd* commands taking a VkCommandBuffer that CDL doesn't intercept
+ignored_command_buffer_functions = {
+        'vkGetCommandBufferInternalHandleNV',
+}
+
 namespace = 'crash_diagnostic_layer'
 
 #
@@ -137,8 +142,9 @@ class CdlBaseOutputGenerator(BaseGenerator):
         return namespace_text
 
     def CommandBufferCall(self, command):
-        intercept = (command.name.startswith('vkCmd') or
-                     command.params[0].type == 'VkCommandBuffer')
+        intercept = ((command.name.startswith('vkCmd') or
+                      command.params[0].type == 'VkCommandBuffer') and
+                     command.name not in ignored_command_buffer_functions)
         return intercept
 
     def NeedsIntercept(self, command):
