@@ -3399,6 +3399,15 @@ void Context::PostCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer
     p_cmd->PostCmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
 }
 
+void Context::PreGetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PreGetCommandBufferInternalHandleNV(commandBuffer, pHandle);
+}
+void Context::PostGetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) {
+    auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
+    p_cmd->PostGetCommandBufferInternalHandleNV(commandBuffer, pHandle);
+}
+
 void Context::PreCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {
     auto p_cmd = crash_diagnostic_layer::GetCommandBuffer(commandBuffer);
     p_cmd->PreCmdSetPrimitiveRestartIndexEXT(commandBuffer, primitiveRestartIndex);

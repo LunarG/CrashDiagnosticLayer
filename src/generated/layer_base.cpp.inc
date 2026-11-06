@@ -4874,6 +4874,19 @@ static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetComputeOccupancyPriorityNV(
     layer_data->interceptor->PostCmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
 }
 
+static VKAPI_ATTR void VKAPI_CALL InterceptGetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer,
+                                                                            VkInternalHandleNV* pHandle) {
+    auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
+    layer_data->interceptor->PreGetCommandBufferInternalHandleNV(commandBuffer, pHandle);
+
+    PFN_vkGetCommandBufferInternalHandleNV pfn = layer_data->dispatch_table.GetCommandBufferInternalHandleNV;
+    if (pfn != nullptr) {
+        pfn(commandBuffer, pHandle);
+    }
+
+    layer_data->interceptor->PostGetCommandBufferInternalHandleNV(commandBuffer, pHandle);
+}
+
 static VKAPI_ATTR void VKAPI_CALL InterceptCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer,
                                                                           uint32_t primitiveRestartIndex) {
     auto layer_data = GetDeviceLayerData(DataKey(commandBuffer));
@@ -5468,6 +5481,7 @@ const std::unordered_map<std::string, function_data>& GetNameToFuncPtrMap() {
         {"vkCmdEndRendering2EXT", {kFuncTypeDev, (void*)InterceptCmdEndRendering2EXT}},
         {"vkCmdBeginCustomResolveEXT", {kFuncTypeDev, (void*)InterceptCmdBeginCustomResolveEXT}},
         {"vkCmdSetComputeOccupancyPriorityNV", {kFuncTypeDev, (void*)InterceptCmdSetComputeOccupancyPriorityNV}},
+        {"vkGetCommandBufferInternalHandleNV", {kFuncTypeDev, (void*)InterceptGetCommandBufferInternalHandleNV}},
         {"vkCmdSetPrimitiveRestartIndexEXT", {kFuncTypeDev, (void*)InterceptCmdSetPrimitiveRestartIndexEXT}},
         {"vkCmdBuildAccelerationStructuresKHR", {kFuncTypeDev, (void*)InterceptCmdBuildAccelerationStructuresKHR}},
         {"vkCmdBuildAccelerationStructuresIndirectKHR",

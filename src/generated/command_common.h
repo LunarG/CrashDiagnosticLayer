@@ -354,6 +354,7 @@ struct Command {
         kCmdEndRendering2EXT,
         kCmdBeginCustomResolveEXT,
         kCmdSetComputeOccupancyPriorityNV,
+        kGetCommandBufferInternalHandleNV,
         kCmdSetPrimitiveRestartIndexEXT,
         kCmdBuildAccelerationStructuresKHR,
         kCmdBuildAccelerationStructuresIndirectKHR,
@@ -2307,6 +2308,11 @@ struct CmdBeginCustomResolveEXTArgs {
 struct CmdSetComputeOccupancyPriorityNVArgs {
     VkCommandBuffer commandBuffer;
     const VkComputeOccupancyPriorityParametersNV* pParameters;
+};
+
+struct GetCommandBufferInternalHandleNVArgs {
+    VkCommandBuffer commandBuffer;
+    VkInternalHandleNV* pHandle;
 };
 
 struct CmdSetPrimitiveRestartIndexEXTArgs {

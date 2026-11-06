@@ -4651,6 +4651,17 @@ void CommandPrinter::PrintCmdSetComputeOccupancyPriorityNVArgs(YAML::Emitter &os
     }
 }
 
+void CommandPrinter::PrintGetCommandBufferInternalHandleNVArgs(YAML::Emitter &os,
+                                                               const GetCommandBufferInternalHandleNVArgs &args) {
+    os << YAML::Key << "pHandle";
+    // pointer
+    if (args.pHandle != nullptr) {
+        os << YAML::Value << *args.pHandle;
+    } else {
+        os << YAML::Value << "nullptr";
+    }
+}
+
 void CommandPrinter::PrintCmdSetPrimitiveRestartIndexEXTArgs(YAML::Emitter &os,
                                                              const CmdSetPrimitiveRestartIndexEXTArgs &args) {
     os << YAML::Key << "primitiveRestartIndex";
@@ -7113,6 +7124,13 @@ void CommandPrinter::PrintCommandParameters(YAML::Emitter &os, const Command &cm
             if (cmd.parameters) {
                 auto args = reinterpret_cast<CmdSetComputeOccupancyPriorityNVArgs *>(cmd.parameters);
                 PrintCmdSetComputeOccupancyPriorityNVArgs(os, *args);
+            }
+            break;
+
+        case Command::Type::kGetCommandBufferInternalHandleNV:
+            if (cmd.parameters) {
+                auto args = reinterpret_cast<GetCommandBufferInternalHandleNVArgs *>(cmd.parameters);
+                PrintGetCommandBufferInternalHandleNVArgs(os, *args);
             }
             break;
 

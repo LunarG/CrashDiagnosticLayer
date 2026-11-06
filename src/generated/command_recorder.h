@@ -1074,6 +1074,9 @@ class CommandRecorder {
     CmdSetComputeOccupancyPriorityNVArgs* RecordCmdSetComputeOccupancyPriorityNV(
         VkCommandBuffer commandBuffer, const VkComputeOccupancyPriorityParametersNV* pParameters);
 
+    GetCommandBufferInternalHandleNVArgs* RecordGetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer,
+                                                                                 VkInternalHandleNV* pHandle);
+
     CmdSetPrimitiveRestartIndexEXTArgs* RecordCmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer,
                                                                              uint32_t primitiveRestartIndex);
 

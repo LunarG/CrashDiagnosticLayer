@@ -37317,6 +37317,23 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRest
     return os;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "vertexAddressBindingUnrestricted";
+    // vertexAddressBindingUnrestricted -> Field -> VkBool32
+    os << YAML::Value << t.vertexAddressBindingUnrestricted;
+    os << YAML::EndMap;
+    return os;
+}
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageTilingControlFeaturesEXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -42349,6 +42366,9 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT *>(pStruct);
+            break;
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ADDRESS_BINDING_UNRESTRICTED_FEATURES_EXT:
+            os << *reinterpret_cast<const VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT *>(pStruct);
             break;
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT:
             os << *reinterpret_cast<const VkPhysicalDeviceImageTilingControlFeaturesEXT *>(pStruct);

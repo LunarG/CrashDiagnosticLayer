@@ -2081,6 +2081,7 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceDataGraphNeur
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineNeuralStatisticsCreateInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT &t);
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceImageTilingControlFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkImageTilingControlCreateInfoEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV &t);
@@ -2476,6 +2477,7 @@ class CommandPrinter {
     void PrintCmdEndRendering2EXTArgs(YAML::Emitter &os, const CmdEndRendering2EXTArgs &args);
     void PrintCmdBeginCustomResolveEXTArgs(YAML::Emitter &os, const CmdBeginCustomResolveEXTArgs &args);
     void PrintCmdSetComputeOccupancyPriorityNVArgs(YAML::Emitter &os, const CmdSetComputeOccupancyPriorityNVArgs &args);
+    void PrintGetCommandBufferInternalHandleNVArgs(YAML::Emitter &os, const GetCommandBufferInternalHandleNVArgs &args);
     void PrintCmdSetPrimitiveRestartIndexEXTArgs(YAML::Emitter &os, const CmdSetPrimitiveRestartIndexEXTArgs &args);
     void PrintCmdBuildAccelerationStructuresKHRArgs(YAML::Emitter &os,
                                                     const CmdBuildAccelerationStructuresKHRArgs &args);
