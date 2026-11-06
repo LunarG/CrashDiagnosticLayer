@@ -657,8 +657,6 @@ const char *Command::GetCommandName(const Command &cmd) {
             return "vkCmdBeginCustomResolveEXT";
         case Command::Type::kCmdSetComputeOccupancyPriorityNV:
             return "vkCmdSetComputeOccupancyPriorityNV";
-        case Command::Type::kGetCommandBufferInternalHandleNV:
-            return "vkGetCommandBufferInternalHandleNV";
         case Command::Type::kCmdSetPrimitiveRestartIndexEXT:
             return "vkCmdSetPrimitiveRestartIndexEXT";
         case Command::Type::kCmdBuildAccelerationStructuresKHR:

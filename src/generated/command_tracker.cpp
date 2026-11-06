@@ -3181,15 +3181,6 @@ void CommandTracker::CmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuf
     commands_.push_back(cmd);
 }
 
-void CommandTracker::GetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) {
-    Command cmd{};
-    cmd.type = Command::Type::kGetCommandBufferInternalHandleNV;
-    cmd.id = static_cast<uint32_t>(commands_.size()) + 1;
-    cmd.labels = labels_;
-    cmd.parameters = recorder_.RecordGetCommandBufferInternalHandleNV(commandBuffer, pHandle);
-    commands_.push_back(cmd);
-}
-
 void CommandTracker::CmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {
     Command cmd{};
     cmd.type = Command::Type::kCmdSetPrimitiveRestartIndexEXT;
