@@ -6335,6 +6335,16 @@ CmdSetComputeOccupancyPriorityNVArgs* CommandRecorder::RecordCmdSetComputeOccupa
     return args;
 }
 
+GetCommandBufferInternalHandleNVArgs* CommandRecorder::RecordGetCommandBufferInternalHandleNV(
+    VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) {
+    auto* args = Alloc<GetCommandBufferInternalHandleNVArgs>();
+    args->commandBuffer = commandBuffer;
+    if (pHandle) {
+        args->pHandle = CopyArray(pHandle, static_cast<size_t>(0U), static_cast<size_t>(1U));
+    }
+    return args;
+}
+
 CmdSetPrimitiveRestartIndexEXTArgs* CommandRecorder::RecordCmdSetPrimitiveRestartIndexEXT(
     VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {
     auto* args = Alloc<CmdSetPrimitiveRestartIndexEXTArgs>();

@@ -311,6 +311,8 @@ void InitInstanceDispatchTable(VkInstance instance, PFN_vkGetInstanceProcAddr pa
     dt->GetPhysicalDeviceUbmPresentationSupportSEC =
         (PFN_vkGetPhysicalDeviceUbmPresentationSupportSEC)pa(instance, "vkGetPhysicalDeviceUbmPresentationSupportSEC");
 #endif  // VK_USE_PLATFORM_UBM_SEC
+    dt->GetPhysicalDeviceInternalHandleNV =
+        (PFN_vkGetPhysicalDeviceInternalHandleNV)pa(instance, "vkGetPhysicalDeviceInternalHandleNV");
 };
 
 void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, DeviceDispatchTable *dt) {
@@ -1301,6 +1303,10 @@ void InitDeviceDispatchTable(VkDevice device, PFN_vkGetDeviceProcAddr pa, Device
     dt->CmdBeginCustomResolveEXT = (PFN_vkCmdBeginCustomResolveEXT)pa(device, "vkCmdBeginCustomResolveEXT");
     dt->CmdSetComputeOccupancyPriorityNV =
         (PFN_vkCmdSetComputeOccupancyPriorityNV)pa(device, "vkCmdSetComputeOccupancyPriorityNV");
+    dt->GetDeviceInternalHandleNV = (PFN_vkGetDeviceInternalHandleNV)pa(device, "vkGetDeviceInternalHandleNV");
+    dt->GetQueueInternalHandleNV = (PFN_vkGetQueueInternalHandleNV)pa(device, "vkGetQueueInternalHandleNV");
+    dt->GetCommandBufferInternalHandleNV =
+        (PFN_vkGetCommandBufferInternalHandleNV)pa(device, "vkGetCommandBufferInternalHandleNV");
     dt->CmdSetPrimitiveRestartIndexEXT =
         (PFN_vkCmdSetPrimitiveRestartIndexEXT)pa(device, "vkCmdSetPrimitiveRestartIndexEXT");
     dt->CreateAccelerationStructureKHR =

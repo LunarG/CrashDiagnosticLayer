@@ -865,6 +865,8 @@ class CommandTracker {
     void CmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                           const VkComputeOccupancyPriorityParametersNV* pParameters);
 
+    void GetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle);
+
     void CmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex);
 
     void CmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount,
