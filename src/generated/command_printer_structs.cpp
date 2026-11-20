@@ -37006,6 +37006,25 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeOccupa
     return os;
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMultiLevelAccelerationStructureFeaturesAMDX &t) {
+    os << YAML::BeginMap;
+    os << YAML::Key << "sType";
+    // sType -> Field -> VkStructureType
+    os << YAML::Value << t.sType;
+    os << YAML::Key << "pNext";
+    // pNext -> Field -> ConstNextPtr(void)
+    os << YAML::Value << YAML::BeginSeq;
+    PrintNextPtr(os, t.pNext);
+    os << YAML::EndSeq;
+    os << YAML::Key << "multiLevelAccelerationStructure";
+    // multiLevelAccelerationStructure -> Field -> VkBool32
+    os << YAML::Value << t.multiLevelAccelerationStructure;
+    os << YAML::EndMap;
+    return os;
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixProperties2EXT &t) {
     os << YAML::BeginMap;
     os << YAML::Key << "sType";
@@ -42323,6 +42342,11 @@ YAML::Emitter &PrintVkStruct(YAML::Emitter &os, const VkStruct *pStruct) {
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV:
             os << *reinterpret_cast<const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV *>(pStruct);
             break;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_LEVEL_ACCELERATION_STRUCTURE_FEATURES_AMDX:
+            os << *reinterpret_cast<const VkPhysicalDeviceMultiLevelAccelerationStructureFeaturesAMDX *>(pStruct);
+            break;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         case VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT:
             os << *reinterpret_cast<const VkCooperativeMatrixProperties2EXT *>(pStruct);
             break;
