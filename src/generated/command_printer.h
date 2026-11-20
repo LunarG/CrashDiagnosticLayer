@@ -2065,6 +2065,9 @@ YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDevicePipelineCache
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkComputeOccupancyPriorityParametersNV &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV &t);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceMultiLevelAccelerationStructureFeaturesAMDX &t);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkCooperativeMatrixProperties2EXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixInfo2EXT &t);
 YAML::Emitter &operator<<(YAML::Emitter &os, const VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT &t);
